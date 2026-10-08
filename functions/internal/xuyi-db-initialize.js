@@ -2,7 +2,7 @@
 // Delete from GitHub immediately after verification. No Demalong bindings are referenced.
 const EXPECTED_SHA256 = "729b67a4f5e15dff451c129d121d3f947153aa40f60d1f4e8bc95447877c9c1f";
 const statements = [
-  "do not import internal supplier prices.\nCREATE TABLE IF NOT EXISTS products (\n  id TEXT PRIMARY KEY, source_model TEXT NOT NULL, name_en TEXT NOT NULL,\n  category_slug TEXT NOT NULL, description_en TEXT,\n  production_mode TEXT NOT NULL DEFAULT 'pending' CHECK(production_mode IN ('pending','in_house','partner')),\n  approval_state TEXT NOT NULL DEFAULT 'draft' CHECK(approval_state IN ('draft','review','published')),\n  source_ref TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)",
+  "CREATE TABLE IF NOT EXISTS products (\n  id TEXT PRIMARY KEY, source_model TEXT NOT NULL, name_en TEXT NOT NULL,\n  category_slug TEXT NOT NULL, description_en TEXT,\n  production_mode TEXT NOT NULL DEFAULT 'pending' CHECK(production_mode IN ('pending','in_house','partner')),\n  approval_state TEXT NOT NULL DEFAULT 'draft' CHECK(approval_state IN ('draft','review','published')),\n  source_ref TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP\n)",
   "CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_slug,approval_state)",
   "CREATE TABLE IF NOT EXISTS variants (\n  id TEXT PRIMARY KEY, product_id TEXT NOT NULL REFERENCES products(id),\n  capacity_ml INTEGER, color TEXT, material_parts_json TEXT,\n  packing_json TEXT, image_key TEXT, status TEXT DEFAULT 'draft'\n)",
   "CREATE INDEX IF NOT EXISTS idx_variants_product ON variants(product_id)",
