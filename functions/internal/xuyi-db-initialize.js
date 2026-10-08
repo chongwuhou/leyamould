@@ -31,5 +31,5 @@ export async function onRequestPost({request,env}) {
   }
 }
 export async function onRequestGet() {
-  return new Response("Method Not Allowed", {status:405,headers:{"Cache-Control":"no-store"}});
+  return new Response("Method Not Allowed v2", {status:405,headers:{"Cache-Control":"no-store"}});
 }
