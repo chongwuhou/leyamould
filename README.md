@@ -31,3 +31,11 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Added 5 bottle feature landings, 5 use-case landings, Request Sample process, Why Us, Custom Water Bottle and Custom Molding pages; English only, no glass or stainless steel.
 - Inspiration: Kreat visual/nav hierarchy, GOX model-category discovery, Everich sample/OEM flow, Diller buyer-side product specifications and FAQ. Competitor images and branding are not copied.
 - The B2B quote form remains disabled until verified inbox/privacy/security are ready; draft catalog data is not published via API.
+
+## October homepage refinement
+- Preserved target-inspired four-photo Products menu and compact Capabilities / Why Us dropdowns.
+- Reorganized homepage flow to match target's editorial rhythm without copying third-party media or unsupported factory claims.
+- Replaced duplicative product and capabilities sections with genuine 4-tab product display and a working buyer-brief model preview.
+- Added dark two-column procurement FAQ / inquiry-preview section. Live submissions remain explicitly disabled.
+- Preserved existing material suitability and factory capability modules with no invented metrics.
+- Responsive preview tested at 320px, 390px, 820px and 1440px with no horizontal overflow or missing image assets.

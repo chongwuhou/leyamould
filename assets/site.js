@@ -11,6 +11,35 @@ document.querySelectorAll('[data-mega-toggle]').forEach(b=>{b.addEventListener('
 document.addEventListener('click',e=>{if(!e.target.closest('.nav__drop'))document.querySelectorAll('.nav__drop.open').forEach(d=>{d.classList.remove('open');d.querySelector('[data-mega-toggle]')?.setAttribute('aria-expanded','false')})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.nav__drop.open').forEach(d=>{d.classList.remove('open');d.querySelector('[data-mega-toggle]')?.setAttribute('aria-expanded','false')});if(nav){nav.classList.remove('open');menu?.setAttribute('aria-expanded','false')}}});
 const search=document.getElementById('search-panel');const st=document.getElementById('search-toggle');if(search&&st){st.addEventListener('click',()=>{let open=!search.classList.contains('open');search.classList.toggle('open',open);st.setAttribute('aria-expanded',String(open));if(open)search.querySelector('input')?.focus()})}
+
+// Buyer brief preview. This controls only locally displayed reference photos and inquiry link;
+// it does not claim a specific customization is actually available.
+const configButtons=[...document.querySelectorAll('[data-config-kind]')];
+const requestButtons=[...document.querySelectorAll('[data-config-request]')];
+if(configButtons.length){
+ const refs={
+  sports:{model:'2501',img:'/media/excel/row-003.webp',alt:'XUYI source sports bottle, model 2501'},
+  kids:{model:'2508',img:'/media/excel/row-008.webp',alt:'XUYI source kids bottle, model 2508'},
+  jug:{model:'2290',img:'/media/excel/row-021.webp',alt:'XUYI source larger water jug, model 2290'},
+  shaker:{model:'501',img:'/media/ppt/slide-091.webp',alt:'XUYI source plastic shaker bottle, model 501'}
+ };
+ let selected='sports',focus='logo';
+ const img=document.getElementById('configurator-photo');
+ const info=document.getElementById('configurator-model');
+ const cta=document.getElementById('configurator-cta');
+ function render(){
+  const r=refs[selected];if(!r||!img||!cta)return;
+  img.src=r.img;img.alt=r.alt;
+  if(info)info.textContent='Source catalog reference: Model '+r.model;
+  cta.href='/contact/?model='+encodeURIComponent(r.model)+'&type='+encodeURIComponent(focus)+'#inquiry';
+  configButtons.forEach(b=>{const active=b.dataset.configKind===selected;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+  requestButtons.forEach(b=>{const active=b.dataset.configRequest===focus;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+ }
+ configButtons.forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.configKind;render()}));
+ requestButtons.forEach(b=>b.addEventListener('click',()=>{focus=b.dataset.configRequest;render()}));
+ render();
+}
+
 const model=document.getElementById('inquiry-model');if(model){model.value=new URLSearchParams(location.search).get('model')||'';}const inquiryType=new URLSearchParams(location.search).get('type');if(inquiryType){const choices=document.querySelector('#inquiry select[name="type"]');if(choices){const target=/sample/i.test(inquiryType)?'Samples':/logo|graphic|brand/i.test(inquiryType)?'Custom Logo / Branding':/oem|molding|manufacturing/i.test(inquiryType)?'OEM / ODM':'Wholesale Quote';[...choices.options].forEach(o=>{if(o.text===target)choices.value=o.value})}}
 const q=document.querySelector('[data-catalog-query]');if(q){const searchVal=new URLSearchParams(location.search).get('q');if(searchVal)q.value=searchVal.slice(0,120)}const category=document.querySelector('[data-catalog-category]');const count=document.getElementById('filter-count');const cards=[...document.querySelectorAll('[data-product-card]')];let visible=0;const perPage=18;let page=1;
 const pageStatus=document.getElementById('page-status'),prev=document.getElementById('page-prev'),next=document.getElementById('page-next');

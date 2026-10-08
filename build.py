@@ -1,4 +1,5 @@
 from site_renderer import *
+from home_enhancements import interactive_bottle_customization, dark_buyer_faq
 import json
 def sec(title,desc="",eyebrow="XUYI DRINKWARE"):
  return f'<div class="section__head"><div><span class="eyebrow">{e(eyebrow)}</span><h2 class="section__title">{e(title)}</h2><p class="copy-muted">{e(desc)}</p></div></div>'
@@ -40,7 +41,7 @@ def front():
  buyer='<section class="section"><div class="shell">'+sec("Built for Business Buyers","Product sourcing and customization for global trade.","Buyer Applications")+'<div class="grid grid--4">'+''.join('<article class="benefit"><h3>'+e(t)+'</h3><p>'+e(d)+'</p></article>' for t,d in [("Importers","Select models and shipping configurations for your market."),("Wholesale Distributors","Browse reusable bottles by capacity, lid and material."),("Brands & Private Label","Explore custom logo, color and branded packaging options."),("Sports & Gift Buyers","Find sports, kids and shaker bottle designs for bulk projects.")])+'</div></div></section>'
  faq='<section class="section section--soft"><div class="shell">'+sec("Frequently Asked Questions","Answers to common questions from international purchasing teams.","FAQ")+faq_html(FAQS[:6])+'<p style="margin-top:25px"><a class="text-link" href="/faq/">Read All FAQs →</a></p></div></section>'
  blog='<section class="section"><div class="shell">'+sec("Resources for Wholesale Buyers","Practical guides to comparing products, branding and bulk purchasing.","Resources")+'<div class="article-list">'+''.join('<article class="article-card"><span class="article-card__num">BUYING GUIDE</span><h3>'+e(t)+'</h3><p>'+e(d)+'</p><a href="/blog/'+s+'/">Read Article →</a></article>' for s,t,d in ARTICLES[:3])+'</div></div></section>'
- return hero+factory_intro_module()+cat+bottle_collection_tabs()+why+caps+customization_gallery_module()+fac+process+buyer+faq+blog
+ return hero+factory_intro_module()+bottle_collection_tabs()+why+interactive_bottle_customization()+materials_responsibility_module()+production_capability_module()+dark_buyer_faq()+blog
 def catalog(cat_name=None):
  if cat_name:
   title,slug,im,desc=CAT[cat_name]
@@ -55,14 +56,14 @@ def catalog(cat_name=None):
  return pagehtml
 def detail(obj):
  photos=obj['images'];category=obj['category'];variants=obj['variants']
- fields=[("Model",obj['model']),("Product Type",CAT[category][0]),("Catalog Capacity",", ".join(dict.fromkeys(x['capacity'] for x in variants)))]
+ fields=[("Model",obj['model']),("Product Type",CAT[category][0]),("Catalog Capacity", "Pending supplier verification" if str(obj["model"])=="2506" else ", ".join(dict.fromkeys(x["capacity"] for x in variants)))]
  for name,key in [("Source Material","material"),("Dimensions","dimensions"),("Source Colors","colors"),("Packaging","packing"),("Carton Quantity","carton_quantity"),("Carton Dimensions","carton_size")]:
   vals=[str(x.get(key)) for x in variants if x.get(key)]
   if vals:fields.append((name,", ".join(list(dict.fromkeys(vals))[:3])))
  specs='<table class="spec">'+''.join('<tr><td>'+e(name)+'</td><td>'+e(value)+'</td></tr>' for name,value in fields)+'</table>'
- thumbs='<div class="product-detail__thumbs">'+''.join('<button class="product-detail__thumb" data-main-photo="'+e(img)+'" type="button" aria-label="View product catalog image '+str(i+1)+'">'+photo(img,obj['name'])+'</button>' for i,img in enumerate(photos))+'</div>'
+ thumbs='<div class="product-detail__thumbs">'+''.join('<button class="product-detail__thumb" data-main-photo="'+e(img)+'" type="button" aria-label="View product catalog image '+str(i+1)+'">'+photo(img,public_display_name(obj))+'</button>' for i,img in enumerate(photos))+'</div>'
  bcrumb='<div class="breadcrumb"><a href="/">Home</a> / <a href="/products/">Products</a> / <a href="/collections/'+CAT[category][1]+'/">'+e(CAT[category][0])+'</a> / '+e(obj['model'])+'</div>'
- h='<section class="section"><div class="shell">'+bcrumb+'<div class="product-detail"><div class="product-detail__photos"><div class="product-detail__main">'+photo(photos[0],obj['name']+' Model '+obj['model'],'eager').replace('<img ','<img id="main-photo" ',1)+'</div>'+thumbs+'<p class="copy-muted" style="font-size:12px">Source: original XUYI Excel / PPT catalog. Photography and specifications require final approval.</p></div><div><span class="eyebrow">PLASTIC DRINKWARE / MODEL '+e(obj['model'])+'</span><h1>'+e(obj['name'])+'</h1><p class="copy-muted">B2B wholesale supply and custom branding inquiries. Please confirm product specifications, quantity, colors and required materials before ordering.</p>'+specs+'<div class="actions"><a class="button" href="/contact/?model='+e(obj['model'])+'#inquiry">Request a Quote →</a><a class="button button--outline" href="/contact/?model='+e(obj['model'])+'&type=sample#inquiry">Request Sample ↗</a></div><p class="notice"><b>Catalog preview:</b> Confirm material by component, correct capacity, target-market food-contact testing, MOQ and lead time before listing as available for sale.</p><div><span class="badge">OEM inquiry</span> <span class="badge">Bulk order</span> <span class="badge">Sample confirmation</span></div></div></div></div></section>'
+ h='<section class="section"><div class="shell">'+bcrumb+'<div class="product-detail"><div class="product-detail__photos"><div class="product-detail__main">'+photo(photos[0],public_display_name(obj)+' Model '+obj['model'],'eager').replace('<img ','<img id="main-photo" ',1)+'</div>'+thumbs+'<p class="copy-muted" style="font-size:12px">Source: original XUYI Excel / PPT catalog. Photography and specifications require final approval.</p></div><div><span class="eyebrow">PLASTIC DRINKWARE / MODEL '+e(obj['model'])+'</span><h1>'+e(public_display_name(obj))+'</h1><p class="copy-muted">B2B wholesale supply and custom branding inquiries. Please confirm product specifications, quantity, colors and required materials before ordering.</p>'+specs+'<div class="actions"><a class="button" href="/contact/?model='+e(obj['model'])+'#inquiry">Request a Quote →</a><a class="button button--outline" href="/contact/?model='+e(obj['model'])+'&type=sample#inquiry">Request Sample ↗</a></div><p class="notice"><b>Catalog preview:</b> Confirm material by component, correct capacity, target-market food-contact testing, MOQ and lead time before listing as available for sale.</p><div><span class="badge">OEM inquiry</span> <span class="badge">Bulk order</span> <span class="badge">Sample confirmation</span></div></div></div></div></section>'
  h+='<section class="section section--soft"><div class="shell">'+sec("Product Details & Customization","Discuss logo printing, color combinations, packing and any project-specific drawings.","Product Information")+'<div class="grid grid--3">'+''.join('<article class="benefit"><h3>'+e(t)+'</h3><p>'+e(d)+'</p></article>' for t,d in [("Material & Specifications","Use the source figures as a starting point. We verify component materials, dimensions and capacity."),("Colors & Branding","Ask which colors, logo placements and branding methods are available for this exact model."),("Packing & Shipment","Carton details, volume, sample policies and production schedule are confirmed against the order.")])+'</div></div></section>'
  rel=[x for x in SERIES.values() if x['category']==category and x['model']!=obj['model']][:4]
  if rel:h+='<section class="section"><div class="shell">'+sec("Related Water Bottle Models","Compare other sizes and styles from this series.","Related Products")+product_grid(rel)+'</div></section>'
@@ -230,13 +231,27 @@ def bottle_collection_tabs():
  content+='</div></section>'
  return content
 
+
+def materials_responsibility_module():
+ return '<section class="section section--dark"><div class="shell"><div class="split"><div><span class="eyebrow">MATERIAL RESPONSIBILITY</span><h2 class="section__title">Better Reusable Bottle Projects Start with the Right Material.</h2><p class="copy-muted">Plastic drinkware is not one material or one standard. Each body, lid, straw and seal may differ. We review intended use, target market and applicable food-contact documentation for the exact product.</p><div class="actions"><a class="button button--white" href="/quality-control/">Quality & Material Guidance →</a><a class="button button--outline" href="/blog/plastic-bottle-material-selection/">Read Material Guide ↗</a></div><p class="copy-muted" style="font-size:12px">No unverified recycled-content, biodegradable, BPA-free or certification claims are made here.</p></div><div class="responsible-media">'+photo('/media/ppt/slide-066.webp','Reusable plastic drinking bottles from the original XUYI catalog')+'<div class="responsible-media__caption"><b>Reusable plastic drinkware</b><span>Review materials by model and component</span></div></div></div></div></section>'
+
+def production_capability_module():
+ points=[
+ ("Own Facility","XUYI operates a Taizhou manufacturing facility for its plastic drinkware business."),
+ ("Project Matching","Select the model and identify whether work is handled in-house or by an approved partner."),
+ ("Sample Confirmation","Document fit, finish, closures, sample acceptance and artwork before full production."),
+ ("Quality & Dispatch","Review agreed checkpoints, packaging, cartons and shipment requirements.")
+ ]
+ cards=''.join('<article class="production-proof"><span class="production-proof__num">0'+str(i)+'</span><h3>'+e(title)+'</h3><p>'+e(desc)+'</p></article>' for i,(title,desc) in enumerate(points,1))
+ return '<section class="section production-capacity"><div class="shell"><div class="section__head"><div><span class="eyebrow">MANUFACTURING SUPPORT</span><h2 class="section__title">XUYI Production & Order Capabilities.</h2><p class="copy-muted">Project-specific manufacturing, production and shipment information. Machine counts and output figures will be shown only after factory verification.</p></div><a class="text-link" href="/manufacturing/">Explore Our Process →</a></div><div class="production-proof-grid">'+cards+'</div><div class="production-footer"><p>Need a custom color, print or packaging design? Send your actual model, artwork, order quantity and destination.</p><a class="button" href="/request-sample/">Discuss a Sample →</a></div></div></section>'
+
 def generate():
  build_url('index.html','Homepage',page('Custom Plastic Water Bottle Manufacturer in China | XUYI Drinkware','Factory-backed plastic sports, kids and shaker bottles for wholesale and OEM/ODM sourcing.',front()))
  build_url('products/index.html','All Products',page('Plastic Water Bottle Catalog | XUYI Drinkware','Explore plastic sports water bottles, large capacity water jugs, kids bottles and shaker bottles.',catalog()))
  for cat,(title,slug,im,desc) in CAT.items():
   build_url('collections/'+slug+'/index.html',title,page(title+' Wholesale | XUYI Drinkware',desc,catalog(cat)))
  for product in SERIES.values():
-  build_url('products/'+product['slug']+'/index.html','Model '+product['model'],page(product['name']+' — Model '+product['model']+' | XUYI',product['name']+' B2B plastic water bottle product specifications and wholesale inquiry.',detail(product)))
+  build_url('products/'+product['slug']+'/index.html','Model '+product['model'],page(public_display_name(product)+' — Model '+product['model']+' | XUYI',public_display_name(product)+' B2B plastic water bottle product specifications and wholesale inquiry.',detail(product)))
  build_url('capabilities/index.html','Capabilities',page('Plastic Bottle OEM & Customization | XUYI','Logo, graphics, OEM/ODM and custom packing options for bulk plastic drinkware.',capabilities_page()))
  for cap in CAPABILITIES:
   title,slug,desc,*_=cap
