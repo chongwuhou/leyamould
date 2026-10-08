@@ -2,9 +2,11 @@
   "projectName": "xuyi-drinkware-site",
   "localProjectPath": "D:\\bendigpt-WebCodex\\xuyi-drinkware-site",
   "githubRepository": "xuyi-drinkware-site",
-  "githubStatus": "not-created-login-required",
+  "githubStatus": "private-repo-created-source-pushed",
   "cloudflarePagesProject": "xuyi-drinkware-site",
-  "cloudflareStatus": "not-created-login-required",
+  "cloudflareStatus": "not-created-dashboard-blank-after-auth",
   "existingFilterSite": "do-not-modify",
-  "domain": "pending"
+  "domain": "pending",
+  "githubUrl": "https://github.com/chongwuhou/xuyi-drinkware-site",
+  "githubCommit": "4dbb1525e8c6936c1cc89b08fe2fab6761328b5b"
 }
