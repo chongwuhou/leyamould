@@ -1,5 +1,9 @@
 
 (function(){
+// Menu photo warmup: hidden hover panels need their source images ready before first hover.
+const menuPhotoWarmup=document.querySelectorAll('#menu-products .mega__image img,.mobile-nav__group-title img');
+menuPhotoWarmup.forEach(img=>{img.loading='eager';img.decoding='async'});
+
 const menu=document.getElementById('mobile-menu');
 const nav=document.getElementById('mobile-navigation');
 if(menu&&nav){menu.addEventListener('click',()=>{const state=!nav.classList.contains('open');nav.classList.toggle('open',state);menu.setAttribute('aria-expanded',String(state));menu.setAttribute('aria-label',state?'Close menu':'Open menu')});}
@@ -16,9 +20,9 @@ if(cards.length){q?.addEventListener('input',()=>{page=1;render()});category?.ad
 const hero=document.querySelector('[data-hero]');
 if(hero){
  const slides=[
- {title:'Custom Water Bottles <span>Built for Your Brand.</span>',description:'Explore sports, kids, large capacity and shaker bottles with factory-backed supply and project-specific branding options.',img:'/media/ppt/slide-059.webp',alt:'XUYI gradient sports water bottle collection',link:'/products/',cta:'Explore Our Products →'},
- {title:'Plastic Sports Bottles <span>For Every Collection.</span>',description:'Compare carry-handle styles, colorful bottle shapes and source catalog models for wholesale buyers.',img:'/media/ppt/slide-037.webp',alt:'XUYI sports plastic bottle catalog assortment',link:'/collections/sports-water-bottles/',cta:'See Sports Bottles →'},
- {title:'Custom Drinkware <span>Designed Around You.</span>',description:'Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.',img:'/media/ppt/slide-091.webp',alt:'XUYI shaker bottle collection',link:'/capabilities/',cta:'View Customization →'}
+ {title:'Custom Water Bottles <span>Built for Your Brand.</span>',description:'Explore sports, kids, large capacity and shaker bottles with factory-backed supply and project-specific branding options.',img:'/media/ppt/slide-059.webp',alt:'XUYI gradient sports water bottle collection',link:'/products/',cta:'Explore Our Products â'},
+ {title:'Plastic Sports Bottles <span>For Every Collection.</span>',description:'Compare carry-handle styles, colorful bottle shapes and source catalog models for wholesale buyers.',img:'/media/ppt/slide-037.webp',alt:'XUYI sports plastic bottle catalog assortment',link:'/collections/sports-water-bottles/',cta:'See Sports Bottles â'},
+ {title:'Custom Drinkware <span>Designed Around You.</span>',description:'Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.',img:'/media/ppt/slide-091.webp',alt:'XUYI shaker bottle collection',link:'/capabilities/',cta:'View Customization â'}
  ];
  let idx=0;
  const title=hero.querySelector('#hero-title'),desc=hero.querySelector('#hero-description'),img=hero.querySelector('#hero-image'),cta=hero.querySelector('#hero-cta'),counter=hero.querySelector('#hero-counter');
@@ -28,5 +32,4 @@ const bottleTabs=[...document.querySelectorAll('.bottle-tab[role="tab"]')];
 function selectTab(i){bottleTabs.forEach((t,j)=>{const active=i===j;t.classList.toggle('active',active);t.setAttribute('aria-selected',String(active));const panel=document.getElementById(t.getAttribute('aria-controls'));if(panel)panel.hidden=!active})}
 bottleTabs.forEach((t,i)=>{t.addEventListener('click',()=>selectTab(i));t.addEventListener('keydown',ev=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(ev.key)){ev.preventDefault();const n=ev.key==='Home'?0:ev.key==='End'?bottleTabs.length-1:(i+(ev.key==='ArrowLeft'?-1:1)+bottleTabs.length)%bottleTabs.length;selectTab(n);bottleTabs[n].focus()}})});
 
-document.querySelectorAll('[data-main-photo]').forEach(button=>{button.addEventListener('click',()=>{const large=document.querySelector('#main-photo');if(large){large.src=button.dataset.mainPhoto;large.alt=button.querySelector('img')?.alt||'Bottle image'}})});
-})();
+document.querySelectorAll('[data-main-photo]').forEach(button=>{button.addEventListener('click',()=>{const large=document.querySelector('#main-photo');if(large){large.src=button.dataset.mainPhoto;large.alt=button.querySelector(
