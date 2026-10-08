@@ -54,3 +54,12 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Category labels sit under 1:1 source photos; desktop four-by-two grid, mobile two-column. Shaker short list uses an eighth category discovery card.
 - No fabricated factory capacities or customer associations; logo wall is still awaiting verified, publishable logos.
 - Product detail pages, D1/R2 bindings and the separate Demalong project remain untouched.
+
+
+## Homepage News & Blogs fix
+- The previous "Resources for Wholesale Buyers" section was a plain-text three-card panel that failed to match the Kreat homepage.
+- Restored target's News and Blogs large headline with icon, explanatory text, left guide counter and arrows, and right image carousel; desktop displays two large photos, mobile is touch-scrollable.
+- All six actual XUYI buyer-guide articles are linked. No unverified posting dates or external competitor images.
+- /blog/ now has a six-article photo grid; all six /blog/{slug}/ detail pages include matching XUYI catalog illustration.
+- Moved authorized-only customer logo wall to follow black inquiry/FAQ block and precede News & Blogs, matching the target's actual order.
+- The actual inquiry form remains disabled pending verified company inbox, privacy notice and secure server-side delivery.

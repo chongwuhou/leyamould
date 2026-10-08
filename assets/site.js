@@ -62,4 +62,37 @@ function selectTab(i){bottleTabs.forEach((t,j)=>{const active=i===j;t.classList.
 bottleTabs.forEach((t,i)=>{t.addEventListener('click',()=>selectTab(i));t.addEventListener('keydown',ev=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(ev.key)){ev.preventDefault();const n=ev.key==='Home'?0:ev.key==='End'?bottleTabs.length-1:(i+(ev.key==='ArrowLeft'?-1:1)+bottleTabs.length)%bottleTabs.length;selectTab(n);bottleTabs[n].focus()}})});
 
 document.querySelectorAll('[data-main-photo]').forEach(button=>{button.addEventListener('click',()=>{const large=document.querySelector('#main-photo');if(large){large.src=button.dataset.mainPhoto;large.alt=button.querySelector('img')?.alt||'Bottle image'}})});
+
+// News & Blogs carousel controls. Scrolling and arrow activation both update the active counter.
+const newsSlider=document.getElementById('news-slider');
+if(newsSlider){
+ const newsCards=[...newsSlider.querySelectorAll('.news-card')];
+ const newsPrev=document.getElementById('news-prev');
+ const newsNext=document.getElementById('news-next');
+ const newsCounter=document.getElementById('news-active-count');
+ const currentStep=()=>{
+  if(!newsCards.length)return 0;
+  const gap=parseFloat(getComputedStyle(newsSlider).gap)||0;
+  const cardSize=newsCards[0].getBoundingClientRect().width+gap;
+  const maxScroll=Math.max(0,newsSlider.scrollWidth-newsSlider.clientWidth);
+  if(newsSlider.scrollLeft>=maxScroll-4)return newsCards.length-1;
+  return Math.max(0,Math.min(newsCards.length-1,Math.round(newsSlider.scrollLeft/cardSize)));
+ };
+ const refresh=()=>{
+  const active=currentStep();
+  if(newsCounter)newsCounter.textContent=String(active+1).padStart(2,'0');
+  if(newsPrev)newsPrev.disabled=newsSlider.scrollLeft<=4;
+  if(newsNext)newsNext.disabled=newsSlider.scrollLeft>=newsSlider.scrollWidth-newsSlider.clientWidth-4;
+ };
+ const move=(dir)=>{
+  const distance=newsCards[0].getBoundingClientRect().width+(parseFloat(getComputedStyle(newsSlider).gap)||0);
+  newsSlider.scrollBy({left:dir*distance,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+ };
+ newsPrev?.addEventListener('click',()=>move(-1));
+ newsNext?.addEventListener('click',()=>move(1));
+ newsSlider.addEventListener('scroll',refresh,{passive:true});
+ if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(refresh);observer.observe(newsSlider)}
+ refresh();
+}
+
 })();
