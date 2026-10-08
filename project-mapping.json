@@ -4,9 +4,12 @@
   "githubRepository": "xuyi-drinkware-site",
   "githubStatus": "private-repo-created-source-pushed",
   "cloudflarePagesProject": "xuyi-drinkware-site",
-  "cloudflareStatus": "not-created-dashboard-blank-after-auth",
+  "cloudflareStatus": "deployed-preview",
   "existingFilterSite": "do-not-modify",
   "domain": "pending",
   "githubUrl": "https://github.com/chongwuhou/xuyi-drinkware-site",
-  "githubCommit": "4dbb1525e8c6936c1cc89b08fe2fab6761328b5b"
+  "githubCommit": "4dbb1525e8c6936c1cc89b08fe2fab6761328b5b",
+  "cloudflareUrl": "https://xuyi-drinkware-site.pages.dev/",
+  "cloudflareProductionBranch": "main",
+  "launchStatus": "preview-noindex-inquiry-disabled"
 }
