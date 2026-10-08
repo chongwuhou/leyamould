@@ -1,0 +1,1 @@
+Place only customer-provided logos with confirmed customer relationship and permission to publish here. Do not copy logos from other websites or claim unauthorized partnerships. Add authorized image paths to data/customer-logos.json and rebuild.\n

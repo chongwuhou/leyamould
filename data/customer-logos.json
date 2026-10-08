@@ -1,0 +1,10 @@
+{
+  "verified_customers": [],
+  "schema": {
+    "name": "Verified customer brand display name",
+    "logo_path": "/assets/customer-logos/customer.svg",
+    "authorization": "Written public display permission on file",
+    "verified_at": "ISO timestamp"
+  },
+  "note": "Do not show any trademark or claim business relationships until verified and authorized."
+}

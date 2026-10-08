@@ -39,3 +39,11 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Added dark two-column procurement FAQ / inquiry-preview section. Live submissions remain explicitly disabled.
 - Preserved existing material suitability and factory capability modules with no invented metrics.
 - Responsive preview tested at 320px, 390px, 820px and 1440px with no horizontal overflow or missing image assets.
+
+
+## Homepage collection, strengths and brand wall refinement
+- Four switching categories now have eight editorial photo tiles per panel (four wide by two deep on desktop; two columns on mobile) using actual XUYI Excel/PPT images.
+- Company strength presentation covers own manufacturing facility, coordinated partner models, OEM/custom options, verified-model quality review, and order logistics with no invented factory capacity or certifications.
+- Customer logo wall has six reserved locations but **no customer names or logos are published without verifiable customer authorization**.
+- To add authorized customer logos, put owned/authorized images at /assets/customer-logos/<filename> and add name, logo_path and authorization to data/customer-logos.json; rebuild with python build.py.
+- Mobile responsiveness checked at 320, 390, 768, 1024, and 1440 px; all four tabs work with actual catalog photos; no overflow.

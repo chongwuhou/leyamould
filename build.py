@@ -1,5 +1,5 @@
 from site_renderer import *
-from home_enhancements import interactive_bottle_customization, dark_buyer_faq
+from home_enhancements import interactive_bottle_customization, dark_buyer_faq, company_strength_section, customer_logo_section
 import json
 def sec(title,desc="",eyebrow="XUYI DRINKWARE"):
  return f'<div class="section__head"><div><span class="eyebrow">{e(eyebrow)}</span><h2 class="section__title">{e(title)}</h2><p class="copy-muted">{e(desc)}</p></div></div>'
@@ -41,7 +41,7 @@ def front():
  buyer='<section class="section"><div class="shell">'+sec("Built for Business Buyers","Product sourcing and customization for global trade.","Buyer Applications")+'<div class="grid grid--4">'+''.join('<article class="benefit"><h3>'+e(t)+'</h3><p>'+e(d)+'</p></article>' for t,d in [("Importers","Select models and shipping configurations for your market."),("Wholesale Distributors","Browse reusable bottles by capacity, lid and material."),("Brands & Private Label","Explore custom logo, color and branded packaging options."),("Sports & Gift Buyers","Find sports, kids and shaker bottle designs for bulk projects.")])+'</div></div></section>'
  faq='<section class="section section--soft"><div class="shell">'+sec("Frequently Asked Questions","Answers to common questions from international purchasing teams.","FAQ")+faq_html(FAQS[:6])+'<p style="margin-top:25px"><a class="text-link" href="/faq/">Read All FAQs →</a></p></div></section>'
  blog='<section class="section"><div class="shell">'+sec("Resources for Wholesale Buyers","Practical guides to comparing products, branding and bulk purchasing.","Resources")+'<div class="article-list">'+''.join('<article class="article-card"><span class="article-card__num">BUYING GUIDE</span><h3>'+e(t)+'</h3><p>'+e(d)+'</p><a href="/blog/'+s+'/">Read Article →</a></article>' for s,t,d in ARTICLES[:3])+'</div></div></section>'
- return hero+factory_intro_module()+bottle_collection_tabs()+why+interactive_bottle_customization()+materials_responsibility_module()+production_capability_module()+dark_buyer_faq()+blog
+ return hero+factory_intro_module()+bottle_collection_tabs()+company_strength_section()+customer_logo_section()+interactive_bottle_customization()+materials_responsibility_module()+dark_buyer_faq()+blog
 def catalog(cat_name=None):
  if cat_name:
   title,slug,im,desc=CAT[cat_name]
@@ -219,18 +219,50 @@ def customization_gallery_module():
 
 
 def bottle_collection_tabs():
- names=[("Sports Bottles","Plastic Sports Water Bottles"),("Kids Bottles","Kids Plastic Water Bottles"),("Water Jugs","Large Capacity Water Jugs"),("Shaker Bottles","Plastic Shaker Bottles")]
- content='<section class="section section--soft"><div class="shell">'+sec("Rocket Your Brand with XUYI Plastic Bottles","Pick a product line to preview the relevant catalog models and discuss private-label sourcing.","OUR COLLECTIONS")
- content+='<div class="bottle-tabs" role="tablist" aria-label="Browse bottle collections">'
- for i,(label,cat) in enumerate(names):
-  content+='<button class="bottle-tab'+(' active' if i==0 else '')+'" role="tab" id="bottle-tab-'+str(i)+'" aria-controls="bottle-panel-'+str(i)+'" aria-selected="'+('true' if i==0 else 'false')+'" type="button">'+e(label)+'</button>'
- content+='</div>'
- for i,(label,cat) in enumerate(names):
-  items=[x for x in SERIES.values() if x['category']==cat][:6]
-  content+='<div class="bottle-tabpanel" role="tabpanel" id="bottle-panel-'+str(i)+'" aria-labelledby="bottle-tab-'+str(i)+'" '+('hidden' if i else '')+'>'+product_grid(items)+'<p style="margin-top:24px"><a href="/collections/'+CAT[cat][1]+'/" class="button button--outline">Explore '+e(label)+' →</a></p></div>'
- content+='</div></section>'
- return content
-
+ # KREAT visual rhythm: wide category tabs + 4-by-2 editorial photo mosaic,
+ # with product models and photos taken only from XUYI's actual source catalog.
+ from pathlib import Path
+ import hashlib
+ names=[
+  ("Sports Water Bottles","Plastic Sports Water Bottles"),
+  ("Kids Water Bottles","Kids Plastic Water Bottles"),
+  ("Large Capacity Jugs","Large Capacity Water Jugs"),
+  ("Shaker Bottles","Plastic Shaker Bottles")
+ ]
+ def curated(category):
+  values=[v for v in SERIES.values() if v["category"]==category]
+  chosen=[];fingerprints=set();remaining=[]
+  for item in values:
+   image=item["images"][0]
+   file=(ROOT/'assets/catalog/excel'/Path(image).name) if image.startswith('/media/excel/') else (ROOT/'_local_ops/ppt-media-staging'/Path(image).name)
+   key=hashlib.sha256(file.read_bytes()).hexdigest() if file.is_file() else image
+   if key not in fingerprints and len(chosen)<8:
+    chosen.append(item);fingerprints.add(key)
+   else:remaining.append(item)
+  if len(chosen)<8:chosen.extend(remaining[:8-len(chosen)])
+  return chosen[:8]
+ h='<section class="showcase section" id="product-collections"><div class="shell"><div class="showcase__title"><span class="eyebrow">EXPLORE THE COLLECTIONS</span><h2>Rocket Your Brand With <span>XUYI Bottles.</span></h2><p>Browse original plastic bottle catalog photography by collection, and find your ideal product for wholesale and private-label projects.</p></div>'
+ h+='<div class="showcase__tabs" role="tablist" aria-label="Product collection tabs">'
+ for i,(label,category) in enumerate(names):
+  h+='<button class="showcase__tab bottle-tab'+(' active' if i==0 else '')+'" role="tab" id="bottle-tab-'+str(i)+'" aria-controls="bottle-panel-'+str(i)+'" aria-selected="'+('true' if i==0 else 'false')+'" type="button">'+e(label)+'</button>'
+ h+='</div>'
+ for i,(label,category) in enumerate(names):
+  items=curated(category)
+  h+='<div class="bottle-tabpanel" role="tabpanel" id="bottle-panel-'+str(i)+'" aria-labelledby="bottle-tab-'+str(i)+'" '+('hidden' if i else '')+'>'
+  h+='<div class="showcase__tiles">'
+  for j,item in enumerate(items):
+   cap=item.get('capacity','')
+   short=CAT[category][0]
+   tones=["#ecf3f1","#f2f0f4","#edf4f6","#f7f0ed","#f0f0f1","#eaf3f1","#f5f1ec","#e7eff3"]
+   h+='<a class="showcase__tile" style="--tile-tone:'+tones[j%len(tones)]+'" href="/products/'+e(item['slug'])+'/">'
+   h+='<span class="showcase__badge">XUYI / '+e(item['model'])+'</span>'
+   h+=photo(item['images'][0],short+' catalog model '+item['model'])
+   h+='<div class="showcase__caption"><strong>'+e(short)+'</strong><span>Model '+e(item['model'])+(' · '+e(cap) if cap else '')+' &nbsp;↗</span></div></a>'
+  if len(items)<8:
+   h+='<a class="showcase__tile showcase__tile--more" href="/collections/'+CAT[category][1]+'/"><span class="showcase__more-mark">XUYI</span><strong>Discover More<br>'+e(label)+'</strong><span>Explore wholesale bottle models ↗</span></a>'
+  h+='</div><div class="showcase__bottom"><span>Original catalog models · Specifications pending verification</span><a href="/collections/'+CAT[category][1]+'/" class="button button--outline">Explore '+e(label)+' →</a></div></div>'
+ h+='</div></section>'
+ return h
 
 def materials_responsibility_module():
  return '<section class="section section--dark"><div class="shell"><div class="split"><div><span class="eyebrow">MATERIAL RESPONSIBILITY</span><h2 class="section__title">Better Reusable Bottle Projects Start with the Right Material.</h2><p class="copy-muted">Plastic drinkware is not one material or one standard. Each body, lid, straw and seal may differ. We review intended use, target market and applicable food-contact documentation for the exact product.</p><div class="actions"><a class="button button--white" href="/quality-control/">Quality & Material Guidance →</a><a class="button button--outline" href="/blog/plastic-bottle-material-selection/">Read Material Guide ↗</a></div><p class="copy-muted" style="font-size:12px">No unverified recycled-content, biodegradable, BPA-free or certification claims are made here.</p></div><div class="responsible-media">'+photo('/media/ppt/slide-066.webp','Reusable plastic drinking bottles from the original XUYI catalog')+'<div class="responsible-media__caption"><b>Reusable plastic drinkware</b><span>Review materials by model and component</span></div></div></div></div></section>'
