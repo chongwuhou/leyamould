@@ -47,3 +47,10 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Customer logo wall has six reserved locations but **no customer names or logos are published without verifiable customer authorization**.
 - To add authorized customer logos, put owned/authorized images at /assets/customer-logos/<filename> and add name, logo_path and authorization to data/customer-logos.json; rebuild with python build.py.
 - Mobile responsiveness checked at 320, 390, 768, 1024, and 1440 px; all four tabs work with actual catalog photos; no overflow.
+
+## Target-order homepage correction
+- Homepage section order now follows Kreat: hero > company intro > four-column photo categories > Why Choose (OEM/ODM/wholesale) > customization > materials > manufacturing capability > restrained approved-customer-logo slots > FAQ/inquiry > news/blog > footer.
+- Removed the overlaid tile labels and large visual company-strength module that disrupted the reference site's spacing.
+- Category labels sit under 1:1 source photos; desktop four-by-two grid, mobile two-column. Shaker short list uses an eighth category discovery card.
+- No fabricated factory capacities or customer associations; logo wall is still awaiting verified, publishable logos.
+- Product detail pages, D1/R2 bindings and the separate Demalong project remain untouched.

@@ -78,3 +78,37 @@ def customer_logo_section():
   note='Displayed customer logos have been reviewed for public use.'
  html='<section class="client-logo section" id="customer-brands"><div class="shell"><div class="client-logo__heading"><div><span class="eyebrow">CLIENT BRAND SHOWCASE</span><h2>Brands &amp; Customers<span class="client-logo__red">.</span></h2></div><p>Our site is prepared to showcase authorized client brands and verified project relationships.</p></div><div class="client-logo__grid">'+''.join(marks)+'</div><p class="client-logo__note">'+e(note)+'</p></div></section>'
  return html
+
+
+def target_why_choose():
+ # KREAT's position and layout: left statement and CTA, right OEM / ODM / quantity support.
+ return """<section class="target-why"><div class="shell target-why__grid">
+ <div class="target-why__intro"><span class="eyebrow">WHY XUYI</span><h2>Why Choose XUYI</h2>
+ <p>XUYI supplies a focused range of plastic bottles for wholesale and custom projects. We operate our own facility and may coordinate selected partner production for specific designs. Bottle details, materials, samples and quality requirements are confirmed by project.</p>
+ <a class="button button--round" href="/contact/#inquiry">Send Your Inquiry Now →</a></div>
+ <div class="target-why__services">
+ <article><h3>OEM Bottle Manufacturing</h3><p>Discuss production of your selected source model, custom branding, artwork and packing requirements.</p><a href="/capabilities/oem-odm/">Start Your Project ↗</a></article>
+ <article><h3>ODM &amp; Design Support</h3><p>Share designs, requested lids or drawings for feasibility evaluation before making any tooling commitments.</p><a href="/capabilities/custom-molding/">Explore Custom Designs ↗</a></article>
+ <article><h3>Wholesale Quantity Planning</h3><p>We review MOQ, samples, order size and packing by model. No fixed minimum is promised without confirmation.</p><a href="/contact/#inquiry">Request a Quote ↗</a></article>
+ </div></div></section>"""
+
+def target_production_capacity():
+ # KREAT's placement: after material responsibility, before FAQ, with wide media/space on left
+ # and manufacturing presentation on right. Do not invent numerical factory output.
+ return """<section class="target-capacity" id="manufacturing-capability"><div class="shell target-capacity__layout">
+ <div class="target-capacity__visual">
+  <div class="target-capacity__media"><img src="/media/ppt/slide-049.webp" loading="lazy" alt="XUYI catalog plastic drinkware models">
+  <span>ORIGINAL PRODUCT CATALOG IMAGE · NOT FACTORY FOOTAGE</span></div>
+  <a href="/manufacturing/" class="target-capacity__media-link">Explore manufacturing process →</a>
+ </div>
+ <div class="target-capacity__copy">
+  <span class="eyebrow">PRODUCTION &amp; QUALITY</span><h2>XUYI Manufacturing Capability</h2>
+  <p>Our own facility supports our plastic drinkware business, while selected partner suppliers may support specific product types. We confirm the manufacturing route, samples, quality checks, packing and shipping requirements for each project.</p>
+  <div class="target-capacity__facts">
+   <article><strong>Own Factory</strong><span>Production facility in Taizhou</span></article>
+   <article><strong>OEM / ODM</strong><span>Model-dependent options</span></article>
+   <article><strong>Quality Checks</strong><span>Agreed for each order</span></article>
+   <article><strong>Shipment</strong><span>Packing and logistics coordination</span></article>
+  </div>
+  <p class="target-capacity__note">Equipment counts, capacity, factory photos and certificates will be added only after document verification.</p>
+ </div></div></section>"""

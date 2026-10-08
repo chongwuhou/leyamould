@@ -278,3 +278,106 @@
 .showcase__tiles{gap:8px}.showcase__caption strong{font-size:13px}.showcase__caption span{font-size:9px}
 .showcase__tab{font-size:12px}.strengths__visual{min-height:320px}
 }
+
+
+/* HOMEPAGE RE-ALIGNMENT (Kreat's section order / measured editorial geometry).
+   Intentionally scoped to new homepage classes to avoid changing 119 inner routes. */
+.kreat-collections{background:#fff;padding:105px 0 112px}
+.kreat-collections__heading{text-align:center;margin:0 auto 28px}
+.kreat-collections__heading h2{font-size:clamp(30px,3.3vw,47px);font-weight:900;letter-spacing:-.05em;line-height:1.16;margin:12px 0 0}
+.kreat-collections__heading h2 span{color:var(--red)}
+.kreat-collections__tabs{display:flex;align-items:center;justify-content:center;gap:0;margin:0 0 40px;border-bottom:2px solid #efefef;overflow-x:auto;scrollbar-width:thin}
+.kreat-collections__tab{flex:0 0 auto;margin:0;border:0;border-bottom:3px solid transparent;padding:18px 22px;color:#222;background:transparent;font-size:15px;font-weight:900;white-space:nowrap;min-height:54px}
+.kreat-collections__tab:hover,.kreat-collections__tab.active,.kreat-collections__tab[aria-selected=true]{color:var(--red);border-bottom-color:var(--red)}
+.kreat-collections__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:27px 23px}
+.kreat-collections__item{display:block;min-width:0}
+.kreat-collections__photo{display:block;aspect-ratio:1/1;overflow:hidden;background:#f5f5f5;border-radius:12px}
+.kreat-collections__photo img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.kreat-collections__item:hover img{transform:scale(1.04)}
+.kreat-collections__item>strong{display:block;margin:12px 0 5px;font-size:15px;font-weight:900;line-height:1.35;letter-spacing:-.02em}
+.kreat-collections__model{font-size:12px;color:#777;display:block}
+.kreat-collections__more{padding-top:29px;text-align:right}
+/* KREAT: compact Why Choose after photo grid, text left and three vertical business services right */
+.target-why{background:#f7f7f7;padding:98px 0 105px}
+.target-why__grid{display:grid;grid-template-columns:1fr .91fr;gap:clamp(55px,9vw,150px)}
+.target-why__intro h2{font-size:clamp(35px,3.8vw,57px);line-height:1.15;letter-spacing:-.05em;margin:14px 0 24px}
+.target-why__intro p{color:#56595a;font-size:15px;line-height:1.8;max-width:600px;margin:0 0 25px}
+.target-why__services{display:grid;gap:27px}
+.target-why__services article{padding:0}
+.target-why__services h3{font-size:19px;letter-spacing:-.025em;margin:0 0 10px}
+.target-why__services p{font-size:14px;line-height:1.7;color:#5c5c60;margin:0 0 10px}
+.target-why__services a{font-size:13px;font-weight:900;color:var(--red)}
+/* KREAT: 'Production Capacity' after sustainability. Honest capabilities, not invented statistics. */
+.target-capacity{padding:107px 0 120px;background:#fff}
+.target-capacity__layout{display:grid;grid-template-columns:1fr .89fr;align-items:center;gap:clamp(50px,9vw,150px)}
+.target-capacity__visual{min-width:0}
+.target-capacity__media{aspect-ratio:1.28;position:relative;background:#f4f4f4;overflow:hidden;border-radius:4px}
+.target-capacity__media img{width:100%;height:100%;object-fit:cover}
+.target-capacity__media>span{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:#ffffffd9;color:#777;font-size:10px;letter-spacing:.07em;font-weight:800;text-align:center}
+.target-capacity__media-link{color:var(--red);font-size:13px;font-weight:800;display:inline-block;margin-top:15px}
+.target-capacity__copy h2{font-size:clamp(35px,3.6vw,54px);letter-spacing:-.055em;line-height:1.15;margin:16px 0 21px}
+.target-capacity__copy>p{font-size:15px;color:#57595c;line-height:1.75}
+.target-capacity__facts{display:grid;grid-template-columns:1fr 1fr;gap:26px 22px;margin:28px 0}
+.target-capacity__facts article{border-top:2px solid var(--red);padding-top:13px}
+.target-capacity__facts strong{display:block;color:var(--red);font-weight:900;font-size:19px;line-height:1.2;margin-bottom:9px}
+.target-capacity__facts span{color:#56585a;font-size:12px;line-height:1.5}
+.target-capacity__note{font-size:11px!important;color:#929292!important}
+/* A restrained, accessible proof strip after the production block, not in the middle of the homepage. */
+.client-logo{background:#fafafa;padding:45px 0 51px}
+.client-logo__heading{margin-bottom:23px;align-items:center}
+.client-logo__heading h2{font-size:clamp(26px,2.6vw,36px);letter-spacing:-.035em}
+.client-logo__heading p{font-size:13px;line-height:1.65;color:#777}
+.client-logo__grid{border-color:#eee}
+.client-logo__cell{min-height:80px;padding:13px;background:#fcfcfc}
+.client-logo__cell--pending{background:#fcfcfc}
+.client-logo__symbol{font-size:21px;color:#d4d4d4}
+.client-logo__pending{font-size:8px;color:#9a9a9a}
+.client-logo__note{margin-top:13px}
+/* Target has no extra large CTA between its blog and footer. */
+body:has(.kreat-collections) .cta-panel{display:none}
+body:has(.kreat-collections) .kreat-intro{grid-template-columns:1fr 1fr;align-items:start;gap:8%}
+body:has(.kreat-collections) .kreat-intro__media{min-height:270px}
+body:has(.kreat-collections) .kreat-intro__media img{min-height:270px;max-height:300px;object-fit:contain}
+body:has(.kreat-collections) .kreat-intro__copy h2{font-size:clamp(32px,3.6vw,51px)}
+body:has(.kreat-collections) .kreat-intro__copy p{font-size:14px}
+body:has(.kreat-collections) .kreat-intro__copy .button{margin-top:10px}
+@media(max-width:1050px){
+.kreat-collections__grid{gap:21px 17px}
+.kreat-collections__tab{font-size:13px;padding:16px 17px}
+.target-why__grid,.target-capacity__layout{gap:35px}
+.target-why__intro h2{font-size:40px}
+}
+@media(max-width:750px){
+.kreat-collections{padding:68px 0 76px}
+.kreat-collections__heading h2{font-size:clamp(29px,7.3vw,40px)}
+.kreat-collections__tabs{justify-content:flex-start;margin-bottom:22px}
+.kreat-collections__tab{font-size:12px;padding:13px 14px;min-height:47px}
+.kreat-collections__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 13px}
+.kreat-collections__photo{border-radius:8px}
+.kreat-collections__item>strong{font-size:13px;margin-top:10px}
+.kreat-collections__model{font-size:10px}
+.kreat-collections__more{text-align:left}
+.target-why{padding:66px 0}
+.target-why__grid,.target-capacity__layout{grid-template-columns:1fr;gap:36px}
+.target-why__intro h2{font-size:38px}
+.target-why__services{gap:24px}
+.target-why__services article{border-top:1px solid #ddd;padding-top:20px}
+.target-capacity{padding:66px 0}
+.target-capacity__copy h2{font-size:38px}
+.target-capacity__visual{order:2}
+.target-capacity__copy{order:1}
+.target-capacity__facts{gap:21px}
+.client-logo{padding:37px 0 42px}
+.client-logo__heading h2{font-size:29px}
+.client-logo__heading p{font-size:12px}
+body:has(.kreat-collections) .kreat-intro{grid-template-columns:1fr}
+body:has(.kreat-collections) .kreat-intro__copy h2{font-size:36px}
+body:has(.kreat-collections) .kreat-intro__media{margin-top:20px}
+body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280px}
+}
+@media(max-width:380px){
+.kreat-collections__grid{gap:17px 9px}
+.kreat-collections__item>strong{font-size:12px}
+.kreat-collections__tab{font-size:11px;padding:12px 11px}
+.target-capacity__facts strong{font-size:16px}
+}
