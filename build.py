@@ -1,5 +1,6 @@
 from site_renderer import *
-from why_us_content import render as render_why, schema_enhance
+from why_us_layouts import render as render_why
+from why_us_content import schema_enhance
 WHY_DATA=json.loads((ROOT/"data/why-us-content.json").read_text(encoding="utf-8"))
 from home_enhancements import interactive_bottle_customization, dark_buyer_faq, company_strength_section, customer_logo_section, target_why_choose, target_production_capacity
 import json

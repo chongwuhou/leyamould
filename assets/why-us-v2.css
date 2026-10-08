@@ -1,0 +1,205 @@
+/* Independent Why Us chapter designs. Group imagery is captioned accurately. */
+.whyv2{overflow:clip;color:#181a1d;background:white}
+.whyv2 h1,.whyv2 h2,.whyv2 h3{font-weight:900;letter-spacing:-.045em}
+.whyv2 h1{font-size:clamp(38px,5vw,76px);line-height:1.08;margin:17px 0 24px}
+.whyv2 h1 em{font-style:normal;color:#fc2332}
+.whyv2 h2{font-size:clamp(31px,3.3vw,51px);line-height:1.14;margin:12px 0 19px}
+.whyv2 h3{font-size:20px;line-height:1.3;margin:0 0 11px}
+.whyv2 p{line-height:1.78}
+.whyv2 .eyebrow{font-size:12px;letter-spacing:.14em}
+.whyv2 a{text-decoration:none}
+.whyv2-crumb{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12px;line-height:1.6;margin:0 0 35px}
+.whyv2-crumb a:hover{color:#f52331}
+.whyv2-crumb>span:not(:last-child){opacity:.45}
+.whyv2-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:28px}
+.whyv2 .button{display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:47px}
+.whyv2-lead{max-width:890px;margin:0 0 35px}
+.whyv2-lead p{font-size:15px;color:#63676b;max-width:830px}
+.whyv2-source-note,.whyv2-note{font-size:12px!important;color:#757981!important;line-height:1.8;margin:18px 0 0!important}
+.whyv2 .why-detail__table{width:100%}
+.whyv2 .why-detail__table-wrap{margin:20px 0}
+.whyv2 .why-detail__bullets li{font-size:14px}
+.whyv2 .why-detail__faq{max-width:1000px}
+/* --- OEM: dark editorial intro + photo-led customization showcase --- */
+.whyv2-oem-hero{background:#15171b;color:#fff;padding:33px 0 85px;position:relative}
+.whyv2-oem-hero .whyv2-crumb,.whyv2-factory-hero .whyv2-crumb,.whyv2-quality-hero .whyv2-crumb,.whyv2-shipping-hero .whyv2-crumb{color:inherit;opacity:.82}
+.whyv2-oem-hero__grid{display:grid;grid-template-columns:1fr .95fr;gap:clamp(40px,6vw,95px);align-items:center}
+.whyv2-oem-hero__grid>div:first-child>p{font-size:17px;color:#d2d5d6;max-width:620px}
+.whyv2-oem-hero__image{height:570px;position:relative;overflow:hidden;border-radius:12px;background:#ddd}
+.whyv2-oem-hero__image img{width:100%;height:100%;object-fit:cover}
+.whyv2-oem-hero__image span,.whyv2-factory-hero__photo span,.whyv2-shipping-hero__photo span{position:absolute;bottom:0;left:0;right:0;padding:15px 17px;background:#141414b8;color:#fff;font-size:12px}
+.whyv2-oem-hero .button--outline{color:white;border-color:#fff}
+.whyv2-oem-tech{padding:98px 0 90px;background:#fff}
+.whyv2-oem-tech__grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.whyv2-oem-tech__card{min-width:0}
+.whyv2-oem-tech__card>div{overflow:hidden;background:#eee;aspect-ratio:1}
+.whyv2-oem-tech__card img{width:100%;height:100%;object-fit:cover;transition:transform .2s}
+.whyv2-oem-tech__card:hover img{transform:scale(1.035)}
+.whyv2-oem-tech__card h3{font-size:18px;margin:15px 0 8px}
+.whyv2-oem-tech__card p{font-size:13px;color:#62656a}
+.whyv2-oem-route{padding:92px 0;background:#f7f7f7}
+.whyv2-oem-route__head{max-width:830px;margin-bottom:29px}
+.whyv2-oem-route__head p{color:#6d6d6d}
+.whyv2-oem-steps{padding:95px 0}
+.whyv2-oem-steps__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.whyv2-oem-steps__grid article{padding:27px;background:#f4f5f6;border-top:3px solid #f22332}
+.whyv2-oem-steps__grid article>span{font-size:29px;font-weight:900;color:#f22332;display:block;margin-bottom:24px}
+.whyv2-oem-steps__grid article p{font-size:13px;color:#5c6269}
+.whyv2-oem-steps__sample{margin-top:45px;display:grid;grid-template-columns:220px 1fr;gap:35px;align-items:center;border:1px solid #e5e6e8;border-radius:11px;padding:19px}
+.whyv2-oem-steps__sample img{width:100%;height:190px;object-fit:cover;border-radius:8px}
+.whyv2-oem-steps__sample p{color:#666;font-size:14px}
+.whyv2-oem-steps__sample a{font-weight:800;color:#f22332}
+.whyv2-buyer-brief{padding:85px 0;background:#16191c;color:white}
+.whyv2-buyer-brief>.shell{display:grid;grid-template-columns:.78fr 1.22fr;gap:70px}
+.whyv2-buyer-brief .why-detail__bullets{columns:2;column-gap:35px}
+.whyv2-buyer-brief .why-detail__bullets li{color:#e1e1e1;break-inside:avoid}
+/* --- Factory: bright process map + authentic pack/warehouse references --- */
+.whyv2-factory-hero{background:#f3f5f5;padding:30px 0 85px}
+.whyv2-factory-hero__grid{display:grid;grid-template-columns:1fr .96fr;gap:60px;align-items:center}
+.whyv2-factory-hero h1 em{color:#1a9a92}
+.whyv2-factory-hero__grid p{font-size:17px;max-width:660px;color:#4d5a5b}
+.whyv2-factory-hero__photo{position:relative;height:515px;overflow:hidden;border-radius:2px}
+.whyv2-factory-hero__photo img{width:100%;height:100%;object-fit:cover}
+.whyv2-factory-map{padding:95px 0;background:#fff}
+.whyv2-factory-map__steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.whyv2-factory-map__steps>div{padding:22px 17px;background:#f0f5f5;border-top:3px solid #128f88;min-height:190px;display:flex;flex-direction:column;gap:10px}
+.whyv2-factory-map__steps span{color:#16877e;font-size:30px;font-weight:900}
+.whyv2-factory-map__steps strong{font-size:19px}
+.whyv2-factory-map__steps small{font-size:12px;color:#5e686a;line-height:1.5}
+.whyv2-factory-gallery{padding:93px 0;background:#101719;color:#fff}
+.whyv2-factory-gallery .whyv2-lead p{color:#b6c2c3}
+.whyv2-factory-gallery__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:21px}
+.whyv2-factory-gallery figure{margin:0;background:#242e30;border-radius:7px;overflow:hidden}
+.whyv2-factory-gallery figure>div{aspect-ratio:1.35;overflow:hidden}
+.whyv2-factory-gallery figure img{width:100%;height:100%;object-fit:cover}
+.whyv2-factory-gallery figcaption{padding:20px}
+.whyv2-factory-gallery figcaption strong{font-size:20px}
+.whyv2-factory-gallery figcaption p{font-size:13px;color:#bbc4c5}
+.whyv2-factory-gallery .whyv2-source-note{color:#a4b0b0!important}
+.whyv2-factory-detail{padding:95px 0}
+.whyv2-factory-detail>.shell{display:grid;grid-template-columns:.88fr 1.12fr;gap:60px;align-items:center}
+.whyv2-factory-detail__image img{width:100%;height:auto;min-height:350px;object-fit:cover}
+.whyv2-factory-detail__copy p{font-size:14px;color:#62686c}
+.whyv2-factory-trace{padding:97px 0;background:#f4f6f6}
+.whyv2-factory-trace__list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 27px;margin-bottom:49px}
+.whyv2-factory-trace__list article{display:flex;gap:16px;padding:24px 10px;border-bottom:1px solid #d1d6d8}
+.whyv2-factory-trace__list article>span{font-size:28px;font-weight:900;color:#17988d}
+.whyv2-factory-trace__list h3{margin:0 0 9px}
+.whyv2-factory-trace__list p{margin:0;font-size:13px;color:#586266}
+.whyv2-factory-trace__table-title{font-size:26px;margin:20px 0}
+/* --- QA: technical blue lab gallery + specification tables --- */
+.whyv2-quality-hero{padding:31px 0 75px;background:#132435;color:#fff}
+.whyv2-quality-hero h1 em{color:#75bdf8}
+.whyv2-quality-hero__grid{display:grid;grid-template-columns:1fr .72fr;gap:60px;align-items:center}
+.whyv2-quality-hero__grid>div:first-child p{color:#d6e1e9;font-size:17px}
+.whyv2-quality-hero__instruments{background:#f2f3f6;min-height:440px;padding:25px;display:grid;place-items:center;border-radius:16px}
+.whyv2-quality-hero__instruments img{width:100%;height:100%;max-height:385px;object-fit:contain}
+.whyv2-quality-lab{padding:90px 0;background:#f8fafc}
+.whyv2-quality-lab__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.whyv2-quality-lab__grid article{background:white;border:1px solid #e7ebef;padding:13px 13px 19px;border-radius:10px}
+.whyv2-quality-lab__grid article>div{height:240px;background:#eef1f6;display:grid;place-items:center}
+.whyv2-quality-lab__grid img{width:100%;height:100%;object-fit:contain}
+.whyv2-quality-lab__grid h3{margin:19px 9px 7px}
+.whyv2-quality-lab__grid p{font-size:13px;color:#63707b;margin:0 9px}
+.whyv2-quality-plan{padding:95px 0;background:#fff}
+.whyv2-quality-plan__head{max-width:910px}
+.whyv2-quality-plan__head p{color:#636c74}
+.whyv2-quality-proof{padding:96px 0;background:#eaf0f5}
+.whyv2-quality-proof>.shell{display:grid;grid-template-columns:1fr 1fr;gap:65px}
+.whyv2-quality-proof p{color:#55616a;font-size:14px}
+.whyv2-quality-proof__check{padding:35px;background:white;border-left:5px solid #327bc2}
+.whyv2-quality-flow{padding:90px 0}
+.whyv2-quality-flow__list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.whyv2-quality-flow__list>div{padding:23px;background:#f4f6f8;border-top:2px solid #327bc2}
+.whyv2-quality-flow__list span{display:block;font-weight:900;font-size:25px;color:#2b7bbf}
+.whyv2-quality-flow__list strong{display:block;font-size:16px;margin:16px 0 8px}
+.whyv2-quality-flow__list p{font-size:12px;color:#63717c}
+/* --- Freight: airy teal header, real group warehouse and shipping mode cards --- */
+.whyv2-shipping-hero{background:#e7f2ef;padding:31px 0 80px}
+.whyv2-shipping-hero__grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.whyv2-shipping-hero h1 em{color:#177d70}
+.whyv2-shipping-hero__grid p{font-size:17px;color:#435c57}
+.whyv2-shipping-hero__photo{position:relative;height:480px;overflow:hidden}
+.whyv2-shipping-hero__photo img{height:100%;width:100%;object-fit:cover}
+.whyv2-shipping-options{padding:94px 0}
+.whyv2-shipping-options__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.whyv2-shipping-options__grid article{overflow:hidden;background:#f7f8f9;border-radius:11px}
+.whyv2-shipping-options__grid article>div{height:280px}
+.whyv2-shipping-options__grid img{width:100%;height:100%;object-fit:cover}
+.whyv2-shipping-options__grid h3{margin:20px 20px 10px}
+.whyv2-shipping-options__grid p{margin:0 20px 25px;color:#626b69;font-size:13px}
+.whyv2-shipping-pack{padding:93px 0;background:#0e2623;color:white}
+.whyv2-shipping-pack>.shell{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px;align-items:center}
+.whyv2-shipping-pack__image img{height:470px;width:100%;object-fit:cover;border-radius:8px}
+.whyv2-shipping-pack p{font-size:13px;color:#b5c8c4}
+.whyv2-shipping-pack__fields{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:24px}
+.whyv2-shipping-pack__fields span{display:block;background:#24413d;padding:12px 13px;border-radius:4px;color:#eaf7f4;font-size:12px}
+.whyv2-shipping-matrix{padding:95px 0;background:#fafafa}
+.whyv2-shipping-flow{padding:95px 0;background:#fff}
+.whyv2-shipping-flow__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px}
+.whyv2-shipping-flow__grid article{background:#f0f5f2;padding:24px;border-radius:7px}
+.whyv2-shipping-flow__grid article>strong{font-size:29px;color:#15816d}
+.whyv2-shipping-flow__grid h3{margin-top:15px}
+.whyv2-shipping-flow__grid p{font-size:12px;color:#5e7169}
+.whyv2-shipping-paper{background:#e9f2ed;padding:72px 0}
+.whyv2-shipping-paper .why-detail__bullets{columns:2;column-gap:70px}
+/* Shared helpful FAQ / sibling navigation and page-specific bottom CTA. */
+.whyv2-faq{padding:91px 0;background:#f8f9fa}
+.whyv2-faq__heading{max-width:910px;margin-bottom:38px}
+.whyv2-faq__heading p{color:#61676d}
+.whyv2-faq .why-detail__faq details{border-color:#dadde0}
+.whyv2-siblings{padding:45px 0;background:white}
+.whyv2-siblings__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.whyv2-siblings__grid a{padding:22px 19px;background:#f3f4f5;border-top:3px solid #f32a35;font-weight:900;display:flex;justify-content:space-between;gap:9px}
+.whyv2-siblings__grid a:hover{background:#ffeded}
+.whyv2-siblings__grid a span{color:#f32a35}
+.whyv2-end{padding:80px 0;background:#141517;color:white;text-align:center}
+.whyv2-end h2{max-width:850px;margin:13px auto 20px}
+.whyv2-end p{max-width:800px;margin:0 auto 22px;color:#d8dbdc}
+.whyv2-end small{display:block;color:#aaa;max-width:790px;margin:20px auto 0;font-size:11px;line-height:1.6}
+@media(max-width:1070px){
+.whyv2-oem-hero__grid,.whyv2-factory-hero__grid,.whyv2-quality-hero__grid,.whyv2-shipping-hero__grid{gap:34px}
+.whyv2-oem-hero__image{height:420px}
+.whyv2-factory-hero__photo{height:400px}
+.whyv2-quality-hero__instruments{min-height:340px}
+.whyv2-shipping-hero__photo{height:370px}
+.whyv2-oem-tech__grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.whyv2-factory-map__steps{grid-template-columns:repeat(3,minmax(0,1fr))}
+.whyv2-shipping-pack>.shell{gap:35px}
+}
+@media(max-width:750px){
+.whyv2 h1{font-size:clamp(34px,9vw,47px)}
+.whyv2 h2{font-size:clamp(29px,7vw,38px)}
+.whyv2 .whyv2-crumb{margin-bottom:25px}
+.whyv2-oem-hero,.whyv2-factory-hero,.whyv2-quality-hero,.whyv2-shipping-hero{padding:23px 0 56px}
+.whyv2-oem-hero__grid,.whyv2-factory-hero__grid,.whyv2-quality-hero__grid,.whyv2-shipping-hero__grid{grid-template-columns:1fr;gap:27px}
+.whyv2-oem-hero__image,.whyv2-factory-hero__photo,.whyv2-shipping-hero__photo{height:auto;aspect-ratio:1.35}
+.whyv2-quality-hero__instruments{min-height:240px}
+.whyv2 .whyv2-actions{flex-direction:column;align-items:stretch}
+.whyv2-oem-tech,.whyv2-oem-route,.whyv2-oem-steps,.whyv2-factory-map,.whyv2-factory-gallery,.whyv2-factory-detail,.whyv2-factory-trace,.whyv2-quality-lab,.whyv2-quality-plan,.whyv2-quality-proof,.whyv2-quality-flow,.whyv2-shipping-options,.whyv2-shipping-pack,.whyv2-shipping-matrix,.whyv2-shipping-flow,.whyv2-shipping-paper,.whyv2-faq{padding:63px 0}
+.whyv2-oem-tech__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.whyv2-oem-tech__card h3{font-size:16px}
+.whyv2-oem-steps__grid,.whyv2-quality-lab__grid,.whyv2-quality-flow__list,.whyv2-shipping-flow__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.whyv2-oem-steps__grid article{padding:19px}
+.whyv2-oem-steps__sample{grid-template-columns:1fr}
+.whyv2-buyer-brief{padding:65px 0}
+.whyv2-buyer-brief>.shell{grid-template-columns:1fr;gap:25px}
+.whyv2-buyer-brief .why-detail__bullets{columns:1}
+.whyv2-factory-map__steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+.whyv2-factory-gallery__grid{grid-template-columns:1fr}
+.whyv2-factory-gallery figure>div{aspect-ratio:1.55}
+.whyv2-factory-detail>.shell,.whyv2-quality-proof>.shell,.whyv2-shipping-pack>.shell{grid-template-columns:1fr;gap:28px}
+.whyv2-factory-trace__list{grid-template-columns:1fr}
+.whyv2-quality-lab__grid article>div{height:165px}
+.whyv2-quality-lab__grid h3{font-size:16px}
+.whyv2-shipping-options__grid{grid-template-columns:1fr}
+.whyv2-shipping-options__grid article>div{height:250px}
+.whyv2-shipping-pack__image img{height:280px}
+.whyv2-shipping-paper .why-detail__bullets{columns:1}
+.whyv2-siblings__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:385px){
+.whyv2-oem-tech__grid,.whyv2-quality-lab__grid,.whyv2-quality-flow__list,.whyv2-oem-steps__grid,.whyv2-shipping-flow__grid{grid-template-columns:1fr}
+.whyv2-factory-map__steps{grid-template-columns:1fr}
+.whyv2-siblings__grid{grid-template-columns:1fr}
+}

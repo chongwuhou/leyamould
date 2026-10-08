@@ -1,0 +1,107 @@
+{
+  "usage": "Group-site process/reference imagery permitted by project owner; do not present metal-bottle examples as XUYI plastic production or claim certificates and tests without product matching evidence.",
+  "R2_bucket": "xuyi-drinkware-r2",
+  "R2_prefix": "site-preview/group/",
+  "source_inventory": {
+    "oem-logo": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Custom-Logo-1.jpg",
+      "local_media_url": "/media/group/oem-logo.webp",
+      "visual_type": "group_reference"
+    },
+    "oem-color": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Custom-Color.jpg",
+      "local_media_url": "/media/group/oem-color.webp",
+      "visual_type": "group_reference"
+    },
+    "oem-artwork": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Custom-Picture.jpg",
+      "local_media_url": "/media/group/oem-artwork.webp",
+      "visual_type": "group_reference"
+    },
+    "oem-packaging": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Custom-Packaging.jpg",
+      "local_media_url": "/media/group/oem-packaging.webp",
+      "visual_type": "group_reference"
+    },
+    "oem-tooling": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Custom-Tooling.jpg",
+      "local_media_url": "/media/group/oem-tooling.webp",
+      "visual_type": "group_reference"
+    },
+    "oem-sampling": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Providing-Quotation-and-Sample-1.jpg",
+      "local_media_url": "/media/group/oem-sampling.webp",
+      "visual_type": "group_reference"
+    },
+    "factory-raw": {
+      "source_url": "https://kreat.com/wp-content/uploads/2026/02/Raw-Material-Preparation.jpg",
+      "local_media_url": "/media/group/factory-raw.webp",
+      "visual_type": "group_reference"
+    },
+    "factory-bottle-packing": {
+      "source_url": "https://kreat.com/wp-content/uploads/2026/02/Bottle-packing.jpg",
+      "local_media_url": "/media/group/factory-bottle-packing.webp",
+      "visual_type": "group_reference"
+    },
+    "factory-final-pack": {
+      "source_url": "https://kreat.com/wp-content/uploads/2026/02/Final-Packing.jpg",
+      "local_media_url": "/media/group/factory-final-pack.webp",
+      "visual_type": "group_reference"
+    },
+    "factory-shipment": {
+      "source_url": "https://kreat.com/wp-content/uploads/2026/02/Packing-and-Shipping.jpg",
+      "local_media_url": "/media/group/factory-shipment.webp",
+      "visual_type": "group_reference"
+    },
+    "qa-color-box": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Color-Assessment-Light-Box.jpg",
+      "local_media_url": "/media/group/qa-color-box.webp",
+      "visual_type": "group_reference"
+    },
+    "qa-print-life": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Printing-Life-Tester-2.jpg",
+      "local_media_url": "/media/group/qa-print-life.webp",
+      "visual_type": "group_reference"
+    },
+    "qa-temp-humidity": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Humidity-and-Temp-Programmable-Tester.jpg",
+      "local_media_url": "/media/group/qa-temp-humidity.webp",
+      "visual_type": "group_reference"
+    },
+    "qa-vibration": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Transportation-Vibration-Cable.jpg",
+      "local_media_url": "/media/group/qa-vibration.webp",
+      "visual_type": "group_reference"
+    },
+    "qa-crush-edge": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Microcomputer-Ring-Crush-Edge-Tester.jpg",
+      "local_media_url": "/media/group/qa-crush-edge.webp",
+      "visual_type": "group_reference"
+    },
+    "qa-bursting": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Automatic-Bursting-Strength-Tester.jpg",
+      "local_media_url": "/media/group/qa-bursting.webp",
+      "visual_type": "group_reference"
+    },
+    "freight-air-sea": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Sea-and-Air-Freight.jpg",
+      "local_media_url": "/media/group/freight-air-sea.webp",
+      "visual_type": "group_reference"
+    },
+    "freight-door": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Door-to-Door-Delivery.jpg",
+      "local_media_url": "/media/group/freight-door.webp",
+      "visual_type": "group_reference"
+    },
+    "freight-express": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Express-Courier.jpg",
+      "local_media_url": "/media/group/freight-express.webp",
+      "visual_type": "group_reference"
+    },
+    "freight-warehouse": {
+      "source_url": "https://kreat.com/wp-content/uploads/2025/09/Amazon-FBA-Support.jpg",
+      "local_media_url": "/media/group/freight-warehouse.webp",
+      "visual_type": "group_reference"
+    }
+  }
+}

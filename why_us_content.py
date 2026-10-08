@@ -53,5 +53,5 @@ def schema_enhance(html, data):
   {"@type":"FAQPage","@id":url+"#faq","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in data["faqs"]]}
  ]}
  script='<script type="application/ld+json">'+json.dumps(entity,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c')+'</script>'
- extras='<meta name="author" content="XUYI Drinkware"><meta property="og:type" content="website"><meta property="og:title" content="'+e(data["seo_title"])+'"><meta property="og:description" content="'+e(data["description"])+'"><meta property="og:url" content="'+e(url)+'">'+script
+ extras='<link rel="stylesheet" href="/assets/why-us-v2.css"><meta name="author" content="XUYI Drinkware"><meta property="og:type" content="website"><meta property="og:title" content="'+e(data["seo_title"])+'"><meta property="og:description" content="'+e(data["description"])+'"><meta property="og:url" content="'+e(url)+'">'+script
  return html.replace('</head>',extras+'</head>',1)

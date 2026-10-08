@@ -72,3 +72,15 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Source images are real XUYI Excel/PPT catalog imagery, labeled as product illustrations (not factory photos).
 - Do not publish unsupported: factory equipment and numbers, food-contact certifications, BPA-free claims, 24h quotes, sample/production lead times, fixed MOQ, DDP guarantee, client logos.
 - Noindex remains across the preview until verified company details, product substantiation, enquiry delivery and target domain approval.
+
+
+## Four Why Us Pages - Distinct Group Photo Revision
+- Group-approved reference images collected from Kreat OEM, manufacturing, quality, and shipping pages. Image source URL mapping: data/why-us-group-media.json.
+- 20 compressed WebP images (~0.3 MB) uploaded into XUYI's existing R2 bucket at site-preview/group/ and served via /media/group/{allowlisted-file}.webp. Demalong storage not touched.
+- Distinct page compositions implemented in why_us_layouts.py and assets/why-us-v2.css.
+- OEM / ODM: XUYI plastic hero with 5 group customization references (including metal examples clearly identified), approval stages, model selection.
+- Manufacturing: group packing/warehouse workshop images, plastic-specific component map, manufacturing checkpoints. No metal-forming equipment passed off as plastic molding.
+- Quality: 6 real group testing-equipment images, component-focused inspection matrix and destination-market document scope.
+- Shipping: real group warehouse plus export freight scenario images, packing data, transport modes, Incoterms.
+- Group reference imagery cannot substitute for test results and verified specific equipment ownership or availability for a plastic SKU.
+- Unique SEO titles, H1s, descriptive FAQ, JSON-LD, breadcrumbs, noindex preserved until launch approval.
