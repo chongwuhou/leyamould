@@ -1,0 +1,12 @@
+{
+  "defaultLocale": "en",
+  "plannedLocales": [
+    "es",
+    "fr",
+    "ar"
+  ],
+  "strategy": "one shared site template; localized content generated at build-time after professional translation review",
+  "urlPattern": "/{locale}/... except English uses /",
+  "hreflang": "generate only for pages with real approved translations",
+  "status": "planned"
+}

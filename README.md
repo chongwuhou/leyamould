@@ -1,3 +1,1 @@
-# XUYI Drinkware Site
-
-Private repository for XUYI's independent B2B plastic drinkware website. First build is a noindex internal preview; specifications, images and inquiry form must be approved before public launch.
+XUYI independent static B2B preview. Project name: xuyi-drinkware-site. GitHub repository and Cloudflare Pages project must be created separately and are NOT yet provisioned. All pages are intentionally noindex. Product records and photos are provisional; contact form is disabled until configured. English-only draft; multilingual architecture and 1688 review/import still pending. Use a static HTTP server to preview, not file://.
