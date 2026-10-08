@@ -1,4 +1,6 @@
 from site_renderer import *
+from why_us_content import render as render_why, schema_enhance
+WHY_DATA=json.loads((ROOT/"data/why-us-content.json").read_text(encoding="utf-8"))
 from home_enhancements import interactive_bottle_customization, dark_buyer_faq, company_strength_section, customer_logo_section, target_why_choose, target_production_capacity
 import json
 def sec(title,desc="",eyebrow="XUYI DRINKWARE"):
@@ -88,6 +90,7 @@ def capabilities_page():
  return h
 def capability_detail(item):
  title,slug,desc,stepslist,im=item
+ if slug=="oem-odm":return render_why(WHY_DATA["capabilities/oem-odm"])
  h=intro("Capabilities / "+title,title,desc)
  h+='<section class="section"><div class="shell"><div class="split"><div>'+photo(im,title+' source catalog imagery')+'</div><div><span class="eyebrow">BRAND & MANUFACTURING SERVICES</span><h2 class="section__title">Plan Your '+e(title)+' Project.</h2><p class="copy-muted">'+e(desc)+'</p><p class="copy-muted">Actual techniques, order quantity and testing depend on the selected bottle and materials. XUYI will confirm feasibility when preparing a quotation.</p><a href="/contact/?type='+slug+'#inquiry" class="button">Discuss This Service →</a></div></div></div></section>'
  h+='<section class="section section--soft"><div class="shell">'+sec("What We Need from Buyers","A clear brief helps us check the correct manufacturing and custom options.","Project Checklist")+'<div class="grid grid--4">'+''.join('<article class="benefit"><h3>0'+str(i+1)+' · '+e(t.split(' ')[0])+'</h3><p>'+e(t)+'</p></article>' for i,t in enumerate(stepslist))+'</div></div></section>'
@@ -102,30 +105,14 @@ def about():
  h+='<section class="section section--soft"><div class="shell">'+sec("Meet Our Manufacturing Process","See how project details move from product selection to shipping.","Our Process")+steps()+'</div></section>'
  return h
 def manufacturing():
- h=intro("About / Manufacturing","Factory & Manufacturing","Our own factory is at the core of our operation, with selected partner support for some products and processes.")
- h+='<section class="section"><div class="shell"><div class="split"><div><span class="eyebrow">PRODUCTION</span><h2 class="section__title">Real Factory Capacity. Clearly Explained.</h2><p class="copy-muted">XUYI operates its own manufacturing facility in Taizhou. Some orders may involve carefully selected partner facilities. We coordinate each approved project requirements for materials, samples, inspection and packing.</p><p class="copy-muted">Precise workshop photos, equipment images and capacity data will be published only after XUYI verifies them.</p><a class="button button--outline" href="/quality-control/">How We Handle Quality →</a></div><div class="split__placeholder"><div><h3>Actual Factory Media Pending</h3><p>Reserved for verified XUYI equipment, workshop, staff and inspection imagery.</p></div></div></div></div></section>'
- h+='<section class="section section--soft"><div class="shell">'+sec("From Specification to Delivery","An organized manufacturing workflow is essential for bulk purchasing.","Production Process")+steps()+'</div></section>'
- return h
+ return render_why(WHY_DATA["manufacturing"])
+
 def quality():
- h=intro("About / Quality Control","Quality Control & Documentation","Quality processes and supporting material documents must match the specific model and destination market.")
- h+='<section class="section"><div class="shell">'+sec("Product Quality Depends on the Details","We confirm project-specific information before making material or certification claims.","Quality Focus")+'<div class="grid grid--3">'+''.join('<article class="benefit"><h3>'+e(t)+'</h3><p>'+e(d)+'</p></article>' for t,d in [
- ("Material Identification","Verify the actual components and plastic material of the selected bottle. A multi-material entry is not evidence of BPA-free status."),
- ("Sample Confirmation","Review lid function, capacity, colors, printing and packing against the agreed sample."),
- ("Production & Packing Checks","Agree on measurable inspection points, carton configuration and product condition prior to shipment."),
- ("Testing Scope","Request reports for the actual SKU, materials and applicable destination-market requirements."),
- ("Supplier Coordination","For relevant partner-made styles, confirm how requirements and acceptance checks are handled."),
- ("Traceable Order Details","Maintain clear records of model number, variant, artwork and final approved specification.")
- ])+'</div><div class="notice" style="margin-top:36px">We do not publish an unverified FDA, LFGB, BPA-free, Tritan, food-safe or other compliance claim. Ask us about specific documentation for your selected models.</div></div></section>'
- h+='<section class="section section--soft"><div class="shell">'+sec("Quality FAQs","Key compliance questions to include in your sourcing brief.","Buyer Questions")+faq_html(FAQS[3:9])+'</div></section>'
- return h
+ return render_why(WHY_DATA["quality-control"])
+
 def shipping():
- h=intro("About / Shipping","Packing, Shipping & Logistics","Confirm practical carton information and the required delivery terms before production.")
- h+='<section class="section"><div class="shell">'+sec("Prepare Bottles for International Wholesale Orders","Packaging options and shipment requirements vary by model, order size and destination.","Shipping & Packing")+'<div class="grid grid--3">'+''.join('<article class="benefit"><h3>'+e(t)+'</h3><p>'+e(d)+'</p></article>' for t,d in [
- ("Carton Specifications","Use model-specific quantity, carton dimensions and gross weight after reconfirmation."),
- ("Packing Options","Discuss bulk bags, individual boxes, labels and customized cartons as available."),
- ("Destination & Documentation","Provide destination, preferred shipping method and any necessary labeling or documents.")
- ])+'</div><div style="margin-top:40px"><a href="/contact/#inquiry" class="button">Request Packing Details →</a></div></div></section>'
- return h
+ return render_why(WHY_DATA["shipping-logistics"])
+
 def faq_page():
  h=intro("FAQ","Frequently Asked Questions","The most common questions about buying, customizing and importing plastic water bottles.")
  h+='<section class="section"><div class="shell">'+sec("Wholesale, Customization & Product Questions","Answers are general guidance. Actual MOQ, materials, lead time and certification depend on the model.","B2B FAQ")+faq_html(FAQS)+'</div></section>'
@@ -309,7 +296,9 @@ def generate():
  build_url('capabilities/index.html','Capabilities',page('Plastic Bottle OEM & Customization | XUYI','Logo, graphics, OEM/ODM and custom packing options for bulk plastic drinkware.',capabilities_page()))
  for cap in CAPABILITIES:
   title,slug,desc,*_=cap
-  build_url('capabilities/'+slug+'/index.html',title,page(title+' | XUYI Drinkware',desc,capability_detail(cap)))
+  cap_markup=page((WHY_DATA["capabilities/oem-odm"]["seo_title"] if slug=="oem-odm" else title+' | XUYI Drinkware'),(WHY_DATA["capabilities/oem-odm"]["description"] if slug=="oem-odm" else desc),capability_detail(cap))
+  if slug=="oem-odm":cap_markup=schema_enhance(cap_markup,WHY_DATA["capabilities/oem-odm"])
+  build_url('capabilities/'+slug+'/index.html',title,cap_markup)
  for slug,title,description,fn in [
  ('about','About', 'Learn about XUYI’s factory-backed plastic water bottle business.',about),
  ('manufacturing','Manufacturing','Our factory and selected partner supply process for plastic drinkware.',manufacturing),
@@ -320,7 +309,12 @@ def generate():
  ('blog','Blog','Plastic drinkware sourcing guides for brands and importers.',blog_index),
  ('privacy-policy','Privacy Policy','Preview of inquiry processing and business contact data protections.',privacy)
  ]:
-  build_url(slug+'/index.html',title,page(title+' | XUYI Drinkware',description,fn()))
+  if slug in ("manufacturing","quality-control","shipping-logistics"):
+   data=WHY_DATA[slug]
+   body_markup=schema_enhance(page(data["seo_title"],data["description"],fn()),data)
+  else:
+   body_markup=page(title+' | XUYI Drinkware',description,fn())
+  build_url(slug+'/index.html',title,body_markup)
  build_url('why-us/index.html','Why Us',page('Why Work with XUYI Drinkware | Factory-backed Plastic Water Bottles','How XUYI supports custom bottle buyers, product development, quality and supply.',why_us()))
  build_url('request-sample/index.html','Request a Sample',page('Request a Plastic Water Bottle Sample | XUYI','Sample request steps for sports, kids, jug and shaker bottle models.',sample_page()))
  for row in FEATURES:

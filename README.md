@@ -63,3 +63,12 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - /blog/ now has a six-article photo grid; all six /blog/{slug}/ detail pages include matching XUYI catalog illustration.
 - Moved authorized-only customer logo wall to follow black inquiry/FAQ block and precede News & Blogs, matching the target's actual order.
 - The actual inquiry form remains disabled pending verified company inbox, privacy notice and secure server-side delivery.
+
+## Why Us SEO/GEO content upgrade
+- Research references: Kreat (four Why Us pages); Everich (customization stages and material/quality inspection); GOX (SKU-level technical tables and packing); Diller (buyer-type use cases, drawing-to-tooling OEM/ODM process).
+- Rebuilt /capabilities/oem-odm/, /manufacturing/, /quality-control/, /shipping-logistics/ in original English, focused on XUYI's plastic product families rather than copied stainless/glass claims.
+- Each page: single descriptive H1, direct answer, unique intent-focused title/description, four feature/decision cards, six-step process, comparison/reference matrix, practical buyer checklist, seven unique FAQs, and deep links between categories and the Why Us content cluster.
+- JSON-LD: Organization (registered Chinese company name), WebPage, BreadcrumbList, FAQPage matching visible Q&A. Added preview Open Graph metadata.
+- Source images are real XUYI Excel/PPT catalog imagery, labeled as product illustrations (not factory photos).
+- Do not publish unsupported: factory equipment and numbers, food-contact certifications, BPA-free claims, 24h quotes, sample/production lead times, fixed MOQ, DDP guarantee, client logos.
+- Noindex remains across the preview until verified company details, product substantiation, enquiry delivery and target domain approval.
