@@ -3,7 +3,7 @@
 Production branch: main; Cloudflare Pages: xuyi-drinkware-site; GitHub: chongwuhou/xuyi-drinkware-site.
 
 ## Scope
-Kreat-inspired original navigation and UI system: homepage; 4 categories; 79 model pages; 5 capabilities subpages; About; Manufacturing; Quality Control; Shipping; FAQ; Blog; 6 buying guides; Contact; Privacy Policy and 404. All photos are from XUYI source catalogs.
+Kreat-inspired original navigation and UI system: homepage; 4 product categories; 79 model pages; 7 capabilities subpages; About; Manufacturing; Quality Control; Shipping; FAQ; Blog; 6 buying guides; Contact; Privacy Policy and 404. All photos are from XUYI source catalogs.
 
 ## Technology
 - GitHub -> Cloudflare Pages: static HTML/CSS/JS.
@@ -23,3 +23,11 @@ Verify SKU variants, 2506 anomalous capacity, official English legal name, compa
 
 ## Responsive
 Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model search/filter and fixed mobile inquiry link. QA on 320–1440 px.
+
+## Target-style UI revision (October 8 2026)
+- Main navigation: Home, Products (4-column photo mega menu), Capabilities (compact list), About, Why Us (compact list), Blog, Contact Us, Instant Quote.
+- Products menu images: XUYI-owned R2 images in every menu column, not KREAT assets.
+- Fully functional 3-slide hero and category tabbed model display; link + keyboard responsive test.
+- Added 5 bottle feature landings, 5 use-case landings, Request Sample process, Why Us, Custom Water Bottle and Custom Molding pages; English only, no glass or stainless steel.
+- Inspiration: Kreat visual/nav hierarchy, GOX model-category discovery, Everich sample/OEM flow, Diller buyer-side product specifications and FAQ. Competitor images and branding are not copied.
+- The B2B quote form remains disabled until verified inbox/privacy/security are ready; draft catalog data is not published via API.

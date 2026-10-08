@@ -4,6 +4,26 @@
     "title": "About"
   },
   {
+    "path": "/applications/everyday-hydration/",
+    "title": "Everyday Water Bottles"
+  },
+  {
+    "path": "/applications/gym-sports/",
+    "title": "Gym & Sports Water Bottles"
+  },
+  {
+    "path": "/applications/kids-school/",
+    "title": "Kids & School Bottles"
+  },
+  {
+    "path": "/applications/outdoor-travel/",
+    "title": "Outdoor & Travel Drinkware"
+  },
+  {
+    "path": "/applications/promotional-gifts/",
+    "title": "Custom Promotional Bottles"
+  },
+  {
     "path": "/blog/custom-logo-water-bottle-checklist/",
     "title": "Custom Logo Water Bottle Project Checklist"
   },
@@ -44,8 +64,16 @@
     "title": "Custom Manufacturing"
   },
   {
+    "path": "/capabilities/custom-molding/",
+    "title": "Custom Molding"
+  },
+  {
     "path": "/capabilities/custom-packaging/",
     "title": "Custom Packaging"
+  },
+  {
+    "path": "/capabilities/custom-water-bottle/",
+    "title": "Custom Water Bottle"
   },
   {
     "path": "/capabilities/",
@@ -78,6 +106,26 @@
   {
     "path": "/faq/",
     "title": "FAQ"
+  },
+  {
+    "path": "/features/carry-handle/",
+    "title": "Carry-Handle Bottle Styles"
+  },
+  {
+    "path": "/features/flip-top/",
+    "title": "Flip-Top Bottle Styles"
+  },
+  {
+    "path": "/features/gradient-colors/",
+    "title": "Gradient Color Plastic Bottles"
+  },
+  {
+    "path": "/features/large-capacity/",
+    "title": "Large Capacity Plastic Bottles"
+  },
+  {
+    "path": "/features/straw-lid/",
+    "title": "Straw Lid Bottle Styles"
   },
   {
     "path": "/",
@@ -416,7 +464,15 @@
     "title": "Quality Control"
   },
   {
+    "path": "/request-sample/",
+    "title": "Request a Sample"
+  },
+  {
     "path": "/shipping-logistics/",
     "title": "Shipping & Logistics"
+  },
+  {
+    "path": "/why-us/",
+    "title": "Why Us"
   }
 ]

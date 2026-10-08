@@ -40,31 +40,85 @@ ICONS={
 }
 def category_links():
  return [(v[0],"/collections/"+v[1]+"/") for v in CAT.values()]
-DROPS={
-"Products":[("Categories",category_links()),("Find Bottles",[("All Plastic Drinkware","/products/"),("Sports Water Bottles","/collections/sports-water-bottles/"),("Kids Water Bottles","/collections/kids-water-bottles/")]),("Bulk Purchasing",[("Large Capacity Jugs","/collections/large-capacity-water-jugs/"),("Shaker Bottles","/collections/plastic-shaker-bottles/"),("Wholesale Buying FAQ","/faq/")])],
-"Capabilities":[("Custom Branding",[("Custom Logo Printing","/capabilities/custom-logo/"),("Colors & Graphics","/capabilities/custom-graphics/")]),("Manufacturing",[("OEM / ODM Service","/capabilities/oem-odm/"),("Custom Manufacturing","/capabilities/custom-manufacturing/"),("Custom Packaging","/capabilities/custom-packaging/")]),("Buyer Services",[("Wholesale Quote","/contact/?type=wholesale#inquiry"),("Request Samples","/contact/?type=sample#inquiry"),("Buying FAQs","/faq/")])],
-"About":[("XUYI Company",[("About XUYI","/about/"),("Our Factory","/manufacturing/"),("Quality Control","/quality-control/")]),("How We Work",[("Manufacturing Process","/manufacturing/"),("Shipping & Logistics","/shipping-logistics/")]),("Resources",[("FAQs","/faq/"),("Buying Guides","/blog/"),("Contact","/contact/")])]
+# Navigation mirrors the target's information architecture, while retaining XUYI-only products.
+PRODUCT_COLUMNS=[
+ ("Plastic Water Bottles","/media/ppt/slide-059.webp",[
+ ("Sports Water Bottles","/collections/sports-water-bottles/"),
+ ("Large Capacity Jugs","/collections/large-capacity-water-jugs/"),
+ ("Kids Water Bottles","/collections/kids-water-bottles/"),
+ ("Protein Shaker Bottles","/collections/plastic-shaker-bottles/"),
+ ("All Plastic Bottle Models","/products/")]),
+ ("Bottle By Feature","/media/ppt/slide-066.webp",[
+ ("Straw Lid Bottles","/features/straw-lid/"),
+ ("Flip Top Bottles","/features/flip-top/"),
+ ("Carry Handle Bottles","/features/carry-handle/"),
+ ("Large Capacity","/features/large-capacity/"),
+ ("Gradient Colors","/features/gradient-colors/"),
+ ("Custom Logo","/capabilities/custom-logo/")]),
+ ("Bottle By Use","/media/ppt/slide-037.webp",[
+ ("Gym & Sports","/applications/gym-sports/"),
+ ("Outdoor & Travel","/applications/outdoor-travel/"),
+ ("Kids & School","/applications/kids-school/"),
+ ("Everyday Hydration","/applications/everyday-hydration/"),
+ ("Promotional Gifts","/applications/promotional-gifts/"),
+ ("Protein Shakers","/collections/plastic-shaker-bottles/")]),
+ ("OEM & Wholesale","/media/ppt/slide-091.webp",[
+ ("Custom Water Bottles","/capabilities/custom-water-bottle/"),
+ ("Custom Graphics","/capabilities/custom-graphics/"),
+ ("Custom Packaging","/capabilities/custom-packaging/"),
+ ("OEM & ODM","/capabilities/oem-odm/"),
+ ("Request a Sample","/request-sample/"),
+ ("Wholesale Buyer Guide","/blog/wholesale-plastic-water-bottle-buying-guide/")])
+]
+MINI_MENUS={
+"Capabilities":[
+ ("Custom Water Bottle","/capabilities/custom-water-bottle/"),
+ ("Custom Logo","/capabilities/custom-logo/"),
+ ("Custom Graphics","/capabilities/custom-graphics/"),
+ ("Custom Molding","/capabilities/custom-molding/"),
+ ("Custom Manufacturing","/capabilities/custom-manufacturing/"),
+ ("Custom Packaging","/capabilities/custom-packaging/")],
+"Why Us":[
+ ("OEM / ODM Support","/capabilities/oem-odm/"),
+ ("Manufacturing Process","/manufacturing/"),
+ ("Quality Assurance","/quality-control/"),
+ ("Shipping & Logistics","/shipping-logistics/")]
 }
 def header():
  navitems=[]
- for name in ["Home","Products","Capabilities","About","Blog","Contact Us"]:
-  if name not in DROPS:
-   uri={"/Home":"/"}.get(name,{"Home":"/","Blog":"/blog/","Contact Us":"/contact/"}[name])
-   navitems.append(f'<a class="nav__link" href="{uri}">{name}</a>')
-   continue
-  cols=DROPS[name]
-  colhtml=''.join('<div class="mega__column"><strong>'+e(group)+'</strong>'+''.join(f'<a href="{e(uri)}">{e(label)}</a>' for label,uri in links)+'</div>' for group,links in cols)
-  if name=="Products":colhtml+='<div class="mega__column">'+photo("/media/ppt/slide-059.webp","Plastic bottle collection image")+'<strong>Find your bottle</strong><a href="/products/">Browse all models →</a></div>'
-  else:colhtml+='<div class="mega__column">'+photo("/media/ppt/slide-049.webp","XUYI catalog product photo")+'<strong>Wholesale inquiries</strong><a href="/contact/">Contact our team →</a></div>'
-  navitems.append(f'<div class="nav__drop"><button class="nav__toggle" type="button" data-mega-toggle aria-expanded="false">{name}{ICONS["chevron"]}</button><div class="mega"><div class="shell mega__grid">{colhtml}</div></div></div>')
- mob='<a href="/">Home</a>'
- for name in ("Products","Capabilities","About"):
-  mob+=f'<details><summary>{name}</summary>'
-  for title,ls in DROPS[name]:
-   mob+=''.join(f'<a href="{e(uri)}">{e(label)}</a>' for label,uri in ls)
-  mob+='</details>'
- mob+='<a href="/blog/">Blog</a><a href="/faq/">FAQ</a><a href="/contact/">Contact Us</a><a href="/contact/#inquiry">Instant Quote →</a>'
- return '<div class="topbar"><div class="shell topbar__inner"><a href="/about/">Taizhou, China · Plastic Drinkware Manufacturer</a><a href="/contact/">Contact us →</a></div></div><header class="header"><div class="shell header__inner"><a href="/" class="logo" aria-label="XUYI Drinkware home">XUYI<small>PLASTIC DRINKWARE</small></a><nav class="nav" aria-label="Main navigation">'+''.join(navitems)+'</nav><div class="header__actions"><span class="language-label" title="English is the only published locale">EN</span><button class="icon-button" id="search-toggle" aria-label="Toggle product search" aria-expanded="false" type="button">'+ICONS["search"]+'</button><a class="button" href="/contact/#inquiry">Instant Quote →</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS["menu"]+'</button></div></div><div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="/products/" method="get"><input type="search" name="q" aria-label="Search product models" placeholder="Search by model, bottle type or capacity"><button class="button" type="submit">Search →</button></form></div><nav class="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation">'+mob+'</nav></header>'
+ for name in ["Home","Products","Capabilities","About","Why Us","Blog","Contact Us"]:
+  if name=="Home":navitems.append('<a class="nav__link" href="/">Home</a>')
+  elif name in ("About","Blog","Contact Us"):
+   uri={"About":"/about/","Blog":"/blog/","Contact Us":"/contact/"}[name]
+   navitems.append('<a class="nav__link" href="'+uri+'">'+name+'</a>')
+  elif name=="Products":
+   cols=[]
+   for group,img,links in PRODUCT_COLUMNS:
+    heading='<a class="mega__heading" href="'+e(links[0][1])+'">'+e(group)+'</a>'
+    pic='<a class="mega__image" href="'+e(links[0][1])+'">'+photo(img,"XUYI "+group+" catalog photo")+'</a>'
+    column='<div class="mega__column">'+heading+pic+'<div class="mega__links">'+''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in links)+'</div></div>'
+    cols.append(column)
+   submenu='<div class="mega" id="menu-products"><div class="mega__grid">'+''.join(cols)+'</div></div>'
+   navitems.append('<div class="nav__drop nav__drop--mega"><button class="nav__toggle" data-mega-toggle type="button" aria-expanded="false" aria-controls="menu-products">Products'+ICONS['chevron']+'</button>'+submenu+'</div>')
+  else:
+   items=''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in MINI_MENUS[name])
+   menu_id='menu-'+name.lower().replace(' ','-')
+   navitems.append('<div class="nav__drop nav__drop--mini"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="'+menu_id+'" aria-expanded="false">'+name+ICONS['chevron']+'</button><div class="mini-menu" id="'+menu_id+'">'+items+'</div></div>')
+ # All navigational targets are XUYI pages, no stainless steel or competitor-branded items.
+ mobile='<a href="/">Home</a><details><summary>Products</summary>'
+ for group,img,links in PRODUCT_COLUMNS:
+  mobile+='<div class="mobile-nav__group"><div class="mobile-nav__group-title">'+photo(img,group+' plastic bottles')+'<strong>'+e(group)+'</strong></div>'
+  mobile+=''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in links)+'</div>'
+ mobile+='</details><details><summary>Capabilities</summary>'
+ mobile+=''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in MINI_MENUS["Capabilities"])
+ mobile+='</details><a href="/about/">About</a><details><summary>Why Us</summary>'
+ mobile+=''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in MINI_MENUS["Why Us"])
+ mobile+='</details><a href="/blog/">Blog</a><a href="/contact/">Contact Us</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Instant Quote →</a>'
+ top='<div class="topbar"><div class="shell topbar__inner"><a href="/about/" aria-label="XUYI company">XUYI · Taizhou, China</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Contact</a></div></div>'
+ logo='<a href="/" class="logo" aria-label="XUYI Drinkware home">XUYI<small>PLASTIC DRINKWARE</small></a>'
+ actions='<div class="header__actions"><span class="language-label" title="English is the current site language">EN</span><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
+ search='<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="/products/" method="get"><input type="search" name="q" placeholder="Search product model or type…" aria-label="Search product models"><button class="button" type="submit">Search →</button></form></div>'
+ return top+'<header class="header"><div class="shell header__inner">'+logo+'<nav class="nav" aria-label="Main navigation">'+''.join(navitems)+'</nav>'+actions+'</div>'+search+'<nav class="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation">'+mobile+'</nav></header>'
 def footer():
  links=''.join('<p><a href="'+uri+'">'+e(label)+'</a></p>' for label,uri in category_links())
  return '<section class="cta-panel"><div class="shell"><span class="eyebrow">Wholesale & Custom Branding</span><h2>Ready to Build Your Bottle Collection?</h2><p>Share your model numbers, estimated quantity, colors, artwork and destination country.</p><a href="/contact/#inquiry" class="button button--round">Get an Instant Quote →</a></div></section><footer class="footer"><div class="shell"><div class="footer__cols"><div><a class="logo" href="/">XUYI<small>PLASTIC DRINKWARE</small></a><p>Factory-backed plastic water bottles for wholesale, branding and OEM/ODM projects.</p><p>Taizhou, Zhejiang, China</p></div><div><h3>Products</h3>'+links+'</div><div><h3>Capabilities</h3><p><a href="/capabilities/custom-logo/">Custom Logo</a></p><p><a href="/capabilities/oem-odm/">OEM / ODM</a></p><p><a href="/capabilities/custom-packaging/">Custom Packaging</a></p><p><a href="/quality-control/">Quality Control</a></p></div><div><h3>Quick Links</h3><p><a href="/about/">About Us</a></p><p><a href="/blog/">Blog</a></p><p><a href="/faq/">FAQ</a></p><p><a href="/contact/">Contact Us</a></p><p><a href="/privacy-policy/">Privacy Policy</a></p></div></div><div class="footer__bottom"><span>© XUYI Drinkware · Website preview · Specifications subject to verification</span><span>Factory-backed B2B plastic drinkware</span></div></div></footer><div class="sticky-inquiry"><span>Wholesale & OEM Enquiries</span><a class="button" href="/contact/#inquiry">Get Quote →</a></div>'
