@@ -44,7 +44,20 @@ async function verifyCloudflareProjectToken(token, env) {
   }
 }
 
+// A Cloudflare project token proves access to deployment metadata, not
+// permission to edit content or read customer records. Preserve the existing
+// Demalong-style admin session for all writes and private admin modules.
+const BUILD_READ_PATHS = new Set([
+  "/api/build-snapshot", "/api/publish-state",
+  "/api/admin/brand-config", "/api/admin/site-config",
+  "/api/admin/pages", "/api/admin/product-content",
+  "/api/admin/page-content", "/api/admin/page-translations"
+]);
+
 export async function authorizedBuildRequest(request, env) {
   if (await authorizeAdminRequest(request, env)) return true;
+  if (request.method !== "GET" && request.method !== "HEAD") return false;
+  const pathname = new URL(request.url).pathname;
+  if (!BUILD_READ_PATHS.has(pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }

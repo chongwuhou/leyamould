@@ -77,6 +77,17 @@ def main():
     if total>=limit:fail(f"Pages file hard stop: {total} >= {limit}")
     source_files=sorted((ROOT/"templates/site").glob("*.html"))
     templates={file.name:file_hash(file) for file in source_files}
+    # Demalong V1.4 reports the true production data origin, not merely
+    # whether a D1 API was reachable. Empty D1 tables mean source fallback.
+    state=json.loads(snapshot.read_text(encoding="utf-8")) if snapshot.is_file() else {}
+    sources={
+        "brand":"cloudflare-d1:site_state.brand_config" if state.get("brand") else "source-fallback:brand",
+        "navigation":"cloudflare-d1:site_navigation" if state.get("navigation") else "source-fallback:curated-navigation",
+        "pageSeo":"cloudflare-d1:site_pages" if state.get("pages") else "source-fallback:page-metadata",
+        "products":"cloudflare-d1:xuyi_product_content+source-catalog" if state.get("products") else "source-fallback:data/products.json",
+        "pageBodies":"cloudflare-d1:xuyi_page_content" if state.get("pageBodies") else "source-fallback:python-page-modules",
+        "locales":"cloudflare-d1:reviewed-translations" if state.get("translations") else "not-published:no-reviewed-translations"
+    }
     metadata={
         "version":"XUYI source-templated static build v1",
         "siteOrigin":CONFIG["site"]["origin"],
@@ -86,6 +97,7 @@ def main():
         "publishRevision":int(env.get("XUYI_PUBLISH_REVISION","0")),
         "templateSet":"templates/site",
         "templateSha256":templates,
+        "contentSources":sources,
         "fileCount":total,
         "fileBreakdown":counts,
         "noindex":not CONFIG["site"]["indexingApproved"]

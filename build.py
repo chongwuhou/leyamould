@@ -265,7 +265,12 @@ def generate():
  for cat,(title,slug,im,desc) in CAT.items():
   build_url('collections/'+slug+'/index.html',title,page(title+' Wholesale | XUYI Bottles',desc,catalog(cat)))
  for product in SERIES.values():
-  product_markup=page(public_display_name(product)+' | XUYI Bottles',public_display_name(product)+' wholesale plastic bottle specifications, material and color choices, OEM logo options and bulk inquiry.',detail(product))
+  model=str(product['model'])
+  public_name=public_display_name(product)
+  # Every real model has its own SEO title and description, as in Demalong's
+  # evidence-backed model pages. Do not invent MOQ, certification or capacity.
+  product_markup=page(public_name+' — Model '+model+' | XUYI Bottles',
+    public_name+' model '+model+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.',detail(product))
   build_url('products/'+product['slug']+'/index.html','Model '+product['slug'],product_schema(product_markup,product))
  build_url('capabilities/index.html','Capabilities',resources_schema(page(*RESOURCE_SEO['capabilities'],capabilities_page()),'capabilities',RESOURCE_SEO['capabilities'][1]))
  for cap in CAPABILITIES:

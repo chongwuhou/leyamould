@@ -42,6 +42,25 @@ def swap_meta(page,name,value):
     tag='<meta name="'+name+'" content="'
     return re.sub(re.escape(tag)+r'[^"]*">',tag+html.escape(value,quote=True)+'">',page,count=1)
 
+def localize_verified_links(markup, locale, path_prefix, published_routes):
+    """Keep navigation on the current locale only where approved pages exist.
+
+    Unknown targets intentionally fall back to the English source page; never
+    create translated-looking links that lead to a 404 or an unreviewed page.
+    """
+    prefix = "/" + path_prefix.strip("/")
+    def replace(match):
+        raw = html.unescape(match.group(2))
+        parts = urlsplit(raw)
+        if not raw.startswith("/") or raw.startswith("//") or parts.path not in published_routes:
+            return match.group(0)
+        target = prefix + parts.path
+        if parts.query: target += "?" + parts.query
+        if parts.fragment: target += "#" + parts.fragment
+        return match.group(1) + html.escape(target, quote=True) + match.group(3)
+    return re.sub(r'(<a\b[^>]*?\bhref=")([^"]+)(")', replace, markup, flags=re.I)
+
+
 def main():
     if not SNAPSHOT.is_file():
         print("XUYI_LOCALES_SKIPPED: no reviewed D1 snapshot")
@@ -62,6 +81,8 @@ def main():
         src=DIST/route.lstrip("/")/"index.html"
         if route=="/":src=DIST/"index.html"
         if src.is_file():translated[(route,loc)]=fields
+    routes_by_locale = {locale: {route for route, lang in translated if lang == locale}
+                        for locale in live}
     created=0
     for (route,loc),fields in translated.items():
         original=(DIST/route.lstrip("/")/"index.html" if route!="/" else DIST/"index.html").read_text(encoding="utf-8")
@@ -70,6 +91,7 @@ def main():
         _,suffix=remainder.split('</main>',1)
         ui=live[loc].get("uiText",{})
         text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+fields["mainHtml"]+'</main>'+translate_chrome(suffix,loc,ui)
+        text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])
         text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)
         text=re.sub(r'<title>[^<]*</title>','<title>'+html.escape(fields["title"])+'</title>',text,count=1)
         text=swap_meta(text,"description",fields["description"])
@@ -96,6 +118,21 @@ def main():
             tags.append('<link rel="alternate" hreflang="x-default" href="'+ORIGIN+route+'">')
             content=content.replace('</head>',''.join(tags)+'</head>',1)
             link.write_text(content,encoding="utf-8")
+    # Extend the existing English sitemap with *real* reviewed routes only.
+    # The site-wide noindex gate is independent and remains unchanged.
+    sitemap=DIST/"sitemap.xml"
+    if alternates and sitemap.is_file():
+        xml=sitemap.read_text(encoding="utf-8")
+        added=[]
+        for route,alts in sorted(alternates.items()):
+            for _,url in sorted(alts):
+                absolute=ORIGIN+url
+                if "<loc>"+html.escape(absolute)+"</loc>" not in xml:
+                    added.append(" <url><loc>"+html.escape(absolute)+"</loc></url>")
+        if added:
+            if "</urlset>" not in xml:raise RuntimeError("Invalid XUYI sitemap: no urlset closing tag")
+            xml=xml.replace("</urlset>","\\n".join(added)+"\\n</urlset>",1)
+            sitemap.write_text(xml,encoding="utf-8")
     print("XUYI_REVIEWED_LOCALIZED_PAGES",created,"LANGUAGES",sorted(live),"ALTERNATE_SETS",len(alternates))
 
 if __name__=="__main__":main()

@@ -105,7 +105,10 @@ jobs:
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
           python scripts/test_release.py
+          python scripts/test_shared_templates.py
+          python scripts/test_localized_templates.py
           node scripts/test_inquiry_readiness.mjs
+          node scripts/test_admin_auth.mjs
       - name: No changes in the XUYI D1 publish revision
         if: github.event_name == 'schedule' && steps.revision.outputs.needed == 'false'
         run: echo "No changes; skipped build and deploy to preserve GitHub Actions usage."

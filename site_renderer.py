@@ -216,6 +216,21 @@ def header():
  for nav_name in ("About","Blog","Contact Us"):
   mobile_parts[nav_name]='<a href="'+top_urls[nav_name]+'">'+e(labels[nav_name])+'</a>'
  mobile=''.join(mobile_parts[k] for k in sorted_names)
+ # Let D1 append genuine, approved top-level links to both menus. The
+ # existing four-column product group remains the XUYI design source.
+ custom_top=sorted((r for r in nav_rows if isinstance(r,dict) and not r.get("parent_id")
+     and r.get("url") not in top_urls.values()),
+     key=lambda r:(int(r.get("sort_order",999)),str(r.get("id",""))))
+ for item in custom_top:
+  uri=str(item.get("url") or "")
+  if not uri.startswith("/") or uri.startswith("//") or any(ch in uri for ch in ('"',"<",">")):
+   continue
+  label=e(str(item.get("label") or "")[:80])
+  if not label:continue
+  blank=bool(item.get("new_window",item.get("newWindow",False)))
+  extra=' target="_blank" rel="noopener noreferrer"' if blank else ''
+  navitems.append('<a class="nav__link" href="'+e(uri)+'"'+extra+'>'+label+'</a>')
+  mobile+='<a href="'+e(uri)+'"'+extra+'>'+label+'</a>'
  mobile+='<a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Instant Quote →</a>'
  top='<div class="topbar"><div class="shell topbar__inner"><a href="/about/" aria-label="XUYI company">XUYI · Taizhou, China</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Contact</a></div></div>'
  logo='<a href="/" class="logo" aria-label="XUYI Bottles home">XUYI<small>BOTTLES</small></a>'

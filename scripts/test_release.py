@@ -16,6 +16,8 @@ assert meta["siteOrigin"]=="https://xuyibottles.com"
 assert meta["templateSet"]=="templates/site" and len(meta["templateSha256"])>=10
 assert meta["noindex"] is True
 assert meta["fileCount"]<19500
+assert set(meta.get("contentSources",{}))=={"brand","navigation","pageSeo","products","pageBodies","locales"}, "D1/source origin metadata is incomplete"
+assert all(isinstance(v,str) and v for v in meta["contentSources"].values())
 
 class LocalRefs(HTMLParser):
     def __init__(self):
@@ -52,6 +54,25 @@ for page in pages:
         if target.startswith(("media/","api/")):continue
         if target and not (OUT/target).is_file() and not (OUT/target/"index.html").is_file():
             broken.append((rel,"broken route",url))
+# Demalong V1.4 quality gate: model pages need unique search snippets and
+# self-referencing canonical URLs. A duplicated value blocks deployment.
+product_titles={}
+product_descriptions={}
+for page in pages:
+    rel=page.relative_to(OUT).as_posix()
+    if not (rel.startswith("products/") and rel.endswith("/index.html")):
+        continue
+    content=page.read_text(encoding="utf-8")
+    title=re.search(r"<title>([^<]+)</title>",content,re.I)
+    desc=re.search(r'<meta name="description" content="([^"]+)"',content,re.I)
+    canon=re.search(r'<link rel="canonical" href="([^"]+)"',content,re.I)
+    for label,match,seen in (("title",title,product_titles),("description",desc,product_descriptions)):
+        if not match:broken.append((rel,"missing product "+label));continue
+        value=match.group(1).strip()
+        if value in seen:broken.append((rel,"duplicate product "+label,seen[value]))
+        seen[value]=rel
+    expected="https://xuyibottles.com/"+rel[:-len("index.html")]
+    if not canon or canon.group(1)!=expected:broken.append((rel,"product canonical mismatch"))
 for route in ["index.html","blog/index.html","admin/index.html",
               "products/2095/index.html","products/5340/index.html",
               "capabilities/custom-molding/index.html","capabilities/custom-packaging/index.html"]:
