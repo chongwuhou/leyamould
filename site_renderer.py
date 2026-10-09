@@ -1,6 +1,21 @@
 from pathlib import Path
-import json,html,re,collections
+from functools import lru_cache
+import json,html,re,collections,os
 ROOT=Path(__file__).parent
+BUILD_OUTPUT_DIR=os.environ.get("XUYI_OUTPUT_DIR",".")
+if BUILD_OUTPUT_DIR not in (".","dist"):
+ raise ValueError("XUYI_OUTPUT_DIR must be . or dist")
+
+@lru_cache(maxsize=8)
+def read_template(name):
+ if name not in {"shell","header","footer","sidebar"}:raise ValueError("Unknown site partial")
+ return (ROOT/"templates"/"site"/(name+".html")).read_text(encoding="utf-8").rstrip(chr(10))
+
+def render_template(name,**parts):
+ template=read_template(name)
+ for key,value in parts.items():template=template.replace("{{"+key+"}}",value)
+ if "{{" in template or "}}" in template:raise ValueError("Unfilled template placeholder: "+name)
+ return template
 RAW=json.loads((ROOT/"data/products.json").read_text(encoding="utf-8"))
 IMAGES=json.loads((ROOT/"data/excel-images.json").read_text(encoding="utf-8"))
 CAT={
@@ -30,7 +45,7 @@ assert all(v["images"] for v in SERIES.values()),[(k,v["images"]) for k,v in SER
 def e(v):return html.escape(str(v or ""),quote=True)
 def photo(src,alt,loading='lazy'):return f'<img src="{e(src)}" alt="{e(alt)}" loading="{loading}" decoding="async">'
 def write(path,content):
- out=ROOT/path;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding="utf-8")
+ out=ROOT/BUILD_OUTPUT_DIR/path;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding="utf-8")
 URLS={}
 SITE_ORIGIN="https://xuyibottles.com"
 def build_url(path,title,content):
@@ -131,15 +146,15 @@ def header():
  logo='<a href="/" class="logo" aria-label="XUYI Bottles home">XUYI<small>BOTTLES</small></a>'
  actions='<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language"><option value="en">English</option><option value="es">Español</option><option value="pt">Português</option><option value="ru">Русский</option><option value="tr">Türkçe</option></select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
  search='<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="/products/" method="get"><input type="search" name="q" placeholder="Search product model or type…" aria-label="Search product models"><button class="button" type="submit">Search →</button></form></div>'
- return top+'<header class="header"><div class="shell header__inner">'+logo+'<nav class="nav" aria-label="Main navigation">'+''.join(navitems)+'</nav>'+actions+'</div>'+search+'<nav class="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation">'+mobile+'</nav></header>'
+ return render_template("header",TOPBAR=top,LOGO=logo,NAV_DESKTOP=''.join(navitems),ACTIONS=actions,SEARCH=search,NAV_MOBILE=mobile)
 def footer():
  links=''.join('<p><a href="'+uri+'">'+e(label)+'</a></p>' for label,uri in category_links())
- return '<section class="cta-panel"><div class="shell"><span class="eyebrow">Wholesale & Custom Branding</span><h2>Ready to Build Your Bottle Collection?</h2><p>Share your model numbers, estimated quantity, colors, artwork and destination country.</p><a href="/contact/#inquiry" class="button button--round">Get an Instant Quote →</a></div></section><footer class="footer"><div class="shell"><div class="footer__cols"><div><a class="logo" href="/">XUYI<small>BOTTLES</small></a><p>Factory-backed plastic water bottles for wholesale, branding and OEM/ODM projects.</p><p>Taizhou, Zhejiang, China</p></div><div><h3>Products</h3>'+links+'</div><div><h3>Capabilities</h3><p><a href="/capabilities/custom-logo/">Custom Logo</a></p><p><a href="/capabilities/oem-odm/">OEM / ODM</a></p><p><a href="/capabilities/custom-packaging/">Custom Packaging</a></p><p><a href="/quality-control/">Quality Control</a></p></div><div><h3>Quick Links</h3><p><a href="/about/">About Us</a></p><p><a href="/blog/">Blog</a></p><p><a href="/faq/">FAQ</a></p><p><a href="/contact/">Contact Us</a></p><p><a href="/privacy-policy/">Privacy Policy</a></p></div></div><div class="footer__bottom"><span>© 2026 XUYI Bottles · <a href="https://xuyibottles.com/">xuyibottles.com</a></span><span><a data-site-email href="mailto:Janey@xuyibottles.com">Janey@xuyibottles.com</a> · <a data-site-whatsapp href="https://wa.me/8615395897937" target="_blank" rel="noopener noreferrer">WhatsApp</a></span></div></div></footer><div class="sticky-inquiry"><span>Wholesale & OEM Enquiries</span><a class="button" href="/contact/#inquiry">Get Quote →</a></div>'
+ return render_template("footer",PRODUCT_LINKS=links)
 def page(title,description,body,canonical=None):
  # Search indexing stays disabled pending final launch approval.
  head='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light"><meta name="theme-color" content="#ffffff"><title>'+e(title)+'</title><meta name="description" content="'+e(description)[:220]+'"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/site-settings.css"><script defer src="/assets/site.js"></script><script defer src="/assets/site-settings.js"></script></head><body>'
- rail='<aside class="rail" aria-label="Quick contact"><a href="/contact/#inquiry" aria-label="Inquiry form" title="Inquiry form">'+ICONS["form"]+'</a><a data-site-email-link href="mailto:Janey@xuyibottles.com" aria-label="Send email" title="Email">'+ICONS["mail"]+'</a><a data-site-whatsapp href="https://wa.me/8615395897937" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="WhatsApp">'+ICONS["whatsapp"]+'</a><a href="#" aria-label="Back to top" onclick="scrollTo({top:0,behavior:\'smooth\'});return false">'+ICONS["top"]+'</a></aside>'
- return head+header()+rail+'<main id="main-content">'+body+'</main>'+footer()+'</body></html>'
+ rail=render_template("sidebar",ICON_FORM=ICONS["form"],ICON_MAIL=ICONS["mail"],ICON_WHATSAPP=ICONS["whatsapp"],ICON_TOP=ICONS["top"])
+ return render_template("shell",HEAD=head,HEADER=header(),SIDEBAR=rail,BODY=body,FOOTER=footer())
 def intro(crumb,title,subtitle=""):
  return '<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / '+e(crumb)+'</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+e(title)+'</h1><p>'+e(subtitle)+'</p></div></section>'
 def category_card(cat):

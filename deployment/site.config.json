@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "site": {
+    "brand": "XUYI Bottles",
+    "origin": "https://xuyibottles.com",
+    "defaultLocale": "en",
+    "indexingApproved": false
+  },
+  "cloudflare": {
+    "pagesProjectName": "xuyi-drinkware-site",
+    "productionBranch": "main",
+    "d1Database": "xuyi-drinkware-d1",
+    "d1Binding": "XUYI_DB",
+    "r2Bucket": "xuyi-drinkware-r2",
+    "r2Binding": "XUYI_ASSETS"
+  },
+  "build": {
+    "source": "source-controlled templates/site plus product/blog datasets",
+    "output": "dist",
+    "warningFiles": 16000,
+    "hardLimitFiles": 19500
+  }
+}

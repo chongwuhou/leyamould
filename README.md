@@ -1,5 +1,15 @@
 # XUYI Drinkware — B2B Static Frontend
 
+> **2026-10-09 architecture hardening:** The canonical build source is now
+> `templates/site/` + the Python content modules + XUYI datasets.
+> Run `python scripts/build_release.py` to produce a clean `dist/`, and
+> `python scripts/test_release.py` before deploying **only `dist/`**.
+> Never redeploy the repository root. The old root-as-Pages-output setup exposed
+> non-public Python/JSON source files. See `项目圣经/目录.md` and
+> `deployment/site.config.json`. XUYI D1/R2/credentials stay independent of
+> Demalong's. GitHub Actions auto-publication requires XUYI-specific secrets and
+> disabling Cloudflare's competing Git build trigger before activating it.
+
 Production branch: main; Cloudflare Pages: xuyi-drinkware-site; GitHub: chongwuhou/xuyi-drinkware-site.
 
 ## Scope

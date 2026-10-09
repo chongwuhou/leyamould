@@ -8,7 +8,7 @@
 </form></div>
 <div id="admin-app" class="app hidden"><header class="topbar"><div><div class="brand-line">XUYI · CLOUDFLARE D1</div><h1>网站后台管理</h1></div>
 <div class="top-actions"><span class="pill">D1 网站设置</span><a href="/" class="btn ghost" target="_blank" rel="noopener">网站首页 ↗</a>
-<button id="refresh-btn" class="btn ghost">刷新</button><button id="logout-btn" class="btn ghost">退出</button></div></header>
+<button type="button" id="publish-site-btn" class="btn primary">一键全站重建</button><button id="refresh-btn" class="btn ghost">刷新</button><button id="logout-btn" class="btn ghost">退出</button></div></header>
 <div class="admin-layout"><aside class="admin-sidebar"><div class="admin-sidebar-head"><span class="eyebrow">MANAGEMENT</span><strong>管理模块</strong></div><nav class="admin-module-nav">
 <button type="button" class="admin-module-btn active" data-admin-target="leads">01 询盘客户</button>
 <button type="button" class="admin-module-btn" data-admin-target="blog">02 Blog 内容发布</button>
@@ -18,6 +18,7 @@
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">技术模块采用 Demalong 已有实现，数据与密钥属于旭一网站。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
+<div id="publish-site-status" role="status" class="muted" aria-live="polite"></div>
       <section class="panel" id="blog-admin-panel" data-admin-module="blog">
 <div class="panel-head"><div><div class="eyebrow">BLOG CONTENT MANAGEMENT · D1</div><h2>Blog 内容管理 / 文章发布</h2>
 <p>复用德玛隆后台的保存草稿、正式发布与修订流程。旭一博客按文章而不是滤芯型号管理，保存草稿不会公开。</p></div></div>
@@ -164,4 +165,5 @@
 <script src="/assets/admin-forms.js" defer></script>
 <script src="/assets/admin-blog.js" defer></script>
 <script src="/assets/admin-site-settings.js" defer></script>
+<script src="/assets/admin-publish.js" defer></script>
 </body></html>

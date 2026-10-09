@@ -1,0 +1,109 @@
+name: XUYI source build and Cloudflare Pages publication
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-xuyi.yml"
+      - "templates/**"
+      - "scripts/**"
+      - "build.py"
+      - "site_renderer.py"
+      - "capability_*.py"
+      - "blog_editorial.py"
+      - "product_content.py"
+      - "home_enhancements.py"
+      - "resource_pages.py"
+      - "why_us_*.py"
+      - "data/**"
+      - "assets/**"
+      - "admin/**"
+      - "functions/**"
+      - "deployment/**"
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+concurrency:
+  group: xuyi-drinkware-production
+  cancel-in-progress: false
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
+      SITE_ORIGIN: https://xuyibottles.com
+      XUYI_PUBLISH_REVISION: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate site isolation
+        run: python scripts/preflight.py
+      - name: Check deployment credential
+        id: credential
+        shell: bash
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::XUYI Pages publication requires its independent Cloudflare GitHub Actions secrets."
+          fi
+      - name: Guard against competing Cloudflare Git auto deployments
+        if: steps.credential.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error --retry 2 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/xuyi-drinkware-site" \
+            | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||j.result?.name!=='xuyi-drinkware-site')throw new Error('XUYI project identity mismatch');const c=j.result?.source?.config||{};if(c.production_deployments_enabled!==false||c.preview_deployment_setting!=='none')throw new Error('Disable old Git auto deploy for XUYI before enabling the CI publisher');console.log('One controlled production publisher verified')})"
+      - name: Read XUYI D1 publish revision
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'schedule'
+        id: revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(curl --fail --silent --show-error --retry 2 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$SITE_ORIGIN/api/publish-state" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
+          deployed="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
+          echo "revision=$current" >> "$GITHUB_OUTPUT"
+          echo "deployed=$deployed" >> "$GITHUB_OUTPUT"
+          echo "XUYI_PUBLISH_REVISION=$current" >> "$GITHUB_ENV"
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$current" -gt "$deployed" ]; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build from shared templates and source data
+        run: python scripts/build_release.py
+      - name: Validate release artifact and file budget
+        run: python scripts/test_release.py
+      - name: Skip when controller is unconfigured
+        if: steps.credential.outputs.ready != 'true'
+        run: echo "Build verified; production unchanged. Add the XUYI-only GitHub Actions secrets."
+      - name: Deploy XUYI production
+        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
+        run: npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+      - name: Verify XUYI live deployment
+        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
+        shell: bash
+        run: |
+          set -euo pipefail
+          for n in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?xuyi_check=$n" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.pagesProject==='xuyi-drinkware-site'&&Number(v.publishRevision)>=Number(process.env.XUYI_PUBLISH_REVISION)?0:1)})"; then
+              echo "XUYI production revision verified"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::XUYI production build-meta did not update"
+          exit 1
