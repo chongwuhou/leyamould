@@ -5,11 +5,16 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 import site_renderer as site
 
-names=("shell","header","footer","sidebar","home","listing","content","static","product-card","category-card")
+names=("shell","header","footer","sidebar","home","listing","content","static","product-card","category-card","page-intro","catalog-filter","catalog-pagination","faq-list")
 for name in names:
     template=site.read_template(name)
-    assert template and "{{" in template, name
+    assert template, name
+    if name!="catalog-pagination":assert "{{" in template, name
     assert (Path("templates/site")/(name+".html")).exists()
+assert '<section class="page-intro">' in site.intro("FAQ","FAQ","Questions")
+assert '<div class="filterbar">' in site.filters()
+assert '<div class="pagination">' in site.pagination()
+assert '<div class="faq-list">' in site.faq_html([("Question?","Answer")])
 header=site.header()
 assert 'id="mobile-navigation"' in header
 assert 'id="menu-products"' in header

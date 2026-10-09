@@ -60,6 +60,7 @@
    field("name","","英文产品名称")+
    field("material","","材质/部件材料（必须真实核实）")+
    field("capacity","","容量")+
+   field("image","","产品主图路径（媒体库上传后复制 /media/product/...）")+
    field("description","","英文产品描述",4)+
    field("seoTitle","","SEO Title")+
    field("seoDescription","","Meta Description",3)+
@@ -147,7 +148,7 @@
    }else if(action==="product"){
     result=await api("product-content",{action:"save_product",model:value("model"),
      status:value("status"),content:{name:value("name"),material:value("material"),capacity:value("capacity"),
-       description:value("description"),seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
+       description:value("description"),image:value("image"),seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
    }else if(action==="page-body-source"){
     const route=$("cms-page-body-route").value;
     const response=await fetch(route,{cache:"no-store"});

@@ -16,6 +16,7 @@
 <button type="button" class="admin-module-btn" data-admin-target="languages">04 多语言</button>
 <button type="button" class="admin-module-btn" data-admin-target="advanced">05 翻译工作流</button>
 <button type="button" class="admin-module-btn" data-admin-target="content">06 页面 / 品牌 / 产品 / SEO</button>
+<button type="button" class="admin-module-btn" data-admin-target="media">07 R2 通用媒体库</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">技术模块采用 Demalong 已有实现，数据与密钥属于旭一网站。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
@@ -35,6 +36,19 @@
  <p id="content-status" role="status" aria-live="polite"></p>
  <div id="content-form"></div>
 </section>
+<section class="panel" id="media-admin-panel" data-admin-module="media">
+ <div class="panel-head"><div><div class="eyebrow">XUYI · R2 ASSETS</div>
+ <h2>通用媒体管理</h2><p>复用现有 Blog 上传的图片内容校验。可上传产品、普通页面及全站素材，上传后复制 R2 图片路径到内容 CMS；不会自动篡改现有页面。</p></div></div>
+ <div class="row-actions">
+  <label>分类 <select id="media-kind"><option value="product">产品图片</option><option value="page">页面图片</option><option value="shared">公共素材</option></select></label>
+  <label>文件 <input type="file" id="media-upload" accept="image/jpeg,image/png,image/webp"></label>
+  <button class="btn primary" type="button" id="media-upload-btn">上传到 R2</button>
+  <button class="btn ghost" type="button" id="media-load">刷新素材</button>
+ </div>
+ <p id="media-status" class="muted" role="status" aria-live="polite"></p>
+ <div id="media-files" style="display:flex;flex-wrap:wrap;gap:14px"></div>
+ <button type="button" class="btn ghost" id="media-more" hidden>加载更多</button>
+ </section>
       <section class="panel" id="blog-admin-panel" data-admin-module="blog">
 <div class="panel-head"><div><div class="eyebrow">BLOG CONTENT MANAGEMENT · D1</div><h2>Blog 内容管理 / 文章发布</h2>
 <p>复用德玛隆后台的保存草稿、正式发布与修订流程。旭一博客按文章而不是滤芯型号管理，保存草稿不会公开。</p></div></div>
@@ -180,6 +194,7 @@
 <script src="/assets/xuyi-admin-bridge.js" defer></script>
 <script src="/assets/admin-forms.js" defer></script>
 <script src="/assets/admin-blog.js" defer></script>
+<script src="/assets/admin-media.js" defer></script>
 <script src="/assets/admin-site-settings.js" defer></script>
 <script src="/assets/admin-content.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>

@@ -23,6 +23,8 @@ export async function onRequestGet({ params, env }) {
     key = "site-gallery/" + filename;
   } else if (kind === "blog" && /^[a-z0-9_-]{20,70}\.(?:jpg|png|webp)$/.test(filename)) {
     key = "site-blog/" + filename;
+  } else if (["product","page","shared"].includes(kind) && /^[a-f0-9]{32}\.(?:jpg|png|webp)$/.test(filename)) {
+    key = "site-media/" + kind + "/" + filename;
   } else if (kind === "group" && /^[a-z0-9-]+\.webp$/.test(filename) && GROUP_IMAGES.has(filename)) {
     key = "site-preview/group/" + filename;
   } else {
@@ -33,7 +35,7 @@ export async function onRequestGet({ params, env }) {
     if (!obj) return new Response("Not found", {status:404});
     return new Response(obj.body, {
       headers: {
-        "Content-Type": kind === "blog" ? (filename.endsWith(".png") ? "image/png" : filename.endsWith(".jpg") ? "image/jpeg" : "image/webp") : "image/webp",
+        "Content-Type": ["blog","product","page","shared"].includes(kind) ? (filename.endsWith(".png") ? "image/png" : filename.endsWith(".jpg") ? "image/jpeg" : "image/webp") : "image/webp",
         "Cache-Control":"public,max-age=3600",
         "X-Content-Type-Options":"nosniff"
       }

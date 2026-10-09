@@ -21,7 +21,7 @@ if BUILD_OUTPUT_DIR not in (".","dist"):
 
 @lru_cache(maxsize=8)
 def read_template(name):
- if name not in {"shell","header","footer","sidebar","home","listing","content","static","product-card","category-card"}:raise ValueError("Unknown site partial")
+ if name not in {"shell","header","footer","sidebar","home","listing","content","static","product-card","category-card","page-intro","catalog-filter","catalog-pagination","faq-list"}:raise ValueError("Unknown site partial")
  return (ROOT/"templates"/"site"/(name+".html")).read_text(encoding="utf-8").rstrip(chr(10))
 
 def render_template(name,**parts):
@@ -268,7 +268,7 @@ def page(title,description,body,canonical=None):
  rail=render_template("sidebar",ICON_FORM=ICONS["form"],ICON_MAIL=ICONS["mail"],ICON_WHATSAPP=ICONS["whatsapp"],ICON_TOP=ICONS["top"])
  return render_template("shell",HEAD=head,HEADER=header(),SIDEBAR=rail,BODY=body,FOOTER=footer())
 def intro(crumb,title,subtitle=""):
- return '<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / '+e(crumb)+'</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+e(title)+'</h1><p>'+e(subtitle)+'</p></div></section>'
+ return render_template("page-intro",CRUMB=e(crumb),TITLE=e(title),SUBTITLE=e(subtitle))
 def category_card(cat):
  n,slug,im,desc=cat
  return render_template("category-card",URL="/collections/"+e(slug)+"/",IMAGE=photo(im,n),TITLE=e(n))
@@ -291,11 +291,13 @@ def product_card(item):
 def product_grid(items):return '<div class="grid grid--4 product-grid">'+''.join(product_card(x) for x in items)+'</div>'
 def filters(with_categories=True):
  options='<option value="">All product categories</option>'+''.join('<option value="'+x[1]+'">'+e(x[0])+'</option>' for x in CAT.values())
- return '<div class="filterbar"><input type="search" data-catalog-query aria-label="Search bottles" placeholder="Search model, capacity or bottle type…">' + ('<select aria-label="Filter category" data-catalog-category>'+options+'</select>' if with_categories else '') +'<span class="filter-count" id="filter-count"></span></div>'
-def pagination():return '<div class="pagination"><button id="page-prev" type="button" aria-label="Previous page">← Prev</button><span id="page-status" aria-live="polite"></span><button id="page-next" type="button" aria-label="Next page">Next →</button></div>'
+ category='<select aria-label="Filter category" data-catalog-category>'+options+'</select>' if with_categories else ""
+ return render_template("catalog-filter",CATEGORY_FILTER=category)
+def pagination():return render_template("catalog-pagination")
 def faq_html(items=None):
  arr=items or FAQS
- return '<div class="faq-list">'+''.join('<details><summary>'+e(q)+'</summary><p>'+e(a)+'</p></details>' for q,a in arr)+'</div>'
+ rows="".join("<details><summary>"+e(q)+"</summary><p>"+e(a)+"</p></details>" for q,a in arr)
+ return render_template("faq-list",CONTENT=rows)
 FAQS=[
 ("Can you customize bottle colors and logos?","We can review logo artwork, colors and packaging for each selected model. Available decoration methods and order requirements are confirmed during quotation."),
 ("What is your MOQ for wholesale orders?","Minimum order quantity depends on bottle model, stock availability and customization. Send us the products and estimated volume to get an accurate answer."),
