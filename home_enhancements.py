@@ -29,13 +29,13 @@ def interactive_bottle_customization():
 
 def dark_buyer_faq():
  qa=[
- ("Which plastics are used in your bottles?","Materials vary by product component. We verify the actual SKU and relevant destination-market requirements before making material or food-contact claims."),
+ ("Which plastics are used in your bottles?","Material options include PC, Tritan, PP and PETG, with BPA-free options available on suitable models. We confirm requirements for each order."),
  ("Do you offer samples before production?","Please give the model, destination and customization needs. We can then discuss sample availability, cost and shipping."),
  ("Can you make a custom bottle design?","We can review artwork, existing designs and the feasibility of new tooling or component changes. Each proposal needs technical confirmation."),
  ("Can I request custom colors or packaging?","Describe your brand colors, logo, labels and packaging. Feasibility depends on the selected model and order."),
  ("How do you handle factory quality checks?","XUYI has its own facility and may coordinate selected partners. We agree project-specific samples, specifications and checkpoints."),
  ]
- form='<div class="inquiry-preview"><span class="eyebrow">SEND YOUR PROJECT DETAILS</span><h2>Tell Us About<br>Your Bottle Project.</h2><div class="inquiry-preview__form"><div class="inquiry-preview__line">Company name</div><div class="inquiry-preview__line">Email address</div><div class="inquiry-preview__line">Bottle model or design</div><div class="inquiry-preview__line">Quantity and customization requirements</div><p>Inquiry submissions are currently disabled on this preview site. Verified contact details and secure delivery are pending.</p><a class="button" href="/contact/#inquiry">Prepare Your Inquiry →</a></div></div>'
+ form='<div class="inquiry-preview"><span class="eyebrow">SEND YOUR PROJECT DETAILS</span><h2>Tell Us About<br>Your Bottle Project.</h2><div class="inquiry-preview__form"><div class="inquiry-preview__line">Company name</div><div class="inquiry-preview__line">Email address</div><div class="inquiry-preview__line">Bottle model or design</div><div class="inquiry-preview__line">Quantity and customization requirements</div><p>Request PC, Tritan, PP, PETG or BPA-free options. Include your model, capacity, destination and quantity.</p><a class="button" href="/contact/#inquiry">Prepare Your Inquiry →</a></div></div>'
  faqs='<div class="dark-faq"><span class="eyebrow">FREQUENTLY ASKED QUESTIONS</span><h2>We’re Here to Answer<br>All Your Questions.</h2>'+''.join('<details><summary>'+e(q)+'</summary><p>'+e(a)+'</p></details>' for q,a in qa)+'<p class="dark-faq__more"><a href="/faq/">See All Questions →</a></p></div>'
  return '<section class="dark-buyer-faq"><div class="shell dark-buyer-faq__grid">'+form+faqs+'</div></section>'
 
@@ -57,22 +57,25 @@ def company_strength_section():
 
 def customer_logo_section():
  import json
- from site_renderer import ROOT,photo,e
- file=ROOT/'data/customer-logos.json'
- entries=json.loads(file.read_text(encoding='utf-8')).get('group_brand_marks',[]) if file.exists() else []
- marks=[]
- for brand in entries:
-  name=brand.get('name','').strip()
-  logo=brand.get('logo_path','')
-  auth=brand.get('authorization','')
-  if not name or not logo.startswith('/assets/customer-logos/') or not auth or not (ROOT/logo.lstrip('/')).is_file():continue
-  marks.append('<div class="client-logo__cell">'+photo(logo,name+' logo shown in the Kreat group website brand carousel','eager')+'</div>')
- if not marks:
-  marks=['<div class="client-logo__cell client-logo__cell--pending">Brand images unavailable</div>']
- first='<div class="client-logo__set">'+''.join(marks)+'</div>'
- second='<div class="client-logo__set" aria-hidden="true">'+''.join(marks)+'</div>'
- html='<section class="client-logo section" id="customer-brands"><div class="shell"><div class="client-logo__heading"><div><span class="eyebrow">GROUP WEBSITE BRAND REFERENCES</span><h2>Brands &amp; Customers<span class="client-logo__red">.</span></h2></div><p>Brand marks presented in the Kreat group website carousel, displayed here with the original imagery and colors.</p></div><div class="client-logo__viewport" aria-label="Group website brand carousel"><div class="client-logo__track">'+first+second+'</div></div><p class="client-logo__note">Source: <a href="https://kreat.com/" target="_blank" rel="noopener noreferrer">Kreat group website</a>. Logos reproduce the group-site display, not evidence of a separate direct customer or endorsement relationship with XUYI.</p></div></section>'
- return html
+ from site_renderer import ROOT, photo, e
+ media = ROOT / "data/customer-logos.json"
+ entries = json.loads(media.read_text(encoding="utf-8")).get("group_brand_marks", []) if media.exists() else []
+ marks = []
+ for entry in entries:
+  name = str(entry.get("name") or "").strip()
+  src = str(entry.get("logo_path") or "")
+  if not name or not src.startswith("/assets/customer-logos/") or not (ROOT / src.lstrip("/")).is_file():
+   continue
+  marks.append('<div class="client-logo__cell">'+photo(src, name+' brand logo', 'lazy')+'</div>')
+ if len(marks) != 6:
+  return ""  # Never show an incomplete or placeholder client-brand carousel.
+ first = '<div class="client-logo__set">' + ''.join(marks) + '</div>'
+ second = '<div class="client-logo__set" aria-hidden="true">' + ''.join(marks) + '</div>'
+ return ('<section class="client-logo section" id="customer-brands"><div class="shell">'
+         '<div class="client-logo__heading"><div><span class="eyebrow">BRANDS &amp; CUSTOMERS</span>'
+         '<h2>Brands &amp; Customers<span class="client-logo__red">.</span></h2></div></div>'
+         '<div class="client-logo__viewport" aria-label="Brands and customers image carousel">'
+         '<div class="client-logo__track">'+first+second+'</div></div></div></section>')
 
 
 def target_why_choose():
@@ -92,8 +95,8 @@ def target_production_capacity():
  # and manufacturing presentation on right. Do not invent numerical factory output.
  return """<section class="target-capacity" id="manufacturing-capability"><div class="shell target-capacity__layout">
  <div class="target-capacity__visual">
-  <div class="target-capacity__media"><img src="/media/ppt/slide-049.webp" loading="lazy" alt="XUYI catalog plastic drinkware models">
-  <span>ORIGINAL PRODUCT CATALOG IMAGE · NOT FACTORY FOOTAGE</span></div>
+  <div class="target-capacity__media"><img src="/media/group/factory-bottle-packing.webp" loading="lazy" alt="Production team preparing packing crates for drinkware orders">
+  <span>PRODUCTION &amp; PACKING</span></div>
   <a href="/manufacturing/" class="target-capacity__media-link">Explore manufacturing process →</a>
  </div>
  <div class="target-capacity__copy">
@@ -105,5 +108,5 @@ def target_production_capacity():
    <article><strong>Quality Checks</strong><span>Agreed for each order</span></article>
    <article><strong>Shipment</strong><span>Packing and logistics coordination</span></article>
   </div>
-  <p class="target-capacity__note">Equipment counts, capacity, factory photos and certificates will be added only after document verification.</p>
+  <p class="target-capacity__note">Manufacturing routes, equipment and available capacity are confirmed for each product and order.</p>
  </div></div></section>"""

@@ -1,0 +1,132 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><title>XUYI Bottles · 无服务器网站后台</title>
+<link rel="stylesheet" href="/assets/admin-console.css"><link rel="stylesheet" href="/assets/xuyi-admin-bridge.css"></head><body>
+<div id="admin-lock" class="lock-shell"><form id="token-form" class="lock-card">
+<div class="brand-line">XUYI BOTTLES · INTERNAL</div><h1>无服务器网站后台</h1><p>请输入旭一网站的后台密码或恢复密钥。</p>
+<input id="token-input" type="password" autocomplete="current-password" placeholder="后台密码" required>
+<button type="submit" class="btn primary">进入后台</button><p id="lock-error" class="error" role="alert"></p>
+</form></div>
+<div id="admin-app" class="app hidden"><header class="topbar"><div><div class="brand-line">XUYI · CLOUDFLARE D1</div><h1>网站后台管理</h1></div>
+<div class="top-actions"><span class="pill">D1 网站设置</span><a href="/" class="btn ghost" target="_blank" rel="noopener">网站首页 ↗</a>
+<button id="refresh-btn" class="btn ghost">刷新</button><button id="logout-btn" class="btn ghost">退出</button></div></header>
+<div class="admin-layout"><aside class="admin-sidebar"><div class="admin-sidebar-head"><span class="eyebrow">MANAGEMENT</span><strong>管理模块</strong></div><nav class="admin-module-nav">
+<button type="button" class="admin-module-btn active" data-admin-target="leads">01 询盘客户</button>
+<button type="button" class="admin-module-btn" data-admin-target="settings">02 联系人与邮箱</button>
+<button type="button" class="admin-module-btn" data-admin-target="languages">03 多语言</button>
+<button type="button" class="admin-module-btn" data-admin-target="advanced">04 翻译工作流</button>
+<button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
+<p class="admin-sidebar-info">技术模块采用 Demalong 已有实现，数据与密钥属于旭一网站。</p></aside><main class="shell admin-main">
+<section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
+      <section class="panel form-admin-panel" data-admin-module="leads">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">LEADS · D1</div>
+            <h2>网站询盘</h2>
+            <p>全站表单提交会先保存到 D1，再尝试发送 SMTP 通知。邮件发送失败不会丢失询盘。</p>
+          </div>
+          <div class="filters">
+            <input id="form-search" placeholder="搜索姓名 / 邮箱 / 公司 / 型号" />
+            <select id="form-status-filter">
+              <option value="">全部状态</option>
+              <option value="new">New</option>
+              <option value="read">Read</option>
+              <option value="replied">Replied</option>
+              <option value="spam">Spam</option>
+            </select>
+            <button id="forms-refresh" class="btn ghost">刷新询盘</button>
+          </div>
+        </div>
+        <div id="form-stats" class="lead-stats"></div>
+        <div class="table-wrap">
+          <table class="lead-table">
+            <thead><tr><th>时间</th><th>客户</th><th>型号 / 品牌</th><th>询盘</th><th>状态</th><th>邮件</th><th></th></tr></thead>
+            <tbody id="forms-body"></tbody>
+          </table>
+        </div>
+        <div id="forms-status" class="muted"></div>
+      </section>
+
+      <section class="panel smtp-panel" data-admin-module="settings">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">SMTP · NOTIFICATION</div>
+            <h2>SMTP 邮件通知</h2>
+            <p>密码加密保存到 D1；加密主密钥仅保存在 Cloudflare Secret。端口 25 不可用，建议 SSL 465 或 STARTTLS 587。</p>
+          </div>
+          <span id="smtp-state-badge" class="safe-badge">正在读取…</span>
+        </div>
+        <div class="smtp-grid">
+          <label class="smtp-enabled"><input id="smtp-enabled" type="checkbox"> 启用 SMTP 通知</label>
+          <label>SMTP Host<input id="smtp-host" placeholder="smtp.example.com"></label>
+          <label>端口<input id="smtp-port" type="number" min="1" max="65535" value="465"></label>
+          <label>安全方式<select id="smtp-security"><option value="ssl">SSL / TLS (465)</option><option value="starttls">STARTTLS (587)</option><option value="none">None</option></select></label>
+          <label>用户名<input id="smtp-username" autocomplete="off"></label>
+          <label>密码<input id="smtp-password" type="password" autocomplete="new-password" placeholder="留空 = 不修改已保存密码"></label>
+          <label>发件人名称<input id="smtp-from-name" value="XUYI Bottles Website"></label>
+          <label>发件人邮箱<input id="smtp-from-email" type="email" placeholder="Janey@xuyibottles.com"></label>
+          <label class="wide">通知收件人<input id="smtp-to-emails" placeholder="sales@example.com, another@example.com"></label>
+          <label>Reply-To<select id="smtp-reply-to"><option value="visitor">客户邮箱（推荐）</option><option value="from">发件人邮箱</option></select></label>
+          <label class="wide">邮件标题模板<input id="smtp-subject" value="Website inquiry: {{reference}} {{name}}"><span class="muted">支持 {{reference}} {{brand}} {{name}} {{email}} {{page}}</span></label>
+        </div>
+        <div class="row-actions">
+          <button id="smtp-save" class="btn primary">保存 SMTP</button>
+          <button id="smtp-test" class="btn ghost">发送测试邮件</button>
+          <span id="smtp-status" class="muted"></span>
+        </div>
+      </section>
+
+      <section class="panel admin-security-panel" data-admin-module="settings">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">ADMIN SECURITY</div>
+            <h2>后台登录密码</h2>
+            <p>登录密码使用 PBKDF2-SHA256 哈希保存到 D1；恢复密钥仍只保存在 Cloudflare Secret。后台路径修改后会自动排队重建，旧路径将在新版本上线后失效。</p>
+          </div>
+          <span id="admin-security-badge" class="safe-badge">正在读取…</span>
+        </div>
+        <div class="security-grid">
+          <div class="security-box" hidden aria-hidden="true">
+            <h3>后台入口</h3>
+            <label>路径
+              <div class="path-input"><span>/</span><input id="admin-path-input" type="text" maxlength="48" placeholder="admin" /><span>/</span></div>
+            </label>
+            <p class="muted">仅支持小写字母、数字和连字符。入口隐藏只是减少扫描，不替代密码保护。</p>
+            <div class="row-actions"><button id="save-admin-path" class="btn primary">保存路径并排队发布</button><span id="admin-path-status" class="muted"></span></div>
+          </div>
+          <div class="security-box">
+            <h3>后台登录密码</h3>
+            <label>新密码<input id="admin-password-new" type="password" minlength="10" maxlength="128" autocomplete="new-password" placeholder="至少 10 位，建议 12 位以上" /></label>
+            <label>确认密码<input id="admin-password-confirm" type="password" minlength="10" maxlength="128" autocomplete="new-password" /></label>
+            <p class="muted">修改密码后，之前用旧密码登录的会话立即失效；Cloudflare Secret 中的恢复密钥不变。</p>
+            <div class="row-actions"><button id="save-admin-password" class="btn primary">设置 / 修改密码</button><span id="admin-password-status" class="muted"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="language-settings-panel" data-admin-module="languages">
+        <div class="panel-head"><div><div class="eyebrow">LANGUAGES · D1 SOURCE OF TRUTH</div><h2>语种管理</h2><p>选择启用语种、默认语种、源语言，也可以新增自定义 BCP47 语言。只有同时勾选“可发布”的语种才会生成前台目录、hreflang 和 Sitemap。</p></div><span class="safe-badge">Online First</span></div>
+        <div class="row-actions"><button id="add-language" class="btn ghost">+ 新增语种</button><button id="save-languages" class="btn primary">保存语种并排队发布</button><button id="reload-site-settings" class="btn ghost">重新读取线上</button><span id="language-settings-status" class="muted"></span></div>
+        <div class="table-wrap"><table class="pages-table language-table"><thead><tr><th>代码</th><th>显示名称</th><th>本地名称</th><th>URL 前缀</th><th>排序</th><th>默认</th><th>源语言</th><th>启用</th><th>可发布</th><th></th></tr></thead><tbody id="language-config-body"></tbody></table></div>
+        <details class="advanced-config"><summary>自定义语言 UI 文案（高级）</summary><p class="muted">新增语言可以先“启用”但不勾“可发布”。每个语言可配置 UI JSON：renderer、phrases、formMessages；翻译内容审核完整后再设为可发布。</p><div id="language-ui-editors"></div></details>
+      </section>
+
+      <section class="panel" id="external-contacts-panel" data-admin-module="settings">
+        <div class="panel-head"><div><div class="eyebrow">PUBLIC SALES CONTACTS</div><h2>对外联系人 / 业务员</h2><p>支持多个业务联系人，可按当前页面语种/地区匹配。找不到匹配时回退默认联系人；前台联系方式会显示联系人，询盘入库会记录分配结果。</p></div><span class="safe-badge">D1 → Frontend + Inquiry</span></div>
+        <div class="row-actions"><button id="add-contact" class="btn ghost">+ 新增联系人</button><button id="save-contacts" class="btn primary">保存联系人并排队发布</button><span id="contact-settings-status" class="muted"></span></div>
+        <div class="table-wrap"><table class="pages-table contact-table"><thead><tr><th>姓名 / 职位</th><th>Email</th><th>电话 / WhatsApp</th><th>语种</th><th>地区</th><th>头像</th><th>排序</th><th>默认</th><th>启用</th><th></th></tr></thead><tbody id="contact-config-body"></tbody></table></div>
+      </section>
+
+      <section class="panel" id="translation-workflow-panel" data-admin-module="advanced">
+        <div class="panel-head"><div><div class="eyebrow">TRANSLATION WORKFLOW</div><h2>自动翻译与审核</h2><p>源语言内容修改后生成翻译任务。默认 Manual + 人工审核，不产生 API 费用；Google / DeepL / OpenAI-Compatible 的密钥只放 Cloudflare Pages Secret，不写入 D1。</p></div><span class="safe-badge">Queue → Translate → Review → Publish</span></div>
+        <div class="grid"><label>Provider<select id="translation-provider"><option value="manual">Manual（手工翻译）</option><option value="google-cloud-translation">Google Cloud Translation</option><option value="deepl">DeepL</option><option value="openai-compatible">OpenAI-Compatible</option></select></label><label>源语言<select id="translation-source-locale"></select></label><label>Model（OpenAI-Compatible）<input id="translation-model" type="text" placeholder="例如 gpt-4.1-mini" /></label><label>Endpoint（DeepL/OpenAI-Compatible）<input id="translation-endpoint" type="url" placeholder="https://..." /></label></div>
+        <div class="row-actions"><label><input id="translation-auto-queue" type="checkbox" /> 源内容修改后自动排队</label><label><input id="translation-auto-run" type="checkbox" /> 自动调用机翻（配置 Secret 后）</label><label><input id="translation-review" type="checkbox" checked /> 发布前必须人工审核</label><button id="save-translation-settings" class="btn primary">保存翻译设置</button><span id="translation-settings-status" class="muted"></span></div>
+        <p id="translation-secret-status" class="muted"></p>
+        <div class="row-actions"><input id="translation-model-id" type="text" placeholder="产品型号，例如 2501" /><button id="enqueue-translation-model" class="btn ghost">生成/刷新翻译任务</button><button id="reload-translations" class="btn ghost">刷新任务</button></div>
+        <div id="translation-jobs" class="batches"></div>
+      </section>
+
+</main></div></div>
+<script src="/assets/xuyi-admin-bridge.js" defer></script>
+<script src="/assets/admin-forms.js" defer></script>
+<script src="/assets/admin-site-settings.js" defer></script>
+</body></html>

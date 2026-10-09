@@ -1,0 +1,9 @@
+/* Styling adapter; core layout/styles come from Demalong admin-console.css. */
+[hidden]{display:none!important}
+.admin-sidebar-info{font-size:12px;line-height:1.65;color:#aebacc;padding:16px 14px}
+.admin-module-nav button{display:block}
+.admin-main .panel{margin-bottom:20px}
+.admin-main{min-width:0}
+.panel .table-wrap{overflow-x:auto}
+#admin-app .module-heading{margin-bottom:24px}
+@media(max-width:850px){.admin-sidebar-info{display:none}}

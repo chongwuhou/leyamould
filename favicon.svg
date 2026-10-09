@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="XUYI"><rect width="64" height="64" rx="14" fill="#F31927"/><path d="M15 13H27L49 51H37L15 13Z" fill="#FFFFFF"/><path d="M37 13H49L27 51H15L37 13Z" fill="#FFFFFF"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="XY - XUYI Bottles">
+<rect width="64" height="64" rx="14" fill="#F31927"/>
+<g fill="none" stroke="#fff" stroke-width="7.2" stroke-linecap="square" stroke-linejoin="round">
+<path d="M13 20 L29 44 M29 20 L13 44"/>
+<path d="M36 20 L45 32 L54 20 M45 32 V44"/>
+</g></svg>

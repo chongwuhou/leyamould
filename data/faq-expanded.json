@@ -43,7 +43,7 @@
         ],
         [
           "Do you list prices or accept retail checkout orders?",
-          "This is a B2B inquiry website, not a retail shopping cart. Quotations need an identifiable SKU, confirmed order volume, branding choices and shipping terms. The current preview inquiry form is not yet enabled.",
+          "This is a B2B inquiry website, not a retail shopping cart. Quotations need an identifiable SKU, confirmed order volume, branding choices and shipping terms. Submit a model-specific enquiry using our contact form, email or WhatsApp.",
           "/contact/"
         ]
       ]
@@ -321,7 +321,7 @@
         ],
         [
           "Is this website able to receive a live inquiry right now?",
-          "The current site is an internal preview. The contact form is intentionally disabled until XUYI's approved business inbox, privacy terms and secure delivery process have been connected and tested.",
+          "Send your wholesale or OEM enquiry using the contact form. If it is temporarily unavailable, use email or WhatsApp.",
           "/contact/"
         ]
       ]

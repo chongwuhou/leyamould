@@ -47,11 +47,11 @@ def schema_enhance(html, data):
  path='/'+data["slug"]+'/'
  url=BASE+path
  entity={"@context":"https://schema.org","@graph":[
-  {"@type":"Organization","@id":BASE+"/#organization","name":"台州市旭一家居用品有限公司","alternateName":"XUYI Drinkware","url":BASE+"/","address":{"@type":"PostalAddress","addressLocality":"Taizhou","addressRegion":"Zhejiang","addressCountry":"CN"}},
-  {"@type":"WebPage","@id":url+"#webpage","url":url,"name":data["seo_title"],"description":data["description"],"inLanguage":"en","about":{"@id":BASE+"/#organization"},"isPartOf":{"@type":"WebSite","name":"XUYI Drinkware","url":BASE+"/"}},
+  {"@type":"Organization","@id":BASE+"/#organization","name":"台州市旭一家居用品有限公司","alternateName":"XUYI Bottles","url":BASE+"/","address":{"@type":"PostalAddress","addressLocality":"Taizhou","addressRegion":"Zhejiang","addressCountry":"CN"}},
+  {"@type":"WebPage","@id":url+"#webpage","url":url,"name":data["seo_title"],"description":data["description"],"inLanguage":"en","about":{"@id":BASE+"/#organization"},"isPartOf":{"@type":"WebSite","name":"XUYI Bottles","url":BASE+"/"}},
   {"@type":"BreadcrumbList","@id":url+"#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":BASE+"/"},{"@type":"ListItem","position":2,"name":"Why Us","item":BASE+"/why-us/"},{"@type":"ListItem","position":3,"name":data["short"],"item":url}]},
   {"@type":"FAQPage","@id":url+"#faq","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in data["faqs"]]}
  ]}
  script='<script type="application/ld+json">'+json.dumps(entity,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c')+'</script>'
- extras='<link rel="stylesheet" href="/assets/why-us-v2.css"><meta name="author" content="XUYI Drinkware"><meta property="og:type" content="website"><meta property="og:title" content="'+e(data["seo_title"])+'"><meta property="og:description" content="'+e(data["description"])+'"><meta property="og:url" content="'+e(url)+'">'+script
+ extras='<link rel="stylesheet" href="/assets/why-us-v2.css"><meta name="author" content="XUYI Bottles"><meta property="og:type" content="website"><meta property="og:title" content="'+e(data["seo_title"])+'"><meta property="og:description" content="'+e(data["description"])+'"><meta property="og:url" content="'+e(url)+'">'+script
  return html.replace('</head>',extras+'</head>',1)

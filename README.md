@@ -3,7 +3,7 @@
 Production branch: main; Cloudflare Pages: xuyi-drinkware-site; GitHub: chongwuhou/xuyi-drinkware-site.
 
 ## Scope
-Kreat-inspired original navigation and UI system: homepage; 4 product categories; 79 model pages; 7 capabilities subpages; About; Manufacturing; Quality Control; Shipping; FAQ; Blog; 6 buying guides; Contact; Privacy Policy and 404. All photos are from XUYI source catalogs.
+Kreat-inspired original navigation and UI system: homepage; 4 product categories; 79 model pages; 7 capabilities subpages; About; Manufacturing; Quality Control; Shipping; FAQ; Blog; 6 buying guides; Contact; Privacy Policy and 404. Product photos are from XUYI catalogs. Relevant group-owned unwatermarked factory, QA, packing and logistics images are reused under owner-confirmed permission (docs/GROUP_MEDIA_USAGE.md).
 
 ## Technology
 - GitHub -> Cloudflare Pages: static HTML/CSS/JS.

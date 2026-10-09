@@ -1,1 +1,1 @@
-Place only customer-provided logos with confirmed customer relationship and permission to publish here. Do not copy logos from other websites or claim unauthorized partnerships. Add authorized image paths to data/customer-logos.json and rebuild.\n
+Group website logo assets are provided for use on the XUYI Bottles website by the same group owner. These six marks originate from the group customer/brand display. Keep source URLs in the internal JSON for provenance, not in public pages. Do not present logos as individually endorsed XUYI-direct relationships without evidence.

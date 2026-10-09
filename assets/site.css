@@ -603,3 +603,5 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
 .hero__controls-label{color:#6b6f73;font-size:9px;letter-spacing:.13em;font-weight:900;margin-right:4px}
 .hero__controls-total{font-size:12px;color:#37383b}
 @media(max-width:750px){.hero__controls{right:12px;bottom:12px;padding:7px 10px}}
+
+@media(prefers-reduced-motion:reduce){.client-logo__track{animation:none;transform:none;flex-wrap:wrap;width:100%;justify-content:center}.client-logo__set:last-child{display:none}.client-logo__set{flex-wrap:wrap;justify-content:center}}

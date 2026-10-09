@@ -41,6 +41,29 @@ if(configButtons.length){
 }
 
 const model=document.getElementById('inquiry-model');if(model){model.value=new URLSearchParams(location.search).get('model')||'';}const inquiryType=new URLSearchParams(location.search).get('type');if(inquiryType){const choices=document.querySelector('#inquiry select[name="type"]');if(choices){const target=/sample/i.test(inquiryType)?'Samples':/logo|graphic|brand/i.test(inquiryType)?'Custom Logo / Branding':/oem|molding|manufacturing/i.test(inquiryType)?'OEM / ODM':'Wholesale Quote';[...choices.options].forEach(o=>{if(o.text===target)choices.value=o.value})}}
+// Store public inquiries in XUYI D1 before reporting success.
+const inquiryForm=document.getElementById('inquiry');
+if(inquiryForm){inquiryForm.addEventListener('submit',async event=>{
+ event.preventDefault();
+ const button=inquiryForm.querySelector('button[type="submit"]');
+ const status=document.getElementById('inquiry-status');
+ if(button.disabled)return;
+ const fields=new FormData(inquiryForm);
+ if(!fields.get('consent')){status.textContent='Please accept the privacy policy.';return;}
+ button.disabled=true;status.textContent='Submitting your enquiry…';
+ try{
+  const payload={source:'xuyi-contact-form',pageUrl:location.href,locale:document.documentElement.lang||'en',
+   region:fields.get('country')||'',company:fields.get('company')||'',email:fields.get('email')||'',
+   reference:fields.get('model')||'',requirements:fields.get('requirements')||'',
+   website:fields.get('website')||'',fields:{material:fields.get('material')||'',quantity:fields.get('quantity')||'',inquiry_type:fields.get('type')||''}};
+  const response=await fetch('/api/form-submit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!result.saved)throw Error(result.error||'The enquiry could not be received. Please use our email or WhatsApp contact instead.');
+  status.textContent='Thank you. Your enquiry has been received.';
+  inquiryForm.reset();
+ }catch(error){status.textContent=error.message||'The request could not be sent.'}
+ finally{button.disabled=false}
+})}
 const q=document.querySelector('[data-catalog-query]');if(q){const searchVal=new URLSearchParams(location.search).get('q');if(searchVal)q.value=searchVal.slice(0,120)}const category=document.querySelector('[data-catalog-category]');const count=document.getElementById('filter-count');const cards=[...document.querySelectorAll('[data-product-card]')];let visible=0;const perPage=18;let page=1;
 const pageStatus=document.getElementById('page-status'),prev=document.getElementById('page-prev'),next=document.getElementById('page-next');
 function render(){const query=(q?.value||'').toLowerCase().trim();const cat=category?.value||'';const matching=cards.filter(c=>(!cat||c.dataset.category===cat)&&(!query||(c.dataset.search||'').includes(query)));const totalPages=Math.max(1,Math.ceil(matching.length/perPage));page=Math.min(page,totalPages);cards.forEach(c=>{c.hidden=true});matching.slice((page-1)*perPage,page*perPage).forEach(c=>{c.hidden=false});if(count)count.textContent=matching.length+' models';if(pageStatus)pageStatus.textContent=page+' / '+totalPages;if(prev)prev.disabled=page<=1;if(next)next.disabled=page>=totalPages;}

@@ -1,0 +1,686 @@
+{
+  "20": {
+    "row": 20,
+    "sku": "2513",
+    "name_zh": "2402运动水杯随手杯",
+    "path": "/assets/catalog/excel/row-020.webp",
+    "width": 980,
+    "height": 836,
+    "original_target": "xl/media/image1.jpeg"
+  },
+  "47": {
+    "row": 47,
+    "sku": "2410",
+    "name_zh": "本本熊儿童带水杯",
+    "path": "/assets/catalog/excel/row-047.webp",
+    "width": 630,
+    "height": 314,
+    "original_target": "xl/media/image2.png"
+  },
+  "3": {
+    "row": 3,
+    "sku": "2501",
+    "name_zh": "透明运动水杯",
+    "path": "/assets/catalog/excel/row-003.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image3.jpeg"
+  },
+  "4": {
+    "row": 4,
+    "sku": "2502",
+    "name_zh": "透明运动水杯",
+    "path": "/assets/catalog/excel/row-004.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image3.jpeg"
+  },
+  "5": {
+    "row": 5,
+    "sku": "2505",
+    "name_zh": "提手运动水杯",
+    "path": "/assets/catalog/excel/row-005.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image4.jpeg"
+  },
+  "6": {
+    "row": 6,
+    "sku": "2506",
+    "name_zh": "提手运动水杯",
+    "path": "/assets/catalog/excel/row-006.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image4.jpeg"
+  },
+  "7": {
+    "row": 7,
+    "sku": "2507",
+    "name_zh": "提手运动水杯",
+    "path": "/assets/catalog/excel/row-007.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image4.jpeg"
+  },
+  "8": {
+    "row": 8,
+    "sku": "2508",
+    "name_zh": "儿童吸管杯",
+    "path": "/assets/catalog/excel/row-008.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image5.jpeg"
+  },
+  "9": {
+    "row": 9,
+    "sku": "2509",
+    "name_zh": "儿童吸管杯",
+    "path": "/assets/catalog/excel/row-009.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image6.jpeg"
+  },
+  "10": {
+    "row": 10,
+    "sku": "2511",
+    "name_zh": "渐变直饮杯",
+    "path": "/assets/catalog/excel/row-010.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image7.jpeg"
+  },
+  "11": {
+    "row": 11,
+    "sku": "2512",
+    "name_zh": "渐变直饮杯",
+    "path": "/assets/catalog/excel/row-011.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image7.jpeg"
+  },
+  "12": {
+    "row": 12,
+    "sku": "2513",
+    "name_zh": "渐变运动水杯",
+    "path": "/assets/catalog/excel/row-012.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image8.jpeg"
+  },
+  "13": {
+    "row": 13,
+    "sku": "2514",
+    "name_zh": "渐变运动水杯",
+    "path": "/assets/catalog/excel/row-013.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image8.jpeg"
+  },
+  "14": {
+    "row": 14,
+    "sku": "2515",
+    "name_zh": "渐变运动水杯",
+    "path": "/assets/catalog/excel/row-014.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image9.jpeg"
+  },
+  "15": {
+    "row": 15,
+    "sku": "2516",
+    "name_zh": "渐变运动水杯",
+    "path": "/assets/catalog/excel/row-015.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image9.jpeg"
+  },
+  "16": {
+    "row": 16,
+    "sku": "2517",
+    "name_zh": "渐变运动水杯",
+    "path": "/assets/catalog/excel/row-016.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image9.jpeg"
+  },
+  "17": {
+    "row": 17,
+    "sku": "2470",
+    "name_zh": "方形塑料杯",
+    "path": "/assets/catalog/excel/row-017.webp",
+    "width": 980,
+    "height": 626,
+    "original_target": "xl/media/image10.jpeg"
+  },
+  "18": {
+    "row": 18,
+    "sku": "2400透明款",
+    "name_zh": "2400运动水杯随手杯",
+    "path": "/assets/catalog/excel/row-018.webp",
+    "width": 800,
+    "height": 699,
+    "original_target": "xl/media/image11.jpeg"
+  },
+  "19": {
+    "row": 19,
+    "sku": "2401透明款",
+    "name_zh": "2401运动水杯随手杯",
+    "path": "/assets/catalog/excel/row-019.webp",
+    "width": 800,
+    "height": 699,
+    "original_target": "xl/media/image11.jpeg"
+  },
+  "21": {
+    "row": 21,
+    "sku": "2290",
+    "name_zh": "2290透明款",
+    "path": "/assets/catalog/excel/row-021.webp",
+    "width": 744,
+    "height": 685,
+    "original_target": "xl/media/image12.png"
+  },
+  "22": {
+    "row": 22,
+    "sku": "2280",
+    "name_zh": "2280直饮款",
+    "path": "/assets/catalog/excel/row-022.webp",
+    "width": 215,
+    "height": 195,
+    "original_target": "xl/media/image13.png"
+  },
+  "23": {
+    "row": 23,
+    "sku": "2290",
+    "name_zh": "2290吸嘴款",
+    "path": "/assets/catalog/excel/row-023.webp",
+    "width": 915,
+    "height": 645,
+    "original_target": "xl/media/image14.png"
+  },
+  "24": {
+    "row": 24,
+    "sku": "2281",
+    "name_zh": "2281直饮款",
+    "path": "/assets/catalog/excel/row-024.webp",
+    "width": 215,
+    "height": 195,
+    "original_target": "xl/media/image13.png"
+  },
+  "25": {
+    "row": 25,
+    "sku": "2291",
+    "name_zh": "2291吸嘴款",
+    "path": "/assets/catalog/excel/row-025.webp",
+    "width": 915,
+    "height": 645,
+    "original_target": "xl/media/image14.png"
+  },
+  "26": {
+    "row": 26,
+    "sku": "2292",
+    "name_zh": "2292吸嘴款",
+    "path": "/assets/catalog/excel/row-026.webp",
+    "width": 915,
+    "height": 645,
+    "original_target": "xl/media/image14.png"
+  },
+  "27": {
+    "row": 27,
+    "sku": "2282",
+    "name_zh": "2282直饮款",
+    "path": "/assets/catalog/excel/row-027.webp",
+    "width": 215,
+    "height": 195,
+    "original_target": "xl/media/image13.png"
+  },
+  "28": {
+    "row": 28,
+    "sku": "2212",
+    "name_zh": "2212渐变款 运动水杯",
+    "path": "/assets/catalog/excel/row-028.webp",
+    "width": 822,
+    "height": 647,
+    "original_target": "xl/media/image15.png"
+  },
+  "29": {
+    "row": 29,
+    "sku": "2209",
+    "name_zh": "2209运动水杯",
+    "path": "/assets/catalog/excel/row-029.webp",
+    "width": 559,
+    "height": 367,
+    "original_target": "xl/media/image16.png"
+  },
+  "30": {
+    "row": 30,
+    "sku": "2215",
+    "name_zh": "2215运动水杯",
+    "path": "/assets/catalog/excel/row-030.webp",
+    "width": 737,
+    "height": 494,
+    "original_target": "xl/media/image17.png"
+  },
+  "31": {
+    "row": 31,
+    "sku": "2250",
+    "name_zh": "2250握手水杯",
+    "path": "/assets/catalog/excel/row-031.webp",
+    "width": 896,
+    "height": 766,
+    "original_target": "xl/media/image18.png"
+  },
+  "32": {
+    "row": 32,
+    "sku": "2270",
+    "name_zh": "2270极酷方形渐变款",
+    "path": "/assets/catalog/excel/row-032.webp",
+    "width": 886,
+    "height": 775,
+    "original_target": "xl/media/image19.png"
+  },
+  "33": {
+    "row": 33,
+    "sku": "2270",
+    "name_zh": "2270极酷方形透明款",
+    "path": "/assets/catalog/excel/row-033.webp",
+    "width": 916,
+    "height": 642,
+    "original_target": "xl/media/image20.png"
+  },
+  "34": {
+    "row": 34,
+    "sku": "2271",
+    "name_zh": "2271极酷方形渐变吨吨桶",
+    "path": "/assets/catalog/excel/row-034.webp",
+    "width": 886,
+    "height": 775,
+    "original_target": "xl/media/image19.png"
+  },
+  "35": {
+    "row": 35,
+    "sku": "2271",
+    "name_zh": "2271透明",
+    "path": "/assets/catalog/excel/row-035.webp",
+    "width": 916,
+    "height": 642,
+    "original_target": "xl/media/image20.png"
+  },
+  "36": {
+    "row": 36,
+    "sku": "2400",
+    "name_zh": "2400运动水杯随手杯",
+    "path": "/assets/catalog/excel/row-036.webp",
+    "width": 875,
+    "height": 522,
+    "original_target": "xl/media/image21.png"
+  },
+  "37": {
+    "row": 37,
+    "sku": "2401",
+    "name_zh": "2401运动水杯随手杯",
+    "path": "/assets/catalog/excel/row-037.webp",
+    "width": 875,
+    "height": 522,
+    "original_target": "xl/media/image21.png"
+  },
+  "38": {
+    "row": 38,
+    "sku": "2402",
+    "name_zh": "2402运动水杯随手杯",
+    "path": "/assets/catalog/excel/row-038.webp",
+    "width": 875,
+    "height": 522,
+    "original_target": "xl/media/image21.png"
+  },
+  "39": {
+    "row": 39,
+    "sku": "2403",
+    "name_zh": "2403运动水杯随手杯",
+    "path": "/assets/catalog/excel/row-039.webp",
+    "width": 875,
+    "height": 522,
+    "original_target": "xl/media/image21.png"
+  },
+  "40": {
+    "row": 40,
+    "sku": "2407",
+    "name_zh": "2407圆形款",
+    "path": "/assets/catalog/excel/row-040.webp",
+    "width": 259,
+    "height": 150,
+    "original_target": "xl/media/image22.png"
+  },
+  "41": {
+    "row": 41,
+    "sku": "2406",
+    "name_zh": "2406方形款",
+    "path": "/assets/catalog/excel/row-041.webp",
+    "width": 871,
+    "height": 504,
+    "original_target": "xl/media/image23.png"
+  },
+  "42": {
+    "row": 42,
+    "sku": "2106",
+    "name_zh": "2106兔兔儿童背带吸管杯",
+    "path": "/assets/catalog/excel/row-042.webp",
+    "width": 395,
+    "height": 381,
+    "original_target": "xl/media/image24.png"
+  },
+  "43": {
+    "row": 43,
+    "sku": "2108",
+    "name_zh": "嘟嘟卡通儿童吸管杯",
+    "path": "/assets/catalog/excel/row-043.webp",
+    "width": 456,
+    "height": 507,
+    "original_target": "xl/media/image25.png"
+  },
+  "44": {
+    "row": 44,
+    "sku": "2109",
+    "name_zh": "嘟嘟卡通儿童吸管杯背带款",
+    "path": "/assets/catalog/excel/row-044.webp",
+    "width": 625,
+    "height": 634,
+    "original_target": "xl/media/image26.png"
+  },
+  "45": {
+    "row": 45,
+    "sku": "2409",
+    "name_zh": "兔兔直立款儿童背带水杯",
+    "path": "/assets/catalog/excel/row-045.webp",
+    "width": 231,
+    "height": 135,
+    "original_target": "xl/media/image27.png"
+  },
+  "46": {
+    "row": 46,
+    "sku": "2413",
+    "name_zh": "萌萌兔儿童背带水杯",
+    "path": "/assets/catalog/excel/row-046.webp",
+    "width": 300,
+    "height": 331,
+    "original_target": "xl/media/image28.png"
+  },
+  "48": {
+    "row": 48,
+    "sku": "2319",
+    "name_zh": "卡通儿童背带水杯",
+    "path": "/assets/catalog/excel/row-048.webp",
+    "width": 656,
+    "height": 466,
+    "original_target": "xl/media/image29.png"
+  },
+  "49": {
+    "row": 49,
+    "sku": "2350",
+    "name_zh": "卡通儿童背带水杯",
+    "path": "/assets/catalog/excel/row-049.webp",
+    "width": 602,
+    "height": 337,
+    "original_target": "xl/media/image30.png"
+  },
+  "50": {
+    "row": 50,
+    "sku": "2405",
+    "name_zh": "新运动水杯",
+    "path": "/assets/catalog/excel/row-050.webp",
+    "width": 345,
+    "height": 199,
+    "original_target": "xl/media/image31.png"
+  },
+  "51": {
+    "row": 51,
+    "sku": "2408",
+    "name_zh": "哈里兔",
+    "path": "/assets/catalog/excel/row-051.webp",
+    "width": 980,
+    "height": 375,
+    "original_target": "xl/media/image32.png"
+  },
+  "52": {
+    "row": 52,
+    "sku": "2309",
+    "name_zh": "乐酷运动杯",
+    "path": "/assets/catalog/excel/row-052.webp",
+    "width": 305,
+    "height": 240,
+    "original_target": "xl/media/image33.png"
+  },
+  "53": {
+    "row": 53,
+    "sku": "2310",
+    "name_zh": "乐酷运动杯",
+    "path": "/assets/catalog/excel/row-053.webp",
+    "width": 305,
+    "height": 240,
+    "original_target": "xl/media/image33.png"
+  },
+  "54": {
+    "row": 54,
+    "sku": "2305",
+    "name_zh": "乐酷运动吨吨桶",
+    "path": "/assets/catalog/excel/row-054.webp",
+    "width": 451,
+    "height": 367,
+    "original_target": "xl/media/image34.png"
+  },
+  "55": {
+    "row": 55,
+    "sku": "2307",
+    "name_zh": "乐酷运动吨吨桶",
+    "path": "/assets/catalog/excel/row-055.webp",
+    "width": 451,
+    "height": 367,
+    "original_target": "xl/media/image34.png"
+  },
+  "56": {
+    "row": 56,
+    "sku": "2307透明款",
+    "name_zh": "2307透明款",
+    "path": "/assets/catalog/excel/row-056.webp",
+    "width": 425,
+    "height": 479,
+    "original_target": "xl/media/image35.png"
+  },
+  "57": {
+    "row": 57,
+    "sku": "2306",
+    "name_zh": "乐酷运动吨吨桶",
+    "path": "/assets/catalog/excel/row-057.webp",
+    "width": 611,
+    "height": 595,
+    "original_target": "xl/media/image36.png"
+  },
+  "58": {
+    "row": 58,
+    "sku": "2308",
+    "name_zh": "乐酷运动吨吨桶",
+    "path": "/assets/catalog/excel/row-058.webp",
+    "width": 611,
+    "height": 595,
+    "original_target": "xl/media/image36.png"
+  },
+  "59": {
+    "row": 59,
+    "sku": "2306透明款",
+    "name_zh": "乐酷透明吨吨桶",
+    "path": "/assets/catalog/excel/row-059.webp",
+    "width": 352,
+    "height": 277,
+    "original_target": "xl/media/image37.png"
+  },
+  "60": {
+    "row": 60,
+    "sku": "2308透明款",
+    "name_zh": "乐酷透明吨吨桶",
+    "path": "/assets/catalog/excel/row-060.webp",
+    "width": 352,
+    "height": 277,
+    "original_target": "xl/media/image37.png"
+  },
+  "61": {
+    "row": 61,
+    "sku": "2302",
+    "name_zh": "萌墩墩背带水壶",
+    "path": "/assets/catalog/excel/row-061.webp",
+    "width": 380,
+    "height": 447,
+    "original_target": "xl/media/image38.png"
+  },
+  "62": {
+    "row": 62,
+    "sku": "2303",
+    "name_zh": "萌墩墩背带水壶",
+    "path": "/assets/catalog/excel/row-062.webp",
+    "width": 494,
+    "height": 462,
+    "original_target": "xl/media/image39.png"
+  },
+  "63": {
+    "row": 63,
+    "sku": "2317",
+    "name_zh": "酷墩墩儿童背带水杯",
+    "path": "/assets/catalog/excel/row-063.webp",
+    "width": 457,
+    "height": 437,
+    "original_target": "xl/media/image40.png"
+  },
+  "64": {
+    "row": 64,
+    "sku": "2318",
+    "name_zh": "酷墩墩儿童背带水杯",
+    "path": "/assets/catalog/excel/row-064.webp",
+    "width": 457,
+    "height": 437,
+    "original_target": "xl/media/image40.png"
+  },
+  "65": {
+    "row": 65,
+    "sku": "2315",
+    "name_zh": "酷墩墩儿童背带水杯",
+    "path": "/assets/catalog/excel/row-065.webp",
+    "width": 440,
+    "height": 471,
+    "original_target": "xl/media/image41.png"
+  },
+  "66": {
+    "row": 66,
+    "sku": "2316",
+    "name_zh": "酷墩墩儿童背带水杯",
+    "path": "/assets/catalog/excel/row-066.webp",
+    "width": 440,
+    "height": 471,
+    "original_target": "xl/media/image41.png"
+  },
+  "67": {
+    "row": 67,
+    "sku": "2412",
+    "name_zh": "卡通动漫儿童背带水杯",
+    "path": "/assets/catalog/excel/row-067.webp",
+    "width": 980,
+    "height": 630,
+    "original_target": "xl/media/image42.png"
+  },
+  "68": {
+    "row": 68,
+    "sku": "2411",
+    "name_zh": "卡通抽象儿童随手杯",
+    "path": "/assets/catalog/excel/row-068.webp",
+    "width": 927,
+    "height": 642,
+    "original_target": "xl/media/image43.png"
+  },
+  "69": {
+    "row": 69,
+    "sku": "2416",
+    "name_zh": "透明双色吨吨桶",
+    "path": "/assets/catalog/excel/row-069.webp",
+    "width": 307,
+    "height": 112,
+    "original_target": "xl/media/image44.png"
+  },
+  "70": {
+    "row": 70,
+    "sku": "2417",
+    "name_zh": "透明双色吨吨桶",
+    "path": "/assets/catalog/excel/row-070.webp",
+    "width": 336,
+    "height": 136,
+    "original_target": "xl/media/image45.png"
+  },
+  "71": {
+    "row": 71,
+    "sku": "2418",
+    "name_zh": "机甲吨吨背带桶",
+    "path": "/assets/catalog/excel/row-071.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image46.jpeg"
+  },
+  "72": {
+    "row": 72,
+    "sku": "2419",
+    "name_zh": "机甲吨吨背带桶",
+    "path": "/assets/catalog/excel/row-072.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image46.jpeg"
+  },
+  "73": {
+    "row": 73,
+    "sku": "2458",
+    "name_zh": "直饮运动水杯",
+    "path": "/assets/catalog/excel/row-073.webp",
+    "width": 980,
+    "height": 980,
+    "original_target": "xl/media/image47.jpeg"
+  },
+  "74": {
+    "row": 74,
+    "sku": "2459",
+    "name_zh": "直饮运动水杯",
+    "path": "/assets/catalog/excel/row-074.webp",
+    "width": 980,
+    "height": 980,
+    "original_target": "xl/media/image47.jpeg"
+  },
+  "75": {
+    "row": 75,
+    "sku": "2487",
+    "name_zh": "儿童吸管杯",
+    "path": "/assets/catalog/excel/row-075.webp",
+    "width": 980,
+    "height": 980,
+    "original_target": "xl/media/image48.jpeg"
+  },
+  "76": {
+    "row": 76,
+    "sku": "2311",
+    "name_zh": "渐变运动水杯",
+    "path": "/assets/catalog/excel/row-076.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image49.jpeg"
+  },
+  "77": {
+    "row": 77,
+    "sku": "2312",
+    "name_zh": "渐变运动水杯",
+    "path": "/assets/catalog/excel/row-077.webp",
+    "width": 800,
+    "height": 800,
+    "original_target": "xl/media/image49.jpeg"
+  },
+  "78": {
+    "row": 78,
+    "sku": "6252",
+    "name_zh": "运动水杯",
+    "path": "/assets/catalog/excel/row-078.webp",
+    "width": 679,
+    "height": 980,
+    "original_target": "xl/media/image50.jpeg"
+  }
+}
