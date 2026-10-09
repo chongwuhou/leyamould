@@ -630,8 +630,8 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
 /* XUYI editorial reading layout — 2026-10-09 */
 .blog-editorial .blog-detail__cover{max-width:1100px;aspect-ratio:2.5;margin-bottom:42px}
 .blog-editorial__layout{display:grid;grid-template-columns:minmax(210px,265px) minmax(0,790px);gap:clamp(28px,5vw,74px);justify-content:center;align-items:start}
-.blog-editorial__aside{min-width:0}
-.blog-toc{position:sticky;top:115px;background:#f5f6f7;padding:26px;border:1px solid #e9e9e9;border-radius:16px}
+.blog-editorial__aside{min-width:0;position:sticky;top:calc(var(--header) + 20px);align-self:start;max-height:calc(100vh - var(--header) - 40px);max-height:calc(100dvh - var(--header) - 40px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.blog-toc{position:static;background:#f5f6f7;padding:26px;border:1px solid #e9e9e9;border-radius:16px}
 .blog-toc .eyebrow{font-size:11px;letter-spacing:.12em}
 .blog-toc nav{display:grid;gap:12px;margin:18px 0}
 .blog-toc nav a{display:block;font-size:13px;line-height:1.5;color:#555;border-left:2px solid #ddd;padding-left:12px}
