@@ -76,9 +76,84 @@ if(hero){
  {title:'Plastic Sports Bottles <span>For Every Collection.</span>',description:'Compare carry-handle styles, colorful bottle shapes and source catalog models for wholesale buyers.',img:'/media/ppt/slide-037.webp',alt:'XUYI sports plastic bottle catalog assortment',link:'/collections/sports-water-bottles/',cta:'See Sports Bottles →'},
  {title:'Custom Drinkware <span>Designed Around You.</span>',description:'Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.',img:'/media/ppt/slide-091.webp',alt:'XUYI shaker bottle collection',link:'/capabilities/',cta:'View Customization →'}
  ];
- let idx=0;
- const title=hero.querySelector('#hero-title'),desc=hero.querySelector('#hero-description'),img=hero.querySelector('#hero-image'),cta=hero.querySelector('#hero-cta'),counter=hero.querySelector('#hero-counter');
- hero.querySelectorAll('[data-hero-nav]').forEach(b=>b.addEventListener('click',()=>{idx=(idx+Number(b.dataset.heroNav)+slides.length)%slides.length;const s=slides[idx];title.innerHTML=s.title;desc.textContent=s.description;img.src=s.img;img.alt=s.alt;cta.href=s.link;cta.textContent=s.cta;counter.textContent=String(idx+1).padStart(2,'0');hero.querySelector('.hero__controls').setAttribute('aria-label','Banner slide '+(idx+1)+' of '+slides.length)}));
+ const title=hero.querySelector('#hero-title'),desc=hero.querySelector('#hero-description'),
+       img=hero.querySelector('#hero-image'),cta=hero.querySelector('#hero-cta'),
+       status=hero.querySelector('#hero-status'),
+       dots=[...hero.querySelectorAll('[data-hero-go]')],
+       controls=hero.querySelector('.hero__controls'),
+       prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+ const DELAY=5500;
+ let idx=0,timer=null,inView=true,hoveringControls=false,focusWithin=false,touchStart=null;
+ function stop(){
+  if(timer!==null){clearTimeout(timer);timer=null}
+  hero.classList.remove('is-playing');
+ }
+ function schedule(){
+  stop();
+  if(document.hidden||!inView||hoveringControls||focusWithin||prefersReducedMotion.matches)return;
+  // Restart the progress indicator whenever the next automatic slide is scheduled.
+  void hero.offsetWidth;
+  hero.classList.add('is-playing');
+  timer=setTimeout(()=>show(idx+1,false),DELAY);
+ }
+ function show(index,announce){
+  idx=(index+slides.length)%slides.length;
+  const slide=slides[idx];
+  title.innerHTML=slide.title;
+  desc.textContent=slide.description;
+  if(img.getAttribute('src')!==slide.img)img.src=slide.img;
+  img.alt=slide.alt;
+  cta.href=slide.link;
+  cta.textContent=slide.cta;
+  dots.forEach((dot,i)=>{
+   const active=i===idx;
+   dot.classList.toggle('active',active);
+   dot.setAttribute('aria-pressed',String(active));
+  });
+  hero.classList.remove('hero--animating');
+  void hero.offsetWidth;
+  hero.classList.add('hero--animating');
+  if(announce&&status)status.textContent='Slide '+(idx+1)+' of '+slides.length;
+  schedule();
+ }
+ hero.querySelectorAll('[data-hero-nav]').forEach(button=>button.addEventListener('click',()=>{
+  show(idx+Number(button.dataset.heroNav),true);
+ }));
+ dots.forEach((dot,i)=>dot.addEventListener('click',()=>show(i,true)));
+ controls?.addEventListener('mouseenter',()=>{hoveringControls=true;stop()});
+ controls?.addEventListener('mouseleave',()=>{hoveringControls=false;schedule()});
+ hero.addEventListener('focusin',()=>{focusWithin=true;stop()});
+ hero.addEventListener('focusout',event=>{
+  if(!hero.contains(event.relatedTarget)){focusWithin=false;schedule()}
+ });
+ hero.addEventListener('keydown',event=>{
+  if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
+   event.preventDefault();
+   show(idx+(event.key==='ArrowRight'?1:-1),true);
+  }
+ });
+ hero.addEventListener('touchstart',event=>{
+  if(event.touches.length===1)touchStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
+ },{passive:true});
+ hero.addEventListener('touchend',event=>{
+  if(!touchStart||!event.changedTouches.length)return;
+  const dx=event.changedTouches[0].clientX-touchStart.x;
+  const dy=event.changedTouches[0].clientY-touchStart.y;
+  touchStart=null;
+  if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3)show(idx+(dx<0?1:-1),true);
+ },{passive:true});
+ document.addEventListener('visibilitychange',schedule);
+ if(prefersReducedMotion.addEventListener)prefersReducedMotion.addEventListener('change',schedule);
+ if('IntersectionObserver' in window){
+  const observer=new IntersectionObserver(entries=>{
+   inView=entries[0]?.isIntersecting!==false;
+   schedule();
+  },{threshold:.2});
+  observer.observe(hero);
+ }
+ // Keep the other two locally hosted images ready for their first appearance.
+ slides.slice(1).forEach(slide=>{const preload=new Image();preload.src=slide.img});
+ schedule();
 }
 const bottleTabs=[...document.querySelectorAll('.bottle-tab[role="tab"]')];
 function selectTab(i){bottleTabs.forEach((t,j)=>{const active=i===j;t.classList.toggle('active',active);t.setAttribute('aria-selected',String(active));const panel=document.getElementById(t.getAttribute('aria-controls'));if(panel)panel.hidden=!active})}
