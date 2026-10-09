@@ -25,13 +25,11 @@ def main():
             try:body=json.load(error)
             except (ValueError,UnicodeError):body={}
             return error.code,body
-    status,reply=api("zones?name="+HOST+"&per_page=10")
-    zones=[z for z in reply.get("result",[]) if z.get("name")==HOST] if isinstance(reply,dict) else []
-    if status!=200 or not reply.get("success") or len(zones)!=1:
-        print("XUYI_LEGACY_PURGE_BLOCKED zone lookup status",status,"errors",[x.get("code") for x in reply.get("errors",[])])
-        return
-    zone=zones[0]
-    status,reply=api("zones/"+zone["id"]+"/purge_cache","POST",{"files":URLS})
+    # Zone ID verified for xuyibottles.com through the already-authorized
+    # local Cloudflare account. The Pages CI token may have Cache Purge
+    # permission even when it cannot list Zones; try exact URLs only.
+    zone_id="c32f7ad3e72edcf182390b4deb90d9f9"
+    status,reply=api("zones/"+zone_id+"/purge_cache","POST",{"files":URLS})
     if status==200 and reply.get("success"):
         print("XUYI_LEGACY_PURGE_REQUEST_ACCEPTED exact_urls",len(URLS))
     else:
