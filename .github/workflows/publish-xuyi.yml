@@ -121,9 +121,6 @@ jobs:
       - name: Deploy XUYI production
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         run: npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
-      - name: Attempt exact XUYI legacy-source CDN purge
-        if: steps.credential.outputs.ready == 'true' && github.event_name != 'schedule'
-        run: python scripts/purge_legacy_cache.py
       - name: Verify XUYI live deployment
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         shell: bash
