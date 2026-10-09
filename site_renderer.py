@@ -167,11 +167,5 @@ FAQS=[
 ("Can you provide test reports for my export market?","Please specify the model, destination country and required standards. Any documents offered must match the actual product, material and valid test scope."),
 ("Are there online prices or a shopping cart?","No. This is a business-to-business quotation website. We quote based on model, quantity, customization and delivery terms.")
 ]
-ARTICLES=[
-("wholesale-plastic-water-bottle-buying-guide","Wholesale Plastic Water Bottle Buying Guide","How to compare models, capacity, packaging and production options before requesting a quote."),
-("plastic-bottle-material-selection","How to Discuss Plastic Bottle Materials with Suppliers","Questions about material components, suitability and food-contact documentation."),
-("custom-logo-water-bottle-checklist","Custom Logo Water Bottle Project Checklist","Artwork, colors, packaging and expected quantities to prepare for an OEM quote."),
-("sports-bottle-vs-water-jug","Sports Water Bottle vs Large Water Jug","A practical comparison of small bottles and larger carrying-jug styles."),
-("kids-water-bottle-procurement","Kids Water Bottle Wholesale Procurement Guide","Selection, lid formats, packaging and material documentation to ask about."),
-("shaker-bottle-wholesale","Protein Shaker Bottle Wholesale Checklist","Choosing shaker bottle capacity, materials and decoration options.")
-]
+BLOG_POSTS={post["slug"]:post for post in json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf-8"))}
+ARTICLES=[(post["slug"],post["title"],post["description"]) for post in reversed(list(BLOG_POSTS.values()))]

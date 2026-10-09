@@ -1,4 +1,5 @@
 from site_renderer import *
+from blog_editorial import cover_path, render_article, enrich_article_html
 from why_us_layouts import render as render_why
 from why_us_content import schema_enhance
 WHY_DATA=json.loads((ROOT/"data/why-us-content.json").read_text(encoding="utf-8"))
@@ -131,51 +132,38 @@ def contact():
  h+='<section class="section"><div class="shell"><div class="contact-layout"><div><span class="eyebrow">BUSINESS ENQUIRIES</span><h2 class="section__title">Let’s Talk About Your Project.</h2><p class="copy-muted">Tell us the model, material, quantity, desired customization and destination market.</p><div class="benefit"><h3>What to include</h3><p>Model or photo, capacity, preferred PC / Tritan / PP / PETG material, BPA-free requirements, logo, quantity and shipping details.</p></div><div class="benefit"><h3>Company</h3><p>台州市旭一家居用品有限公司<br>Taizhou, Zhejiang, China</p><p><a data-site-email href="mailto:Janey@xuyibottles.com">Janey@xuyibottles.com</a></p><p><a data-site-whatsapp href="https://wa.me/8615395897937" target="_blank" rel="noopener noreferrer">WhatsApp Chat →</a></p></div></div><form class="form" id="inquiry" aria-label="Wholesale inquiry form"><div class="form__row"><label>Company Name<input name="company" placeholder="Your company" autocomplete="organization" required></label><label>Work Email<input name="email" type="email" placeholder="name@company.com" autocomplete="email" required></label></div><div class="form__row"><label>Product Model<input name="model" id="inquiry-model" placeholder="e.g. 2501"></label><label>Estimated Quantity<input name="quantity" placeholder="e.g. 3000 pcs"></label></div><div class="form__row"><label>Destination Country<input name="country" placeholder="Country"></label><label>Inquiry Type<select name="type"><option>Wholesale Quote</option><option>Custom Logo / Branding</option><option>Samples</option><option>OEM / ODM</option></select></label></div><label>Material Preference<select name="material"><option value="">Please advise</option><option>PC</option><option>Tritan</option><option>PP</option><option>PETG</option></select></label><label>Your Requirements<textarea name="requirements" rows="5" required placeholder="Capacity, BPA-free option, logo, colors, packaging, shipping, delivery date"></textarea></label><label style="display:flex;align-items:start;gap:8px"><input type="checkbox" name="consent" style="width:auto;margin-top:3px" required> I agree to the <a href="/privacy-policy/">privacy policy</a> and the processing of my business enquiry.</label><label style="position:absolute;left:-9999px" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label><button class="button" type="submit">Send Inquiry →</button><p id="inquiry-status" role="status" aria-live="polite" style="font-size:13px;margin:0"></p></form></div></div></section>'
  return h
 
-# Article image inventory is from the original XUYI product catalogs.
-# Media is illustrative of the topic, not an assertion about a specific product attribute.
-EDITORIAL_IMAGES={
- "wholesale-plastic-water-bottle-buying-guide":"/media/ppt/slide-059.webp",
- "plastic-bottle-material-selection":"/media/ppt/slide-066.webp",
- "custom-logo-water-bottle-checklist":"/media/ppt/slide-061.webp",
- "sports-bottle-vs-water-jug":"/media/ppt/slide-055.webp",
- "kids-water-bottle-procurement":"/media/ppt/slide-030.webp",
- "shaker-bottle-wholesale":"/media/ppt/slide-091.webp"
-}
-def news_cover(slug,title,alt_suffix=''):
- image=EDITORIAL_IMAGES[slug]
- return photo(image,title+' — original XUYI product catalog illustration'+alt_suffix)
+# Illustrations use XUYI's own approved product imagery.
+def news_cover(slug,title,alt_suffix=""):
+ return photo(cover_path(slug),title+" | XUYI bottle sourcing guide"+alt_suffix)
+
 def target_news_and_blogs():
  intro='<section class="news-section" id="news-and-blogs" aria-labelledby="news-title"><div class="shell">'
  intro+='<div class="news-section__head"><h2 id="news-title">News <span class="news-section__symbol" aria-hidden="true"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="32" fill="#f31927"/><g transform="rotate(11 32 32)"><rect x="17" y="13" width="32" height="39" rx="2" fill="#fff"/><rect x="21" y="19" width="23" height="5" fill="#1d1d1d"/><path stroke="#8d8d8d" stroke-width="2" d="M21 29h23M21 34h23M21 39h23M21 44h17"/></g></svg></span> and Blogs</h2><p>Discover helpful plastic bottle buying guides on materials, customization, lid styles and wholesale sourcing. Compare options and plan your next brand project.</p></div>'
- intro+='<div class="news-section__layout"><div class="news-section__aside"><div class="news-section__counter" aria-live="polite"><strong id="news-active-count">01</strong><span>/ 06</span></div><div class="news-section__label">Buying Guides<br>&amp; Resources</div><div class="news-section__arrows"><button type="button" id="news-prev" aria-label="Previous article" disabled>←</button><button type="button" id="news-next" aria-label="Next article">→</button></div><a class="news-section__all" href="/blog/">View All Articles ↗</a></div><div class="news-section__slider" aria-label="Latest XUYI buying guides" id="news-slider" tabindex="0">'
- for slug,title,desc in ARTICLES:
+ intro+='<div class="news-section__layout"><div class="news-section__aside"><div class="news-section__counter" aria-live="polite"><strong id="news-active-count">01</strong><span>/ '+str(len(ARTICLES[:8])).zfill(2)+'</span></div><div class="news-section__label">Buying Guides<br>&amp; Resources</div><div class="news-section__arrows"><button type="button" id="news-prev" aria-label="Previous article" disabled>←</button><button type="button" id="news-next" aria-label="Next article">→</button></div><a class="news-section__all" href="/blog/">View All Articles ↗</a></div><div class="news-section__slider" aria-label="Latest XUYI buying guides" id="news-slider" tabindex="0">'
+ for slug,title,desc in ARTICLES[:8]:
   intro+='<article class="news-card"><a href="/blog/'+e(slug)+'/" class="news-card__image">'+news_cover(slug,title)+'</a><div class="news-card__info"><span class="news-card__category">BUYING GUIDE</span><h3><a href="/blog/'+e(slug)+'/">'+e(title)+'</a></h3><p>'+e(desc)+'</p><a class="news-card__read" href="/blog/'+e(slug)+'/">Read Article →</a></div></article>'
  intro+='</div></div></div></section>'
  return intro
 
 def blog_index():
- h=intro("Blog","Water Bottle Buying Guides","Helpful plastic bottle sourcing guides covering materials, customization, lid styles and wholesale planning.")
- h+='<section class="section blog-listing"><div class="shell">'+sec("News and Blogs","Buying guides based on XUYI product categories and practical sourcing questions.","BUYER RESOURCES")
- h+='<div class="blog-listing__grid">'
+ h=intro("Blog","Water Bottle Buying Guides","Practical plastic water bottle buying guides for material selection, customization, quality control and wholesale procurement.")
+ h+='<section class="section blog-listing"><div class="shell">'+sec("Sourcing Knowledge Center","Explore '+str(len(ARTICLES))+' in-depth resources for importers, distributors and private-label bottle brands.","BUYER RESOURCES")
+ h+='<div class="blog-filter"><label for="blog-search">Find the right sourcing topic</label><input id="blog-search" type="search" placeholder="Search materials, MOQ, BPA-free, printing or packaging..." autocomplete="off" aria-controls="blog-guide-results">'
+ h+='<div class="blog-filter__tabs" role="group" aria-label="Filter articles by topic"><button type="button" class="active" data-blog-filter="All" aria-pressed="true">All guides</button>'
+ for group in ("Wholesale & Planning","Materials","OEM & Branding","Quality & Safety"):
+  h+='<button type="button" data-blog-filter="'+e(group)+'" aria-pressed="false">'+e(group)+'</button>'
+ h+='</div><p id="blog-filter-status" class="blog-filter__count" role="status" aria-live="polite">'+str(len(ARTICLES))+' guides</p></div>'
+ h+='<div class="blog-listing__grid" id="blog-guide-results">'
  for slug,title,description in ARTICLES:
-  h+='<article class="news-card"><a class="news-card__image" href="/blog/'+e(slug)+'/">'+news_cover(slug,title)+'</a><div class="news-card__info"><span class="news-card__category">BUYING GUIDE</span><h3><a href="/blog/'+e(slug)+'/">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="/blog/'+e(slug)+'/">Read Article →</a></div></article>'
+  post=BLOG_POSTS[slug]
+  searchable=" ".join([title,description,post["primary_keyword"],*post["secondary_keywords"]]).lower()
+  h+='<article class="news-card" data-blog-card data-blog-topic="'+e(post["group"])+'" data-blog-search="'+e(searchable)+'"><a class="news-card__image" href="/blog/'+e(slug)+'/">'+news_cover(slug,title)+'</a><div class="news-card__info"><span class="news-card__category">'+e(post["group"]).upper()+'</span><h3><a href="/blog/'+e(slug)+'/">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="/blog/'+e(slug)+'/">Read Article →</a></div></article>'
  h+='</div></div></section>'
  return h
 
-CONTENT={
- "wholesale-plastic-water-bottle-buying-guide":[("Start with the buyer’s use case","Sports bottle, children’s bottle, large capacity jug and shaker cup have different handling and carton needs. Choose the product line before comparing colors."),("Confirm the exact model","Ask for the model code, accurate capacity, individual size, material by component and images of the actual item. Avoid mixing variants with the same short model number."),("Prepare a detailed quote request","Include planned order quantity, colors, preferred lid, logo artwork, individual packing and destination country. Also ask for sample and inspection terms."),("Compare total sourcing requirements","The lowest product price is not the whole order cost. Review carton size, breakage or damage risk, labeling, shipment terms and required test documents.")],
- "plastic-bottle-material-selection":[("Materials can vary by component","A single bottle may have a body, cap, seal, straw, handle and other separate parts. Material labels such as PC, PP, PE or ABS should identify which part is made from what."),("Match documentation to the destination","Food-contact materials are regulated differently by market. Request documents that match the exact SKU, materials and intended food contact usage."),("Do not assume equivalence","PC, Tritan, PP and other polymers are not interchangeable labels. Do not advertise BPA-free or a certificate based solely on appearance or supplier assumptions."),("Confirm materials before production","Lock down the material composition, colors, finish, printing and sample properties before approving a larger order.")],
- "custom-logo-water-bottle-checklist":[("Select the model and location","Choose the bottle body material and logo area. Curved, textured or translucent surfaces can affect decoration choices."),("Provide usable artwork","Vector logo files and a preferred color reference speed up feasibility review. For multiple colors, specify how the artwork should appear."),("Confirm method and quantity","Artwork setup, decoration method, sample cost and MOQ may differ by model. Get an itemized answer before committing."),("Review a sample","Check size, location, colors and durability expectations against a real sample. Agree on packaging and carton markings.")],
- "sports-bottle-vs-water-jug":[("Consider where it is carried","A compact sports bottle is easier to carry daily; a large jug may prioritize grip, handles, shoulder strap and hydration volume."),("Capacity affects shipping","Different bottle sizes change unit dimensions, carton density and shipment planning. Confirm actual capacity and carton pack per SKU."),("Pay attention to lids","Straight-drink caps, spouts, straw lids and seals are not identical. Ask for close photos and operating instructions where applicable."),("Fit the sales channel","Sports, gym, outdoor, school and promotional channels may require different designs and packaging.")],
- "kids-water-bottle-procurement":[("Bottle use and age suitability","Children’s designs often use straw lids, flip caps and carry straps. Do not assume every kids’ cup is suitable for all ages."),("Ask about every component","Material declarations should cover drinking contact surfaces, straw and lid as applicable. Market requirements for children's articles can be stricter."),("Verify cleaning and sealing","Ask suppliers for instructions and sample tests that match the exact bottle design and intended use."),("Prepare compliant packaging","Country-specific labeling, warnings and reports need review before launch.")],
- "shaker-bottle-wholesale":[("Distinguish shaker styles","A shaker bottle is not necessarily supplied with a whisk ball, mesh or special mixing component. Confirm the physical components."),("Check capacity and graduation","Source catalogs may show several capacities within a series. Verify fill volume, printed measurement scale and lid closure."),("Review plastic and branding","Ask for verified body and lid materials as well as available decoration methods."),("Match packaging to the order","Carton quantity, sample policy and production time should be confirmed for the chosen shaker and order volume.")]
-}
 def blog_article(slug,title,desc):
- body=intro("Blog / Buying Guide",title,desc)
- body+='<section class="section"><div class="shell"><div class="blog-detail__cover">'+news_cover(slug,title)+'</div><article class="article"><p class="blog-detail__note">Product image from XUYI source catalog. Specifications and applicable claims require model-by-model verification.</p><p>'+e(desc)+'</p>'
- for t,p in CONTENT[slug]:body+='<h2>'+e(t)+'</h2><p>'+e(p)+'</p>'
- body+='<h2>Need a specific product recommendation?</h2><p>Send the models and expected quantity. Our team can confirm actual material, capacity, available customization and relevant project details.</p><a class="button" href="/contact/#inquiry">Discuss Your Requirements →</a></article></div></section>'
- return body
+ return render_article(slug)
+
 def privacy():
  h=intro("Privacy Policy","Privacy & Inquiry Data","How XUYI handles business enquiries and contact details.")
  h+='<section class="section"><div class="shell"><article class="article"><p>台州市旭一家居用品有限公司 (XUYI Bottles) uses your contact details, company information, bottle models, expected quantities and requirements to respond to enquiries and prepare quotations or sample proposals.</p><h2>Business enquiries</h2><p>When submitted through the online form, enquiry data is stored with Cloudflare D1 and may be forwarded to the designated sales representative. We may process limited technical data for protection from spam and abuse.</p><h2>Data management</h2><p>Access is limited to authorized personnel. Retention is based on relevant business needs and applicable laws. You may request correction or deletion, subject to legal obligations.</p><h2>Contact</h2><p>Contact <a data-site-email href="mailto:Janey@xuyibottles.com">Janey@xuyibottles.com</a> for privacy questions and data requests.</p></article></div></section>'
@@ -328,10 +316,25 @@ def generate():
   slug,title,description,*rest=row
   build_url('applications/'+slug+'/index.html',title,page(title+' | XUYI Bottles',description,topic_page('applications',row)))
  for slug,title,desc in ARTICLES:
-  build_url('blog/'+slug+'/index.html',title,page(title+' | XUYI Buying Guide',desc,blog_article(slug,title,desc)))
+  article_html=page(title,desc,blog_article(slug,title,desc))
+  build_url('blog/'+slug+'/index.html',title,enrich_article_html(article_html,slug))
  build_url('404.html','404',page('Page Not Found | XUYI Bottles','Page not found.',intro('404','Page Not Found','The requested page could not be found.')+'<section class="section"><div class="shell"><a class="button" href="/">Back to Homepage →</a></div></section>'))
  # A fully accurate domain and multilingual sitemap will be generated after domain verification, translation and product approval.
  write('robots.txt','User-agent: *\nDisallow: /\n')
+ # Maintain the current English URL inventory even while indexing is withheld.
+ # This stays ready for the later approved SEO launch without publishing
+ # unreviewed multilingual paths.
+ sitemap=['<?xml version="1.0" encoding="utf-8"?>',
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+ for file_path in sorted(path for path in URLS if path.endswith('index.html')):
+  route='/'+file_path[:-len('index.html')]
+  sitemap.append(' <url><loc>'+e(SITE_ORIGIN+route)+'</loc>'
+                 +('<lastmod>'+e(BLOG_POSTS[route.split('/')[2]]['updated'])+'</lastmod>'
+                   if route.startswith('/blog/') and route!='/blog/'
+                   and route.split('/')[2] in BLOG_POSTS else '')
+                 +'</url>')
+ sitemap.append('</urlset>')
+ write('sitemap.xml','\n'.join(sitemap)+'\n')
  write('data/route-manifest.json',json.dumps([{'path':'/'+x.replace('index.html',''),'title':title} for x,title in sorted(URLS.items()) if x.endswith('index.html')],ensure_ascii=False,indent=2))
  print('BUILD_OK','HTML_FILES',len(URLS),'PRODUCT_PAGES',len(SERIES),'CAT_PAGES',len(CAT),'CAPABILITY_PAGES',len(CAPABILITIES),'ARTICLES',len(ARTICLES))
 if __name__=='__main__':generate()
