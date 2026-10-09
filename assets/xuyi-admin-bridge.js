@@ -7,5 +7,16 @@ $('#token-form')?.addEventListener('submit',async event=>{event.preventDefault()
 $$('[data-admin-target]').forEach(el=>el.addEventListener('click',()=>showPanel(el.dataset.adminTarget)));
 $('#logout-btn')?.addEventListener('click',()=>{sessionStorage.removeItem(KEY);setAuthenticated(false)});
 $('#refresh-btn')?.addEventListener('click',()=>{if(sessionStorage.getItem(KEY))location.reload()});
+async function checkSetup(){
+ try{
+  const response=await fetch('/api/admin/auth',{cache:'no-store'});
+  const state=await response.json();
+  if(!state.configured){
+   const error=$('#lock-error');
+   if(error)error.textContent='后台尚未初始化：请先在 XUYI Cloudflare Pages Production 中设置 ADMIN_TOKEN Secret。';
+  }
+ }catch{/* Login requests will still report their own errors. */}
+}
+checkSetup();
 verify();
 })();

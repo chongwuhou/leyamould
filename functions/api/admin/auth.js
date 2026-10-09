@@ -37,7 +37,10 @@ async function loginRateState(db, ipHash) {
 export async function onRequestGet(context) {
   if (!context.env.XUYI_DB) return response({ error: "XUYI_DB binding missing" }, 503);
   const security = await loadAdminSecurityConfig(context.env.XUYI_DB);
-  return response({ configured: true, passwordConfigured: Boolean(security.password?.hash) });
+  return response({
+    configured: Boolean(clean(context.env.ADMIN_TOKEN)),
+    passwordConfigured: Boolean(security.password?.hash)
+  });
 }
 
 export async function onRequestPost(context) {
