@@ -58,10 +58,10 @@ export async function onRequestPost(context) {
         name: "SMTP Test",
         email: settings.fromEmail,
         phone: "",
-        company: "Demalong",
-        brand: "Demalong",
+        company: "XUYI Bottles",
+        brand: "XUYI Bottles",
         reference: "SMTP-TEST",
-        requirements: "This is a test email from the Demalong serverless form system.",
+        requirements: "This is an XUYI Bottles SMTP verification message.",
         equipment: ""
       });
       return response({ tested: true, result });
