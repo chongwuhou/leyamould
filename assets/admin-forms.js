@@ -109,9 +109,26 @@
           ["new","read","replied","spam"].map((value) =>
             '<button class="btn ' + (value === s.status ? "primary" : "ghost") + ' submission-status-btn" data-status="' + value + '">' + value + '</button>'
           ).join("") +
+          ((s.smtp_status !== "sent" && s.status !== "spam") ?
+            '<button class="btn ghost submission-retry-email-btn" type="button">补发邮件通知</button>' : '') +
           '<button class="btn ghost submission-delete-btn">删除</button>' +
           '<span id="submission-action-status" class="muted"></span>' +
         '</div>';
+      $(".submission-retry-email-btn")?.addEventListener("click", async (event) => {
+        const button = event.currentTarget;
+        const msg = $("#submission-action-status");
+        button.disabled = true;
+        if (msg) msg.textContent = "正在发送通知…";
+        try {
+          await api(FORMS_API, "POST", { action: "retry_notification", id: s.id });
+          if (msg) msg.textContent = "SMTP 已接受该邮件。请检查收件箱。";
+          button.remove();
+          await loadForms();
+        } catch (error) {
+          if (msg) msg.textContent = "补发失败：" + error.message;
+          button.disabled = false;
+        }
+      });
       $$(".submission-status-btn").forEach((button) => button.addEventListener("click", async () => {
         const msg = $("#submission-action-status");
         try {
@@ -158,12 +175,24 @@
       $("#smtp-password").value = "";
       $("#smtp-password").placeholder = s.passwordConfigured ? "已保存密码；留空 = 不修改" : "尚未保存密码";
       $("#smtp-from-name").value = s.fromName || "XUYI Bottles Website";
-      $("#smtp-from-email").value = s.fromEmail || "";
-      $("#smtp-to-emails").value = s.toEmails || "";
+      let defaultEmail = "Janey@xuyibottles.com";
+      try {
+        const publicResponse = await fetch("/api/site-settings", { cache: "no-store" });
+        if (publicResponse.ok) {
+          const site = await publicResponse.json();
+          const contact = (site.contacts || []).find((c) => c.enabled && c.isDefault) ||
+                          (site.contacts || []).find((c) => c.enabled);
+          if (contact?.email) defaultEmail = contact.email;
+        }
+      } catch { /* A missing public setting must never block admin SMTP management. */ }
+      $("#smtp-from-email").value = s.fromEmail || defaultEmail;
+      $("#smtp-to-emails").value = s.toEmails || defaultEmail;
       $("#smtp-reply-to").value = s.replyToMode || "visitor";
       $("#smtp-subject").value = s.subjectTemplate || "Website inquiry: {{reference}} {{name}}";
       $("#smtp-state-badge").textContent = s.enabled ? "SMTP 已启用" : "SMTP 未启用";
-      if (status) status.textContent = s.passwordConfigured ? "SMTP 密码已加密保存。" : "尚未保存 SMTP 密码。";
+      if (status) status.textContent = s.enabled
+        ? (s.passwordConfigured ? "SMTP 已启用，密码已加密保存。" : "SMTP 已启用，请确认发信服务器是否需要密码。")
+        : "询盘会保存在 D1，但不会自动发送邮件。请完成 SMTP 配置并测试。";
     } catch (error) {
       if (status) status.textContent = "SMTP 设置读取失败：" + error.message;
       $("#smtp-state-badge").textContent = "读取失败";

@@ -1,5 +1,5 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
-import { clean, ensureFormSchema } from "../../_shared/forms.js";
+import { clean, ensureFormSchema, loadSmtpSettings, sendSubmissionNotification } from "../../_shared/forms.js";
 
 function response(data, status = 200) {
   return Response.json(data, { status, headers: { "cache-control": "no-store", "x-robots-tag": "noindex, nofollow, noarchive" } });
@@ -64,6 +64,36 @@ export async function onRequestPost(context) {
       "UPDATE form_submissions SET status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?"
     ).bind(status, id).run();
     return response({ saved: true, status, changes: result.meta?.changes || 0 });
+  }
+  if (payload.action === "retry_notification") {
+    const db = context.env.XUYI_DB;
+    const row = await db.prepare("SELECT * FROM form_submissions WHERE id=?").bind(id).first();
+    if (!row) return response({ error: "Inquiry not found" }, 404);
+    if (row.status === "spam") return response({ error: "Spam enquiries cannot trigger notifications" }, 400);
+    if (row.smtp_status === "sent") return response({ error: "This enquiry has already been emailed" }, 409);
+    const settings = await loadSmtpSettings(db, context.env);
+    if (!settings.enabled || !settings.host || !settings.fromEmail ||
+        (!settings.toEmails && !row.assigned_contact_email)) {
+      return response({ error: "SMTP is not ready. Enable and configure it before retrying." }, 409);
+    }
+    // Only one admin request may claim an unsent enquiry. Never resend an
+    // already accepted email or deliver anything classed as spam.
+    const claimed = await db.prepare(
+      "UPDATE form_submissions SET smtp_status='sending',updated_at=CURRENT_TIMESTAMP " +
+      "WHERE id=? AND smtp_status IN ('pending','disabled','failed')"
+    ).bind(id).run();
+    if (Number(claimed.meta?.changes || 0) !== 1) {
+      return response({ error: "Another notification attempt is in progress" }, 409);
+    }
+    try {
+      const result = await sendSubmissionNotification(db, context.env, row);
+      if (!result.sent) return response({ error: "SMTP delivery was not completed" }, 502);
+      return response({ sent: true, id, recipients: result.recipients });
+    } catch {
+      // The helper records the failure privately in D1. Do not expose SMTP
+      // credentials, email content, or raw server diagnostics here.
+      return response({ error: "Email delivery failed. Check the SMTP status in the inquiry." }, 502);
+    }
   }
   return response({ error: "Unknown action" }, 400);
 }
