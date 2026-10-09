@@ -47,7 +47,7 @@ def render_capability(slug):
    h+='<figure class="cap-detail-figure">'+photo(d["detail"],"Plastic drinkware customization option – "+service)
    h+='<figcaption>Design or manufacturing reference; the actual process is confirmed for the selected model.</figcaption></figure>'
   if i==3 and slug=="custom-water-bottle":
-   h+='<figure class="cap-detail-figure">'+photo("/media/capability/gox-kids-custom-bottle.webp","Plastic straw-lid bottle design reference")
+   h+='<figure class="cap-detail-figure">'+photo("/media/capability/gox-kids-custom-bottle.webp?v=20261009","Plastic straw-lid bottle design reference")
    h+='<figcaption>Reference for a children’s straw-lid design. Select the actual XUYI model and confirm component suitability before ordering.</figcaption></figure>'
  h+='</div></div></div></section>'
  h+='<section class="section section--soft cap-process"><div class="shell"><div class="section__head"><div><span class="eyebrow">WORKFLOW</span><h2 class="section__title">Five Steps from Brief to Production</h2><p>Each stage has an approval point, so production does not rely on assumptions.</p></div></div><ol class="cap-process__list">'
@@ -82,4 +82,4 @@ def enrich_capability(doc,slug):
  graph={"@context":"https://schema.org","@graph":[service,crumbs,faq]}
  schema='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+'</script>'
  meta='<meta name="keywords" content="'+e(d["seo"])+'"><meta property="og:image" content="'+e(SITE_ORIGIN+d["hero"])+'">'
- return doc.replace('</head>',meta+schema+'</head>',1)
+ return doc.replace('href="/assets/site.css"','href="/assets/site.css?v=cap-20261009"',1).replace('</head>',meta+schema+'</head>',1)
