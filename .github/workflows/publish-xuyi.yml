@@ -83,6 +83,17 @@ jobs:
           else
             echo "needed=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Verify XUYI CMS APIs against D1 (read-only)
+        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
+        shell: bash
+        run: |
+          set -euo pipefail
+          for section in brand-config site-config pages product-content page-content page-translations; do
+            curl --fail --silent --show-error --retry 2 \
+              -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              "$SITE_ORIGIN/api/admin/$section" -o /dev/null
+            echo "XUYI D1 CMS OK: $section"
+          done
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         # The public site must run the authenticated XUYI snapshot endpoint.
