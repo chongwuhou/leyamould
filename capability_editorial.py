@@ -1,6 +1,7 @@
 """Source-controlled B2B service guides, grounded in XUYI's plastic bottle scope."""
 import json
 from site_renderer import ROOT,e,photo,SERIES,SITE_ORIGIN,product_grid
+from capability_modules import render_distinct_sections
 
 CAPABILITY_DATA=json.loads((ROOT/"data/capability-guides.json").read_text(encoding="utf-8"))
 SERVICE_NAMES={
@@ -58,20 +59,18 @@ def render_capability(slug):
  h+='<p>Providing the correct details helps evaluate materials, prices, MOQ, samples and tooling without premature promises.</p><a href="'+quote+'" class="button">Request Project Quote →</a></div><div class="cap-brief__list"><ul>'
  for item in d["brief"]:h+='<li><span aria-hidden="true">✓</span>'+e(item)+'</li>'
  h+='</ul></div></div></div></section>'
- models=[SERIES[model] for model in d["products"] if model in SERIES]
- if models:
-  h+='<section class="section section--soft"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT REFERENCES</span><h2 class="section__title">Start with a Real Bottle Model</h2><p>Choose a reference SKU and confirm which modifications are feasible for it.</p></div></div>'+product_grid(models)+'</div></section>'
- h+='<section class="section cap-faq"><div class="shell"><div class="section__head"><div><span class="eyebrow">BUYER QUESTIONS</span><h2 class="section__title">Frequently Asked Questions</h2></div></div><div class="cap-faq__items">'
- for qa in d["faqs"]:h+='<details><summary>'+e(qa["question"])+'</summary><p>'+e(qa["answer"])+'</p></details>'
- h+='</div></div></section>'
- h+='<section class="section cap-related"><div class="shell"><div class="section__head"><div><span class="eyebrow">CONNECTED SERVICES</span><h2 class="section__title">Explore Related Customization</h2></div></div><div class="cap-related__grid">'
- for related in d["related"]:h+='<a href="/capabilities/'+e(related)+'/">'+e(SERVICE_NAMES[related])+' <span aria-hidden="true">↗</span></a>'
- h+='</div></div></section>'
- h+='<section class="section section--soft cap-related"><div class="shell"><div class="section__head"><div><span class="eyebrow">BUYING GUIDES</span><h2 class="section__title">Learn More Before You Place an Order</h2></div></div><div class="cap-related__grid">'
- for title,postslug in BUYING_GUIDES[slug]:
-  h+='<a href="/blog/'+e(postslug)+'/">'+e(title)+' <span aria-hidden="true">↗</span></a>'
- h+='</div></div></section>'
- h+='<section class="section cap-end"><div class="shell"><div class="cap-end__body"><div><span class="eyebrow">READY TO SOURCE?</span><h2>Turn Your Bottle Idea into a Clear Specification.</h2><p>Send your target model, material, quantity and artwork. We can review the actual project requirements.</p></div><a class="button" href="'+quote+'">Request a Wholesale Quote →</a></div></div></section>'
+ # Each capability needs useful domain-specific sections, not four generic
+ # shared bottom modules (product grid / FAQ / services / buying guides).
+ h+=render_distinct_sections(slug,d)
+ closing={
+  "custom-water-bottle":("Build a Bottle Range Around an Actual SKU","Send capacity, closure, resin preference, target quantity and branding direction.","Discuss Your Bottle Range"),
+  "custom-molding":("Validate the Design Before Paying for Tooling","Share part geometry, material targets, tolerance requirements and expected production volume.","Request a Tooling Review"),
+  "custom-logo":("Check Your Artwork on a Real Plastic Surface","Send a vector logo, selected bottle SKU, brand colors and proposed print locations.","Request a Logo Feasibility Review"),
+  "custom-graphics":("Move from Color Inspiration to an Approved Sample","Send your selected model, color references, transparency target and artwork concept.","Discuss Your Color Sample"),
+  "custom-manufacturing":("Set Quality Expectations Before Your Order","Provide the exact model, materials, quantity, acceptance criteria and destination.","Plan Production and Inspection"),
+  "custom-packaging":("Get Packaging Costed Against the Finished Bottle","Share the model, retail presentation, dieline or artwork, carton quantities and destination.","Request a Packaging Review")
+ }[slug]
+ h+='<section class="section cap-end"><div class="shell"><div class="cap-end__body"><div><span class="eyebrow">DISCUSS THE NEXT STEP</span><h2>'+e(closing[0])+'</h2><p>'+e(closing[1])+'</p></div><a class="button" href="'+quote+'">'+e(closing[2])+' →</a></div></div></section>'
  return h
 
 def enrich_capability(doc,slug):
@@ -82,4 +81,4 @@ def enrich_capability(doc,slug):
  graph={"@context":"https://schema.org","@graph":[service,crumbs,faq]}
  schema='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+'</script>'
  meta='<meta name="keywords" content="'+e(d["seo"])+'"><meta property="og:image" content="'+e(SITE_ORIGIN+d["hero"])+'">'
- return doc.replace('href="/assets/site.css"','href="/assets/site.css?v=cap-20261009"',1).replace('</head>',meta+schema+'</head>',1)
+ return doc.replace('href="/assets/site.css"','href="/assets/site.css?v=cap-modules-20261009"',1).replace('</head>',meta+schema+'</head>',1)
