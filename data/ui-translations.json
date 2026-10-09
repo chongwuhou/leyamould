@@ -1,0 +1,38 @@
+{
+  "es": {
+    "Home": "Inicio", "Products": "Productos", "Capabilities": "Servicios", "About": "Nosotros", "About Us": "Sobre nosotros",
+    "Why Us": "Por qué elegirnos", "Blog": "Blog", "Contact Us": "Contacto", "Contact": "Contacto",
+    "Request Sample": "Solicitar muestra", "Instant Quote": "Cotización rápida", "Get Quote →": "Solicitar cotización →",
+    "Get an Instant Quote →": "Solicitar presupuesto →", "Ready to Build Your Bottle Collection?": "¿Listo para crear su colección de botellas?",
+    "Quick Links": "Enlaces rápidos", "Privacy Policy": "Política de privacidad", "Wholesale & OEM Enquiries": "Consultas de venta al por mayor y OEM",
+    "Wholesale & Custom Branding": "Venta al por mayor y personalización", "Custom Logo": "Logotipo personalizado",
+    "Custom Packaging": "Embalaje personalizado", "Quality Control": "Control de calidad", "Search products": "Buscar productos"
+  },
+  "pt": {
+    "Home": "Início", "Products": "Produtos", "Capabilities": "Serviços", "About": "Sobre nós", "About Us": "Sobre nós",
+    "Why Us": "Por que nos escolher", "Blog": "Blog", "Contact Us": "Contato", "Contact": "Contato",
+    "Request Sample": "Solicitar amostra", "Instant Quote": "Orçamento rápido", "Get Quote →": "Pedir orçamento →",
+    "Get an Instant Quote →": "Solicitar orçamento →", "Ready to Build Your Bottle Collection?": "Pronto para criar sua coleção de garrafas?",
+    "Quick Links": "Links úteis", "Privacy Policy": "Política de privacidade", "Wholesale & OEM Enquiries": "Consultas de atacado e OEM",
+    "Wholesale & Custom Branding": "Atacado e personalização", "Custom Logo": "Logotipo personalizado",
+    "Custom Packaging": "Embalagem personalizada", "Quality Control": "Controle de qualidade", "Search products": "Buscar produtos"
+  },
+  "ru": {
+    "Home": "Главная", "Products": "Продукция", "Capabilities": "Услуги", "About": "О нас", "About Us": "О нас",
+    "Why Us": "Почему мы", "Blog": "Блог", "Contact Us": "Контакты", "Contact": "Связаться",
+    "Request Sample": "Запросить образец", "Instant Quote": "Быстрый расчёт", "Get Quote →": "Запросить цену →",
+    "Get an Instant Quote →": "Получить предложение →", "Ready to Build Your Bottle Collection?": "Готовы создать свою коллекцию бутылок?",
+    "Quick Links": "Полезные ссылки", "Privacy Policy": "Политика конфиденциальности", "Wholesale & OEM Enquiries": "Оптовые и OEM-запросы",
+    "Wholesale & Custom Branding": "Оптовые поставки и брендирование", "Custom Logo": "Нанесение логотипа",
+    "Custom Packaging": "Индивидуальная упаковка", "Quality Control": "Контроль качества", "Search products": "Поиск продукции"
+  },
+  "tr": {
+    "Home": "Ana Sayfa", "Products": "Ürünler", "Capabilities": "Hizmetler", "About": "Hakkımızda", "About Us": "Hakkımızda",
+    "Why Us": "Neden Biz", "Blog": "Blog", "Contact Us": "İletişim", "Contact": "İletişim",
+    "Request Sample": "Numune İsteyin", "Instant Quote": "Hızlı Teklif", "Get Quote →": "Teklif Alın →",
+    "Get an Instant Quote →": "Hızlı Teklif Alın →", "Ready to Build Your Bottle Collection?": "Şişe koleksiyonunuzu oluşturmaya hazır mısınız?",
+    "Quick Links": "Hızlı Bağlantılar", "Privacy Policy": "Gizlilik Politikası", "Wholesale & OEM Enquiries": "Toptan ve OEM Talepleri",
+    "Wholesale & Custom Branding": "Toptan ve Özel Markalama", "Custom Logo": "Özel Logo",
+    "Custom Packaging": "Özel Ambalaj", "Quality Control": "Kalite Kontrol", "Search products": "Ürün Ara"
+  }
+}

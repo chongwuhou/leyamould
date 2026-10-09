@@ -29,7 +29,7 @@ export async function onRequestPost(c){
   if(!["es","pt","ru","tr"].includes(locale))return respond({error:"Unsupported locale"},400);
   if(!title||!description||html.length<120||!/<(?:section|article|div|h1)\b/i.test(html))
     return respond({error:"Full translated title, description and main HTML required"},400);
-  if(/<\s*(?:script|iframe|object|embed|form)\b|on(?:click|error|load|submit)\s*=|javascript\s*:/i.test(html))
+  if(/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i.test(html))
     return respond({error:"Unsafe HTML in translated content"},400);
   const db=c.env.XUYI_DB;
   if(!MANAGED_ROUTES.has(route))return respond({error:"Unknown managed XUYI page"},400);

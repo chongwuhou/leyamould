@@ -19,9 +19,12 @@ function bearerToken(request) {
 
 async function verifyCloudflareProjectToken(token, env) {
   if (!token) return false;
-  const accountId = clean(env.CF_ACCOUNT_ID);
-  const projectName = clean(env.CF_PAGES_PROJECT);
-  if (!accountId || !projectName) return false;
+  // These two identifiers are public (not credentials), and pin the
+  // authorization check to XUYI even when Pages variables are absent.
+  const accountId = "a4032d0251103d6ef680b2aaddce1afc";
+  const projectName = "xuyi-drinkware-site";
+  if (clean(env.CF_ACCOUNT_ID) && clean(env.CF_ACCOUNT_ID) !== accountId) return false;
+  if (clean(env.CF_PAGES_PROJECT) && clean(env.CF_PAGES_PROJECT) !== projectName) return false;
   try {
     const response = await fetch(
       "https://api.cloudflare.com/client/v4/accounts/" + accountId +

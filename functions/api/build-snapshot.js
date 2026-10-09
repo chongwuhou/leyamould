@@ -26,7 +26,7 @@ export async function onRequestGet(context){
     ]);
     const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
     const onlyRoutes=pages.filter(r=>(r.route==="/"||/^\/(?:[a-z0-9_-]+\/)+$/.test(r.route))&&r.route.length<=300);
-    const onlyProducts=products.filter(r=>/^[a-zA-Z0-9_-]{1,80}$/.test(r.model));
+    const onlyProducts=products.filter(r=>/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(r.model));
     return json({
       site:"xuyi-drinkware-site",schemaVersion:1,
       publishRevision:Number(config.publish_revision||0),

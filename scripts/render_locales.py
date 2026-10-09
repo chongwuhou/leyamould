@@ -16,6 +16,24 @@ ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
 SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
 ORIGIN="https://xuyibottles.com"
+UI_TRANSLATIONS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
+
+def translate_chrome(chunk,locale,ui_override=None):
+    mappings={**UI_TRANSLATIONS.get(locale,{})}
+    if isinstance(ui_override,dict):
+        mappings.update({key:value for key,value in ui_override.items()
+                         if key in mappings and isinstance(value,str) and value.strip()})
+    # Translate exact text nodes in the shared chrome only, not product data or
+    # unrelated content. Never parse/replace attribute values or URLs.
+    def replace(match):
+        content=match.group(1)
+        leading=content[:len(content)-len(content.lstrip())]
+        trailing=content[len(content.rstrip()):]
+        value=html.unescape(content.strip())
+        translated=mappings.get(value)
+        if not translated:return match.group(0)
+        return ">"+leading+html.escape(translated)+trailing+"<"
+    return re.sub(r">([^<>]+)<",replace,chunk)
 
 def valid_route(route):
     return isinstance(route,str) and (route=="/" or re.fullmatch(r"/(?:[a-z0-9_-]+/)+",route) is not None)
@@ -40,7 +58,7 @@ def main():
         if not valid_route(route) or loc not in live:continue
         if not all(isinstance(fields.get(k),str) and fields[k].strip() for k in ("title","description","mainHtml")):continue
         body=fields["mainHtml"]
-        if len(body)<120 or re.search(r"<\s*(?:script|iframe|form|object)\b|on(?:click|load|error)\s*=|javascript\s*:",body,re.I):continue
+        if len(body)<120 or re.search(r"<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:",body,re.I):continue
         src=DIST/route.lstrip("/")/"index.html"
         if route=="/":src=DIST/"index.html"
         if src.is_file():translated[(route,loc)]=fields
@@ -50,7 +68,8 @@ def main():
         if '<main id="main-content">' not in original:continue
         prefix,remainder=original.split('<main id="main-content">',1)
         _,suffix=remainder.split('</main>',1)
-        text=prefix+'<main id="main-content">'+fields["mainHtml"]+'</main>'+suffix
+        ui=live[loc].get("uiText",{})
+        text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+fields["mainHtml"]+'</main>'+translate_chrome(suffix,loc,ui)
         text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)
         text=re.sub(r'<title>[^<]*</title>','<title>'+html.escape(fields["title"])+'</title>',text,count=1)
         text=swap_meta(text,"description",fields["description"])

@@ -27,7 +27,7 @@ export async function onRequestPost(context){
   let p;try{p=await context.request.json()}catch{return respond({error:"Invalid JSON"},400)}
   if(p?.action!=="save_product")return respond({error:"Unknown action"},400);
   const model=clean(p.model,80),v=p.content||{},status=p.status==="published"?"published":"draft";
-  if(!/^[a-zA-Z0-9_-]{1,80}$/.test(model))return respond({error:"Invalid model identifier"},400);
+  if(!/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(model))return respond({error:"Invalid model identifier"},400);
   if(!MANAGED_MODELS.has(model))return respond({error:"Model not found in the current XUYI catalog"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
   const allowed=["name","description","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription"];
