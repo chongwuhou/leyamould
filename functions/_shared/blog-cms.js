@@ -65,7 +65,7 @@ export function blogHtml(post){
 }
 export function blogCard(post){
  const url='/blog/'+post.slug+'/';
- return '<article class="news-card" data-blog-card data-blog-topic="'+esc(post.group||'Buyer Resources')+'" data-blog-search="'+esc([post.title,post.description,post.primary_keyword,...(post.secondary_keywords||[])].join(' ').toLowerCase())+'"><a href="'+url+'" class="news-card__image"><img src="'+esc(post.cover)+'" alt="'+esc(post.title)+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+esc((post.group||'Buyer Resources').toUpperCase())+'</span><h3><a href="'+url+'">'+esc(post.title)+'</a></h3><p>'+esc(post.description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>';
+ return '<article class="news-card"><a href="'+url+'" class="news-card__image"><img src="'+esc(post.cover)+'" alt="'+esc(post.title)+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+esc((post.group||'Buyer Resources').toUpperCase())+'</span><h3><a href="'+url+'">'+esc(post.title)+'</a></h3><p>'+esc(post.description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>';
 }
 export function composePage(template,body,post,route){
  if(!template.includes('<main id="main-content">'))throw Error('Blog page template missing');

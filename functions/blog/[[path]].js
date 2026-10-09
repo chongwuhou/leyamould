@@ -26,12 +26,9 @@ export async function onRequestGet(context){
   const posts=await listBlogPosts(db,"published");
   if(!posts.length)return context.next();
   const template=await assetHtml(context,"/blog/index.html");
-  const groups=["Wholesale & Planning","Materials","OEM & Branding","Quality & Safety"];
   let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / Blog</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>Water Bottle Buying Guides</h1><p>Practical guides to material choice, wholesale sourcing, OEM customization and quality assurance.</p></div></section>';
   body+='<section class="section blog-listing"><div class="shell"><div class="section__head"><div><span class="eyebrow">BUYER RESOURCES</span><h2 class="section__title">Sourcing Knowledge Center</h2><p>Explore '+posts.length+' buying guides written for B2B customers.</p></div></div>';
-  body+='<div class="blog-filter"><label for="blog-search">Find the right sourcing topic</label><input id="blog-search" type="search" placeholder="Search materials, MOQ, BPA-free, printing or packaging..." autocomplete="off" aria-controls="blog-guide-results"><div class="blog-filter__tabs" role="group" aria-label="Filter articles by topic"><button type="button" class="active" data-blog-filter="All" aria-pressed="true">All guides</button>';
-  for(const group of groups)body+='<button type="button" data-blog-filter="'+esc(group)+'" aria-pressed="false">'+esc(group)+'</button>';
-  body+='</div><p id="blog-filter-status" class="blog-filter__count" aria-live="polite">'+posts.length+' guides</p></div><div class="blog-listing__grid" id="blog-guide-results">'+posts.map(blogCard).join('')+'</div></div></section>';
+  body+='<div class="blog-listing__grid">'+posts.map(blogCard).join('')+'</div></div></section>';
   return response(composePage(template,body,null,"/blog/"));
  }catch(error){
   // Availability of the site must not depend on D1; untouched static pages stay accessible.

@@ -135,17 +135,11 @@ def target_news_and_blogs():
 
 def blog_index():
  h=intro("Blog","Water Bottle Buying Guides","Practical plastic water bottle buying guides for material selection, customization, quality control and wholesale procurement.")
- h+='<section class="section blog-listing"><div class="shell">'+sec("Sourcing Knowledge Center","Explore '+str(len(ARTICLES))+' in-depth resources for importers, distributors and private-label bottle brands.","BUYER RESOURCES")
- h+='<div class="blog-filter"><label for="blog-search">Find the right sourcing topic</label><input id="blog-search" type="search" placeholder="Search materials, MOQ, BPA-free, printing or packaging..." autocomplete="off" aria-controls="blog-guide-results">'
- h+='<div class="blog-filter__tabs" role="group" aria-label="Filter articles by topic"><button type="button" class="active" data-blog-filter="All" aria-pressed="true">All guides</button>'
- for group in ("Wholesale & Planning","Materials","OEM & Branding","Quality & Safety"):
-  h+='<button type="button" data-blog-filter="'+e(group)+'" aria-pressed="false">'+e(group)+'</button>'
- h+='</div><p id="blog-filter-status" class="blog-filter__count" role="status" aria-live="polite">'+str(len(ARTICLES))+' guides</p></div>'
- h+='<div class="blog-listing__grid" id="blog-guide-results">'
+ h+='<section class="section blog-listing"><div class="shell">'+sec("Sourcing Knowledge Center",f"Explore {len(ARTICLES)} in-depth resources for importers, distributors and private-label bottle brands.","BUYER RESOURCES")
+ h+='<div class="blog-listing__grid">'
  for slug,title,description in ARTICLES:
   post=BLOG_POSTS[slug]
-  searchable=" ".join([title,description,post["primary_keyword"],*post["secondary_keywords"]]).lower()
-  h+='<article class="news-card" data-blog-card data-blog-topic="'+e(post["group"])+'" data-blog-search="'+e(searchable)+'"><a class="news-card__image" href="/blog/'+e(slug)+'/">'+news_cover(slug,title)+'</a><div class="news-card__info"><span class="news-card__category">'+e(post["group"]).upper()+'</span><h3><a href="/blog/'+e(slug)+'/">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="/blog/'+e(slug)+'/">Read Article →</a></div></article>'
+  h+='<article class="news-card"><a class="news-card__image" href="/blog/'+e(slug)+'/">'+news_cover(slug,title)+'</a><div class="news-card__info"><span class="news-card__category">'+e(post["group"]).upper()+'</span><h3><a href="/blog/'+e(slug)+'/">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="/blog/'+e(slug)+'/">Read Article →</a></div></article>'
  h+='</div></div></section>'
  return h
 

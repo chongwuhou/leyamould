@@ -193,35 +193,4 @@ if(newsSlider){
  refresh();
 }
 
-// Blog resource center: lightweight client-side filtering of static HTML cards.
-const blogSearch=document.getElementById('blog-search');
-const blogCards=[...document.querySelectorAll('[data-blog-card]')];
-if(blogSearch&&blogCards.length){
- const tabs=[...document.querySelectorAll('[data-blog-filter]')];
- const status=document.getElementById('blog-filter-status');
- let topic='All';
- const filterGuides=()=>{
-  const term=blogSearch.value.toLowerCase().trim();
-  let count=0;
-  blogCards.forEach(card=>{
-   const visible=(topic==='All'||card.dataset.blogTopic===topic)
-     &&(!term||(card.dataset.blogSearch||'').includes(term));
-   card.hidden=!visible;
-   if(visible)count++;
-  });
-  if(status)status.textContent=count+' '+(count===1?'guide':'guides')+' found';
- };
- tabs.forEach(button=>button.addEventListener('click',()=>{
-  topic=button.dataset.blogFilter;
-  tabs.forEach(tab=>{
-   const selected=tab===button;
-   tab.classList.toggle('active',selected);
-   tab.setAttribute('aria-pressed',String(selected));
-  });
-  filterGuides();
- }));
- blogSearch.addEventListener('input',filterGuides);
- filterGuides();
-}
-
 })();
