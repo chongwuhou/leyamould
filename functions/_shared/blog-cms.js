@@ -3,6 +3,7 @@ export const esc = value => String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp
 export async function ensureBlogSchema(db){
  await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_blog_posts (slug TEXT PRIMARY KEY,status TEXT NOT NULL DEFAULT 'draft',content_json TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_at TEXT)").run();
  await db.prepare("CREATE INDEX IF NOT EXISTS idx_xuyi_blog_status ON xuyi_blog_posts(status,updated_at)").run();
+ await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_blog_drafts (slug TEXT PRIMARY KEY,draft_json TEXT NOT NULL,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
 }
 const str=(x,max=300)=>String(x??'').trim().slice(0,max);
 const slugOk=x=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(x)&&x.length<=120;
@@ -28,9 +29,11 @@ export async function listBlogPosts(db,status=''){
  await ensureBlogSchema(db);
  const st=status?db.prepare('SELECT * FROM xuyi_blog_posts WHERE status=? ORDER BY updated_at DESC').bind(status):db.prepare('SELECT * FROM xuyi_blog_posts ORDER BY updated_at DESC');
  const rows=(await st.all()).results||[];
+ const saved=(await db.prepare('SELECT slug FROM xuyi_blog_drafts').all()).results||[];
+ const hasDraft=new Set(saved.map(x=>x.slug));
  return rows.map(row=>{
   let post={};try{post=JSON.parse(row.content_json)}catch{}
-  return {...post,slug:row.slug,status:row.status,updated_at:row.updated_at,published_at:row.published_at};
+  return {...post,slug:row.slug,status:row.status,updated_at:row.updated_at,published_at:row.published_at,has_draft:hasDraft.has(row.slug)};
  });
 }
 export async function findBlogPost(db,slug){
@@ -39,6 +42,14 @@ export async function findBlogPost(db,slug){
  if(!row)return null;
  let post;try{post=JSON.parse(row.content_json)}catch{return null}
  return {...post,status:row.status,updated_at:row.updated_at,published_at:row.published_at};
+}
+export async function findEditableBlogPost(db,slug){
+ const post=await findBlogPost(db,slug);
+ if(!post)return null;
+ const draft=await db.prepare('SELECT draft_json FROM xuyi_blog_drafts WHERE slug=?').bind(slug).first();
+ if(!draft)return post;
+ try{return {...JSON.parse(draft.draft_json),status:post.status,isDraftVersion:true,slug,published_at:post.published_at}}
+ catch{return post}
 }
 export function blogHtml(post){
  let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Buying Guide</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+esc(post.title)+'</h1><p>'+esc(post.description)+'</p></div></section>';

@@ -61,9 +61,15 @@ async function list(){
  const data=await api();
  const root=$('#blog-admin-list');root.hidden=false;
  $('#blog-editor-form').hidden=true;
- root.innerHTML=data.posts.length?data.posts.map(post=>'<div class="blog-admin-row"><div><strong>'+esc(post.title)+'</strong><small>'+esc(post.slug)+' · '+esc(post.group||'')+' · '+esc(post.status)+' · '+esc(post.updated_at||'')+'</small></div><button type="button" class="btn ghost" data-edit-blog="'+esc(post.slug)+'">编辑</button></div>').join(''):'<p class="muted">还没有已导入文章。可以新建文章，或先导入当前 16 篇站内文章。</p>';
+ root.innerHTML=data.posts.length?data.posts.map(post=>'<div class="blog-admin-row"><div><strong>'+esc(post.title)+'</strong><small>'+esc(post.slug)+' · '+esc(post.group||'')+' · '+esc(post.status)+(post.has_draft?' · 有未发布草稿':'')+' · '+esc(post.updated_at||'')+'</small></div><button type="button" class="btn ghost" data-edit-blog="'+esc(post.slug)+'">编辑</button>'+(post.status==='published'?'<button type="button" class="btn ghost" data-retire-blog="'+esc(post.slug)+'">撤回</button>':'')+'</div>').join(''):'<p class="muted">暂无文章，点击“新建文章”即可创建。</p>';
  root.querySelectorAll('[data-edit-blog]').forEach(button=>button.addEventListener('click',async()=>{
   try{const {post}=await api('GET',null,API+'?slug='+encodeURIComponent(button.dataset.editBlog));setForm(post,true)}catch(err){status(err.message)}
+ }));
+ root.querySelectorAll('[data-retire-blog]').forEach(button=>button.addEventListener('click',async()=>{
+  if(!confirm('确定要从正式站撤回这篇文章吗？撤回后客户将无法再访问文章 URL。'))return;
+  button.disabled=true;
+  try{await api('POST',{action:'retire',slug:button.dataset.retireBlog});await list()}
+  catch(error){status('撤回失败：'+error.message);button.disabled=false}
  }));
  loaded=true;status('D1 文章总数：'+data.posts.length+'。其中发布后可以立即在线访问。');
  }catch(err){status('Blog 数据读取失败：'+err.message)}

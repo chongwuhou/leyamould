@@ -1,5 +1,5 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
-import { ensureBlogSchema, normalizeBlogPost, listBlogPosts, findBlogPost } from "../../_shared/blog-cms.js";
+import { ensureBlogSchema, normalizeBlogPost, listBlogPosts, findEditableBlogPost } from "../../_shared/blog-cms.js";
 const clean=x=>String(x??'').trim();
 const reply=(x,status=200)=>Response.json(x,{status,headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex,nofollow"}});
 async function authorized(context){
@@ -13,11 +13,11 @@ export async function onRequestGet(context){
  const url=new URL(context.request.url);
  if(url.searchParams.has("slug")){
   const slug=url.searchParams.get("slug");
-  const post=await findBlogPost(context.env.XUYI_DB,slug);
+  const post=await findEditableBlogPost(context.env.XUYI_DB,slug);
   return post?reply({post}):reply({error:"Article not found"},404);
  }
  const posts=await listBlogPosts(context.env.XUYI_DB);
- return reply({posts:posts.map(p=>({slug:p.slug,title:p.title,status:p.status,group:p.group,updated_at:p.updated_at,published_at:p.published_at,cover:p.cover})),count:posts.length});
+ return reply({posts:posts.map(p=>({slug:p.slug,title:p.title,status:p.status,has_draft:p.has_draft,group:p.group,updated_at:p.updated_at,published_at:p.published_at,cover:p.cover})),count:posts.length});
 }
 export async function onRequestPost(context){
  const denied=await authorized(context);if(denied)return denied;
@@ -33,8 +33,15 @@ export async function onRequestPost(context){
   if(status==="published"&&!post.sections.some(s=>s.paragraph.length>=120))return reply({error:"Cannot publish without substantive article content."},400);
   const content=JSON.stringify(post);
   if(content.length>100000)return reply({error:"Article content is too large"},413);
+  if(action==="save"&&exists?.status==="published"){
+   // Editing a live article must not unpublish the customer-facing version.
+   await db.prepare("INSERT INTO xuyi_blog_drafts(slug,draft_json) VALUES(?,?) ON CONFLICT(slug) DO UPDATE SET draft_json=excluded.draft_json,updated_at=CURRENT_TIMESTAMP")
+     .bind(post.slug,content).run();
+   return reply({saved:true,status:"draft",slug:post.slug,liveUnchanged:true});
+  }
   await db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,?,?,?) ON CONFLICT(slug) DO UPDATE SET status=excluded.status,content_json=excluded.content_json,updated_at=CURRENT_TIMESTAMP,published_at=CASE WHEN excluded.status='published' THEN COALESCE(xuyi_blog_posts.published_at,excluded.published_at) ELSE xuyi_blog_posts.published_at END")
     .bind(post.slug,status,content,status==="published"?new Date().toISOString():null).run();
+  if(action==="publish")await db.prepare("DELETE FROM xuyi_blog_drafts WHERE slug=?").bind(post.slug).run();
   return reply({saved:true,status,slug:post.slug,url:status==="published"?"/blog/"+post.slug+"/":null});
  }
  if(action==="retire"){
