@@ -6,7 +6,7 @@ claims about machinery, certification, quantity and lead time require approval.
 from site_renderer import e,photo,FAQS
 import json
 
-BASE="https://xuyi-drinkware-site.pages.dev"
+BASE="https://xuyibottles.com"
 RELATED=[
  ("OEM / ODM Support","/capabilities/oem-odm/","How model-based customization and custom development are evaluated"),
  ("Manufacturing Process","/manufacturing/","How specifications, samples, production and packing are coordinated"),

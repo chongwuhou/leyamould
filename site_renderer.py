@@ -27,7 +27,13 @@ def photo(src,alt,loading='lazy'):return f'<img src="{e(src)}" alt="{e(alt)}" lo
 def write(path,content):
  out=ROOT/path;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding="utf-8")
 URLS={}
+SITE_ORIGIN="https://xuyibottles.com"
 def build_url(path,title,content):
+ # Canonical URL for all generated static routes on the already-live production hostname.
+ route="/"+path[:-len("index.html")] if path.endswith("index.html") else "/"+path
+ canonical=SITE_ORIGIN+route
+ if 'rel="canonical"' not in content:
+  content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
  URLS[path]=title
  write(path,content)
 ICONS={
@@ -124,7 +130,7 @@ def footer():
  return '<section class="cta-panel"><div class="shell"><span class="eyebrow">Wholesale & Custom Branding</span><h2>Ready to Build Your Bottle Collection?</h2><p>Share your model numbers, estimated quantity, colors, artwork and destination country.</p><a href="/contact/#inquiry" class="button button--round">Get an Instant Quote →</a></div></section><footer class="footer"><div class="shell"><div class="footer__cols"><div><a class="logo" href="/">XUYI<small>PLASTIC DRINKWARE</small></a><p>Factory-backed plastic water bottles for wholesale, branding and OEM/ODM projects.</p><p>Taizhou, Zhejiang, China</p></div><div><h3>Products</h3>'+links+'</div><div><h3>Capabilities</h3><p><a href="/capabilities/custom-logo/">Custom Logo</a></p><p><a href="/capabilities/oem-odm/">OEM / ODM</a></p><p><a href="/capabilities/custom-packaging/">Custom Packaging</a></p><p><a href="/quality-control/">Quality Control</a></p></div><div><h3>Quick Links</h3><p><a href="/about/">About Us</a></p><p><a href="/blog/">Blog</a></p><p><a href="/faq/">FAQ</a></p><p><a href="/contact/">Contact Us</a></p><p><a href="/privacy-policy/">Privacy Policy</a></p></div></div><div class="footer__bottom"><span>© XUYI Drinkware · Website preview · Specifications subject to verification</span><span>Factory-backed B2B plastic drinkware</span></div></div></footer><div class="sticky-inquiry"><span>Wholesale & OEM Enquiries</span><a class="button" href="/contact/#inquiry">Get Quote →</a></div>'
 def page(title,description,body,canonical=None):
  # Internal preview. No index until the company info, media and claims have been verified.
- head='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light"><meta name="theme-color" content="#ffffff"><title>'+e(title)+'</title><meta name="description" content="'+e(description)[:220]+'"><link rel="stylesheet" href="/assets/site.css"><script defer src="/assets/site.js"></script></head><body>'
+ head='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light"><meta name="theme-color" content="#ffffff"><title>'+e(title)+'</title><meta name="description" content="'+e(description)[:220]+'"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="stylesheet" href="/assets/site.css"><script defer src="/assets/site.js"></script></head><body>'
  rail='<aside class="rail" aria-label="Quick contact"><a href="/contact/#inquiry" aria-label="Contact us">'+ICONS["mail"]+'</a><a href="/contact/?type=sample#inquiry" aria-label="Request a sample">'+ICONS["phone"]+'</a><a href="#" aria-label="Back to top" onclick="scrollTo({top:0,behavior:\'smooth\'});return false">'+ICONS["top"]+'</a></aside>'
  return head+header()+rail+'<main id="main-content">'+body+'</main>'+footer()+'</body></html>'
 def intro(crumb,title,subtitle=""):
@@ -132,10 +138,14 @@ def intro(crumb,title,subtitle=""):
 def category_card(cat):
  n,slug,im,desc=cat
  return '<a class="category" href="/collections/'+slug+'/"><div class="category__photo">'+photo(im,n)+'</div><div class="category__body"><h3>'+e(n)+'</h3><span>Explore Collection ↗</span></div></a>'
+def public_display_name(item):
+ # The source lists model 2506 as 60ml; this is unverified and likely a catalog data error.
+ if str(item.get("model"))=="2506":return "Plastic Sports Water Bottle — Model 2506"
+ return item["name"]
 def product_card(item):
  img=item["images"][0]
- text=(item["name"]+" "+item["model"]+" "+item["capacity"]).lower()
- return '<a class="product-card" data-product-card data-category="'+e(CAT[item["category"]][1])+'" data-search="'+e(text)+'" href="/products/'+e(item["slug"])+'/"><div class="product-card__image">'+photo(img,item["name"]+" model "+item["model"])+'</div><div class="product-card__body"><span class="product-card__small">MODEL '+e(item["model"])+'</span><h3>'+e(item["name"])+'</h3><span class="product-card__link">View Product ↗</span></div></a>'
+ text=(public_display_name(item)+" "+item["model"]+" "+item["capacity"]).lower()
+ return '<a class="product-card" data-product-card data-category="'+e(CAT[item["category"]][1])+'" data-search="'+e(text)+'" href="/products/'+e(item["slug"])+'/"><div class="product-card__image">'+photo(img,public_display_name(item)+" model "+item["model"])+'</div><div class="product-card__body"><span class="product-card__small">MODEL '+e(item["model"])+'</span><h3>'+e(public_display_name(item))+'</h3><span class="product-card__link">View Product ↗</span></div></a>'
 def product_grid(items):return '<div class="grid grid--4 product-grid">'+''.join(product_card(x) for x in items)+'</div>'
 def filters(with_categories=True):
  options='<option value="">All product categories</option>'+''.join('<option value="'+x[1]+'">'+e(x[0])+'</option>' for x in CAT.values())

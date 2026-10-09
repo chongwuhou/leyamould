@@ -1,10 +1,83 @@
 {
-  "verified_customers": [],
-  "schema": {
-    "name": "Verified customer brand display name",
-    "logo_path": "/assets/customer-logos/customer.svg",
-    "authorization": "Written public display permission on file",
-    "verified_at": "ISO timestamp"
-  },
-  "note": "Do not show any trademark or claim business relationships until verified and authorized."
+  "context": "Brand logos displayed on Kreat group homepage. These logos are group-site references, not proof that the brands are XUYI direct customers.",
+  "group_brand_marks": [
+    {
+      "name": "Amazon",
+      "logo_path": "/assets/customer-logos/amazon.png",
+      "source_url": "https://kreat.com/wp-content/uploads/2025/10/amazon-1.png",
+      "usage": "group_site_reference",
+      "source": "Kreat homepage carousel",
+      "authorization": "user-confirmed-same-group-permission",
+      "original_size": [
+        260,
+        50
+      ],
+      "content_type": "image/png"
+    },
+    {
+      "name": "Walmart",
+      "logo_path": "/assets/customer-logos/walmart.png",
+      "source_url": "https://kreat.com/wp-content/uploads/2025/10/Walmart.png",
+      "usage": "group_site_reference",
+      "source": "Kreat homepage carousel",
+      "authorization": "user-confirmed-same-group-permission",
+      "original_size": [
+        260,
+        50
+      ],
+      "content_type": "image/png"
+    },
+    {
+      "name": "Costco",
+      "logo_path": "/assets/customer-logos/costco.png",
+      "source_url": "https://kreat.com/wp-content/uploads/2025/10/Costco.png",
+      "usage": "group_site_reference",
+      "source": "Kreat homepage carousel",
+      "authorization": "user-confirmed-same-group-permission",
+      "original_size": [
+        260,
+        50
+      ],
+      "content_type": "image/png"
+    },
+    {
+      "name": "eBay",
+      "logo_path": "/assets/customer-logos/ebay.png",
+      "source_url": "https://kreat.com/wp-content/uploads/2025/10/ebay.png",
+      "usage": "group_site_reference",
+      "source": "Kreat homepage carousel",
+      "authorization": "user-confirmed-same-group-permission",
+      "original_size": [
+        260,
+        50
+      ],
+      "content_type": "image/png"
+    },
+    {
+      "name": "Coca-Cola",
+      "logo_path": "/assets/customer-logos/coca-cola.png",
+      "source_url": "https://kreat.com/wp-content/uploads/2025/10/Cocacola.png",
+      "usage": "group_site_reference",
+      "source": "Kreat homepage carousel",
+      "authorization": "user-confirmed-same-group-permission",
+      "original_size": [
+        260,
+        50
+      ],
+      "content_type": "image/png"
+    },
+    {
+      "name": "Carrefour",
+      "logo_path": "/assets/customer-logos/carrefour.png",
+      "source_url": "https://kreat.com/wp-content/uploads/2025/10/Carrefour.png",
+      "usage": "group_site_reference",
+      "source": "Kreat homepage carousel",
+      "authorization": "user-confirmed-same-group-permission",
+      "original_size": [
+        260,
+        50
+      ],
+      "content_type": "image/png"
+    }
+  ]
 }

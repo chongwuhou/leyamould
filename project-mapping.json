@@ -1,0 +1,20 @@
+{
+  "projectName": "xuyi-drinkware-site",
+  "localProjectPath": "D:\\bendigpt-WebCodex\\xuyi-drinkware-site",
+  "githubRepository": "xuyi-drinkware-site",
+  "githubStatus": "private-repo-created-source-pushed",
+  "cloudflarePagesProject": "xuyi-drinkware-site",
+  "cloudflareStatus": "deployed-preview-and-custom-domain",
+  "existingFilterSite": "do-not-modify",
+  "domain": "xuyibottles.com",
+  "githubUrl": "https://github.com/chongwuhou/xuyi-drinkware-site",
+  "githubCommit": "main",
+  "cloudflareUrl": "https://xuyi-drinkware-site.pages.dev/",
+  "cloudflareProductionBranch": "main",
+  "launchStatus": "production-domain-connected-preview-noindex-inquiry-disabled",
+  "canonicalOrigin": "https://xuyibottles.com",
+  "wwwHostname": "www.xuyibottles.com",
+  "domainStatus": "both-hostnames-return-xuyi-site-200-observed",
+  "faviconStyle": "red-rounded-square-white-X",
+  "brandCarouselSource": "https://kreat.com/"
+}

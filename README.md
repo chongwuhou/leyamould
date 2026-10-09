@@ -112,3 +112,13 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Desktop layout uses explanatory text at left and live-search input at right; mobile stacks them. Added functional popular-search chips for MOQ, Materials, Logo, Sample and Shipping.
 - Kept all 54 FAQ answers, seven topics, JSON-LD, internal links and preview noindex unchanged.
 - Local browser QA at 320/390/768/1024/1440px verified FAQ search, chip actions, clearing search and zero horizontal overflow.
+
+
+## Production domain, original group-brand carousel and XUYI favicon
+- Confirmed xuyibottles.com and www.xuyibottles.com already resolve and respond with the XUYI Pages website (HTTP 200). Chosen canonical origin is https://xuyibottles.com/ (non-www). Keep existing noindex and disabled inquiry pending formal approval.
+- Six ORIGINAL Kreat homepage brand carousel image assets: Amazon, Walmart, Costco, eBay, Coca-Cola and Carrefour. Saved unchanged under assets/customer-logos with source URL/provenance in data/customer-logos.json. Displayed as group-site brand references; not represented as independently verified direct XUYI clients or endorsements.
+- Carousel loops horizontally with color logos, pauses on pointer/focus, is static and horizontally scrollable for reduced-motion visitors; adapts from desktop to mobile.
+- Favicon designed to match the existing red XUYI wordmark: red rounded-square background + bold white X. SVG, ICO (16/32/48), 16/32 PNG, 180 apple touch and 192/512 PWA icons.
+- All generated HTML pages get favicon/manifest links, a canonical URL under https://xuyibottles.com, and matching og:url metadata; existing JSON-LD and sitemap base URLs updated.
+- Banner bottom-right 01 / 03 means first of three slides; a visible SLIDE label and synchronized accessible description make it explicit.
+- Demalong and other Cloudflare projects were not modified.

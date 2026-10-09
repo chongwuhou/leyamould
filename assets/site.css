@@ -582,3 +582,24 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
 .why-detail__related-products,.why-detail__related{grid-template-columns:1fr}
 .why-detail__hero h1{font-size:33px}
 }
+
+
+/* Original six Kreat group brand-carousel logos — continuous accessible marquee. */
+.client-logo__heading p{max-width:540px}
+.client-logo__viewport{position:relative;width:100%;overflow:hidden;border:1px solid #e5e6e8;background:#fff;border-radius:5px}
+.client-logo__track{display:flex;width:max-content;animation:xuyi-brand-marquee 34s linear infinite;will-change:transform}
+.client-logo__set{display:flex;flex:none}
+.client-logo__set .client-logo__cell{flex:0 0 clamp(175px,16vw,228px);width:clamp(175px,16vw,228px);height:122px;min-height:0;box-sizing:border-box;border-right:1px solid #eceff0;padding:23px;justify-content:center}
+.client-logo__set .client-logo__cell img{width:100%;max-width:200px;max-height:61px;object-fit:contain;filter:none;opacity:1}
+.client-logo__viewport:hover .client-logo__track,.client-logo__viewport:focus-within .client-logo__track{animation-play-state:paused}
+.client-logo__note a{font-weight:800;color:#cf2633;text-decoration:underline;text-underline-offset:2px}
+@keyframes xuyi-brand-marquee{to{transform:translateX(-50%)}}
+@media(max-width:750px){.client-logo__set .client-logo__cell{flex-basis:166px;width:166px;height:105px;padding:18px}}
+@media(prefers-reduced-motion:reduce){.client-logo__viewport{overflow-x:auto}.client-logo__track{animation:none;will-change:auto}}
+
+
+/* Disambiguate the home banner slide position, keeping the existing three-slide functionality. */
+.hero__controls{display:flex;align-items:center;gap:8px;padding:8px 13px;background:#ffffffdf;border:1px solid #ffffffab;border-radius:100px;box-shadow:0 3px 14px #0000000c;letter-spacing:.08em}
+.hero__controls-label{color:#6b6f73;font-size:9px;letter-spacing:.13em;font-weight:900;margin-right:4px}
+.hero__controls-total{font-size:12px;color:#37383b}
+@media(max-width:750px){.hero__controls{right:12px;bottom:12px;padding:7px 10px}}

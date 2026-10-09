@@ -57,26 +57,21 @@ def company_strength_section():
 
 def customer_logo_section():
  import json
- from pathlib import Path
  from site_renderer import ROOT,photo,e
  file=ROOT/'data/customer-logos.json'
- entries=json.loads(file.read_text(encoding='utf-8')).get('verified_customers',[]) if file.exists() else []
+ entries=json.loads(file.read_text(encoding='utf-8')).get('group_brand_marks',[]) if file.exists() else []
  marks=[]
  for brand in entries:
   name=brand.get('name','').strip()
   logo=brand.get('logo_path','')
   auth=brand.get('authorization','')
-  # Only explicitly authorized, locally verified brand-logo image assets appear.
   if not name or not logo.startswith('/assets/customer-logos/') or not auth or not (ROOT/logo.lstrip('/')).is_file():continue
-  marks.append('<div class="client-logo__cell">'+photo(logo,name+' logo')+'</div>')
+  marks.append('<div class="client-logo__cell">'+photo(logo,name+' logo shown in the Kreat group website brand carousel')+'</div>')
  if not marks:
-  # Layout preview, not invented customer identities or endorsements.
-  designs=['01','02','03','04','05','06']
-  marks=['<div class="client-logo__cell client-logo__cell--pending"><span class="client-logo__symbol" aria-hidden="true">'+x+'</span><span class="client-logo__pending">Client logo pending approval</span></div>' for x in designs]
-  note='Client brand names and logos will be added only after cooperation and public display rights are verified. These are layout placeholders, not customers.'
- else:
-  note='Displayed customer logos have been reviewed for public use.'
- html='<section class="client-logo section" id="customer-brands"><div class="shell"><div class="client-logo__heading"><div><span class="eyebrow">CLIENT BRAND SHOWCASE</span><h2>Brands &amp; Customers<span class="client-logo__red">.</span></h2></div><p>Our site is prepared to showcase authorized client brands and verified project relationships.</p></div><div class="client-logo__grid">'+''.join(marks)+'</div><p class="client-logo__note">'+e(note)+'</p></div></section>'
+  marks=['<div class="client-logo__cell client-logo__cell--pending">Brand images unavailable</div>']
+ first='<div class="client-logo__set">'+''.join(marks)+'</div>'
+ second='<div class="client-logo__set" aria-hidden="true">'+''.join(marks)+'</div>'
+ html='<section class="client-logo section" id="customer-brands"><div class="shell"><div class="client-logo__heading"><div><span class="eyebrow">GROUP WEBSITE BRAND REFERENCES</span><h2>Brands &amp; Customers<span class="client-logo__red">.</span></h2></div><p>Brand marks presented in the Kreat group website carousel, displayed here with the original imagery and colors.</p></div><div class="client-logo__viewport" aria-label="Group website brand carousel"><div class="client-logo__track">'+first+second+'</div></div><p class="client-logo__note">Source: <a href="https://kreat.com/" target="_blank" rel="noopener noreferrer">Kreat group website</a>. Logos reproduce the group-site display, not evidence of a separate direct customer or endorsement relationship with XUYI.</p></div></section>'
  return html
 
 

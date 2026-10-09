@@ -55,7 +55,7 @@ if(hero){
  ];
  let idx=0;
  const title=hero.querySelector('#hero-title'),desc=hero.querySelector('#hero-description'),img=hero.querySelector('#hero-image'),cta=hero.querySelector('#hero-cta'),counter=hero.querySelector('#hero-counter');
- hero.querySelectorAll('[data-hero-nav]').forEach(b=>b.addEventListener('click',()=>{idx=(idx+Number(b.dataset.heroNav)+slides.length)%slides.length;const s=slides[idx];title.innerHTML=s.title;desc.textContent=s.description;img.src=s.img;img.alt=s.alt;cta.href=s.link;cta.textContent=s.cta;counter.textContent=String(idx+1).padStart(2,'0')}));
+ hero.querySelectorAll('[data-hero-nav]').forEach(b=>b.addEventListener('click',()=>{idx=(idx+Number(b.dataset.heroNav)+slides.length)%slides.length;const s=slides[idx];title.innerHTML=s.title;desc.textContent=s.description;img.src=s.img;img.alt=s.alt;cta.href=s.link;cta.textContent=s.cta;counter.textContent=String(idx+1).padStart(2,'0');hero.querySelector('.hero__controls').setAttribute('aria-label','Banner slide '+(idx+1)+' of '+slides.length)}));
 }
 const bottleTabs=[...document.querySelectorAll('.bottle-tab[role="tab"]')];
 function selectTab(i){bottleTabs.forEach((t,j)=>{const active=i===j;t.classList.toggle('active',active);t.setAttribute('aria-selected',String(active));const panel=document.getElementById(t.getAttribute('aria-controls'));if(panel)panel.hidden=!active})}
