@@ -29,6 +29,15 @@ for locale in ("es","pt","ru","tr"):
   main=html.split('<main id="main-content">',1)[1].split('</main>',1)[0]
   assert '{{' not in main and '}}' not in main,(locale,route)
   assert '<main id="main-content">' in html and '</main>' in html,(locale,route)
+  segments=f.relative_to(folder).parts
+  if len(segments)==3 and segments[0]=="products" and segments[1].isdigit():
+   model=segments[1]
+   title=re.search(r"<title>([^<]+)</title>",html)
+   desc=re.search(r'<meta name="description" content="([^"]+)"',html)
+   assert title and title.group(1).count(model)==1,(locale,route,"SEO model repeated")
+   assert desc and desc.group(1).count(model)==1,(locale,route,"description model repeated")
+  if route=="/"+locale+"/":
+   assert ">FAQ<" not in html,(locale,"untranslated footer FAQ")
   if locale=="ru" and route.endswith("/products/2501/"):
    main=html.split('<main id="main-content">',1)[1].split('</main>',1)[0]
    assert len(re.findall('[\u0400-\u04ff]',main))>=150,"Cyrillic product copy missing"

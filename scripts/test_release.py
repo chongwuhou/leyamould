@@ -73,6 +73,9 @@ for page in pages:
         value=match.group(1).strip()
         if value in seen:broken.append((rel,"duplicate product "+label,seen[value]))
         seen[value]=rel
+        slug=rel.split("/")[1]
+        if slug.isdigit() and value.count(slug)!=1:
+            broken.append((rel,"product model repeats in "+label,slug))
     expected="https://xuyibottles.com/"+rel[:-len("index.html")]
     if not canon or canon.group(1)!=expected:broken.append((rel,"product canonical mismatch"))
 for route in ["index.html","blog/index.html",ADMIN_PATH+"/index.html",

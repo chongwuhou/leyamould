@@ -269,8 +269,12 @@ def generate():
   public_name=public_display_name(product)
   # Every real model has its own SEO title and description, as in Demalong's
   # evidence-backed model pages. Do not invent MOQ, certification or capacity.
-  product_markup=page(public_name+' — Model '+model+' | XUYI Bottles',
-    public_name+' model '+model+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.',detail(product))
+  # Some catalog names already end in Model N: never append N twice.
+  existing_model=public_name.casefold().endswith(('model '+model).casefold())
+  seo_name=public_name if existing_model else public_name+' — Model '+model
+  description_name=public_name if existing_model else public_name+' model '+model
+  product_markup=page(seo_name+' | XUYI Bottles',
+    description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.',detail(product))
   build_url('products/'+product['slug']+'/index.html','Model '+product['slug'],product_schema(product_markup,product))
  build_url('capabilities/index.html','Capabilities',resources_schema(page(*RESOURCE_SEO['capabilities'],capabilities_page()),'capabilities',RESOURCE_SEO['capabilities'][1]))
  for cap in CAPABILITIES:
