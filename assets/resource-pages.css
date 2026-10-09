@@ -194,3 +194,15 @@ body:has(.rs-hero) .sticky-inquiry,body:has(.rs-hero) .cta-panel{display:none!im
 .rs-cap__list article>div:nth-child(2){padding:16px}
 .rs-cap__list h3{font-size:17px}
 }
+
+
+/* Published group-site figures: source attributed to Everich, never relabeled XUYI capacity. */
+.rs-section--group-scale{background:#e9f1f2}
+.rs-about__scale{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.rs-about__scale>div{background:#fff;padding:27px 19px;border-top:3px solid var(--red)}
+.rs-about__scale strong{display:block;font-size:clamp(25px,3vw,42px);font-weight:900;letter-spacing:-.048em;line-height:1.18}
+.rs-about__scale span{display:block;color:#5a666d;font-size:12px;line-height:1.55;margin-top:13px}
+.rs-about__source{margin:22px 0 0;color:#5b666a;font-size:12px;line-height:1.75}
+.rs-about__source a{color:#bf2631;text-decoration:underline;font-weight:850}
+@media(max-width:750px){.rs-about__scale{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.rs-about__scale>div{padding:19px 12px}.rs-about__scale strong{font-size:24px}}

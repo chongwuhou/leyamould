@@ -104,3 +104,5 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Reference research provenance is recorded in data/support-content-sources.json and group photo origins in data/why-us-group-media.json.
 - Five page titles/meta descriptions are unique. BreadcrumbList, Organization, WebPage schemas used; FAQPage only where the visible Q&A exists. Site remains noindex until approved launch and inquiry delivery.
 - Never infer XUYI product materials, temperatures, BPA status, certifications, production quantities or stock from source group-brand pages. No live inquiry submissions enabled.
+
+- Added a separately sourced Everich group-site capacity reference on /about/: 70,000+ m², 13 automated lines, 15 million pieces/year, 1,200+ personnel. Clearly attributed to Everich public profile and NOT claimed as XUYI Taizhou plant capacity.

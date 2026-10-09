@@ -77,5 +77,13 @@
       ],
       "content_note": "Educational sourcing guidance only"
     }
-  ]
+  ],
+  "group_public_figures": {
+    "source": "https://www.everich.com/about/",
+    "reported_as": "Everich public figures, not verified XUYI Taizhou factory capacity",
+    "area_m2": "70,000+",
+    "automated_lines": 13,
+    "annual_pieces": "15 Million",
+    "employees": "1,200+"
+  }
 }
