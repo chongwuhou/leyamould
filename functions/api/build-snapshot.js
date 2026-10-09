@@ -16,13 +16,14 @@ export async function onRequestGet(context){
   const db=context.env.XUYI_DB;
   if(!db)return json({error:"XUYI_DB binding missing"},503);
   try{
-    const [state,pages,navigation,redirects,products,translations]=await Promise.all([
+    const [state,pages,navigation,redirects,products,translations,pageBodies]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','publish_revision')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
       list(db,"SELECT source_path,target_path,status_code FROM site_redirects WHERE enabled=1 ORDER BY source_path"),
       list(db,"SELECT model,content_json,publication_status FROM xuyi_product_content WHERE publication_status='published' ORDER BY model"),
-      list(db,"SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides ORDER BY locale,resource_id")
+      list(db,"SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides ORDER BY locale,resource_id"),
+      list(db,"SELECT route,main_html FROM xuyi_page_content WHERE publication_status='published' ORDER BY route")
     ]);
     const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
     const onlyRoutes=pages.filter(r=>(r.route==="/"||/^\/(?:[a-z0-9_-]+\/)+$/.test(r.route))&&r.route.length<=300);
@@ -34,6 +35,8 @@ export async function onRequestGet(context){
       contacts:config.contact_config?JSON.parse(config.contact_config):null,
       languages:config.language_config?JSON.parse(config.language_config):null,
       pages:onlyRoutes,navigation,redirects,
+      pageBodies:pageBodies.filter(r=>typeof r.route==="string"&&typeof r.main_html==="string")
+        .map(r=>({route:r.route,mainHtml:r.main_html})),
       products:onlyProducts.map(r=>({model:r.model,content:JSON.parse(r.content_json)})),
       translations:translations.map(r=>({resourceId:r.resource_id,locale:r.locale,content:JSON.parse(r.translated_json)}))
     });

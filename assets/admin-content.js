@@ -18,8 +18,8 @@
  async function load(){
   say("正在读取旭一 D1 …");
   try{
-   const results=await Promise.all(["brand-config","site-config","pages","product-content","page-translations"].map(x=>api(x)));
-   [state.brand,state.site,state.pages,state.products,state.locales]=results;
+   const results=await Promise.all(["brand-config","site-config","pages","product-content","page-translations","page-content"].map(x=>api(x)));
+   [state.brand,state.site,state.pages,state.products,state.locales,state.pageBodies]=results;
    dirty=false;say("已读取 D1，修改后需要保存。未审核内容不会自动公开。");
    render();
   }catch(e){say("读取失败："+e.message)}
@@ -66,6 +66,13 @@
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
    button("保存产品到 D1","product");
   }
+  if(tab==="page-body"){
+   html='<h3>普通页面正文管理</h3><p>管理 About、Why Us、Capabilities 等页面；Blog 与产品详情各用其自身编辑器。草稿不影响前台，审核后发布才会覆盖现有页面主内容。</p>'+
+    '<label class="block-label">英文原始页面 <select id="cms-page-body-route"></select></label>'+
+    field("pageBodyHtml","","主内容完整 HTML（保留类名、图片、链接及页面结构）",20)+
+    '<label class="block-label">状态 <select data-cms-field="pageBodyStatus"><option value="draft">草稿</option><option value="published">审核发布</option></select></label>'+
+    button("读取当前英文页正文","page-body-source")+' '+button("保存页面正文","page-body-save");
+  }
   if(tab==="locales"){
    html='<h3>多语言正式页面 · 翻译审核</h3><p>先复制英文原文，再逐段翻译。只有完整审核并设置发布就绪才会生成对应语言 URL；不会把英文假装成其他语言。</p>'+
     '<label class="block-label">目标语言 <select id="cms-locale"><option value="es">Español</option><option value="pt">Português</option><option value="ru">Русский</option><option value="tr">Türkçe</option></select></label>'+
@@ -94,6 +101,15 @@
     for(const [key,val] of Object.entries(entry.content||{})){const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=val;}
     container.querySelector('[data-cms-field="status"]').value=entry.status;});
   } 
+  if(tab==="page-body"){
+   const routes=$("cms-page-body-route");
+   routes.innerHTML=(state.pageBodies?.editableRoutes||[]).map(route=>'<option value="'+esc(route)+'">'+esc(route)+'</option>').join("");
+   routes.onchange=()=>{const item=(state.pageBodies?.items||[]).find(x=>x.route===routes.value);
+    container.querySelector('[data-cms-field="pageBodyHtml"]').value=item?.mainHtml||"";
+    container.querySelector('[data-cms-field="pageBodyStatus"]').value=item?.status||"draft";
+   };
+   routes.onchange();
+  }
   if(tab==="locales"){
    const selector=$("cms-locale-route");
    selector.innerHTML=(state.pages.pages||[]).map(x=>'<option value="'+esc(x.route)+'">'+esc(x.route+" · "+x.label)+'</option>').join("");
@@ -132,6 +148,19 @@
     result=await api("product-content",{action:"save_product",model:value("model"),
      status:value("status"),content:{name:value("name"),material:value("material"),capacity:value("capacity"),
        description:value("description"),seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
+   }else if(action==="page-body-source"){
+    const route=$("cms-page-body-route").value;
+    const response=await fetch(route,{cache:"no-store"});
+    if(!response.ok)throw Error("无法读取英文页面正文");
+    const main=new DOMParser().parseFromString(await response.text(),"text/html").getElementById("main-content");
+    if(!main)throw Error("找不到页面的 main 内容");
+    document.querySelector('[data-cms-field="pageBodyHtml"]').value=main.innerHTML;
+    say("已读取。请检查所有图片、链接及交互结构；不允许嵌入 JS/脚本。");return;
+   }else if(action==="page-body-save"){
+    const status=value("pageBodyStatus");
+    if(status==="published"&&!window.confirm("确认页面正文已经核实并加入正式发布队列？"))return;
+    result=await api("page-content",{action:"save_page",route:$("cms-page-body-route").value,status,
+      mainHtml:value("pageBodyHtml")});
    }else if(action==="locale-source"){
     const response=await fetch($("cms-locale-route").value,{cache:"no-store"});
     if(!response.ok)throw Error("无法读取英文页面");
@@ -149,7 +178,7 @@
    await load();
   }catch(e){say("保存失败："+e.message)}
  }
- for(const tabName of ["brand","navigation","pages","products","locales"]){
+ for(const tabName of ["brand","navigation","pages","page-body","products","locales"]){
   $("content-tab-"+tabName)?.addEventListener("click",()=>{tab=tabName;render();});
  }
  $("content-load")?.addEventListener("click",load);

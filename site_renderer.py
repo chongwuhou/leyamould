@@ -13,6 +13,8 @@ if _build_state_path:
 PAGE_OVERRIDES={str(v.get("route")):v for v in BUILD_STATE.get("pages",[]) if isinstance(v,dict)}
 PRODUCT_OVERRIDES={str(v.get("model")):v.get("content",{}) for v in BUILD_STATE.get("products",[]) if isinstance(v,dict)}
 BRAND_CONFIG=BUILD_STATE.get("brand") or {}
+BODY_OVERRIDES={str(r.get("route")):r.get("mainHtml","")
+                for r in BUILD_STATE.get("pageBodies",[]) if isinstance(r,dict)}
 BUILD_OUTPUT_DIR=os.environ.get("XUYI_OUTPUT_DIR",".")
 if BUILD_OUTPUT_DIR not in (".","dist"):
  raise ValueError("XUYI_OUTPUT_DIR must be . or dist")
@@ -93,6 +95,11 @@ def build_url(path,title,content):
  if marker in content and "</main>" in content:
   start,tail=content.split(marker,1)
   main,end=tail.split("</main>",1)
+  body_override=BODY_OVERRIDES.get(route)
+  if isinstance(body_override,str) and len(body_override)>=100 and not re.search(
+     r"<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:",
+     body_override,re.I):
+   main=body_override
   content=start+marker+render_template(family,CONTENT=main)+"</main>"+end
  if 'rel="canonical"' not in content:
   content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
@@ -109,7 +116,8 @@ ICONS={
 "chevron":'<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg>'
 }
 def category_links():
- return [(v[0],"/collections/"+v[1]+"/") for v in CAT.values()]
+ nav={r.get("url"):r.get("label") for r in BUILD_STATE.get("navigation",[]) if isinstance(r,dict)}
+ return [(nav.get("/collections/"+v[1]+"/") or v[0],"/collections/"+v[1]+"/") for v in CAT.values()]
 # Navigation mirrors the target's information architecture, while retaining XUYI-only products.
 PRODUCT_COLUMNS=[
  ("Plastic Water Bottles","/media/ppt/slide-059.webp",[
@@ -211,6 +219,11 @@ def header():
  mobile+='<a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Instant Quote →</a>'
  top='<div class="topbar"><div class="shell topbar__inner"><a href="/about/" aria-label="XUYI company">XUYI · Taizhou, China</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Contact</a></div></div>'
  logo='<a href="/" class="logo" aria-label="XUYI Bottles home">XUYI<small>BOTTLES</small></a>'
+ identity=BRAND_CONFIG.get("identity") or {}
+ if isinstance(identity.get("displayName"),str) and identity["displayName"].strip() and identity["displayName"].strip()!="XUYI Bottles":
+  brand=e(identity["displayName"].strip()[:120])
+  logo='<a href="/" class="logo" aria-label="'+brand+' home">'+brand+'</a>'
+  top=top.replace("XUYI · Taizhou, China",brand+" · Taizhou, China",1)
  actions='<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language"><option value="en">English</option><option value="es">Español</option><option value="pt">Português</option><option value="ru">Русский</option><option value="tr">Türkçe</option></select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
  search='<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="/products/" method="get"><input type="search" name="q" placeholder="Search product model or type…" aria-label="Search product models"><button class="button" type="submit">Search →</button></form></div>'
  return render_template("header",TOPBAR=top,LOGO=logo,NAV_DESKTOP=''.join(navitems),ACTIONS=actions,SEARCH=search,NAV_MOBILE=mobile)
@@ -218,6 +231,11 @@ def footer():
  links=''.join('<p><a href="'+uri+'">'+e(label)+'</a></p>' for label,uri in category_links())
  result=render_template("footer",PRODUCT_LINKS=links)
  footer_config=BRAND_CONFIG.get("footer") or {}
+ identity=BRAND_CONFIG.get("identity") or {}
+ brand_name=str(identity.get("displayName","")).strip()
+ if brand_name and brand_name!="XUYI Bottles":
+  result=result.replace("XUYI<small>BOTTLES</small>",e(brand_name),1)
+  result=result.replace("© 2026 XUYI Bottles", "© 2026 "+e(brand_name),1)
  if footer_config.get("about"):
   result=result.replace("Factory-backed plastic water bottles for wholesale, branding and OEM/ODM projects.",
                         e(str(footer_config["about"])[:1000]),1)
