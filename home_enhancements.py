@@ -66,7 +66,7 @@ def customer_logo_section():
   logo=brand.get('logo_path','')
   auth=brand.get('authorization','')
   if not name or not logo.startswith('/assets/customer-logos/') or not auth or not (ROOT/logo.lstrip('/')).is_file():continue
-  marks.append('<div class="client-logo__cell">'+photo(logo,name+' logo shown in the Kreat group website brand carousel')+'</div>')
+  marks.append('<div class="client-logo__cell">'+photo(logo,name+' logo shown in the Kreat group website brand carousel','eager')+'</div>')
  if not marks:
   marks=['<div class="client-logo__cell client-logo__cell--pending">Brand images unavailable</div>']
  first='<div class="client-logo__set">'+''.join(marks)+'</div>'
