@@ -10,7 +10,9 @@ import sys
 
 ROOT=Path(__file__).resolve().parent.parent
 OUT=ROOT/"dist"
+from admin_route import admin_path as resolve_admin_path
 meta=json.loads((OUT/"build-meta.json").read_text(encoding="utf-8"))
+ADMIN_PATH=resolve_admin_path(meta.get("adminPath","admin"))
 assert meta["pagesProject"]=="xuyi-drinkware-site"
 assert meta["siteOrigin"]=="https://xuyibottles.com"
 assert meta["templateSet"]=="templates/site" and len(meta["templateSha256"])>=10
@@ -38,9 +40,9 @@ for page in pages:
     refs=LocalRefs();refs.feed(content)
     if "<main" not in content or "</html>" not in content:
         broken.append((rel,"missing shell"))
-    if rel!="admin/index.html" and '<aside class="rail"' not in content:
+    if rel!=ADMIN_PATH+"/index.html" and '<aside class="rail"' not in content:
         broken.append((rel,"missing shared rail"))
-    if '<meta name="robots" content="noindex,nofollow">' not in content and rel!="admin/index.html":
+    if '<meta name="robots" content="noindex,nofollow">' not in content and rel!=ADMIN_PATH+"/index.html":
         broken.append((rel,"robots unexpectedly indexable"))
     for url in refs.images:
         target=urlsplit(url).path.lstrip("/")
@@ -73,7 +75,7 @@ for page in pages:
         seen[value]=rel
     expected="https://xuyibottles.com/"+rel[:-len("index.html")]
     if not canon or canon.group(1)!=expected:broken.append((rel,"product canonical mismatch"))
-for route in ["index.html","blog/index.html","admin/index.html",
+for route in ["index.html","blog/index.html",ADMIN_PATH+"/index.html",
               "products/2095/index.html","products/5340/index.html",
               "capabilities/custom-molding/index.html","capabilities/custom-packaging/index.html"]:
     if not (OUT/route).is_file():broken.append((route,"missing critical route"))

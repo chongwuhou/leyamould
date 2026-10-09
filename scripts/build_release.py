@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
+from admin_route import admin_path as resolve_admin_path
 
 ROOT=Path(__file__).resolve().parent.parent
 CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
@@ -48,7 +49,8 @@ def main():
     # Keep static artifacts and Functions separate; Wrangler bundles sibling
     # functions/ during Pages deploy. Never publish source, backups or secrets.
     shutil.copytree(ROOT/"assets",DIST/"assets",ignore=shutil.ignore_patterns("*.md"))
-    shutil.copytree(ROOT/"admin",DIST/"admin")
+    admin_slug=resolve_admin_path(state.get("adminPath","admin") if snapshot.is_file() else "admin")
+    shutil.copytree(ROOT/"admin",DIST/admin_slug)
     subprocess.run([sys.executable,"scripts/render_locales.py"],cwd=ROOT,env=env,check=True)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
@@ -96,6 +98,7 @@ def main():
         "sourceRevision":os.environ.get("GITHUB_SHA","local"),
         "publishRevision":int(env.get("XUYI_PUBLISH_REVISION","0")),
         "templateSet":"templates/site",
+        "adminPath":admin_slug,
         "templateSha256":templates,
         "contentSources":sources,
         "fileCount":total,
@@ -105,7 +108,7 @@ def main():
     (DIST/"build-meta.json").write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     if total>=CONFIG["build"]["warningFiles"]:
         print(f"WARNING: static file budget {total}")
-    if not (DIST/"index.html").is_file() or not (DIST/"admin/index.html").is_file():
+    if not (DIST/"index.html").is_file() or not (DIST/admin_slug/"index.html").is_file():
         fail("Missing homepage or admin")
     print("DIST_BUILD_OK",f"files={total+1}",f"templates={len(templates)}",f"output={DIST}")
 

@@ -106,6 +106,7 @@ jobs:
         run: |
           python scripts/test_release.py
           python scripts/test_shared_templates.py
+          python scripts/test_admin_route.py
           python scripts/test_localized_templates.py
           node scripts/test_inquiry_readiness.mjs
           node scripts/test_admin_auth.mjs

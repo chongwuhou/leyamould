@@ -5,7 +5,10 @@ const SESSION_TTL_SECONDS = 12 * 60 * 60;
 const RECOVERY_TTL_SECONDS = 60 * 60;
 const RESERVED_PATHS = new Set([
   "api","assets","blog","about-us","contact-us","brands","filter-types","replacement-filters",
-  "es","de","pt","ru","id","zh","favicon.ico","robots.txt","sitemap.xml"
+  "es","de","pt","ru","tr","id","zh","favicon.ico","robots.txt","sitemap.xml",
+  "admin","about","products","collections","capabilities","applications","features",
+  "why-us","faq","contact","manufacturing","quality-control","shipping-logistics",
+  "privacy-policy","request-sample","media"
 ]);
 
 function constantTimeEqual(a, b) {

@@ -61,7 +61,7 @@ export async function onRequestPost(context) {
       return response({ saved: true, passwordConfigured: Boolean(updated.password?.hash), passwordUpdatedAt: updated.passwordUpdatedAt, sessionsInvalidated: true });
     }
     if (payload.action === "save_path") {
-      const adminPath = normalizeAdminPath(payload.adminPath);
+      const adminPath = clean(payload.adminPath) === "admin" ? "admin" : normalizeAdminPath(payload.adminPath);
       const languageRow = await db.prepare("SELECT value FROM site_state WHERE key='language_config'").first();
       if (languageRow?.value) {
         try {

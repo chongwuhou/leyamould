@@ -17,7 +17,7 @@ export async function onRequestGet(context){
   if(!db)return json({error:"XUYI_DB binding missing"},503);
   try{
     const [state,pages,navigation,redirects,products,translations,pageBodies]=await Promise.all([
-      list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','publish_revision')"),
+      list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
       list(db,"SELECT source_path,target_path,status_code FROM site_redirects WHERE enabled=1 ORDER BY source_path"),
@@ -26,10 +26,15 @@ export async function onRequestGet(context){
       list(db,"SELECT route,main_html FROM xuyi_page_content WHERE publication_status='published' ORDER BY route")
     ]);
     const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
+    const security=config.admin_security_config?JSON.parse(config.admin_security_config):{};
+    const adminPath=security.adminPath||"admin";
+    if(typeof adminPath!=="string"||!/^[a-z0-9][a-z0-9-]{2,47}$/.test(adminPath))
+      throw new Error("Invalid XUYI admin route");
     const onlyRoutes=pages.filter(r=>(r.route==="/"||/^\/(?:[a-z0-9_-]+\/)+$/.test(r.route))&&r.route.length<=300);
     const onlyProducts=products.filter(r=>/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(r.model));
     return json({
       site:"xuyi-drinkware-site",schemaVersion:1,
+      adminPath,
       publishRevision:Number(config.publish_revision||0),
       brand:config.brand_config?JSON.parse(config.brand_config):null,
       contacts:config.contact_config?JSON.parse(config.contact_config):null,
