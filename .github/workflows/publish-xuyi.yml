@@ -74,7 +74,7 @@ jobs:
         run: |
           set -euo pipefail
           current="$(curl --fail --silent --show-error --retry 2 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$SITE_ORIGIN/api/publish-state" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
-          deployed="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
+          deployed="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?ci_poll=${{ github.run_id }}" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
           echo "revision=$current" >> "$GITHUB_OUTPUT"
           echo "deployed=$deployed" >> "$GITHUB_OUTPUT"
           echo "XUYI_PUBLISH_REVISION=$current" >> "$GITHUB_ENV"
@@ -84,9 +84,14 @@ jobs:
             echo "needed=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Build from shared templates and source data
+        if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/build_release.py
       - name: Validate release artifact and file budget
+        if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/test_release.py
+      - name: No changes in the XUYI D1 publish revision
+        if: github.event_name == 'schedule' && steps.revision.outputs.needed == 'false'
+        run: echo "No changes; skipped build and deploy to preserve GitHub Actions usage."
       - name: Skip when controller is unconfigured
         if: steps.credential.outputs.ready != 'true'
         run: echo "Build verified; production unchanged. Add the XUYI-only GitHub Actions secrets."
