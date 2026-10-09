@@ -131,7 +131,7 @@ def main():
                     added.append(" <url><loc>"+html.escape(absolute)+"</loc></url>")
         if added:
             if "</urlset>" not in xml:raise RuntimeError("Invalid XUYI sitemap: no urlset closing tag")
-            xml=xml.replace("</urlset>","\\n".join(added)+"\\n</urlset>",1)
+            xml=xml.replace("</urlset>","\n".join(added)+"\n</urlset>",1)
             sitemap.write_text(xml,encoding="utf-8")
     print("XUYI_REVIEWED_LOCALIZED_PAGES",created,"LANGUAGES",sorted(live),"ALTERNATE_SETS",len(alternates))
 

@@ -109,6 +109,7 @@ jobs:
           python scripts/test_product_components.py
           python scripts/test_admin_route.py
           python scripts/test_localized_templates.py
+          python scripts/test_localized_release.py
           node scripts/test_inquiry_readiness.mjs
           node scripts/test_admin_auth.mjs
           node scripts/test_media_library.mjs

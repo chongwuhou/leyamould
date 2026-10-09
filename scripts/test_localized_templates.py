@@ -19,6 +19,9 @@ with tempfile.TemporaryDirectory(prefix="xuyi-locale-qa-") as workspace:
         path = dist / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / "dist" / relative, path)
+    # Fixture must start from an English-only sitemap, even when the real
+    # production dist already contains all four translated languages.
+    (dist / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>',encoding="utf-8")
     sample_html = (
         '<section class="section"><div class="shell">'
         '<h1>Botellas plasticas para marcas y distribuidores</h1>'
