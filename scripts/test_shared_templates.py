@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 import site_renderer as site
 
-names=("shell","header","footer","sidebar","home","listing","content","static","product-card","category-card","page-intro","catalog-filter","catalog-pagination","faq-list")
+names=("shell","header","footer","sidebar","home","listing","content","static","product-card","category-card","page-intro","catalog-filter","catalog-pagination","faq-list","product-spec","product-thumbnails","product-benefit","product-overview")
 for name in names:
     template=site.read_template(name)
     assert template, name
@@ -15,6 +15,9 @@ assert '<section class="page-intro">' in site.intro("FAQ","FAQ","Questions")
 assert '<div class="filterbar">' in site.filters()
 assert '<div class="pagination">' in site.pagination()
 assert '<div class="faq-list">' in site.faq_html([("Question?","Answer")])
+assert '<table class="spec">' in site.render_template("product-spec",ROWS="<tr><th>Model</th></tr>")
+assert 'class="product-detail__thumbs"' in site.render_template("product-thumbnails",ITEMS="test")
+assert 'class="section product-overview"' in site.render_template("product-overview",BREADCRUMB="",MAIN_PHOTO="",THUMBNAILS="",MODEL="2095",NAME="Sample",LEAD="Test",SPECS="",SLUG="2095")
 header=site.header()
 assert 'id="mobile-navigation"' in header
 assert 'id="menu-products"' in header

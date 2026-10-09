@@ -1,6 +1,6 @@
 """English structured XUYI product details built from catalog figures, not invented performance claims."""
 import re,json
-from site_renderer import CAT,SERIES,e,photo,product_grid,public_display_name,SITE_ORIGIN
+from site_renderer import CAT,SERIES,e,photo,product_grid,public_display_name,SITE_ORIGIN,render_template
 from html import escape
 PALETTE={
 "星夜黑":"Midnight Black","奇幻粉":"Fantasy Pink","极光紫":"Aurora Purple","月芽白":"Moonlight White",
@@ -100,22 +100,21 @@ def details(obj):
    ("Everyday and sport applications","Check handling, bottle opening, spout type and practical cleaning for the intended use environment."),
    ("Closure and seal design","Different lid types have different threads and gasket locations. Request real samples before making leakproof performance claims."),
    ("Brand-ready customization","Choose compatible colors, logos and packing based on this model's tooling and decoration area.") ]
- spec='<table class="spec">'+''.join('<tr><th scope="row">'+e(k)+'</th><td>'+e(v)+'</td></tr>' for k,v in data)+'</table>'
- thumbs='<div class="product-detail__thumbs">'+''.join('<button type="button" class="product-detail__thumb" data-main-photo="'+e(x)+'" aria-label="Show product image '+str(i+1)+'">'+photo(x,name+" view "+str(i+1))+'</button>' for i,x in enumerate(photos))+'</div>'
+ spec=render_template("product-spec",ROWS=''.join('<tr><th scope="row">'+e(k)+'</th><td>'+e(v)+'</td></tr>' for k,v in data))
+ thumbs=render_template("product-thumbnails",ITEMS=''.join('<button type="button" class="product-detail__thumb" data-main-photo="'+e(x)+'" aria-label="Show product image '+str(i+1)+'">'+photo(x,name+" view "+str(i+1))+'</button>' for i,x in enumerate(photos)))
  breadcrumb='<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/products/">Products</a> / <a href="/collections/'+e(CAT[category][1])+'/">'+e(display)+'</a> / '+e(model)+'</nav>'
- h='<section class="section product-overview"><div class="shell">'+breadcrumb+'<div class="product-detail"><div class="product-detail__photos"><div class="product-detail__main">'+photo(img,name+" model "+model,"eager").replace('<img ','<img id="main-photo" ',1)+'</div>'+thumbs+'<p class="copy-muted">Catalog imagery; final color and specification are confirmed with your order.</p></div><div>'
- h+='<span class="eyebrow">WHOLESALE PLASTIC DRINKWARE · MODEL '+e(model)+'</span><h1>'+e(name)+'</h1><p class="copy-muted">'+e(lead)+'</p>'+spec
- h+='<div class="actions"><a class="button" href="/contact/?model='+e(obj["slug"])+'#inquiry">Request Wholesale Quote →</a><a class="button button--outline" href="/request-sample/">Discuss a Sample ↗</a></div>'
- h+='<p class="notice"><strong>Before placing an order:</strong> Confirm body/lid material grades, food-contact evidence for your destination market, capacity, colorway, artwork, MOQ and lead time. BPA-free can be specified when supported for this exact construction.</p></div></div></div></section>'
+ h=render_template("product-overview",BREADCRUMB=breadcrumb,
+   MAIN_PHOTO=photo(img,name+" model "+model,"eager").replace('<img ','<img id="main-photo" ',1),
+   THUMBNAILS=thumbs,MODEL=e(model),NAME=e(name),LEAD=e(lead),SPECS=spec,SLUG=e(obj["slug"]))
  h+='<section class="section section--soft product-content"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT DETAILS</span><h2 class="section__title">Design, Materials &amp; Applications</h2><p>Model-specific buying considerations for commercial sourcing.</p></div></div><div class="grid grid--3">'
- for title,desc in points:h+='<article class="benefit"><h3>'+e(title)+'</h3><p>'+e(desc)+'</p></article>'
+ for title,desc in points:h+=render_template("product-benefit",HEADING=e(title),DESCRIPTION=e(desc))
  h+='</div></div></section>'
  h+='<section class="section product-ordering"><div class="shell"><div class="section__head"><div><span class="eyebrow">OEM / ODM</span><h2 class="section__title">Customization &amp; Ordering Process</h2><p>Define practical options before approving production.</p></div></div><div class="grid grid--4">'
  steps=[("01 · Choose exact SKU","Send the model number, required capacity, cap type and material or BPA-free requirements."),
  ("02 · Share brand requirements","Include logo artwork, preferred color references, printed positions, private-label packaging and target quantity."),
  ("03 · Approve a sample","Review print positioning, cap and seal operation, material evidence and packing against an agreed sample."),
  ("04 · Confirm delivery plan","Agree MOQ, actual quotation, inspection requirements, carton counts, export documents and shipment terms.")]
- for title,desc in steps:h+='<article class="benefit"><h3>'+e(title)+'</h3><p>'+e(desc)+'</p></article>'
+ for title,desc in steps:h+=render_template("product-benefit",HEADING=e(title),DESCRIPTION=e(desc))
  h+='</div><p class="product-content__cta"><a href="/capabilities/oem-odm/">Explore OEM/ODM Services →</a> · <a href="/capabilities/custom-logo/">Custom Logo Options →</a></p></div></section>'
  qs=[
  ("Can I order custom printed model "+model+"?","Logo placement, decoration process and minimum order quantity are confirmed against the actual product, artwork and order quantity."),

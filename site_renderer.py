@@ -21,7 +21,7 @@ if BUILD_OUTPUT_DIR not in (".","dist"):
 
 @lru_cache(maxsize=8)
 def read_template(name):
- if name not in {"shell","header","footer","sidebar","home","listing","content","static","product-card","category-card","page-intro","catalog-filter","catalog-pagination","faq-list"}:raise ValueError("Unknown site partial")
+ if name not in {"shell","header","footer","sidebar","home","listing","content","static","product-card","category-card","page-intro","catalog-filter","catalog-pagination","faq-list","product-spec","product-thumbnails","product-benefit","product-overview"}:raise ValueError("Unknown site partial")
  return (ROOT/"templates"/"site"/(name+".html")).read_text(encoding="utf-8").rstrip(chr(10))
 
 def render_template(name,**parts):
