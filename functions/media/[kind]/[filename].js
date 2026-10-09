@@ -1,4 +1,5 @@
 const GROUP_IMAGES = new Set(["oem-logo.webp","oem-color.webp","oem-artwork.webp","oem-packaging.webp","oem-tooling.webp","oem-sampling.webp","factory-raw.webp","factory-bottle-packing.webp","factory-final-pack.webp","factory-shipment.webp","plastic-injection-blow.webp","plastic-extrusion-blow.webp","plastic-lid-molding.webp","qa-color-box.webp","qa-print-life.webp","qa-temp-humidity.webp","qa-vibration.webp","qa-crush-edge.webp","qa-bursting.webp","freight-air-sea.webp","freight-door.webp","freight-express.webp","freight-warehouse.webp"]);
+const CAPABILITY_IMAGES = new Set(["everich-plastic-bottles.webp","everich-engineering-drawing.webp","everich-production-lines.webp","everich-silk-printing.webp","kreat-print-transfer.webp","kreat-box-packaging.webp","gox-kids-custom-bottle.webp"]);
 // Read-only XUYI catalog media proxy. Allowlisted paths from XUYI-owned source catalogs.
 // No Demalong resource is referenced.
 export async function onRequestGet({ params, env }) {
@@ -16,6 +17,8 @@ export async function onRequestGet({ params, env }) {
       return new Response("Not found", {status:404});
     }
     key = "catalog-staging/ppt/" + filename;
+  } else if (kind === "capability" && CAPABILITY_IMAGES.has(filename)) {
+    key = "site-capabilities/" + filename;
   } else if (kind === "gallery" && /^(?:2095|2099|5299|5340|8563)-0[1-3]\.webp$/.test(filename)) {
     key = "site-gallery/" + filename;
   } else if (kind === "blog" && /^[a-z0-9_-]{20,70}\.(?:jpg|png|webp)$/.test(filename)) {

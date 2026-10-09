@@ -1,4 +1,5 @@
 from site_renderer import *
+from capability_editorial import CAPABILITY_DATA, render_capability, enrich_capability
 from product_content import details as structured_product_details, add_schema as product_schema
 from blog_editorial import cover_path, render_article, enrich_article_html
 from why_us_layouts import render as render_why
@@ -94,6 +95,7 @@ def capabilities_page():
 def capability_detail(item):
  title,slug,desc,stepslist,im=item
  if slug=="oem-odm":return render_why(WHY_DATA["capabilities/oem-odm"])
+ if slug in CAPABILITY_DATA:return render_capability(slug)
  h=intro("Capabilities / "+title,title,desc)
  h+='<section class="section"><div class="shell"><div class="split"><div>'+photo(im,title+' source catalog imagery')+'</div><div><span class="eyebrow">BRAND & MANUFACTURING SERVICES</span><h2 class="section__title">Plan Your '+e(title)+' Project.</h2><p class="copy-muted">'+e(desc)+'</p><p class="copy-muted">Actual techniques, order quantity and testing depend on the selected bottle and materials. XUYI will confirm feasibility when preparing a quotation.</p><a href="/contact/?type='+slug+'#inquiry" class="button">Discuss This Service →</a></div></div></div></section>'
  h+='<section class="section section--soft"><div class="shell">'+sec("What We Need from Buyers","A clear brief helps us check the correct manufacturing and custom options.","Project Checklist")+'<div class="grid grid--4">'+''.join('<article class="benefit"><h3>0'+str(i+1)+' · '+e(t.split(' ')[0])+'</h3><p>'+e(t)+'</p></article>' for i,t in enumerate(stepslist))+'</div></div></section>'
@@ -270,6 +272,9 @@ def generate():
   title,slug,desc,*_=cap
   cap_markup=page((WHY_DATA["capabilities/oem-odm"]["seo_title"] if slug=="oem-odm" else title+' | XUYI Bottles'),(WHY_DATA["capabilities/oem-odm"]["description"] if slug=="oem-odm" else desc),capability_detail(cap))
   if slug=="oem-odm":cap_markup=schema_enhance(cap_markup,WHY_DATA["capabilities/oem-odm"])
+  elif slug in CAPABILITY_DATA:
+   cap_markup=page(CAPABILITY_DATA[slug]["title"]+' | XUYI Bottles',CAPABILITY_DATA[slug]["lead"],capability_detail(cap))
+   cap_markup=enrich_capability(cap_markup,slug)
   build_url('capabilities/'+slug+'/index.html',title,cap_markup)
  for slug,title,description,fn in [
  ('about','About', 'Learn about XUYI’s factory-backed plastic water bottle business.',about),

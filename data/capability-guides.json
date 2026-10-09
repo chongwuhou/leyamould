@@ -1,0 +1,820 @@
+{
+  "custom-water-bottle": {
+    "slug": "custom-water-bottle",
+    "title": "Custom Plastic Water Bottles for Wholesale & Private Label",
+    "kicker": "PRODUCT CUSTOMIZATION",
+    "lead": "Build a coherent bottle range from an approved model, material, closure and branding specification — not from a catalog photo alone.",
+    "hero": "/media/ppt/slide-059.webp",
+    "detail": "/media/capability/everich-plastic-bottles.webp",
+    "overview": "Most projects can start with an established XUYI plastic bottle model, then refine the capacity, body and lid colors, decoration and retail presentation. A new bottle silhouette or unusual drinking mechanism takes a different engineering and tooling route. We help B2B buyers define that route before a final quotation or production commitment.",
+    "sections": [
+      {
+        "heading": "Start with the right bottle architecture",
+        "body": "Sports bottles, children's straw bottles, shaker cups and large water jugs have different lids, carrying loads and cleaning requirements. Choose a product family and exact model first; identify whether the project changes decoration only or the component geometry. A 600 mL bottle body cannot automatically accept a larger closure or straw simply because the threads look similar.",
+        "checks": [
+          "Identify the product SKU and preferred volume",
+          "Confirm cap type, straw, seal and carry handle",
+          "Decide what can remain a standard stock component"
+        ]
+      },
+      {
+        "heading": "Material decisions: PC, Tritan, PP and PETG",
+        "body": "Body, lid, straw and gasket do not always share one polymer. Clarify intended water temperature, permitted cleaning conditions, transparency, finish and destination market. Conventional BPA-based PC should not be marketed as BPA-free without product-specific evidence. Resin grade, colorants and the final assembled product must be reviewed for any food-contact or BPA-free statement.",
+        "checks": [
+          "State whether BPA-free is a contractual requirement",
+          "Specify intended liquid, temperature and cleaning",
+          "Ask for component-level material and supporting evidence"
+        ]
+      },
+      {
+        "heading": "Custom appearance without redesigning the bottle",
+        "body": "Many private-label projects use existing molded bodies with a selected solid color, compatible logo print and buyer-designed packaging. Gradients, translucent colors, multi-position graphics or different lid colors are possible only where compatible with the selected resin and manufacturing route. Custom color minimums may apply independently to lids and bodies.",
+        "checks": [
+          "Provide a color reference or Pantone target",
+          "Ask which decoration area is actually printable",
+          "Confirm color minimums and logo setup fees"
+        ]
+      },
+      {
+        "heading": "Validate the sample as a complete retail SKU",
+        "body": "Approve the actual bottle plus lid, straw or mixer insert, packing components and graphics together. Review assembled appearance, seal placement, repeated opening, surface scuffs, print placement and the information required for your sales market. Images alone are not acceptance samples. Record the approved artwork version and component specification for repeat production.",
+        "checks": [
+          "Approve the precise body and lid combination",
+          "Keep a decorated reference sample",
+          "Specify packaging and product labeling"
+        ]
+      },
+      {
+        "heading": "Create a comparable wholesale RFQ",
+        "body": "Include quantity by color, model numbers, logo positions, packaging choices, target delivery date and destination. Ask the factory to separate unit costs, decoration/tooling setup, sample cost, test requests and packing requirements. MOQ and lead time must be quoted for the final variant, not inferred from a general 'custom water bottle' claim.",
+        "checks": [
+          "Request quote by SKU and quantity tier",
+          "Define destination and shipping term",
+          "Document any material or design exclusions"
+        ]
+      }
+    ],
+    "options": [
+      {
+        "name": "Catalog model customization",
+        "fit": "Use an established shape and closure; adjust permitted colors, branding and packs.",
+        "verify": "Check model availability and actual decoration surface."
+      },
+      {
+        "name": "Lid and accessory selection",
+        "fit": "Compare compatible cap, straw, loop and carrying configurations.",
+        "verify": "Compatibility and sealing need physical confirmation."
+      },
+      {
+        "name": "Materials and appearance",
+        "fit": "Review PC, Tritan, PP or PETG options and finishes against the end use.",
+        "verify": "Confirm exact grade, tooling behavior and market documentation."
+      },
+      {
+        "name": "New shape development",
+        "fit": "Consider drawings, prototypes and a mold where existing products do not fit.",
+        "verify": "Engineering, tooling ownership and lead time require a separate quote."
+      }
+    ],
+    "steps": [
+      {
+        "name": "Requirement review",
+        "detail": "Choose the exact target model and submit reference pictures, brand and use requirements."
+      },
+      {
+        "name": "Feasibility and quote",
+        "detail": "Review available tooling, cap compatibility, materials, print processes, MOQs and price assumptions."
+      },
+      {
+        "name": "Sample evaluation",
+        "detail": "Check physical samples, decoration, cap operation, appearance and any required tests."
+      },
+      {
+        "name": "Final specification approval",
+        "detail": "Approve materials, artwork revision, pack, carton information and commercial terms."
+      },
+      {
+        "name": "Production and shipping",
+        "detail": "Coordinate manufacturing, inspection and export handover against the approved specification."
+      }
+    ],
+    "brief": [
+      "Model number or reference photograph",
+      "Capacity and end user / sales channel",
+      "Body, lid, seal and straw requirements",
+      "Solid or gradient color and logo artwork",
+      "Estimated quantity per SKU and color",
+      "Destination country, packaging and delivery window"
+    ],
+    "faqs": [
+      {
+        "question": "Can we customize an existing bottle without a new mold?",
+        "answer": "Often, provided the requested colors, logo and pack work with the selected stock design. A new bottle structure, embossed graphic or closure may require tooling."
+      },
+      {
+        "question": "Which plastic is best for BPA-free bottles?",
+        "answer": "No material name alone proves a whole assembled bottle is BPA-free. Tritan, PP and PETG are options to assess; request product-specific statements and applicable test evidence."
+      },
+      {
+        "question": "Will the sample match the mass-production order?",
+        "answer": "The sample should be approved against a controlled bill of materials, decoration file and pack specification. Changes require review before production."
+      },
+      {
+        "question": "How do we get an accurate wholesale price?",
+        "answer": "Send the chosen model, variant details, quantity tiers, artwork, destination and packing requirement. Pricing and MOQ depend on these details."
+      }
+    ],
+    "products": [
+      "2095",
+      "5299",
+      "2501"
+    ],
+    "related": [
+      "custom-logo",
+      "custom-graphics",
+      "custom-packaging"
+    ],
+    "seo": "custom plastic water bottles wholesale OEM private label manufacturer"
+  },
+  "custom-molding": {
+    "slug": "custom-molding",
+    "title": "Custom Plastic Bottle Molding & Tooling Development",
+    "kicker": "NEW PRODUCT ENGINEERING",
+    "lead": "Understand when an injection-molded cap, a new bottle body, or a revised drinking system needs dedicated tooling and validation.",
+    "hero": "/media/ppt/slide-037.webp",
+    "detail": "/media/capability/everich-engineering-drawing.webp",
+    "overview": "A truly custom bottle is an engineering project, not a print job. The body-forming process, cap and handle construction, polymer behavior and tolerances affect the mold route. We can discuss feasibility through the suitable XUYI or manufacturing-partner production route; engineering capability, tooling costs and ownership are confirmed per project.",
+    "sections": [
+      {
+        "heading": "Define precisely what changes require tooling",
+        "body": "A printed logo and standard body color usually do not require a new cavity. New body geometry, an integrated handle, neck thread or cap shape may. Mark whether the requested change affects appearance only or water sealing and mechanical function. The second class needs more careful fit, assembly and durability evaluation.",
+        "checks": [
+          "Draw body and neck dimensions",
+          "List revised lid, cap, straw and gasket parts",
+          "Separate cosmetic changes from functional changes"
+        ]
+      },
+      {
+        "heading": "Select appropriate body and component forming methods",
+        "body": "Injection molding is commonly associated with caps, small handles and complex plastic components; plastic bottle bodies may use blow-molding or other processes depending on polymer, design and manufacturing route. The mold maker must verify resin suitability, wall thickness, draft, shrinkage and neck tolerances. Do not describe all bottles as injection-molded products.",
+        "checks": [
+          "Confirm resin and finished wall/weight targets",
+          "Review whether the body uses blowing or another suitable process",
+          "Ask for neck, cap and seal fit checks"
+        ]
+      },
+      {
+        "heading": "Design-for-manufacture before cutting steel",
+        "body": "Before committing to a mold, assess the 2D/3D part definition, parting line, surface finish, draft angles, undercuts, gate and ejector positions if relevant, and assembly interfaces. Evaluate where sinks, flash or deformation would be unacceptable. Review how changing the bottle capacity could affect mold size, carton dimensions and lid alignment.",
+        "checks": [
+          "Review engineering drawings and samples",
+          "Document critical sealing and thread tolerances",
+          "Agree visible surface and finish expectations"
+        ]
+      },
+      {
+        "heading": "Prototypes, trial shots and acceptance",
+        "body": "A visual 3D model cannot validate liquid containment or assembly quality. Where feasible, use prototypes to check handling and mechanical layout, then inspect molded trial samples for fit, appearance, dimensional stability, closure function and relevant material evidence. Decide defect acceptance, rework and pilot approval before production quantities are committed.",
+        "checks": [
+          "Review first samples with the actual cap/gasket",
+          "Record leakage or opening-force test conditions",
+          "Approve signed drawings and reference sample"
+        ]
+      },
+      {
+        "heading": "Commercial responsibilities and mold ownership",
+        "body": "A responsible quote separates design services, tooling charges, sample trials and ongoing per-unit costs. Clarify in writing ownership and storage of molds, maintenance responsibility, design-file access, revision allowances and transfer rights, when applicable. NDA, exclusivity and third-party supplier involvement should be agreed rather than implied.",
+        "checks": [
+          "Ask who owns and stores each tool",
+          "Agree redesign and rework responsibility",
+          "Separate tooling amortization from unit cost"
+        ]
+      }
+    ],
+    "options": [
+      {
+        "name": "New cap or seal component",
+        "fit": "Changes to drinking mechanism, hinge or gasket may require dedicated tooling.",
+        "verify": "Check neck compatibility and food-contact component materials."
+      },
+      {
+        "name": "New bottle body shape",
+        "fit": "New external design, special capacity or handle can alter mold and forming method.",
+        "verify": "Check resin, wall geometry, neck finish and weight."
+      },
+      {
+        "name": "Embossed or debossed branding",
+        "fit": "Integrated molded identity differs from ordinary ink printing.",
+        "verify": "Requires tool-surface review and may affect future brand reuse."
+      },
+      {
+        "name": "Existing tool adaptation",
+        "fit": "Some projects may be served through a current SKU and decoration.",
+        "verify": "Verify that proposed changes do not compromise fit or quality."
+      }
+    ],
+    "steps": [
+      {
+        "name": "Share CAD or concept",
+        "detail": "Submit sketches, sample photographs, desired volume, polymer and closure concept."
+      },
+      {
+        "name": "Engineering assessment",
+        "detail": "Review part geometry, tolerances, possible processes, tooling route and cost assumptions."
+      },
+      {
+        "name": "Tooling agreement",
+        "detail": "Confirm quote, design ownership, payment stages, milestones and revision responsibilities."
+      },
+      {
+        "name": "Trial samples",
+        "detail": "Evaluate dimensions, molded appearance, lid operation, sealing and any required testing."
+      },
+      {
+        "name": "Pilot then bulk",
+        "detail": "Approve final specification and production controls before scheduled mass manufacture."
+      }
+    ],
+    "brief": [
+      "2D drawing, 3D file, or reference bottle",
+      "Target polymer and intended use temperature",
+      "Volume, weight, physical dimensions and lid type",
+      "Surface, branding and color requirements",
+      "Forecast volume, MOQ and target unit cost",
+      "Tool ownership, confidentiality and approval requirements"
+    ],
+    "faqs": [
+      {
+        "question": "Do custom bottles always need injection molding?",
+        "answer": "No. Caps and certain parts are commonly injection molded, while bottle bodies may use suitable blow-forming or other processes. The engineering route depends on resin and geometry."
+      },
+      {
+        "question": "Does a new printed logo require a new mold?",
+        "answer": "Normally not for compatible surface printing. An integrated embossed or debossed logo may require tooling changes."
+      },
+      {
+        "question": "Who owns the mold?",
+        "answer": "Ownership and use rights must be specified in the tooling contract and cannot be assumed from a one-time fee."
+      },
+      {
+        "question": "Can you quote a mold from a photograph?",
+        "answer": "A photograph supports initial screening, but accurate quotes require dimensions, part geometry, material and production targets."
+      }
+    ],
+    "products": [
+      "2095",
+      "5340"
+    ],
+    "related": [
+      "custom-water-bottle",
+      "custom-manufacturing",
+      "custom-logo"
+    ],
+    "seo": "custom plastic bottle molding injection lid tool blow molding development"
+  },
+  "custom-logo": {
+    "slug": "custom-logo",
+    "title": "Custom Logo Printing & Private Label Bottle Branding",
+    "kicker": "LOGO AND IDENTITY",
+    "lead": "Choose an appropriate way to put a brand on a curved plastic bottle — with confirmed print area, color and abrasion performance.",
+    "hero": "/media/ppt/slide-061.webp",
+    "detail": "/media/capability/everich-silk-printing.webp",
+    "overview": "A logo that looks perfect on a flat PDF can distort on a tapered sports bottle or lose contrast on a translucent wall. We work from the actual bottle surface, resin grade, desired artwork and quantity to review suitable print or decoration options. Screen, pad, compatible transfers or other methods are considered case by case rather than promised for every polymer.",
+    "sections": [
+      {
+        "heading": "Map the real logo area first",
+        "body": "Request a printing-layout drawing or a photograph annotated with maximum width, height and distance from handles, ribs or seams. Fix the orientation of the logo relative to the spout and lid. A curved surface changes perceived proportions and may constrain multi-color registration. Separate bottle-body artwork from cap and retail-box artwork.",
+        "checks": [
+          "Provide a vector logo in AI, EPS or PDF",
+          "Specify the viewing position relative to the lid",
+          "Confirm minimum line widths and safe margins"
+        ]
+      },
+      {
+        "heading": "Compare the process instead of chasing buzzwords",
+        "body": "Screen printing is useful for some single or limited-color designs; pad printing can address smaller or irregular areas where technically feasible. Transfer or digital processes may enable more complex artwork but demand compatible plastic, inks and curing. Laser processes developed for stainless tumblers are not automatically suitable for PP, Tritan, PC or PETG.",
+        "checks": [
+          "Confirm ink compatibility with the exact resin",
+          "Ask about color count and registration",
+          "Request a physical printed sample"
+        ]
+      },
+      {
+        "heading": "Color management, white underprint and transparency",
+        "body": "Brand colors appear different against opaque black, translucent pastel and transparent bodies. White ink backing or adjusted color separation may be necessary. Define Pantone or other references with a tolerance agreement, and evaluate the print on the actual molded-color sample under normal light rather than relying on monitor mockups.",
+        "checks": [
+          "Provide artwork and preferred color values",
+          "Test contrast on every important body color",
+          "Approve a realistic decorated physical sample"
+        ]
+      },
+      {
+        "heading": "Print durability and food-contact boundaries",
+        "body": "Normal handling, cleaning and rubbing can damage some decorations. Agree on an appropriate adhesion, rub and cleaning test and inspect the printed sample after testing. Confirm where printing sits relative to drinking-contact areas and retailer packaging claims. Do not advertise permanent, scratchproof or dishwasher-safe printing without evidence tied to the chosen process.",
+        "checks": [
+          "Keep decoration away from undesired contact areas",
+          "Agree test method and pass criteria",
+          "Control ink/process changes on repeat orders"
+        ]
+      },
+      {
+        "heading": "Make the purchase order precise",
+        "body": "Quote and approve logo size, print locations, ink colors, setup charges, unit print cost and packaging artwork as separate fields. Complex graphics and each SKU/color variation can change the minimum order. Keep revision IDs and a physical golden sample so a reorder does not drift from the original approved mark.",
+        "checks": [
+          "Record artwork revision and position",
+          "Ask MOQ per design/color combination",
+          "Approve packaging copy separately"
+        ]
+      }
+    ],
+    "options": [
+      {
+        "name": "Screen print",
+        "fit": "Clean, simple designs on suitable molded surfaces.",
+        "verify": "Confirm curved-area limits, ink adhesion and setup cost."
+      },
+      {
+        "name": "Pad print",
+        "fit": "Smaller marks on certain cap or curved part geometries.",
+        "verify": "Confirm registration, ink compatibility and visibility."
+      },
+      {
+        "name": "Compatible transfer or digital decoration",
+        "fit": "Full-color or complex design where process supports the selected plastic.",
+        "verify": "Test adhesion, surface finish and processing temperature."
+      },
+      {
+        "name": "Molded embossed logo",
+        "fit": "Integrated 3D brand element during component forming.",
+        "verify": "Review mold changes, ownership and visible finish."
+      }
+    ],
+    "steps": [
+      {
+        "name": "Submit brand assets",
+        "detail": "Send vector artwork, logo dimensions, Pantone reference and intended SKU."
+      },
+      {
+        "name": "Artwork mapping",
+        "detail": "Agree printable area, print orientation and proposed method."
+      },
+      {
+        "name": "Decoration proof",
+        "detail": "Check digital proof, then physical printed sample where needed."
+      },
+      {
+        "name": "Quality sign-off",
+        "detail": "Inspect placement, color, registration and handling resistance."
+      },
+      {
+        "name": "Repeat-order control",
+        "detail": "Lock artwork version, setup and color specification for production."
+      }
+    ],
+    "brief": [
+      "Exact product model and body/lid material",
+      "Vector AI/EPS/PDF file and usage rules",
+      "Logo width, height, position and orientation",
+      "1-color, multi-color or full-color target",
+      "Expected volume and color variants",
+      "Appropriate cleaning/abrasion requirements"
+    ],
+    "faqs": [
+      {
+        "question": "Can I print full-color artwork on any plastic bottle?",
+        "answer": "Not universally. Feasibility depends on curved geometry, plastic resin, surface treatment, production method and run size."
+      },
+      {
+        "question": "Should my logo be supplied as a PNG?",
+        "answer": "PNG can show the intended visual result, but editable vector artwork generally provides more reliable production dimensions and separations."
+      },
+      {
+        "question": "Can the same printed artwork fit different bottle sizes?",
+        "answer": "Usually the design must be mapped separately to each printable area; size and curvature changes may require a new proof."
+      },
+      {
+        "question": "Is laser engraving standard for plastic bottles?",
+        "answer": "No. It is not a universal plastic decoration method and must be reviewed for the exact resin and part. Do not assume metal-bottle techniques transfer directly."
+      }
+    ],
+    "products": [
+      "2501",
+      "5299"
+    ],
+    "related": [
+      "custom-graphics",
+      "custom-packaging",
+      "custom-water-bottle"
+    ],
+    "seo": "custom logo printing plastic water bottles private label screen print pad print"
+  },
+  "custom-graphics": {
+    "slug": "custom-graphics",
+    "title": "Custom Bottle Colors, Patterns & Graphic Finishes",
+    "kicker": "COLOR AND SURFACE DESIGN",
+    "lead": "Plan solid colors, transparent and translucent styles, gradients and printed patterns without confusing mockup possibilities with mass-production feasibility.",
+    "hero": "/media/ppt/slide-060.webp",
+    "detail": "/media/capability/kreat-print-transfer.webp",
+    "overview": "Color and surface design often determine whether a bottle looks like a recognizable retail collection. But a Pantone value, a molded pigment and a decorated gradient are different production choices. They need different materials, process checks, minimum order quantities and physical sampling; XUYI reviews them against the selected bottle shape and actual plastic substrate.",
+    "sections": [
+      {
+        "heading": "Plan molded color separately from artwork",
+        "body": "When the bottle body color is made through resin coloring, the result is affected by material, wall thickness, transparency and mold texture. A visual gradient may instead depend on a specific compatible decoration method. A rendered design does not prove a particular model can be mass-produced with that effect. Agree on what is solid molded color and what is later printing.",
+        "checks": [
+          "Choose opaque, translucent or transparent",
+          "Specify body and lid colors separately",
+          "Clarify whether artwork is in-mold or applied afterward"
+        ]
+      },
+      {
+        "heading": "Build a workable color palette",
+        "body": "Provide Pantone targets or a physical color chip, while recognizing that digital RGB images rarely match molded resin exactly. Test colors under normal lighting on the actual bottle. Transparent bodies can alter the appearance of white, pastel and dark printed graphics. Specify which deviations are acceptable in volume production.",
+        "checks": [
+          "Select primary and alternate approved samples",
+          "Review print visibility on translucent bodies",
+          "Approve acceptable color variation"
+        ]
+      },
+      {
+        "heading": "Understand solid, gradient and wraparound treatments",
+        "body": "A solid pigment often depends on molding material and lot size; a gradient or wraparound pattern may require a verified transfer, screen/digital system or different finishing process. Complex continuous graphics can break around handles, ribs and tapered shapes. Request a production feasibility check with the bottle maker, particularly for PP and other difficult-to-print surfaces.",
+        "checks": [
+          "Map design across ribs and seams",
+          "Confirm method compatible with selected resin",
+          "Review minimum graphic details and registration"
+        ]
+      },
+      {
+        "heading": "Surface texture changes appearance and handling",
+        "body": "Matte and glossy tools create different look and tactile feel. Soft-feel coating or overmolded grip is a different component/process decision and cannot be promised just because an image depicts a textured bottle. Check scuff marks, fingerprint visibility, rub performance and cleaning conditions on approved samples.",
+        "checks": [
+          "Specify molded texture vs applied coating",
+          "Review grip zones and logo overlap",
+          "Check cleaning/rub behavior"
+        ]
+      },
+      {
+        "heading": "Synchronize design with MOQ and repeat orders",
+        "body": "A combination of body color, contrasting cap color, gradient design and full-color packaging may have multiple production minimums. Build a SKU matrix showing body, lid, graphic version and carton variation. Agree on a signed appearance reference and confirm how many colorways can be packed together for the delivery channel.",
+        "checks": [
+          "Create color-by-model SKU matrix",
+          "Separate mold-color and decoration setup fees",
+          "Keep final appearance reference for reorders"
+        ]
+      }
+    ],
+    "options": [
+      {
+        "name": "Solid molded colors",
+        "fit": "Single-color and matched collections where tooling permits.",
+        "verify": "Review resin shade, component differences and MOQ."
+      },
+      {
+        "name": "Clear or translucent finishes",
+        "fit": "Showcase product form with a transparent or tinted plastic.",
+        "verify": "Verify exact polymer, colorants and wall-thickness effects."
+      },
+      {
+        "name": "Gradient or multicolor decoration",
+        "fit": "Fashion-inspired styles where compatible printing/transfer is validated.",
+        "verify": "Test process, adhesion and design continuity on curves."
+      },
+      {
+        "name": "Matte, gloss or texture",
+        "fit": "Change appearance and grip through suitable molds or coatings.",
+        "verify": "Approve physical look and handling, not just renderings."
+      }
+    ],
+    "steps": [
+      {
+        "name": "Share inspiration and SKU",
+        "detail": "Send model, target market, selected material and color references."
+      },
+      {
+        "name": "Artwork and method",
+        "detail": "Separate molded color and applied decoration; verify process capability."
+      },
+      {
+        "name": "Color and surface proof",
+        "detail": "Review swatches and physical samples from the chosen production method."
+      },
+      {
+        "name": "Performance check",
+        "detail": "Evaluate scuffing, logo visibility, cleaning and sample fit."
+      },
+      {
+        "name": "Approve collection matrix",
+        "detail": "Lock bottle, lid, artwork version and packaging details by SKU."
+      }
+    ],
+    "brief": [
+      "Product model and resin preference",
+      "Pantone/physical color references",
+      "Opaque, translucent or clear finish",
+      "Pattern or gradient reference files",
+      "Quantity by body color, lid color and print",
+      "Destination/packaging and sample deadline"
+    ],
+    "faqs": [
+      {
+        "question": "Can a photo's gradient be matched exactly?",
+        "answer": "A photo is a starting point. Final visual results depend on substrate, ink/process, lighting and approval tolerances. A decorated sample is required."
+      },
+      {
+        "question": "Can I order one different cap color for every bottle?",
+        "answer": "It depends on stock availability and minimum quantities for each separately molded component. Confirm the requested color matrix."
+      },
+      {
+        "question": "Does translucent mean the same thing as Tritan?",
+        "answer": "No. Translucency describes appearance; Tritan is a resin family. Multiple plastics can have different optical properties."
+      },
+      {
+        "question": "How should we approve color accuracy?",
+        "answer": "Use agreed color references plus actual samples under controlled viewing conditions; keep a signed sample for future orders."
+      }
+    ],
+    "products": [
+      "2095",
+      "5299",
+      "2501"
+    ],
+    "related": [
+      "custom-logo",
+      "custom-water-bottle",
+      "custom-packaging"
+    ],
+    "seo": "custom colored plastic water bottles gradient bottle graphic branding"
+  },
+  "custom-manufacturing": {
+    "slug": "custom-manufacturing",
+    "title": "Plastic Drinkware Manufacturing & Quality Coordination",
+    "kicker": "PRODUCTION AND QA",
+    "lead": "Connect an approved design to materials, forming, closure assembly, decoration, inspection and packed shipment through a controlled specification.",
+    "hero": "/media/ppt/slide-045.webp",
+    "detail": "/media/capability/everich-production-lines.webp",
+    "overview": "Production quality is determined by the approved bottle specification, reliable component sourcing and checks at appropriate stages. XUYI coordinates its own and relevant manufacturing-partner processes depending on the model. We do not claim that every part or technique is produced on one particular machine or that a fixed capacity applies to all designs.",
+    "sections": [
+      {
+        "heading": "Translate the approved sample into a production specification",
+        "body": "A purchase order should be traceable to a model/variant, component bill of materials, signed sample, artwork revision and pack instruction. For bottle bodies and closures, the specification may include wall dimensions, neck/thread fit, material grade and color. Without a controlled reference, two batches can look similar but have different sealing or label behavior.",
+        "checks": [
+          "Record body, lid, seal and accessory versions",
+          "Approve a reference sample and printable file",
+          "Document parts that require buyer approval before substitution"
+        ]
+      },
+      {
+        "heading": "Understand forming, assembly and surface-decoration steps",
+        "body": "Caps, handles and selected small parts may be injection molded; bottle bodies can use other forming processes based on shape and polymer. Components are then assembled with gaskets, straws or inserts as specified. Printing, transfer or other surface work is checked on the actual substrate. Each process needs suitable controls rather than a universal 'fully automated' promise.",
+        "checks": [
+          "Match tooling method to exact component",
+          "Check molding flash, threads and clarity",
+          "Inspect printed and assembled details separately"
+        ]
+      },
+      {
+        "heading": "Material identification and incoming quality",
+        "body": "Confirm resin grade and component material declarations for body, lid, seals, straw and any colorants. Buyers needing BPA-free or food-contact documentation should state the destination rules and intended use at the start. A report for another brand or product model cannot automatically be treated as this specific bottle's evidence.",
+        "checks": [
+          "Review component-level material list",
+          "Ask for evidence for destination markets",
+          "Control resin and color changes"
+        ]
+      },
+      {
+        "heading": "In-process and final inspection",
+        "body": "Depending on the product, checks may cover visual marks, capacity, dimensions, print position, lid operation, missing seals, assembly cleanliness and selected leak or impact tests. A written sample plan should define the method and acceptance criteria. '100% leakproof' or 'zero defects' should not be used without clear support.",
+        "checks": [
+          "Define critical, major and minor defects",
+          "Check assembly and close/open consistency",
+          "Document failures and corrective steps"
+        ]
+      },
+      {
+        "heading": "Bulk packing, traceability and shipping release",
+        "body": "Review the retail pack and master carton against the approved specification. Check carton counts, size and weight, label information, product color assortments and export handover requirements. The factory and any partner suppliers should know how to identify affected lots when a component or artwork change occurs.",
+        "checks": [
+          "Inspect cartons and labels",
+          "Retain shipment and batch references",
+          "Confirm delivery terms and loading instructions"
+        ]
+      }
+    ],
+    "options": [
+      {
+        "name": "Catalog model orders",
+        "fit": "Established designs with documented variants and shorter development scope.",
+        "verify": "Check stock parts and order-specific quality requirements."
+      },
+      {
+        "name": "Decorated private-label runs",
+        "fit": "Existing body with approved brand decoration and packaging.",
+        "verify": "Verify printing sample, colors and carton artwork."
+      },
+      {
+        "name": "Custom component development",
+        "fit": "New cap, neck or body design when standard tooling does not fit.",
+        "verify": "Engineering and tool/process choice require separate approval."
+      },
+      {
+        "name": "Repeat procurement programs",
+        "fit": "Consistent SKU, component, artwork and carton specifications across orders.",
+        "verify": "Agree change-control and repeat inspection points."
+      }
+    ],
+    "steps": [
+      {
+        "name": "Pre-production review",
+        "detail": "Approve model, material, drawings, artwork, pack and incoming requirements."
+      },
+      {
+        "name": "Material and production planning",
+        "detail": "Confirm feasible forming/assembly methods, supplies, target quantity and schedule."
+      },
+      {
+        "name": "Sample and trial checks",
+        "detail": "Evaluate dimensions, color, lid operation, decoration and required evidence."
+      },
+      {
+        "name": "Production inspections",
+        "detail": "Apply agreed in-process and final checks with traceable deviations."
+      },
+      {
+        "name": "Packaging and handover",
+        "detail": "Verify master cartons, quantity, marks and agreed shipping documents."
+      }
+    ],
+    "brief": [
+      "Exact SKU list with variant details",
+      "Material grades and destination requirements",
+      "Signed artwork and sample version",
+      "Inspection tests/acceptance criteria",
+      "Quantity, carton, labels and packing plan",
+      "Target ship date, trade terms and documents"
+    ],
+    "faqs": [
+      {
+        "question": "Are all XUYI bottles produced in the same factory?",
+        "answer": "Manufacturing location and processes can differ by model. Confirm the specific production route and any approved partner involvement during quotation."
+      },
+      {
+        "question": "What inspections are included?",
+        "answer": "The inspection plan should match the selected SKU and buyer requirements; share any retailer-specific testing or reporting standards."
+      },
+      {
+        "question": "Can you guarantee zero defects?",
+        "answer": "No responsible bulk specification should promise absolute zero defects. Agree sampling, critical defects and remediation procedures."
+      },
+      {
+        "question": "Can I request test reports?",
+        "answer": "Specify the required destination-market standard and exact components so available declarations or relevant testing can be evaluated."
+      }
+    ],
+    "products": [
+      "5340",
+      "5299"
+    ],
+    "related": [
+      "custom-molding",
+      "custom-packaging",
+      "custom-water-bottle"
+    ],
+    "seo": "plastic water bottle contract manufacturing OEM factory quality control"
+  },
+  "custom-packaging": {
+    "slug": "custom-packaging",
+    "title": "Custom Water Bottle Packaging & Export Carton Design",
+    "kicker": "PACKAGING AND LOGISTICS",
+    "lead": "Choose retail presentation and master cartons that protect decorated bottles, communicate your brand and fit import requirements.",
+    "hero": "/media/ppt/slide-065.webp",
+    "detail": "/media/capability/kreat-box-packaging.webp",
+    "overview": "A wholesale bottle becomes a sellable SKU only when the physical product, accessories, labels and packing agree. Retail color boxes, sleeves, protective bags and bulk cartons have different costs and freight footprints. We develop packing requirements from the selected plastic bottle and destination market rather than assuming one generic box works for every cap or handle.",
+    "sections": [
+      {
+        "heading": "Choose retail-ready or bulk-first pack formats",
+        "body": "Simple individual bags or sleeves may be practical for promotional orders, while branded folding cartons and gift packs support retail shelves. Bottle shape, cap height, handles, mixer inserts and straps can change the interior footprint. Decide whether the consumer expects a single bottle, bundled accessories or a multipack, then specify the contents precisely.",
+        "checks": [
+          "Confirm bottle and accessories per sales unit",
+          "Identify retail versus wholesale distribution",
+          "Choose simple protection or branded presentation"
+        ]
+      },
+      {
+        "heading": "Design the protective structure around a real sample",
+        "body": "Transparent plastic surfaces and printed logos can scuff during transit if items touch. Paper wrap, inserts, dividers or compartment arrangements may be considered, subject to cost and packaging sustainability targets. Approve how the lid is secured and any loose accessories are retained. Do not use stock packaging pictures as proof of the proposed shipping strength.",
+        "checks": [
+          "Measure packed bottle including lid/handle",
+          "Decide insert, divider or sleeve needs",
+          "Inspect packaging abrasion on samples"
+        ]
+      },
+      {
+        "heading": "Finish carton engineering with measured data",
+        "body": "Request units per carton, carton external dimensions, gross/net weight and handling or pallet information where applicable. Large jugs and compact sports bottles have very different freight volume per unit. Compare shipping terms and landed cost using real carton configurations. Carton compression or transit test methods are chosen for the actual route and retailer needs.",
+        "checks": [
+          "Approve units/carton and outer dimensions",
+          "Confirm gross weight and carton marking",
+          "Validate stacking and transport conditions"
+        ]
+      },
+      {
+        "heading": "Prepare artwork and legally appropriate labels",
+        "body": "Print-ready artwork should identify dielines, bleed/safe areas, barcodes, warnings, capacity, market language and any importer details required by the buyer's destination. Do not carry over group-site claims such as universal FDA/LFGB certification, 'eco' or BPA-free without model-specific evidence. The buyer should approve legal copy and symbol usage before packaging prints.",
+        "checks": [
+          "Provide vector art and barcode data",
+          "Confirm language, warnings and destination rules",
+          "Sign off carton design and revision"
+        ]
+      },
+      {
+        "heading": "Control order assembly and shipping records",
+        "body": "For mixed-color cartons, decide which SKU/color and how many go in every case. Agree whether product labels and cartons identify body and cap variants, whether serial/lot traceability is needed and who supplies shipping documents. Packing photos, carton counts and a final specification reduce disputes and customer returns.",
+        "checks": [
+          "Confirm SKU and color breakdown per carton",
+          "Check printed carton marks and pack list",
+          "Retain version control for reorders"
+        ]
+      }
+    ],
+    "options": [
+      {
+        "name": "Protective bag or sleeve",
+        "fit": "Cost-aware bulk and promotional shipments using existing models.",
+        "verify": "Check scratches and printed surfaces during transport."
+      },
+      {
+        "name": "Plain white individual box",
+        "fit": "Basic single-SKU packing where no full retail graphics are needed.",
+        "verify": "Confirm bottle dimensions and included accessories."
+      },
+      {
+        "name": "Branded retail color box",
+        "fit": "Shelf-ready branding with model, warnings and barcode artwork.",
+        "verify": "Approve dieline, proof, print and label requirements."
+      },
+      {
+        "name": "Display or gift set",
+        "fit": "Selected channel bundles where multiple parts need secure placement.",
+        "verify": "Confirm contents, insert fit and carton freight cost."
+      }
+    ],
+    "steps": [
+      {
+        "name": "Specify pack purpose",
+        "detail": "State retail, corporate-gift, warehouse or distributor destination."
+      },
+      {
+        "name": "Share the physical product",
+        "detail": "Confirm actual bottle dimensions, lid, handle and loose accessories."
+      },
+      {
+        "name": "Prepare artwork",
+        "detail": "Provide dieline, brand files, barcode, warnings and required languages."
+      },
+      {
+        "name": "Pack sample and trial",
+        "detail": "Evaluate protected surfaces, box fit and carton measurements."
+      },
+      {
+        "name": "Approve master cartons",
+        "detail": "Freeze carton counts, weights, markings, shipping and inspection terms."
+      }
+    ],
+    "brief": [
+      "Model(s) with exact cap/handle configuration",
+      "Retail channel and unit/kit contents",
+      "Pack format, sustainability preferences and budget",
+      "Brand vector files, barcode, label wording",
+      "Quantity by color and carton mix rules",
+      "Destination and requested freight/shipment term"
+    ],
+    "faqs": [
+      {
+        "question": "Can custom packaging be ordered for a standard bottle?",
+        "answer": "Yes when packaging is feasible for the selected product. Minimum quantities and carton costs vary with print colors and dieline."
+      },
+      {
+        "question": "Can we mix bottle colors in a single master carton?",
+        "answer": "Sometimes, but the packing list, labels and production quantities need to specify the distribution clearly."
+      },
+      {
+        "question": "Who supplies barcode and destination warnings?",
+        "answer": "The buyer or its appointed regulatory representative should approve required local wording, barcode data and compliance claims."
+      },
+      {
+        "question": "Can packing reduce freight cost?",
+        "answer": "Improved carton utilization can help, but actual savings depend on carton dimensions, weight, transport mode and handling constraints."
+      }
+    ],
+    "products": [
+      "8563",
+      "5340"
+    ],
+    "related": [
+      "custom-manufacturing",
+      "custom-logo",
+      "custom-water-bottle"
+    ],
+    "seo": "custom water bottle packaging printed gift box master carton wholesale"
+  }
+}
