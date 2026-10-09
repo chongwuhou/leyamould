@@ -35,6 +35,16 @@ for locale in ("es","pt","ru","tr"):
   if route.endswith("/contact/"):
    assert 'href="mailto:Janey@xuyibottles.com"' in html,"Localized contact email must work"
  result[locale]=len(files)
+# Match the actual approved D1 snapshot, not only a permissive minimum.
+snapshot=ROOT/"_local_ops/build-snapshot.json"
+if snapshot.is_file():
+ data=json.loads(snapshot.read_text(encoding="utf8"))
+ if data.get("site")=="xuyi-drinkware-site":
+  for locale in ("es","pt","ru","tr"):
+   expected=sum(1 for row in data.get("translations",[]) if
+     row.get("locale")==locale and str(row.get("resourceId","")).startswith("page:"))
+   if expected:
+    assert result[locale]==expected, (locale,"D1 translation count mismatch",result[locale],expected)
 if sum(result.values()):
  assert all(result.values()),"Partial language release not allowed"
  assert sum(result.values())>=500,"Expected near-complete four-language coverage"
