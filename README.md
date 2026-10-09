@@ -84,3 +84,12 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Shipping: real group warehouse plus export freight scenario images, packing data, transport modes, Incoterms.
 - Group reference imagery cannot substitute for test results and verified specific equipment ownership or availability for a plastic SKU.
 - Unique SEO titles, H1s, descriptive FAQ, JSON-LD, breadcrumbs, noindex preserved until launch approval.
+
+
+## Manufacturing FAQ and Three Why Us Layout Correction
+- Measured the online issue: the 1440 px layout has a 1360 px shell, but an old FAQ max-width of 1000 px and heading max-width 910 px caused visible right-side blank space on manufacturing, quality, and logistics.
+- All three FAQ headings and the accordion grid now use 100% of the shared content shell on desktop and mobile.
+- Manufacturing FAQ is a numbered full-width horizontal accordion; QA FAQ uses a full-width two-column quality-check card layout; logistics FAQ uses a sea-green full-width two-column buyer section. All return to one column on mobile.
+- Suppressed the duplicate generic page CTA and fixed mobile inquiry bar on these service pages, avoiding obstruction of questions.
+- Added three plastic-specific process references (injection blow molding, extrusion blow molding, lid component handling) to manufacturing. Original sources and reference status are in data/why-us-group-media.json; images uploaded to XUYI R2 under site-preview/group.
+- Content deliberately distinguishes group/reference processes from a specific XUYI production line, test report, or confirmed machine.

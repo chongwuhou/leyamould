@@ -102,6 +102,21 @@
       "source_url": "https://kreat.com/wp-content/uploads/2025/09/Amazon-FBA-Support.jpg",
       "local_media_url": "/media/group/freight-warehouse.webp",
       "visual_type": "group_reference"
+    },
+    "plastic-injection-blow": {
+      "source_url": "https://www.everich.com/wp-content/uploads/2022/06/injection-blow-molding-process.png",
+      "local_media_url": "/media/group/plastic-injection-blow.webp",
+      "visual_type": "plastic_process_reference_not_factory_evidence"
+    },
+    "plastic-extrusion-blow": {
+      "source_url": "https://www.everich.com/wp-content/uploads/2022/06/extrusion-blow-molding-process.jpg",
+      "local_media_url": "/media/group/plastic-extrusion-blow.webp",
+      "visual_type": "plastic_process_reference_not_factory_evidence"
+    },
+    "plastic-lid-molding": {
+      "source_url": "https://www.everich.com/wp-content/uploads/2022/06/Plastic-Bottle-Lids.jpg",
+      "local_media_url": "/media/group/plastic-lid-molding.webp",
+      "visual_type": "plastic_process_reference_not_factory_evidence"
     }
   }
 }

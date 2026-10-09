@@ -203,3 +203,124 @@
 .whyv2-factory-map__steps{grid-template-columns:1fr}
 .whyv2-siblings__grid{grid-template-columns:1fr}
 }
+
+
+/* October layout correction: FAQ rows always fill the same shell as adjacent blocks. */
+.whyv2-faq__heading,
+.whyv2-faq .why-detail__faq {
+  width:100%;
+  max-width:none;
+  min-width:0;
+}
+.whyv2-faq .why-detail__faq details {
+  box-sizing:border-box;
+}
+/* Eliminate duplicate generic footer CTA on each long-form Why Us page. */
+body:has(.whyv2) .cta-panel{display:none}
+/* Factory: full-bleed horizontal questions with left index, matching production timeline. */
+.whyv2--factory .whyv2-faq{background:#edf3f2}
+.whyv2--factory .whyv2-faq .why-detail__faq{counter-reset:faq-index}
+.whyv2--factory .whyv2-faq .why-detail__faq details{counter-increment:faq-index;border-bottom:1px solid #cad9d6}
+.whyv2--factory .whyv2-faq .why-detail__faq summary{
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr) 30px;
+  gap:20px;
+  align-items:center;
+  padding:5px 0;
+}
+.whyv2--factory .whyv2-faq summary::before{
+  content:counter(faq-index,decimal-leading-zero);
+  color:#0c968b;
+  font-size:18px;
+  font-weight:900;
+}
+.whyv2--factory .whyv2-faq summary::after{justify-self:end}
+.whyv2--factory .whyv2-faq .why-detail__faq details>p{
+  padding:0 45px 0 66px;
+  max-width:none;
+}
+/* QA: lab-log style full-width two-column question wall instead of 7 narrow rows. */
+.whyv2--quality .whyv2-faq{background:#e9f0f6}
+.whyv2--quality .whyv2-faq .why-detail__faq{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+  align-items:start;
+}
+.whyv2--quality .whyv2-faq .why-detail__faq details{
+  margin:0;background:#fff;border:1px solid #d6e1ed;border-left:4px solid #428bd1;
+  border-radius:7px;padding:23px 24px;min-width:0;
+}
+.whyv2--quality .whyv2-faq .why-detail__faq details>summary{
+  font-size:16px;
+  align-items:center;
+}
+.whyv2--quality .whyv2-faq .why-detail__faq details>p{max-width:none}
+.whyv2--quality .whyv2-faq .why-detail__faq details:nth-child(7){grid-column:1/-1}
+/* Freight: warm sea-green with wide, container-aligned accordion columns and logistics focus. */
+.whyv2--shipping .whyv2-faq{background:#eaf3f0}
+.whyv2--shipping .whyv2-faq .why-detail__faq{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:40px;
+  row-gap:0;
+}
+.whyv2--shipping .whyv2-faq .why-detail__faq details{border-color:#becfca;padding:20px 0}
+.whyv2--shipping .whyv2-faq .why-detail__faq details>summary{font-size:16px}
+.whyv2--shipping .whyv2-faq .why-detail__faq details>p{max-width:none}
+.whyv2--shipping .whyv2-faq .why-detail__faq details:nth-child(7){grid-column:1/-1}
+/* Source-backed plastic-specific manufacturing visual explanation. */
+.whyv2-factory-technical{
+  background:#fff;
+  padding:98px 0 97px;
+}
+.whyv2-factory-technical__grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:23px;
+}
+.whyv2-factory-technical figure{
+  margin:0;
+  background:#f5f7f9;
+  border:1px solid #e4e9ec;
+  border-radius:8px;
+  overflow:hidden;
+}
+.whyv2-factory-technical figure>div{
+  background:#fff;
+  min-height:255px;
+  display:grid;
+  place-items:center;
+  padding:13px;
+}
+.whyv2-factory-technical img{width:100%;height:230px;object-fit:contain}
+.whyv2-factory-technical figcaption{padding:22px 21px 25px}
+.whyv2-factory-technical h3{font-size:21px;margin:0 0 10px}
+.whyv2-factory-technical figcaption p{color:#55646a;font-size:14px;margin:0}
+.whyv2-factory-technical .whyv2-source-note a{color:#087c70;text-decoration:underline}
+@media(max-width:800px){
+  .whyv2-factory-technical{padding:69px 0}
+  .whyv2-factory-technical__grid{grid-template-columns:1fr;gap:18px}
+  .whyv2-factory-technical figure>div{min-height:190px}
+  .whyv2-factory-technical img{height:auto;max-height:280px}
+  .whyv2-faq .why-detail__faq{width:100%}
+  .whyv2--quality .whyv2-faq .why-detail__faq,
+  .whyv2--shipping .whyv2-faq .why-detail__faq{
+    grid-template-columns:1fr;
+  }
+  .whyv2--quality .whyv2-faq .why-detail__faq details:nth-child(7),
+  .whyv2--shipping .whyv2-faq .why-detail__faq details:nth-child(7){grid-column:auto}
+  .whyv2--factory .whyv2-faq .why-detail__faq summary{
+    grid-template-columns:31px minmax(0,1fr) 22px;gap:10px;font-size:15px;
+  }
+  .whyv2--factory .whyv2-faq .why-detail__faq summary::before{font-size:14px}
+  .whyv2--factory .whyv2-faq .why-detail__faq details>p{padding-left:41px;padding-right:0}
+}
+@media(max-width:390px){
+  .whyv2--quality .whyv2-faq .why-detail__faq details{padding:16px}
+  .whyv2--quality .whyv2-faq .why-detail__faq details>summary{font-size:15px}
+}
+
+/* Long-form service pages already have their own call to action; the fixed mobile
+   quote strip obscures accordion questions and should not cover their content. */
+body:has(.whyv2) .sticky-inquiry{display:none!important}
