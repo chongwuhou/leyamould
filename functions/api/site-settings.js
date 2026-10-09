@@ -1,3 +1,4 @@
+import { isInquiryFormReady } from "../_shared/forms.js";
 import {
   defaultContactConfig,
   defaultLanguageConfig,
@@ -16,7 +17,9 @@ export async function onRequestGet(context) {
     const languageConfig = normalizeLanguageConfig(languageRaw.value);
     const contactRaw = await loadSiteSetting(db, "contact_config", defaultContactConfig(brand?.config || {}));
     const contactConfig = normalizeContactConfig(contactRaw.value, brand?.config || {});
+    const acceptsForm = await isInquiryFormReady(db, context.env);
     return Response.json({
+      inquiry: { acceptsForm },
       source: "cloudflare-d1",
       languages: {
         defaultLocale: languageConfig.defaultLocale,

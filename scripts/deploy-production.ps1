@@ -18,13 +18,19 @@ if ($cfg.cloudflare.d1Database -ne "xuyi-drinkware-d1") { throw "Wrong D1 databa
 if ($cfg.cloudflare.r2Bucket -ne "xuyi-drinkware-r2") { throw "Wrong R2 bucket" }
 
 RunChecked "python" @("scripts/preflight.py")
-RunChecked "python" @("scripts/build_release.py")
-RunChecked "python" @("scripts/test_release.py")
 
 if ($DryRun) {
+  RunChecked "python" @("scripts/build_release.py")
+  RunChecked "python" @("scripts/test_release.py")
   Write-Host "XUYI DRY RUN PASSED. No Cloudflare deployment was performed."
   exit 0
 }
+
+# Like Demalong V1.4, production content comes from D1, not a stale local
+# snapshot or local JSON fixtures. Fail closed without independent XUYI CI credentials.
+RunChecked "python" @("scripts/fetch_build_snapshot.py")
+RunChecked "python" @("scripts/build_release.py")
+RunChecked "python" @("scripts/test_release.py")
 
 $node = Join-Path $root "_local_ops/.tooling/node/node.exe"
 $wrangler = Join-Path $root "_local_ops/.tooling/wrangler/node_modules/wrangler/bin/wrangler.js"

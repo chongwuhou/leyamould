@@ -43,7 +43,7 @@ export async function onRequestPost(context) {
       binds.push(1);
       await db.prepare(`UPDATE form_smtp_settings SET
         enabled=?,host=?,port=?,security=?,username=?,from_name=?,from_email=?,to_emails=?,reply_to_mode=?,subject_template=?
-        ${passwordSql},updated_at=CURRENT_TIMESTAMP WHERE id=?`).bind(...binds).run();
+        ${passwordSql},smtp_verified_at=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=?`).bind(...binds).run();
       return response({ saved: true, settings: await loadSmtpSettings(db, context.env, false) });
     }
     if (payload.action === "test") {
@@ -64,6 +64,8 @@ export async function onRequestPost(context) {
         requirements: "This is an XUYI Bottles SMTP verification message.",
         equipment: ""
       });
+      if (!result.sent) return response({ error: "SMTP test did not send a message" }, 502);
+      await db.prepare("UPDATE form_smtp_settings SET smtp_verified_at=CURRENT_TIMESTAMP WHERE id=1").run();
       return response({ tested: true, result });
     }
     return response({ error: "Unknown action" }, 400);

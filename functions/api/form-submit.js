@@ -1,4 +1,4 @@
-import { clean, emailRe, ensureFormSchema, sendSubmissionNotification } from "../_shared/forms.js";
+import { clean, emailRe, ensureFormSchema, isInquiryFormReady, sendSubmissionNotification } from "../_shared/forms.js";
 import { defaultContactConfig, loadSiteSetting, normalizeContactConfig, selectExternalContact } from "../_shared/site-settings.js";
 
 function response(data, status = 200) {
@@ -34,6 +34,7 @@ function normalizePayload(payload) {
     requirements: clean(pick("requirements", "message", "comment"), 10000),
     equipment: clean(pick("equipment", "application"), 2000),
     honeypot: clean(pick("website", "homepage", "url"), 500),
+    consent: payload?.consent === true || fields?.consent === true,
     fields
   };
 }
@@ -41,14 +42,21 @@ function normalizePayload(payload) {
 export async function onRequestPost(context) {
   const db = context.env.XUYI_DB;
   if (!db) return response({ error: "Form storage is unavailable" }, 503);
-  await ensureFormSchema(db);
+  const contentLength = Number(context.request.headers.get("content-length") || 0);
+  if (contentLength > 65536) return response({ error: "Form payload is too large" }, 413);
   let payload;
   try { payload = await context.request.json(); }
   catch { return response({ error: "Invalid form payload" }, 400); }
   const data = normalizePayload(payload);
   if (data.honeypot) return response({ ok: true, saved: false });
+  if (!data.consent) return response({ error: "Please accept the privacy policy" }, 400);
   if (data.email && !emailRe.test(data.email)) return response({ error: "Please enter a valid email address" }, 400);
+  if (!data.email && !data.phone) return response({ error: "Please provide an email or phone number" }, 400);
   if (!data.reference && !data.requirements && !data.equipment) return response({ error: "Please describe the bottle model or order requirements" }, 400);
+  if (!(await isInquiryFormReady(db, context.env))) {
+    return response({ error: "Online enquiries are temporarily unavailable. Please contact us by email or WhatsApp." }, 503);
+  }
+  await ensureFormSchema(db);
 
   const ip = clean(context.request.headers.get("cf-connecting-ip"), 100);
   const userAgent = clean(context.request.headers.get("user-agent"), 800);
@@ -65,7 +73,7 @@ export async function onRequestPost(context) {
   }
 
   const id = "inq_" + Date.now().toString(36) + "_" + crypto.randomUUID().replace(/-/g, "").slice(0, 12);
-  const safeFields = {};
+  const safeFields = { privacy_consent: "accepted" };
   for (const [key, value] of Object.entries(data.fields || {})) {
     if (Object.keys(safeFields).length >= 40) break;
     if (!/^[A-Za-z0-9_.-]{1,80}$/.test(key)) continue;

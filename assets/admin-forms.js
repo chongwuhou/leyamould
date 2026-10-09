@@ -189,10 +189,11 @@
       $("#smtp-to-emails").value = s.toEmails || defaultEmail;
       $("#smtp-reply-to").value = s.replyToMode || "visitor";
       $("#smtp-subject").value = s.subjectTemplate || "Website inquiry: {{reference}} {{name}}";
-      $("#smtp-state-badge").textContent = s.enabled ? "SMTP 已启用" : "SMTP 未启用";
-      if (status) status.textContent = s.enabled
-        ? (s.passwordConfigured ? "SMTP 已启用，密码已加密保存。" : "SMTP 已启用，请确认发信服务器是否需要密码。")
-        : "询盘会保存在 D1，但不会自动发送邮件。请完成 SMTP 配置并测试。";
+      $("#smtp-state-badge").textContent = !s.enabled ? "SMTP 未启用" : s.verifiedAt ? "SMTP 已测试" : "SMTP 待测试";
+      if (status) status.textContent = !s.enabled
+        ? "在线询盘表单暂不接收提交。请配置 SMTP 并实际发送测试邮件；客户仍可通过邮箱或 WhatsApp 联系。"
+        : s.verifiedAt ? "SMTP 已通过发送测试；在线询盘表单已具备接收条件。请确认测试邮件确实进入收件箱。"
+        : "SMTP 尚未通过发送测试；在线询盘表单仍关闭。保存后点击发送测试邮件。";
     } catch (error) {
       if (status) status.textContent = "SMTP 设置读取失败：" + error.message;
       $("#smtp-state-badge").textContent = "读取失败";
@@ -237,7 +238,8 @@
     status.textContent = "正在连接 SMTP 并发送测试邮件…";
     try {
       await api(SMTP_API, "POST", { action: "test" });
-      status.textContent = "测试邮件已由 SMTP 服务器接受。请检查收件箱。";
+      await loadSmtp();
+      status.textContent = "测试邮件已由 SMTP 服务器接受，在线询盘表单可启用。请检查实际收件箱。";
     } catch (error) {
       status.textContent = "SMTP 测试失败：" + error.message;
     } finally {

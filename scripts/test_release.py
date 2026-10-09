@@ -59,6 +59,11 @@ for route in ["index.html","blog/index.html","admin/index.html",
 if len(pages)<130:broken.append(("release","unexpected page loss",len(pages)))
 if any("demalong" in x.read_text(encoding="utf-8").lower() for x in (OUT/"templates").rglob("*") if x.is_file()) if (OUT/"templates").exists() else False:
     broken.append(("release","DML brand leaked"))
+for sensitive in ("build.py", "site_renderer.py", "product_content.py", "data/products.json", "_local_ops/build-snapshot.json", ".wrangler/config/default.toml"):
+    if (OUT/sensitive).exists():broken.append((sensitive,"sensitive source included in public dist"))
+for hidden in ("_local_ops", "functions", "templates", ".wrangler"):
+    if (OUT/hidden).exists():broken.append((hidden,"private source tree included in public dist"))
+
 if broken:
     print("SITE_RELEASE_ERRORS",len(broken),broken[:40]);sys.exit(1)
 print("SITE_RELEASE_TESTS_PASSED",f"html={len(pages)}",f"assets={meta['fileCount']}",f"broken={len(broken)}")

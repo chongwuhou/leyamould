@@ -43,6 +43,21 @@ if(configButtons.length){
 const model=document.getElementById('inquiry-model');if(model){model.value=new URLSearchParams(location.search).get('model')||'';}const inquiryType=new URLSearchParams(location.search).get('type');if(inquiryType){const choices=document.querySelector('#inquiry select[name="type"]');if(choices){const target=/sample/i.test(inquiryType)?'Samples':/logo|graphic|brand/i.test(inquiryType)?'Custom Logo / Branding':/oem|molding|manufacturing/i.test(inquiryType)?'OEM / ODM':'Wholesale Quote';[...choices.options].forEach(o=>{if(o.text===target)choices.value=o.value})}}
 // Store public inquiries in XUYI D1 before reporting success.
 const inquiryForm=document.getElementById('inquiry');
+if(inquiryForm){
+ const formButton=inquiryForm.querySelector('button[type="submit"]');
+ const formStatus=document.getElementById('inquiry-status');
+ if(formButton){
+  formButton.disabled=true;
+  if(formStatus)formStatus.textContent='Checking online enquiry availability…';
+  fetch('/api/site-settings',{cache:'no-store'})
+   .then(async res=>{if(!res.ok)throw Error('Status unavailable');return res.json()})
+   .then(data=>{
+    if(data?.inquiry?.acceptsForm===true){formButton.disabled=false;if(formStatus)formStatus.textContent='';}
+    else if(formStatus)formStatus.textContent='Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.';
+   })
+   .catch(()=>{if(formStatus)formStatus.textContent='Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.'});
+ }
+}
 if(inquiryForm){inquiryForm.addEventListener('submit',async event=>{
  event.preventDefault();
  const button=inquiryForm.querySelector('button[type="submit"]');
@@ -52,14 +67,14 @@ if(inquiryForm){inquiryForm.addEventListener('submit',async event=>{
  if(!fields.get('consent')){status.textContent='Please accept the privacy policy.';return;}
  button.disabled=true;status.textContent='Submitting your enquiry…';
  try{
-  const payload={source:'xuyi-contact-form',pageUrl:location.href,locale:document.documentElement.lang||'en',
+  const payload={source:'xuyi-contact-form',consent:true,pageUrl:location.href,locale:document.documentElement.lang||'en',
    region:fields.get('country')||'',company:fields.get('company')||'',email:fields.get('email')||'',
    reference:fields.get('model')||'',requirements:fields.get('requirements')||'',
    website:fields.get('website')||'',fields:{material:fields.get('material')||'',quantity:fields.get('quantity')||'',inquiry_type:fields.get('type')||''}};
   const response=await fetch('/api/form-submit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
   const result=await response.json().catch(()=>({}));
   if(!response.ok||!result.saved)throw Error(result.error||'The enquiry could not be received. Please use our email or WhatsApp contact instead.');
-  status.textContent='Thank you. Your enquiry has been received.';
+  status.textContent='Thank you. Your enquiry has been recorded. For urgent requests, please also contact us by email or WhatsApp.';
   inquiryForm.reset();
  }catch(error){status.textContent=error.message||'The request could not be sent.'}
  finally{button.disabled=false}

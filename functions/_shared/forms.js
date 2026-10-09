@@ -47,6 +47,7 @@ export const FORM_SCHEMA = [
     to_emails TEXT NOT NULL DEFAULT '',
     reply_to_mode TEXT NOT NULL DEFAULT 'visitor' CHECK (reply_to_mode IN ('visitor','from')),
     subject_template TEXT NOT NULL DEFAULT 'Website inquiry: {{reference}} {{name}}',
+    smtp_verified_at TEXT,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`
 ];
@@ -64,7 +65,24 @@ export async function ensureFormSchema(db) {
   for (const [name, definition] of additions) {
     if (!existing.has(name)) await db.prepare("ALTER TABLE form_submissions ADD COLUMN " + name + " " + definition).run();
   }
+  const smtpColumns = await db.prepare("PRAGMA table_info(form_smtp_settings)").all();
+  if (!(smtpColumns.results || []).some((row) => row.name === "smtp_verified_at")) {
+    await db.prepare("ALTER TABLE form_smtp_settings ADD COLUMN smtp_verified_at TEXT").run();
+  }
   await db.prepare(`INSERT INTO form_smtp_settings(id) VALUES(1) ON CONFLICT(id) DO NOTHING`).run();
+}
+
+// Share one fail-closed readiness rule between public UI and POST handler.
+// A successful SMTP test is required; a saved but untested SMTP configuration
+// must never silently swallow genuine customer enquiries.
+export async function isInquiryFormReady(db, env) {
+  if (!db) return false;
+  try {
+    const row = await db.prepare(`SELECT enabled, host, username, password_ciphertext,
+      from_email, to_emails, smtp_verified_at FROM form_smtp_settings WHERE id=1`).first();
+    return Boolean(row?.enabled && row?.host && row?.from_email && row?.to_emails &&
+      row?.smtp_verified_at && (!row?.username || (row?.password_ciphertext && env?.FORM_SETTINGS_KEY)));
+  } catch { return false; }
 }
 
 function bytesToBase64(bytes) {
@@ -125,6 +143,7 @@ export async function loadSmtpSettings(db, env, includePassword = false) {
     security: clean(row?.security, 20) || "ssl",
     username: clean(row?.username, 255),
     passwordConfigured: Boolean(row?.password_ciphertext),
+    verifiedAt: row?.smtp_verified_at || "",
     fromName: clean(row?.from_name, 160) || brandDefaultFromName,
     fromEmail: clean(row?.from_email, 320),
     toEmails: clean(row?.to_emails, 2000),

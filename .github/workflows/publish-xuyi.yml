@@ -101,9 +101,11 @@ jobs:
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
-      - name: Validate release artifact and file budget
+      - name: Validate release artifact and inquiry readiness
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
-        run: python scripts/test_release.py
+        run: |
+          python scripts/test_release.py
+          node scripts/test_inquiry_readiness.mjs
       - name: No changes in the XUYI D1 publish revision
         if: github.event_name == 'schedule' && steps.revision.outputs.needed == 'false'
         run: echo "No changes; skipped build and deploy to preserve GitHub Actions usage."
