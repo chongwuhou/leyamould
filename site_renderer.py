@@ -19,8 +19,13 @@ for i,p in enumerate(RAW):
   if media and media['sku']==key:obj["images"].append("/media/excel/row-%03d.webp"%(i+3))
 for model,slide in [('501',91),('502',92),('507',93),('509',94),('510',95),('5247',96),('5248',96)]:
  if model in SERIES:SERIES[model]["images"].append("/media/ppt/slide-%03d.webp"%slide)
-for m,item in SERIES.items():item["images"]=list(dict.fromkeys(item["images"]))
-assert len(SERIES)==79,(len(SERIES))
+GALLERY_IMAGES=json.loads((ROOT/"data/verified-gallery.json").read_text(encoding="utf-8"))
+for m,item in SERIES.items():
+ if m in GALLERY_IMAGES:item["images"]=GALLERY_IMAGES[m]+item["images"]
+ if m=="2100":item["images"]=GALLERY_IMAGES["2099"]+item["images"]
+ item["images"]=list(dict.fromkeys(item["images"]))
+
+assert len(SERIES)>=85,(len(SERIES))
 assert all(v["images"] for v in SERIES.values()),[(k,v["images"]) for k,v in SERIES.items() if not v["images"]]
 def e(v):return html.escape(str(v or ""),quote=True)
 def photo(src,alt,loading='lazy'):return f'<img src="{e(src)}" alt="{e(alt)}" loading="{loading}" decoding="async">'
@@ -143,10 +148,13 @@ def public_display_name(item):
  # The source lists model 2506 as 60ml; this is unverified and likely a catalog data error.
  if str(item.get("model"))=="2506":return "Plastic Sports Water Bottle — Model 2506"
  return item["name"]
+def model_label(value):
+ return str(value).replace("透明款"," (Transparent Variant)")
+
 def product_card(item):
  img=item["images"][0]
- text=(public_display_name(item)+" "+item["model"]+" "+item["capacity"]).lower()
- return '<a class="product-card" data-product-card data-category="'+e(CAT[item["category"]][1])+'" data-search="'+e(text)+'" href="/products/'+e(item["slug"])+'/"><div class="product-card__image">'+photo(img,public_display_name(item)+" model "+item["model"])+'</div><div class="product-card__body"><span class="product-card__small">MODEL '+e(item["model"])+'</span><h3>'+e(public_display_name(item))+'</h3><span class="product-card__link">View Product ↗</span></div></a>'
+ text=(public_display_name(item)+" "+model_label(item["model"])+" "+str(item["capacity"]).split("产品尺寸",1)[0]).lower()
+ return '<a class="product-card" data-product-card data-category="'+e(CAT[item["category"]][1])+'" data-search="'+e(text)+'" href="/products/'+e(item["slug"])+'/"><div class="product-card__image">'+photo(img,public_display_name(item)+" model "+model_label(item["model"]))+'</div><div class="product-card__body"><span class="product-card__small">MODEL '+e(model_label(item["model"]))+'</span><h3>'+e(public_display_name(item))+'</h3><span class="product-card__link">View Product ↗</span></div></a>'
 def product_grid(items):return '<div class="grid grid--4 product-grid">'+''.join(product_card(x) for x in items)+'</div>'
 def filters(with_categories=True):
  options='<option value="">All product categories</option>'+''.join('<option value="'+x[1]+'">'+e(x[0])+'</option>' for x in CAT.values())

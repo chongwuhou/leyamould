@@ -696,3 +696,16 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
 .blog-filter__count{margin:0;color:#777;font-size:12px;font-weight:700}
 .blog-listing__grid .news-card[hidden]{display:none!important}
 @media(max-width:750px){.blog-filter{padding:18px 15px}.blog-filter__tabs button{font-size:12px;padding:9px 12px}}
+
+/* XUYI structured product content */
+.product-detail .spec th{width:37%;padding:13px 15px;background:#f8f8f8;border-bottom:1px solid #ebebeb;color:#424242;font-weight:700;text-align:left;vertical-align:top;font-size:13px}
+.product-detail .spec td{padding:13px 15px;overflow-wrap:anywhere}
+.product-overview .product-detail__main{background:#f7f7f8;border-radius:16px;overflow:hidden}
+.product-overview .product-detail__main img{width:100%;object-fit:contain}
+.product-overview .notice{line-height:1.65}
+.product-content .benefit,.product-ordering .benefit{padding:25px;line-height:1.7}
+.product-content .benefit p,.product-ordering .benefit p{font-size:14px;color:#5b5b5b}
+.product-content__cta{margin:27px 0 0;font-size:14px;font-weight:800;line-height:1.7}
+.product-content__cta a{color:var(--red)}
+.product-content__cta a:hover{text-decoration:underline}
+@media(max-width:750px){.product-detail .spec th{width:39%;padding:11px 9px}.product-detail .spec td{padding:11px 9px;font-size:13px}}

@@ -11,13 +11,47 @@
 <button id="refresh-btn" class="btn ghost">刷新</button><button id="logout-btn" class="btn ghost">退出</button></div></header>
 <div class="admin-layout"><aside class="admin-sidebar"><div class="admin-sidebar-head"><span class="eyebrow">MANAGEMENT</span><strong>管理模块</strong></div><nav class="admin-module-nav">
 <button type="button" class="admin-module-btn active" data-admin-target="leads">01 询盘客户</button>
-<button type="button" class="admin-module-btn" data-admin-target="settings">02 联系人与邮箱</button>
-<button type="button" class="admin-module-btn" data-admin-target="languages">03 多语言</button>
-<button type="button" class="admin-module-btn" data-admin-target="advanced">04 翻译工作流</button>
+<button type="button" class="admin-module-btn" data-admin-target="blog">02 Blog 内容发布</button>
+<button type="button" class="admin-module-btn" data-admin-target="settings">03 联系人与邮箱</button>
+<button type="button" class="admin-module-btn" data-admin-target="languages">04 多语言</button>
+<button type="button" class="admin-module-btn" data-admin-target="advanced">05 翻译工作流</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">技术模块采用 Demalong 已有实现，数据与密钥属于旭一网站。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
-      <section class="panel form-admin-panel" data-admin-module="leads">
+      <section class="panel" id="blog-admin-panel" data-admin-module="blog">
+<div class="panel-head"><div><div class="eyebrow">BLOG CONTENT MANAGEMENT · D1</div><h2>Blog 内容管理 / 文章发布</h2>
+<p>复用德玛隆后台的保存草稿、正式发布与修订流程。旭一博客按文章而不是滤芯型号管理，保存草稿不会公开。</p></div></div>
+<div class="row" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:15px 0">
+<button class="btn primary" type="button" id="blog-new-btn">+ 新建文章</button>
+<button class="btn ghost" type="button" id="blog-refresh-btn">刷新文章列表</button>
+<span id="blog-admin-status" role="status" class="muted"></span></div>
+<div id="blog-admin-list"></div>
+<form id="blog-editor-form" hidden class="blog-admin-editor">
+<h3 id="blog-editor-heading">编辑文章</h3>
+<div class="blog-admin-form-grid">
+<label>文章 URL Slug<input id="blog-slug" required placeholder="custom-plastic-bottle-guide" pattern="[a-z0-9-]+"></label>
+<label>文章分类<select id="blog-group"><option>Wholesale &amp; Planning</option><option>Materials</option><option>OEM &amp; Branding</option><option>Quality &amp; Safety</option></select></label>
+<label class="blog-admin-wide">文章标题 / H1<input id="blog-title" required maxlength="125"></label>
+<label class="blog-admin-wide">SEO 描述 / 简介<textarea id="blog-description" rows="2" maxlength="250" required></textarea></label>
+<label>核心关键词<input id="blog-keyword" placeholder="wholesale plastic water bottles"></label>
+<label>其他关键词（每行一个）<textarea id="blog-secondary" rows="3"></textarea></label>
+<label class="blog-admin-wide">首图 URL（建议上传到旭一 R2）<input id="blog-cover" placeholder="/media/ppt/slide-059.webp" required></label>
+<label>上传新封面（JPEG/PNG/WebP，不超过 6MB）<input id="blog-upload" type="file" accept="image/jpeg,image/png,image/webp"></label>
+<div><img id="blog-cover-preview" style="width:160px;height:120px;object-fit:contain;background:#f4f4f4" alt="文章封面预览"><p id="blog-upload-status" class="muted"></p></div>
+<label class="blog-admin-wide">导语 / 第一段<textarea id="blog-intro" rows="4" required></textarea></label>
+<label class="blog-admin-wide">正文（每段先写 ## 小标题，下一行写正文；重复多节）<textarea id="blog-sections" rows="18" required placeholder="## Sourcing the correct model&#10;Check the exact material and capacity ..."></textarea></label>
+<label class="blog-admin-wide">采购清单（每行一项）<textarea id="blog-checklist" rows="5"></textarea></label>
+<label class="blog-admin-wide">FAQ（每行：问题 | 回答）<textarea id="blog-faqs" rows="5"></textarea></label>
+<label class="blog-admin-wide">相关文章 Slug（每行一项）<textarea id="blog-related" rows="4"></textarea></label>
+</div>
+<div class="row" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
+<button type="submit" class="btn ghost" id="blog-save-btn">保存草稿</button>
+<button type="button" class="btn primary" id="blog-publish-btn">正式发布</button>
+<button type="button" class="btn ghost" id="blog-close-btn">返回列表</button>
+<a id="blog-preview-link" class="btn ghost" href="/blog/" target="_blank" rel="noopener">查看已发布页面 ↗</a></div>
+<p class="muted">Blog 英语原稿优先；其他语言仍沿用德玛隆的审核工作流，不会自动发布未经审核的翻译。</p>
+</form></section>
+<section class="panel form-admin-panel" data-admin-module="leads">
         <div class="panel-head">
           <div>
             <div class="eyebrow">LEADS · D1</div>
@@ -128,5 +162,6 @@
 </main></div></div>
 <script src="/assets/xuyi-admin-bridge.js" defer></script>
 <script src="/assets/admin-forms.js" defer></script>
+<script src="/assets/admin-blog.js" defer></script>
 <script src="/assets/admin-site-settings.js" defer></script>
 </body></html>

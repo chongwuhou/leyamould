@@ -1,4 +1,5 @@
 from site_renderer import *
+from product_content import details as structured_product_details, add_schema as product_schema
 from blog_editorial import cover_path, render_article, enrich_article_html
 from why_us_layouts import render as render_why
 from why_us_content import schema_enhance
@@ -76,20 +77,7 @@ def catalog(cat_name=None):
  pagehtml+='<section class="section"><div class="shell">'+sec("Wholesale Buying Questions","Contact XUYI with model number, quantity and destination.","Product FAQ")+faq_html(FAQS[:6])+'</div></section>'
  return pagehtml
 def detail(obj):
- photos=obj['images'];category=obj['category'];variants=obj['variants']
- fields=[("Model",obj['model']),("Product Type",CAT[category][0]),("Catalog Capacity", "Pending supplier verification" if str(obj["model"])=="2506" else ", ".join(dict.fromkeys(x["capacity"] for x in variants)))]
- for name,key in [("Source Material","material"),("Dimensions","dimensions"),("Source Colors","colors"),("Packaging","packing"),("Carton Quantity","carton_quantity"),("Carton Dimensions","carton_size")]:
-  vals=[str(x.get(key)) for x in variants if x.get(key)]
-  if vals:fields.append((name,", ".join(list(dict.fromkeys(vals))[:3])))
- specs='<table class="spec">'+''.join('<tr><td>'+e(name)+'</td><td>'+e(value)+'</td></tr>' for name,value in fields)+'</table>'
- thumbs='<div class="product-detail__thumbs">'+''.join('<button class="product-detail__thumb" data-main-photo="'+e(img)+'" type="button" aria-label="View product catalog image '+str(i+1)+'">'+photo(img,public_display_name(obj))+'</button>' for i,img in enumerate(photos))+'</div>'
- bcrumb='<div class="breadcrumb"><a href="/">Home</a> / <a href="/products/">Products</a> / <a href="/collections/'+CAT[category][1]+'/">'+e(CAT[category][0])+'</a> / '+e(obj['model'])+'</div>'
- h='<section class="section"><div class="shell">'+bcrumb+'<div class="product-detail"><div class="product-detail__photos"><div class="product-detail__main">'+photo(photos[0],public_display_name(obj)+' Model '+obj['model'],'eager').replace('<img ','<img id="main-photo" ',1)+'</div>'+thumbs+'<p class="copy-muted" style="font-size:12px">Product materials, capacity and configuration are confirmed when quoting.</p></div><div><span class="eyebrow">PLASTIC DRINKWARE / MODEL '+e(obj['model'])+'</span><h1>'+e(public_display_name(obj))+'</h1><p class="copy-muted">B2B wholesale supply and custom branding inquiries. Please confirm product specifications, quantity, colors and required materials before ordering.</p>'+specs+'<div class="actions"><a class="button" href="/contact/?model='+e(obj['model'])+'#inquiry">Request a Quote →</a><a class="button button--outline" href="/contact/?model='+e(obj['model'])+'&type=sample#inquiry">Request Sample ↗</a></div><p class="notice"><b>Product specifications:</b> Confirm material by component, correct capacity, target-market food-contact testing, MOQ and lead time before listing as available for sale.</p><div><span class="badge">OEM inquiry</span> <span class="badge">Bulk order</span> <span class="badge">Sample confirmation</span></div></div></div></div></section>'
- h+='<section class="section section--soft"><div class="shell">'+sec("Product Details & Customization","Discuss logo printing, color combinations, packing and any project-specific drawings.","Product Information")+'<div class="grid grid--3">'+''.join('<article class="benefit"><h3>'+e(t)+'</h3><p>'+e(d)+'</p></article>' for t,d in [("Material & Specifications","Use the source figures as a starting point. We verify component materials, dimensions and capacity."),("Colors & Branding","Ask which colors, logo placements and branding methods are available for this exact model."),("Packing & Shipment","Carton details, volume, sample policies and production schedule are confirmed against the order.")])+'</div></div></section>'
- rel=[x for x in SERIES.values() if x['category']==category and x['model']!=obj['model']][:4]
- if rel:h+='<section class="section"><div class="shell">'+sec("Related Water Bottle Models","Compare other sizes and styles from this series.","Related Products")+product_grid(rel)+'</div></section>'
- h+='<section class="section section--soft"><div class="shell">'+sec("Frequently Asked Questions","Answers about wholesale supply and customizing bottle model "+obj['model']+".","Model FAQ")+faq_html(FAQS[:5])+'</div></section>'
- return h
+ return structured_product_details(obj)
 
 CAPABILITIES=[
 ("Custom Water Bottle","custom-water-bottle","Explore OEM designs and decoration options for selected plastic drinkware models.",["Select model, capacity and lid format.","Provide any logo, color or branding brief.","Review source material, test requirements and packaging.","Confirm samples, production route and project terms."],"/media/ppt/slide-059.webp"),
@@ -281,7 +269,8 @@ def generate():
  for cat,(title,slug,im,desc) in CAT.items():
   build_url('collections/'+slug+'/index.html',title,page(title+' Wholesale | XUYI Bottles',desc,catalog(cat)))
  for product in SERIES.values():
-  build_url('products/'+product['slug']+'/index.html','Model '+product['model'],page(public_display_name(product)+' — Model '+product['model']+' | XUYI',public_display_name(product)+' B2B plastic water bottle product specifications and wholesale inquiry.',detail(product)))
+  product_markup=page(public_display_name(product)+' | XUYI Bottles',public_display_name(product)+' wholesale plastic bottle specifications, material and color choices, OEM logo options and bulk inquiry.',detail(product))
+  build_url('products/'+product['slug']+'/index.html','Model '+product['slug'],product_schema(product_markup,product))
  build_url('capabilities/index.html','Capabilities',resources_schema(page(*RESOURCE_SEO['capabilities'],capabilities_page()),'capabilities',RESOURCE_SEO['capabilities'][1]))
  for cap in CAPABILITIES:
   title,slug,desc,*_=cap

@@ -7,3 +7,15 @@
 .panel .table-wrap{overflow-x:auto}
 #admin-app .module-heading{margin-bottom:24px}
 @media(max-width:850px){.admin-sidebar-info{display:none}}
+
+.blog-admin-editor{margin-top:22px;padding:22px;background:#fafafa;border:1px solid #e3e5ea;border-radius:12px}
+.blog-admin-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.blog-admin-form-grid label{display:grid;gap:7px;font-size:13px;font-weight:700}
+.blog-admin-form-grid input,.blog-admin-form-grid textarea,.blog-admin-form-grid select{min-width:0;width:100%;border:1px solid #d6d8da;background:#fff;padding:11px;border-radius:6px;color:#202020;font:inherit}
+.blog-admin-wide{grid-column:1/-1}
+.blog-admin-row{display:flex;gap:12px;align-items:center;border-bottom:1px solid #e3e3e3;padding:12px 6px}
+.blog-admin-row>div{flex:1;min-width:0}
+.blog-admin-row strong{display:block;font-size:14px}
+.blog-admin-row small{display:block;color:#757575;margin-top:4px}
+.blog-admin-row button{flex:none}
+@media(max-width:720px){.blog-admin-form-grid{grid-template-columns:1fr}.blog-admin-editor{padding:14px}.blog-admin-row{flex-wrap:wrap}}

@@ -16,6 +16,10 @@ export async function onRequestGet({ params, env }) {
       return new Response("Not found", {status:404});
     }
     key = "catalog-staging/ppt/" + filename;
+  } else if (kind === "gallery" && /^(?:2095|2099|5299|5340|8563)-0[1-3]\.webp$/.test(filename)) {
+    key = "site-gallery/" + filename;
+  } else if (kind === "blog" && /^[a-z0-9_-]{20,70}\.(?:jpg|png|webp)$/.test(filename)) {
+    key = "site-blog/" + filename;
   } else if (kind === "group" && /^[a-z0-9-]+\.webp$/.test(filename) && GROUP_IMAGES.has(filename)) {
     key = "site-preview/group/" + filename;
   } else {
@@ -26,7 +30,7 @@ export async function onRequestGet({ params, env }) {
     if (!obj) return new Response("Not found", {status:404});
     return new Response(obj.body, {
       headers: {
-        "Content-Type":"image/webp",
+        "Content-Type": kind === "blog" ? (filename.endsWith(".png") ? "image/png" : filename.endsWith(".jpg") ? "image/jpeg" : "image/webp") : "image/webp",
         "Cache-Control":"public,max-age=3600",
         "X-Content-Type-Options":"nosniff"
       }
