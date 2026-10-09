@@ -26,15 +26,17 @@ def real_source_note(extra=""):
  return '<p class="whyv2-source-note">Group-site photographs are provided as process or design references; material-specific capabilities and application to each XUYI plastic SKU require confirmation.'+((" "+e(extra)) if extra else "")+'</p>'
 def render_oem(d):
  h='<div class="whyv2 whyv2--oem"><section class="whyv2-oem-hero"><div class="shell">'+crumbs(d)+'<div class="whyv2-oem-hero__grid"><div><span class="eyebrow">OEM / ODM · PRIVATE LABEL · TAIZHOU</span><h1>Plastic Water Bottle <em>OEM &amp; ODM</em></h1><p>'+e(d["answer"])+'</p><div class="whyv2-actions"><a class="button" href="/contact/?type=oem-odm#inquiry">Start an OEM Project →</a><a class="button button--outline" href="/products/">See Bottle Models →</a></div></div><div class="whyv2-oem-hero__image">'+photo("/media/ppt/slide-059.webp","Original XUYI plastic water bottle styles that can be discussed for private-label sourcing","eager")+'<span>XUYI plastic catalog · Select a model before design approval</span></div></div></div></section>'
- h+='<section class="whyv2-oem-tech"><div class="shell"><div class="whyv2-lead"><span class="eyebrow">GROUP DESIGN PORTFOLIO</span><h2>Five Ways a Bottle Can Look Different</h2><p>These original group-reference photos illustrate decoration and development ideas, including examples on metal bottles. Each technique must be checked separately for plastic substrates; do not infer all finishes are compatible with XUYI plastic bottles.</p></div><div class="whyv2-oem-tech__grid">'
- tech=[("oem-logo","Custom Logo","Discuss print area, artwork scale, decoration compatibility and proof approval."),
- ("oem-color","Custom Colors","Review body and lid colors on the actual polymer and selected model."),
- ("oem-artwork","Graphics & Patterns","Supply vector designs and confirm their visual appearance on a physical sample."),
- ("oem-tooling","Bottle Structure","Changes to shape or lid require engineering feasibility and sometimes tooling."),
- ("oem-packaging","Retail Packaging","Coordinate unit box, labels, branded insert and master carton.")]
- for k,title,desc in tech:
-  h+='<article class="whyv2-oem-tech__card"><div>'+img(k,"Group reference: "+title+" examples on drinkware")+'</div><h3>'+e(title)+'</h3><p>'+e(desc)+'</p></article>'
- h+='</div>'+real_source_note('Reference photos include stainless-steel items and are not listings for XUYI plastic products.')+'</div></section>'
+ h+='<section class="whyv2-oem-tech"><div class="shell"><div class="whyv2-lead"><span class="eyebrow">XUYI PLASTIC DRINKWARE CATALOG</span><h2>Explore Plastic Bottle Branding &amp; Design Options</h2><p>These are genuine XUYI plastic bottle catalog photographs: printed bottles, color combinations, illustrated graphics, closure styles and retail packing examples. They are references for discussing customization, not a claim that every pictured feature can be changed on every model.</p></div><div class="whyv2-oem-tech__grid">'
+ tech=[
+  ("/media/ppt/slide-020.webp","Custom Logo &amp; Text","Plastic sports bottles with visible printed lettering. Confirm logo dimensions and print suitability for the chosen model.","XUYI plastic water bottles with printed words and colored bottle bodies"),
+  ("/media/ppt/slide-049.webp","Bottle &amp; Lid Colors","Existing plastic bottles in contrasting gradient colors. Match proposed body and cap colors against a physical sample.","Three gradient-colored XUYI plastic water bottles with carrying handles"),
+  ("/media/ppt/slide-007.webp","Printed Illustrations","Cartoon-print plastic bottles show how graphic decoration may look on a transparent body. Artwork needs approval.","XUYI transparent plastic kids bottles featuring cartoon artwork"),
+  ("/media/ppt/slide-038.webp","Lid &amp; Carry Styles","Compare plastic body shapes, drinking lids and carrying features, then confirm compatible component combinations.","XUYI plastic drinking bottles showing multiple flip lids and carry handles"),
+  ("/media/ppt/slide-030.webp","Retail Pack Presentation","A children's plastic drinking bottle displayed beside its printed retail carton; discuss box layout and packing per SKU.","XUYI plastic kids water bottles photographed with a matching illustrated packaging box")
+ ]
+ for path,title,desc,alt in tech:
+  h+='<article class="whyv2-oem-tech__card"><div>'+photo(path,alt)+'</div><h3>'+title+'</h3><p>'+e(desc)+'</p></article>'
+ h+='</div><p class="whyv2-source-note">All five product photographs are from the XUYI plastic bottle source catalog. Please confirm model, decoration method, components and packaging with a physical sample before ordering.</p></div></section>'
  h+='<section class="whyv2-oem-route"><div class="shell"><div class="whyv2-oem-route__head"><span class="eyebrow">PROJECT DECISION</span><h2>OEM Branding or ODM Development?</h2><p>'+e(d["intro_summary"])+'</p></div>'+_table(d["table_headers"],d["table_rows"],d["table_title"])+'<p class="whyv2-note">'+e(d["table_note"])+'</p></div></section>'
  h+='<section class="whyv2-oem-steps"><div class="shell"><div class="whyv2-lead"><span class="eyebrow">FROM IDEAS TO PRODUCTION</span><h2>Six Project Approval Milestones</h2><p>Each step has a deliverable the buyer can check before moving to the next.</p></div><div class="whyv2-oem-steps__grid">'
  for i,(title,desc) in enumerate(d["steps"],1):
