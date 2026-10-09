@@ -13,7 +13,7 @@ OUT=ROOT/"dist"
 meta=json.loads((OUT/"build-meta.json").read_text(encoding="utf-8"))
 assert meta["pagesProject"]=="xuyi-drinkware-site"
 assert meta["siteOrigin"]=="https://xuyibottles.com"
-assert meta["templateSet"]=="templates/site" and len(meta["templateSha256"])==4
+assert meta["templateSet"]=="templates/site" and len(meta["templateSha256"])>=10
 assert meta["noindex"] is True
 assert meta["fileCount"]<19500
 

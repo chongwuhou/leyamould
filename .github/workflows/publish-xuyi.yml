@@ -85,7 +85,11 @@ jobs:
           fi
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
-        run: python scripts/build_release.py
+        # The public site must run the authenticated XUYI snapshot endpoint.
+        # The revision and content are read from the same D1 snapshot.
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/build_release.py
       - name: Validate release artifact and file budget
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/test_release.py

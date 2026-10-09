@@ -1,0 +1,9 @@
+{
+  "site": {"origin": "https://example-bottle-site.com", "defaultLocale": "en"},
+  "cloudflare": {
+    "pagesProjectName": "example-bottle-project",
+    "d1Database": "example-bottle-d1",
+    "r2Bucket": "example-bottle-r2"
+  },
+  "brand": {"name": "Example Bottle Brand", "email": "sales@example-bottle-site.com"}
+}

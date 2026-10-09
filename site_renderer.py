@@ -2,13 +2,24 @@ from pathlib import Path
 from functools import lru_cache
 import json,html,re,collections,os
 ROOT=Path(__file__).parent
+BUILD_STATE={}
+_build_state_path=os.environ.get("XUYI_BUILD_SNAPSHOT","")
+if _build_state_path:
+ _state_path=Path(_build_state_path).resolve()
+ if not _state_path.is_file():raise RuntimeError("Missing XUYI build snapshot")
+ BUILD_STATE=json.loads(_state_path.read_text(encoding="utf-8"))
+ if BUILD_STATE.get("site")!="xuyi-drinkware-site" or BUILD_STATE.get("schemaVersion")!=1:
+  raise RuntimeError("Refusing build snapshot from another project")
+PAGE_OVERRIDES={str(v.get("route")):v for v in BUILD_STATE.get("pages",[]) if isinstance(v,dict)}
+PRODUCT_OVERRIDES={str(v.get("model")):v.get("content",{}) for v in BUILD_STATE.get("products",[]) if isinstance(v,dict)}
+BRAND_CONFIG=BUILD_STATE.get("brand") or {}
 BUILD_OUTPUT_DIR=os.environ.get("XUYI_OUTPUT_DIR",".")
 if BUILD_OUTPUT_DIR not in (".","dist"):
  raise ValueError("XUYI_OUTPUT_DIR must be . or dist")
 
 @lru_cache(maxsize=8)
 def read_template(name):
- if name not in {"shell","header","footer","sidebar"}:raise ValueError("Unknown site partial")
+ if name not in {"shell","header","footer","sidebar","home","listing","content","static","product-card","category-card"}:raise ValueError("Unknown site partial")
  return (ROOT/"templates"/"site"/(name+".html")).read_text(encoding="utf-8").rstrip(chr(10))
 
 def render_template(name,**parts):
@@ -39,6 +50,19 @@ for m,item in SERIES.items():
  if m in GALLERY_IMAGES:item["images"]=GALLERY_IMAGES[m]+item["images"]
  if m=="2100":item["images"]=GALLERY_IMAGES["2099"]+item["images"]
  item["images"]=list(dict.fromkeys(item["images"]))
+for row in BUILD_STATE.get("products",[]):
+ model=str(row.get("model",""))
+ override=row.get("content") or {}
+ if model in SERIES and isinstance(override,dict):
+  for field in ("name","description","capacity","material","colors","packing","dimensions","carton_quantity","carton_size"):
+   if isinstance(override.get(field),str) and override[field].strip():
+    SERIES[model][field]=override[field].strip()
+    if field in ("capacity","material","colors","packing","dimensions","carton_quantity","carton_size"):
+     for variant in SERIES[model]["variants"]:
+      variant[field]=override[field].strip()
+  img=override.get("image")
+  if isinstance(img,str) and img.startswith(("/assets/","/media/")) and ".." not in img:
+   SERIES[model]["images"]=[img]+[old for old in SERIES[model]["images"] if old!=img]
 
 assert len(SERIES)>=85,(len(SERIES))
 assert all(v["images"] for v in SERIES.values()),[(k,v["images"]) for k,v in SERIES.items() if not v["images"]]
@@ -52,6 +76,24 @@ def build_url(path,title,content):
  # Canonical URL for all generated static routes on the already-live production hostname.
  route="/"+path[:-len("index.html")] if path.endswith("index.html") else "/"+path
  canonical=SITE_ORIGIN+route
+ override=PAGE_OVERRIDES.get(route)
+ if route.startswith("/products/"):
+  model=route.strip("/").split("/")[-1]
+  p=PRODUCT_OVERRIDES.get(model,{})
+  if isinstance(p,dict):
+   override={**(override or {}),"seo_title":p.get("seoTitle") or (override or {}).get("seo_title"),
+             "meta_description":p.get("seoDescription") or (override or {}).get("meta_description")}
+ if override:
+  if override.get("seo_title"):
+   content=re.sub(r"<title>.*?</title>","<title>"+e(str(override["seo_title"])[:90])+"</title>",content,count=1,flags=re.S)
+  if override.get("meta_description"):
+   content=re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="'+e(str(override["meta_description"])[:240])+'">',content,count=1)
+ family="home" if route=="/" else "listing" if route=="/products/" or route.startswith("/collections/") else "content" if route.startswith(("/products/","/blog/")) else "static"
+ marker='<main id="main-content">'
+ if marker in content and "</main>" in content:
+  start,tail=content.split(marker,1)
+  main,end=tail.split("</main>",1)
+  content=start+marker+render_template(family,CONTENT=main)+"</main>"+end
  if 'rel="canonical"' not in content:
   content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
  URLS[path]=title
@@ -114,7 +156,17 @@ MINI_MENUS={
 }
 def header():
  navitems=[]
- for name in ["Home","Products","Capabilities","About","Why Us","Blog","Contact Us"]:
+ defaults=["Home","Products","Capabilities","About","Why Us","Blog","Contact Us"]
+ top_urls={"Home":"/","Products":"/products/","Capabilities":"/capabilities/",
+           "About":"/about/","Why Us":"/why-us/","Blog":"/blog/","Contact Us":"/contact/"}
+ nav_rows=BUILD_STATE.get("navigation",[])
+ by_url={x.get("url"):x for x in nav_rows if isinstance(x,dict)}
+ labels={name:(by_url.get(url,{}).get("label") or name) for name,url in top_urls.items()}
+ sorted_names=[name for name in defaults if top_urls[name] in by_url and not by_url[top_urls[name]].get("parent_id")]
+ if sorted_names:
+  sorted_names.sort(key=lambda name:(int(by_url[top_urls[name]].get("sort_order",999)),defaults.index(name)))
+ else:sorted_names=defaults
+ for name in defaults:
   if name=="Home":navitems.append('<a class="nav__link" href="/">Home</a>')
   elif name in ("About","Blog","Contact Us"):
    uri={"About":"/about/","Blog":"/blog/","Contact Us":"/contact/"}[name]
@@ -124,24 +176,39 @@ def header():
    for group,img,links in PRODUCT_COLUMNS:
     heading='<a class="mega__heading" href="'+e(links[0][1])+'">'+e(group)+'</a>'
     pic='<a class="mega__image" href="'+e(links[0][1])+'">'+photo(img,"XUYI "+group+" catalog photo")+'</a>'
-    column='<div class="mega__column">'+heading+pic+'<div class="mega__links">'+''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in links)+'</div></div>'
+    column='<div class="mega__column">'+heading+pic+'<div class="mega__links">'+''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get('label') or label)+'</a>' for label,uri in links)+'</div></div>'
     cols.append(column)
    submenu='<div class="mega" id="menu-products"><div class="mega__grid">'+''.join(cols)+'</div></div>'
    navitems.append('<div class="nav__drop nav__drop--mega"><button class="nav__toggle" data-mega-toggle type="button" aria-expanded="false" aria-controls="menu-products">Products'+ICONS['chevron']+'</button>'+submenu+'</div>')
   else:
-   items=''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in MINI_MENUS[name])
+   items=''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get('label') or label)+'</a>' for label,uri in MINI_MENUS[name])
    menu_id='menu-'+name.lower().replace(' ','-')
    navitems.append('<div class="nav__drop nav__drop--mini"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="'+menu_id+'" aria-expanded="false">'+name+ICONS['chevron']+'</button><div class="mini-menu" id="'+menu_id+'">'+items+'</div></div>')
+ nav_parts=dict(zip(defaults,navitems))
+ navitems=[]
+ for key in sorted_names:
+  markup=nav_parts[key]
+  label=labels[key]
+  if key in ("Products","Capabilities","Why Us"):
+   markup=markup.replace(key+ICONS["chevron"],e(label)+ICONS["chevron"],1)
+  else:markup=markup.replace(">"+key+"</a>",">"+e(label)+"</a>",1)
+  navitems.append(markup)
  # All navigational targets are XUYI pages, no stainless steel or competitor-branded items.
- mobile='<a href="/">Home</a><details><summary>Products</summary>'
+ mobile_parts={}
+ mobile_parts["Home"]='<a href="/">'+e(labels["Home"])+'</a>'
+ groups=[]
  for group,img,links in PRODUCT_COLUMNS:
-  mobile+='<div class="mobile-nav__group"><div class="mobile-nav__group-title">'+photo(img,group+' plastic bottles')+'<strong>'+e(group)+'</strong></div>'
-  mobile+=''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in links)+'</div>'
- mobile+='</details><details><summary>Capabilities</summary>'
- mobile+=''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in MINI_MENUS["Capabilities"])
- mobile+='</details><a href="/about/">About</a><details><summary>Why Us</summary>'
- mobile+=''.join('<a href="'+e(uri)+'">'+e(label)+'</a>' for label,uri in MINI_MENUS["Why Us"])
- mobile+='</details><a href="/blog/">Blog</a><a href="/contact/">Contact Us</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Instant Quote →</a>'
+  item='<div class="mobile-nav__group"><div class="mobile-nav__group-title">'+photo(img,group+' plastic bottles')+'<strong>'+e(group)+'</strong></div>'
+  item+=''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get("label") or label)+'</a>' for label,uri in links)+'</div>'
+  groups.append(item)
+ mobile_parts["Products"]='<details><summary>'+e(labels["Products"])+'</summary>'+''.join(groups)+'</details>'
+ for nav_name in ("Capabilities","Why Us"):
+  submenu=''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get("label") or label)+'</a>' for label,uri in MINI_MENUS[nav_name])
+  mobile_parts[nav_name]='<details><summary>'+e(labels[nav_name])+'</summary>'+submenu+'</details>'
+ for nav_name in ("About","Blog","Contact Us"):
+  mobile_parts[nav_name]='<a href="'+top_urls[nav_name]+'">'+e(labels[nav_name])+'</a>'
+ mobile=''.join(mobile_parts[k] for k in sorted_names)
+ mobile+='<a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Instant Quote →</a>'
  top='<div class="topbar"><div class="shell topbar__inner"><a href="/about/" aria-label="XUYI company">XUYI · Taizhou, China</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Contact</a></div></div>'
  logo='<a href="/" class="logo" aria-label="XUYI Bottles home">XUYI<small>BOTTLES</small></a>'
  actions='<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language"><option value="en">English</option><option value="es">Español</option><option value="pt">Português</option><option value="ru">Русский</option><option value="tr">Türkçe</option></select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
@@ -149,7 +216,19 @@ def header():
  return render_template("header",TOPBAR=top,LOGO=logo,NAV_DESKTOP=''.join(navitems),ACTIONS=actions,SEARCH=search,NAV_MOBILE=mobile)
 def footer():
  links=''.join('<p><a href="'+uri+'">'+e(label)+'</a></p>' for label,uri in category_links())
- return render_template("footer",PRODUCT_LINKS=links)
+ result=render_template("footer",PRODUCT_LINKS=links)
+ footer_config=BRAND_CONFIG.get("footer") or {}
+ if footer_config.get("about"):
+  result=result.replace("Factory-backed plastic water bottles for wholesale, branding and OEM/ODM projects.",
+                        e(str(footer_config["about"])[:1000]),1)
+ contact=BRAND_CONFIG.get("contact") or {}
+ if contact.get("email"):
+  email=str(contact["email"]).strip()
+  if re.fullmatch(r"[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+",email):
+   result=result.replace("Janey@xuyibottles.com",e(email))
+ if contact.get("whatsappUrl") and str(contact["whatsappUrl"]).startswith("https://wa.me/"):
+  result=result.replace("https://wa.me/8615395897937",e(str(contact["whatsappUrl"])))
+ return result
 def page(title,description,body,canonical=None):
  # Search indexing stays disabled pending final launch approval.
  head='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light"><meta name="theme-color" content="#ffffff"><title>'+e(title)+'</title><meta name="description" content="'+e(description)[:220]+'"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/site-settings.css"><script defer src="/assets/site.js"></script><script defer src="/assets/site-settings.js"></script></head><body>'
@@ -159,7 +238,7 @@ def intro(crumb,title,subtitle=""):
  return '<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / '+e(crumb)+'</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+e(title)+'</h1><p>'+e(subtitle)+'</p></div></section>'
 def category_card(cat):
  n,slug,im,desc=cat
- return '<a class="category" href="/collections/'+slug+'/"><div class="category__photo">'+photo(im,n)+'</div><div class="category__body"><h3>'+e(n)+'</h3><span>Explore Collection ↗</span></div></a>'
+ return render_template("category-card",URL="/collections/"+e(slug)+"/",IMAGE=photo(im,n),TITLE=e(n))
 def public_display_name(item):
  # The source lists model 2506 as 60ml; this is unverified and likely a catalog data error.
  if str(item.get("model"))=="2506":return "Plastic Sports Water Bottle — Model 2506"
@@ -169,8 +248,13 @@ def model_label(value):
 
 def product_card(item):
  img=item["images"][0]
- text=(public_display_name(item)+" "+model_label(item["model"])+" "+str(item["capacity"]).split("产品尺寸",1)[0]).lower()
- return '<a class="product-card" data-product-card data-category="'+e(CAT[item["category"]][1])+'" data-search="'+e(text)+'" href="/products/'+e(item["slug"])+'/"><div class="product-card__image">'+photo(img,public_display_name(item)+" model "+model_label(item["model"]))+'</div><div class="product-card__body"><span class="product-card__small">MODEL '+e(model_label(item["model"]))+'</span><h3>'+e(public_display_name(item))+'</h3><span class="product-card__link">View Product ↗</span></div></a>'
+ title=public_display_name(item)
+ model=model_label(item["model"])
+ searchable=(title+" "+model+" "+str(item["capacity"]).split("产品尺寸",1)[0]).lower()
+ return render_template("product-card",
+  CATEGORY=e(CAT[item["category"]][1]),SEARCH=e(searchable),
+  URL="/products/"+e(item["slug"])+"/",
+  IMAGE=photo(img,title+" model "+model),MODEL=e(model),TITLE=e(title))
 def product_grid(items):return '<div class="grid grid--4 product-grid">'+''.join(product_card(x) for x in items)+'</div>'
 def filters(with_categories=True):
  options='<option value="">All product categories</option>'+''.join('<option value="'+x[1]+'">'+e(x[0])+'</option>' for x in CAT.values())

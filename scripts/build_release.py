@@ -37,11 +37,32 @@ def main():
         shutil.rmtree(DIST)
     DIST.mkdir(parents=True)
     env={**os.environ,"XUYI_OUTPUT_DIR":"dist","PYTHONDONTWRITEBYTECODE":"1"}
+    snapshot=ROOT/"_local_ops"/"build-snapshot.json"
+    if snapshot.is_file():
+        state=json.loads(snapshot.read_text(encoding="utf-8"))
+        if state.get("site")!="xuyi-drinkware-site":
+            fail("Refusing non-XUYI build snapshot")
+        env["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
+        env["XUYI_PUBLISH_REVISION"]=str(int(state.get("publishRevision",0)))
     subprocess.run([sys.executable,"build.py"],cwd=ROOT,env=env,check=True)
     # Keep static artifacts and Functions separate; Wrangler bundles sibling
     # functions/ during Pages deploy. Never publish source, backups or secrets.
     shutil.copytree(ROOT/"assets",DIST/"assets",ignore=shutil.ignore_patterns("*.md"))
     shutil.copytree(ROOT/"admin",DIST/"admin")
+    subprocess.run([sys.executable,"scripts/render_locales.py"],cwd=ROOT,env=env,check=True)
+    if snapshot.is_file():
+        state=json.loads(snapshot.read_text(encoding="utf-8"))
+        valid=[]
+        for row in state.get("redirects",[]):
+            src=row.get("source_path","");target=row.get("target_path","")
+            code=int(row.get("status_code",301))
+            if not (isinstance(src,str) and src.startswith("/") and " " not in src and "\n" not in src):
+                continue
+            if not (isinstance(target,str) and (target.startswith("/") or target.startswith("https://"))
+                    and " " not in target and "\n" not in target):
+                continue
+            if code in (301,302):valid.append(f"{src} {target} {code}")
+        if valid:(DIST/"_redirects").write_text("\n".join(valid)+"\n",encoding="utf-8")
     for name in ("favicon.svg","favicon.ico","favicon-16.png","favicon-32.png",
                  "apple-touch-icon.png","icon-192.png","icon-512.png",
                  "site.webmanifest","_headers"):
@@ -54,7 +75,7 @@ def main():
     total=sum(counts.values())
     limit=CONFIG["build"]["hardLimitFiles"]
     if total>=limit:fail(f"Pages file hard stop: {total} >= {limit}")
-    source_files=[ROOT/"templates/site"/f"{n}.html" for n in ("header","footer","sidebar","shell")]
+    source_files=sorted((ROOT/"templates/site").glob("*.html"))
     templates={file.name:file_hash(file) for file in source_files}
     metadata={
         "version":"XUYI source-templated static build v1",
@@ -62,7 +83,7 @@ def main():
         "pagesProject":CONFIG["cloudflare"]["pagesProjectName"],
         "generatedAt":datetime.now(timezone.utc).isoformat(),
         "sourceRevision":os.environ.get("GITHUB_SHA","local"),
-        "publishRevision":int(os.environ.get("XUYI_PUBLISH_REVISION","0")),
+        "publishRevision":int(env.get("XUYI_PUBLISH_REVISION","0")),
         "templateSet":"templates/site",
         "templateSha256":templates,
         "fileCount":total,
