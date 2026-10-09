@@ -108,7 +108,7 @@ jobs:
         run: |
           set -euo pipefail
           for n in 1 2 3 4 5 6; do
-            if curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?xuyi_check=$n" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.pagesProject==='xuyi-drinkware-site'&&Number(v.publishRevision)>=Number(process.env.XUYI_PUBLISH_REVISION)?0:1)})"; then
+            if curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?xuyi_check=$n&sha=$GITHUB_SHA" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.pagesProject==='xuyi-drinkware-site'&&v.sourceRevision===process.env.GITHUB_SHA&&Number(v.publishRevision)>=Number(process.env.XUYI_PUBLISH_REVISION)?0:1)})"; then
               echo "XUYI production revision verified"
               exit 0
             fi
