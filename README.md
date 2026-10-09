@@ -106,3 +106,9 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Never infer XUYI product materials, temperatures, BPA status, certifications, production quantities or stock from source group-brand pages. No live inquiry submissions enabled.
 
 - Added a separately sourced Everich group-site capacity reference on /about/: 70,000+ m², 13 automated lines, 15 million pieces/year, 1,200+ personnel. Clearly attributed to Everich public profile and NOT claimed as XUYI Taizhou plant capacity.
+
+## FAQ Search Layout Correction
+- Search replaced by a full-width light-grey band directly under the FAQ statistics strip; search input is aligned to the main FAQ answer column rather than capped at an unrelated 1010px width.
+- Desktop layout uses explanatory text at left and live-search input at right; mobile stacks them. Added functional popular-search chips for MOQ, Materials, Logo, Sample and Shipping.
+- Kept all 54 FAQ answers, seven topics, JSON-LD, internal links and preview noindex unchanged.
+- Local browser QA at 320/390/768/1024/1440px verified FAQ search, chip actions, clearing search and zero horizontal overflow.

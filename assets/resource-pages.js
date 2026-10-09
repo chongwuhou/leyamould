@@ -27,6 +27,9 @@
     if(reset)reset.hidden=!query;
     if(results)results.textContent=query?(count?String(count)+' answers match “'+search.value.trim()+'”.':'No answers match “'+search.value.trim()+'”. Try another term.'):'Browse all '+items.length+' questions below.';
   }
+  for(const suggestion of document.querySelectorAll('[data-faq-suggest]')){
+    suggestion.addEventListener('click',()=>{search.value=suggestion.dataset.faqSuggest||'';update();search.focus();});
+  }
   search.addEventListener('input',update);
   reset?.addEventListener('click',()=>{search.value='';update();search.focus()});
   update();
