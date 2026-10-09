@@ -1,0 +1,81 @@
+{
+  "project": "XUYI drinkware",
+  "method": "Original English buyer guidance; user-approved same-group material reuse with provenance and model-specific limitations",
+  "sources": [
+    {
+      "site": "Kreat",
+      "source": "https://kreat.com/oem/",
+      "reused_topics": [
+        "OEM vs ODM scope",
+        "artwork",
+        "sample and tooling approvals"
+      ],
+      "content_note": "Adapted topics, not copy or XUYI-specific terms"
+    },
+    {
+      "site": "Kreat",
+      "source": "https://kreat.com/quality-assurance/",
+      "reused_topics": [
+        "group test-equipment photo reference",
+        "inspection dimensions"
+      ],
+      "content_note": "Photo attribution and SKU verification required"
+    },
+    {
+      "site": "GOX",
+      "source": "https://www.goxbottles.com/gox-china-oem-sports-tritan-water-bottle-with-auto-open-flip-nozzle-product/",
+      "reused_topics": [
+        "capacity and dimension sheets",
+        "packaging variants",
+        "closure details"
+      ],
+      "content_note": "No GOX model specification transferred onto an XUYI SKU"
+    },
+    {
+      "site": "Everich",
+      "source": "https://www.everich.com/get-sample/",
+      "reused_topics": [
+        "sample request stages",
+        "drawing/prototype/sample testing"
+      ],
+      "content_note": "No Everich quote timing or fees adopted as an XUYI promise"
+    },
+    {
+      "site": "Everich",
+      "source": "https://www.everich.com/customization/",
+      "reused_topics": [
+        "design, prototype and sample approval",
+        "OEM/ODM separation"
+      ],
+      "content_note": "Original buyer-focused English text written"
+    },
+    {
+      "site": "Everich",
+      "source": "https://www.everich.com/quality-control/",
+      "reused_topics": [
+        "component testing and shipment inspection"
+      ],
+      "content_note": "No group volume/inspector counts attributed to XUYI"
+    },
+    {
+      "site": "Diller",
+      "source": "https://www.dillerbottle.com/custom-water-bottle-manufacturer",
+      "reused_topics": [
+        "model vs mold",
+        "artwork and packaging",
+        "sampling"
+      ],
+      "content_note": "No metal/glass product photos added"
+    },
+    {
+      "site": "Diller",
+      "source": "https://www.dillerbottle.com/info/oem-water-bottle-quality-agreement.html",
+      "reused_topics": [
+        "QC approval checklist",
+        "defect categorization",
+        "sample revision"
+      ],
+      "content_note": "Educational sourcing guidance only"
+    }
+  ]
+}

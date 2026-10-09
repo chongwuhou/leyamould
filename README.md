@@ -93,3 +93,14 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Suppressed the duplicate generic page CTA and fixed mobile inquiry bar on these service pages, avoiding obstruction of questions.
 - Added three plastic-specific process references (injection blow molding, extrusion blow molding, lid component handling) to manufacturing. Original sources and reference status are in data/why-us-group-media.json; images uploaded to XUYI R2 under site-preview/group.
 - Content deliberately distinguishes group/reference processes from a specific XUYI production line, test report, or confirmed machine.
+
+
+## Expanded buying guide and supporting information pages
+- Redesigned FAQ (/faq/): 54 original model-aware buyer answers in seven topics with search, category navigation, helpful internal links and matching FAQPage JSON-LD.
+- Rebuilt /about/ with legal Chinese company name, four plastic categories, sourcing capability, and original group-site pack/QA/warehouse reference photographs already in XUYI R2. Group images are captioned as references and do not automatically establish a SKU certificate or machine ownership.
+- Rebuilt /why-us/ with buyer-type guidance, factory-backed sourcing and group visual resources, plus practical approvals and internal links.
+- Rebuilt /request-sample/ as six-stage sampling workflow, stock vs printed vs prototype guidance, sample-review checklist and seven topical FAQs.
+- Rebuilt /capabilities/ with seven customization workflows linking to actual existing capability detail pages, and OEM vs ODM decision guidance.
+- Reference research provenance is recorded in data/support-content-sources.json and group photo origins in data/why-us-group-media.json.
+- Five page titles/meta descriptions are unique. BreadcrumbList, Organization, WebPage schemas used; FAQPage only where the visible Q&A exists. Site remains noindex until approved launch and inquiry delivery.
+- Never infer XUYI product materials, temperatures, BPA status, certifications, production quantities or stock from source group-brand pages. No live inquiry submissions enabled.

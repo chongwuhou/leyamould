@@ -2,6 +2,7 @@ from site_renderer import *
 from why_us_layouts import render as render_why
 from why_us_content import schema_enhance
 WHY_DATA=json.loads((ROOT/"data/why-us-content.json").read_text(encoding="utf-8"))
+from resource_pages import (faq_page as faq_expanded, about_page as about_expanded, why_us_page as why_us_expanded, sample_page as sample_expanded, capabilities_page as capabilities_expanded, schema_add as resources_schema, DATA as RESOURCE_DATA)
 from home_enhancements import interactive_bottle_customization, dark_buyer_faq, company_strength_section, customer_logo_section, target_why_choose, target_production_capacity
 import json
 def sec(title,desc="",eyebrow="XUYI DRINKWARE"):
@@ -83,12 +84,8 @@ CAPABILITIES=[
 ("Custom Packaging","custom-packaging","Match packaging to your brand presentation and logistics requirements.",["Specify retail box or bulk carton preferences.","Confirm label, barcode and artwork requirements.","Review carton quantities, weights and outer carton marking.","Approve the actual packing method before shipping."],"/media/ppt/slide-065.webp")
 ]
 def capabilities_page():
- h=intro("Capabilities","Custom Water Bottle Capabilities","Branding, packaging, production and project support for B2B plastic drinkware sourcing.")
- h+='<section class="section"><div class="shell">'+sec("Create a Product That Fits Your Market","From logo artwork to production details, every customization is evaluated by product model.","Capabilities")
- for title,slug,desc,stepslist,im in CAPABILITIES:
-  h+='<div class="split" style="margin:48px 0 65px"><div>'+photo(im,title+' sample from catalog')+'</div><div><span class="eyebrow">CUSTOMIZATION</span><h2 class="section__title">'+e(title)+'</h2><p class="copy-muted">'+e(desc)+'</p><p><a class="button button--outline" href="/capabilities/'+slug+'/">Learn More →</a></p></div></div>'
- h+='</div></section><section class="section section--soft"><div class="shell">'+sec("How Our Custom Projects Work","Share your requirements, review feasible options, approve samples and confirm details before manufacture.")+steps()+'</div></section>'
- return h
+ return capabilities_expanded()
+
 def capability_detail(item):
  title,slug,desc,stepslist,im=item
  if slug=="oem-odm":return render_why(WHY_DATA["capabilities/oem-odm"])
@@ -99,12 +96,8 @@ def capability_detail(item):
  h+='<section class="section section--soft"><div class="shell">'+sec("Questions About Custom Orders","Common questions from international importers.","FAQ")+faq_html(FAQS[:6])+'</div></section>'
  return h
 def about():
- h=intro("About Us","About XUYI Drinkware","A Taizhou-based producer and supplier specializing in plastic sports bottles, kids bottles, large capacity jugs and shaker bottles.")
- h+='<section class="section"><div class="shell"><div class="split"><div><span class="eyebrow">OUR COMPANY</span><h2 class="section__title">Focused on Plastic Water Bottles for B2B Trade.</h2><p class="copy-muted">Our company is 台州市旭一家居用品有限公司, based in Taizhou, Zhejiang, China. XUYI has its own manufacturing facility and also works with selected production partners when projects require additional styles or processes.</p><p class="copy-muted">We work with brand teams, wholesale buyers, importers and distributors to discuss products, customization, packaging and order requirements.</p><p class="notice">The official registered English legal company name, certifications and factory capacity figures will be added after document verification.</p></div><div>'+photo("/media/ppt/slide-049.webp","Original sports water bottle catalog source image")+'</div></div></div></section>'
- h+='<section class="section section--soft"><div class="shell">'+sec("What We Focus On","A clear product offer and practical B2B service instead of a retail shopping cart.","Why XUYI")+features()+'</div></section>'
- h+='<section class="section"><div class="shell">'+sec("Our Plastic Bottle Collections","Choose from four primary product lines.","Products")+'<div class="grid grid--4">'+''.join(category_card(v) for v in CAT.values())+'</div></div></section>'
- h+='<section class="section section--soft"><div class="shell">'+sec("Meet Our Manufacturing Process","See how project details move from product selection to shipping.","Our Process")+steps()+'</div></section>'
- return h
+ return about_expanded()
+
 def manufacturing():
  return render_why(WHY_DATA["manufacturing"])
 
@@ -115,10 +108,8 @@ def shipping():
  return render_why(WHY_DATA["shipping-logistics"])
 
 def faq_page():
- h=intro("FAQ","Frequently Asked Questions","The most common questions about buying, customizing and importing plastic water bottles.")
- h+='<section class="section"><div class="shell">'+sec("Wholesale, Customization & Product Questions","Answers are general guidance. Actual MOQ, materials, lead time and certification depend on the model.","B2B FAQ")+faq_html(FAQS)+'</div></section>'
- h+='<section class="section section--soft"><div class="shell">'+sec("Explore the Buying Guides","More information on bottle choice, logos and packaging.","Resources")+'<div class="article-list">'+''.join('<article class="article-card"><h3>'+e(t)+'</h3><p>'+e(d)+'</p><a href="/blog/'+slug+'/">Read Article →</a></article>' for slug,t,d in ARTICLES[:3])+'</div></div></section>'
- return h
+ return faq_expanded()
+
 def contact():
  h=intro("Contact Us","Contact XUYI Drinkware","For bulk plastic bottle sourcing, OEM/ODM questions, product samples and private-label enquiries.")
  h+='<section class="section"><div class="shell"><div class="contact-layout"><div><span class="eyebrow">BUSINESS ENQUIRIES</span><h2 class="section__title">Let’s Talk About Your Project.</h2><p class="copy-muted">Tell us what models you need, how many units you plan to order and whether you require logo printing, different colors or special packaging.</p><div class="benefit"><h3>What to include</h3><p>Product model or catalog reference, estimated quantity, target market, logo/artwork, carton details and preferred delivery terms.</p></div><div class="benefit"><h3>Company</h3><p>台州市旭一家居用品有限公司<br>Taizhou, Zhejiang, China</p></div><p class="notice">Contact email, phone, WhatsApp and form delivery service must be verified before public launch. This prototype deliberately does not accept live inquiries yet.</p></div><form class="form" id="inquiry" aria-label="Wholesale inquiry preview form" onsubmit="return false"><div class="form__row"><label>Company Name<input placeholder="Your company" autocomplete="organization" required></label><label>Work Email<input type="email" placeholder="name@company.com" autocomplete="email" required></label></div><div class="form__row"><label>Product Model<input name="model" id="inquiry-model" placeholder="e.g. 2501"></label><label>Estimated Quantity<input name="quantity" inputmode="numeric" placeholder="e.g. 3000 pcs"></label></div><div class="form__row"><label>Destination Country<input name="country" placeholder="Destination country"></label><label>Inquiry Type<select name="type"><option>Wholesale Quote</option><option>Custom Logo / Branding</option><option>Samples</option><option>OEM / ODM</option></select></label></div><label>Your Requirements<textarea rows="5" placeholder="Bottle design, size, colors, logo, artwork, packing and shipping details"></textarea></label><label><input type="checkbox" style="width:auto" disabled> I agree to the privacy notice (enabled after privacy review)</label><button class="button" type="button" disabled>Inquiry Form Coming Soon</button><p class="copy-muted" style="font-size:12px;margin:0">No information is submitted by this preview form.</p></form></div></div></section>'
@@ -200,26 +191,11 @@ def topic_page(kind,entry):
  body+='<section class="section section--soft"><div class="shell">'+sec('Questions for Wholesale Buyers','Check model-specific availability, decoration, materials and destination requirements.','SOURCING FAQ')+faq_html(FAQS[:6])+'</div></section>'
  return body
 def why_us():
- body=intro('Why Us','Why Work with XUYI?','Factory-backed plastic water bottle sourcing with customization, product selection and clear project communication.')
- body+='<section class="section"><div class="shell"><div class="split"><div><span class="eyebrow">WHY XUYI</span><h2 class="section__title">One Project. The Right Bottle. A Clear Process.</h2><p class="copy-muted">XUYI operates its own manufacturing facility and may work with selected production partners for particular drinkware designs. We clarify materials, model numbers, samples, branding and shipment specifications for every project.</p><a class="button" href="/contact/#inquiry">Send Your Brief →</a></div><div>'+photo('/media/ppt/slide-037.webp','XUYI plastic sports bottle catalog assortment')+'</div></div></div></section>'
- body+='<section class="section section--soft"><div class="shell">'+sec('What You Can Check With Us','These are process commitments, not unverified numerical promises or certification claims.','BUYER ADVANTAGES')+'<div class="proof-grid">'+''.join('<article><span>'+e(icon)+'</span><h3>'+e(title)+'</h3><p>'+e(text)+'</p></article>' for icon,title,text in [('01','Factory-backed Supply','Our own facility plus selected partner manufacturing where needed.'),('02','Model-specific Sourcing','Choose using original model numbers and photos.'),('03','OEM & Customization','Discuss logo, graphics, colors and packing against a selected SKU.'),('04','Order Coordination','Confirm samples, specifications, quality checks and delivery terms.')])+'</div></div></section>'
- body+='<section class="section"><div class="shell">'+sec('See How We Work','Explore our manufacturing, quality and shipment process pages.','SUPPORT')+'<div class="grid grid--3">'+''.join('<a class="category" href="'+uri+'"><div class="category__photo">'+photo(im,title)+'</div><div class="category__body"><h3>'+e(title)+'</h3><span>Learn More ↗</span></div></a>' for title,uri,im in [('OEM & ODM','/capabilities/oem-odm/','/media/ppt/slide-060.webp'),('Manufacturing Process','/manufacturing/','/media/ppt/slide-037.webp'),('Quality Assurance','/quality-control/','/media/ppt/slide-066.webp')])+'</div></div></section>'
- body+='<section class="section section--soft"><div class="shell">'+sec('Buyer Questions','What to know before sending your first wholesale quote request.','FAQ')+faq_html(FAQS[:6])+'</div></section>'
- return body
-SAMPLE_STEPS=[
- ('Share a Model & Brief','Send a bottle model, desired capacity, estimated quantity, customization requirements and country.'),
- ('Confirm Available Options','We check source design details, available samples, artwork needs and any special requirements.'),
- ('Agree Sample Details','Sample lead time, fee, delivery cost and documentation are confirmed for the actual selected product.'),
- ('Prepare or Source Samples','The appropriate production or sourcing team prepares the agreed sample as feasible.'),
- ('Check Sample & Artwork','Inspect the sample’s dimensions, lid function, appearance and decoration against the agreed brief.'),
- ('Arrange Dispatch & Feedback','Confirm shipping details and review buyer feedback before discussing any bulk production.')
-]
+ return why_us_expanded()
+
 def sample_page():
- body=intro('Sample Request','Request a Plastic Bottle Sample','Review models and branding options before a wholesale order. Sample availability and fee vary by design.')
- body+='<section class="section"><div class="shell">'+sec('How to Request a Bottle Sample','A six-step buyer workflow inspired by established B2B sample processes, adapted to XUYI’s project-specific verification.','SAMPLE PROCESS')+'<div class="sample-flow">'+''.join('<article><span>'+str(i).zfill(2)+'</span><h3>'+e(title)+'</h3><p>'+e(desc)+'</p></article>' for i,(title,desc) in enumerate(SAMPLE_STEPS,1))+'</div></div></section>'
- body+='<section class="section section--soft"><div class="shell"><div class="split"><div>'+photo('/media/ppt/slide-059.webp','XUYI plastic bottle styles for sample inquiry')+'</div><div><span class="eyebrow">SAMPLE INQUIRY</span><h2 class="section__title">Tell Us What You Would Like to Test.</h2><p class="copy-muted">Include the exact bottle code, reference photo, target quantity, logo requirements and country. We will only quote verified sample options.</p><p class="notice">The contact form is still a non-submitting preview. We will enable actual delivery after a company email and privacy terms are confirmed.</p><a href="/contact/?type=sample#inquiry" class="button">Prepare Sample Request →</a></div></div></div></section>'
- body+='<section class="section"><div class="shell">'+sec('Sample FAQs','Pre-production sample costs and logistics depend on the requested bottle.','BUYER QUESTIONS')+faq_html(FAQS[:6])+'</div></section>'
- return body
+ return sample_expanded()
+
 def factory_intro_module():
  return '<section class="section"><div class="shell"><div class="kreat-intro"><div class="kreat-intro__copy"><span class="eyebrow">WELCOME TO XUYI</span><h2>Reliable <em>Plastic Bottle</em> Manufacturing Partner.</h2><p class="copy-muted">We focus on plastic water bottles for brands, importers and wholesalers. XUYI operates its own factory and may coordinate selected partner-made products, depending on model and project requirements.</p><p class="copy-muted">Our goal is clear product specifications, practical customization options and carefully planned purchasing and delivery.</p><a class="button button--outline button--round" href="/about/">Learn More About XUYI →</a></div><div class="kreat-intro__media">'+photo('/media/ppt/slide-037.webp','Original XUYI sports bottle collection photography')+'</div></div></div></section>'
 def customization_gallery_module():
@@ -287,6 +263,14 @@ def production_capability_module():
  cards=''.join('<article class="production-proof"><span class="production-proof__num">0'+str(i)+'</span><h3>'+e(title)+'</h3><p>'+e(desc)+'</p></article>' for i,(title,desc) in enumerate(points,1))
  return '<section class="section production-capacity"><div class="shell"><div class="section__head"><div><span class="eyebrow">MANUFACTURING SUPPORT</span><h2 class="section__title">XUYI Production & Order Capabilities.</h2><p class="copy-muted">Project-specific manufacturing, production and shipment information. Machine counts and output figures will be shown only after factory verification.</p></div><a class="text-link" href="/manufacturing/">Explore Our Process →</a></div><div class="production-proof-grid">'+cards+'</div><div class="production-footer"><p>Need a custom color, print or packaging design? Send your actual model, artwork, order quantity and destination.</p><a class="button" href="/request-sample/">Discuss a Sample →</a></div></div></section>'
 
+RESOURCE_SEO={
+ 'faq':('Wholesale Plastic Water Bottle FAQ: MOQ, OEM, Materials & Shipping | XUYI','Answers to 54 wholesale plastic bottle questions: MOQ, custom logos, Tritan and PP, samples, inspection, carton packing, shipping and reorders.'),
+ 'about':('About XUYI Drinkware | Taizhou Plastic Water Bottle Supply & Group Resources','Meet XUYI: Taizhou-based plastic bottle manufacturer and supplier offering sports bottles, kids bottles, jugs and shakers with factory-backed sourcing.'),
+ 'why-us':('Why Choose XUYI for Wholesale Plastic Bottles | Factory & OEM','Explore the buyer support, sourcing workflow, group factory references, brand customization, quality review and logistics behind XUYI plastic drinkware.'),
+ 'request-sample':('Plastic Water Bottle Sample Request Guide | XUYI Drinkware','Learn how to request plastic bottle samples, approve logo artwork, compare prototypes, review components and prepare for wholesale production.'),
+ 'capabilities':('Custom Plastic Water Bottle Capabilities: Logo, OEM, Molding & Packaging | XUYI','Explore XUYI plastic bottle branding, printed graphics, colors, lids, tooling, OEM ODM, custom retail boxes and factory-backed manufacturing.')
+}
+
 def generate():
  build_url('index.html','Homepage',page('Custom Plastic Water Bottle Manufacturer in China | XUYI Drinkware','Factory-backed plastic sports, kids and shaker bottles for wholesale and OEM/ODM sourcing.',front()))
  build_url('products/index.html','All Products',page('Plastic Water Bottle Catalog | XUYI Drinkware','Explore plastic sports water bottles, large capacity water jugs, kids bottles and shaker bottles.',catalog()))
@@ -294,7 +278,7 @@ def generate():
   build_url('collections/'+slug+'/index.html',title,page(title+' Wholesale | XUYI Drinkware',desc,catalog(cat)))
  for product in SERIES.values():
   build_url('products/'+product['slug']+'/index.html','Model '+product['model'],page(public_display_name(product)+' — Model '+product['model']+' | XUYI',public_display_name(product)+' B2B plastic water bottle product specifications and wholesale inquiry.',detail(product)))
- build_url('capabilities/index.html','Capabilities',page('Plastic Bottle OEM & Customization | XUYI','Logo, graphics, OEM/ODM and custom packing options for bulk plastic drinkware.',capabilities_page()))
+ build_url('capabilities/index.html','Capabilities',resources_schema(page(*RESOURCE_SEO['capabilities'],capabilities_page()),'capabilities',RESOURCE_SEO['capabilities'][1]))
  for cap in CAPABILITIES:
   title,slug,desc,*_=cap
   cap_markup=page((WHY_DATA["capabilities/oem-odm"]["seo_title"] if slug=="oem-odm" else title+' | XUYI Drinkware'),(WHY_DATA["capabilities/oem-odm"]["description"] if slug=="oem-odm" else desc),capability_detail(cap))
@@ -313,11 +297,14 @@ def generate():
   if slug in ("manufacturing","quality-control","shipping-logistics"):
    data=WHY_DATA[slug]
    body_markup=schema_enhance(page(data["seo_title"],data["description"],fn()),data)
+  elif slug in ('faq','about'):
+   meta=RESOURCE_SEO[slug]
+   body_markup=resources_schema(page(meta[0],meta[1],fn()),slug,meta[1],RESOURCE_DATA['categories'] if slug=='faq' else None)
   else:
    body_markup=page(title+' | XUYI Drinkware',description,fn())
   build_url(slug+'/index.html',title,body_markup)
- build_url('why-us/index.html','Why Us',page('Why Work with XUYI Drinkware | Factory-backed Plastic Water Bottles','How XUYI supports custom bottle buyers, product development, quality and supply.',why_us()))
- build_url('request-sample/index.html','Request a Sample',page('Request a Plastic Water Bottle Sample | XUYI','Sample request steps for sports, kids, jug and shaker bottle models.',sample_page()))
+ build_url('why-us/index.html','Why Us',resources_schema(page(*RESOURCE_SEO['why-us'],why_us()),'why-us',RESOURCE_SEO['why-us'][1]))
+ build_url('request-sample/index.html','Request a Sample',resources_schema(page(*RESOURCE_SEO['request-sample'],sample_page()),'request-sample',RESOURCE_SEO['request-sample'][1],[c for c in RESOURCE_DATA['categories'] if c['id']=='samples']))
  for row in FEATURES:
   slug,title,description,*rest=row
   build_url('features/'+slug+'/index.html',title,page(title+' | XUYI Drinkware',description,topic_page('features',row)))

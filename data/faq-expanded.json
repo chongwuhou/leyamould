@@ -1,0 +1,331 @@
+{
+  "categories": [
+    {
+      "id": "wholesale",
+      "name": "Wholesale Orders & Quotation",
+      "summary": "Understand MOQ, quotation details, product selection, model mixes and purchase-order approvals.",
+      "icon": "01",
+      "questions": [
+        [
+          "What information do I need to request a wholesale plastic water bottle quotation?",
+          "Provide the bottle model or photo, capacity and lid choice, quantity per color, destination country, desired logo or packaging, and requested delivery window. A quote should confirm model revision, specifications, minimum quantity, production assumptions and Incoterm instead of listing a unit price alone.",
+          "/contact/"
+        ],
+        [
+          "What is the minimum order quantity (MOQ) for XUYI plastic bottles?",
+          "MOQ depends on the existing model, color availability, production route, decoration method and packing requirements. There is no verified website-wide minimum. Tell us your proposed quantity and model, and request separate MOQ figures for plain, printed and custom-tooling orders.",
+          "/products/"
+        ],
+        [
+          "Can I mix different colors and bottle models in one order?",
+          "A mixed purchase order may be considered, but each model and color often has its own production or packing constraints. Provide a quantity-by-SKU matrix and ask how splitting colors affects MOQ, packing, lead time and price.",
+          "/collections/sports-water-bottles/"
+        ],
+        [
+          "Is XUYI a factory or a trading company?",
+          "XUYI operates its own manufacturing facility in Taizhou, Zhejiang, and may coordinate selected partner facilities for certain models or processes. Confirm the manufacturing route and sample approval requirements for the SKU you wish to buy.",
+          "/about/"
+        ],
+        [
+          "Are there ready-stock plastic water bottles for immediate shipment?",
+          "Stock status is not guaranteed for every model or color. Request confirmation of available capacity, cap style, color breakdown, stock quantity and dispatch date before committing to a promotion or sale.",
+          "/products/"
+        ],
+        [
+          "What affects the price of a customized plastic water bottle?",
+          "Pricing reflects the body material and size, lid and seal components, decoration method, number of print colors, custom packaging, quantity, tooling if required and shipment terms. Compare quotations against exactly the same technical and packaging specifications.",
+          "/capabilities/oem-odm/"
+        ],
+        [
+          "Can we source sports bottles, kids bottles, jugs and shakers together?",
+          "The catalog covers all four plastic product lines. Share a model-by-model order list and ask whether production dates, packing, documentation and shipment consolidation can be coordinated for your project.",
+          "/products/"
+        ],
+        [
+          "Do you list prices or accept retail checkout orders?",
+          "This is a B2B inquiry website, not a retail shopping cart. Quotations need an identifiable SKU, confirmed order volume, branding choices and shipping terms. The current preview inquiry form is not yet enabled.",
+          "/contact/"
+        ]
+      ]
+    },
+    {
+      "id": "materials",
+      "name": "Plastic Materials & Bottle Features",
+      "summary": "Clarify capacity, polymers, closures, food-contact documentation and model-specific performance.",
+      "icon": "02",
+      "questions": [
+        [
+          "Which plastics are commonly used for reusable water bottles?",
+          "Reusable bottles may use PP, PE, PC, PETG, PCTG or copolyesters such as Tritan depending on the product. The body, cap, straw, gasket and handle can use different materials. Confirm an actual SKU specification before treating any material name as a product claim.",
+          "/blog/plastic-bottle-material-selection/"
+        ],
+        [
+          "Are all XUYI bottles BPA-free or food-contact compliant?",
+          "Do not assume universal BPA-free status or food-contact compliance from a catalog photograph or polymer family. Request component-specific documentation, intended conditions of use and test scope matching the model and target destination.",
+          "/quality-control/"
+        ],
+        [
+          "What is the difference between Tritan, PP, PETG and PC bottles?",
+          "These materials differ in transparency, processing and properties. For example, PP is used in many caps and reusable components, while copolyesters may be selected for transparent bodies. Suitability depends on grade, product construction, target temperature and regulatory evidence, not a generic ranking.",
+          "/blog/plastic-bottle-material-selection/"
+        ],
+        [
+          "Can a plastic bottle be used for boiling water or hot drinks?",
+          "Only if the manufacturer provides model- and component-specific temperature/use guidance. Do not infer hot-water suitability from the material abbreviation alone; closures, seals and decoration may have different limits.",
+          "/quality-control/"
+        ],
+        [
+          "Are plastic bottles suitable for carbonated drinks?",
+          "Pressure from carbonation changes the product requirements. Unless the exact bottle and closure are validated for pressure, do not present a standard water bottle as safe for carbonated beverages. Specify the intended drink and pressure requirements when sourcing.",
+          "/quality-control/"
+        ],
+        [
+          "How should I compare nominal capacity with actual bottle dimensions?",
+          "Confirm usable fill volume, height, body diameter, mouth size, weight and lid configuration on the specific sample. Catalog units can be inconsistent, so a model's dimensions should be verified before printing packaging or product listings.",
+          "/products/"
+        ],
+        [
+          "What lid and drinking styles are available?",
+          "The XUYI plastic catalog includes examples of flip lids, straw designs, screw caps, carry handles and shaker-style closures. Compatibility varies by body/neck design, so options shown on different models are not necessarily interchangeable.",
+          "/collections/kids-water-bottles/"
+        ],
+        [
+          "Which bottles are most suitable for gyms, schools or outdoor promotions?",
+          "Gym buyers often prioritize one-hand operation and carrying comfort; school buyers consider age-appropriate parts and cleaning; promotions prioritize branding area and pack presentation. Compare real catalog models against the intended user and market.",
+          "/applications/gym-sports/"
+        ]
+      ]
+    },
+    {
+      "id": "customization",
+      "name": "Logo, Branding & OEM/ODM",
+      "summary": "Prepare artwork, choose plastic-compatible decoration and separate existing-model branding from new tooling.",
+      "icon": "03",
+      "questions": [
+        [
+          "Can I print my brand logo on an existing XUYI plastic bottle?",
+          "Submit the catalog model, vector logo, approximate print size, colors, quantity and intended market. Decoration suitability depends on the actual plastic substrate, shape and print area; confirm artwork and physical sample before approving mass production.",
+          "/capabilities/oem-odm/"
+        ],
+        [
+          "What is the difference between OEM and ODM bottle manufacturing?",
+          "Existing-model OEM usually means applying agreed branding or options to a current design. ODM may involve engineering a new body or lid, developing drawings, prototypes and molds. Clarify ownership, changes, approvals, cost and timeline in the contract.",
+          "/capabilities/oem-odm/"
+        ],
+        [
+          "Can you customize bottle colors or match a Pantone reference?",
+          "Share Pantone or physical color references, including whether the body, cap, straw and handle require separate colors. Color matching is subject to the model material and order requirements and should be evaluated on real production-representative samples.",
+          "/capabilities/custom-graphics/"
+        ],
+        [
+          "Which logo methods can be used on plastic bottles?",
+          "Options may include suitable screen printing, pad printing, transfer labels or other plastic-compatible decoration depending on the product. Laser engraving and metal powder-coating methods shown on stainless-steel drinkware must not be assumed suitable for plastic.",
+          "/capabilities/custom-logo/"
+        ],
+        [
+          "Can XUYI develop a custom cap, straw or entirely new bottle shape?",
+          "We can discuss the requirements and route them for engineering feasibility review. Such changes may affect thread fit, closure sealing, tooling, samples and tests, and are not guaranteed as simple color changes.",
+          "/capabilities/custom-molding/"
+        ],
+        [
+          "What artwork or design files should I send for private-label bottles?",
+          "For logos use vector AI, EPS or PDF where possible; supply Pantone references, print placement and retail box dielines. For structural projects include dimensioned drawings or a reference sample and identify the must-have features.",
+          "/capabilities/oem-odm/"
+        ],
+        [
+          "Does a custom water bottle require a new mold?",
+          "Existing-model branding often avoids new body tooling, while a changed silhouette, neck or mechanism may need tooling investment. Determine feasibility, mold ownership, maintenance and intellectual-property terms before starting work.",
+          "/capabilities/custom-molding/"
+        ],
+        [
+          "Can my design files be treated as confidential?",
+          "Ask to agree confidentiality and intellectual-property terms before exchanging commercially sensitive drawings. Specific NDA availability, exclusivity and tooling ownership must be established in writing for the project.",
+          "/capabilities/oem-odm/"
+        ]
+      ]
+    },
+    {
+      "id": "samples",
+      "name": "Samples & Product Approval",
+      "summary": "Know what sample to request, what can be checked and how artwork approval relates to bulk production.",
+      "icon": "04",
+      "questions": [
+        [
+          "Can I order samples before a wholesale purchase?",
+          "Discuss availability for the selected model and whether you need a plain reference sample, logo sample or new-tooling prototype. Fees, dispatch timing, international courier costs and payment terms must be confirmed per project.",
+          "/request-sample/"
+        ],
+        [
+          "How long will a sample take?",
+          "Existing-stock references, decorated samples and tooling prototypes require different preparation steps. A standard number of days from another group brand should not be treated as XUYI's guarantee; ask for a written model-specific schedule.",
+          "/request-sample/"
+        ],
+        [
+          "What is the difference between a stock sample and a pre-production sample?",
+          "A stock sample can help check the basic model and handling. A production-representative sample should confirm the approved material, color, logo, components and packaging that the bulk order will use.",
+          "/request-sample/"
+        ],
+        [
+          "Can we review a rendering or 2D/3D drawing first?",
+          "A rendering may help agree appearance, but does not prove function, leak resistance or final material characteristics. For new bottle designs, establish which prototype stage validates which requirement and obtain a suitable physical sample.",
+          "/capabilities/oem-odm/"
+        ],
+        [
+          "Which checks should buyers perform on a sample?",
+          "Compare body dimensions, nominal capacity, lid fit, gasket position, user operation, visual defects, decoration location and packing. Any leak or durability checks must use an agreed method appropriate to the model.",
+          "/quality-control/"
+        ],
+        [
+          "What happens if the prototype does not meet our requirements?",
+          "Record the discrepancy against the drawing or approved specification. Agree on design changes, revised cost, timeline and whether another prototype or test is needed before authorizing production.",
+          "/request-sample/"
+        ],
+        [
+          "Can I send a competitor-style reference bottle or design sketch?",
+          "A reference can help communicate functions and dimensions, but proprietary designs and trademarks should be respected. We can review original alternatives and feasibility without promising an exact copied product.",
+          "/capabilities/oem-odm/"
+        ]
+      ]
+    },
+    {
+      "id": "quality",
+      "name": "Factory, Quality Control & Compliance",
+      "summary": "Evaluate group manufacturing resources, actual SKU documentation, acceptance criteria and inspections.",
+      "icon": "05",
+      "questions": [
+        [
+          "What factory and manufacturing resources are available?",
+          "The XUYI project has its own factory-backed supply and access to group-reference manufacturing and packing experience. Product-specific molding routes, equipment ownership, capacity and the applicable production site should be confirmed for a selected model.",
+          "/manufacturing/"
+        ],
+        [
+          "Can I see factory packing, warehouse and test-equipment photos?",
+          "The manufacturing and quality pages contain authentic group reference imagery, identified by function. Those photos demonstrate the group's resources but are not a substitute for evidence that a given plastic SKU uses a particular machine or passed a test.",
+          "/manufacturing/"
+        ],
+        [
+          "What quality checks matter most for plastic drinking bottles?",
+          "Useful checks include body appearance and dimensions, filling capacity, lid/closure function, agreed leakage conditions, seal placement, printed decoration and packaging. Agree tolerances, sample size and acceptance criteria before production.",
+          "/quality-control/"
+        ],
+        [
+          "Can you provide FDA, EU food-contact, LFGB or REACH documentation?",
+          "Ask which current reports or declarations apply to the exact bottle and component materials and destination. FDA is a regulator, not a blanket product certificate; document validity and scope must be evaluated for the intended use.",
+          "/quality-control/"
+        ],
+        [
+          "Are all product models certified for the US or EU?",
+          "No site-wide certification is verified. A document for one body material, lid or color may not cover another, and EU or U.S. requirements can differ. Obtain model-specific evidence before making compliance claims.",
+          "/quality-control/"
+        ],
+        [
+          "Can I appoint a third-party inspector?",
+          "A buyer-appointed inspection can be discussed by purchase order. Inspection access, sampling method, laboratory work, correction procedure, cost and pre-shipment approval must be agreed with the responsible production facility.",
+          "/quality-control/"
+        ],
+        [
+          "How is product consistency managed between orders?",
+          "Compare each run with approved samples and a revision-controlled specification; document component or tool changes, printing reference, packaging and inspection scope. Do not assume a repeat order is identical without reconfirmation.",
+          "/manufacturing/"
+        ],
+        [
+          "What evidence should I request for a new product design?",
+          "A suitable package may include drawing revision, prototype approval, component materials, specified performance tests, artwork proof, inspection criteria and agreed manufacturing responsibility. Evidence should be directly attributable to the purchased SKU.",
+          "/quality-control/"
+        ]
+      ]
+    },
+    {
+      "id": "shipping",
+      "name": "Packaging, Shipping & Importing",
+      "summary": "Compare carton packing, freight methods, delivery terms, documents and international landed costs.",
+      "icon": "06",
+      "questions": [
+        [
+          "Which packaging formats are available for wholesale water bottles?",
+          "Options for discussion can include bulk protection, OPP or sleeve packaging, inner boxes, printed retail boxes, gift packs and marked master cartons. The selected SKU, order quantity and feasibility determine what can actually be offered.",
+          "/shipping-logistics/"
+        ],
+        [
+          "Can you prepare Amazon FBA or retailer-specific packaging?",
+          "Provide labeling, carton dimensions, barcode format, carton weight limits and relevant retailer requirements. Feasibility, charges and final checks must be confirmed; an image from a group logistics page does not establish automatic FBA eligibility.",
+          "/shipping-logistics/"
+        ],
+        [
+          "Do you ship plastic water bottles internationally?",
+          "Freight coordination can be discussed for the destination and order. Sea, air and express options depend on volume, route, cargo readiness, freight providers and import requirements; confirm the booking and responsibilities before shipment.",
+          "/shipping-logistics/"
+        ],
+        [
+          "How are express, air freight and sea freight different?",
+          "Express may suit samples, air freight time-sensitive orders and sea freight larger carton volumes, but the right choice depends on dimensional weight, origin/destination handling, local fees and transit uncertainty.",
+          "/shipping-logistics/"
+        ],
+        [
+          "Can you quote EXW, FOB, CIF, DAP or DDP?",
+          "These trade terms assign different obligations. Specify an Incoterm edition and named place in the RFQ; do not assume duties, destination clearance or final-mile delivery are included unless they are quoted and agreed.",
+          "/shipping-logistics/"
+        ],
+        [
+          "What shipping documents should accompany a bulk order?",
+          "An invoice, packing list, relevant transport documents and any destination-required declarations should be reconciled with the purchase order. The exact documentation depends on goods, origin, carrier and destination requirements.",
+          "/shipping-logistics/"
+        ],
+        [
+          "Why can shipping cost be high for an empty large-capacity jug?",
+          "Plastic jugs can occupy significant carton space relative to their mass. Freight may depend on volumetric/chargeable weight, carton dimensions and container utilization rather than bottle weight alone.",
+          "/collections/large-capacity-water-jugs/"
+        ],
+        [
+          "How long does delivery to the United States or Europe take?",
+          "No universal shipping duration applies. Request a route-specific estimate for the actual mode, destination, cargo-ready date and customs arrangements; account for inspections or peak-season delays.",
+          "/shipping-logistics/"
+        ]
+      ]
+    },
+    {
+      "id": "after-sales",
+      "name": "Orders, Reorders & After-sales",
+      "summary": "Manage approvals, product revisions, damage reports, repeat orders and confidential project information.",
+      "icon": "07",
+      "questions": [
+        [
+          "What should be documented before placing a purchase order?",
+          "Record exact model, body/lid parts, capacity, material specification, colors, approved artwork/sample, quantities, acceptable defects, carton packing, payment milestones and Incoterm. Both sides should work from the same revision.",
+          "/contact/"
+        ],
+        [
+          "Can I reorder the same printed bottle design later?",
+          "A repeat order should reference the approved model and revision, artwork files, sample, decoration parameters and packaging. Material availability and colors should be reconfirmed before promising identical repeat delivery.",
+          "/capabilities/oem-odm/"
+        ],
+        [
+          "What if bottles arrive with damage or incorrect parts?",
+          "Keep purchase order, carton labels, quantities, photos of defects and packaging, and delivery records. Contact the responsible supplier promptly so the issue can be evaluated against agreed inspection and claims terms.",
+          "/shipping-logistics/"
+        ],
+        [
+          "Can I make changes after the final sample approval?",
+          "Possible changes depend on how far production has progressed. A new lid, artwork or color can require a revised quotation, sample, tool or schedule; confirm the change in writing before proceeding.",
+          "/capabilities/oem-odm/"
+        ],
+        [
+          "How can a distributor avoid mixing model revisions in warehouse stock?",
+          "Use distinct SKU/model-revision identifiers, pack labels, color breakdowns, carton-level references and a clear packing list. Keep approval and receiving records tied to the exact version.",
+          "/shipping-logistics/"
+        ],
+        [
+          "Where should I start if I do not know the product model?",
+          "Browse the four product collections and send a clear photo or application brief, approximate capacity, preferred closure, order volume and target market. A sourcing discussion should establish a comparable model before pricing.",
+          "/products/"
+        ],
+        [
+          "Is this website able to receive a live inquiry right now?",
+          "The current site is an internal preview. The contact form is intentionally disabled until XUYI's approved business inbox, privacy terms and secure delivery process have been connected and tested.",
+          "/contact/"
+        ]
+      ]
+    }
+  ],
+  "editorial_note": "Original buyer guidance adapted from group website topics; not a guarantee that every group claim applies to XUYI's exact plastic SKUs."
+}
