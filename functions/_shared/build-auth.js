@@ -23,8 +23,8 @@ async function verifyCloudflareProjectToken(token, env) {
   // authorization check to XUYI even when Pages variables are absent.
   const accountId = "a4032d0251103d6ef680b2aaddce1afc";
   const projectName = "xuyi-drinkware-site";
-  if (clean(env.CF_ACCOUNT_ID) && clean(env.CF_ACCOUNT_ID) !== accountId) return false;
-  if (clean(env.CF_PAGES_PROJECT) && clean(env.CF_PAGES_PROJECT) !== projectName) return false;
+  // The Cloudflare GET below validates this exact project; Pages environment
+  // variables are not a second, potentially stale source of truth.
   try {
     const response = await fetch(
       "https://api.cloudflare.com/client/v4/accounts/" + accountId +
