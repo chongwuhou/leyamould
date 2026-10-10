@@ -165,6 +165,8 @@ def build_url(path,title,content):
     lambda m:m.group(1)+e(slide["alt"])+m.group(2),content,count=1)
   content=re.sub(r'(<img\b(?=[^>]*\bid="hero-image")[^>]*\bsrc=")[^"]+(")',lambda m:m.group(1)+e(slide["img"])+m.group(2),content,count=1)
   content=re.sub(r'(<a\b(?=[^>]*\bid="hero-cta")[^>]*\bhref=")[^"]+(")',lambda m:m.group(1)+e(slide["link"])+m.group(2),content,count=1)
+ from product_locale_seo import polish_product_head
+ content=polish_product_head(content,"en",route)
  URLS[path]=title
  write(path,content)
 ICONS={

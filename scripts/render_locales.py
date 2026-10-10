@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from home_banner_config import tag as banner_tag,for_locale as banner_slides
 from locale_registry import approved_locales,local_url
+from product_locale_seo import polish_product_head
 
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
@@ -257,6 +258,7 @@ def main():
         text=re.sub(r'<link rel="canonical" href="[^"]*">','<link rel="canonical" href="'+canonical+'">',text,count=1)
         text=re.sub(r'<meta property="og:url" content="[^"]*">','<meta property="og:url" content="'+canonical+'">',text,count=1)
         text=localize_structured_data(text,loc,route,localized,fields,routes_by_locale[loc],live[loc]["pathPrefix"])
+        text=polish_product_head(text,loc,route)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
         created+=1

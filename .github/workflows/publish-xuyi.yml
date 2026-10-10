@@ -8,6 +8,7 @@ on:
       - "scripts/**"
       - "build.py"
       - "site_renderer.py"
+      - "product_locale_seo.py"
       - "locale_registry.py"
       - "home_banner_config.py"
       - "capability_*.py"
@@ -121,6 +122,7 @@ jobs:
           node scripts/test_blog_dynamic_evidence.mjs
           node scripts/test_blog_hreflang_runtime.mjs
           python scripts/test_seo_multilingual_launch.py
+          python scripts/test_product_locale_metadata.py
           python scripts/test_future_locale_framework.py
           node scripts/test_future_locale_runtime.mjs
           node scripts/test_language_switch_failover.mjs
