@@ -36,7 +36,7 @@ export async function onRequestGet({ params, env }) {
     return new Response(obj.body, {
       headers: {
         "Content-Type": ["blog","product","page","shared"].includes(kind) ? (filename.endsWith(".png") ? "image/png" : filename.endsWith(".jpg") ? "image/jpeg" : "image/webp") : "image/webp",
-        "Cache-Control":"public,max-age=3600",
+        "Cache-Control":"public,max-age=300",
         "X-Content-Type-Options":"nosniff"
       }
     });

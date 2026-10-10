@@ -72,7 +72,14 @@ async function list(cursor=""){
     await list();say("已从旭一通用媒体桶删除："+row.path);
    }catch(err){showState("unknown");say("删除被阻止："+err.message)}
   });
-  card.append(photo,pathLabel,bytes,state,refs,copy,verify,remove);host.append(card);
+  const replace=document.createElement("button");replace.type="button";
+  replace.className="btn ghost media-replace-action";
+  replace.textContent="上传新图替换（原地址）";
+  replace.dataset.kind=selectedKind;
+  replace.dataset.filename=row.path.split("/").pop();
+  replace.dataset.path=row.path;
+  replace.dataset.etag=row.etag||"";
+  card.append(photo,pathLabel,bytes,state,refs,copy,verify,replace,remove);host.append(card);
  }
  const more=$("media-more");more.hidden=!data.cursor;more.dataset.cursor=data.cursor||"";
  const upload=$("media-upload"),button=$("media-upload-btn");

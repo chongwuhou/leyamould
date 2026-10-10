@@ -38,7 +38,7 @@
 </section>
 <section class="panel" id="media-admin-panel" data-admin-module="media">
  <div class="panel-head"><div><div class="eyebrow">XUYI · R2 ASSETS</div>
- <h2>R2 图片管理与引用检查</h2><p>管理旭一媒体桶。上传素材可在确认所有正式页面与 D1 草稿均未引用后删除；原始 PPT、Excel、工厂、博客图库先只读保护，避免删坏现有页面。第二个型号溢出桶不在这里删除。</p></div></div>
+ <h2>R2 图片管理与引用检查</h2><p>管理旭一媒体桶。上传素材可在确认所有正式页面与 D1 草稿均未引用后删除；原始 PPT、Excel、工厂、博客图库禁止直接删除，但支持上传核对后的高清新图替换，并自动备份旧版。第二个型号溢出桶不在这里删除。</p></div></div>
  <div class="row-actions">
   <label>R2 文件分类 <select id="media-kind"><optgroup label="后台上传（有保护的删除）"><option value="product">产品图片</option><option value="page">页面图片</option><option value="shared">公共素材</option></optgroup><optgroup label="原始资产（只读）"><option value="ppt">PPT 旧图库</option><option value="excel">Excel 型号图片</option><option value="group">工厂与质检图片</option><option value="capability">制造能力配图</option><option value="gallery">旧款式画廊</option><option value="blog">博客图片</option></optgroup></select></label>
   <label>文件 <input type="file" id="media-upload" accept="image/jpeg,image/png,image/webp"></label>
@@ -195,6 +195,7 @@
 <script src="/assets/admin-forms.js" defer></script>
 <script src="/assets/admin-blog.js" defer></script>
 <script src="/assets/admin-media.js" defer></script>
+<script src="/assets/admin-media-replace.js" defer></script>
 <script src="/assets/admin-security.js" defer></script>
 <script src="/assets/admin-site-settings.js" defer></script>
 <script src="/assets/admin-content.js" defer></script>
