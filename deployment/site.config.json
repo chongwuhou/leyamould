@@ -12,12 +12,15 @@
     "d1Database": "xuyi-drinkware-d1",
     "d1Binding": "XUYI_DB",
     "r2Bucket": "xuyi-drinkware-r2",
-    "r2Binding": "XUYI_ASSETS"
+    "r2Binding": "XUYI_ASSETS",
+    "r2OverflowBucket": "xuyi-drinkware-model-pages",
+    "r2OverflowBinding": "XUYI_MODEL_PAGES"
   },
   "build": {
     "source": "source-controlled templates/site plus product/blog datasets",
     "output": "dist",
     "warningFiles": 16000,
+    "overflowTargetFiles": 15500,
     "hardLimitFiles": 19500
   }
 }

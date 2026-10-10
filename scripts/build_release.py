@@ -14,6 +14,7 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from admin_route import admin_path as resolve_admin_path
+from plan_model_overflow import plan as plan_model_overflow
 
 ROOT=Path(__file__).resolve().parent.parent
 CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
@@ -69,6 +70,13 @@ def main():
                  "apple-touch-icon.png","icon-192.png","icon-512.png",
                  "site.webmanifest","_headers"):
         shutil.copy2(ROOT/name,DIST/name)
+    # Never drop static model HTML unless the bundling planner produced all
+    # corresponding locale HTML and a validated manifest for R2 synchronization.
+    overflow_dir=ROOT/"_local_ops"/"model-overflow"
+    if overflow_dir.exists():shutil.rmtree(overflow_dir)
+    overflow=plan_model_overflow(DIST,overflow_dir,
+        switch_at=int(CONFIG["build"]["warningFiles"]),target=int(CONFIG["build"].get("overflowTargetFiles",15500)),
+        hard_stop=int(CONFIG["build"]["hardLimitFiles"]))
     counts={}
     for path in DIST.rglob("*"):
         if path.is_file():
@@ -103,6 +111,13 @@ def main():
         "contentSources":sources,
         "fileCount":total,
         "fileBreakdown":counts,
+        "modelPageStorageMode":overflow["mode"],
+        "projectedStaticFileCountBeforeOverflow":overflow["projectedStaticFileCountBeforeOverflow"],
+        "staticModelCount":overflow["catalogModelCount"]-overflow["modelCount"],
+        "overflowModelCount":overflow["modelCount"],
+        "overflowLocalizedPageCount":overflow["localizedPageCount"],
+        "modelOverflowSwitchAt":int(CONFIG["build"]["warningFiles"]),
+        "modelStaticTarget":int(CONFIG["build"].get("overflowTargetFiles",15500)),
         "noindex":not CONFIG["site"]["indexingApproved"]
     }
     (DIST/"build-meta.json").write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")

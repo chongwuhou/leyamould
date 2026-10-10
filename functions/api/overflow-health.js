@@ -1,0 +1,2 @@
+import {overflowHealth} from "../_shared/model-overflow.js";
+export async function onRequestGet(context){const result=await overflowHealth(context.env);return Response.json(result,{status:result.ready?200:503,headers:{"cache-control":"no-store"}})}

@@ -40,7 +40,30 @@ if(configButtons.length){
  render();
 }
 
-const model=document.getElementById('inquiry-model');if(model){model.value=new URLSearchParams(location.search).get('model')||'';}const inquiryType=new URLSearchParams(location.search).get('type');if(inquiryType){const choices=document.querySelector('#inquiry select[name="type"]');if(choices){const target=/sample/i.test(inquiryType)?'Samples':/logo|graphic|brand/i.test(inquiryType)?'Custom Logo / Branding':/oem|molding|manufacturing/i.test(inquiryType)?'OEM / ODM':'Wholesale Quote';[...choices.options].forEach(o=>{if(o.text===target)choices.value=o.value})}}
+const model=document.getElementById('inquiry-model');if(model){model.value=new URLSearchParams(location.search).get('model')||'';}const inquiryType=new URLSearchParams(location.search).get('type');if(inquiryType){const choices=document.querySelector('#inquiry select[name="type"]');if(choices){const target=/sample/i.test(inquiryType)?'Samples':/logo|graphic|brand/i.test(inquiryType)?'Custom Logo / Branding':/oem|molding|manufacturing/i.test(inquiryType)?'OEM / ODM':'Wholesale Quote';[...choices.options].forEach(o=>{if(o.value===target)choices.value=o.value})}}
+// All five contact pages use the same D1 business contacts.
+// Locale/region assignment is also rechecked by the form API on submit.
+const contactLinks=[...document.querySelectorAll('[data-site-email],[data-site-whatsapp]')];
+if(contactLinks.length){
+ fetch('/api/site-settings',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('settings unavailable');return r.json()}).then(settings=>{
+  const contacts=Array.isArray(settings.contacts)?settings.contacts:[];
+  const locale=(document.documentElement.lang||'en').toLowerCase();
+  const ordered=contacts.filter(c=>c&&c.enabled!==false).sort((a,b)=>Number(a.sortOrder||0)-Number(b.sortOrder||0));
+  const contact=ordered.find(c=>Array.isArray(c.locales)&&c.locales.includes(locale))||ordered.find(c=>c.isDefault)||ordered[0];
+  if(!contact)return;
+  const email=String(contact.email||'').trim();
+  const whatsapp=String(contact.whatsappUrl||'').trim();
+  contactLinks.forEach(link=>{
+   if(link.hasAttribute('data-site-email')&&/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+    link.href='mailto:'+email;link.textContent=email;
+   }
+   if(link.hasAttribute('data-site-whatsapp')&&/^https:\/\/(?:wa\.me|api\.whatsapp\.com|www\.whatsapp\.com)\//i.test(whatsapp)){
+    link.href=whatsapp;
+   }
+  });
+ }).catch(()=>{}); // Existing approved contact remains visible if D1 is unavailable.
+}
+
 // Store public inquiries in XUYI D1 before reporting success.
 const inquiryForm=document.getElementById('inquiry');
 if(inquiryForm){

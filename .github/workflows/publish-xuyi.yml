@@ -107,6 +107,8 @@ jobs:
           python scripts/test_release.py
           python scripts/test_shared_templates.py
           python scripts/test_product_components.py
+          python scripts/test_model_overflow.py
+          node scripts/test_model_overflow_handler.mjs
           python scripts/test_admin_route.py
           python scripts/test_localized_templates.py
           python scripts/test_localized_release.py
@@ -119,6 +121,9 @@ jobs:
       - name: Skip when controller is unconfigured
         if: steps.credential.outputs.ready != 'true'
         run: echo "Build verified; production unchanged. Add the XUYI-only GitHub Actions secrets."
+      - name: Synchronize approved overflow model bundles to XUYI R2
+        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
+        run: node scripts/sync_model_overflow.mjs
       - name: Deploy XUYI production
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         run: npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main

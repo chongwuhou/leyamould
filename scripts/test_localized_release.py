@@ -43,6 +43,11 @@ for locale in ("es","pt","ru","tr"):
    assert len(re.findall('[\u0400-\u04ff]',main))>=150,"Cyrillic product copy missing"
   if route.endswith("/contact/"):
    assert 'href="mailto:Janey@xuyibottles.com"' in html,"Localized contact email must work"
+   assert html.count('id="inquiry"')==1,(locale,"contact form must match English")
+   assert 'data-site-email' in html and 'data-site-whatsapp' in html,(locale,"D1 contacts missing")
+   for required in ('company','email','model','quantity','country','type','material','requirements','consent','website'):
+    assert 'name="'+required+'"' in html,(locale,"contact form field",required)
+   assert '<button class="button" type="submit">' in html,(locale,"submit action missing")
  result[locale]=len(files)
 # Match the actual approved D1 snapshot, not only a permissive minimum.
 snapshot=ROOT/"_local_ops/build-snapshot.json"

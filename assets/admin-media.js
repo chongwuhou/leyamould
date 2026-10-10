@@ -21,10 +21,22 @@ async function list(cursor=""){
       try{await navigator.clipboard.writeText(row.path);say("已复制："+row.path)}
       catch{say("请手动复制图片路径："+row.path)}
     });
-    card.append(photo,text,copy);host.append(card);
+    const remove=document.createElement("button");remove.type="button";remove.className="btn ghost";
+    remove.textContent="删除图片";remove.addEventListener("click",async()=>{
+      if(!confirm("确定删除这张图片？若已被页面引用，应先从 CMS 中解除引用。"))return;
+      try{
+        const url="/api/admin/media?kind="+encodeURIComponent(kind())+"&filename="+encodeURIComponent(row.path.split("/").pop());
+        const response=await fetch(url,{method:"DELETE",headers:{authorization:"Bearer "+token()}});
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok)throw Error(data.error||"删除失败");
+        await list();say("已从旭一媒体桶删除："+row.path);
+      }catch(error){say("删除失败："+error.message)}
+    });
+    card.append(photo,text,copy,remove);host.append(card);
   }
   const more=$("media-more");more.hidden=!data.cursor;more.dataset.cursor=data.cursor||"";
-  say("已载入："+host.children.length+" 张，存储在旭一独立 R2。图片路径可以填入产品或页面 CMS。");
+  const megabytes=(Number(data.usageBytes||0)/1048576).toFixed(2);
+  say("已载入："+host.children.length+" 张；媒体库总容量 "+megabytes+" MB / 1024 MB。图片路径可以填入产品或页面 CMS。");
 }
 async function upload(){
   const file=$("media-upload")?.files?.[0];if(!file){say("请选择 JPEG、PNG 或 WebP 图片");return;}

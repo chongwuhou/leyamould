@@ -4,16 +4,18 @@ const base=(file)=>new URL("../"+file,import.meta.url);
 const uri=s=>"data:text/javascript;base64,"+Buffer.from(s).toString("base64");
 const imageHelper=readFileSync(base("functions/_shared/media-image.js"),"utf8");
 const raw=readFileSync(base("functions/api/admin/media.js"),"utf8")
- .replace('import { authorizeAdminRequest } from "../../_shared/admin-security.js";',
+ .replace('import {authorizeAdminRequest} from "../../_shared/admin-security.js";',
    'const authorizeAdminRequest=async(request)=>request.headers.get("x-test-admin")==="yes";')
- .replace('import { checkedImage } from "../../_shared/media-image.js";',
+ .replace('import {checkedImage} from "../../_shared/media-image.js";',
    'import { checkedImage } from "'+uri(imageHelper)+'";');
-const {onRequestGet,onRequestPost}=await import(uri(raw));
+const {onRequestGet,onRequestPost,onRequestDelete}=await import(uri(raw));
 const objects=new Map();
 const storage={
  put:async(key,body,options)=>{objects.set(key,{body,options})},
  list:async({prefix})=>({objects:[...objects.keys()].filter(x=>x.startsWith(prefix)).map(key=>({key,size:objects.get(key).body.byteLength,uploaded:new Date("2026-10-09")})),truncated:false}),
- get:async(key)=>objects.has(key)?{body:objects.get(key).body}:null
+ get:async(key)=>objects.has(key)?{body:objects.get(key).body}:null,
+ head:async(key)=>objects.has(key)?{size:objects.get(key).body.byteLength}:null,
+ delete:async(key)=>{objects.delete(key)}
 };
 const env={ADMIN_TOKEN:"a-test-admin",XUYI_ASSETS:storage};
 const context=(request)=>({request,env});
@@ -47,4 +49,9 @@ assert.equal(response.status,200,"existing R2 media proxy must deliver new asset
 assert.equal(response.headers.get("Content-Type"),"image/png");
 response=await proxy.onRequestGet({params:{kind:"product",filename:"../secret.txt"},env});
 assert.equal(response.status,404);
-console.log("XUYI_R2_SHARED_MEDIA_REGRESSION_PASSED",11,"assertions, no remote writes");
+const used=await onRequestGet(context(new Request("https://xuyibottles.com/api/admin/media?kind=product",{headers:{"x-test-admin":"yes"}})));
+assert.equal((await used.json()).usageObjects,1);
+const removed=await onRequestDelete(context(new Request("https://xuyibottles.com/api/admin/media?kind=product&filename="+filename,{method:"DELETE",headers:{"x-test-admin":"yes"}})));
+assert.equal(removed.status,200);
+assert.equal(objects.size,0);
+console.log("XUYI_R2_SHARED_MEDIA_REGRESSION_PASSED",14,"assertions, no remote writes");

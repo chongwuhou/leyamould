@@ -61,6 +61,41 @@ def localize_verified_links(markup, locale, path_prefix, published_routes):
     return re.sub(r'(<a\b[^>]*?\bhref=")([^"]+)(")', replace, markup, flags=re.I)
 
 
+CONTACT_FORM_TRANSLATIONS=json.loads((ROOT/"data/contact-form-translations.json").read_text(encoding="utf-8"))
+
+def localized_contact_body(original, translated_body, locale):
+    """Use the SAME inquiry form fields as English, with translated labels.
+
+    The D1 page translation contains safe static HTML, intentionally without
+    a <form>. This build-stage component restores the shared form structure
+    without granting D1 untrusted translations the ability to inject forms.
+    The existing front-end + server SMTP readiness gates remain authoritative.
+    """
+    original_body=original.split('<main id="main-content">',1)[1].split("</main>",1)[0]
+    english=re.search(r'<form class="form" id="inquiry"[\s\S]*?</form>',original_body)
+    if not english:raise RuntimeError("English contact form missing")
+    form=english.group(0)
+    translations=CONTACT_FORM_TRANSLATIONS[locale]
+    # Make stable option values independent of their translated visible text.
+    form=re.sub(r'<option>([^<]+)</option>',
+        lambda m:'<option value="'+html.escape(html.unescape(m.group(1)),quote=True)+'">'+m.group(1)+'</option>',form)
+    def translate_node(match):
+        source=html.unescape(match.group(1).strip())
+        if not source or source not in translations:return match.group(0)
+        original_text=match.group(1)
+        before=original_text[:len(original_text)-len(original_text.lstrip())]
+        after=original_text[len(original_text.rstrip()):]
+        return '>'+before+html.escape(translations[source])+after+'<'
+    form=re.sub(r'>([^<>]+)<',translate_node,form)
+    form=re.sub(r'(aria-label|placeholder)="([^"]+)"',
+        lambda m:m.group(1)+'="'+html.escape(translations.get(html.unescape(m.group(2)),html.unescape(m.group(2))),quote=True)+'"',form)
+    # Remove the earlier machine-translation fallback block, not the bilingual
+    # company contacts, their data-site-* attributes, or the surrounding grid.
+    fallback=r'<section class="section"><div class="shell"><h2>[\s\S]*?</section>(?=</div></div></section>\s*$)'
+    updated,count=re.subn(fallback,lambda _:form,translated_body,count=1)
+    if count!=1:raise RuntimeError("Localized contact fallback block mismatch for "+locale)
+    return updated
+
 def main():
     if not SNAPSHOT.is_file():
         print("XUYI_LOCALES_SKIPPED: no reviewed D1 snapshot")
@@ -90,7 +125,8 @@ def main():
         prefix,remainder=original.split('<main id="main-content">',1)
         _,suffix=remainder.split('</main>',1)
         ui=live[loc].get("uiText",{})
-        text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+fields["mainHtml"]+'</main>'+translate_chrome(suffix,loc,ui)
+        body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
+        text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+body+'</main>'+translate_chrome(suffix,loc,ui)
         text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])
         text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)
         text=re.sub(r'<title>[^<]*</title>','<title>'+html.escape(fields["title"])+'</title>',text,count=1)
