@@ -286,11 +286,11 @@ def production_capability_module():
  return '<section class="section production-capacity"><div class="shell"><div class="section__head"><div><span class="eyebrow">MANUFACTURING SUPPORT</span><h2 class="section__title">XUYI Production & Order Capabilities.</h2><p class="copy-muted">Project-specific manufacturing, production and shipment information. Machine counts and output figures will be shown only after factory verification.</p></div><a class="text-link" href="/manufacturing/">Explore Our Process →</a></div><div class="production-proof-grid">'+cards+'</div><div class="production-footer"><p>Need a custom color, print or packaging design? Send your actual model, artwork, order quantity and destination.</p><a class="button" href="/request-sample/">Discuss a Sample →</a></div></div></section>'
 
 RESOURCE_SEO={
- 'faq':('Wholesale Plastic Water Bottle FAQ: MOQ, OEM, Materials & Shipping | XUYI','Answers to 54 wholesale plastic bottle questions: MOQ, custom logos, Tritan and PP, samples, inspection, carton packing, shipping and reorders.'),
- 'about':('About XUYI Bottles | Taizhou Plastic Water Bottle Supply & Group Resources','Meet XUYI: Taizhou-based plastic bottle manufacturer and supplier offering sports bottles, kids bottles, jugs and shakers with factory-backed sourcing.'),
+ 'faq':('Wholesale Plastic Bottle FAQ: MOQ & OEM | XUYI','Answers to 54 wholesale plastic bottle questions covering MOQ, custom logos, component materials, samples, inspection, cartons, shipping and reorders.'),
+ 'about':('About XUYI | Taizhou Plastic Water Bottle Supplier','Meet XUYI in Taizhou, China. Explore the original plastic sports, kids, jug and shaker bottle catalog, sourcing approach and manufacturing coordination.'),
  'why-us':('Why Choose XUYI for Wholesale Plastic Bottles | Factory & OEM','Explore the buyer support, sourcing workflow, group factory references, brand customization, quality review and logistics behind XUYI plastic drinkware.'),
  'request-sample':('Plastic Water Bottle Sample Request Guide | XUYI Bottles','Learn how to request plastic bottle samples, approve logo artwork, compare prototypes, review components and prepare for wholesale production.'),
- 'capabilities':('Custom Plastic Water Bottle Capabilities: Logo, OEM, Molding & Packaging | XUYI','Explore XUYI plastic bottle branding, printed graphics, colors, lids, tooling, OEM ODM, custom retail boxes and factory-backed manufacturing.')
+ 'capabilities':('Custom Plastic Water Bottle OEM & Branding | XUYI','Explore custom logo printing, lid and color options, OEM bottle development and custom packaging. Feasibility is confirmed by model and order brief.')
 }
 
 def generate():
@@ -349,9 +349,16 @@ def generate():
  for slug,title,desc in ARTICLES:
   article_html=page(title,desc,blog_article(slug,title,desc))
   build_url('blog/'+slug+'/index.html',title,enrich_article_html(article_html,slug))
- build_url('404.html','404',page('Page Not Found | XUYI Bottles','Page not found.',intro('404','Page Not Found','The requested page could not be found.')+'<section class="section"><div class="shell"><a class="button" href="/">Back to Homepage →</a></div></section>'))
+ notfound=page('Page Not Found | XUYI Bottles','Page not found.',intro('404','Page Not Found','The requested page could not be found.')+'<section class="section"><div class="shell"><a class="button" href="/">Back to Homepage →</a></div></section>')
+ notfound=notfound.replace('<meta name="robots" content="index,follow">','<meta name="robots" content="noindex,follow">',1)
+ build_url('404.html','404',notfound)
  # A fully accurate domain and multilingual sitemap will be generated after domain verification, translation and product approval.
- write('robots.txt','User-agent: *\nDisallow: /\n')
+ if INDEXING_APPROVED:
+  # Never publish a public indexed site while robots.txt still blocks crawling.
+  # /admin/ stays out of search; its authorization gate is independent.
+  write('robots.txt','User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: '+SITE_ORIGIN+'/sitemap.xml\n')
+ else:
+  write('robots.txt','User-agent: *\nDisallow: /\n')
  # Maintain the current English URL inventory even while indexing is withheld.
  # This stays ready for the later approved SEO launch without publishing
  # unreviewed multilingual paths.
