@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json,tempfile
 from pathlib import Path
-from plan_model_overflow import plan
+from plan_model_overflow import plan,RETIRED_SOURCE_PATHS
 
 with tempfile.TemporaryDirectory(prefix="xuyi-overflow-") as folder:
  root=Path(folder)
@@ -22,7 +22,8 @@ with tempfile.TemporaryDirectory(prefix="xuyi-overflow-") as folder:
  stable=plan(d,root/"out1",switch_at=50,target=44,hard_stop=65)
  assert stable["mode"]=="static" and stable["modelCount"]==0
  assert len(list(d.rglob("*/index.html")))>=40
- assert json.loads((d/"_routes.json").read_text())["include"]==["/api/*","/blog/*","/media/*"]
+ assert json.loads((d/"_routes.json").read_text())["include"]==[
+   "/api/*","/blog/*","/media/*",*RETIRED_SOURCE_PATHS]
  d=fresh()
  changed=plan(d,root/"out2",switch_at=36,target=25,hard_stop=65)
  assert changed["mode"]=="hybrid" and changed["modelCount"]>=3

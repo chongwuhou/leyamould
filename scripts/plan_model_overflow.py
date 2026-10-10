@@ -11,6 +11,10 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 VALID_SLUG=re.compile(r"[a-z0-9][a-z0-9_-]{0,78}",re.I)
 PLANNED_BUCKET="xuyi-drinkware-model-pages"
+# Tombstone three historical source URLs using Pages Functions, even when
+# using static-mode product pages. This does not consume dynamic requests for
+# unrelated public pages.
+RETIRED_SOURCE_PATHS=("/build.py","/site_renderer.py","/data/products.json")
 
 def approved_prefixes(dist:Path):
     manifest=dist/"locale-manifest.json"
@@ -64,7 +68,7 @@ def plan(dist:Path,output:Path,*,switch_at:int=16000,target:int=15500,hard_stop:
             raise RuntimeError(f"Cannot move enough XUYI models to R2 ({current}>{target}); fail closed")
     if current>=hard_stop:
         raise RuntimeError(f"Cloudflare Pages hard stop {current}>={hard_stop}")
-    route_includes=["/api/*","/blog/*","/media/*"]
+    route_includes=["/api/*","/blog/*","/media/*",*RETIRED_SOURCE_PATHS]
     if overflow:
         route_includes+=["/products/*"]+[f"/{loc}/products/*" for loc in prefixes]
     (dist/"_routes.json").write_text(json.dumps({"version":1,"include":route_includes,"exclude":[]},indent=2)+"\n",encoding="utf8")
