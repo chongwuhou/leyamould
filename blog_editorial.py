@@ -4,6 +4,8 @@ import re
 from site_renderer import ROOT, e, photo, intro, SITE_ORIGIN
 
 GUIDES = {post["slug"]: post for post in json.loads((ROOT / "data/blog-guides.json").read_text(encoding="utf-8"))}
+EVIDENCE=json.loads((ROOT / "data/editorial-evidence.json").read_text(encoding="utf-8"))
+assert set(EVIDENCE).issubset(GUIDES)
 LEGACY_GUIDES = {
     "wholesale-plastic-water-bottle-buying-guide",
     "plastic-bottle-material-selection",
@@ -48,13 +50,23 @@ def render_article(slug):
     for item in post["sections"]:
         h+='<a href="#'+anchor(item["heading"])+'">'+e(item["heading"])+'</a>'
     h+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside>'
-    h+='<article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>Updated '+e(post["updated"])+'</span></div>'
+    updated="2026-10-10" if slug in EVIDENCE else post["updated"]
+    h+='<article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>Updated '+e(updated)+'</span></div>'
     h+='<p class="blog-lede">'+e(post["intro"])+'</p>'
     h+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>'
     for tip in post["checklist"][:3]:h+='<li>'+e(tip)+'</li>'
     h+='</ul></div>'
     for section in post["sections"]:
         h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+'</p></section>'
+    evidence=EVIDENCE.get(slug)
+    if evidence:
+        h+='<section class="blog-evidence" id="primary-sources" aria-labelledby="primary-sources-heading"><span class="eyebrow">SOURCE-CHECKED BUYER NOTES</span><h2 id="primary-sources-heading">'+e(evidence["title"])+'</h2>'
+        h+='<p>'+e(evidence["insight"])+'</p><p><strong>Practical next step:</strong> '+e(evidence["next_step"])+'</p>'
+        h+='<h3>Primary references</h3><ul>'
+        for source in evidence["sources"]:
+            assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/"))
+            h+='<li><a href="'+e(source["url"])+'" target="_blank" rel="noopener noreferrer">'+e(source["label"])+' ↗</a></li>'
+        h+='</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>'
     h+='<section class="blog-checklist"><h2>Buyer checklist</h2><p>Use these points when comparing a factory sample, artwork approval and purchase quotation.</p><ul>'
     for tip in post["checklist"]:h+='<li>'+e(tip)+'</li>'
     h+='</ul></section><section class="blog-faq"><h2>Frequently asked questions</h2>'
@@ -76,6 +88,7 @@ def render_article(slug):
 
 def enrich_article_html(document, slug):
     post=GUIDES[slug]
+    updated="2026-10-10" if slug in EVIDENCE else post["updated"]
     url=SITE_ORIGIN+"/blog/"+slug+"/"
     breadcrumb={"@type":"BreadcrumbList","itemListElement":[
       {"@type":"ListItem","position":1,"name":"Home","item":SITE_ORIGIN+"/"},
@@ -84,14 +97,16 @@ def enrich_article_html(document, slug):
     blogpost={"@type":"BlogPosting","@id":url+"#article","headline":post["title"],
       "description":post["description"],"mainEntityOfPage":{"@type":"WebPage","@id":url},
       "image":[SITE_ORIGIN+cover_path(slug)],
-      "dateModified":post["updated"],"inLanguage":"en","keywords":", ".join([post["primary_keyword"]]+post["secondary_keywords"]),
+      "dateModified":updated,"inLanguage":"en","keywords":", ".join([post["primary_keyword"]]+post["secondary_keywords"]),
       "author":{"@type":"Organization","name":"XUYI Bottles","url":SITE_ORIGIN+"/"},
       "publisher":{"@type":"Organization","name":"XUYI Bottles","url":SITE_ORIGIN+"/"}}
+    if slug in EVIDENCE:
+        blogpost["citation"]=[{"@type":"CreativeWork","name":ref["label"],"url":ref["url"]} for ref in EVIDENCE[slug]["sources"]]
     if slug not in LEGACY_GUIDES:
         blogpost["datePublished"]=post["updated"]
     faq={"@type":"FAQPage","mainEntity":[{"@type":"Question","name":qa["question"],"acceptedAnswer":{"@type":"Answer","text":qa["answer"]}} for qa in post["faqs"]]}
     graph={"@context":"https://schema.org","@graph":[blogpost,breadcrumb,faq]}
-    metadata='<meta property="og:type" content="article"><meta property="article:modified_time" content="'+e(post["updated"])+'">'
+    metadata='<meta property="og:type" content="article"><meta property="article:modified_time" content="'+e(updated)+'">'
     metadata+='<meta name="keywords" content="'+e(", ".join([post["primary_keyword"]]+post["secondary_keywords"]))+'">'
     metadata+='<meta property="og:image" content="'+e(SITE_ORIGIN+cover_path(slug))+'">'
     metadata+='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+'</script>'
