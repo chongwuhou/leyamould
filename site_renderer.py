@@ -3,6 +3,8 @@ from functools import lru_cache
 import json,html,re,collections,os
 from home_banner_config import tag as banner_tag,for_locale as banner_slides
 ROOT=Path(__file__).parent
+INDEXING_APPROVED=(json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+                   .get("site",{}).get("indexingApproved") is True)
 BUILD_STATE={}
 _build_state_path=os.environ.get("XUYI_BUILD_SNAPSHOT","")
 if _build_state_path:
@@ -120,6 +122,34 @@ def build_url(path,title,content):
   content=start+marker+render_template(family,CONTENT=main)+"</main>"+end
  if 'rel="canonical"' not in content:
   content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
+ # Keep social preview metadata aligned with the final D1-reviewed SEO values.
+ # This is separate from the ignored legacy meta-keywords tag.
+ for name,value in (
+   ("og:title",re.search(r"<title>([^<]*)</title>",content,re.S)),
+   ("og:description",re.search(r'<meta name="description" content="([^"]*)"',content))):
+  if not value:continue
+  tag='<meta property="'+name+'" content="'+value.group(1)+'">'
+  if re.search(r'<meta property="'+name+'" content="[^"]*">',content):
+   content=re.sub(r'<meta property="'+name+'" content="[^"]*">',lambda _:tag,content,count=1)
+  else:content=content.replace("</head>",tag+"</head>",1)
+ if route=="/":
+  # Global, verified business entity identifiers; never invent test results,
+  # product certification, reviews or production capacity for SEO/GEO.
+  page_title=re.search(r"<title>([^<]*)</title>",content,re.S)
+  page_desc=re.search(r'<meta name="description" content="([^"]*)"',content)
+  graph={"@context":"https://schema.org","@graph":[
+   {"@type":"Organization","@id":SITE_ORIGIN+"/#organization",
+    "name":"XUYI Bottles","legalName":"台州市旭一家居用品有限公司",
+    "url":SITE_ORIGIN+"/","address":{"@type":"PostalAddress","addressLocality":"Taizhou","addressRegion":"Zhejiang","addressCountry":"CN"}},
+   {"@type":"WebSite","@id":SITE_ORIGIN+"/#website","url":SITE_ORIGIN+"/",
+    "name":"XUYI Bottles","publisher":{"@id":SITE_ORIGIN+"/#organization"},
+    "inLanguage":["en","es","pt","ru","tr"]},
+   {"@type":"WebPage","@id":SITE_ORIGIN+"/#webpage","url":SITE_ORIGIN+"/",
+    "name":html.unescape(page_title.group(1)) if page_title else "XUYI Bottles",
+    "description":html.unescape(page_desc.group(1)) if page_desc else "",
+    "inLanguage":"en","isPartOf":{"@id":SITE_ORIGIN+"/#website"}}]}
+  schema='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")+'</script>'
+  content=content.replace("</head>",schema+"</head>",1)
  if route=="/":
   content=content.replace("</head>",banner_tag(BUILD_STATE)+"</head>",1)
   slide=banner_slides(BUILD_STATE)[0]
@@ -314,8 +344,12 @@ def footer():
   result=result.replace("https://wa.me/8615395897937",e(str(contact["whatsappUrl"])))
  return result
 def page(title,description,body,canonical=None):
- # Search indexing stays disabled pending final launch approval.
+ # The release gate defaults to noindex until business approval. Once explicitly
+ # enabled, all public locales inherit the same indexable head from this template.
  head=render_template("head",TITLE=e(title),DESCRIPTION=e(description)[:220])
+ if INDEXING_APPROVED:
+  head=head.replace('<meta name="robots" content="noindex,nofollow">',
+                    '<meta name="robots" content="index,follow">',1)
  rail=render_template("sidebar",ICON_FORM=ICONS["form"],ICON_MAIL=ICONS["mail"],ICON_WHATSAPP=ICONS["whatsapp"],ICON_TOP=ICONS["top"])
  return render_template("shell",HEAD=head,HEADER=header(),SIDEBAR=rail,BODY=body,FOOTER=footer())
 def intro(crumb,title,subtitle=""):
@@ -326,7 +360,9 @@ def category_card(cat):
 def public_display_name(item):
  # The source lists model 2506 as 60ml; this is unverified and likely a catalog data error.
  if str(item.get("model"))=="2506":return "Plastic Sports Water Bottle — Model 2506"
- return item["name"]
+ # Some original workbook variant labels contain Chinese suffixes. Preserve
+ # model/slugs but make their English search snippets readable.
+ return str(item["name"]).replace("透明款"," (Transparent Variant)")
 def model_label(value):
  return str(value).replace("透明款"," (Transparent Variant)")
 
