@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for section in brand-config home-banners site-config pages product-content page-content page-translations; do
+          for section in brand-config site-config pages product-content page-content page-translations; do
             curl --fail --silent --show-error --retry 2 \
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               "$SITE_ORIGIN/api/admin/$section" -o /dev/null
@@ -142,6 +142,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # A just-added Functions endpoint cannot be probed before its first deployment.
+          # Verify it here, after Pages deploy, with the existing authenticated build token.
+          curl --fail --silent --show-error --retry 2 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$SITE_ORIGIN/api/admin/home-banners" -o /dev/null
           for n in 1 2 3 4 5 6; do
             if curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?xuyi_check=$n&sha=$GITHUB_SHA" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.pagesProject==='xuyi-drinkware-site'&&v.sourceRevision===process.env.GITHUB_SHA&&Number(v.publishRevision)>=Number(process.env.XUYI_PUBLISH_REVISION)?0:1)})"; then
               echo "XUYI production revision verified"
