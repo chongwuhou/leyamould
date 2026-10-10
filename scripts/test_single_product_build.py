@@ -38,7 +38,9 @@ try:
  html=(ROOT/"dist/products"/model/"index.html").read_text(encoding="utf-8")
  assert "Synthetic Test Bottle 750ml | XUYI Bottles" in html
  assert 'href="https://xuyibottles.com/products/'+model+'/"' in html
- assert 'name="robots" content="noindex,nofollow"' in html
+ cfg=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+ expected="index,follow" if cfg["site"]["indexingApproved"] else "noindex,nofollow"
+ assert 'name="robots" content="'+expected+'"' in html
  assert '/media/ppt/slide-059.webp' in html
  assert "Submitted Capacity" in html
  assert "XUYI Synthetic Bottle QA Model" in html
