@@ -116,6 +116,7 @@ jobs:
           python scripts/test_buyer_content.py
           python scripts/test_editorial_evidence.py
           python scripts/test_editorial_d1_overrides.py
+          node scripts/test_blog_dynamic_evidence.mjs
           python scripts/test_model_overflow.py
           node scripts/test_model_overflow_handler.mjs
           python scripts/test_admin_route.py
