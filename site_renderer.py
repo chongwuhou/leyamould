@@ -167,6 +167,10 @@ def build_url(path,title,content):
   content=re.sub(r'(<a\b(?=[^>]*\bid="hero-cta")[^>]*\bhref=")[^"]+(")',lambda m:m.group(1)+e(slide["link"])+m.group(2),content,count=1)
  from product_locale_seo import polish_product_head
  content=polish_product_head(content,"en",route)
+ from image_alt_quality import polish_image_alt
+ content=polish_image_alt(content,"en")
+ from media_alt_render import apply_media_alts
+ content=apply_media_alts(content,BUILD_STATE,"en")
  URLS[path]=title
  write(path,content)
 ICONS={

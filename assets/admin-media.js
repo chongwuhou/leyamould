@@ -5,6 +5,22 @@ const $=id=>document.getElementById(id);
 const say=message=>{const node=$("media-status");if(node)node.textContent=message};
 const kind=()=>$("media-kind")?.value||"product";
 const editable=()=>["product","page","shared"].includes(kind());
+let languages=[{code:"en",name:"English"}];
+function altInputs(parent,values={},includeEnglish=true){
+ const inputs={};
+ for(const locale of languages){
+  if(!includeEnglish&&locale.code==="en")continue;
+  const label=document.createElement("label");label.style.cssText="display:flex;flex-direction:column;gap:3px;min-width:180px;font-size:12px";
+  label.textContent="ALT · "+(locale.name||locale.code);
+  const input=document.createElement("input");
+  input.type="text";input.maxLength=180;input.value=values[locale.code]||"";
+  input.placeholder=locale.code==="en"?"Describe this exact image":"审核后填写本语言描述";
+  input.dataset.altLocale=locale.code;label.append(input);parent.append(label);inputs[locale.code]=input;
+ }
+ return inputs;
+}
+const altValues=inputs=>Object.fromEntries(Object.entries(inputs)
+ .map(([language,input])=>[language,input.value.trim()]).filter(([,value])=>value));
 async function api(path,options={}){
  const response=await fetch(path,{headers:{authorization:"Bearer "+token(),...(options.headers||{})},
   cache:"no-store",...options});
@@ -17,6 +33,10 @@ async function list(cursor=""){
  const selectedKind=kind();
  const url="/api/admin/media?kind="+encodeURIComponent(selectedKind)+(cursor?"&cursor="+encodeURIComponent(cursor):"");
  const data=await api(url);
+ languages=Array.isArray(data.altLocales)&&data.altLocales.length?data.altLocales:[{code:"en",name:"English"}];
+ const uploadLocales=$("media-upload-alt-locales");
+ if(uploadLocales&&!cursor){uploadLocales.replaceChildren();
+  altInputs(uploadLocales,{},false)}
  const host=$("media-files");if(!cursor)host.replaceChildren();
  for(const row of data.items||[]){
   const card=document.createElement("div");card.className="media-library-item";
@@ -26,6 +46,24 @@ async function list(cursor=""){
   photo.style.cssText="width:100%;height:140px;object-fit:contain;background:#f6f6f6;border-radius:7px";
   const pathLabel=document.createElement("code");pathLabel.textContent=row.path;
   pathLabel.style.cssText="font-size:11px;overflow-wrap:anywhere";
+  const altEditor=document.createElement("details");
+  const altSummary=document.createElement("summary");altSummary.textContent="编辑图片 ALT · SEO / GEO";altEditor.append(altSummary);
+  const altFields=document.createElement("div");altFields.style.cssText="display:flex;flex-direction:column;gap:7px;margin:8px 0";
+  const inputs=altInputs(altFields,row.altByLocale||{});
+  altEditor.append(altFields);
+  const saveAlt=document.createElement("button");saveAlt.type="button";saveAlt.className="btn ghost";saveAlt.textContent="保存 ALT 并等待发布";
+  saveAlt.addEventListener("click",async()=>{
+   saveAlt.disabled=true;
+   try{
+    const saved=await api("/api/admin/media",{method:"POST",
+      headers:{"content-type":"application/json"},
+      body:JSON.stringify({action:"save_alt",path:row.path,altByLocale:altValues(inputs)})});
+    photo.alt=saved.altByLocale.en;
+    say("图片 ALT 已保存到 D1，发布修订号 "+saved.revision+"；构建完成后本语言页面自动更新。");
+   }catch(error){say("保存 ALT 失败："+error.message)}
+   finally{saveAlt.disabled=false}
+  });
+  altEditor.append(saveAlt);
   const bytes=document.createElement("small");bytes.textContent=(Number(row.size||0)/1024).toFixed(1)+" KB";
   const state=document.createElement("p");state.style.cssText="margin:0;font-size:12px";
   const refs=document.createElement("div");refs.style.cssText="font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere";
@@ -79,7 +117,7 @@ async function list(cursor=""){
   replace.dataset.filename=row.path.split("/").pop();
   replace.dataset.path=row.path;
   replace.dataset.etag=row.etag||"";
-  card.append(photo,pathLabel,bytes,state,refs,copy,verify,replace,remove);host.append(card);
+  card.append(photo,pathLabel,altEditor,bytes,state,refs,copy,verify,replace,remove);host.append(card);
  }
  const more=$("media-more");more.hidden=!data.cursor;more.dataset.cursor=data.cursor||"";
  const upload=$("media-upload"),button=$("media-upload-btn");
@@ -95,11 +133,17 @@ async function upload(){
  const file=$("media-upload")?.files?.[0];if(!file){say("请选择 JPEG、PNG 或 WebP 图片");return}
  if(file.size>6*1024*1024){say("单张图片不能超过 6 MB");return}
  const key=token();if(!key){say("请先登录后台");return}
+ const english=$("media-upload-alt-en")?.value.trim()||"";
+ if(!english){say("上传前请填写准确的英文 ALT：实际产品类型、可核实型号或容量");return}
  const button=$("media-upload-btn");button.disabled=true;say("正在上传旭一 R2…");
  try{
+  const values={en:english};
+  for(const input of $("media-upload-alt-locales")?.querySelectorAll("[data-alt-locale]")||[])
+   if(input.value.trim())values[input.dataset.altLocale]=input.value.trim();
   const body=new FormData();body.append("kind",kind());body.append("image",file);
+  body.append("altByLocale",JSON.stringify(values));
   const data=await api("/api/admin/media",{method:"POST",body});
-  $("media-upload").value="";await list();
+  $("media-upload").value="";$("media-upload-alt-en").value="";await list();
   say("已上传："+data.path+"，请复制地址并在内容 CMS 中引用。");
  }catch(err){say("上传失败："+err.message)}
  finally{button.disabled=!editable()}

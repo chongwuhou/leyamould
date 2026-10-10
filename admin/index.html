@@ -44,9 +44,12 @@
  <div class="row-actions">
   <label>R2 文件分类 <select id="media-kind"><optgroup label="后台上传（有保护的删除）"><option value="product">产品图片</option><option value="page">页面图片</option><option value="shared">公共素材</option></optgroup><optgroup label="原始资产（只读）"><option value="ppt">PPT 旧图库</option><option value="excel">Excel 型号图片</option><option value="group">工厂与质检图片</option><option value="capability">制造能力配图</option><option value="gallery">旧款式画廊</option><option value="blog">博客图片</option></optgroup></select></label>
   <label>文件 <input type="file" id="media-upload" accept="image/jpeg,image/png,image/webp"></label>
+  <label>图片 ALT（英文，必填）<input id="media-upload-alt-en" maxlength="180" placeholder="例：550 ml plastic sports water bottle model 2501, product view"></label>
   <button class="btn primary" type="button" id="media-upload-btn">上传到 R2</button>
   <button class="btn ghost" type="button" id="media-load">刷新素材</button>
  </div>
+ <div id="media-upload-alt-locales" style="display:flex;flex-wrap:wrap;gap:10px;margin:12px 0"></div>
+ <p class="muted">ALT 描述照片实际可见的产品、型号、容量或外观，不要堆叠关键词；外语可以稍后逐一审核填写。上传后仍需在页面或商品 CMS 中使用该图片，ALT 才会出现在页面里。</p>
  <p id="media-status" class="muted" role="status" aria-live="polite"></p>
  <div id="media-files" style="display:flex;flex-wrap:wrap;gap:14px"></div>
  <button type="button" class="btn ghost" id="media-more" hidden>加载更多</button>

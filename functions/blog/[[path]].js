@@ -1,4 +1,5 @@
 import { ensureBlogSchema, listBlogPosts, findBlogPost, esc, blogCard, blogHtml, composePage } from "../_shared/blog-cms.js";
+import {englishAltFor} from "../_shared/media-alt.js";
 async function assetHtml(context,path){
  const url=new URL(path,context.request.url);
  const res=await context.env.ASSETS.fetch(new Request(url.toString()));
@@ -38,11 +39,12 @@ export async function onRequestGet(context){
    }
    // The route slug, not an editable content_json field, identifies which
    // article is published and which source-reviewed notes belong to it.
-   const published={...post,slug:tail};
+   const published={...post,slug:tail,coverAlt:await englishAltFor(db,post.cover)};
    return response(composePage(shell,blogHtml(published),published,"/blog/"+tail+"/"));
   }
   const posts=await listBlogPosts(db,"published");
   if(!posts.length)return context.next();
+  for(const post of posts)post.coverAlt=await englishAltFor(db,post.cover);
   const template=await assetHtml(context,"/blog/index.html");
   let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / Blog</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>Water Bottle Buying Guides</h1><p>Practical guides to material choice, wholesale sourcing, OEM customization and quality assurance.</p></div></section>';
   body+='<section class="section blog-listing"><div class="shell"><div class="section__head"><div><span class="eyebrow">BUYER RESOURCES</span><h2 class="section__title">Sourcing Knowledge Center</h2><p>Explore '+posts.length+' buying guides written for B2B customers.</p></div></div>';

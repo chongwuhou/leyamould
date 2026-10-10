@@ -15,7 +15,11 @@ function requestContext(slug,{index=false}={}){
  };
  const db={prepare(sql){
   const query={bind(){return this;},async run(){return {success:true};},
-    async first(){return sql.includes("FROM xuyi_blog_posts")?{slug,status:"published",content_json:JSON.stringify(post)}:null;},
+    async first(){
+      if(sql.includes("FROM xuyi_media_alt"))return {alt_json:JSON.stringify({
+        en:"Plastic bottle material choices shown in a wholesale sourcing guide"})};
+      return sql.includes("FROM xuyi_blog_posts")?{slug,status:"published",content_json:JSON.stringify(post)}:null;
+    },
     async all(){return {results:[]};}};
   return query;
  }};
@@ -41,6 +45,8 @@ assert(html.includes('<link rel="alternate" hreflang="x-default" href="'+slugUrl
 assert(!html.includes('<link rel="alternate" hreflang="en" href="'+ORIGIN+'/blog/">'));
 assert(html.includes('<meta property="og:title" content="Plastic Bottle Buying Guide: Verified Materials">'));
 assert(html.includes("A practical wholesale buying guide with original content from the D1 CMS"));
+assert(html.includes('alt="Plastic bottle material choices shown in a wholesale sourcing guide"'),
+  "Dynamic D1 Blog must use edited R2 image ALT, not only the post headline");
 const newer=await onRequestGet(requestContext("buyer-guide-only-in-d1"));
 const newerHtml=await newer.text();
 assert(newerHtml.includes('href="'+ORIGIN+'/blog/buyer-guide-only-in-d1/"'));

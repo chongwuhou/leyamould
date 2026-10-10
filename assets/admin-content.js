@@ -172,6 +172,9 @@
      const uploadButton=event.currentTarget;uploadButton.disabled=true;say("正在上传 Banner "+(i+1)+" 到旭一 R2…");
      try{
       const body=new FormData();body.set("kind","shared");body.set("image",file);
+      const sourceAlt=String(state.bannerDraft.slides[i].alt||"").trim();
+      if(!sourceAlt)throw Error("请先填写这张 Banner 的英文 ALT，再上传图片");
+      body.set("altByLocale",JSON.stringify({en:sourceAlt}));
       const response=await fetch("/api/admin/media",{method:"POST",
        headers:{"authorization":"Bearer "+token()},body,cache:"no-store"});
       const saved=await response.json().catch(()=>({}));
