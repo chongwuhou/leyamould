@@ -1,5 +1,20 @@
 // XUYI Blog CMS extends Demalong's D1-backed page-editor and revision approach.
+// Match the separately reviewed static Blog sources on D1-backed live routes.
+import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json" with {type:"json"};
 export const esc = value => String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+function verifiedEvidence(post){
+ const evidence=EDITORIAL_EVIDENCE[post?.slug];
+ if(!evidence)return "";
+ const sourceLinks=evidence.sources.filter(s=>
+  /^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org)\//.test(s.url))
+  .map(s=>'<li><a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+esc(s.label)+' ↗</a></li>').join("");
+ if(sourceLinks.length===0)return "";
+ return '<section class="blog-evidence" id="primary-sources" aria-labelledby="primary-sources-heading"><span class="eyebrow">SOURCE-CHECKED BUYER NOTES</span><h2 id="primary-sources-heading">'+esc(evidence.title)+'</h2><p>'+esc(evidence.insight)+'</p><p><strong>Practical next step:</strong> '+esc(evidence.next_step)+'</p><h3>Primary references</h3><ul>'+sourceLinks+'</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>';
+}
+function contentModifiedDate(post){
+ const value=String(post?.updated||"").slice(0,10);
+ return EDITORIAL_EVIDENCE[post?.slug] && value<"2026-10-10"?"2026-10-10":value;
+}
 export async function ensureBlogSchema(db){
  await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_blog_posts (slug TEXT PRIMARY KEY,status TEXT NOT NULL DEFAULT 'draft',content_json TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_at TEXT)").run();
  await db.prepare("CREATE INDEX IF NOT EXISTS idx_xuyi_blog_status ON xuyi_blog_posts(status,updated_at)").run();
@@ -55,9 +70,10 @@ export function blogHtml(post){
  let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Buying Guide</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+esc(post.title)+'</h1><p>'+esc(post.description)+'</p></div></section>';
  body+='<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="'+esc(post.cover)+'" alt="'+esc(post.title)+'" loading="eager"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">';
  for(let i=0;i<post.sections.length;i++)body+='<a href="#article-section-'+i+'">'+esc(post.sections[i].heading)+'</a>';
- body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>Updated '+esc(post.updated)+'</span></div><p class="blog-lede">'+esc(post.intro)+'</p>';
+ body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>Updated '+esc(contentModifiedDate(post))+'</span></div><p class="blog-lede">'+esc(post.intro)+'</p>';
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
  post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+esc(section.paragraph)+'</p></section>'});
+ body+=verifiedEvidence(post);
  if(post.checklist?.length){body+='<section class="blog-checklist"><h2>Buyer checklist</h2><ul>';for(const tip of post.checklist)body+='<li>'+esc(tip)+'</li>';body+='</ul></section>'}
  if(post.faqs?.length){body+='<section class="blog-faq"><h2>Frequently asked questions</h2>';for(const q of post.faqs)body+='<details><summary>'+esc(q.question)+'</summary><p>'+esc(q.answer)+'</p></details>';body+='</section>'}
  body+='<div class="blog-editorial__cta"><h2>Need a quote for a specific model?</h2><p>Send the model, expected order quantity, logo requirements and destination market. XUYI can review confirmed material and customization options.</p><a class="button" href="/contact/#inquiry">Request a Plastic Bottle Quote →</a></div></article></div></div></section>';
@@ -78,7 +94,10 @@ export function composePage(template,body,post,route){
   html=html.replace(/<meta property="og:url" content="[^"]*">/,'<meta property="og:url" content="'+esc(url)+'">');
   html=html.replace(/<meta property="og:image" content="[^"]*">/,'');
   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g,'');
-  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:post.updated,mainEntityOfPage:url,publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
+  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
+  if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
+    .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org)\//.test(s.url))
+    .map(s=>({'@type':'CreativeWork',name:s.label,url:s.url}));
   const safe=JSON.stringify(graph).replace(/</g,'\\u003c');
   html=html.replace('</head>','<meta property="og:image" content="'+esc('https://xuyibottles.com'+post.cover)+'"><script type="application/ld+json">'+safe+'</script></head>');
  }
