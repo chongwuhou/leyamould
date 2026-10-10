@@ -6,6 +6,7 @@ import json,re,xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
 info=json.loads((DIST/"build-meta.json").read_text(encoding="utf8"))
+indexable=not info["noindex"]
 sitemap=DIST/"sitemap.xml"
 assert sitemap.is_file()
 ET.parse(sitemap)
@@ -24,7 +25,7 @@ for locale in ("es","pt","ru","tr"):
   url="https://xuyibottles.com"+route
   assert '<html lang="'+locale+'">' in html,(locale,route)
   assert '<link rel="canonical" href="'+url+'">' in html,(locale,route)
-  assert '<meta name="robots" content="noindex,nofollow">' in html,(locale,route)
+  assert '<meta name="robots" content="'+("index,follow" if indexable else "noindex,nofollow")+'">' in html,(locale,route)
   assert 'hreflang="en"' in html and 'hreflang="'+locale+'"' in html,(locale,route)
   main=html.split('<main id="main-content">',1)[1].split('</main>',1)[0]
   assert '{{' not in main and '}}' not in main,(locale,route)
