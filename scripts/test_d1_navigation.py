@@ -14,7 +14,7 @@ nav=[
  dict(id="why-us",parent_id="",label="Why Us",url="/why-us/",sort_order=50),
  dict(id="blog",parent_id="",label="Blog",url="/blog/",sort_order=60),
  dict(id="contact",parent_id="",label="Contact Us",url="/contact/",sort_order=70),
- dict(id="custom-top",parent_id="",label="Shipping Check",url="/faq/",sort_order=15),
+ dict(id="custom-top",parent_id="",label="Shipping Check",url="/shipping-logistics/#shipping",sort_order=15),
  dict(id="custom-child",parent_id="products",label="More Bottles",url="/products/2095/",sort_order=19),
  dict(id="custom-cap",parent_id="capabilities",label="OEM Methods",url="/privacy-policy/",sort_order=25)
 ]
@@ -22,11 +22,12 @@ saved=renderer.BUILD_STATE
 try:
  renderer.BUILD_STATE={**saved,"navigation":nav}
  html=renderer.header()
- assert '<a class="nav__link" href="/faq/">Shipping Check</a>' in html
+ assert '<a class="nav__link" href="/shipping-logistics/#shipping">Shipping Check</a>' in html
  assert html.index('>Home</a>')<html.index('>Shipping Check</a>')<html.index('>Products')
  assert 'More Bottles' in html and html.count('More Bottles')==2,("D1 child must appear in desktop+mobile",html.count('More Bottles'))
  assert html.count('OEM Methods')==2
  assert html.count('Shipping Check')==2
+ assert html.count('href="/faq/"')==2,"FAQ must stay accessible via desktop and mobile even with D1 custom nav"
  assert 'id="menu-products"' in html
  assert 'id="menu-capabilities"' in html
  assert html.count('<div class="mega__column">')==4
