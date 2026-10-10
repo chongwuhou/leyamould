@@ -22,6 +22,60 @@ ORIGIN="https://xuyibottles.com"
 UI_TRANSLATIONS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
 RUNTIME_UI_TRANSLATIONS=json.loads((ROOT/"data/runtime-ui-translations.json").read_text(encoding="utf-8"))
 
+def localize_structured_data(markup,locale,route,localized,fields,approved_routes):
+    """Match JSON-LD to the reviewed language page, never the English source.
+
+    Product identifiers, images and the global legal Organization remain
+    untouched; only page-local language, URLs and human-facing text change.
+    Untranslated FAQ answers are dropped rather than represented as reviewed.
+    """
+    own=ORIGIN+localized
+    source=ORIGIN+route
+    h1match=re.search(r'<h1\b[^>]*>(.*?)</h1>',fields["mainHtml"],re.S|re.I)
+    heading=html.unescape(re.sub(r'<[^>]*>',' ',h1match.group(1))).strip() if h1match else ""
+    heading=re.sub(r'\s+',' ',heading) or fields["title"].split(" | ",1)[0]
+    ui=UI_TRANSLATIONS.get(locale,{})
+    def localize_item(item):
+        if not isinstance(item,dict):return item
+        typ=item.get("@type")
+        if typ=="FAQPage":return None
+        if typ=="Organization":return item  # One globally identifiable legal company.
+        if typ in ("Product","BlogPosting","Service","WebPage"):
+            for key in ("@id","url"):
+                if isinstance(item.get(key),str) and item[key].startswith(source):
+                    item[key]=own+item[key][len(source):]
+            if isinstance(item.get("mainEntityOfPage"),dict):
+                x=item["mainEntityOfPage"]
+                if isinstance(x.get("@id"),str) and x["@id"].startswith(source):
+                    x["@id"]=own+x["@id"][len(source):]
+            elif item.get("mainEntityOfPage")==source:item["mainEntityOfPage"]=own
+            item["inLanguage"]=locale
+            if typ=="BlogPosting":item["headline"]=fields["title"]
+            else:item["name"]=heading
+            item["description"]=fields["description"]
+        if typ=="BreadcrumbList":
+            for crumb in item.get("itemListElement",[]):
+                value=crumb.get("item","")
+                if not isinstance(value,str) or not value.startswith(ORIGIN+"/"):continue
+                original_route=value[len(ORIGIN):]
+                if original_route in approved_routes:
+                    crumb["item"]=ORIGIN+"/"+locale+original_route
+                    if original_route=="/":crumb["name"]=ui.get("Home",crumb.get("name","Home"))
+                    elif original_route==route:crumb["name"]=heading
+                    elif original_route=="/blog/":crumb["name"]=ui.get("Blog",crumb.get("name","Blog"))
+        return item
+    def replace(match):
+        try:data=json.loads(match.group(1))
+        except (ValueError,TypeError) as exc:raise RuntimeError("Invalid source JSON-LD: "+route) from exc
+        if not isinstance(data,dict):raise RuntimeError("JSON-LD root must be an object: "+route)
+        if isinstance(data.get("@graph"),list):
+            data["@graph"]=[v for raw in data["@graph"] if (v:=localize_item(raw)) is not None]
+        else:
+            data=localize_item(data)
+            if data is None:return ""
+        return '<script type="application/ld+json">'+json.dumps(data,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")+'</script>'
+    return re.sub(r'<script type="application/ld\+json">([\s\S]*?)</script>',replace,markup)
+
 def translate_chrome(chunk,locale,ui_override=None):
     mappings={**UI_TRANSLATIONS.get(locale,{})}
     if isinstance(ui_override,dict):
@@ -183,11 +237,17 @@ def main():
         text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)
         text=re.sub(r'<title>[^<]*</title>','<title>'+html.escape(fields["title"])+'</title>',text,count=1)
         text=swap_meta(text,"description",fields["description"])
+        for property_name,value in (("og:title",fields["title"]),("og:description",fields["description"])):
+            tag='<meta property="'+property_name+'" content="'+html.escape(value,quote=True)+'">'
+            current=r'<meta property="'+property_name+'" content="[^"]*">'
+            if re.search(current,text):text=re.sub(current,lambda _:tag,text,count=1)
+            else:text=text.replace("</head>",tag+"</head>",1)
         localized="/"+live[loc].get("pathPrefix",loc).strip("/")+(route if route!="/" else "/")
         localized=re.sub("/+","/",localized)
         canonical=ORIGIN+localized
         text=re.sub(r'<link rel="canonical" href="[^"]*">','<link rel="canonical" href="'+canonical+'">',text,count=1)
         text=re.sub(r'<meta property="og:url" content="[^"]*">','<meta property="og:url" content="'+canonical+'">',text,count=1)
+        text=localize_structured_data(text,loc,route,localized,fields,routes_by_locale[loc])
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
         created+=1
