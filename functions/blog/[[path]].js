@@ -21,7 +21,10 @@ export async function onRequestGet(context){
    if(!post)return context.next(); // older catalog articles remain in immutable static build
    if(post.status!=="published")return response("<!doctype html><html lang='en'><head><meta name='robots' content='noindex'><title>Article unavailable</title></head><body><p>Article unavailable.</p><a href='/blog/'>Back to Blog</a></body></html>",404);
    const shell=await assetHtml(context,"/blog/index.html");
-   return response(composePage(shell,blogHtml(post),post,"/blog/"+tail+"/"));
+   // The route slug, not an editable content_json field, identifies which
+   // article is published and which source-reviewed notes belong to it.
+   const published={...post,slug:tail};
+   return response(composePage(shell,blogHtml(published),published,"/blog/"+tail+"/"));
   }
   const posts=await listBlogPosts(db,"published");
   if(!posts.length)return context.next();
