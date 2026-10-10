@@ -49,7 +49,7 @@ async function verifyCloudflareProjectToken(token, env) {
 // Demalong-style admin session for all writes and private admin modules.
 const BUILD_READ_PATHS = new Set([
   "/api/build-snapshot", "/api/publish-state",
-  "/api/admin/brand-config", "/api/admin/site-config",
+  "/api/admin/brand-config", "/api/admin/home-banners", "/api/admin/site-config",
   "/api/admin/pages", "/api/admin/product-content",
   "/api/admin/page-content", "/api/admin/page-translations"
 ]);
