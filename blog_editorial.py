@@ -40,6 +40,18 @@ def cover_path(slug):
 def anchor(heading):
     return re.sub(r"[^a-z0-9-]+", "-", heading.lower().replace("’", "").replace("'", "")).strip("-")[:90]
 
+def render_primary_evidence(slug):
+    evidence=EVIDENCE.get(slug)
+    if not evidence:return ""
+    h='<section class="blog-evidence" id="primary-sources" aria-labelledby="primary-sources-heading"><span class="eyebrow">SOURCE-CHECKED BUYER NOTES</span><h2 id="primary-sources-heading">'+e(evidence["title"])+'</h2>'
+    h+='<p>'+e(evidence["insight"])+'</p><p><strong>Practical next step:</strong> '+e(evidence["next_step"])+'</p>'
+    h+='<h3>Primary references</h3><ul>'
+    for source in evidence["sources"]:
+        assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/"))
+        h+='<li><a href="'+e(source["url"])+'" target="_blank" rel="noopener noreferrer">'+e(source["label"])+' ↗</a></li>'
+    h+='</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>'
+    return h
+
 def render_article(slug):
     post=GUIDES[slug]
     related=[GUIDES[s] for s in post["related"]]
@@ -58,15 +70,7 @@ def render_article(slug):
     h+='</ul></div>'
     for section in post["sections"]:
         h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+'</p></section>'
-    evidence=EVIDENCE.get(slug)
-    if evidence:
-        h+='<section class="blog-evidence" id="primary-sources" aria-labelledby="primary-sources-heading"><span class="eyebrow">SOURCE-CHECKED BUYER NOTES</span><h2 id="primary-sources-heading">'+e(evidence["title"])+'</h2>'
-        h+='<p>'+e(evidence["insight"])+'</p><p><strong>Practical next step:</strong> '+e(evidence["next_step"])+'</p>'
-        h+='<h3>Primary references</h3><ul>'
-        for source in evidence["sources"]:
-            assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/"))
-            h+='<li><a href="'+e(source["url"])+'" target="_blank" rel="noopener noreferrer">'+e(source["label"])+' ↗</a></li>'
-        h+='</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>'
+    h+=render_primary_evidence(slug)
     h+='<section class="blog-checklist"><h2>Buyer checklist</h2><p>Use these points when comparing a factory sample, artwork approval and purchase quotation.</p><ul>'
     for tip in post["checklist"]:h+='<li>'+e(tip)+'</li>'
     h+='</ul></section><section class="blog-faq"><h2>Frequently asked questions</h2>'
