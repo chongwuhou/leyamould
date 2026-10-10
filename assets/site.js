@@ -117,12 +117,31 @@ if(hero){
  {title:'Custom Drinkware <span>Designed Around You.</span>',description:'Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.',img:'/assets/curated-hd/customizable-assortment.webp',alt:'Plastic water bottle color and lid variants for customization',link:'/capabilities/',cta:'View Customization →'}
  ];
  if(Array.isArray(runtimeUI.slides)&&runtimeUI.slides.length===slides.length){slides=slides.map((slide,i)=>({...slide,...runtimeUI.slides[i]}))}
+ // D1 reviewed banner settings are baked into this page at release time.
+ // Never load an admin API in the public site or allow unreviewed HTML.
+ try{
+  const managed=JSON.parse(document.getElementById("xuyi-home-banners")?.textContent||"null");
+  if(Array.isArray(managed)&&managed.length===3&&managed.every(v=>
+      typeof v?.title==="string"&&typeof v?.highlight==="string"&&
+      typeof v?.link==="string"&&typeof v?.img==="string"))
+   slides=slides.map((fallback,i)=>({...fallback,...managed[i],managed:true}));
+ }catch{}
+
  const title=hero.querySelector('#hero-title'),desc=hero.querySelector('#hero-description'),
        img=hero.querySelector('#hero-image'),cta=hero.querySelector('#hero-cta'),
        status=hero.querySelector('#hero-status'),
        dots=[...hero.querySelectorAll('[data-hero-go]')],
        controls=hero.querySelector('.hero__controls'),
        prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+ // Both the image and call-to-action lead to the configured banner URL.
+ let artLink=img?.closest("a");
+ if(img&&!artLink){
+  artLink=document.createElement("a");
+  artLink.className="hero__art-link";
+  artLink.setAttribute("aria-label","Open featured collection");
+  img.parentNode.insertBefore(artLink,img);
+  artLink.append(img);
+ }
  const DELAY=5500;
  let idx=0,timer=null,inView=true,hoveringControls=false,focusWithin=false,touchStart=null;
  function stop(){
@@ -140,11 +159,23 @@ if(hero){
  function show(index,announce){
   idx=(index+slides.length)%slides.length;
   const slide=slides[idx];
-  title.innerHTML=slide.title;
+  if(slide.managed){
+   title.replaceChildren(document.createTextNode(slide.title+" "));
+   const emphasis=document.createElement("span");emphasis.textContent=slide.highlight;
+   title.append(emphasis);
+  }else{title.innerHTML=slide.title;}
   desc.textContent=slide.description;
   if(img.getAttribute('src')!==slide.img)img.src=slide.img;
   img.alt=slide.alt;
+  if(artLink){
+   artLink.href=slide.link;
+   artLink.setAttribute("aria-label",slide.alt||"Featured collection");
+   if(/^https:\/\//i.test(slide.link)){artLink.target="_blank";artLink.rel="noopener noreferrer";}
+   else{artLink.removeAttribute("target");artLink.removeAttribute("rel");}
+  }
   cta.href=slide.link;
+  if(/^https:\/\//i.test(slide.link)){cta.target="_blank";cta.rel="noopener noreferrer";}
+  else{cta.removeAttribute("target");cta.removeAttribute("rel");}
   cta.textContent=slide.cta;
   dots.forEach((dot,i)=>{
    const active=i===idx;
@@ -192,6 +223,7 @@ if(hero){
   },{threshold:.2});
   observer.observe(hero);
  }
+ show(0,false);
  // Keep the other two locally hosted images ready for their first appearance.
  slides.slice(1).forEach(slide=>{const preload=new Image();preload.src=slide.img});
  schedule();

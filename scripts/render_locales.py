@@ -11,6 +11,9 @@ import os
 from pathlib import Path
 import re
 from urllib.parse import urlsplit
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
+from home_banner_config import tag as banner_tag,for_locale as banner_slides
 
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
@@ -143,22 +146,23 @@ def main():
         # markup. Refresh ONLY the immutable generic hero image asset; leave
         # all user-translated text and model photos unchanged.
         if route=="/":
-            # The D1-approved homepage may carry either image attribute order
-            # or already contain this exact approved image in another revision.
-            # Limit the update to the single known hero <img>, never any SKU.
-            matches=list(re.finditer(r'<img\b[^>]*\bid="hero-image"[^>]*>',body))
-            if len(matches)!=1:
-                print("XUYI_HQ_HERO_NO_UNIQUE_IMG",loc,len(matches))
-            else:
-                tag=matches[0].group(0)
-                old_url=re.search(r'\bsrc="([^"]+)"',tag)
-                approved={"/media/ppt/slide-059.webp","/assets/curated-hd/gradient-sports.webp"}
-                if not old_url or old_url.group(1) not in approved:
-                    print("XUYI_HQ_HERO_UNRECOGNIZED_SOURCE",loc)
-                else:
-                    new_tag=tag[:old_url.start(1)]+"/assets/curated-hd/gradient-sports.webp"+tag[old_url.end(1):]
-                    body=body[:matches[0].start()]+new_tag+body[matches[0].end():]
-
+            prefix,count=re.subn(r'<script type="application/json" id="xuyi-home-banners">[^<]*</script>',
+              lambda _:banner_tag(data,loc,routes_by_locale[loc]),prefix,count=1)
+            if count!=1:raise RuntimeError("English homepage must have exactly one banner configuration")
+            slide=banner_slides(data,loc,routes_by_locale[loc])[0]
+            heading=html.escape(slide["title"])+" <span>"+html.escape(slide["highlight"])+"</span>"
+            body=re.sub(r'(<h1\b[^>]*\bid="hero-title"[^>]*>).*?(</h1>)',
+              lambda m:m.group(1)+heading+m.group(2),body,count=1,flags=re.S)
+            body=re.sub(r'(<p\b[^>]*\bid="hero-description"[^>]*>).*?(</p>)',
+              lambda m:m.group(1)+html.escape(slide["description"])+m.group(2),body,count=1,flags=re.S)
+            body=re.sub(r'(<a\b(?=[^>]*\bid="hero-cta")[^>]*>).*?(</a>)',
+              lambda m:m.group(1)+html.escape(slide["cta"])+m.group(2),body,count=1,flags=re.S)
+            body=re.sub(r'(<img\b(?=[^>]*\bid="hero-image")[^>]*\balt=")[^"]+(")',
+              lambda m:m.group(1)+html.escape(slide["alt"])+m.group(2),body,count=1)
+            body=re.sub(r'(<img\b(?=[^>]*\bid="hero-image")[^>]*\bsrc=")[^"]+(")',
+              lambda m:m.group(1)+html.escape(slide["img"])+m.group(2),body,count=1)
+            body=re.sub(r'(<a\b(?=[^>]*\bid="hero-cta")[^>]*\bhref=")[^"]+(")',
+              lambda m:m.group(1)+html.escape(slide["link"])+m.group(2),body,count=1)
         text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+body+'</main>'+translate_chrome(suffix,loc,ui)
         text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])
         text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)

@@ -1,6 +1,7 @@
 from pathlib import Path
 from functools import lru_cache
 import json,html,re,collections,os
+from home_banner_config import tag as banner_tag,for_locale as banner_slides
 ROOT=Path(__file__).parent
 BUILD_STATE={}
 _build_state_path=os.environ.get("XUYI_BUILD_SNAPSHOT","")
@@ -105,6 +106,20 @@ def build_url(path,title,content):
   content=start+marker+render_template(family,CONTENT=main)+"</main>"+end
  if 'rel="canonical"' not in content:
   content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
+ if route=="/":
+  content=content.replace("</head>",banner_tag(BUILD_STATE)+"</head>",1)
+  slide=banner_slides(BUILD_STATE)[0]
+  heading=e(slide["title"])+" <span>"+e(slide["highlight"])+"</span>"
+  content=re.sub(r'(<h1\b[^>]*\bid="hero-title"[^>]*>).*?(</h1>)',
+    lambda m:m.group(1)+heading+m.group(2),content,count=1,flags=re.S)
+  content=re.sub(r'(<p\b[^>]*\bid="hero-description"[^>]*>).*?(</p>)',
+    lambda m:m.group(1)+e(slide["description"])+m.group(2),content,count=1,flags=re.S)
+  content=re.sub(r'(<a\b(?=[^>]*\bid="hero-cta")[^>]*>).*?(</a>)',
+    lambda m:m.group(1)+e(slide["cta"])+m.group(2),content,count=1,flags=re.S)
+  content=re.sub(r'(<img\b(?=[^>]*\bid="hero-image")[^>]*\balt=")[^"]+(")',
+    lambda m:m.group(1)+e(slide["alt"])+m.group(2),content,count=1)
+  content=re.sub(r'(<img\b(?=[^>]*\bid="hero-image")[^>]*\bsrc=")[^"]+(")',lambda m:m.group(1)+e(slide["img"])+m.group(2),content,count=1)
+  content=re.sub(r'(<a\b(?=[^>]*\bid="hero-cta")[^>]*\bhref=")[^"]+(")',lambda m:m.group(1)+e(slide["link"])+m.group(2),content,count=1)
  URLS[path]=title
  write(path,content)
 ICONS={

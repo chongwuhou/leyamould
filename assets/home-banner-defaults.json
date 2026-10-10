@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "slides": [
+    {
+      "title": "Custom Water Bottles",
+      "highlight": "Built for Your Brand.",
+      "description": "Explore sports, kids, large capacity and shaker bottles with factory-backed supply and project-specific branding options.",
+      "img": "/assets/curated-hd/gradient-sports.webp",
+      "alt": "Colorful gradient plastic sports bottle collection",
+      "link": "/products/",
+      "cta": "Explore Our Products →",
+      "translations": {
+        "es": {
+          "title": "Botellas personalizadas",
+          "highlight": "para su marca.",
+          "description": "Descubra botellas deportivas, infantiles, de gran capacidad y shakers con suministro directo de fábrica y opciones de personalización.",
+          "alt": "Colección de botellas deportivas de XUYI con colores degradados",
+          "cta": "Explorar productos →"
+        },
+        "pt": {
+          "title": "Garrafas personalizadas",
+          "highlight": "para a sua marca.",
+          "description": "Conheça garrafas esportivas, infantis, de grande capacidade e coqueteleiras, com fornecimento direto de fábrica e personalização.",
+          "alt": "Coleção de garrafas esportivas XUYI em cores degradê",
+          "cta": "Explorar produtos →"
+        },
+        "ru": {
+          "title": "Бутылки на заказ",
+          "highlight": "для вашего бренда.",
+          "description": "Спортивные и детские бутылки, ёмкости большого объёма и шейкеры с производством и индивидуальным брендированием под ваш проект.",
+          "alt": "Коллекция спортивных бутылок XUYI с градиентными цветами",
+          "cta": "Смотреть продукцию →"
+        },
+        "tr": {
+          "title": "Markanıza özel",
+          "highlight": "su şişeleri.",
+          "description": "Fabrikadan tedarik ve projeye özel markalama seçenekleriyle spor, çocuk, büyük hacimli ve shaker şişeleri keşfedin.",
+          "alt": "XUYI degrade renkli sporcu şişesi koleksiyonu",
+          "cta": "Ürünleri keşfet →"
+        }
+      }
+    },
+    {
+      "title": "Plastic Sports Bottles",
+      "highlight": "For Every Collection.",
+      "description": "Compare carry-handle styles, colorful bottle shapes and source catalog models for wholesale buyers.",
+      "img": "/assets/curated-hd/outdoor-lifestyle.webp",
+      "alt": "Colorful sports bottles arranged for outdoor activities",
+      "link": "/collections/sports-water-bottles/",
+      "cta": "See Sports Bottles →",
+      "translations": {
+        "es": {
+          "title": "Botellas deportivas de plástico",
+          "highlight": "para cada colección.",
+          "description": "Compare asas, diseños de colores y modelos del catálogo para compras al por mayor.",
+          "alt": "Surtido de botellas deportivas de plástico XUYI",
+          "cta": "Ver botellas deportivas →"
+        },
+        "pt": {
+          "title": "Garrafas esportivas de plástico",
+          "highlight": "para cada coleção.",
+          "description": "Compare estilos de alça, formatos coloridos e modelos de catálogo para atacadistas.",
+          "alt": "Seleção de garrafas esportivas de plástico XUYI",
+          "cta": "Ver garrafas esportivas →"
+        },
+        "ru": {
+          "title": "Пластиковые спортивные бутылки",
+          "highlight": "для вашего ассортимента.",
+          "description": "Сравните ручки для переноски, расцветки и модели из каталога для оптовых закупок.",
+          "alt": "Ассортимент спортивных пластиковых бутылок XUYI",
+          "cta": "Спортивные бутылки →"
+        },
+        "tr": {
+          "title": "Plastik sporcu şişeleri",
+          "highlight": "her koleksiyon için.",
+          "description": "Toptan alımlar için taşıma saplarını, renkli tasarımları ve katalog modellerini karşılaştırın.",
+          "alt": "XUYI plastik sporcu şişesi çeşitleri",
+          "cta": "Sporcu şişelerini gör →"
+        }
+      }
+    },
+    {
+      "title": "Custom Drinkware",
+      "highlight": "Designed Around You.",
+      "description": "Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.",
+      "img": "/assets/curated-hd/customizable-assortment.webp",
+      "alt": "Plastic water bottle color and lid variants for customization",
+      "link": "/capabilities/",
+      "cta": "View Customization →",
+      "translations": {
+        "es": {
+          "title": "Artículos para bebidas personalizados",
+          "highlight": "pensados para usted.",
+          "description": "Consulte opciones de logotipo, embalaje, modelos y muestras para su proyecto B2B.",
+          "alt": "Surtido de botellas de plástico con diferentes colores y tapas",
+          "cta": "Ver personalización →"
+        },
+        "pt": {
+          "title": "Garrafas personalizadas",
+          "highlight": "pensadas para você.",
+          "description": "Converse sobre logotipo, embalagem, modelos e amostras para seu projeto B2B.",
+          "alt": "Seleção de garrafas de plástico com diferentes cores e tampas",
+          "cta": "Ver personalização →"
+        },
+        "ru": {
+          "title": "Бутылки с вашим дизайном",
+          "highlight": "для вашего проекта.",
+          "description": "Обсудите нанесение логотипа, упаковку, модели и образцы для вашего B2B-проекта.",
+          "alt": "Ассортимент пластиковых бутылок разных цветов и с разными крышками",
+          "cta": "Варианты персонализации →"
+        },
+        "tr": {
+          "title": "Özel tasarım içecek ürünleri",
+          "highlight": "sizin için tasarlandı.",
+          "description": "B2B projeniz için logo, ambalaj, modeller ve numune gereksinimlerini görüşün.",
+          "alt": "Farklı renk ve kapak seçeneklerine sahip plastik su şişeleri",
+          "cta": "Özelleştirme seçenekleri →"
+        }
+      }
+    }
+  ]
+}

@@ -30,7 +30,10 @@ for locale in ("", "es", "pt", "ru", "tr"):
  for src in approved:
   assert html.count(src)>=1,(name,"Missing managed HQ menu/hero image",src)
   assert (dist/src.lstrip("/")).is_file(),(name,"missing local image asset",src)
- assert re.search(r'<img src="/assets/curated-hd/gradient-sports.webp" id="hero-image"',html)
+ banner=re.search(r'<script type="application/json" id="xuyi-home-banners">([^<]+)</script>',html)
+ assert banner,("Missing approved homepage banner settings",name)
+ expected=json.loads(banner.group(1))[0]["img"]
+ assert re.search(r'<img\b(?=[^>]*\bid="hero-image")(?=[^>]*\bsrc="'+re.escape(expected)+r'")[^>]*>',html),(name,"First-frame image differs from the D1 approved banner")
  assert "src=\"/media/ppt/slide-091.webp\" id=\"hero-image\"" not in html
  checked+=1
 # Original catalog model photos must be unchanged. New images are exclusively

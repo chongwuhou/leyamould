@@ -3,7 +3,7 @@
  const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
  const $=id=>document.getElementById(id);
  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- let state={},tab="brand",dirty=false;
+ let state={},tab="brand",dirty=false,bannerLocale="en";
  const say=v=>{$("content-status").textContent=v};
  async function api(route,body){
   if(!token())throw Error("请先登录后台");
@@ -18,8 +18,13 @@
  async function load(){
   say("正在读取旭一 D1 …");
   try{
-   const results=await Promise.all(["brand-config","site-config","pages","product-content","page-translations","page-content"].map(x=>api(x)));
-   [state.brand,state.site,state.pages,state.products,state.locales,state.pageBodies]=results;
+   const results=await Promise.all(["brand-config","site-config","pages","product-content","page-translations","page-content","home-banners"].map(x=>api(x)));
+   [state.brand,state.site,state.pages,state.products,state.locales,state.pageBodies,state.banners]=results;
+   const defaults=await fetch("/assets/home-banner-defaults.json",{cache:"no-store"});
+   if(!defaults.ok)throw Error("Banner defaults unavailable");
+   const source=await defaults.json();
+   state.bannerDraft=structuredClone(state.banners?.config||source);
+
    dirty=false;say("已读取 D1，修改后需要保存。未审核内容不会自动公开。");
    render();
   }catch(e){say("读取失败："+e.message)}
@@ -38,6 +43,34 @@
     field("phoneE164",c.phoneE164,"WhatsApp 号码（国际格式 +86…）")+
     field("footerAbout",footer.about,"页脚介绍",3)+
     button("保存品牌并排队发布","brand");
+  }
+  if(tab==="banners"){
+   const items=state.bannerDraft?.slides||[];
+   const options=[["en","English"],["es","Español"],["pt","Português"],["ru","Русский"],["tr","Türkçe"]];
+   html='<h3>首页 3 张 Banner · 统一图片和链接</h3>'+
+     '<p>修改后保存至 D1，并等待现有自动发布。五语使用同一图片及跳转地址；标题、说明、按钮文字分别维护，避免翻译混用。图片请先在 07 R2 媒体库上传后复制地址；也支持当前已有 /assets/ 图片。</p>'+
+     '<label class="block-label">当前编辑语言 <select id="cms-banner-language">'+
+       options.map(([code,label])=>'<option value="'+code+'"'+(code===bannerLocale?' selected':'')+'>'+label+'</option>').join("")+'</select></label>';
+   for(let i=0;i<items.length;i++){
+    const item=items[i],copy=bannerLocale==="en"?item:item.translations?.[bannerLocale]||{};
+    html+='<section style="padding:14px 0;border-bottom:1px solid #ddd"><h4>Banner '+(i+1)+'</h4>';
+    if(bannerLocale==="en"){
+     html+=field("b"+i+"-img",item.img,"高清图片路径（R2 /media/... 或现有 /assets/...）")+
+       '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0">'+
+       '<img data-banner-preview="'+i+'" src="'+esc(item.img)+'" alt="Banner '+(i+1)+' 当前图片" style="width:180px;height:110px;object-fit:contain;border:1px solid #ddd;border-radius:8px">'+
+       '<input data-banner-upload="'+i+'" type="file" accept="image/jpeg,image/png,image/webp" aria-label="上传第 '+(i+1)+' 张 Banner 图">'+
+       '<button type="button" class="btn ghost" data-banner-upload-btn="'+i+'">上传图片并使用</button></div>'+
+       field("b"+i+"-link",item.link,"图片与按钮共同跳转的链接（站内 /路径/ 或 HTTPS）");
+    }
+    html+=field("b"+i+"-title",copy.title,"标题（常规部分）")+
+       field("b"+i+"-highlight",copy.highlight,"标题（强调部分）")+
+       field("b"+i+"-description",copy.description,"Banner 说明",3)+
+       field("b"+i+"-cta",copy.cta,"按钮显示文字")+
+       field("b"+i+"-alt",copy.alt,"图片描述（ALT）")+
+       '<p><small>图片：'+esc(item.img)+'　链接：'+esc(item.link)+'</small></p></section>';
+   }
+   html+='<p>保存前，请核对四语标题和按钮文字；修改图片与跳转地址会同步影响五种语言。</p>'+
+    button("保存 3 张 Banner 并等待发布","banners");
   }
   if(tab==="navigation"){
    html='<h3>导航与跳转管理</h3><p>数组字段与德玛隆 site-config CMS 一致。仅允许网站实际路径或经核准的外链，编辑前请核对目标 URL。</p>'+
@@ -107,6 +140,39 @@
     button("审核完成并保存","locale-save");
   }
   container.innerHTML=html;
+  if(tab==="banners"){
+   for(let i=0;i<3;i++){
+    container.querySelector('[data-banner-upload-btn="'+i+'"]')?.addEventListener("click",async event=>{
+     const file=container.querySelector('[data-banner-upload="'+i+'"]')?.files?.[0];
+     if(!file){say("请先选择第 "+(i+1)+" 张新图片");return}
+     if(file.size>6*1024*1024){say("单张图片不能超过 6MB");return}
+     const uploadButton=event.currentTarget;uploadButton.disabled=true;say("正在上传 Banner "+(i+1)+" 到旭一 R2…");
+     try{
+      const body=new FormData();body.set("kind","shared");body.set("image",file);
+      const response=await fetch("/api/admin/media",{method:"POST",
+       headers:{"authorization":"Bearer "+token()},body,cache:"no-store"});
+      const saved=await response.json().catch(()=>({}));
+      if(!response.ok||!saved.path)throw Error(saved.error||"上传失败");
+      state.bannerDraft.slides[i].img=saved.path;
+      const input=container.querySelector('[data-cms-field="b'+i+'-img"]');
+      if(input)input.value=saved.path;
+      const preview=container.querySelector('[data-banner-preview="'+i+'"]');
+      if(preview)preview.src=saved.path;
+      say("Banner "+(i+1)+" 图片已上传，尚需点击「保存 3 张 Banner」才会更新官网。");
+     }catch(error){say("上传失败："+error.message)}
+     finally{uploadButton.disabled=false}
+    });
+   }
+   $("cms-banner-language")?.addEventListener("change",event=>{
+    collectBannerFields();
+    bannerLocale=event.target.value;
+    render();
+   });
+   for(let i=0;i<3;i++)container.querySelector('[data-cms-field="b'+i+'-img"]')?.addEventListener("change",event=>{
+    const row=state.bannerDraft?.slides?.[i];if(row)row.img=event.target.value.trim();
+   });
+  }
+
   container.querySelectorAll("[data-cms-action]").forEach(el=>el.addEventListener("click",()=>save(el.dataset.cmsAction)));
   if(tab==="pages"){
    const input=$("cms-route-filter"),sel=$("cms-route");
@@ -167,12 +233,30 @@
    const el=document.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=x?.content?.[field]||"";
   }
  }
+ function collectBannerFields(){
+  if(tab!=="banners")return;
+  for(let i=0;i<3;i++){
+   const row=state.bannerDraft?.slides?.[i];if(!row)continue;
+   if(bannerLocale==="en"){
+    row.img=value("b"+i+"-img");
+    row.link=value("b"+i+"-link");
+   }
+   const target=bannerLocale==="en"?row:(row.translations?.[bannerLocale]||{});
+   for(const k of ["title","highlight","description","alt","cta"])
+    target[k]=value("b"+i+"-"+k);
+   if(bannerLocale!=="en")row.translations[bannerLocale]=target;
+  }
+ }
  const value=(name)=>document.querySelector('#content-form [data-cms-field="'+name+'"]')?.value?.trim()||"";
  async function save(action){
   say("正在验证并保存到 XUYI D1 …");
   try{
    let result;
-   if(action==="brand"){
+   if(action==="banners"){
+    collectBannerFields();
+    if(!window.confirm("确认 3 张 Banner 的图片、按钮链接和五语文案均已检查？保存后进入 D1 定时发布队列。"))return;
+    result=await api("home-banners",{config:state.bannerDraft});
+   }else if(action==="brand"){
     const b=structuredClone(state.brand.config);
     b.identity={...(b.identity||{}),displayName:value("displayName"),legalName:value("legalName")};
     b.contact={...(b.contact||{}),email:value("email"),phoneE164:value("phoneE164"),whatsappUrl:"https://wa.me/"+value("phoneE164").replace(/\D/g,"")};
@@ -229,7 +313,7 @@
    await load();
   }catch(e){say("保存失败："+e.message)}
  }
- for(const tabName of ["brand","navigation","pages","page-body","products","new-product","locales"]){
+ for(const tabName of ["brand","banners","navigation","pages","page-body","products","new-product","locales"]){
   $("content-tab-"+tabName)?.addEventListener("click",()=>{tab=tabName;render();});
  }
  $("content-load")?.addEventListener("click",load);

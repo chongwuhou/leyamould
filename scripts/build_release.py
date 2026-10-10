@@ -83,6 +83,14 @@ def main():
     # Demalong V1.4 reports the true production data origin, not merely
     # whether a D1 API was reachable. Empty D1 tables mean source fallback.
     state=json.loads(snapshot.read_text(encoding="utf-8")) if snapshot.is_file() else {}
+    # A saved D1 Banner image must exist in the published static artifact.
+    # /media references are verified by the authenticated CMS before saving.
+    sys.path.insert(0,str(ROOT))
+    from home_banner_config import config_for
+    for slide in config_for(state)["slides"]:
+        path=slide["img"]
+        if path.startswith("/assets/") and not (DIST/path.lstrip("/")).is_file():
+            fail("Missing homepage banner asset: "+path)
     sources={
         "brand":"cloudflare-d1:site_state.brand_config" if state.get("brand") else "source-fallback:brand",
         "navigation":"cloudflare-d1:site_navigation" if state.get("navigation") else "source-fallback:curated-navigation",

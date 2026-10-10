@@ -865,3 +865,6 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
  .svc-quality__item img{height:240px;min-height:0}
  .svc-next__two>div{padding:19px}
 }
+\n/* XUYI shared footer: contacts in former Quick Links column, legal at bottom right. */\n.footer__contact p{margin:5px 0}.footer__contact a{overflow-wrap:anywhere}.footer__bottom{align-items:center}.footer__legal{display:inline-flex;align-items:center;gap:9px;justify-content:flex-end;white-space:nowrap}.footer__legal a{font-size:12px}.footer__legal>span{color:#777}\n@media(max-width:700px){.footer__bottom{flex-wrap:wrap;gap:12px}.footer__legal{width:100%;justify-content:flex-start}}\n
+/* Images in homepage carousels share the approved CTA destination. */
+.hero__art-link{display:block;width:100%;height:100%}.hero__art-link img{display:block;width:100%;height:100%;object-fit:contain}
