@@ -871,3 +871,30 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
 
 /* Keep eight primary links and the language switch accessible before the mobile breakpoint. */
 @media(min-width:1051px) and (max-width:1240px){.nav{gap:9px}.header__inner{gap:12px}.header__actions{gap:7px}}
+
+/* XUYI desktop header rhythm: retain logo size, move navigation toward logo.
+   Distribute spare room between navigation and the right-side actions,
+   rather than leaving a large unused gap between logo and Home. */
+@media(min-width:1051px){
+ .header__inner{justify-content:flex-start}
+ .header__inner>.logo,.header__inner>.header__actions{flex-shrink:0}
+ .header__inner>.nav{margin-left:clamp(12px,2.7vw,48px);margin-right:auto;flex-shrink:0}
+}
+@media(min-width:1241px) and (max-width:1450px){
+ .header__inner{gap:18px}
+ .header__inner>.nav{margin-left:12px;gap:10px}
+ .nav__link,.nav__toggle{font-size:12px}
+ .header__actions{gap:9px}
+ .header .button{padding-inline:14px}
+}
+@media(min-width:1051px) and (max-width:1240px){
+ .header__inner>.nav{margin-left:clamp(8px,1.2vw,16px)}
+}
+@media(min-width:1051px) and (max-width:1150px){
+ .header__inner{gap:5px}
+ .header__inner>.nav{margin-left:0;gap:7px}
+ .nav__link,.nav__toggle{font-size:11px;gap:4px}
+ .header__actions{gap:4px}
+ .header .button{padding-inline:6px}
+ .logo{font-size:34px}
+}
