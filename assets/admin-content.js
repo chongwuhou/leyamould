@@ -4,6 +4,8 @@
  const $=id=>document.getElementById(id);
  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  let state={},tab="brand",dirty=false,bannerLocale="en";
+ const requiredData={brand:"brand",banners:"bannerDraft",navigation:"site",pages:"pages",
+  "page-body":"pageBodies",products:"products","new-product":"products",locales:"locales"};
  const say=v=>{$("content-status").textContent=v};
  async function api(route,body){
   if(!token())throw Error("请先登录后台");
@@ -18,21 +20,37 @@
  async function load(){
   say("正在读取旭一 D1 …");
   try{
-   const results=await Promise.all(["brand-config","site-config","pages","product-content","page-translations","page-content","home-banners"].map(x=>api(x)));
-   [state.brand,state.site,state.pages,state.products,state.locales,state.pageBodies,state.banners]=results;
-   const defaults=await fetch("/assets/home-banner-defaults.json",{cache:"no-store"});
-   if(!defaults.ok)throw Error("Banner defaults unavailable");
-   const source=await defaults.json();
-   state.bannerDraft=structuredClone(state.banners?.config||source);
-
-   dirty=false;say("已读取 D1，修改后需要保存。未审核内容不会自动公开。");
+   const endpoints=[["brand-config","brand"],["site-config","site"],["pages","pages"],
+    ["product-content","products"],["page-translations","locales"],["page-content","pageBodies"],
+    ["home-banners","banners"]];
+   // A failed unrelated CMS endpoint must not disable Banner/new-product editing.
+   const results=await Promise.allSettled(endpoints.map(([route])=>api(route)));
+   const errors=[];
+   results.forEach((result,i)=>{
+    const [route,key]=endpoints[i];
+    if(result.status==="fulfilled")state[key]=result.value;
+    else{state[key]=null;errors.push(route+": "+result.reason.message)}
+   });
+   state.bannerDraft=null;
+   if(state.banners){
+    if(state.banners.config)state.bannerDraft=structuredClone(state.banners.config);
+    else{
+     try{
+      const defaults=await fetch("/assets/home-banner-defaults.json",{cache:"no-store"});
+      if(!defaults.ok)throw Error("Banner defaults unavailable");
+      state.bannerDraft=structuredClone(await defaults.json());
+     }catch(error){errors.push("Banner 默认设置: "+error.message)}
+    }
+   }
+   dirty=false;
+   say(errors.length?"部分模块读取失败（其他模块仍可使用）："+errors.join("；"):"已读取 D1，修改后需要保存。未审核内容不会自动公开。");
    render();
   }catch(e){say("读取失败："+e.message)}
  }
  function render(){
   const container=$("content-form");
   if(!container)return;
-  if(!state.brand){container.innerHTML="<p>请先点击「读取线上 D1 内容」。</p>";return}
+  if(!state[requiredData[tab]]){container.innerHTML="<p>当前栏目数据尚未读取成功，请点击「读取线上 D1 内容」重试；其他栏目可继续编辑。</p>";return}
   let html="";
   if(tab==="brand"){
    const b=state.brand.config||{},c=b.contact||{},id=b.identity||{},footer=b.footer||{};
@@ -314,7 +332,7 @@
   }catch(e){say("保存失败："+e.message)}
  }
  for(const tabName of ["brand","banners","navigation","pages","page-body","products","new-product","locales"]){
-  $("content-tab-"+tabName)?.addEventListener("click",()=>{tab=tabName;render();});
+  $("content-tab-"+tabName)?.addEventListener("click",()=>{tab=tabName;if(!state[requiredData[tab]])load();else render();});
  }
  $("content-load")?.addEventListener("click",load);
  document.querySelector('[data-admin-target="content"]')?.addEventListener("click",()=>{
