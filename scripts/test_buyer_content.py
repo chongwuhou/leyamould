@@ -32,5 +32,9 @@ for file in (DIST/"products").glob("*/index.html"):
     model=file.parent.name
     assert 'href="/contact/?model='+model+'&amp;type=Samples#inquiry"' in source,model
     assert 'product-detail__quote-note' in source,model
-assert 'html[lang="en"] .header__inner>.nav{margin-left:0}' in (DIST/"assets/site.css").read_text(encoding="utf-8")
+css=(DIST/"assets/site.css").read_text(encoding="utf-8")
+assert 'html[lang="en"] .header__inner>.nav{' in css
+assert 'margin-left:clamp(8px,2.7vw,48px)' in css
+assert 'gap:clamp(15px,2.4vw,38px)' in css
+assert 'html[lang="en"] .header__inner>.nav{margin-left:0}' not in css
 print("XUYI_BUYER_CONTENT_RELEASE_TESTS_PASSED: 4 categories, 3 paths, 85 product pages")
