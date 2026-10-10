@@ -107,7 +107,11 @@ for rel,html in all_published_documents():
             if locale!="en" and typ=="FAQPage":
                 errors.append((route,"English FAQ structured data incorrectly inherited"))
     records[expected]={"route":route,"locale":locale,"title":title,"description":desc,"hreflang":hrefs}
-assert len(records)>=675,(len(records),"unexpected public URL loss")
+expected_published=sum(len(manifest["routes"].get(code,[])) for code in LOCALES)
+if len(records)!=expected_published:
+    errors.append(("manifest","published URL coverage mismatch",len(records),expected_published))
+if len(manifest["routes"].get(manifest["defaultLocale"],[]))<130:
+    errors.append(("manifest","English source catalog unexpectedly lost pages"))
 for url,row in records.items():
     for language,alternate in row["hreflang"].items():
         if language=="x-default":continue

@@ -56,8 +56,11 @@ def approved_locales(state,require_resources=True):
         locales.append({"code":code,"pathPrefix":prefix,
                         "nativeName":str(row.get("nativeName") or row.get("displayName") or code),
                         "sortOrder":int(row.get("sortOrder",999))})
-    if not locales or locales[0]["code"]!=DEFAULT:
+    if not any(lang["code"]==DEFAULT for lang in locales):
         raise ValueError("Default English language must be enabled and publish-ready")
+    # D1 sortOrder is an editorial menu ordering preference. Moving the
+    # default language row below another locale must not abort the build.
+    locales.sort(key=lambda lang:(lang["code"]!=DEFAULT,lang["sortOrder"],lang["code"]))
     if require_resources:
         for name,path in _RESOURCES.items():
             resources=json.loads((ROOT/path).read_text(encoding="utf-8"))

@@ -275,6 +275,27 @@ def main():
             tags.append('<link rel="alternate" hreflang="x-default" href="'+ORIGIN+route+'">')
             content=content.replace('</head>',''.join(tags)+'</head>',1)
             link.write_text(content,encoding="utf-8")
+    # English-only new D1 products/articles must remain publishable BEFORE
+    # their foreign translations are approved. A self link + English default
+    # is safe; NEVER advertise a foreign locale without its real HTML page.
+    # Read the English sitemap rather than guessing source pages or admin URLs.
+    english_xml=(DIST/"sitemap.xml").read_text(encoding="utf-8")
+    published_prefixes={"/"+entry["pathPrefix"]+"/" for entry in ready if entry["pathPrefix"]}
+    english_urls=[
+        route for route in re.findall(r"<loc>"+re.escape(ORIGIN)+r"(/[^<]*)</loc>",english_xml)
+        if not any(route.startswith(prefix) for prefix in published_prefixes)
+    ]
+    for route in english_urls:
+        if route in alternates:continue
+        src=DIST/route.lstrip("/")/"index.html" if route!="/" else DIST/"index.html"
+        if not src.is_file():raise RuntimeError("English sitemap URL has no page: "+route)
+        content=src.read_text(encoding="utf-8")
+        tags=('<link rel="alternate" hreflang="en" href="'+ORIGIN+route+'">'
+              '<link rel="alternate" hreflang="x-default" href="'+ORIGIN+route+'">')
+        if '<link rel="alternate" hreflang=' in content:
+            if content.count(tags)==1:continue # an idempotent second renderer run
+            raise RuntimeError("Stale alternates on English-only route: "+route)
+        src.write_text(content.replace("</head>",tags+"</head>",1),encoding="utf-8")
     # Extend the existing English sitemap with *real* reviewed routes only.
     # The site-wide noindex gate is independent and remains unchanged.
     sitemap=DIST/"sitemap.xml"

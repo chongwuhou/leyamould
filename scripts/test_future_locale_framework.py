@@ -43,6 +43,10 @@ with tempfile.TemporaryDirectory(prefix="xuyi-future-locale-test-") as folder:
             file.parent.mkdir(parents=True,exist_ok=True)
             file.write_text(json.dumps(data,ensure_ascii=False),encoding="utf-8")
         assert [l["code"] for l in registry.approved_locales(state)]==["en",SOURCE]
+        # CMS display order may change without migrating the English root URL.
+        order=deepcopy(state)
+        order["languages"]["languages"][0]["sortOrder"]=300
+        assert [l["code"] for l in registry.approved_locales(order)]==["en",SOURCE]
         try:banner.config_for(state)
         except ValueError as error:assert "Missing reviewed fr banner text" in str(error),str(error)
         else:raise AssertionError("Missing reviewed Banner was not blocked")
@@ -62,7 +66,7 @@ with tempfile.TemporaryDirectory(prefix="xuyi-future-locale-test-") as folder:
         renderer.RUNTIME_UI_TRANSLATIONS[SOURCE]=deepcopy(source_runtime)
         renderer.CONTACT_FORM_TRANSLATIONS[SOURCE]=deepcopy(source_contact)
         dist=temp/"dist"
-        for route in ("index.html","about/index.html"):
+        for route in ("index.html","about/index.html","contact/index.html"):
             target=dist/route
             target.parent.mkdir(parents=True,exist_ok=True)
             source=(ROOT/"dist"/route).read_text(encoding="utf-8")
@@ -71,7 +75,8 @@ with tempfile.TemporaryDirectory(prefix="xuyi-future-locale-test-") as folder:
         (dist/"sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n'+
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
             '<url><loc>https://xuyibottles.com/</loc></url>'+
-            '<url><loc>https://xuyibottles.com/about/</loc></url></urlset>',encoding="utf-8")
+            '<url><loc>https://xuyibottles.com/about/</loc></url>'+
+            '<url><loc>https://xuyibottles.com/contact/</loc></url></urlset>',encoding="utf-8")
         fixture=temp/"reviewed-snapshot.json"
         fixture.write_text(json.dumps(state,ensure_ascii=False),encoding="utf-8")
         renderer.DIST=dist
@@ -97,6 +102,13 @@ with tempfile.TemporaryDirectory(prefix="xuyi-future-locale-test-") as folder:
         assert 'property="og:title" content="QA Locale /about/ | XUYI"' in localized
         assert '<loc>https://xuyibottles.com/fr/about/</loc>' in (dist/"sitemap.xml").read_text(encoding="utf-8")
         assert not (dist/SOURCE/"contact/index.html").exists()
+        english_only=(dist/"contact/index.html").read_text(encoding="utf-8")
+        assert 'hreflang="en" href="https://xuyibottles.com/contact/"' in english_only
+        assert 'hreflang="x-default" href="https://xuyibottles.com/contact/"' in english_only
+        assert 'hreflang="fr" href="https://xuyibottles.com/fr/contact/"' not in english_only
+        renderer.main()
+        assert (dist/"contact/index.html").read_text(encoding="utf-8").count(
+            'hreflang="en" href="https://xuyibottles.com/contact/"')==1
         assert "fr" not in [x["code"] for x in registry.approved_locales({
             **state,"languages":{**languages,"languages":[languages["languages"][0],
                 {**languages["languages"][1],"publishReady":False}]}})]
