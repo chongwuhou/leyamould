@@ -22,7 +22,7 @@ for model,product in site.SERIES.items():
     main=doc.split('<main id="main-content">',1)[1].split("</main>",1)[0]
     assert len(re.findall(r"<h1(?:\s[^>]*)?>",main))==1,model
     assert "{{" not in main and "}}" not in main,model
-    assert 'href="/request-sample/"' in main,model
+    assert 'href="/contact/?model='+product["slug"]+'&amp;type=Samples#inquiry"' in main,model
     assert 'href="/contact/?model='+product["slug"]+'#inquiry"' in main,model
     count+=1
 assert count==85,count
