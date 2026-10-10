@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "gallery": "D:\\bendigpt-WebCodex\\ai-shuibei\\图库",
+  "assets": [
+    {
+      "target": "/assets/curated-hd/gradient-sports.webp",
+      "sourceRelativeToUserGallery": "13/IMG_2142.png",
+      "sourceSha256": "ea79b8d180c63f1904080bcd3a2779758c6ec378e869a63473f3435575a26181",
+      "sourceDimensions": [
+        1500,
+        1500
+      ],
+      "outputBytes": 134552,
+      "pageUse": "generic-home-and-nav",
+      "category": "Plastic Water Bottles",
+      "alt": "Group of colorful gradient plastic sports water bottles",
+      "restrictions": "Only shared marketing/mega-menu/hero; do not use as an identified product model or verified factory photo."
+    },
+    {
+      "target": "/assets/curated-hd/feature-flip-top.webp",
+      "sourceRelativeToUserGallery": "10/IMG_8085.png",
+      "sourceSha256": "a4b869406e565e7b609730b9a99deab67ad78c5c908b6823e870d62e43c447f7",
+      "sourceDimensions": [
+        1500,
+        1500
+      ],
+      "outputBytes": 88004,
+      "pageUse": "generic-menu",
+      "category": "Bottle By Feature",
+      "alt": "Close-up of open flip-top drinking lids",
+      "restrictions": "Only shared marketing/mega-menu/hero; do not use as an identified product model or verified factory photo."
+    },
+    {
+      "target": "/assets/curated-hd/outdoor-lifestyle.webp",
+      "sourceRelativeToUserGallery": "5/LHP_3370.png",
+      "sourceSha256": "935be0fba419a8e5c32050ed4819ac65e6ee9430491ed481dc31a51bf80db8ca",
+      "sourceDimensions": [
+        1500,
+        1500
+      ],
+      "outputBytes": 352050,
+      "pageUse": "generic-menu-and-hero",
+      "category": "Bottle By Use",
+      "alt": "Sports drinking bottles in an outdoor activity setting",
+      "restrictions": "Only shared marketing/mega-menu/hero; do not use as an identified product model or verified factory photo."
+    },
+    {
+      "target": "/assets/curated-hd/customizable-assortment.webp",
+      "sourceRelativeToUserGallery": "10/IMG_8079.png",
+      "sourceSha256": "ec027d8bbeaa9bc89d4dfe82ee374e798cc0edc68b05d26e44c0be21d3554b2a",
+      "sourceDimensions": [
+        1500,
+        1500
+      ],
+      "outputBytes": 80428,
+      "pageUse": "generic-menu-and-hero",
+      "category": "OEM & Wholesale",
+      "alt": "Assortment of blank plastic bottle color styles",
+      "restrictions": "Only shared marketing/mega-menu/hero; do not use as an identified product model or verified factory photo."
+    }
+  ]
+}

@@ -112,9 +112,9 @@ if(cards.length){q?.addEventListener('input',()=>{page=1;render()});category?.ad
 const hero=document.querySelector('[data-hero]');
 if(hero){
  let slides=[
- {title:'Custom Water Bottles <span>Built for Your Brand.</span>',description:'Explore sports, kids, large capacity and shaker bottles with factory-backed supply and project-specific branding options.',img:'/media/ppt/slide-059.webp',alt:'XUYI gradient sports water bottle collection',link:'/products/',cta:'Explore Our Products →'},
- {title:'Plastic Sports Bottles <span>For Every Collection.</span>',description:'Compare carry-handle styles, colorful bottle shapes and source catalog models for wholesale buyers.',img:'/media/ppt/slide-037.webp',alt:'XUYI sports plastic bottle catalog assortment',link:'/collections/sports-water-bottles/',cta:'See Sports Bottles →'},
- {title:'Custom Drinkware <span>Designed Around You.</span>',description:'Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.',img:'/media/ppt/slide-091.webp',alt:'XUYI shaker bottle collection',link:'/capabilities/',cta:'View Customization →'}
+ {title:'Custom Water Bottles <span>Built for Your Brand.</span>',description:'Explore sports, kids, large capacity and shaker bottles with factory-backed supply and project-specific branding options.',img:'/assets/curated-hd/gradient-sports.webp',alt:'Colorful gradient plastic sports bottle collection',link:'/products/',cta:'Explore Our Products →'},
+ {title:'Plastic Sports Bottles <span>For Every Collection.</span>',description:'Compare carry-handle styles, colorful bottle shapes and source catalog models for wholesale buyers.',img:'/assets/curated-hd/outdoor-lifestyle.webp',alt:'Colorful sports bottles arranged for outdoor activities',link:'/collections/sports-water-bottles/',cta:'See Sports Bottles →'},
+ {title:'Custom Drinkware <span>Designed Around You.</span>',description:'Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.',img:'/assets/curated-hd/customizable-assortment.webp',alt:'Plastic water bottle color and lid variants for customization',link:'/capabilities/',cta:'View Customization →'}
  ];
  if(Array.isArray(runtimeUI.slides)&&runtimeUI.slides.length===slides.length){slides=slides.map((slide,i)=>({...slide,...runtimeUI.slides[i]}))}
  const title=hero.querySelector('#hero-title'),desc=hero.querySelector('#hero-description'),

@@ -139,6 +139,15 @@ def main():
         encoded=json.dumps(runtime,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
         prefix=prefix.replace("</head>",'<script type="application/json" id="xuyi-runtime-ui">'+encoded+"</script></head>",1)
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
+        # The homepage body is a D1-approved translation of previous English
+        # markup. Refresh ONLY the immutable generic hero image asset; leave
+        # all user-translated text and model photos unchanged.
+        if route=="/":
+            source='src="/media/ppt/slide-059.webp" id="hero-image"'
+            replacement='src="/assets/curated-hd/gradient-sports.webp" id="hero-image"'
+            if body.count(source)!=1:raise RuntimeError("Localized homepage hero source differs: "+loc)
+            body=body.replace(source,replacement)
+
         text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+body+'</main>'+translate_chrome(suffix,loc,ui)
         text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])
         text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)

@@ -43,7 +43,7 @@ def front():
   '<p id="hero-description">Explore sports, kids, large capacity and shaker bottles with factory-backed supply and project-specific branding options.</p>'
   '<a class="button button--round" id="hero-cta" href="/products/">Explore Our Products →</a>'
   '<p class="hero__note">Taizhou, China · Plastic drinkware · OEM/ODM inquiries</p></div>'
-  '<div class="hero__art"><img src="/media/ppt/slide-059.webp" id="hero-image" alt="XUYI colorful plastic water bottle collection" loading="eager" decoding="async"></div>'
+  '<div class="hero__art"><img src="/assets/curated-hd/gradient-sports.webp" id="hero-image" alt="XUYI colorful plastic water bottle collection" loading="eager" decoding="async"></div>'
   '<div class="hero__controls" role="group" aria-label="Select a banner slide">'
   '<button class="hero__dot active" data-hero-go="0" type="button" aria-label="Show slide 1 of 3" aria-pressed="true">01</button>'
   '<button class="hero__dot" data-hero-go="1" type="button" aria-label="Show slide 2 of 3" aria-pressed="false">02</button>'

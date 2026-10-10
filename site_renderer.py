@@ -120,27 +120,27 @@ def category_links():
  return [(nav.get("/collections/"+v[1]+"/") or v[0],"/collections/"+v[1]+"/") for v in CAT.values()]
 # Navigation mirrors the target's information architecture, while retaining XUYI-only products.
 PRODUCT_COLUMNS=[
- ("Plastic Water Bottles","/media/ppt/slide-059.webp",[
+ ("Plastic Water Bottles","/assets/curated-hd/gradient-sports.webp",[
  ("Sports Water Bottles","/collections/sports-water-bottles/"),
  ("Large Capacity Jugs","/collections/large-capacity-water-jugs/"),
  ("Kids Water Bottles","/collections/kids-water-bottles/"),
  ("Protein Shaker Bottles","/collections/plastic-shaker-bottles/"),
  ("All Plastic Bottle Models","/products/")]),
- ("Bottle By Feature","/media/ppt/slide-066.webp",[
+ ("Bottle By Feature","/assets/curated-hd/feature-flip-top.webp",[
  ("Straw Lid Bottles","/features/straw-lid/"),
  ("Flip Top Bottles","/features/flip-top/"),
  ("Carry Handle Bottles","/features/carry-handle/"),
  ("Large Capacity","/features/large-capacity/"),
  ("Gradient Colors","/features/gradient-colors/"),
  ("Custom Logo","/capabilities/custom-logo/")]),
- ("Bottle By Use","/media/ppt/slide-037.webp",[
+ ("Bottle By Use","/assets/curated-hd/outdoor-lifestyle.webp",[
  ("Gym & Sports","/applications/gym-sports/"),
  ("Outdoor & Travel","/applications/outdoor-travel/"),
  ("Kids & School","/applications/kids-school/"),
  ("Everyday Hydration","/applications/everyday-hydration/"),
  ("Promotional Gifts","/applications/promotional-gifts/"),
  ("Protein Shakers","/collections/plastic-shaker-bottles/")]),
- ("OEM & Wholesale","/media/ppt/slide-091.webp",[
+ ("OEM & Wholesale","/assets/curated-hd/customizable-assortment.webp",[
  ("Custom Water Bottles","/capabilities/custom-water-bottle/"),
  ("Custom Graphics","/capabilities/custom-graphics/"),
  ("Custom Packaging","/capabilities/custom-packaging/"),
