@@ -1,0 +1,55 @@
+{
+  "plastic-bottle-material-selection": {
+    "title": "Food-contact evidence: what buyers can actually check",
+    "insight": "A bottle is an assembly, not a single resin label. For a US-destination SKU, request the component formulation or material declarations, intended food-contact conditions and the applicable regulatory basis. FDA explains that the status of each food-contact substance matters; its published guidance does not certify any XUYI product.",
+    "next_step": "Request separate evidence for the bottle body, cap, straw, flexible seal, colorants and any food-contact decoration. Match each document to the product revision and intended use temperature.",
+    "sources": [
+      {"label":"US FDA: Determining the Regulatory Status of Components of a Food Contact Material","url":"https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"},
+      {"label":"EU Commission Regulation (EU) 2025/351, amendments to plastic food-contact rules","url":"https://eur-lex.europa.eu/eli/reg/2025/351/oj/eng"}
+    ]
+  },
+  "tritan-vs-pp-petg-pc": {
+    "title": "Why PC and BPA-free cannot simply be assumed together",
+    "insight": "A trade name or generic plastic abbreviation does not establish the chemical composition of a finished food-contact article. The EU has a specific BPA regulation updated in 2026. Check the currently applicable provisions and any transitional rules for your article and sale date; this is not evidence that a particular XUYI bottle meets them.",
+    "next_step": "Require exact resin grades and finished-article documents before replacing a PC specification with Tritan, PETG or another material. Review the product's components and intended contact conditions.",
+    "sources": [
+      {"label":"EU Regulation 2024/3190, consolidated text as of 23 February 2026","url":"https://eur-lex.europa.eu/eli/reg/2024/3190"},
+      {"label":"US FDA: Regulatory status of food-contact material components","url":"https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"}
+    ]
+  },
+  "bpa-free-plastic-water-bottle-sourcing": {
+    "title": "Check the market and the full assembly, not a BPA-free sticker",
+    "insight": "The EU's BPA regulation covers several classes of food-contact material, including plastics, and has been amended since its original publication. A BPA-free claim for a finished bottle must be verified against the actual applicable rules and supporting material evidence, not inferred from a photograph or a supplier's unrelated test report.",
+    "next_step": "For an EU inquiry, request the exact component materials, declaration of compliance and supporting information for the required market and use conditions; confirm the regulatory transition timetable for the product and transaction date.",
+    "sources": [
+      {"label":"EUR-Lex: Regulation (EU) 2024/3190 on BPA in food-contact materials (current consolidated text)","url":"https://eur-lex.europa.eu/eli/reg/2024/3190"},
+      {"label":"EUR-Lex: Regulation (EU) 2025/351, plastic food-contact requirements","url":"https://eur-lex.europa.eu/eli/reg/2025/351/oj/eng"}
+    ]
+  },
+  "kids-water-bottle-procurement": {
+    "title": "Children's bottle purchasing needs an end-use and market definition",
+    "insight": "A bottle sold for children is not proven suitable merely because it has a colorful design or a straw lid. Where food-contact requirements apply, the regulatory evaluation concerns the actual materials, their components and their intended use. Additional age- and jurisdiction-specific rules may also apply.",
+    "next_step": "Include intended user age, market, cap and strap components, cleaning instructions, material list and requested finished-product testing in the RFQ. Ask for SKU-specific reports rather than general factory certificates.",
+    "sources": [
+      {"label":"US FDA: Determining regulatory status of food-contact components","url":"https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"},
+      {"label":"EUR-Lex: 2025/351 update to EU plastic food-contact rules","url":"https://eur-lex.europa.eu/eli/reg/2025/351/oj/eng"}
+    ]
+  },
+  "water-bottle-quality-control-checklist": {
+    "title": "AQL is a sampling method, not a claim of zero defects",
+    "insight": "ISO 2859-1:2026 defines acceptance-sampling schemes for inspection by attributes. It helps specify an agreed sample plan; it does not prove that a factory is ISO-certified or that every bottle in a shipment is flawless. Quality acceptance also needs separately defined critical product and functional checks.",
+    "next_step": "Agree lot definition, severity of defects, inspection level, sample plan, cap/leak test method, carton acceptance and record of deviations before the pre-shipment inspection. Never insert arbitrary AQL thresholds into a quote.",
+    "sources": [
+      {"label":"ISO 2859-1:2026 — sampling schemes indexed by acceptance quality limit","url":"https://www.iso.org/cms/live/live/en/sites/isoorg/contents/data/standard/08/54/85464.html"},
+      {"label":"US FDA: food-contact components and regulatory verification","url":"https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"}
+    ]
+  },
+  "water-bottle-lid-leakproof-testing": {
+    "title": "Distinguish sampling plans from an actual lid leak test",
+    "insight": "ISO 2859-1 addresses attribute sampling, not a universal leakproof threshold or a prescribed bottle test orientation. The test method must define the SKU, lid assembly, fill level, water temperature, dwell time, orientation and pass/fail condition separately.",
+    "next_step": "Ask the supplier to document the leak-check procedure on a production-representative sample, record the gasket and closure design, and agree the inspection sampling plan for the lot.",
+    "sources": [
+      {"label":"ISO 2859-1:2026 — acceptance sampling for attributes","url":"https://www.iso.org/cms/live/live/en/sites/isoorg/contents/data/standard/08/54/85464.html"}
+    ]
+  }
+}
