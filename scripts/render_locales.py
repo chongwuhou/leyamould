@@ -104,6 +104,21 @@ def localized_contact_body(original, translated_body, locale):
     fallback=r'<section class="section"><div class="shell"><h2>[\s\S]*?</section>(?=</div></div></section>\s*$)'
     updated,count=re.subn(fallback,lambda _:form,translated_body,count=1)
     if count!=1:raise RuntimeError("Localized contact fallback block mismatch for "+locale)
+    # The D1-reviewed foreign-language body predates the visible-number design.
+    # Reuse the actual English contact number without changing the approved
+    # translation or weakening the safe-form/HTML checks.
+    source=re.search(r'<a\b(?=[^>]*\bdata-site-whatsapp-number\b)[^>]*>([^<]+)</a>',original_body)
+    number=re.search(r'\+\d[\d ]{7,}',html.unescape(source.group(1))) if source else None
+    if not number:raise RuntimeError("English contact WhatsApp number missing")
+    def add_number(match):
+        attrs=match.group(1)
+        if "data-site-whatsapp-number" not in attrs:attrs+=" data-site-whatsapp-number"
+        label=match.group(2).rstrip()
+        arrow=" →" if label.endswith("→") else ""
+        if arrow:label=label[:-1].rstrip()
+        return attrs+">"+label+" · "+html.escape(number.group(0).strip())+arrow+"</a>"
+    updated,count=re.subn(r'(<a\b(?=[^>]*\bdata-site-whatsapp\s)[^>]*)(?:>)([^<]+)</a>',add_number,updated,count=1)
+    if count!=1:raise RuntimeError("Translated contact WhatsApp link missing: "+locale)
     return updated
 
 def main():
