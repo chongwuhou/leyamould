@@ -64,7 +64,40 @@ def front():
  buyer='<section class="section"><div class="shell">'+sec("Built for Business Buyers","Product sourcing and customization for global trade.","Buyer Applications")+'<div class="grid grid--4">'+''.join(render_template("product-benefit",HEADING=e(t),DESCRIPTION=e(d)) for t,d in [("Importers","Select models and shipping configurations for your market."),("Wholesale Distributors","Browse reusable bottles by capacity, lid and material."),("Brands & Private Label","Explore custom logo, color and branded packaging options."),("Sports & Gift Buyers","Find sports, kids and shaker bottle designs for bulk projects.")])+'</div></div></section>'
  faq='<section class="section section--soft"><div class="shell">'+sec("Frequently Asked Questions","Answers to common questions from international purchasing teams.","FAQ")+faq_html(FAQS[:6])+'<p style="margin-top:25px"><a class="text-link" href="/faq/">Read All FAQs →</a></p></div></section>'
  blog=target_news_and_blogs()
- return hero+factory_intro_module()+bottle_collection_tabs()+target_why_choose()+interactive_bottle_customization()+materials_responsibility_module()+target_production_capacity()+dark_buyer_faq()+customer_logo_section()+blog
+ return hero+factory_intro_module()+bottle_collection_tabs()+buyer_project_paths()+target_why_choose()+interactive_bottle_customization()+materials_responsibility_module()+target_production_capacity()+dark_buyer_faq()+customer_logo_section()+blog
+def buyer_project_paths():
+ options=[
+  ("01","Browse Existing Models","Compare real catalog styles by capacity, shape, closure and intended market before requesting bulk pricing.","/products/","Explore Bottle Models →"),
+  ("02","Plan Custom Branding","Share the bottle model, expected quantity, logo artwork, color references and packaging brief so we can review feasible options.","/capabilities/custom-logo/","Review Branding Options →"),
+  ("03","Discuss Samples & Supply","Ask about a specific model and agree the sample, component materials, carton configuration and shipping destination before ordering.","/request-sample/","Plan a Sample Request →")
+ ]
+ cards=''.join('<a class="buyer-path" href="'+url+'"><span class="buyer-path__number">'+number+'</span><h3>'+e(title)+'</h3><p>'+e(desc)+'</p><span class="buyer-path__link">'+e(cta)+'</span></a>' for number,title,desc,url,cta in options)
+ return '<section class="section buyer-paths-section"><div class="shell">'+sec("Start with Your Buying Requirements","Choose the shortest route from product selection to a model-specific wholesale inquiry.","WHOLESALE BUYER GUIDE")+'<div class="buyer-paths">'+cards+'</div></div></section>'
+def catalog_buying_guide(category=None):
+ guides={
+  "Plastic Sports Water Bottles":[
+   ("Compare Closure Styles","Ask whether the exact model uses a straw, flip-top or direct-drink lid, and confirm included parts."),
+   ("Match Capacity & Handling","Compare the catalog-listed volume, overall dimensions, carry loop and target use."),
+   ("Plan Your Branding","Provide artwork, target colors and quantity; printing positions and feasibility depend on the chosen bottle.")],
+  "Large Capacity Water Jugs":[
+   ("Consider Filled Handling","Review the actual jug capacity, handle arrangement, cap fit and balance when filled."),
+   ("Confirm Outer Cartons","Ask for carton quantity, packing dimensions and delivery destination before comparing landed costs."),
+   ("Specify the Exact Variant","Check the mouthpiece, straw or lid configuration, which may differ between catalog photographs.")],
+  "Kids Plastic Water Bottles":[
+   ("Check Intended Age & Market","Confirm the target market, intended age range and relevant product requirements for the finished SKU."),
+   ("Review Removable Components","Ask about straw, gasket, cap and carrying-strap components and cleaning instructions."),
+   ("Confirm Materials & Evidence","Request model-specific body/lid material details and any required food-contact or children's product documents.")],
+  "Plastic Shaker Bottles":[
+   ("Verify Mixing Accessories","Ask if the selected SKU includes a mixing ball, mesh insert or other accessory."),
+   ("Compare Capacity & Markings","Check usable fill volume, lid design, measurement scale and cleaning access for the actual model."),
+   ("Prepare an OEM Brief","Share your logo artwork, order volume, colors and carton requirements to confirm custom options.")]
+ }
+ rows=guides.get(category) if category else [
+  ("Find Your Product Family","Explore sports bottles, large-volume jugs, children's styles and plastic fitness shakers."),
+  ("Identify the Exact Model","Use the model number to verify capacity, lid design, component materials and matching product images."),
+  ("Request a Comparable Quote","Include expected quantity, destination, customization and packaging so different options can be assessed.")]
+ cards=''.join(render_template("product-benefit",HEADING=e(title),DESCRIPTION=e(desc)) for title,desc in rows)
+ return '<section class="section section--soft catalog-buyer-guide"><div class="shell">'+sec("How to Choose Before You Order","These are buying checkpoints, not claims that every model has the same features or approvals.","B2B SOURCING NOTES")+'<div class="grid grid--3">'+cards+'</div><p class="catalog-buyer-guide__cta"><a class="button" href="/contact/#inquiry">Send Your Model & Requirements →</a><a class="text-link" href="/faq/">Read Wholesale Buying FAQs →</a></p></div></section>'
 def catalog(cat_name=None):
  if cat_name:
   title,slug,im,desc=CAT[cat_name]
@@ -74,6 +107,7 @@ def catalog(cat_name=None):
   arr=list(SERIES.values());heading="Explore All Plastic Water Bottles";subtitle="Browse sports water bottles, large capacity water jugs, kids bottles and shaker bottles."
  pagehtml=intro("Products" if not cat_name else "Products / "+CAT[cat_name][0],heading,subtitle)
  pagehtml+='<section class="section"><div class="shell"><div class="catalog-layout">'+catnav(CAT[cat_name][1] if cat_name else None)+'<div>'+filters(not cat_name)+product_grid(arr)+pagination()+'</div></div></div></section>'
+ pagehtml+=catalog_buying_guide(cat_name)
  pagehtml+='<section class="section section--soft"><div class="shell">'+sec("Wholesale & Custom Bottle Solutions","Ask about available colors, custom printing, branding and packing for the models that interest you.","OEM & CUSTOMIZATION")+features()+'</div></section>'
  pagehtml+='<section class="section"><div class="shell">'+sec("Wholesale Buying Questions","Contact XUYI with model number, quantity and destination.","Product FAQ")+faq_html(FAQS[:6])+'</div></section>'
  return pagehtml
@@ -220,7 +254,7 @@ def bottle_collection_tabs():
    else:spare.append(item)
   return (chosen+spare)[:8]
  content='<section class="kreat-collections" id="product-collections"><div class="shell">'
- content+='<div class="kreat-collections__heading"><span class="eyebrow">PLASTIC DRINKWARE</span><h2>Rocket Your Brand With <span>XUYI Bottles</span></h2></div>'
+ content+='<div class="kreat-collections__heading"><span class="eyebrow">PLASTIC DRINKWARE · SOURCE CATALOG</span><h2>Explore Plastic Bottles <span>for Your Market</span></h2><p>Compare sports, kids, large-capacity and shaker bottle models. Open any model to review its catalog details and request a product-specific wholesale quote.</p></div>'
  content+='<div class="kreat-collections__tabs" role="tablist" aria-label="Browse plastic bottle collections">'
  for i,(name,cat) in enumerate(names):
   content+='<button type="button" class="bottle-tab kreat-collections__tab'+(' active' if i==0 else '')+'" role="tab" id="bottle-tab-'+str(i)+'" aria-controls="bottle-panel-'+str(i)+'" aria-selected="'+('true' if i==0 else 'false')+'">'+e(name)+'</button>'
@@ -239,7 +273,7 @@ def bottle_collection_tabs():
  return content
 
 def materials_responsibility_module():
- return '<section class="section section--dark"><div class="shell"><div class="split"><div><span class="eyebrow">MATERIAL RESPONSIBILITY</span><h2 class="section__title">Better Reusable Bottle Projects Start with the Right Material.</h2><p class="copy-muted">We offer options in PC, Tritan, PP and PETG. Component materials vary by design, and we can discuss BPA-free options based on the selected model, intended use and destination market.</p><div class="material-options"><span>PC</span><span>Tritan</span><span>PP</span><span>PETG</span><span class="bpa">BPA-Free Options</span></div><div class="actions"><a class="button button--white" href="/quality-control/">Quality & Material Guidance →</a><a class="button button--outline" href="/blog/plastic-bottle-material-selection/">Read Material Guide ↗</a></div><p class="copy-muted" style="font-size:12px">BPA-free options are available on suitable material and product combinations; confirm the exact model.</p></div><div class="responsible-media">'+photo('/media/ppt/slide-066.webp','Reusable plastic drinking bottles from the original XUYI catalog')+'<div class="responsible-media__caption"><b>Reusable plastic drinkware</b><span>Review materials by model and component</span></div></div></div></div></section>'
+ return '<section class="section section--dark"><div class="shell"><div class="split"><div><span class="eyebrow">MATERIAL RESPONSIBILITY</span><h2 class="section__title">Better Reusable Bottle Projects Start with the Right Material.</h2><p class="copy-muted">Our source catalog lists PC and PP combinations on selected bottles. Body, lid, straw and gasket materials may differ. Tell us the exact model and destination market so the component specifications and any additional resin or food-contact requirements can be checked.</p><div class="material-options"><span>PC · Catalog Reference</span><span>PP · Catalog Reference</span><span>Component-Level Review</span><span class="bpa">Testing Upon Verification</span></div><div class="actions"><a class="button button--white" href="/quality-control/">Quality & Material Guidance →</a><a class="button button--outline" href="/blog/plastic-bottle-material-selection/">Read Material Guide ↗</a></div><p class="copy-muted" style="font-size:12px">Tritan, PETG, BPA-free and market-specific compliance claims must be confirmed for the actual model and materials; they are not assumed from a catalog photograph.</p></div><div class="responsible-media">'+photo('/media/ppt/slide-066.webp','Reusable plastic drinking bottles from the original XUYI catalog')+'<div class="responsible-media__caption"><b>Reusable plastic drinkware</b><span>Review materials by model and component</span></div></div></div></div></section>'
 
 def production_capability_module():
  points=[
