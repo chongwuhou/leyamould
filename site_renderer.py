@@ -148,9 +148,9 @@ MINI_MENUS={name:[(link["label"],link["url"]) for link in links]
 if len(PRODUCT_COLUMNS)!=4:raise ValueError("Expected four XUYI mega-menu categories")
 def header():
  navitems=[]
- defaults=["Home","Products","Capabilities","About","Why Us","Blog","Contact Us"]
+ defaults=["Home","Products","Capabilities","About","Why Us","Blog","FAQ","Contact Us"]
  top_urls={"Home":"/","Products":"/products/","Capabilities":"/capabilities/",
-           "About":"/about/","Why Us":"/why-us/","Blog":"/blog/","Contact Us":"/contact/"}
+           "About":"/about/","Why Us":"/why-us/","Blog":"/blog/","FAQ":"/faq/","Contact Us":"/contact/"}
  nav_rows=BUILD_STATE.get("navigation",[])
  def custom_children(parent):
   """Keep new D1 child rows inside the parent's existing menu; no new columns."""
@@ -173,10 +173,13 @@ def header():
  if sorted_names:
   sorted_names.sort(key=lambda name:(int(by_url[top_urls[name]].get("sort_order",999)),defaults.index(name)))
  else:sorted_names=defaults
+ # FAQ was accidentally dropped when Quick Links was removed. Keep it present
+ # even on older D1 navigation snapshots that do not yet contain an FAQ row.
+ if "FAQ" not in sorted_names:sorted_names.append("FAQ")
  for name in defaults:
   if name=="Home":navitems.append('<a class="nav__link" href="/">Home</a>')
-  elif name in ("About","Blog","Contact Us"):
-   uri={"About":"/about/","Blog":"/blog/","Contact Us":"/contact/"}[name]
+  elif name in ("About","Blog","FAQ","Contact Us"):
+   uri={"About":"/about/","Blog":"/blog/","FAQ":"/faq/","Contact Us":"/contact/"}[name]
    navitems.append('<a class="nav__link" href="'+uri+'">'+name+'</a>')
   elif name=="Products":
    cols=[]
@@ -224,7 +227,7 @@ def header():
   known_urls={u for _,u in MINI_MENUS[nav_name]}
   submenu+="".join(safe_extra(row) for row in custom_children({"Capabilities":"capabilities","Why Us":"why-us"}[nav_name]) if row.get("url") not in known_urls)
   mobile_parts[nav_name]='<details><summary>'+e(labels[nav_name])+'</summary>'+submenu+'</details>'
- for nav_name in ("About","Blog","Contact Us"):
+ for nav_name in ("About","Blog","FAQ","Contact Us"):
   mobile_parts[nav_name]='<a href="'+top_urls[nav_name]+'">'+e(labels[nav_name])+'</a>'
  mobile=''.join(mobile_parts[k] for k in sorted_names)
  # Let D1 append genuine, approved top-level links to both menus. The

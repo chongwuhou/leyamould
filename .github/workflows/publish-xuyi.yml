@@ -106,6 +106,7 @@ jobs:
         run: |
           python scripts/test_release.py
           python scripts/test_shared_templates.py
+          python scripts/test_faq_access.py
           python scripts/test_home_banners.py
           node scripts/test_home_banners_api.mjs
           python scripts/test_single_product_module.py

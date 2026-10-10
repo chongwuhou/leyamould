@@ -35,11 +35,12 @@ try:
     site.BUILD_STATE["navigation"]=[
       {"id":"home","url":"/","label":"Home","parent_id":"","sort_order":10},
       {"id":"products","url":"/products/","label":"Products","parent_id":"","sort_order":20},
-      {"id":"sample-extra","url":"/faq/","label":"Sample Options",
+      {"id":"sample-extra","url":"/privacy-policy/","label":"Sample Options",
        "parent_id":"","sort_order":75,"new_window":False}
     ]
     changed=site.header()
     assert "Sample Options" not in header
+    assert header.count('href="/faq/"')==2, "FAQ must exist in primary desktop and mobile navigation"
     assert changed.count(">Sample Options</a>")==2, "Custom D1 nav must reach desktop and mobile"
     assert '<div class="mega" id="menu-products">' in changed
 finally:
