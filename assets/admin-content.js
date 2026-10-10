@@ -67,6 +67,28 @@
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
    button("保存产品到 D1","product");
   }
+  if(tab==="new-product"){
+   const cats=state.products?.categories||[];
+   const existing=(state.products?.items||[]).filter(row=>row.content?.newProduct);
+   html='<h3>创建或修改单个商品</h3><p>不做批量导入。先保存 D1 草稿，确认真实型号、材质、容量、图片和说明后再发布。正式发布生成英文商品页；其他语言只有经过对应译文审核才会生成。不会自动复制英文充当翻译。</p>'+
+    '<label class="block-label">已保存的新增商品（可选） <select id="cms-new-existing"><option value="">+ 新建单个商品</option>'+
+      existing.map(item=>'<option value="'+esc(item.model)+'">'+esc(item.model)+' · '+esc(item.status)+'</option>').join("")+'</select></label>'+
+    field("model","","新商品型号 / URL 标识（小写英文字母、数字和短横线；例如 bottle-9001）")+
+    '<label class="block-label">产品类别 <select data-cms-field="category">'+
+      cats.map(label=>'<option value="'+esc(label)+'">'+esc(label)+'</option>').join("")+'</select></label>'+
+    field("name","","英文产品名称（真实名称，不能编造）")+
+    field("capacity","","容量（如 750ml；必须实测或确认）")+
+    field("material","","材质（如 PP；必须核实）")+
+    field("colors","","颜色选项（可选）")+
+    field("packing","","包装信息（可选）")+
+    field("image","","R2 产品主图路径（先在 R2 图片管理上传，必须存在）")+
+    field("description","","英文产品说明（按实际产品填写）",5)+
+    field("seoTitle","","SEO Title（最多 90 字符）")+
+    field("seoDescription","","Meta Description（最多 240 字符）",3)+
+    '<label class="block-label">保存状态 <select data-cms-field="status"><option value="draft">只存草稿，不生成页面</option><option value="published">资料核实完成，进入自动发布队列</option></select></label>'+
+    '<p>页面路径：/products/型号/。新产品复用现有列表、详情、图片、SEO 与 R2 溢出模板，无须单独编辑 HTML。</p>'+
+    button("保存单个新商品","new-product");
+  }
   if(tab==="page-body"){
    html='<h3>普通页面正文管理</h3><p>管理 About、Why Us、Capabilities 等页面；Blog 与产品详情各用其自身编辑器。草稿不影响前台，审核后发布才会覆盖现有页面主内容。</p>'+
     '<label class="block-label">英文原始页面 <select id="cms-page-body-route"></select></label>'+
@@ -102,6 +124,19 @@
     for(const [key,val] of Object.entries(entry.content||{})){const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=val;}
     container.querySelector('[data-cms-field="status"]').value=entry.status;});
   } 
+  if(tab==="new-product"){
+   const select=$("cms-new-existing");
+   select.addEventListener("change",()=>{
+    const entry=(state.products?.items||[]).find(row=>row.model===select.value&&row.content?.newProduct);
+    const keys=["model","name","capacity","material","colors","packing","image","description","seoTitle","seoDescription"];
+    for(const key of keys){
+     const element=container.querySelector('[data-cms-field="'+key+'"]');
+     if(element)element.value=entry?(key==="model"?entry.model:entry.content[key]||""):"";
+    }
+    container.querySelector('[data-cms-field="status"]').value=entry?.status||"draft";
+    if(entry)container.querySelector('[data-cms-field="category"]').value=entry.content.category;
+   });
+  }
   if(tab==="page-body"){
    const routes=$("cms-page-body-route");
    routes.innerHTML=(state.pageBodies?.editableRoutes||[]).map(route=>'<option value="'+esc(route)+'">'+esc(route)+'</option>').join("");
@@ -113,7 +148,14 @@
   }
   if(tab==="locales"){
    const selector=$("cms-locale-route");
-   selector.innerHTML=(state.pages.pages||[]).map(x=>'<option value="'+esc(x.route)+'">'+esc(x.route+" · "+x.label)+'</option>').join("");
+   const pages=[...(state.pages.pages||[])];
+   for(const entry of state.products?.items||[]){
+    if(entry.content?.newProduct&&entry.status==="published"){
+     const route="/products/"+entry.model+"/";
+     if(!pages.some(p=>p.route===route))pages.push({route,label:entry.content.name||entry.model});
+    }
+   }
+   selector.innerHTML=pages.map(x=>'<option value="'+esc(x.route)+'">'+esc(x.route+" · "+x.label)+'</option>').join("");
    selector.onchange=fillLocale;$("cms-locale").onchange=fillLocale;fillLocale();
   }
 
@@ -145,6 +187,14 @@
     const target=rows.find(x=>x.route===selected);if(!target)throw Error("请先选择页面");
     target.seoTitle=value("seoTitle");target.metaDescription=value("seoDescription");
     result=await api("pages",{action:"save_pages",pages:rows});
+   }else if(action==="new-product"){
+    const status=value("status");
+    if(status==="published"&&!window.confirm("请确认容量、材质、产品图片属于真实型号；确认后保存 D1 并排队生成英文产品页。四语译文需要另外审核。"))return;
+    const content={category:value("category"),name:value("name"),material:value("material"),
+      capacity:value("capacity"),colors:value("colors"),packing:value("packing"),
+      image:value("image"),description:value("description"),
+      seoTitle:value("seoTitle"),seoDescription:value("seoDescription")};
+    result=await api("product-content",{action:"create_product",model:value("model"),status,content});
    }else if(action==="product"){
     result=await api("product-content",{action:"save_product",model:value("model"),
      status:value("status"),content:{name:value("name"),material:value("material"),capacity:value("capacity"),
@@ -179,7 +229,7 @@
    await load();
   }catch(e){say("保存失败："+e.message)}
  }
- for(const tabName of ["brand","navigation","pages","page-body","products","locales"]){
+ for(const tabName of ["brand","navigation","pages","page-body","products","new-product","locales"]){
   $("content-tab-"+tabName)?.addEventListener("click",()=>{tab=tabName;render();});
  }
  $("content-load")?.addEventListener("click",load);

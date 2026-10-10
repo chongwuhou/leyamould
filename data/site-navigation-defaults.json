@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "description": "Default XUYI category and submenu structure; D1 site_navigation manages published labels/order/extra links",
+  "productColumns": [
+    {
+      "heading": "Plastic Water Bottles",
+      "image": "/assets/curated-hd/gradient-sports.webp",
+      "links": [
+        {
+          "label": "Sports Water Bottles",
+          "url": "/collections/sports-water-bottles/"
+        },
+        {
+          "label": "Large Capacity Jugs",
+          "url": "/collections/large-capacity-water-jugs/"
+        },
+        {
+          "label": "Kids Water Bottles",
+          "url": "/collections/kids-water-bottles/"
+        },
+        {
+          "label": "Protein Shaker Bottles",
+          "url": "/collections/plastic-shaker-bottles/"
+        },
+        {
+          "label": "All Plastic Bottle Models",
+          "url": "/products/"
+        }
+      ]
+    },
+    {
+      "heading": "Bottle By Feature",
+      "image": "/assets/curated-hd/feature-flip-top.webp",
+      "links": [
+        {
+          "label": "Straw Lid Bottles",
+          "url": "/features/straw-lid/"
+        },
+        {
+          "label": "Flip Top Bottles",
+          "url": "/features/flip-top/"
+        },
+        {
+          "label": "Carry Handle Bottles",
+          "url": "/features/carry-handle/"
+        },
+        {
+          "label": "Large Capacity",
+          "url": "/features/large-capacity/"
+        },
+        {
+          "label": "Gradient Colors",
+          "url": "/features/gradient-colors/"
+        },
+        {
+          "label": "Custom Logo",
+          "url": "/capabilities/custom-logo/"
+        }
+      ]
+    },
+    {
+      "heading": "Bottle By Use",
+      "image": "/assets/curated-hd/outdoor-lifestyle.webp",
+      "links": [
+        {
+          "label": "Gym & Sports",
+          "url": "/applications/gym-sports/"
+        },
+        {
+          "label": "Outdoor & Travel",
+          "url": "/applications/outdoor-travel/"
+        },
+        {
+          "label": "Kids & School",
+          "url": "/applications/kids-school/"
+        },
+        {
+          "label": "Everyday Hydration",
+          "url": "/applications/everyday-hydration/"
+        },
+        {
+          "label": "Promotional Gifts",
+          "url": "/applications/promotional-gifts/"
+        },
+        {
+          "label": "Protein Shakers",
+          "url": "/collections/plastic-shaker-bottles/"
+        }
+      ]
+    },
+    {
+      "heading": "OEM & Wholesale",
+      "image": "/assets/curated-hd/customizable-assortment.webp",
+      "links": [
+        {
+          "label": "Custom Water Bottles",
+          "url": "/capabilities/custom-water-bottle/"
+        },
+        {
+          "label": "Custom Graphics",
+          "url": "/capabilities/custom-graphics/"
+        },
+        {
+          "label": "Custom Packaging",
+          "url": "/capabilities/custom-packaging/"
+        },
+        {
+          "label": "OEM & ODM",
+          "url": "/capabilities/oem-odm/"
+        },
+        {
+          "label": "Request a Sample",
+          "url": "/request-sample/"
+        },
+        {
+          "label": "Wholesale Buyer Guide",
+          "url": "/blog/wholesale-plastic-water-bottle-buying-guide/"
+        }
+      ]
+    }
+  ],
+  "miniMenus": {
+    "Capabilities": [
+      {
+        "label": "Custom Water Bottle",
+        "url": "/capabilities/custom-water-bottle/"
+      },
+      {
+        "label": "Custom Logo",
+        "url": "/capabilities/custom-logo/"
+      },
+      {
+        "label": "Custom Graphics",
+        "url": "/capabilities/custom-graphics/"
+      },
+      {
+        "label": "Custom Molding",
+        "url": "/capabilities/custom-molding/"
+      },
+      {
+        "label": "Custom Manufacturing",
+        "url": "/capabilities/custom-manufacturing/"
+      },
+      {
+        "label": "Custom Packaging",
+        "url": "/capabilities/custom-packaging/"
+      }
+    ],
+    "Why Us": [
+      {
+        "label": "OEM / ODM Support",
+        "url": "/capabilities/oem-odm/"
+      },
+      {
+        "label": "Manufacturing Process",
+        "url": "/manufacturing/"
+      },
+      {
+        "label": "Quality Assurance",
+        "url": "/quality-control/"
+      },
+      {
+        "label": "Shipping & Logistics",
+        "url": "/shipping-logistics/"
+      }
+    ]
+  }
+}

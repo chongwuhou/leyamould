@@ -68,10 +68,11 @@ def details(obj):
  packing=join_unique(variants,'packing',pack_en)
  qty=join_unique(variants,'carton_quantity',lambda x:str(x)+" pcs/carton")
  carton=join_unique(variants,'carton_size',lambda x:str(x)+" cm (source figure)")
+ source_word="Submitted" if obj.get("manualNew") else "Catalog"
  data=[
- ("Model",model),("Product Category",display),("Catalog Capacity",capacity),
- ("Materials Listed in Catalog",materials),("Catalog Dimensions",dims),
- ("Catalog Color Options",colors),("Listed Unit Packing",packing),
+ ("Model",model),("Product Category",display),(source_word+" Capacity",capacity),
+ ("Materials (buyer to confirm)" if obj.get("manualNew") else "Materials Listed in Catalog",materials),(source_word+" Dimensions",dims),
+ (source_word+" Color Options",colors),("Listed Unit Packing",packing),
  ("Master Carton Quantity",qty),("Master Carton Dimensions",carton)
  ]
  photos=obj['images']
@@ -80,6 +81,8 @@ def details(obj):
  lead=("Model "+model+" is a "+display.lower()+" design offered for wholesale supply and custom branding discussions. "
        +"Buyers can request product-specific information on the lid style, materials, capacity, colors, logo decoration and shipping cartons. "
        +"The figures below come from the original product catalog and should be confirmed for the exact variant and order volume.")
+ if obj.get("manualNew"):
+  lead=obj["description"]+" Please confirm all product parameters and options before ordering."
  if category=="Kids Plastic Water Bottles":
   points=[
    ("School and children's product planning","Compare the cap, straw, carrying accessory and easy-clean areas to your intended age group. Compliance and age suitability depend on the selected finished product."),
@@ -105,7 +108,8 @@ def details(obj):
  breadcrumb='<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/products/">Products</a> / <a href="/collections/'+e(CAT[category][1])+'/">'+e(display)+'</a> / '+e(model)+'</nav>'
  h=render_template("product-overview",BREADCRUMB=breadcrumb,
    MAIN_PHOTO=photo(img,name+" model "+model,"eager").replace('<img ','<img id="main-photo" ',1),
-   THUMBNAILS=thumbs,MODEL=e(model),NAME=e(name),LEAD=e(lead),SPECS=spec,SLUG=e(obj["slug"]))
+   THUMBNAILS=thumbs,MODEL=e(model),NAME=e(name),LEAD=e(lead),SPECS=spec,SLUG=e(obj["slug"]),
+   PHOTO_NOTE=e("Submitted product imagery; please confirm sample appearance and final specifications." if obj.get("manualNew") else "Catalog imagery; final color and specification are confirmed with your order."))
  h+='<section class="section section--soft product-content"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT DETAILS</span><h2 class="section__title">Design, Materials &amp; Applications</h2><p>Model-specific buying considerations for commercial sourcing.</p></div></div><div class="grid grid--3">'
  for title,desc in points:h+=render_template("product-benefit",HEADING=e(title),DESCRIPTION=e(desc))
  h+='</div></div></section>'
@@ -118,7 +122,7 @@ def details(obj):
  h+='</div><p class="product-content__cta"><a href="/capabilities/oem-odm/">Explore OEM/ODM Services →</a> · <a href="/capabilities/custom-logo/">Custom Logo Options →</a></p></div></section>'
  qs=[
  ("Can I order custom printed model "+model+"?","Logo placement, decoration process and minimum order quantity are confirmed against the actual product, artwork and order quantity."),
- ("What capacity and plastic material does this SKU use?","The catalog reference lists "+capacity+" capacity and "+materials+" materials. Request component-level verification and market-specific food-contact documents before confirming your order."),
+ ("What capacity and plastic material does this SKU use?",("The submitted product details list " if obj.get("manualNew") else "The catalog reference lists ")+capacity+" capacity and "+materials+" materials. Request component-level verification and market-specific food-contact documents before confirming your order."),
  ("Is this bottle BPA-free and leakproof?","BPA-free material options or leak testing can be requested. Neither claim is guaranteed for every variant; confirm test evidence, cap design and intended usage conditions."),
  ("How do I request a sample and shipping quote?","Send the model, target quantity, destination, logo details and pack type. The team will confirm availability, sample costs and appropriate trade terms.")
  ]

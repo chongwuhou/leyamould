@@ -2,6 +2,9 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
 import { MANAGED_MODELS } from "../../_shared/xuyi-routes.js";
+import { authorizeAdminRequest } from "../../_shared/admin-security.js";
+import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";
+import { imageKey } from "../../_shared/r2-usage.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(v,n=500)=>String(v??"").trim().slice(0,n);
 async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_product_content(
@@ -20,11 +23,44 @@ export async function onRequestGet(context){
   const denied=await auth(context);if(denied)return denied;
   const db=context.env.XUYI_DB;await ensure(db);
   const rows=(await db.prepare("SELECT model,content_json,publication_status,updated_at FROM xuyi_product_content ORDER BY model LIMIT 1000").all()).results||[];
-  return respond({items:rows.map(r=>({model:r.model,content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
+  return respond({categories:CATEGORY_OPTIONS,items:rows.map(r=>({model:r.model,content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
 }
 export async function onRequestPost(context){
   const denied=await auth(context);if(denied)return denied;
   let p;try{p=await context.request.json()}catch{return respond({error:"Invalid JSON"},400)}
+  if(p?.action==="create_product"){
+    // New products may only be authored by authenticated humans, not CI.
+    if(!(await authorizeAdminRequest(context.request,context.env)))return respond({error:"Admin authorization required"},401);
+    const model=clean(p.model,80);
+    const status=p.status==="published"?"published":"draft";
+    let content;
+    try{content=normalizeNewProduct(model,p.content,status)}
+    catch(error){return respond({error:String(error.message||error)},400)}
+    const db=context.env.XUYI_DB;await ensure(db);
+    const prior=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
+    if(prior){
+      let previous;
+      try{previous=JSON.parse(prior.content_json)}catch{return respond({error:"Existing product JSON invalid"},409)}
+      if(previous.newProduct!==true)return respond({error:"Model already owned by legacy catalog"},409);
+    }
+    if(status==="published"){
+      const match=/^\/media\/([a-z]+)\/([a-zA-Z0-9._-]+)$/.exec(content.image);
+      const key=match?imageKey(match[1],match[2]):null;
+      if(!key||!context.env.XUYI_ASSETS)return respond({error:"A verified R2 image is required before publication"},409);
+      let object;
+      try{object=await context.env.XUYI_ASSETS.head(key)}
+      catch{return respond({error:"Could not verify product photo in XUYI R2"},503)}
+      if(!object)return respond({error:"Product image not present in XUYI R2"},409);
+    }
+    await db.prepare(`INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at)
+      VALUES(?,?,?,CURRENT_TIMESTAMP)
+      ON CONFLICT(model) DO UPDATE SET content_json=excluded.content_json,
+      publication_status=excluded.publication_status,updated_at=CURRENT_TIMESTAMP`)
+      .bind(model,JSON.stringify(content),status).run();
+    const revision=await bumpPublishRevision(db);
+    return respond({saved:true,model,status,newProduct:true,route:"/products/"+model+"/",
+      locales:"English only until each translation is reviewed",...revision});
+  }
   if(p?.action!=="save_product")return respond({error:"Unknown action"},400);
   const model=clean(p.model,80),v=p.content||{},status=p.status==="published"?"published":"draft";
   if(!/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(model))return respond({error:"Invalid model identifier"},400);

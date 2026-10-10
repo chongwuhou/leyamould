@@ -14,6 +14,17 @@ These are the only sources for the shared structural shell. The production outpu
 | static.html | Company/capability content placement |
 | product-card.html | Shared model card fields and semantic markup |
 | category-card.html | Shared category card fields and semantic markup |
+| head.html | Shared page HEAD, robots, metadata, favicon and JS/CSS references |
+| contact-form.html | Single English inquiry form structure and field names |
+| section-heading.html | Shared heading/eyebrow/description for common sections |
+| process-step.html | Shared numbered buying/manufacturing process steps |
+| product-overview.html | Shared product detail gallery, properties and CTA for old/new single products |
+| product-benefit.html | Reusable benefit/feature card across catalog, home, details and services |
+| product-spec.html / product-thumbnails.html | Structured spec table and image thumbnail markup |
+| catalog-filter.html / catalog-pagination.html | Shared listing controls |
+| page-intro.html / faq-list.html | Shared hero intro and FAQ markup |
+
+The four-column nav defaults now live in `data/site-navigation-defaults.json` (shared by desktop and mobile), with live D1 navigation settings layered on top. Single new products use `catalog_extensions.py`, the existing product templates, and D1 status review. Do not copy a product HTML page to create a new SKU.
 
 The content/data variables live in `site_renderer.py`, `data/`, and D1 runtime settings. `{{NAV_DESKTOP}}`, `{{PRODUCT_LINKS}}`, and SVG placeholders are strictly replaced during build. Unknown/unfilled placeholders fail the build.
 

@@ -21,7 +21,7 @@ if BUILD_OUTPUT_DIR not in (".","dist"):
 
 @lru_cache(maxsize=8)
 def read_template(name):
- if name not in {"shell","header","footer","sidebar","home","listing","content","static","product-card","category-card","page-intro","catalog-filter","catalog-pagination","faq-list","product-spec","product-thumbnails","product-benefit","product-overview"}:raise ValueError("Unknown site partial")
+ if name not in {"shell","header","footer","sidebar","home","listing","content","static","product-card","category-card","page-intro","catalog-filter","catalog-pagination","faq-list","product-spec","product-thumbnails","product-benefit","product-overview","contact-form","section-heading","head","process-step"}:raise ValueError("Unknown site partial")
  return (ROOT/"templates"/"site"/(name+".html")).read_text(encoding="utf-8").rstrip(chr(10))
 
 def render_template(name,**parts):
@@ -66,6 +66,8 @@ for row in BUILD_STATE.get("products",[]):
   if isinstance(img,str) and img.startswith(("/assets/","/media/")) and ".." not in img:
    SERIES[model]["images"]=[img]+[old for old in SERIES[model]["images"] if old!=img]
 
+from catalog_extensions import append_new_products
+NEW_PRODUCT_COUNT=append_new_products(SERIES,BUILD_STATE.get("products",[]))
 assert len(SERIES)>=85,(len(SERIES))
 assert all(v["images"] for v in SERIES.values()),[(k,v["images"]) for k,v in SERIES.items() if not v["images"]]
 def e(v):return html.escape(str(v or ""),quote=True)
@@ -119,49 +121,16 @@ def category_links():
  nav={r.get("url"):r.get("label") for r in BUILD_STATE.get("navigation",[]) if isinstance(r,dict)}
  return [(nav.get("/collections/"+v[1]+"/") or v[0],"/collections/"+v[1]+"/") for v in CAT.values()]
 # Navigation mirrors the target's information architecture, while retaining XUYI-only products.
-PRODUCT_COLUMNS=[
- ("Plastic Water Bottles","/assets/curated-hd/gradient-sports.webp",[
- ("Sports Water Bottles","/collections/sports-water-bottles/"),
- ("Large Capacity Jugs","/collections/large-capacity-water-jugs/"),
- ("Kids Water Bottles","/collections/kids-water-bottles/"),
- ("Protein Shaker Bottles","/collections/plastic-shaker-bottles/"),
- ("All Plastic Bottle Models","/products/")]),
- ("Bottle By Feature","/assets/curated-hd/feature-flip-top.webp",[
- ("Straw Lid Bottles","/features/straw-lid/"),
- ("Flip Top Bottles","/features/flip-top/"),
- ("Carry Handle Bottles","/features/carry-handle/"),
- ("Large Capacity","/features/large-capacity/"),
- ("Gradient Colors","/features/gradient-colors/"),
- ("Custom Logo","/capabilities/custom-logo/")]),
- ("Bottle By Use","/assets/curated-hd/outdoor-lifestyle.webp",[
- ("Gym & Sports","/applications/gym-sports/"),
- ("Outdoor & Travel","/applications/outdoor-travel/"),
- ("Kids & School","/applications/kids-school/"),
- ("Everyday Hydration","/applications/everyday-hydration/"),
- ("Promotional Gifts","/applications/promotional-gifts/"),
- ("Protein Shakers","/collections/plastic-shaker-bottles/")]),
- ("OEM & Wholesale","/assets/curated-hd/customizable-assortment.webp",[
- ("Custom Water Bottles","/capabilities/custom-water-bottle/"),
- ("Custom Graphics","/capabilities/custom-graphics/"),
- ("Custom Packaging","/capabilities/custom-packaging/"),
- ("OEM & ODM","/capabilities/oem-odm/"),
- ("Request a Sample","/request-sample/"),
- ("Wholesale Buyer Guide","/blog/wholesale-plastic-water-bottle-buying-guide/")])
-]
-MINI_MENUS={
-"Capabilities":[
- ("Custom Water Bottle","/capabilities/custom-water-bottle/"),
- ("Custom Logo","/capabilities/custom-logo/"),
- ("Custom Graphics","/capabilities/custom-graphics/"),
- ("Custom Molding","/capabilities/custom-molding/"),
- ("Custom Manufacturing","/capabilities/custom-manufacturing/"),
- ("Custom Packaging","/capabilities/custom-packaging/")],
-"Why Us":[
- ("OEM / ODM Support","/capabilities/oem-odm/"),
- ("Manufacturing Process","/manufacturing/"),
- ("Quality Assurance","/quality-control/"),
- ("Shipping & Logistics","/shipping-logistics/")]
-}
+# Both desktop and mobile reuse one category/menu data file.
+# D1 site_navigation remains the runtime business source for labels and order.
+MENU_DEFAULTS=json.loads((ROOT/"data/site-navigation-defaults.json").read_text(encoding="utf-8"))
+if MENU_DEFAULTS.get("schemaVersion")!=1:raise ValueError("Unsupported navigation defaults")
+PRODUCT_COLUMNS=[(group["heading"],group["image"],
+                 [(link["label"],link["url"]) for link in group["links"]])
+                for group in MENU_DEFAULTS["productColumns"]]
+MINI_MENUS={name:[(link["label"],link["url"]) for link in links]
+            for name,links in MENU_DEFAULTS["miniMenus"].items()}
+if len(PRODUCT_COLUMNS)!=4:raise ValueError("Expected four XUYI mega-menu categories")
 def header():
  navitems=[]
  defaults=["Home","Products","Capabilities","About","Why Us","Blog","Contact Us"]
@@ -303,7 +272,7 @@ def footer():
  return result
 def page(title,description,body,canonical=None):
  # Search indexing stays disabled pending final launch approval.
- head='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light"><meta name="theme-color" content="#ffffff"><title>'+e(title)+'</title><meta name="description" content="'+e(description)[:220]+'"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/site-settings.css"><script defer src="/assets/site.js"></script><script defer src="/assets/site-settings.js"></script></head><body>'
+ head=render_template("head",TITLE=e(title),DESCRIPTION=e(description)[:220])
  rail=render_template("sidebar",ICON_FORM=ICONS["form"],ICON_MAIL=ICONS["mail"],ICON_WHATSAPP=ICONS["whatsapp"],ICON_TOP=ICONS["top"])
  return render_template("shell",HEAD=head,HEADER=header(),SIDEBAR=rail,BODY=body,FOOTER=footer())
 def intro(crumb,title,subtitle=""):
