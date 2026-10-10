@@ -55,12 +55,24 @@ if(contactLinks.length){
   if(!contact)return;
   const email=String(contact.email||'').trim();
   const whatsapp=String(contact.whatsappUrl||'').trim();
+  const waDigits=/(?:wa\.me\/|phone=)([1-9][0-9]{7,14})/.exec(whatsapp)?.[1]||'';
+  const preferredDisplay=String(contact.phoneDisplay||'').trim();
+  const waNumber=preferredDisplay.startsWith('+')&&preferredDisplay.replace(/\D/g,'')===waDigits
+   ?preferredDisplay:(waDigits.startsWith('86')&&waDigits.length===13
+    ?'+86 '+waDigits.slice(2,5)+' '+waDigits.slice(5,9)+' '+waDigits.slice(9)
+    :(waDigits?'+'+waDigits:''));
   contactLinks.forEach(link=>{
    if(link.hasAttribute('data-site-email')&&/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
     link.href='mailto:'+email;link.textContent=email;
    }
    if(link.hasAttribute('data-site-whatsapp')&&/^https:\/\/(?:wa\.me|api\.whatsapp\.com|www\.whatsapp\.com)\//i.test(whatsapp)){
     link.href=whatsapp;
+    // Preserve the chat link while also exposing the actual D1 WhatsApp number.
+    // Do not replace text on icon-only rail links (their SVG must remain intact).
+    if(link.hasAttribute('data-site-whatsapp-number')&&waNumber){
+     const isContactBody=!!link.closest('.contact-layout');
+     link.textContent='WhatsApp: '+waNumber+(isContactBody?' · Chat →':'');
+    }
    }
   });
  }).catch(()=>{}); // Existing approved contact remains visible if D1 is unavailable.
