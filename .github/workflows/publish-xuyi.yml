@@ -11,6 +11,7 @@ on:
       - "capability_*.py"
       - "blog_editorial.py"
       - "product_content.py"
+      - "editorial_support.py"
       - "home_enhancements.py"
       - "resource_pages.py"
       - "why_us_*.py"
@@ -113,6 +114,7 @@ jobs:
           node scripts/test_single_product_api.mjs
           python scripts/test_product_components.py
           python scripts/test_buyer_content.py
+          python scripts/test_editorial_evidence.py
           python scripts/test_model_overflow.py
           node scripts/test_model_overflow_handler.mjs
           python scripts/test_admin_route.py
