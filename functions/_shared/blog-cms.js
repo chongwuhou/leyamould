@@ -92,6 +92,12 @@ export function composePage(template,body,post,route){
   html=html.replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+esc(post.description)+'">');
   html=html.replace(/<link rel="canonical" href="[^"]*">/,'<link rel="canonical" href="'+esc(url)+'">');
   html=html.replace(/<meta property="og:url" content="[^"]*">/,'<meta property="og:url" content="'+esc(url)+'">');
+  const social=[['og:title',post.title],['og:description',post.description]];
+  for(const [key,value] of social){
+   const tag='<meta property="'+key+'" content="'+esc(value)+'">';
+   const match=new RegExp('<meta property="'+key+'" content="[^"]*">');
+   html=match.test(html)?html.replace(match,tag):html.replace('</head>',tag+'</head>');
+  }
   html=html.replace(/<meta property="og:image" content="[^"]*">/,'');
   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g,'');
   const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
