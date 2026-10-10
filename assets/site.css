@@ -932,3 +932,25 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
 .catalog-buyer-guide__cta{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:28px 0 0}
 .product-detail__quote-note{font-size:13px;line-height:1.75;color:#565b61;margin:-7px 0 21px}
 @media(max-width:900px){.buyer-paths{grid-template-columns:1fr}.buyer-path{padding:24px}}
+
+/* Content-rich editorial modules: used only where real source catalog or
+   primary regulatory material adds information to that page. */
+.blog-evidence{background:#f5f7f9;border-left:4px solid #c92133;padding:28px 30px;margin:35px 0}
+.blog-evidence h2{margin:12px 0 15px;font-size:25px;line-height:1.35}
+.blog-evidence h3{font-size:17px;margin:22px 0 10px}
+.blog-evidence p,.blog-evidence li{font-size:14px;line-height:1.8;color:#384450}
+.blog-evidence ul{padding-left:20px}
+.blog-evidence a,.quality-reference-cards a{color:#b41b30;text-decoration:underline;text-underline-offset:3px}
+.blog-evidence__caveat,.quality-buyer-evidence__note,.production-buyer-evidence__note,.rs-model-proof__note{font-size:13px;line-height:1.75;color:#5d6570;margin:20px 0}
+.quality-reference-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.quality-reference-cards article{min-width:0;background:#f7f8fa;border:1px solid #e4e6e9;padding:24px;display:flex;flex-direction:column;gap:12px}
+.quality-reference-cards h3{font-size:20px;margin:0;line-height:1.35}
+.quality-reference-cards p{font-size:14px;line-height:1.75;color:#4b535a;margin:0;flex:1}
+.quality-reference-cards a{font-size:13px;font-weight:650}
+.rs-model-proof{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.rs-model-proof__card{display:flex;flex-direction:column;gap:12px;padding:21px;border:1px solid #e3e6e8;background:#fff}
+.rs-model-proof__card strong{font-size:17px;line-height:1.4}
+.rs-model-proof__card>span:last-child{color:#b41b30;font-size:13px;line-height:1.5}
+.production-buyer-evidence .button{margin-top:12px}
+@media(max-width:900px){.quality-reference-cards{grid-template-columns:1fr}.rs-model-proof{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.rs-model-proof{grid-template-columns:1fr}.blog-evidence{padding:20px}}
