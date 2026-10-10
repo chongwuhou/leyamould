@@ -38,9 +38,9 @@
 </section>
 <section class="panel" id="media-admin-panel" data-admin-module="media">
  <div class="panel-head"><div><div class="eyebrow">XUYI · R2 ASSETS</div>
- <h2>通用媒体管理</h2><p>复用现有 Blog 上传的图片内容校验。可上传产品、普通页面及全站素材，上传后复制 R2 图片路径到内容 CMS；不会自动篡改现有页面。</p></div></div>
+ <h2>R2 图片管理与引用检查</h2><p>管理旭一媒体桶。上传素材可在确认所有正式页面与 D1 草稿均未引用后删除；原始 PPT、Excel、工厂、博客图库先只读保护，避免删坏现有页面。第二个型号溢出桶不在这里删除。</p></div></div>
  <div class="row-actions">
-  <label>分类 <select id="media-kind"><option value="product">产品图片</option><option value="page">页面图片</option><option value="shared">公共素材</option></select></label>
+  <label>R2 文件分类 <select id="media-kind"><optgroup label="后台上传（有保护的删除）"><option value="product">产品图片</option><option value="page">页面图片</option><option value="shared">公共素材</option></optgroup><optgroup label="原始资产（只读）"><option value="ppt">PPT 旧图库</option><option value="excel">Excel 型号图片</option><option value="group">工厂与质检图片</option><option value="capability">制造能力配图</option><option value="gallery">旧款式画廊</option><option value="blog">博客图片</option></optgroup></select></label>
   <label>文件 <input type="file" id="media-upload" accept="image/jpeg,image/png,image/webp"></label>
   <button class="btn primary" type="button" id="media-upload-btn">上传到 R2</button>
   <button class="btn ghost" type="button" id="media-load">刷新素材</button>

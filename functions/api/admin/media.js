@@ -1,7 +1,7 @@
-// XUYI shared R2 image library, adapted from Demalong's protected admin media.
+// XUYI R2 media manager: safe inventory, live references and fail-closed delete.
 import {authorizeAdminRequest} from "../../_shared/admin-security.js";
 import {checkedImage} from "../../_shared/media-image.js";
-const KINDS=new Set(["product","page","shared"]);
+import {KINDS,readUsageIndex,findMediaUsage,imageKey} from "../../_shared/r2-usage.js";
 const PREFIX="site-media/";
 const MAX_BYTES=1024*1024*1024;
 const reply=(data,status=200)=>Response.json(data,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -25,18 +25,36 @@ export async function onRequestGet(c){
  const denied=await guard(c);if(denied)return denied;
  const u=new URL(c.request.url);
  const kind=u.searchParams.get("kind")||"product";
- if(!KINDS.has(kind))return reply({error:"Unsupported media category"},400);
+ if(!Object.hasOwn(KINDS,kind))return reply({error:"Unsupported media category"},400);
+ const selected=u.searchParams.get("filename")||"";
+ if(selected){
+  const key=imageKey(kind,selected);
+  if(!key)return reply({error:"Invalid filename"},400);
+  try{
+   const index=await readUsageIndex(c.env,c.request.url);
+   return reply({kind,filename:selected,path:"/media/"+kind+"/"+selected,
+    canDelete:!!KINDS[kind].editable,
+    ...await findMediaUsage(c.env,"/media/"+kind+"/"+selected,index)});
+  }catch{return reply({error:"Cannot verify deployed pages and all D1 references",usageStatus:"unknown"},503)}
+ }
  const cursor=u.searchParams.get("cursor")||undefined;
  if(cursor&&(cursor.length>1024||!/^[a-zA-Z0-9_=-]+$/.test(cursor)))return reply({error:"Invalid cursor"},400);
  try{
   const [page,stats]=await Promise.all([
-   c.env.XUYI_ASSETS.list({prefix:PREFIX+kind+"/",limit:80,...(cursor?{cursor}:{})}),
+   c.env.XUYI_ASSETS.list({prefix:KINDS[kind].prefix,limit:80,...(cursor?{cursor}:{})}),
    usage(c.env.XUYI_ASSETS)
   ]);
-  return reply({kind,...stats,items:(page.objects||[]).map(o=>({
-   path:"/media/"+kind+"/"+o.key.split("/").pop(),size:o.size,uploadedAt:o.uploaded?.toISOString?.()||"",
-   etag:o.etag||""
-  })),cursor:page.truncated?page.cursor||"":""});
+  let index=null;try{index=await readUsageIndex(c.env,c.request.url)}catch{}
+  const items=(page.objects||[]).map(o=>{
+   const filename=o.key.split("/").pop();
+   const path="/media/"+kind+"/"+filename;
+   const refs=index?.references?.[path]||[];
+   return {path,key:o.key,size:o.size,uploadedAt:o.uploaded?.toISOString?.()||"",
+     etag:o.etag||"",usageStatus:refs.length?"used":index?"needs-check":"unknown",
+     referenceCount:refs.length,references:refs.slice(0,4),canDelete:!!KINDS[kind].editable};
+  });
+  return reply({kind,readOnly:!KINDS[kind].editable,referenceIndexReady:!!index,
+    ...stats,items,cursor:page.truncated?page.cursor||"":""});
  }catch{return reply({error:"R2 inventory unavailable"},503)}
 }
 export async function onRequestPost(c){
@@ -44,7 +62,7 @@ export async function onRequestPost(c){
  if(Number(c.request.headers.get("content-length")||0)>7*1024*1024)return reply({error:"Image too large"},413);
  let form;try{form=await c.request.formData()}catch{return reply({error:"Invalid form-data"},400)}
  const kind=String(form.get("kind")||"product");
- if(!KINDS.has(kind))return reply({error:"Unsupported media category"},400);
+ if(!Object.hasOwn(KINDS,kind)||!KINDS[kind].editable)return reply({error:"Upload only supports managed media groups"},400);
  let media;try{media=await checkedImage(form.get("image"))}
  catch(err){return reply({error:String(err?.message||err)},400)}
  let stats;try{stats=await usage(c.env.XUYI_ASSETS)}
@@ -64,23 +82,17 @@ export async function onRequestDelete(c){
  const url=new URL(c.request.url);
  const kind=url.searchParams.get("kind")||"";
  const filename=url.searchParams.get("filename")||"";
- if(!KINDS.has(kind)||!/^[a-f0-9]{32}\.(?:jpg|png|webp)$/.test(filename))
-  return reply({error:"Invalid image key"},400);
- const key=PREFIX+kind+"/"+filename;
- const publicPath="/media/"+kind+"/"+filename;
- // Preserve assets already linked in approved D1 product / page content.
- if(c.env.XUYI_DB){
-  const db=c.env.XUYI_DB;
-  for(const sql of [
-   "SELECT model FROM xuyi_product_content WHERE publication_status='published' AND instr(content_json,?)>0 LIMIT 1",
-   "SELECT route FROM xuyi_page_content WHERE publication_status='published' AND instr(main_html,?)>0 LIMIT 1"
-  ]){
-   try{if(await db.prepare(sql).bind(publicPath).first())return reply({error:"Image is in use by published content"},409)}
-   catch{return reply({error:"Cannot confirm image is unused"},503)}
-  }
- }
+ const key=imageKey(kind,filename);
+ if(!key||!Object.hasOwn(KINDS,kind)||!KINDS[kind].editable)return reply({error:"Deleting legacy catalog and system files is forbidden"},403);
+ const path="/media/"+kind+"/"+filename;
+ let usage;
+ try{
+  const index=await readUsageIndex(c.env,c.request.url);
+  usage=await findMediaUsage(c.env,path,index);
+ }catch{return reply({error:"Cannot verify deployed-page and D1 usages; deletion blocked"},503)}
+ if(usage.used)return reply({error:"Image is in use; remove all references before deletion",...usage},409);
  const stored=await c.env.XUYI_ASSETS.head(key);
  if(!stored)return reply({error:"Image not found"},404);
  await c.env.XUYI_ASSETS.delete(key);
- return reply({deleted:true,path:publicPath});
+ return reply({deleted:true,path,usageStatus:"unused"});
 }
