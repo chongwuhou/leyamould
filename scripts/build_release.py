@@ -17,6 +17,7 @@ from admin_route import admin_path as resolve_admin_path
 from plan_model_overflow import plan as plan_model_overflow
 from site_redirects import redirect_lines
 from r2_usage_index import generate as generate_r2_reference_index
+from search_submission import create_manifest as create_search_manifest, key_file as create_indexnow_key
 
 ROOT=Path(__file__).resolve().parent.parent
 CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
@@ -70,6 +71,9 @@ def main():
     overflow=plan_model_overflow(DIST,overflow_dir,
         switch_at=int(CONFIG["build"]["warningFiles"]),target=int(CONFIG["build"].get("overflowTargetFiles",15500)),
         hard_stop=int(CONFIG["build"]["hardLimitFiles"]))
+    # No verification key is published while noindex remains active. When
+    # launch is approved, the key must come from a GitHub Actions secret.
+    indexnow_key=create_indexnow_key()
     counts={}
     for path in DIST.rglob("*"):
         if path.is_file():
@@ -77,12 +81,28 @@ def main():
             counts[group]=counts.get(group,0)+1
     total=sum(counts.values())
     limit=CONFIG["build"]["hardLimitFiles"]
-    if total+2>=limit:fail(f"Pages file hard stop: {total+2} >= {limit}")
+    if total+3>=limit:fail(f"Pages file hard stop: {total+3} >= {limit}")
     source_files=sorted((ROOT/"templates/site").glob("*.html"))
     templates={file.name:file_hash(file) for file in source_files}
     # Demalong V1.4 reports the true production data origin, not merely
     # whether a D1 API was reachable. Empty D1 tables mean source fallback.
     state=json.loads(snapshot.read_text(encoding="utf-8")) if snapshot.is_file() else {}
+    sys.path.insert(0,str(ROOT))
+    from locale_registry import approved_locales
+    from home_banner_config import for_locale
+    # Preload only the LCP hero of a locale homepage. The old /* rule made
+    # every product/article preload FOUR unrelated carousel images, hurting
+    # crawl performance. Never hardcode image URLs or language prefixes here.
+    home_headers=[]
+    for language in approved_locales(state):
+        prefix=language["pathPrefix"]
+        home_url="/"+prefix+"/" if prefix else "/"
+        first=for_locale(state,language["code"])[0]
+        image=first["img"]
+        if not image.startswith(("/media/","/assets/")) or ".." in image:
+            fail("Unsafe homepage preload image: "+image)
+        home_headers.extend([home_url,'  Link: <'+image+'>; rel="preload"; as="image"'])
+    (DIST/"_headers").write_text("\n".join(home_headers)+"\n",encoding="utf-8")
     # A saved D1 Banner image must exist in the published static artifact.
     # /media references are verified by the authenticated CMS before saving.
     sys.path.insert(0,str(ROOT))
@@ -113,7 +133,7 @@ def main():
         "adminPath":admin_slug,
         "templateSha256":templates,
         "contentSources":sources,
-        "fileCount":total+2, # includes build-meta and R2 usage inventory
+        "fileCount":total+3, # includes build-meta, R2 usage and search hash manifest
         "fileBreakdown":counts,
         "modelPageStorageMode":overflow["mode"],
         "projectedStaticFileCountBeforeOverflow":overflow["projectedStaticFileCountBeforeOverflow"],
@@ -127,11 +147,15 @@ def main():
     (DIST/"build-meta.json").write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     refs,uses=generate_r2_reference_index(DIST,overflow_dir)
     print("XUYI_R2_REFERENCE_INDEX",refs,"images",uses,"uses")
+    search_manifest=create_search_manifest()
+    print("XUYI_SEARCH_URLS_PREPARED",len(search_manifest["urls"]),
+          "indexingApproved",CONFIG["site"]["indexingApproved"],
+          "indexNowKeyPublished",bool(indexnow_key))
     if total>=CONFIG["build"]["warningFiles"]:
         print(f"WARNING: static file budget {total}")
     if not (DIST/"index.html").is_file() or not (DIST/admin_slug/"index.html").is_file():
         fail("Missing homepage or admin")
-    print("DIST_BUILD_OK",f"files={total+2}",f"templates={len(templates)}",f"output={DIST}")
+    print("DIST_BUILD_OK",f"files={total+3}",f"templates={len(templates)}",f"output={DIST}")
 
 if __name__=="__main__":
     main()

@@ -23,6 +23,7 @@ on:
       - "admin/**"
       - "functions/**"
       - "deployment/**"
+      - "_headers"
   workflow_dispatch:
   schedule:
     - cron: "7,37 * * * *"
@@ -39,6 +40,7 @@ jobs:
     timeout-minutes: 20
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      XUYI_INDEXNOW_KEY: ${{ secrets.XUYI_INDEXNOW_KEY }}
       CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
       SITE_ORIGIN: https://xuyibottles.com
       XUYI_PUBLISH_REVISION: "0"
@@ -97,6 +99,16 @@ jobs:
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               "$SITE_ORIGIN/api/admin/$section" -o /dev/null
             echo "XUYI D1 CMS OK: $section"
+      - name: Record previous sitemap notification state
+        if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
+        shell: bash
+        run: |
+          mkdir -p _local_ops
+          curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/search-submission-manifest.json?previous=$GITHUB_RUN_ID" -o _local_ops/previous-search-submission-manifest.json || rm -f _local_ops/previous-search-submission-manifest.json
+          curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/robots.txt?previous=$GITHUB_RUN_ID" -o _local_ops/previous-robots.txt || rm -f _local_ops/previous-robots.txt
+      - name: Block indexing launch if old raw source cache is still public
+        if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
+        run: python scripts/preindex_security_gate.py
           done
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
@@ -122,6 +134,7 @@ jobs:
           node scripts/test_blog_dynamic_evidence.mjs
           node scripts/test_blog_hreflang_runtime.mjs
           python scripts/test_seo_multilingual_launch.py
+          python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py
           python scripts/test_future_locale_framework.py
           node scripts/test_future_locale_runtime.mjs
@@ -169,3 +182,6 @@ jobs:
           done
           echo "::error::XUYI production build-meta did not update"
           exit 1
+      - name: Notify IndexNow after verified crawlable publication
+        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
+        run: python scripts/search_submission.py --submit
