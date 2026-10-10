@@ -55,7 +55,9 @@ with tempfile.TemporaryDirectory(prefix="xuyi-locale-qa-") as workspace:
     assert 'href="/es/about/' in home and 'href="/es/about/' in about
     assert 'href="/contact/#inquiry"' in home, "Missing localized pages must safely stay English"
     assert "/es/contact/" not in home
-    assert '<meta name="robots" content="noindex,nofollow">' in home
+    config=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+    expected="index,follow" if config["site"]["indexingApproved"] else "noindex,nofollow"
+    assert '<meta name="robots" content="'+expected+'">' in home
     assert '<link rel="alternate" hreflang="es" href="https://xuyibottles.com/es/">' in english
     assert '<link rel="alternate" hreflang="en" href="https://xuyibottles.com/about/">' in about
     assert "<loc>https://xuyibottles.com/es/</loc>" in sitemap
