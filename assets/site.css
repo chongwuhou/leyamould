@@ -898,3 +898,32 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
  .header .button{padding-inline:6px}
  .logo{font-size:34px}
 }
+
+/* English has the shortest desktop labels. Keep Home anchored near the logo,
+   rather than visually centering the navigation in the spare horizontal space.
+   Longer translated nav labels retain their previously tested spacing. */
+@media(min-width:1451px){
+ html[lang="en"] .header__inner>.nav{margin-left:0}
+}
+/* Spanish and Portuguese labels are substantially longer. Preserve their
+   left alignment while preventing right-hand controls from overflowing. */
+@media(min-width:1451px) and (max-width:1750px){
+ html[lang="es"] .header__inner>.nav,
+ html[lang="pt"] .header__inner>.nav{gap:13px}
+ html[lang="es"] .nav__link,html[lang="es"] .nav__toggle,
+ html[lang="pt"] .nav__link,html[lang="pt"] .nav__toggle{font-size:13px}
+}
+
+/* Buyer-oriented content rather than unsupported factory metrics. */
+.buyer-paths-section{background:#fafafa}
+.buyer-paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.buyer-path{display:flex;flex-direction:column;align-items:flex-start;border:1px solid #e6e7e9;background:#fff;padding:30px 28px;min-width:0;transition:border-color .2s,transform .2s}
+.buyer-path:hover{border-color:#f31927;transform:translateY(-2px)}
+.buyer-path__number{font-size:12px;font-weight:800;letter-spacing:.12em;color:#d01927}
+.buyer-path h3{font-size:21px;line-height:1.25;margin:18px 0 12px}
+.buyer-path p{font-size:14px;line-height:1.75;color:#575b60;margin:0 0 24px;flex:1}
+.buyer-path__link{font-size:13px;font-weight:850;color:#c71726}
+.kreat-collections__heading>p{max-width:710px;font-size:15px;line-height:1.65;color:#585b60;margin:14px 0 0}
+.catalog-buyer-guide__cta{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:28px 0 0}
+.product-detail__quote-note{font-size:13px;line-height:1.75;color:#565b61;margin:-7px 0 21px}
+@media(max-width:900px){.buyer-paths{grid-template-columns:1fr}.buyer-path{padding:24px}}
