@@ -39,6 +39,9 @@ for lang in ("en","es","pt","ru","tr"):
  assert 'href="/sitemap.xml"' in bottom
  assert 'href="/'+("" if lang=="en" else lang+"/")+'privacy-policy/"' in bottom
  assert 'data-site-email' in footer and 'data-site-whatsapp' in footer
+ assert 'data-site-whatsapp-number' in footer and re.search(r'WhatsApp:\s*\+\d',footer)
+ contact=(dist/(lang if lang!="en" else "")/"contact/index.html").read_text(encoding="utf8")
+ assert re.search(r'data-site-whatsapp-number[^>]*>[^<]*\+\d',contact),(lang,"contact phone invisible")
  assert "<h3>Quick Links</h3>" not in footer
 for bad in [
  {"slides":[]},
