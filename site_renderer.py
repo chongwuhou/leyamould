@@ -268,9 +268,20 @@ def header():
  actions='<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language"><option value="en">English</option><option value="es">Español</option><option value="pt">Português</option><option value="ru">Русский</option><option value="tr">Türkçe</option></select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
  search='<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="/products/" method="get"><input type="search" name="q" placeholder="Search product model or type…" aria-label="Search product models"><button class="button" type="submit">Search →</button></form></div>'
  return render_template("header",TOPBAR=top,LOGO=logo,NAV_DESKTOP=''.join(navitems),ACTIONS=actions,SEARCH=search,NAV_MOBILE=mobile)
+def whatsapp_display_number():
+ contact=BRAND_CONFIG.get("contact") or {}
+ digits=re.search(r"^https://wa\.me/([1-9][0-9]{7,14})$",str(contact.get("whatsappUrl") or ""))
+ value=digits.group(1) if digits else "8615395897937"
+ display=str(contact.get("phoneDisplay") or "").strip()
+ if display and re.sub(r"\D","",display)==value and display.startswith("+"):
+  return display
+ if value.startswith("86") and len(value)==13:
+  return "+86 "+value[2:5]+" "+value[5:9]+" "+value[9:]
+ return "+"+value
+
 def footer():
  links=''.join('<p><a href="'+uri+'">'+e(label)+'</a></p>' for label,uri in category_links())
- result=render_template("footer",PRODUCT_LINKS=links)
+ result=render_template("footer",PRODUCT_LINKS=links,WHATSAPP_NUMBER=e(whatsapp_display_number()))
  footer_config=BRAND_CONFIG.get("footer") or {}
  identity=BRAND_CONFIG.get("identity") or {}
  brand_name=str(identity.get("displayName","")).strip()
