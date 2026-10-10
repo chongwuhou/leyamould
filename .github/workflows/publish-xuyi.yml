@@ -99,6 +99,7 @@ jobs:
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               "$SITE_ORIGIN/api/admin/$section" -o /dev/null
             echo "XUYI D1 CMS OK: $section"
+          done
       - name: Record previous sitemap notification state
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         shell: bash
@@ -109,7 +110,6 @@ jobs:
       - name: Block indexing launch if old raw source cache is still public
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/preindex_security_gate.py
-          done
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         # The public site must run the authenticated XUYI snapshot endpoint.
