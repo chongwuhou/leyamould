@@ -899,11 +899,16 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:280
  .logo{font-size:34px}
 }
 
-/* English has the shortest desktop labels. Keep Home anchored near the logo,
-   rather than visually centering the navigation in the spare horizontal space.
-   Longer translated nav labels retain their previously tested spacing. */
-@media(min-width:1451px){
- html[lang="en"] .header__inner>.nav{margin-left:0}
+/* English labels are shorter than the other four languages. Give the
+   desktop links room to breathe instead of squeezing Home beside the logo
+   and leaving the entire unused width after Contact Us. The shared header,
+   sticky behavior and all localized nav geometry stay unchanged. */
+@media(min-width:1051px){
+ html[lang="en"] .header__inner>.nav{
+  margin-left:clamp(8px,2.7vw,48px);
+  margin-right:auto;
+  gap:clamp(15px,2.4vw,38px);
+ }
 }
 /* Spanish and Portuguese labels are substantially longer. Preserve their
    left alignment while preventing right-hand controls from overflowing. */
