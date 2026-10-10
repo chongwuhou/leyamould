@@ -22,8 +22,10 @@ function altInputs(parent,values={},includeEnglish=true){
 const altValues=inputs=>Object.fromEntries(Object.entries(inputs)
  .map(([language,input])=>[language,input.value.trim()]).filter(([,value])=>value));
 async function api(path,options={}){
- const response=await fetch(path,{headers:{authorization:"Bearer "+token(),...(options.headers||{})},
-  cache:"no-store",...options});
+ // Spread options first: otherwise options.headers replaces our authorization
+ // header on JSON ALT edits, turning an authenticated save into HTTP 401.
+ const response=await fetch(path,{...options,cache:"no-store",
+  headers:{...(options.headers||{}),authorization:"Bearer "+token()}});
  const data=await response.json().catch(()=>({}));
  if(!response.ok)throw Error(data.error||"R2 接口不可用");
  return data;

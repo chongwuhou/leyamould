@@ -139,6 +139,7 @@ jobs:
           python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py
           python scripts/test_image_alt_seo.py
+          python scripts/test_catalog_visibility.py
           python scripts/test_future_locale_framework.py
           node scripts/test_future_locale_runtime.mjs
           node scripts/test_language_switch_failover.mjs
@@ -155,6 +156,7 @@ jobs:
           node scripts/test_inquiry_readiness.mjs
           node scripts/test_admin_auth.mjs
           node scripts/test_media_library.mjs
+          node scripts/test_admin_media_auth.mjs
           node scripts/test_media_replacement.mjs
       - name: No changes in the XUYI D1 publish revision
         if: github.event_name == 'schedule' && steps.revision.outputs.needed == 'false'
