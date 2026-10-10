@@ -16,7 +16,9 @@ ADMIN_PATH=resolve_admin_path(meta.get("adminPath","admin"))
 assert meta["pagesProject"]=="xuyi-drinkware-site"
 assert meta["siteOrigin"]=="https://xuyibottles.com"
 assert meta["templateSet"]=="templates/site" and len(meta["templateSha256"])>=10
-assert meta["noindex"] is True
+CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+INDEXABLE=CONFIG["site"].get("indexingApproved") is True
+assert meta["noindex"] is (not INDEXABLE), "Release indexing flag does not match approved configuration"
 assert meta["fileCount"]<19500
 assert set(meta.get("contentSources",{}))=={"brand","navigation","pageSeo","products","pageBodies","locales"}, "D1/source origin metadata is incomplete"
 assert all(isinstance(v,str) and v for v in meta["contentSources"].values())
@@ -42,8 +44,11 @@ for page in pages:
         broken.append((rel,"missing shell"))
     if rel!=ADMIN_PATH+"/index.html" and '<aside class="rail"' not in content:
         broken.append((rel,"missing shared rail"))
-    if '<meta name="robots" content="noindex,nofollow">' not in content and rel!=ADMIN_PATH+"/index.html":
-        broken.append((rel,"robots unexpectedly indexable"))
+    if rel!=ADMIN_PATH+"/index.html":
+        expected='<meta name="robots" content="'+(
+            "noindex,follow" if rel=="404.html" and INDEXABLE else
+            "index,follow" if INDEXABLE else "noindex,nofollow")+'">'
+        if expected not in content:broken.append((rel,"indexing gate mismatch",expected))
     for url in refs.images:
         target=urlsplit(url).path.lstrip("/")
         if target.startswith(("media/","api/")):continue
