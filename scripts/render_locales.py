@@ -143,10 +143,21 @@ def main():
         # markup. Refresh ONLY the immutable generic hero image asset; leave
         # all user-translated text and model photos unchanged.
         if route=="/":
-            source='src="/media/ppt/slide-059.webp" id="hero-image"'
-            replacement='src="/assets/curated-hd/gradient-sports.webp" id="hero-image"'
-            if body.count(source)!=1:raise RuntimeError("Localized homepage hero source differs: "+loc)
-            body=body.replace(source,replacement)
+            # The D1-approved homepage may carry either image attribute order
+            # or already contain this exact approved image in another revision.
+            # Limit the update to the single known hero <img>, never any SKU.
+            matches=list(re.finditer(r'<img\b[^>]*\bid="hero-image"[^>]*>',body))
+            if len(matches)!=1:
+                print("XUYI_HQ_HERO_NO_UNIQUE_IMG",loc,len(matches))
+            else:
+                tag=matches[0].group(0)
+                old_url=re.search(r'\bsrc="([^"]+)"',tag)
+                approved={"/media/ppt/slide-059.webp","/assets/curated-hd/gradient-sports.webp"}
+                if not old_url or old_url.group(1) not in approved:
+                    print("XUYI_HQ_HERO_UNRECOGNIZED_SOURCE",loc)
+                else:
+                    new_tag=tag[:old_url.start(1)]+"/assets/curated-hd/gradient-sports.webp"+tag[old_url.end(1):]
+                    body=body[:matches[0].start()]+new_tag+body[matches[0].end():]
 
         text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+body+'</main>'+translate_chrome(suffix,loc,ui)
         text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])
