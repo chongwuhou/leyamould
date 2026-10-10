@@ -107,6 +107,16 @@ def build_url(path,title,content):
   # source-checked supplements for selected company/quality pages.
   from editorial_support import for_route as reviewed_editorial_for_route
   main+=reviewed_editorial_for_route(route,main)
+  # Some published blog bodies also come from D1 and may predate their
+  # source-reviewed reference section. Never erase the approved article.
+  if route.startswith("/blog/") and 'id="primary-sources"' not in main:
+   from blog_editorial import render_primary_evidence
+   slug=route.strip("/").split("/")[-1]
+   sources_section=render_primary_evidence(slug)
+   if sources_section:
+    related_start='<section class="section section--soft blog-related">'
+    if related_start in main:main=main.replace(related_start,sources_section+related_start,1)
+    else:main+=sources_section
   content=start+marker+render_template(family,CONTENT=main)+"</main>"+end
  if 'rel="canonical"' not in content:
   content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
