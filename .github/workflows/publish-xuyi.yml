@@ -113,6 +113,8 @@ jobs:
           python scripts/test_localized_templates.py
           python scripts/test_localized_release.py
           python scripts/test_shared_chrome_i18n.py
+          python scripts/test_d1_navigation.py
+          python scripts/test_d1_redirects.py
           node scripts/test_inquiry_readiness.mjs
           node scripts/test_admin_auth.mjs
           node scripts/test_media_library.mjs

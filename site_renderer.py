@@ -168,6 +168,21 @@ def header():
  top_urls={"Home":"/","Products":"/products/","Capabilities":"/capabilities/",
            "About":"/about/","Why Us":"/why-us/","Blog":"/blog/","Contact Us":"/contact/"}
  nav_rows=BUILD_STATE.get("navigation",[])
+ def custom_children(parent):
+  """Keep new D1 child rows inside the parent's existing menu; no new columns."""
+  rows=[row for row in nav_rows if isinstance(row,dict) and row.get("parent_id")==parent]
+  rows.sort(key=lambda row:(int(row.get("sort_order",999)),str(row.get("id",""))))
+  return rows
+ def safe_extra(row):
+  url=str(row.get("url") or "")
+  if not (url.startswith("/") and not url.startswith("//") or
+          url.startswith("https://") or url.startswith("mailto:") or url.startswith("tel:")):
+   return ""
+  if any(c in url for c in ("<",">",chr(34),chr(39),"\\","\n","\r")):return ""
+  label=e(str(row.get("label") or "").strip()[:80])
+  if not label:return ""
+  blank=bool(row.get("new_window",row.get("newWindow",False)))
+  return '<a href="'+e(url)+'"'+(' target="_blank" rel="noopener noreferrer"' if blank else '')+'>'+label+'</a>'
  by_url={x.get("url"):x for x in nav_rows if isinstance(x,dict)}
  labels={name:(by_url.get(url,{}).get("label") or name) for name,url in top_urls.items()}
  sorted_names=[name for name in defaults if top_urls[name] in by_url and not by_url[top_urls[name]].get("parent_id")]
@@ -185,11 +200,18 @@ def header():
     heading='<a class="mega__heading" href="'+e(links[0][1])+'">'+e(group)+'</a>'
     pic='<a class="mega__image" href="'+e(links[0][1])+'">'+photo(img,"XUYI "+group+" catalog photo")+'</a>'
     column='<div class="mega__column">'+heading+pic+'<div class="mega__links">'+''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get('label') or label)+'</a>' for label,uri in links)+'</div></div>'
+    if group=="OEM & Wholesale":
+     known_urls={u for _,_,items in PRODUCT_COLUMNS for _,u in items}
+     additional="".join(safe_extra(row) for row in custom_children("products") if row.get("url") not in known_urls)
+     if additional:column=column.replace("</div></div>","<div class=\"mega__links mega__links--custom\">"+additional+"</div></div></div>",1)
     cols.append(column)
    submenu='<div class="mega" id="menu-products"><div class="mega__grid">'+''.join(cols)+'</div></div>'
    navitems.append('<div class="nav__drop nav__drop--mega"><button class="nav__toggle" data-mega-toggle type="button" aria-expanded="false" aria-controls="menu-products">Products'+ICONS['chevron']+'</button>'+submenu+'</div>')
   else:
    items=''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get('label') or label)+'</a>' for label,uri in MINI_MENUS[name])
+   known_urls={u for _,u in MINI_MENUS[name]}
+   submenu_parent={"Capabilities":"capabilities","Why Us":"why-us"}[name]
+   items+="".join(safe_extra(row) for row in custom_children(submenu_parent) if row.get("url") not in known_urls)
    menu_id='menu-'+name.lower().replace(' ','-')
    navitems.append('<div class="nav__drop nav__drop--mini"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="'+menu_id+'" aria-expanded="false">'+name+ICONS['chevron']+'</button><div class="mini-menu" id="'+menu_id+'">'+items+'</div></div>')
  nav_parts=dict(zip(defaults,navitems))
@@ -208,10 +230,15 @@ def header():
  for group,img,links in PRODUCT_COLUMNS:
   item='<div class="mobile-nav__group"><div class="mobile-nav__group-title">'+photo(img,group+' plastic bottles')+'<strong>'+e(group)+'</strong></div>'
   item+=''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get("label") or label)+'</a>' for label,uri in links)+'</div>'
+  if group=="OEM & Wholesale":
+   known_urls={u for _,_,items in PRODUCT_COLUMNS for _,u in items}
+   item+="".join(safe_extra(row) for row in custom_children("products") if row.get("url") not in known_urls)
   groups.append(item)
  mobile_parts["Products"]='<details><summary>'+e(labels["Products"])+'</summary>'+''.join(groups)+'</details>'
  for nav_name in ("Capabilities","Why Us"):
   submenu=''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get("label") or label)+'</a>' for label,uri in MINI_MENUS[nav_name])
+  known_urls={u for _,u in MINI_MENUS[nav_name]}
+  submenu+="".join(safe_extra(row) for row in custom_children({"Capabilities":"capabilities","Why Us":"why-us"}[nav_name]) if row.get("url") not in known_urls)
   mobile_parts[nav_name]='<details><summary>'+e(labels[nav_name])+'</summary>'+submenu+'</details>'
  for nav_name in ("About","Blog","Contact Us"):
   mobile_parts[nav_name]='<a href="'+top_urls[nav_name]+'">'+e(labels[nav_name])+'</a>'
@@ -221,16 +248,28 @@ def header():
  custom_top=sorted((r for r in nav_rows if isinstance(r,dict) and not r.get("parent_id")
      and r.get("url") not in top_urls.values()),
      key=lambda r:(int(r.get("sort_order",999)),str(r.get("id",""))))
+ extra_top={}
  for item in custom_top:
   uri=str(item.get("url") or "")
-  if not uri.startswith("/") or uri.startswith("//") or any(ch in uri for ch in ('"',"<",">")):
-   continue
+  markup=safe_extra(item)
+  if not markup:continue
   label=e(str(item.get("label") or "")[:80])
-  if not label:continue
-  blank=bool(item.get("new_window",item.get("newWindow",False)))
-  extra=' target="_blank" rel="noopener noreferrer"' if blank else ''
-  navitems.append('<a class="nav__link" href="'+e(uri)+'"'+extra+'>'+label+'</a>')
-  mobile+='<a href="'+e(uri)+'"'+extra+'>'+label+'</a>'
+  extra_top[str(item.get("id"))]=(
+    '<a class="nav__link"'+markup.removeprefix("<a"),
+    markup)
+ # Reorder all top-level items (native and extra) according to D1 sortOrder.
+ combined=[]
+ for name in sorted_names:
+  item=by_url.get(top_urls[name],{})
+  combined.append((int(item.get("sort_order",defaults.index(name)*10+10)),
+                   defaults.index(name),nav_parts[name],mobile_parts[name]))
+ for item in custom_top:
+  pair=extra_top.get(str(item.get("id")))
+  if pair:
+   combined.append((int(item.get("sort_order",999)),100+len(combined),pair[0],pair[1]))
+ combined.sort(key=lambda t:(t[0],t[1]))
+ navitems=[a[2] for a in combined]
+ mobile="".join(a[3] for a in combined)
  mobile+='<a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Instant Quote →</a>'
  top='<div class="topbar"><div class="shell topbar__inner"><a href="/about/" aria-label="XUYI company">XUYI · Taizhou, China</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Contact</a></div></div>'
  logo='<a href="/" class="logo" aria-label="XUYI Bottles home">XUYI<small>BOTTLES</small></a>'

@@ -204,6 +204,11 @@ function validNavUrl(value) {
   return validPath(url) || /^https:\/\/[^\s]+$/i.test(url) || /^(mailto|tel):[^\s]+$/i.test(url);
 }
 
+const RESERVED_REDIRECT_SOURCES = ["/api/","/admin/","/assets/","/media/","/_","/robots.txt","/sitemap.xml","/build-meta.json"];
+function validRedirectSource(value) {
+  const route=clean(value).toLowerCase();
+  return validPath(value) && !route.startsWith("//") && !RESERVED_REDIRECT_SOURCES.some(x=>route.startsWith(x));
+}
 function validateRedirects(input) {
   if (!Array.isArray(input) || input.length > 500) throw new Error("Redirect list must contain 0-500 rows");
   const seen = new Set();
@@ -211,7 +216,7 @@ function validateRedirects(input) {
     const sourcePath = clean(row?.sourcePath);
     const targetPath = clean(row?.targetPath);
     const statusCode = Number(row?.statusCode || 301);
-    if (!validPath(sourcePath)) throw new Error("Invalid redirect source: " + sourcePath);
+    if (!validRedirectSource(sourcePath)) throw new Error("Invalid/reserved redirect source: " + sourcePath);
     if (!validTarget(targetPath)) throw new Error("Invalid redirect target for " + sourcePath);
     if (![301,302].includes(statusCode)) throw new Error("Redirect status must be 301 or 302");
     if (sourcePath === targetPath) throw new Error("Redirect cannot point to itself: " + sourcePath);

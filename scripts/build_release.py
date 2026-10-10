@@ -15,6 +15,7 @@ import sys
 from datetime import datetime, timezone
 from admin_route import admin_path as resolve_admin_path
 from plan_model_overflow import plan as plan_model_overflow
+from site_redirects import redirect_lines
 
 ROOT=Path(__file__).resolve().parent.parent
 CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
@@ -55,16 +56,7 @@ def main():
     subprocess.run([sys.executable,"scripts/render_locales.py"],cwd=ROOT,env=env,check=True)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
-        valid=[]
-        for row in state.get("redirects",[]):
-            src=row.get("source_path","");target=row.get("target_path","")
-            code=int(row.get("status_code",301))
-            if not (isinstance(src,str) and src.startswith("/") and " " not in src and "\n" not in src):
-                continue
-            if not (isinstance(target,str) and (target.startswith("/") or target.startswith("https://"))
-                    and " " not in target and "\n" not in target):
-                continue
-            if code in (301,302):valid.append(f"{src} {target} {code}")
+        valid=redirect_lines(state.get("redirects",[]))
         if valid:(DIST/"_redirects").write_text("\n".join(valid)+"\n",encoding="utf-8")
     for name in ("favicon.svg","favicon.ico","favicon-16.png","favicon-32.png",
                  "apple-touch-icon.png","icon-192.png","icon-512.png",
