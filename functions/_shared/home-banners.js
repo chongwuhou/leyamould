@@ -1,5 +1,6 @@
 // XUYI 3-slot homepage Banner: explicit images, links and reviewed localized copy.
-export const LANGS=["en","es","pt","ru","tr"];
+// The configured language registry is authoritative. Optional draft language
+// translations are preserved on save instead of being silently discarded.
 const STRING_FIELDS=["title","highlight","description","alt","cta"];
 const limits={title:100,highlight:110,description:500,alt:220,cta:95};
 function str(value,key){
@@ -18,16 +19,19 @@ export function safeBannerLink(value){
  try{const u=new URL(value);return u.protocol==="https:"&&!!u.hostname&&!u.username&&!u.password}
  catch{return false}
 }
-export function normalizeBanners(input){
+export function normalizeBanners(input,{requiredLocales=[]}={}){
  if(!input||typeof input!=="object"||!Array.isArray(input.slides)||input.slides.length!==3)
   throw Error("Homepage must contain exactly 3 banner slides");
+ const registry=new Set([...requiredLocales.filter(x=>x!=="en"),
+   ...input.slides.flatMap(x=>Object.keys(x?.translations||{}))]);
  return {schemaVersion:1,slides:input.slides.map((row,i)=>{
   if(!row||typeof row!=="object"||!safeBannerPath(row.img)||!safeBannerLink(row.link))
    throw Error("Invalid banner image or link on slide "+(i+1));
   const item={img:row.img,link:row.link};
   for(const k of STRING_FIELDS)item[k]=str(row[k],k);
   item.translations={};
-  for(const locale of LANGS.slice(1)){
+  for(const locale of registry){
+   if(!/^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/.test(locale))throw Error("Invalid banner locale: "+locale);
    const value=row.translations?.[locale];
    if(!value||typeof value!=="object")throw Error("Missing reviewed "+locale+" banner text");
    item.translations[locale]={};

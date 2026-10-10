@@ -13,8 +13,13 @@ sys.stdout.reconfigure(encoding="utf-8")
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
 ORIGIN="https://xuyibottles.com"
-LOCALES=("en","es","pt","ru","tr")
+manifest=json.loads((DIST/"locale-manifest.json").read_text(encoding="utf-8"))
+assert manifest["site"]=="xuyi-drinkware-site" and manifest["sourceLocale"]=="en"
+LOCALES=tuple(lang["code"] for lang in manifest["locales"])
+PREFIX={lang["code"]:lang["pathPrefix"] for lang in manifest["locales"]}
+PREFIX_TO_CODE={prefix:code for code,prefix in PREFIX.items() if prefix}
 config=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+assert config["localizationFrameworkVersion"]==2
 indexable=config["site"].get("indexingApproved") is True
 meta=json.loads((DIST/"build-meta.json").read_text(encoding="utf-8"))
 assert meta["noindex"] is (not indexable)
@@ -23,13 +28,32 @@ warnings=defaultdict(list)
 records={}
 per_lang_title=defaultdict(dict)
 per_lang_description=defaultdict(dict)
-for file in sorted(DIST.rglob("index.html")):
-    rel=file.relative_to(DIST).as_posix()
+def all_published_documents():
+    seen=set()
+    for file in sorted(DIST.rglob("index.html")):
+        rel=file.relative_to(DIST).as_posix()
+        seen.add(rel)
+        yield rel,file.read_text(encoding="utf-8")
+    # Exact route copies in the reviewed R2 overflow bundles remain public
+    # canonical pages even when removed from Cloudflare Pages' file budget.
+    source=ROOT/"_local_ops/model-overflow"
+    manifest_file=source/"manifest.json"
+    if not manifest_file.is_file():return
+    storage=json.loads(manifest_file.read_text(encoding="utf-8"))
+    if storage.get("site")!="xuyi-drinkware-site":raise RuntimeError("Wrong R2 overflow identity")
+    for item in storage.get("objects",[]):
+        bundle=json.loads((source/item["key"]).read_text(encoding="utf-8"))
+        if bundle.get("site")!="xuyi-drinkware-site":raise RuntimeError("Wrong R2 HTML bundle")
+        for route,document in bundle["routes"].items():
+            rel=route.lstrip("/")+"index.html"
+            if rel in seen:raise RuntimeError("Static and overflow page duplicated: "+rel)
+            seen.add(rel)
+            yield rel,document
+for rel,html in all_published_documents():
     if rel.startswith("admin/"):continue
-    locale=rel.split("/")[0] if rel.split("/")[0] in LOCALES[1:] else "en"
+    locale=PREFIX_TO_CODE.get(rel.split("/")[0],"en")
     route="/"+rel.removesuffix("index.html")
     expected=ORIGIN+route
-    html=file.read_text(encoding="utf-8")
     head=html.split("</head>",1)[0]
     def extract(regex):
         match=re.search(regex,head,re.I|re.S)
@@ -49,9 +73,11 @@ for file in sorted(DIST.rglob("index.html")):
     if og_title!=title or og_desc!=desc:errors.append((route,"OG title/description differs from SEO metadata"))
     if len(raw_hrefs)!=len(hrefs):errors.append((route,"duplicate hreflang"))
     if hrefs.get(locale)!=expected:errors.append((route,"missing own hreflang"))
-    base_route=route if locale=="en" else route[len("/"+locale):]
+    base_route=route if locale=="en" else route[len("/"+PREFIX[locale]):]
     if hrefs.get("x-default")!=ORIGIN+base_route:errors.append((route,"wrong x-default"))
-    if set(hrefs)!={"en","es","pt","ru","tr","x-default"}:errors.append((route,"incomplete language set",sorted(hrefs)))
+    expected_codes={lang for lang in LOCALES if base_route in manifest["routes"].get(lang,[])}
+    if set(hrefs)!=expected_codes|{"x-default"}:
+        errors.append((route,"invalid published-language set",sorted(hrefs),sorted(expected_codes)))
     if not html.startswith('<!doctype html><html lang="'+locale+'">'):errors.append((route,"incorrect html lang"))
     robot="index,follow" if indexable else "noindex,nofollow"
     if '<meta name="robots" content="'+robot+'">' not in head:errors.append((route,"indexing control mismatch"))
@@ -99,7 +125,7 @@ if set(links)!=set(records):
 home=records[ORIGIN+"/"]
 if any(lang not in home["hreflang"] for lang in LOCALES):errors.append(("/","missing locale home"))
 for locale in LOCALES:
-    f=DIST/("" if locale=="en" else locale)/"index.html"
+    f=DIST/(PREFIX[locale] or ".")/"index.html"
     txt=f.read_text(encoding="utf-8")
     if '"@type":"WebSite"' not in txt or '"@type":"Organization"' not in txt:
         errors.append(("/"+locale if locale!="en" else "/","missing verified home entity graph"))

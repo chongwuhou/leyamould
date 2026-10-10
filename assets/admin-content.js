@@ -20,7 +20,7 @@
  async function load(){
   say("正在读取旭一 D1 …");
   try{
-   const endpoints=[["brand-config","brand"],["site-config","site"],["pages","pages"],
+   const endpoints=[["brand-config","brand"],["site-config","site"],["site-settings","settings"],["pages","pages"],
     ["product-content","products"],["page-translations","locales"],["page-content","pageBodies"],
     ["home-banners","banners"]];
    // A failed unrelated CMS endpoint must not disable Banner/new-product editing.
@@ -64,9 +64,10 @@
   }
   if(tab==="banners"){
    const items=state.bannerDraft?.slides||[];
-   const options=[["en","English"],["es","Español"],["pt","Português"],["ru","Русский"],["tr","Türkçe"]];
+   const options=(state.settings?.languages?.languages||[])
+      .map(x=>[x.code,x.nativeName||x.displayName||x.code]);
    html='<h3>首页 3 张 Banner · 统一图片和链接</h3>'+
-     '<p>修改后保存至 D1，并等待现有自动发布。五语使用同一图片及跳转地址；标题、说明、按钮文字分别维护，避免翻译混用。图片请先在 07 R2 媒体库上传后复制地址；也支持当前已有 /assets/ 图片。</p>'+
+     '<p>语言列表由 D1 设置统一管理。可先准备尚未 publishReady 的新语言文案；完整审核且准备好 UI、表单和页面后再启用。图片统一使用 R2 或已发布 /assets/。</p>'+
      '<label class="block-label">当前编辑语言 <select id="cms-banner-language">'+
        options.map(([code,label])=>'<option value="'+code+'"'+(code===bannerLocale?' selected':'')+'>'+label+'</option>').join("")+'</select></label>';
    for(let i=0;i<items.length;i++){
@@ -87,7 +88,7 @@
        field("b"+i+"-alt",copy.alt,"图片描述（ALT）")+
        '<p><small>图片：'+esc(item.img)+'　链接：'+esc(item.link)+'</small></p></section>';
    }
-   html+='<p>保存前，请核对四语标题和按钮文字；修改图片与跳转地址会同步影响五种语言。</p>'+
+   html+='<p>保存前，请逐一核对所有已发布语言的标题和按钮；修改图片和跳转会影响所有语言。</p>'+
     button("保存 3 张 Banner 并等待发布","banners");
   }
   if(tab==="navigation"){
@@ -149,7 +150,11 @@
   }
   if(tab==="locales"){
    html='<h3>多语言正式页面 · 翻译审核</h3><p>先复制英文原文，再逐段翻译。只有完整审核并设置发布就绪才会生成对应语言 URL；不会把英文假装成其他语言。</p>'+
-    '<label class="block-label">目标语言 <select id="cms-locale"><option value="es">Español</option><option value="pt">Português</option><option value="ru">Русский</option><option value="tr">Türkçe</option></select></label>'+
+    '<label class="block-label">目标语言 <select id="cms-locale">'+
+       (state.settings?.languages?.languages||[])
+          .filter(x=>x.code!==state.settings?.languages?.sourceLocale)
+          .map(x=>'<option value="'+esc(x.code)+'">'+esc(x.nativeName||x.displayName||x.code)+'</option>').join("")+
+     '</select></label>'+
     '<label class="block-label">英文原始路径 <select id="cms-locale-route"></select></label>'+
     field("localeTitle","","翻译后的 Title")+
     field("localeDescription","","翻译后的 Meta Description")+

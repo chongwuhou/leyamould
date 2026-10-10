@@ -101,6 +101,9 @@ def main():
     }
     metadata={
         "version":"XUYI source-templated static build v1",
+        "localizationFrameworkVersion":CONFIG["localizationFrameworkVersion"],
+        "publishedLocales":[l["code"] for l in json.loads(
+           (DIST/"locale-manifest.json").read_text(encoding="utf-8"))["locales"]],
         "siteOrigin":CONFIG["site"]["origin"],
         "pagesProject":CONFIG["cloudflare"]["pagesProjectName"],
         "generatedAt":datetime.now(timezone.utc).isoformat(),

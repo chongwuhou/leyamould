@@ -4,9 +4,9 @@ from urllib.parse import urlsplit
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 DEFAULT=json.loads((ROOT/"assets/home-banner-defaults.json").read_text(encoding="utf8"))
-LOCALES=("es","pt","ru","tr")
+from locale_registry import approved_locales
 FIELDS=("title","highlight","description","alt","cta")
-def verified(config):
+def verified(config,state=None):
  if not isinstance(config,dict) or not isinstance(config.get("slides"),list) or len(config["slides"])!=3:
   raise ValueError("XUYI homepage requires three banner slides")
  for slide in config["slides"]:
@@ -21,7 +21,7 @@ def verified(config):
   external=parsed.scheme=="https" and bool(parsed.hostname) and parsed.username is None and parsed.password is None
   if unsafe or not (local or external):
    raise ValueError("Invalid homepage banner destination")
-  for loc in ("en",)+LOCALES:
+  for loc in [lang["code"] for lang in approved_locales(state or {})]:
    texts=slide if loc=="en" else (slide.get("translations") or {}).get(loc)
    if not isinstance(texts,dict):raise ValueError("Missing reviewed "+loc+" banner text")
    for field in FIELDS:
@@ -31,10 +31,12 @@ def verified(config):
  return config
 def config_for(state):
  conf=state.get("banners")
- return verified(conf if conf is not None else DEFAULT)
+ return verified(conf if conf is not None else DEFAULT,state)
 def for_locale(state,locale="en",published_routes=None):
  config=config_for(state)
  rows=[]
+ prefixes={lang["code"]:lang["pathPrefix"] for lang in approved_locales(state)}
+ if locale not in prefixes:raise ValueError("Unpublished banner locale: "+locale)
  for slide in config["slides"]:
   words=slide if locale=="en" else slide["translations"][locale]
   link=slide["link"]
@@ -42,7 +44,7 @@ def for_locale(state,locale="en",published_routes=None):
    from urllib.parse import urlsplit
    parsed=urlsplit(link)
    if parsed.path in published_routes:
-    link="/"+locale+link
+    link="/"+prefixes[locale]+link
   rows.append({**{key:words[key] for key in FIELDS},
    "img":slide["img"],"link":link})
  return rows

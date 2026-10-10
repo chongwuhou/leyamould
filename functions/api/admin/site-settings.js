@@ -74,6 +74,10 @@ export async function onRequestPost(context) {
     const action = clean(payload.action);
     if (action === "save_languages") {
       const languages = normalizeLanguageConfig(payload.config);
+      // The current root URL and CMS source are English. Changing them needs
+      // a separate canonical/redirect migration, not a language checkbox.
+      if(languages.defaultLocale!=="en"||languages.sourceLocale!=="en")
+        throw new Error("XUYI default/source language is English. Changing it requires a separate SEO URL migration.");
       const enabled = languages.languages.filter((item) => item.enabled && item.publishReady);
       if (!enabled.length) throw new Error("At least one enabled publish-ready language is required");
       await saveSiteSetting(db, "language_config", languages);

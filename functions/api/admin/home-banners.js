@@ -1,7 +1,7 @@
 // Human-reviewed homepage carousel controls, stored in XUYI's existing D1 site_state.
 import {authorizedBuildRequest} from "../../_shared/build-auth.js";
 import {authorizeAdminRequest} from "../../_shared/admin-security.js";
-import {bumpPublishRevision} from "../../_shared/site-settings.js";
+import {bumpPublishRevision,loadSiteSetting,defaultLanguageConfig,normalizeLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";
 import {normalizeBanners} from "../../_shared/home-banners.js";
 const json=(v,status=200)=>Response.json(v,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 async function auth(c){
@@ -21,7 +21,12 @@ export async function onRequestPost(c){
  const denied=await auth(c);if(denied)return denied;
  if(!(await authorizeAdminRequest(c.request,c.env)))return json({error:"Only a signed-in administrator can update homepage banners"},401);
  let value;try{value=await c.request.json()}catch{return json({error:"Invalid JSON"},400)}
- let config;try{config=normalizeBanners(value.config)}catch(error){return json({error:String(error.message||error)},400)}
+ let config;
+ try{
+  const languageRow=await loadSiteSetting(c.env.XUYI_DB,"language_config",defaultLanguageConfig());
+  const required=publicLanguages(normalizeLanguageConfig(languageRow.value)).map(x=>x.code);
+  config=normalizeBanners(value.config,{requiredLocales:required});
+ }catch(error){return json({error:String(error.message||error)},400)}
  try{
   const db=c.env.XUYI_DB;
   if(!c.env.XUYI_ASSETS)return json({error:"Cannot validate R2 media without XUYI_ASSETS"},503);

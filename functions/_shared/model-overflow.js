@@ -1,12 +1,12 @@
 // Ported from Demalong V1.4 hybrid fallback, isolated to XUYI product routes.
 // Pages static files always win. R2 is read only for approved removed detail files.
-const LOCALES=new Set(["es","pt","ru","tr"]);
 const reply=(value,status)=>Response.json(value,{status,headers:{"cache-control":"no-store"}});
 export function modelKey(pathname){
   const parts=pathname.split("/").filter(Boolean);
   let slug="";
   if(parts.length===2&&parts[0]==="products")slug=parts[1];
-  else if(parts.length===3&&LOCALES.has(parts[0])&&parts[1]==="products")slug=parts[2];
+  else if(parts.length===3&&/^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i.test(parts[0])
+       &&parts[1]==="products")slug=parts[2];
   if(!/^[a-z0-9][a-z0-9_-]{0,78}$/i.test(slug))return "";
   return "models/"+slug+".json";
 }
@@ -28,6 +28,8 @@ export async function serveModelOverflow(context){
   catch{return reply({error:"Invalid XUYI overflow bundle"},502)}
   if(bundle?.site!=="xuyi-drinkware-site"||bundle?.schemaVersion!==1)return reply({error:"Invalid overflow identity"},502);
   const canonical=url.pathname.endsWith("/")?url.pathname:url.pathname+"/";
+  // Exact URL must exist in the approved immutable R2 manifest. Accepting a
+  // syntactically valid new locale prefix does not publish phantom translations.
   const document=bundle.routes?.[canonical];
   if(!document)return staticResponse;
   if(url.pathname!==canonical){const target=new URL(url);target.pathname=canonical;return Response.redirect(target,301)}

@@ -11,14 +11,19 @@ sitemap=DIST/"sitemap.xml"
 assert sitemap.is_file()
 ET.parse(sitemap)
 result={}
-for locale in ("es","pt","ru","tr"):
- folder=DIST/locale
+manifest=json.loads((DIST/"locale-manifest.json").read_text(encoding="utf8"))
+published=[lang for lang in manifest["locales"] if lang["code"]!=manifest["defaultLocale"]]
+for language in published:
+ locale=language["code"]
+ folder=DIST/language["pathPrefix"]
  if not folder.is_dir():
   result[locale]=0
   continue
  files=list(folder.rglob("index.html"))
  assert (folder/"index.html").is_file(),(locale,"missing locale home")
- assert len(files)>=120,(locale,"insufficient translated pages",len(files))
+ assert len(files)>=1,(locale,"no approved translated pages")
+ if locale in ("es","pt","ru","tr"):
+  assert len(files)>=120,(locale,"legacy language unexpectedly lost published pages",len(files))
  for f in files:
   html=f.read_text(encoding="utf8")
   route="/"+f.relative_to(DIST).as_posix().removesuffix("index.html")
@@ -37,7 +42,7 @@ for locale in ("es","pt","ru","tr"):
    desc=re.search(r'<meta name="description" content="([^"]+)"',html)
    assert title and title.group(1).count(model)==1,(locale,route,"SEO model repeated")
    assert desc and desc.group(1).count(model)==1,(locale,route,"description model repeated")
-  if route=="/"+locale+"/":
+  if route=="/"+language["pathPrefix"]+"/":
    assert ">FAQ<" not in html,(locale,"untranslated footer FAQ")
   if locale=="ru" and route.endswith("/products/2501/"):
    main=html.split('<main id="main-content">',1)[1].split('</main>',1)[0]
@@ -55,12 +60,12 @@ snapshot=ROOT/"_local_ops/build-snapshot.json"
 if snapshot.is_file():
  data=json.loads(snapshot.read_text(encoding="utf8"))
  if data.get("site")=="xuyi-drinkware-site":
-  for locale in ("es","pt","ru","tr"):
+  for locale in result:
    expected=sum(1 for row in data.get("translations",[]) if
      row.get("locale")==locale and str(row.get("resourceId","")).startswith("page:"))
    if expected:
     assert result[locale]==expected, (locale,"D1 translation count mismatch",result[locale],expected)
 if sum(result.values()):
  assert all(result.values()),"Partial language release not allowed"
- assert sum(result.values())>=500,"Expected near-complete four-language coverage"
+ assert sum(result.values())>=len(result),"Expected approved localized pages"
 print("XUYI_LOCALIZED_RELEASE_PASSED",json.dumps(result,sort_keys=True))

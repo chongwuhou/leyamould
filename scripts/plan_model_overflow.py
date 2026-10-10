@@ -10,14 +10,27 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
 VALID_SLUG=re.compile(r"[a-z0-9][a-z0-9_-]{0,78}",re.I)
-LOCALES=("es","pt","ru","tr")
 PLANNED_BUCKET="xuyi-drinkware-model-pages"
+
+def approved_prefixes(dist:Path):
+    manifest=dist/"locale-manifest.json"
+    if manifest.is_file():
+        data=json.loads(manifest.read_text(encoding="utf-8"))
+        if data.get("site")!="xuyi-drinkware-site":
+            raise ValueError("Refusing overflow from another site")
+        return tuple(x["pathPrefix"] for x in data["locales"] if x["pathPrefix"])
+    # Isolated test fixture or legacy local build with no registry artifact:
+    # discover *existing* route folders, never fabricate another language.
+    return tuple(sorted(f.name for f in dist.iterdir() if f.is_dir()
+                        and re.fullmatch(r"[a-z]{2,3}(?:-[a-z0-9-]+)?",f.name)
+                        and (f/"products").is_dir()))
 
 def plan(dist:Path,output:Path,*,switch_at:int=16000,target:int=15500,hard_stop:int=19500):
     dist=Path(dist);output=Path(output)
     if not (0<target<switch_at<hard_stop<=20000):
         raise ValueError("Invalid Pages safety budget")
     before=sum(f.is_file() for f in dist.rglob("*"))
+    prefixes=approved_prefixes(dist)
     # Group only existing approved detail routes; preserve route/locale parity
     # by migrating all generated language variants of a given model together.
     groups={}
@@ -27,7 +40,7 @@ def plan(dist:Path,output:Path,*,switch_at:int=16000,target:int=15500,hard_stop:
             slug=file.parent.name
             if not VALID_SLUG.fullmatch(slug):continue
             pages={f"/products/{slug}/":file}
-            for loc in LOCALES:
+            for loc in prefixes:
                 local=dist/loc/"products"/slug/"index.html"
                 if local.is_file():pages[f"/{loc}/products/{slug}/"]=local
             groups[slug]=pages
@@ -53,7 +66,7 @@ def plan(dist:Path,output:Path,*,switch_at:int=16000,target:int=15500,hard_stop:
         raise RuntimeError(f"Cloudflare Pages hard stop {current}>={hard_stop}")
     route_includes=["/api/*","/blog/*","/media/*"]
     if overflow:
-        route_includes+=["/products/*"]+[f"/{loc}/products/*" for loc in LOCALES]
+        route_includes+=["/products/*"]+[f"/{loc}/products/*" for loc in prefixes]
     (dist/"_routes.json").write_text(json.dumps({"version":1,"include":route_includes,"exclude":[]},indent=2)+"\n",encoding="utf8")
     manifest={"schemaVersion":1,"site":"xuyi-drinkware-site","bucket":PLANNED_BUCKET,
               "mode":"hybrid" if overflow else "static",

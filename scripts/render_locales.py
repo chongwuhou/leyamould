@@ -14,6 +14,7 @@ from urllib.parse import urlsplit
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from home_banner_config import tag as banner_tag,for_locale as banner_slides
+from locale_registry import approved_locales,local_url
 
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
@@ -22,7 +23,7 @@ ORIGIN="https://xuyibottles.com"
 UI_TRANSLATIONS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
 RUNTIME_UI_TRANSLATIONS=json.loads((ROOT/"data/runtime-ui-translations.json").read_text(encoding="utf-8"))
 
-def localize_structured_data(markup,locale,route,localized,fields,approved_routes):
+def localize_structured_data(markup,locale,route,localized,fields,approved_routes,path_prefix=None):
     """Match JSON-LD to the reviewed language page, never the English source.
 
     Product identifiers, images and the global legal Organization remain
@@ -59,7 +60,7 @@ def localize_structured_data(markup,locale,route,localized,fields,approved_route
                 if not isinstance(value,str) or not value.startswith(ORIGIN+"/"):continue
                 original_route=value[len(ORIGIN):]
                 if original_route in approved_routes:
-                    crumb["item"]=ORIGIN+"/"+locale+original_route
+                    crumb["item"]=ORIGIN+"/"+(path_prefix or locale)+original_route
                     if original_route=="/":crumb["name"]=ui.get("Home",crumb.get("name","Home"))
                     elif original_route==route:crumb["name"]=heading
                     elif original_route=="/blog/":crumb["name"]=ui.get("Blog",crumb.get("name","Blog"))
@@ -182,7 +183,12 @@ def main():
     data=json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     if data.get("site")!="xuyi-drinkware-site":raise RuntimeError("Wrong locale source site")
     languages=(data.get("languages") or {}).get("languages",[])
-    live={r.get("code"):r for r in languages if r.get("enabled") and r.get("publishReady") and r.get("code") in ("es","pt","ru","tr")}
+    ready=approved_locales(data)
+    # Preserve D1-reviewed UI copy while getting the supported code and URL
+    # prefix solely from the registry; no es/pt/ru/tr enumeration here.
+    original={r.get("code"):r for r in languages}
+    live={r["code"]:{**original.get(r["code"],{}),**r}
+          for r in ready if r["code"]!="en"}
     translated={}
     for item in data.get("translations",[]):
         rid=item.get("resourceId","")
@@ -195,6 +201,9 @@ def main():
         src=DIST/route.lstrip("/")/"index.html"
         if route=="/":src=DIST/"index.html"
         if src.is_file():translated[(route,loc)]=fields
+    for loc in live:
+        if ("/",loc) not in translated:
+            raise RuntimeError("Refusing to publish "+loc+" without a reviewed localized homepage")
     routes_by_locale = {locale: {route for route, lang in translated if lang == locale}
                         for locale in live}
     created=0
@@ -242,19 +251,19 @@ def main():
             current=r'<meta property="'+property_name+'" content="[^"]*">'
             if re.search(current,text):text=re.sub(current,lambda _:tag,text,count=1)
             else:text=text.replace("</head>",tag+"</head>",1)
-        localized="/"+live[loc].get("pathPrefix",loc).strip("/")+(route if route!="/" else "/")
+        localized="/"+live[loc]["pathPrefix"]+(route if route!="/" else "/")
         localized=re.sub("/+","/",localized)
         canonical=ORIGIN+localized
         text=re.sub(r'<link rel="canonical" href="[^"]*">','<link rel="canonical" href="'+canonical+'">',text,count=1)
         text=re.sub(r'<meta property="og:url" content="[^"]*">','<meta property="og:url" content="'+canonical+'">',text,count=1)
-        text=localize_structured_data(text,loc,route,localized,fields,routes_by_locale[loc])
+        text=localize_structured_data(text,loc,route,localized,fields,routes_by_locale[loc],live[loc]["pathPrefix"])
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
         created+=1
     # Only link routes that really exist in the generated release.
     alternates={}
     for route,loc in translated:
-        prefix=live[loc].get("pathPrefix",loc).strip("/")
+        prefix=live[loc]["pathPrefix"]
         dest=DIST/prefix/route.lstrip("/")/"index.html"
         if dest.is_file():alternates.setdefault(route,[]).append((loc,"/"+prefix+route))
     for route,alts in alternates.items():
@@ -281,6 +290,17 @@ def main():
             if "</urlset>" not in xml:raise RuntimeError("Invalid XUYI sitemap: no urlset closing tag")
             xml=xml.replace("</urlset>","\n".join(added)+"\n</urlset>",1)
             sitemap.write_text(xml,encoding="utf-8")
+    # Actual published output is authoritative; disabled/draft or missing
+    # language pages must not become sitemap/hreflang entries.
+    manifest={"schemaVersion":1,"site":"xuyi-drinkware-site","sourceLocale":"en",
+              "defaultLocale":"en","origin":ORIGIN,"locales":ready,
+              "routes":{lang["code"]:sorted(
+                "/"+f.relative_to(DIST/(lang["pathPrefix"] or ".")).as_posix().removesuffix("index.html")
+                for f in (DIST/(lang["pathPrefix"] or ".")).rglob("index.html")
+                if (lang["code"]!="en" or f.relative_to(DIST).parts[0] not in
+                    {x["pathPrefix"] for x in ready if x["code"]!="en"}|{"admin"}))
+                for lang in ready}}
+    (DIST/"locale-manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print("XUYI_REVIEWED_LOCALIZED_PAGES",created,"LANGUAGES",sorted(live),"ALTERNATE_SETS",len(alternates))
 
 if __name__=="__main__":main()

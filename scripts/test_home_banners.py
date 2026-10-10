@@ -8,11 +8,15 @@ from home_banner_config import DEFAULT,verified,for_locale,tag
 dist=root/"dist"
 snapshot=root/"_local_ops/build-snapshot.json"
 state=json.loads(snapshot.read_text(encoding="utf8")) if snapshot.is_file() else {}
+manifest=json.loads((dist/"locale-manifest.json").read_text(encoding="utf-8"))
+langs=manifest["locales"]
 assert state.get("site","xuyi-drinkware-site")=="xuyi-drinkware-site"
 assert len(DEFAULT["slides"])==3
 assert len(verified(DEFAULT)["slides"])==3
-for lang in ("en","es","pt","ru","tr"):
- file=dist/(lang if lang!="en" else "")/"index.html"
+for language in langs:
+ lang=language["code"]
+ prefix=language["pathPrefix"]
+ file=dist/(prefix or ".")/"index.html"
  text=file.read_text(encoding="utf8")
  assert text.count('id="xuyi-home-banners"')==1,(lang,"duplicate or missing banner JSON")
  match=re.search(r'<script type="application/json" id="xuyi-home-banners">([^<]+)</script>',text)
@@ -20,7 +24,7 @@ for lang in ("en","es","pt","ru","tr"):
  saved=json.loads(match.group(1))
  translated_routes=set()
  if lang!="en":
-  translated_routes={"/"+file.parent.relative_to(dist/lang).as_posix().strip("/")+"/" for file in (dist/lang).rglob("index.html")}
+  translated_routes={"/"+file.parent.relative_to(dist/prefix).as_posix().strip("/")+"/" for file in (dist/prefix).rglob("index.html")}
   translated_routes.add("/")
  expected=for_locale(state,lang,translated_routes if lang!="en" else None)
  assert saved==expected,(lang,"localized banner settings lost")
@@ -37,11 +41,14 @@ for lang in ("en","es","pt","ru","tr"):
  footer=text.split('<footer class="footer">',1)[1].split('</footer>',1)[0]
  bottom=footer.split('<div class="footer__bottom">',1)[1]
  assert 'href="/sitemap.xml"' in bottom
- assert 'href="/'+("" if lang=="en" else lang+"/")+'privacy-policy/"' in bottom
+ privacy=("/"+prefix+"/privacy-policy/") if prefix and (dist/prefix/"privacy-policy/index.html").is_file() else "/privacy-policy/"
+ assert 'href="'+privacy+'"' in bottom
  assert 'data-site-email' in footer and 'data-site-whatsapp' in footer
  assert 'data-site-whatsapp-number' in footer and re.search(r'WhatsApp:\s*\+\d',footer)
- contact=(dist/(lang if lang!="en" else "")/"contact/index.html").read_text(encoding="utf8")
- assert re.search(r'data-site-whatsapp-number[^>]*>[^<]*\+\d',contact),(lang,"contact phone invisible")
+ contact_file=dist/(prefix or ".")/"contact/index.html"
+ if contact_file.is_file():
+  contact=contact_file.read_text(encoding="utf8")
+  assert re.search(r'data-site-whatsapp-number[^>]*>[^<]*\+\d',contact),(lang,"contact phone invisible")
  assert "<h3>Quick Links</h3>" not in footer
 for bad in [
  {"slides":[]},
@@ -53,4 +60,4 @@ for bad in [
  except ValueError:pass
  else:raise AssertionError("Unsafe banner configuration passed")
 assert 'const managed=JSON.parse' in (dist/"assets/site.js").read_text(encoding="utf8")
-print("XUYI_HOME_BANNER_FOOTER_TESTS_PASSED",5,"languages, 3 slides, privacy/sitemap and controls")
+print("XUYI_HOME_BANNER_FOOTER_TESTS_PASSED",len(langs),"languages, 3 slides, privacy/sitemap and controls")

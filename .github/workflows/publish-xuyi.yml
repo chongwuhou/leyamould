@@ -8,6 +8,8 @@ on:
       - "scripts/**"
       - "build.py"
       - "site_renderer.py"
+      - "locale_registry.py"
+      - "home_banner_config.py"
       - "capability_*.py"
       - "blog_editorial.py"
       - "product_content.py"
@@ -119,6 +121,8 @@ jobs:
           node scripts/test_blog_dynamic_evidence.mjs
           node scripts/test_blog_hreflang_runtime.mjs
           python scripts/test_seo_multilingual_launch.py
+          python scripts/test_future_locale_framework.py
+          node scripts/test_future_locale_runtime.mjs
           python scripts/test_model_overflow.py
           node scripts/test_model_overflow_handler.mjs
           python scripts/test_admin_route.py

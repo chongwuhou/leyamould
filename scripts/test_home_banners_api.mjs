@@ -32,7 +32,13 @@ const db={
 const apiSource=read("functions/api/admin/home-banners.js")
  .replace('import {authorizedBuildRequest} from "../../_shared/build-auth.js";','const authorizedBuildRequest=async()=>true;')
  .replace('import {authorizeAdminRequest} from "../../_shared/admin-security.js";','const authorizeAdminRequest=async()=>globalThis.__adminAllowed.value;')
- .replace('import {bumpPublishRevision} from "../../_shared/site-settings.js";','const bumpPublishRevision=async()=>({revision:++globalThis.__rev.value});')
+ .replace('import {bumpPublishRevision,loadSiteSetting,defaultLanguageConfig,normalizeLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";',
+  'const bumpPublishRevision=async()=>({revision:++globalThis.__rev.value});'+
+  'const loadSiteSetting=async()=>({value:defaultLanguageConfig()});'+
+  'const defaultLanguageConfig=()=>({defaultLocale:"en",sourceLocale:"en",languages:['+
+  '"en","es","pt","ru","tr"].map(code=>({code,enabled:true,publishReady:true}))});'+
+  'const normalizeLanguageConfig=x=>x;'+
+  'const publicLanguages=x=>x.languages;')
  .replace('import {normalizeBanners} from "../../_shared/home-banners.js";','import {normalizeBanners} from "'+uri(helper)+'";');
 globalThis.__adminAllowed={value:false};
 globalThis.__rev={value:revision};

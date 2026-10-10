@@ -2,6 +2,7 @@ from pathlib import Path
 from functools import lru_cache
 import json,html,re,collections,os
 from home_banner_config import tag as banner_tag,for_locale as banner_slides
+from locale_registry import approved_locales
 ROOT=Path(__file__).parent
 INDEXING_APPROVED=(json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
                    .get("site",{}).get("indexingApproved") is True)
@@ -143,7 +144,7 @@ def build_url(path,title,content):
     "url":SITE_ORIGIN+"/","address":{"@type":"PostalAddress","addressLocality":"Taizhou","addressRegion":"Zhejiang","addressCountry":"CN"}},
    {"@type":"WebSite","@id":SITE_ORIGIN+"/#website","url":SITE_ORIGIN+"/",
     "name":"XUYI Bottles","publisher":{"@id":SITE_ORIGIN+"/#organization"},
-    "inLanguage":["en","es","pt","ru","tr"]},
+    "inLanguage":[lang["code"] for lang in approved_locales(BUILD_STATE)]},
    {"@type":"WebPage","@id":SITE_ORIGIN+"/#webpage","url":SITE_ORIGIN+"/",
     "name":html.unescape(page_title.group(1)) if page_title else "XUYI Bottles",
     "description":html.unescape(page_desc.group(1)) if page_desc else "",
@@ -309,7 +310,9 @@ def header():
   brand=e(identity["displayName"].strip()[:120])
   logo='<a href="/" class="logo" aria-label="'+brand+' home">'+brand+'</a>'
   top=top.replace("XUYI · Taizhou, China",brand+" · Taizhou, China",1)
- actions='<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language"><option value="en">English</option><option value="es">Español</option><option value="pt">Português</option><option value="ru">Русский</option><option value="tr">Türkçe</option></select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
+ locale_options="".join('<option value="'+e(lang["code"])+'">'+e(lang["nativeName"])+'</option>'
+                        for lang in approved_locales(BUILD_STATE))
+ actions='<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language">'+locale_options+'</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
  search='<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="/products/" method="get"><input type="search" name="q" placeholder="Search product model or type…" aria-label="Search product models"><button class="button" type="submit">Search →</button></form></div>'
  return render_template("header",TOPBAR=top,LOGO=logo,NAV_DESKTOP=''.join(navitems),ACTIONS=actions,SEARCH=search,NAV_MOBILE=mobile)
 def whatsapp_display_number():
