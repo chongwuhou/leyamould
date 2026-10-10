@@ -103,6 +103,10 @@ def build_url(path,title,content):
      r"<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:",
      body_override,re.I):
    main=body_override
+  # Retain D1-edited body as the primary page, and append only distinct
+  # source-checked supplements for selected company/quality pages.
+  from editorial_support import for_route as reviewed_editorial_for_route
+  main+=reviewed_editorial_for_route(route,main)
   content=start+marker+render_template(family,CONTENT=main)+"</main>"+end
  if 'rel="canonical"' not in content:
   content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
