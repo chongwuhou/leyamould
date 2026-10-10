@@ -1,0 +1,166 @@
+{
+  "es": {
+    "slides": [
+      {
+        "title": "Botellas personalizadas <span>para su marca.</span>",
+        "description": "Descubra botellas deportivas, infantiles, de gran capacidad y shakers con suministro directo de fábrica y opciones de personalización.",
+        "alt": "Colección de botellas deportivas de XUYI con colores degradados",
+        "cta": "Explorar productos →"
+      },
+      {
+        "title": "Botellas deportivas de plástico <span>para cada colección.</span>",
+        "description": "Compare asas, diseños de colores y modelos del catálogo para compras al por mayor.",
+        "alt": "Surtido de botellas deportivas de plástico XUYI",
+        "cta": "Ver botellas deportivas →"
+      },
+      {
+        "title": "Artículos para bebidas personalizados <span>pensados para usted.</span>",
+        "description": "Consulte opciones de logotipo, embalaje, modelos y muestras para su proyecto B2B.",
+        "alt": "Colección de shakers XUYI",
+        "cta": "Ver personalización →"
+      }
+    ],
+    "messages": {
+      "Close menu": "Cerrar menú",
+      "Checking online enquiry availability…": "Comprobando disponibilidad del formulario…",
+      "Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.": "El formulario no está disponible temporalmente. Contáctenos por correo electrónico o WhatsApp.",
+      "Please accept the privacy policy.": "Acepte la política de privacidad.",
+      "Submitting your enquiry…": "Enviando consulta…",
+      "The enquiry could not be received. Please use our email or WhatsApp contact instead.": "No se pudo recibir la consulta. Utilice el correo electrónico o WhatsApp.",
+      "Thank you. Your enquiry has been recorded. For urgent requests, please also contact us by email or WhatsApp.": "Gracias. Hemos recibido su consulta. Si es urgente, contáctenos también por correo o WhatsApp.",
+      "The request could not be sent.": "No se pudo enviar la solicitud.",
+      "models": "modelos",
+      "Slide": "Diapositiva",
+      "of": "de",
+      "answers match": "respuestas coinciden con",
+      "No answers match": "No hay respuestas para",
+      "Try another term.": "Pruebe otro término.",
+      "Browse all": "Ver las",
+      "questions below.": "preguntas a continuación.",
+      "Open menu": "Abrir menú"
+    }
+  },
+  "pt": {
+    "slides": [
+      {
+        "title": "Garrafas personalizadas <span>para a sua marca.</span>",
+        "description": "Conheça garrafas esportivas, infantis, de grande capacidade e coqueteleiras, com fornecimento direto de fábrica e personalização.",
+        "alt": "Coleção de garrafas esportivas XUYI em cores degradê",
+        "cta": "Explorar produtos →"
+      },
+      {
+        "title": "Garrafas esportivas de plástico <span>para cada coleção.</span>",
+        "description": "Compare estilos de alça, formatos coloridos e modelos de catálogo para atacadistas.",
+        "alt": "Seleção de garrafas esportivas de plástico XUYI",
+        "cta": "Ver garrafas esportivas →"
+      },
+      {
+        "title": "Garrafas personalizadas <span>pensadas para você.</span>",
+        "description": "Converse sobre logotipo, embalagem, modelos e amostras para seu projeto B2B.",
+        "alt": "Coleção de coqueteleiras XUYI",
+        "cta": "Ver personalização →"
+      }
+    ],
+    "messages": {
+      "Close menu": "Fechar menu",
+      "Checking online enquiry availability…": "Verificando a disponibilidade do formulário…",
+      "Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.": "O formulário está temporariamente indisponível. Entre em contato por e-mail ou WhatsApp.",
+      "Please accept the privacy policy.": "Aceite a política de privacidade.",
+      "Submitting your enquiry…": "Enviando solicitação…",
+      "The enquiry could not be received. Please use our email or WhatsApp contact instead.": "Não foi possível receber a solicitação. Use e-mail ou WhatsApp.",
+      "Thank you. Your enquiry has been recorded. For urgent requests, please also contact us by email or WhatsApp.": "Obrigado. Recebemos sua solicitação. Para assuntos urgentes, entre em contato também por e-mail ou WhatsApp.",
+      "The request could not be sent.": "Não foi possível enviar a solicitação.",
+      "models": "modelos",
+      "Slide": "Slide",
+      "of": "de",
+      "answers match": "respostas correspondem a",
+      "No answers match": "Nenhuma resposta corresponde a",
+      "Try another term.": "Tente outro termo.",
+      "Browse all": "Confira as",
+      "questions below.": "perguntas abaixo.",
+      "Open menu": "Abrir menu"
+    }
+  },
+  "ru": {
+    "slides": [
+      {
+        "title": "Бутылки на заказ <span>для вашего бренда.</span>",
+        "description": "Спортивные и детские бутылки, ёмкости большого объёма и шейкеры с производством и индивидуальным брендированием под ваш проект.",
+        "alt": "Коллекция спортивных бутылок XUYI с градиентными цветами",
+        "cta": "Смотреть продукцию →"
+      },
+      {
+        "title": "Пластиковые спортивные бутылки <span>для вашего ассортимента.</span>",
+        "description": "Сравните ручки для переноски, расцветки и модели из каталога для оптовых закупок.",
+        "alt": "Ассортимент спортивных пластиковых бутылок XUYI",
+        "cta": "Спортивные бутылки →"
+      },
+      {
+        "title": "Бутылки с вашим дизайном <span>для вашего проекта.</span>",
+        "description": "Обсудите нанесение логотипа, упаковку, модели и образцы для вашего B2B-проекта.",
+        "alt": "Коллекция пластиковых шейкеров XUYI",
+        "cta": "Варианты персонализации →"
+      }
+    ],
+    "messages": {
+      "Close menu": "Закрыть меню",
+      "Checking online enquiry availability…": "Проверяем доступность формы запроса…",
+      "Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.": "Форма запроса временно недоступна. Свяжитесь с нами по электронной почте или WhatsApp.",
+      "Please accept the privacy policy.": "Примите политику конфиденциальности.",
+      "Submitting your enquiry…": "Отправка запроса…",
+      "The enquiry could not be received. Please use our email or WhatsApp contact instead.": "Не удалось отправить запрос. Свяжитесь с нами по почте или WhatsApp.",
+      "Thank you. Your enquiry has been recorded. For urgent requests, please also contact us by email or WhatsApp.": "Спасибо! Ваш запрос получен. По срочным вопросам свяжитесь с нами также по почте или WhatsApp.",
+      "The request could not be sent.": "Не удалось отправить запрос.",
+      "models": "моделей",
+      "Slide": "Слайд",
+      "of": "из",
+      "answers match": "ответов найдено по запросу",
+      "No answers match": "Ответов не найдено по запросу",
+      "Try another term.": "Попробуйте другой запрос.",
+      "Browse all": "Просмотреть все",
+      "questions below.": "вопросов ниже.",
+      "Open menu": "Открыть меню"
+    }
+  },
+  "tr": {
+    "slides": [
+      {
+        "title": "Markanıza özel <span>su şişeleri.</span>",
+        "description": "Fabrikadan tedarik ve projeye özel markalama seçenekleriyle spor, çocuk, büyük hacimli ve shaker şişeleri keşfedin.",
+        "alt": "XUYI degrade renkli sporcu şişesi koleksiyonu",
+        "cta": "Ürünleri keşfet →"
+      },
+      {
+        "title": "Plastik sporcu şişeleri <span>her koleksiyon için.</span>",
+        "description": "Toptan alımlar için taşıma saplarını, renkli tasarımları ve katalog modellerini karşılaştırın.",
+        "alt": "XUYI plastik sporcu şişesi çeşitleri",
+        "cta": "Sporcu şişelerini gör →"
+      },
+      {
+        "title": "Özel tasarım içecek ürünleri <span>sizin için tasarlandı.</span>",
+        "description": "B2B projeniz için logo, ambalaj, modeller ve numune gereksinimlerini görüşün.",
+        "alt": "XUYI shaker şişesi koleksiyonu",
+        "cta": "Özelleştirme seçenekleri →"
+      }
+    ],
+    "messages": {
+      "Close menu": "Menüyü kapat",
+      "Checking online enquiry availability…": "Talep formunun kullanılabilirliği kontrol ediliyor…",
+      "Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.": "Talep formu geçici olarak kullanılamıyor. Lütfen e-posta veya WhatsApp ile iletişime geçin.",
+      "Please accept the privacy policy.": "Gizlilik politikasını kabul edin.",
+      "Submitting your enquiry…": "Talebiniz gönderiliyor…",
+      "The enquiry could not be received. Please use our email or WhatsApp contact instead.": "Talebiniz alınamadı. Lütfen e-posta veya WhatsApp üzerinden iletişime geçin.",
+      "Thank you. Your enquiry has been recorded. For urgent requests, please also contact us by email or WhatsApp.": "Teşekkürler. Talebiniz alındı. Acil konular için e-posta veya WhatsApp ile de iletişime geçin.",
+      "The request could not be sent.": "Talep gönderilemedi.",
+      "models": "model",
+      "Slide": "Slayt",
+      "of": "/",
+      "answers match": "yanıt eşleşiyor:",
+      "No answers match": "Eşleşen yanıt yok:",
+      "Try another term.": "Başka bir terim deneyin.",
+      "Browse all": "Tüm",
+      "questions below.": "soruyu aşağıda inceleyin.",
+      "Open menu": "Menüyü aç"
+    }
+  }
+}

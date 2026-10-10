@@ -17,14 +17,15 @@ DIST=ROOT/"dist"
 SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
 ORIGIN="https://xuyibottles.com"
 UI_TRANSLATIONS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
+RUNTIME_UI_TRANSLATIONS=json.loads((ROOT/"data/runtime-ui-translations.json").read_text(encoding="utf-8"))
 
 def translate_chrome(chunk,locale,ui_override=None):
     mappings={**UI_TRANSLATIONS.get(locale,{})}
     if isinstance(ui_override,dict):
         mappings.update({key:value for key,value in ui_override.items()
                          if key in mappings and isinstance(value,str) and value.strip()})
-    # Translate exact text nodes in the shared chrome only, not product data or
-    # unrelated content. Never parse/replace attribute values or URLs.
+    # Translate exact shared header/footer text and human-facing alt,
+    # aria-label, placeholder and title values. Never edit href/src/IDs.
     def replace(match):
         content=match.group(1)
         leading=content[:len(content)-len(content.lstrip())]
@@ -33,7 +34,13 @@ def translate_chrome(chunk,locale,ui_override=None):
         translated=mappings.get(value)
         if not translated:return match.group(0)
         return ">"+leading+html.escape(translated)+trailing+"<"
-    return re.sub(r">([^<>]+)<",replace,chunk)
+    chunk=re.sub(r">([^<>]+)<",replace,chunk)
+    def attribute(match):
+        old=html.unescape(match.group(2))
+        translated=mappings.get(old)
+        if not translated:return match.group(0)
+        return match.group(1)+'="'+html.escape(translated,quote=True)+'"'
+    return re.sub(r'\b(aria-label|alt|placeholder|title)="([^"]*)"',attribute,chunk)
 
 def valid_route(route):
     return isinstance(route,str) and (route=="/" or re.fullmatch(r"/(?:[a-z0-9_-]+/)+",route) is not None)
@@ -125,6 +132,12 @@ def main():
         prefix,remainder=original.split('<main id="main-content">',1)
         _,suffix=remainder.split('</main>',1)
         ui=live[loc].get("uiText",{})
+        # A small JSON bundle provides translations for the shared JavaScript
+        # carousel, catalog filters, FAQ search and inquiry status messages.
+        # This also prevents the homepage hero reverting to English on rotation.
+        runtime=RUNTIME_UI_TRANSLATIONS.get(loc,{})
+        encoded=json.dumps(runtime,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
+        prefix=prefix.replace("</head>",'<script type="application/json" id="xuyi-runtime-ui">'+encoded+"</script></head>",1)
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
         text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+body+'</main>'+translate_chrome(suffix,loc,ui)
         text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])

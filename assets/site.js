@@ -1,12 +1,14 @@
 
 (function(){
+const runtimeUI=(()=>{try{return JSON.parse(document.getElementById('xuyi-runtime-ui')?.textContent||'{}')}catch{return {}}})();
+const t=message=>runtimeUI.messages?.[message]||message;
 // Menu photo warmup: hidden hover panels need their source images ready before first hover.
 const menuPhotoWarmup=document.querySelectorAll('#menu-products .mega__image img,.mobile-nav__group-title img');
 menuPhotoWarmup.forEach(img=>{img.loading='eager';img.decoding='async'});
 
 const menu=document.getElementById('mobile-menu');
 const nav=document.getElementById('mobile-navigation');
-if(menu&&nav){menu.addEventListener('click',()=>{const state=!nav.classList.contains('open');nav.classList.toggle('open',state);menu.setAttribute('aria-expanded',String(state));menu.setAttribute('aria-label',state?'Close menu':'Open menu')});}
+if(menu&&nav){menu.addEventListener('click',()=>{const state=!nav.classList.contains('open');nav.classList.toggle('open',state);menu.setAttribute('aria-expanded',String(state));menu.setAttribute('aria-label',state?t('Close menu'):t('Open menu'))});}
 document.querySelectorAll('[data-mega-toggle]').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();const parent=b.closest('.nav__drop');const opened=parent.classList.contains('open');document.querySelectorAll('.nav__drop.open').forEach(d=>{d.classList.remove('open');d.querySelector('[data-mega-toggle]')?.setAttribute('aria-expanded','false')});if(!opened){parent.classList.add('open');b.setAttribute('aria-expanded','true')}})});
 document.addEventListener('click',e=>{if(!e.target.closest('.nav__drop'))document.querySelectorAll('.nav__drop.open').forEach(d=>{d.classList.remove('open');d.querySelector('[data-mega-toggle]')?.setAttribute('aria-expanded','false')})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.nav__drop.open').forEach(d=>{d.classList.remove('open');d.querySelector('[data-mega-toggle]')?.setAttribute('aria-expanded','false')});if(nav){nav.classList.remove('open');menu?.setAttribute('aria-expanded','false')}}});
@@ -71,14 +73,14 @@ if(inquiryForm){
  const formStatus=document.getElementById('inquiry-status');
  if(formButton){
   formButton.disabled=true;
-  if(formStatus)formStatus.textContent='Checking online enquiry availability…';
+  if(formStatus)formStatus.textContent=t('Checking online enquiry availability…');
   fetch('/api/site-settings',{cache:'no-store'})
    .then(async res=>{if(!res.ok)throw Error('Status unavailable');return res.json()})
    .then(data=>{
     if(data?.inquiry?.acceptsForm===true){formButton.disabled=false;if(formStatus)formStatus.textContent='';}
-    else if(formStatus)formStatus.textContent='Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.';
+    else if(formStatus)formStatus.textContent=t('Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.');
    })
-   .catch(()=>{if(formStatus)formStatus.textContent='Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.'});
+   .catch(()=>{if(formStatus)formStatus.textContent=t('Online enquiry submissions are temporarily unavailable. Please contact us by email or WhatsApp using the links on this page.')});
  }
 }
 if(inquiryForm){inquiryForm.addEventListener('submit',async event=>{
@@ -87,8 +89,8 @@ if(inquiryForm){inquiryForm.addEventListener('submit',async event=>{
  const status=document.getElementById('inquiry-status');
  if(button.disabled)return;
  const fields=new FormData(inquiryForm);
- if(!fields.get('consent')){status.textContent='Please accept the privacy policy.';return;}
- button.disabled=true;status.textContent='Submitting your enquiry…';
+ if(!fields.get('consent')){status.textContent=t('Please accept the privacy policy.');return;}
+ button.disabled=true;status.textContent=t('Submitting your enquiry…');
  try{
   const payload={source:'xuyi-contact-form',consent:true,pageUrl:location.href,locale:document.documentElement.lang||'en',
    region:fields.get('country')||'',company:fields.get('company')||'',email:fields.get('email')||'',
@@ -96,24 +98,25 @@ if(inquiryForm){inquiryForm.addEventListener('submit',async event=>{
    website:fields.get('website')||'',fields:{material:fields.get('material')||'',quantity:fields.get('quantity')||'',inquiry_type:fields.get('type')||''}};
   const response=await fetch('/api/form-submit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
   const result=await response.json().catch(()=>({}));
-  if(!response.ok||!result.saved)throw Error(result.error||'The enquiry could not be received. Please use our email or WhatsApp contact instead.');
-  status.textContent='Thank you. Your enquiry has been recorded. For urgent requests, please also contact us by email or WhatsApp.';
+  if(!response.ok||!result.saved)throw Error(result.error||t('The enquiry could not be received. Please use our email or WhatsApp contact instead.'));
+  status.textContent=t('Thank you. Your enquiry has been recorded. For urgent requests, please also contact us by email or WhatsApp.');
   inquiryForm.reset();
- }catch(error){status.textContent=error.message||'The request could not be sent.'}
+ }catch(error){status.textContent=error.message||t('The request could not be sent.')}
  finally{button.disabled=false}
 })}
 const q=document.querySelector('[data-catalog-query]');if(q){const searchVal=new URLSearchParams(location.search).get('q');if(searchVal)q.value=searchVal.slice(0,120)}const category=document.querySelector('[data-catalog-category]');const count=document.getElementById('filter-count');const cards=[...document.querySelectorAll('[data-product-card]')];let visible=0;const perPage=18;let page=1;
 const pageStatus=document.getElementById('page-status'),prev=document.getElementById('page-prev'),next=document.getElementById('page-next');
-function render(){const query=(q?.value||'').toLowerCase().trim();const cat=category?.value||'';const matching=cards.filter(c=>(!cat||c.dataset.category===cat)&&(!query||(c.dataset.search||'').includes(query)));const totalPages=Math.max(1,Math.ceil(matching.length/perPage));page=Math.min(page,totalPages);cards.forEach(c=>{c.hidden=true});matching.slice((page-1)*perPage,page*perPage).forEach(c=>{c.hidden=false});if(count)count.textContent=matching.length+' models';if(pageStatus)pageStatus.textContent=page+' / '+totalPages;if(prev)prev.disabled=page<=1;if(next)next.disabled=page>=totalPages;}
+function render(){const query=(q?.value||'').toLowerCase().trim();const cat=category?.value||'';const matching=cards.filter(c=>(!cat||c.dataset.category===cat)&&(!query||(c.dataset.search||'').includes(query)));const totalPages=Math.max(1,Math.ceil(matching.length/perPage));page=Math.min(page,totalPages);cards.forEach(c=>{c.hidden=true});matching.slice((page-1)*perPage,page*perPage).forEach(c=>{c.hidden=false});if(count)count.textContent=matching.length+' '+t('models');if(pageStatus)pageStatus.textContent=page+' / '+totalPages;if(prev)prev.disabled=page<=1;if(next)next.disabled=page>=totalPages;}
 if(cards.length){q?.addEventListener('input',()=>{page=1;render()});category?.addEventListener('change',()=>{page=1;render()});prev?.addEventListener('click',()=>{page--;render();q?.scrollIntoView({block:'center'})});next?.addEventListener('click',()=>{page++;render();q?.scrollIntoView({block:'center'})});render()}
 
 const hero=document.querySelector('[data-hero]');
 if(hero){
- const slides=[
+ let slides=[
  {title:'Custom Water Bottles <span>Built for Your Brand.</span>',description:'Explore sports, kids, large capacity and shaker bottles with factory-backed supply and project-specific branding options.',img:'/media/ppt/slide-059.webp',alt:'XUYI gradient sports water bottle collection',link:'/products/',cta:'Explore Our Products →'},
  {title:'Plastic Sports Bottles <span>For Every Collection.</span>',description:'Compare carry-handle styles, colorful bottle shapes and source catalog models for wholesale buyers.',img:'/media/ppt/slide-037.webp',alt:'XUYI sports plastic bottle catalog assortment',link:'/collections/sports-water-bottles/',cta:'See Sports Bottles →'},
  {title:'Custom Drinkware <span>Designed Around You.</span>',description:'Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.',img:'/media/ppt/slide-091.webp',alt:'XUYI shaker bottle collection',link:'/capabilities/',cta:'View Customization →'}
  ];
+ if(Array.isArray(runtimeUI.slides)&&runtimeUI.slides.length===slides.length){slides=slides.map((slide,i)=>({...slide,...runtimeUI.slides[i]}))}
  const title=hero.querySelector('#hero-title'),desc=hero.querySelector('#hero-description'),
        img=hero.querySelector('#hero-image'),cta=hero.querySelector('#hero-cta'),
        status=hero.querySelector('#hero-status'),
@@ -151,7 +154,7 @@ if(hero){
   hero.classList.remove('hero--animating');
   void hero.offsetWidth;
   hero.classList.add('hero--animating');
-  if(announce&&status)status.textContent='Slide '+(idx+1)+' of '+slides.length;
+  if(announce&&status)status.textContent=t('Slide')+' '+(idx+1)+' '+t('of')+' '+slides.length;
   schedule();
  }
  hero.querySelectorAll('[data-hero-nav]').forEach(button=>button.addEventListener('click',()=>{

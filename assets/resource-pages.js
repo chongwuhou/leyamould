@@ -1,4 +1,6 @@
 (() => {
+  const runtime=(()=>{try{return JSON.parse(document.getElementById('xuyi-runtime-ui')?.textContent||'{}')}catch{return {}}})();
+  const t=message=>runtime.messages?.[message]||message;
   const search=document.getElementById('faq-search');
   if(!search)return;
   const groups=[...document.querySelectorAll('[data-faq-group]')];
@@ -25,7 +27,7 @@
       label.hidden=!!group?.hidden;
     }
     if(reset)reset.hidden=!query;
-    if(results)results.textContent=query?(count?String(count)+' answers match “'+search.value.trim()+'”.':'No answers match “'+search.value.trim()+'”. Try another term.'):'Browse all '+items.length+' questions below.';
+    if(results)results.textContent=query?(count?String(count)+' '+t('answers match')+' “'+search.value.trim()+'”.':t('No answers match')+' “'+search.value.trim()+'”. '+t('Try another term.')):t('Browse all')+' '+items.length+' '+t('questions below.');
   }
   for(const suggestion of document.querySelectorAll('[data-faq-suggest]')){
     suggestion.addEventListener('click',()=>{search.value=suggestion.dataset.faqSuggest||'';update();search.focus();});
