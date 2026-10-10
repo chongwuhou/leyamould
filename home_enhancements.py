@@ -29,13 +29,13 @@ def interactive_bottle_customization():
 
 def dark_buyer_faq():
  qa=[
- ("Which plastics are used in your bottles?","Material options include PC, Tritan, PP and PETG, with BPA-free options available on suitable models. We confirm requirements for each order."),
+ ("Which plastics are used in your bottles?","The source catalog lists PC and PP combinations for selected models. Ask us to confirm the material of each component and to review any additional resin or BPA-free requirement against your chosen SKU and destination market."),
  ("Do you offer samples before production?","Please give the model, destination and customization needs. We can then discuss sample availability, cost and shipping."),
  ("Can you make a custom bottle design?","We can review artwork, existing designs and the feasibility of new tooling or component changes. Each proposal needs technical confirmation."),
  ("Can I request custom colors or packaging?","Describe your brand colors, logo, labels and packaging. Feasibility depends on the selected model and order."),
  ("How do you handle factory quality checks?","XUYI has its own facility and may coordinate selected partners. We agree project-specific samples, specifications and checkpoints."),
  ]
- form='<div class="inquiry-preview"><span class="eyebrow">SEND YOUR PROJECT DETAILS</span><h2>Tell Us About<br>Your Bottle Project.</h2><div class="inquiry-preview__form"><div class="inquiry-preview__line">Company name</div><div class="inquiry-preview__line">Email address</div><div class="inquiry-preview__line">Bottle model or design</div><div class="inquiry-preview__line">Quantity and customization requirements</div><p>Request PC, Tritan, PP, PETG or BPA-free options. Include your model, capacity, destination and quantity.</p><a class="button" href="/contact/#inquiry">Prepare Your Inquiry →</a></div></div>'
+ form='<div class="inquiry-preview"><span class="eyebrow">SEND YOUR PROJECT DETAILS</span><h2>Tell Us About<br>Your Bottle Project.</h2><div class="inquiry-preview__form"><div class="inquiry-preview__line">Company name</div><div class="inquiry-preview__line">Email address</div><div class="inquiry-preview__line">Bottle model or design</div><div class="inquiry-preview__line">Quantity and customization requirements</div><p>Include your model, capacity, destination, order quantity and material or food-contact documentation requirements for confirmation.</p><a class="button" href="/contact/#inquiry">Prepare Your Inquiry →</a></div></div>'
  faqs='<div class="dark-faq"><span class="eyebrow">FREQUENTLY ASKED QUESTIONS</span><h2>We’re Here to Answer<br>All Your Questions.</h2>'+''.join('<details><summary>'+e(q)+'</summary><p>'+e(a)+'</p></details>' for q,a in qa)+'<p class="dark-faq__more"><a href="/faq/">See All Questions →</a></p></div>'
  return '<section class="dark-buyer-faq"><div class="shell dark-buyer-faq__grid">'+form+faqs+'</div></section>'
 
@@ -60,6 +60,10 @@ def customer_logo_section():
  from site_renderer import ROOT, photo, e
  media = ROOT / "data/customer-logos.json"
  entries = json.loads(media.read_text(encoding="utf-8")).get("group_brand_marks", []) if media.exists() else []
+ # Brand marks collected from a related group's site do not establish direct
+ # XUYI customer relationships. Never label them XUYI customers without review.
+ if not entries or not all(x.get("xuyi_direct_customer_verified") is True for x in entries):
+  return ""
  marks = []
  for entry in entries:
   name = str(entry.get("name") or "").strip()
