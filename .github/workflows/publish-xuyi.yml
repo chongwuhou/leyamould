@@ -126,6 +126,7 @@ jobs:
           python scripts/test_shared_templates.py
           python scripts/test_faq_access.py
           python scripts/test_home_banners.py
+          python scripts/test_home_brand_logos.py
           node scripts/test_home_banners_api.mjs
           python scripts/test_single_product_module.py
           node scripts/test_single_product_api.mjs

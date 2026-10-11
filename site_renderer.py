@@ -110,6 +110,18 @@ def build_url(path,title,content):
   # source-checked supplements for selected company/quality pages.
   from editorial_support import for_route as reviewed_editorial_for_route
   main+=reviewed_editorial_for_route(route,main)
+  # D1's English homepage body predates the five-language logo carousel.
+  # Restore the same six-logo section already present in the four reviewed
+  # translations, regardless of whether D1 overrides the English template.
+  if route=="/" and 'id="customer-brands"' not in main:
+   from home_enhancements import customer_logo_section
+   logos=customer_logo_section()
+   if not logos:
+    raise ValueError("XUYI homepage customer-logo section has no complete assets")
+   news='<section class="news-section"'
+   if news not in main:
+    raise ValueError("XUYI homepage missing the news section insertion point")
+   main=main.replace(news,logos+news,1)
   # Some published blog bodies also come from D1 and may predate their
   # source-reviewed reference section. Never erase the approved article.
   if route.startswith("/blog/") and 'id="primary-sources"' not in main:

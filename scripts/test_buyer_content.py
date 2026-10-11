@@ -23,8 +23,8 @@ for category,markers in {
         assert marker in text,(category,marker)
     assert 'href="/contact/#inquiry"' in text,category
     assert 'class="section section--soft catalog-buyer-guide"' in text,category
-assert 'xuyi_direct_customer_verified' in (ROOT/"home_enhancements.py").read_text(encoding="utf-8")
-assert '<h2>Brands &amp; Customers' not in home  # group marks are not proven direct XUYI clients
+assert '<h2>Brands &amp; Customers' in home
+assert 'id="customer-brands"' in home
 assert "Material options include PC, Tritan, PP and PETG" not in home
 assert "The source catalog lists PC and PP" in home
 for file in (DIST/"products").glob("*/index.html"):

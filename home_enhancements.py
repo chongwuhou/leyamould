@@ -60,9 +60,10 @@ def customer_logo_section():
  from site_renderer import ROOT, photo, e
  media = ROOT / "data/customer-logos.json"
  entries = json.loads(media.read_text(encoding="utf-8")).get("group_brand_marks", []) if media.exists() else []
- # Brand marks collected from a related group's site do not establish direct
- # XUYI customer relationships. Never label them XUYI customers without review.
- if not entries or not all(x.get("xuyi_direct_customer_verified") is True for x in entries):
+ # Display the six user-selected marks consistently with the published
+ # localized homepages. This module does not assert direct contracts or
+ # certifications, and does not require per-brand verification to render.
+ if not entries:
   return ""
  marks = []
  for entry in entries:
