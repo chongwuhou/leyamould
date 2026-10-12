@@ -30,12 +30,17 @@ assert "The source catalog lists PC and PP" in home
 for file in (DIST/"products").glob("*/index.html"):
     source=file.read_text(encoding="utf-8")
     model=file.parent.name
-    inquiry_model=model.upper() if model.startswith("lo-") else model
+    inquiry_model=model.upper() if model.startswith(("lo-","g-")) else model
     assert 'href="/contact/?model='+inquiry_model+'&amp;type=Samples#inquiry"' in source,model
-    assert 'product-detail__quote-note' in source,model
+    if model.startswith("g-"):
+        # These are clearly labeled internal photo references, not factory
+        # models, and therefore use an uncertainty notice instead of specs.
+        assert "not a factory model" in source.lower() and "photo" in source.lower(),model
+    else:
+        assert 'product-detail__quote-note' in source,model
 css=(DIST/"assets/site.css").read_text(encoding="utf-8")
 assert 'html[lang="en"] .header__inner>.nav{' in css
 assert 'margin-left:clamp(8px,2.7vw,48px)' in css
 assert 'gap:clamp(15px,2.4vw,38px)' in css
 assert 'html[lang="en"] .header__inner>.nav{margin-left:0}' not in css
-print("XUYI_BUYER_CONTENT_RELEASE_TESTS_PASSED: 4 categories, 3 paths, 85 product pages")
+print("XUYI_BUYER_CONTENT_RELEASE_TESTS_PASSED: 4 categories, 3 paths, 101 product pages")
