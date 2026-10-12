@@ -232,4 +232,39 @@ def catalog_cards(body,locale,route):
           '<a class="product-card" data-product-card data-category="'+esc(cat)+'" data-search="'+esc(search.lower())+'" href="'+url+'">'
           '<div class="product-card__image"><img src="'+esc(img)+'" alt="'+esc(title)+' — '+esc(product["model"])+'" loading="lazy" decoding="async"></div>'
           '<div class="product-card__body"><span class="product-card__small">MODEL '+esc(product["model"])+'</span><h3>'+esc(title)+'</h3><span class="product-card__link">'+esc(link_text)+' ↗</span></div></a>')
-    return body[:close]+markup+body[close:]
+    # LO products were appended after the 85 legacy models and therefore hidden
+    # by the 18-items-per-page initial view. Hoist reviewed LO cards first in
+    # both D1-overridden and source-built listings, without discarding edits.
+    grid=body[begin:close]+markup
+    selected_urls={
+        ("/" if locale=="en" else "/"+locale+"/")+"products/"+p["slug"]+"/"
+        for p in selected
+    }
+    seen={}
+    card_pattern=re.compile(r'<a\b[^>]*\bdata-product-card\b[^>]*>.*?</a>',re.I|re.S)
+    def extract_new(match):
+        card=match.group(0)
+        opening=card.split(">",1)[0]
+        href=re.search(r'\bhref="([^"]+)"',opening)
+        if not href or href.group(1) not in selected_urls:
+            return card
+        url=href.group(1)
+        if url in seen:
+            raise ValueError("Duplicate new product card: "+url)
+        seen[url]=card
+        return ""
+    remaining=card_pattern.sub(extract_new,grid)
+    if set(seen)!=selected_urls:
+        raise ValueError("Missing new product cards in "+locale+" "+route+": "+str(selected_urls-set(seen)))
+    labels={"en":"NEW","es":"NOVEDAD","pt":"NOVO","ru":"НОВИНКА","tr":"YENİ"}
+    front=[]
+    for product in selected:
+        url=("/" if locale=="en" else "/"+locale+"/")+"products/"+product["slug"]+"/"
+        card=seen[url]
+        if 'data-new-product=' not in card:
+            card=card.replace(" data-product-card ",' data-product-card data-new-product="true" ',1)
+        if 'class="product-card__new"' not in card:
+            card=card.replace('<div class="product-card__body">',
+                '<div class="product-card__body"><span class="product-card__new">'+esc(labels[locale])+'</span>',1)
+        front.append(card)
+    return body[:begin]+''.join(front)+remaining+body[close:]

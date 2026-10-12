@@ -20,6 +20,15 @@ for lang in langs:
     prefix="" if lang=="en" else lang+"/"
     listing=(DIST/prefix/"products/index.html").read_text(encoding="utf8")
     assert listing.count('data-product-card')==93,(lang,"catalog item count")
+    def card_urls(page):
+        return [re.search(r'\bhref="([^"]+)"',m.group(0)).group(1)
+                for m in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>',page,re.I)]
+    expected_lo=["/"+prefix+"products/lo-%03d/"%n for n in range(1,9)]
+    listing_urls=card_urls(listing)
+    assert listing_urls[:8]==expected_lo,(lang,"LO products must appear on the first page")
+    assert len(listing_urls)==len(set(listing_urls))==93,(lang,"duplicate/missing product")
+    assert listing.count('data-new-product="true"')==8,(lang,"new arrivals marker")
+    assert listing.count('class="product-card__new"')==8,(lang,"visible new arrivals badge")
     for product in items:
         model=product["model"]
         slug=product["slug"]
@@ -72,6 +81,10 @@ for lang in langs:
         from site_renderer import CAT
         folder=CAT[category][1]
         category_html=(DIST/prefix/"collections"/folder/"index.html").read_text(encoding="utf8")
+        cat_urls=card_urls(category_html)
+        new_urls=["/"+prefix+"products/"+p["slug"]+"/" for p in items if p["category"]==category]
+        assert cat_urls[:len(new_urls)]==new_urls,(lang,folder,"new models buried after old category cards")
+        assert len(cat_urls)==len(set(cat_urls)),(lang,folder,"duplicate cards")
         for product in items:
             if product["category"]==category:
                 assert '/'+prefix+'products/'+product["slug"]+'/' in category_html,(lang,folder,product["model"])

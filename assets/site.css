@@ -4,6 +4,8 @@
    This broke every catalog search/filter/pagination despite JS setting
    card.hidden=true; respect semantic [hidden] everywhere, including tabs. */
 [hidden]{display:none!important}
+/* Distinguish newly added LO product cards in all five localizations. */
+.product-card__new{display:inline-block;padding:4px 9px;margin-bottom:5px;border-radius:3px;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.055em;line-height:1.4}
 /* LO model-specific long-form detail photographs: unretouched product
    photography extracted from the supplier's Chinese annotated source panels.
    The visible captions stay as localized searchable HTML. */
