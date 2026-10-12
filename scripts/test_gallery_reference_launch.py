@@ -4,7 +4,7 @@ import json,re,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
-from gallery_catalog import GALLERY
+from gallery_catalog import GALLERY,LABELS
 from site_renderer import SERIES
 assert len(GALLERY)==8 and len(SERIES)==101
 assert {p["sourceFolder"] for p in GALLERY}=={1,2,3,4,5,9,10,12}
@@ -18,6 +18,7 @@ for loc in lang:
  assert listing.count('data-product-card')==101,(loc,"catalog count")
  assert listing.count('data-gallery-reference="true"')==8,(loc,"photo refs in catalog")
  assert listing.count('class="product-card__reference"')==8,(loc,"reference labels")
+ assert listing.count(LABELS[loc][10]+" · G")==8,(loc,"reference badges localized")
  urls=re.findall(r'<a\b(?=[^>]*\bdata-product-card\b)[^>]*\bhref="([^"]+)"',listing)
  assert len(set(urls))==101,loc
  assert [u.rsplit("/",2)[1] for u in urls[:16]][:8]==[f"lo-{i:03d}" for i in range(1,9)]
@@ -27,6 +28,7 @@ for loc in lang:
   assert f.is_file(),(loc,p["model"])
   text=f.read_text(encoding="utf8")
   assert p["locales"][loc] in text
+  assert all(label in text for label in LABELS[loc][7:10]),(loc,p["model"],"localized parameter headings")
   assert p["model"] in text
   assert len(re.findall(r'data-main-photo=',text))==len(p["images"])
   assert 'id="material-performance"' in text

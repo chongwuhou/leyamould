@@ -6,11 +6,11 @@ ROOT=Path(__file__).resolve().parent
 GALLERY=json.loads((ROOT/"data/gallery-reference-products.json").read_text(encoding="utf8"))["items"]
 assert {p["sourceFolder"] for p in GALLERY}=={1,2,3,4,5,9,10,12}
 LABELS={
-"en":("Photo reference — not a factory model","Unconfirmed; ask for actual product specification","Style reference only. XUYI's G code is not the factory model. Materials, capacity, size, accessory availability, packing and certification are NOT verified.","Reference product photographs","Request quote","Request sample","View Product"),
-"es":("Referencia de foto — no es modelo de fábrica","Sin confirmar; solicite datos del producto","Referencia visual. El código G de XUYI no es el modelo de fábrica. Materiales, capacidad, dimensiones, accesorios y documentación no están verificados.","Fotos de referencia","Solicitar cotización","Solicitar muestra","Ver producto"),
-"pt":("Referência de foto — não é modelo de fábrica","Não confirmado; consulte as especificações","Referência visual. O código G da XUYI não é um modelo de fábrica. Material, capacidade, tamanho, acessórios e certificados não estão confirmados.","Fotografias de referência","Pedir orçamento","Pedir amostra","Ver produto"),
-"ru":("Фотоартикул — не заводская модель","Не подтверждено; запросите характеристики","Фотокаталог. Код G — внутренний номер XUYI, а не модель завода. Материал, объём, размеры, аксессуары и документы требуют подтверждения.","Фотографии модели","Запросить цену","Запросить образец","Подробнее"),
-"tr":("Fotoğraf referansı — fabrika modeli değil","Doğrulanmadı; ayrıntıları sorun","Fotoğraf referansı. G kodu XUYI sorgu numarasıdır, fabrika modeli değildir. Malzeme, kapasite, boyut, aksesuar ve belgeler doğrulanmalıdır.","Referans fotoğraflar","Teklif isteyin","Numune isteyin","Ürünü incele")}
+"en":("Photo reference — not a factory model","Unconfirmed; ask for actual product specification","Style reference only. XUYI's G code is not the factory model. Materials, capacity, size, accessory availability, packing and certification are NOT verified.","Reference product photographs","Request quote","Request sample","View Product","Capacity","Materials / components","MOQ / packing","PHOTO REF"),
+"es":("Referencia de foto — no es modelo de fábrica","Sin confirmar; solicite datos del producto","Referencia visual. El código G de XUYI no es el modelo de fábrica. Materiales, capacidad, dimensiones, accesorios y documentación no están verificados.","Fotos de referencia","Solicitar cotización","Solicitar muestra","Ver producto","Capacidad","Materiales y componentes","Pedido mínimo y embalaje","REF. FOTO"),
+"pt":("Referência de foto — não é modelo de fábrica","Não confirmado; consulte as especificações","Referência visual. O código G da XUYI não é um modelo de fábrica. Material, capacidade, tamanho, acessórios e certificados não estão confirmados.","Fotografias de referência","Pedir orçamento","Pedir amostra","Ver produto","Capacidade","Materiais e componentes","Pedido mínimo e embalagem","REF. FOTO"),
+"ru":("Фотоартикул — не заводская модель","Не подтверждено; запросите характеристики","Фотокаталог. Код G — внутренний номер XUYI, а не модель завода. Материал, объём, размеры, аксессуары и документы требуют подтверждения.","Фотографии модели","Запросить цену","Запросить образец","Подробнее","Объём","Материалы и комплектующие","Минимальная партия и упаковка","ФОТО"),
+"tr":("Fotoğraf referansı — fabrika modeli değil","Doğrulanmadı; ayrıntıları sorun","Fotoğraf referansı. G kodu XUYI sorgu numarasıdır, fabrika modeli değildir. Malzeme, kapasite, boyut, aksesuar ve belgeler doğrulanmalıdır.","Referans fotoğraflar","Teklif isteyin","Numune isteyin","Ürünü incele","Kapasite","Malzemeler ve bileşenler","Asgari sipariş ve paketleme","FOTO REF")}
 def esc(v):return html.escape(str(v),quote=True)
 def add_products(series):
  for p in GALLERY:
@@ -28,7 +28,7 @@ def detail(product,locale):
  main='<img id="main-photo" src="'+esc(p["images"][0])+'" alt="'+esc(name)+'" loading="eager">'
  thumbs=''.join('<button type="button" class="product-detail__thumb" data-main-photo="'+esc(src)+'"><img loading="lazy" src="'+esc(src)+'" alt="'+esc(name)+'"></button>' for src in p["images"])
  specs='<tr><th scope="row">'+esc(w[0])+'</th><td>'+esc(p["model"])+'</td></tr>'
- for k in ("Capacity","Materials / components","MOQ / packing"):
+ for k in w[7:10]:
   specs+='<tr><th scope="row">'+esc(k)+'</th><td>'+esc(w[1])+'</td></tr>'
  start=('<section class="section product-overview"><div class="shell"><nav class="breadcrumb"><a href="'+prefix+'/">Home</a> / <a href="'+prefix+'/products/">Products</a> / '+esc(p["model"])+'</nav>'
  '<div class="product-detail"><div class="product-detail__photos"><div class="product-detail__main">'+main+'</div><div class="product-detail__thumbs">'+thumbs+'</div></div>'
@@ -82,6 +82,6 @@ def catalog_cards(body,locale,route):
      '<div class="product-card__body"><span class="product-card__small">'+esc(p["model"])+
      '</span><h3>'+esc(name)+'</h3><span class="product-card__link">'+esc(LABELS[locale][6])+' ↗</span></div></a>')
   card=card.replace(' data-product-card ',' data-product-card data-gallery-reference="true" ',1)
-  card=card.replace('<div class="product-card__body">','<div class="product-card__body"><span class="product-card__reference">PHOTO REF · G</span>',1)
+  card=card.replace('<div class="product-card__body">','<div class="product-card__body"><span class="product-card__reference">'+esc(LABELS[locale][10])+' · G</span>',1)
   out+=card
  return body[:begin]+out+remaining+body[close:]
