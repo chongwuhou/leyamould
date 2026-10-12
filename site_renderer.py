@@ -110,6 +110,11 @@ def build_url(path,title,content):
   # source-checked supplements for selected company/quality pages.
   from editorial_support import for_route as reviewed_editorial_for_route
   main+=reviewed_editorial_for_route(route,main)
+  if route.startswith("/products/") and route!="/products/":
+   from product_material_performance import inject
+   product=next((obj for obj in SERIES.values() if "/products/"+obj["slug"]+"/"==route),None)
+   if product is None:raise ValueError("No material source for product route: "+route)
+   main=inject(main,product,"en",route)
   # D1's English homepage body predates the five-language logo carousel.
   # Restore the same six-logo section already present in the four reviewed
   # translations, regardless of whether D1 overrides the English template.

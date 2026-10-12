@@ -18,6 +18,7 @@ from locale_registry import approved_locales,local_url
 from product_locale_seo import polish_product_head
 from media_alt_render import apply_media_alts
 from image_alt_quality import polish_image_alt
+from product_material_performance import inject as inject_materials
 
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
@@ -223,6 +224,15 @@ def main():
         encoded=json.dumps(runtime,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
         prefix=prefix.replace("</head>",'<script type="application/json" id="xuyi-runtime-ui">'+encoded+"</script></head>",1)
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
+        if route.startswith("/products/") and route!="/products/":
+            # D1 translated bodies replace the English product HTML. Re-add
+            # the same reviewed presentation module in this locale, without
+            # touching the existing translated descriptions or SKU data.
+            from site_renderer import SERIES
+            model=route.removeprefix("/products/").strip("/")
+            product=next((obj for obj in SERIES.values() if obj["slug"]==model),None)
+            if product is None:raise ValueError("Missing material source for "+route)
+            body=inject_materials(body,product,loc,route,routes_by_locale[loc])
         # The homepage body is a D1-approved translation of previous English
         # markup. Refresh ONLY the immutable generic hero image asset; leave
         # all user-translated text and model photos unchanged.

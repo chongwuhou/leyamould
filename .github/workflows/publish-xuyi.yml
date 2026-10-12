@@ -9,6 +9,7 @@ on:
       - "build.py"
       - "site_renderer.py"
       - "product_locale_seo.py"
+      - "product_material_performance.py"
       - "image_alt_quality.py"
       - "media_alt_render.py"
       - "locale_registry.py"
@@ -139,6 +140,7 @@ jobs:
           python scripts/test_seo_multilingual_launch.py
           python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py
+          python scripts/test_product_material_performance.py
           python scripts/test_image_alt_seo.py
           python scripts/test_catalog_visibility.py
           python scripts/test_future_locale_framework.py
