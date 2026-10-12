@@ -107,8 +107,11 @@
    button("保存所选页面 SEO","pages");
   }
   if(tab==="products"){
-   html='<h3>产品结构化商详与 SEO</h3><p>输入现有产品型号，保存草稿不会公开。正式发布仅允许经过核实的型号资料覆盖原有页面，不会改写历史源文件。</p>'+
-   field("model","","产品型号，例如 2095")+
+   html='<h3>产品结构化商详与 SEO</h3><p>可输入完整型号或部分型号（例如 008、LO-008、2095），选择后读取官网现有商详及已保存的 D1 修改。保存草稿不会覆盖原始网站内容。</p>'+
+   '<label class="block-label">搜索已有商品型号 <input type="search" id="cms-product-search" placeholder="输入 008 查找 LO-008" autocomplete="off" aria-label="搜索已有商品型号"></label>'+
+   '<select id="cms-product-matches" size="6" aria-label="已有商品型号匹配结果" style="width:100%;margin:8px 0 12px"></select>'+
+   '<p id="cms-product-current" role="status" aria-live="polite"></p>'+
+   field("model","","当前选中型号（从上方选择）")+
    field("name","","英文产品名称")+
    field("material","","材质/部件材料（必须真实核实）")+
    field("capacity","","容量")+
@@ -212,9 +215,64 @@
   }
   if(tab==="products"){
    const model=container.querySelector('[data-cms-field="model"]');
-   model.addEventListener("change",()=>{const entry=(state.products.items||[]).find(x=>x.model===model.value.trim());if(!entry)return;
-    for(const [key,val] of Object.entries(entry.content||{})){const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=val;}
-    container.querySelector('[data-cms-field="status"]').value=entry.status;});
+   const search=$("cms-product-search"),matches=$("cms-product-matches"),notice=$("cms-product-current");
+   model.readOnly=true;
+   const known=[...new Set([...(state.products.catalogModels||[]),
+     ...(state.products.items||[]).filter(x=>!x.content?.newProduct).map(x=>x.model)])].sort();
+   let requestNumber=0;
+   const sourceFields=["name","material","capacity","image","description","seoTitle","seoDescription"];
+   const resetFields=()=>{for(const key of sourceFields){
+     const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value="";
+   }container.querySelector('[data-cms-field="status"]').value="draft";};
+   async function selectProduct(id){
+    if(!known.includes(id))return;
+    const request=++requestNumber;
+    model.value=id;resetFields();notice.textContent="正在读取 "+id+" 的当前商品页面和 D1 商详…";
+    const entry=(state.products.items||[]).find(x=>x.model===id&&!x.content?.newProduct);
+    const route="/products/"+(id.startsWith("LO-")?id.toLowerCase():encodeURIComponent(id))+"/";
+    let original={},sourceAvailable=false;
+    try{
+     const response=await fetch(route,{cache:"no-store"});
+     if(!response.ok)throw Error("HTTP "+response.status);
+     const doc=new DOMParser().parseFromString(await response.text(),"text/html");
+     const spec=[...doc.querySelectorAll(".product-detail .spec tr")].map(tr=>({
+       label:(tr.querySelector("th")?.textContent||"").trim().toLowerCase(),
+       value:(tr.querySelector("td")?.textContent||"").trim()
+     }));
+     const valueFor=(pattern)=>spec.find(r=>pattern.test(r.label))?.value||"";
+     original={
+      name:(doc.querySelector(".product-detail h1")?.textContent||"").trim(),
+      capacity:valueFor(/capacity|容量/),
+      material:valueFor(/material|材质/),
+      image:doc.querySelector(".product-detail__main img")?.getAttribute("src")||"",
+      description:(doc.querySelector(".product-detail > div:last-child > p.copy-muted")?.textContent||"").trim(),
+      seoTitle:doc.title,
+      seoDescription:doc.querySelector('meta[name="description"]')?.getAttribute("content")||""
+     };
+     sourceAvailable=Boolean(original.name);
+    }catch(error){if(request===requestNumber)notice.textContent="已选中 "+id+"，但暂无法读取官网当前商品信息："+error.message;}
+    if(request!==requestNumber)return;
+    for(const [key,val] of Object.entries({...original,...(entry?.content||{})})){
+     const el=container.querySelector('[data-cms-field="'+key+'"]');
+     if(el&&typeof val==="string")el.value=val;
+    }
+    container.querySelector('[data-cms-field="status"]').value=entry?.status||"draft";
+    const label=entry?"已有 D1 "+(entry.status==="published"?"正式发布":"草稿")+"记录":"当前为官网原始商品，尚无单独 D1 修改记录";
+    notice.innerHTML=esc(id)+" · "+esc(label)+"。 <a href=\""+esc(route)+"\" target=\"_blank\" rel=\"noopener\">查看当前商品页 ↗</a>"+
+      (sourceAvailable?"":"（未能自动读取全部字段，请先核对再保存）");
+   }
+   function filterProducts(){
+    const query=search.value.trim().toLowerCase();
+    const list=known.filter(id=>id.toLowerCase().includes(query));
+    matches.innerHTML=list.slice(0,100).map(id=>'<option value="'+esc(id)+'">'+esc(id)+'</option>').join("");
+    if(query&&list.length===1)selectProduct(list[0]);
+    else if(!list.length)notice.textContent="没有找到匹配的型号";
+    else notice.textContent="找到 "+list.length+" 款，选择一个型号查看详情";
+   }
+   search.addEventListener("input",filterProducts);
+   matches.addEventListener("change",()=>selectProduct(matches.value));
+   matches.addEventListener("click",()=>selectProduct(matches.value));
+   filterProducts();
   } 
   if(tab==="new-product"){
    const select=$("cms-new-existing");
@@ -306,6 +364,8 @@
       seoTitle:value("seoTitle"),seoDescription:value("seoDescription")};
     result=await api("product-content",{action:"create_product",model:value("model"),status,content});
    }else if(action==="product"){
+    if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
+      throw Error("请先从已有商品型号列表中选择产品");
     result=await api("product-content",{action:"save_product",model:value("model"),
      status:value("status"),content:{name:value("name"),material:value("material"),capacity:value("capacity"),
        description:value("description"),image:value("image"),seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});

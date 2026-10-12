@@ -23,7 +23,11 @@ export async function onRequestGet(context){
   const denied=await auth(context);if(denied)return denied;
   const db=context.env.XUYI_DB;await ensure(db);
   const rows=(await db.prepare("SELECT model,content_json,publication_status,updated_at FROM xuyi_product_content ORDER BY model LIMIT 1000").all()).results||[];
-  return respond({categories:CATEGORY_OPTIONS,items:rows.map(r=>({model:r.model,content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
+  // D1 stores content overrides, not the original 93 product records.
+  // Expose the allowlisted source models to the authenticated CMS picker,
+  // including all eight LO models without writing synthetic D1 rows.
+  return respond({categories:CATEGORY_OPTIONS,catalogModels:[...MANAGED_MODELS].sort(),
+    items:rows.map(r=>({model:r.model,content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
 }
 export async function onRequestPost(context){
   const denied=await auth(context);if(denied)return denied;
