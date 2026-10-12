@@ -54,6 +54,28 @@ with patch.dict(os.environ,{"XUYI_INDEXNOW_KEY":"a"*32},clear=False):
             module.main()
         finally:sys.argv=argv
 assert not any(f.name.endswith(".txt") and f.stem=="a"*32 for f in dist.iterdir())
+# Indexing authorization must check BOTH apex and www without a stale-source
+# exception. Pages returns 410 for source tombstones, which is safe like 404.
+checked=[]
+class SafeSourceResponse:
+    status=410
+    def __enter__(self):return self
+    def __exit__(self,*args):return False
+def safe_source_probe(request,timeout=15):
+    checked.append(request.full_url)
+    return SafeSourceResponse()
+with patch.object(gate,"approved",return_value=True), patch("urllib.request.urlopen",side_effect=safe_source_probe):
+    gate.check()
+assert len(checked)==6,checked
+assert set(checked)=={origin+path for origin in (module.ORIGIN,module.ORIGIN.replace("https://","https://www.",1))
+                     for path in gate.SENSITIVE}
+def unsafe_source_probe(request,timeout=15):
+    if request.full_url.endswith("/build.py"):return type("UnsafeResponse",(),{"status":200,"__enter__":lambda self:self,"__exit__":lambda self,*args:False})()
+    return SafeSourceResponse()
+with patch.object(gate,"approved",return_value=True), patch("urllib.request.urlopen",side_effect=unsafe_source_probe):
+    try:gate.check()
+    except RuntimeError as exc:assert "old-source cache" in str(exc)
+    else:raise AssertionError("Public source file returned HTTP 200 without stopping indexing")
 with TemporaryDirectory() as temp:
     with patch.object(module,"approved",return_value=True),patch.object(module,"DIST",Path(temp)):
         with patch.dict(os.environ,{"XUYI_INDEXNOW_KEY":"c"*32},clear=False):

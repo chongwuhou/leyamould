@@ -25,12 +25,14 @@ cases={
  "/api/publish-state":401,
  # Check BOTH original URLs and cache-busted URLs: the original URLs once
  # leaked source content under an old Cloudflare deployment and can remain cached.
- "/build.py":404,
- "/site_renderer.py":404,
- "/data/products.json":404,
- "/build.py?xuyi_source_exposure_probe=1":404,
- "/site_renderer.py?xuyi_source_exposure_probe=1":404,
- "/data/products.json?xuyi_source_exposure_probe=1":404,
+ # Pages' explicit source-file tombstones intentionally return 410 Gone.
+ # A missing legacy path (404) is equally safe; 200 must still fail.
+ "/build.py":(404,410),
+ "/site_renderer.py":(404,410),
+ "/data/products.json":(404,410),
+ "/build.py?xuyi_source_exposure_probe=1":(404,410),
+ "/site_renderer.py?xuyi_source_exposure_probe=1":(404,410),
+ "/data/products.json?xuyi_source_exposure_probe=1":(404,410),
 }
 failed=[]
 for path,expected in cases.items():
@@ -47,7 +49,7 @@ for path,expected in cases.items():
   failed.append((path,type(exc).__name__))
   continue
  print(path,status)
- if status!=expected:
+ if status not in (expected if isinstance(expected,tuple) else (expected,)):
   failed.append((path,status,expected,"Purge stale Cloudflare CDN cache for this exact URL" if path in ("/build.py","/site_renderer.py","/data/products.json") and status==200 else "status mismatch"))
 if failed:raise SystemExit("XUYI LIVE AUDIT FAILED: "+repr(failed))
 print("XUYI LIVE AUDIT PASSED",len(cases),"URLs")
