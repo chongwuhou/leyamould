@@ -30,7 +30,8 @@ assert "The source catalog lists PC and PP" in home
 for file in (DIST/"products").glob("*/index.html"):
     source=file.read_text(encoding="utf-8")
     model=file.parent.name
-    assert 'href="/contact/?model='+model+'&amp;type=Samples#inquiry"' in source,model
+    inquiry_model=model.upper() if model.startswith("lo-") else model
+    assert 'href="/contact/?model='+inquiry_model+'&amp;type=Samples#inquiry"' in source,model
     assert 'product-detail__quote-note' in source,model
 css=(DIST/"assets/site.css").read_text(encoding="utf-8")
 assert 'html[lang="en"] .header__inner>.nav{' in css

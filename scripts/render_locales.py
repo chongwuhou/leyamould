@@ -205,6 +205,28 @@ def main():
         src=DIST/route.lstrip("/")/"index.html"
         if route=="/":src=DIST/"index.html"
         if src.is_file():translated[(route,loc)]=fields
+    # Reviewed source-photo LO additions have their own five-language native
+    # content and SEO copy. Existing D1 translations always win, and no older
+    # page translation is changed or auto-translated.
+    from lo_catalog import LO_PRODUCTS,detail as lo_detail
+    from site_renderer import SERIES
+    for row in LO_PRODUCTS:
+        model=row["model"]
+        route="/products/"+row["slug"]+"/"
+        src=DIST/route.lstrip("/")/"index.html"
+        # Partial isolated translation fixtures contain only selected source
+        # routes. Production builds always include all LO pages.
+        if not src.is_file():continue
+        for loc in live:
+            if (route,loc) not in translated:
+                copy=row["locales"][loc]
+                translated[(route,loc)]={
+                    "title":copy["seoTitle"],"description":copy["seoDescription"],
+                    "mainHtml":lo_detail(SERIES[model],loc)}
+    # D1-published catalogs are fixed HTML snapshots; add only the eight
+    # source-verified LO cards to their native-language grids, without
+    # replacing the approved surrounding content.
+    from lo_catalog import catalog_cards
     for loc in live:
         if ("/",loc) not in translated:
             raise RuntimeError("Refusing to publish "+loc+" without a reviewed localized homepage")
@@ -224,6 +246,8 @@ def main():
         encoded=json.dumps(runtime,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
         prefix=prefix.replace("</head>",'<script type="application/json" id="xuyi-runtime-ui">'+encoded+"</script></head>",1)
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
+        if route=="/products/" or route.startswith("/collections/"):
+            body=catalog_cards(body,loc,route)
         if route.startswith("/products/") and route!="/products/":
             # D1 translated bodies replace the English product HTML. Re-add
             # the same reviewed presentation module in this locale, without

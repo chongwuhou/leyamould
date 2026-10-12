@@ -112,6 +112,9 @@ def catalog(cat_name=None):
  pagehtml+='<section class="section"><div class="shell">'+sec("Wholesale Buying Questions","Contact XUYI with model number, quantity and destination.","Product FAQ")+faq_html(FAQS[:6])+'</div></section>'
  return pagehtml
 def detail(obj):
+ if obj.get("loNew"):
+  from lo_catalog import detail as lo_detail
+  return lo_detail(obj,"en")
  return structured_product_details(obj)
 
 CAPABILITIES=[
@@ -307,8 +310,14 @@ def generate():
   existing_model=public_name.casefold().endswith(('model '+model).casefold())
   seo_name=public_name if existing_model else public_name+' — Model '+model
   description_name=public_name if existing_model else public_name+' model '+model
-  product_markup=page(seo_name+' | XUYI Bottles',
-    description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.',detail(product))
+  if product.get("loNew"):
+   from lo_catalog import LO_PRODUCTS
+   meta=next(row["locales"]["en"] for row in LO_PRODUCTS if row["model"]==model)
+   seo_name,seo_desc=meta["seoTitle"],meta["seoDescription"]
+  else:
+   seo_name=seo_name+' | XUYI Bottles'
+   seo_desc=description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.'
+  product_markup=page(seo_name,seo_desc,detail(product))
   build_url('products/'+product['slug']+'/index.html','Model '+product['slug'],product_schema(product_markup,product))
  build_url('capabilities/index.html','Capabilities',resources_schema(page(*RESOURCE_SEO['capabilities'],capabilities_page()),'capabilities',RESOURCE_SEO['capabilities'][1]))
  for cap in CAPABILITIES:

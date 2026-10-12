@@ -22,6 +22,7 @@ on:
       - "resource_pages.py"
       - "why_us_*.py"
       - "data/**"
+      - "lo_catalog.py"
       - "assets/**"
       - "admin/**"
       - "functions/**"
@@ -141,6 +142,7 @@ jobs:
           python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py
           python scripts/test_product_material_performance.py
+          python scripts/test_lo_product_launch.py
           python scripts/test_image_alt_seo.py
           python scripts/test_catalog_visibility.py
           python scripts/test_future_locale_framework.py
