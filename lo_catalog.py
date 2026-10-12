@@ -88,6 +88,26 @@ COPY={
   info="Kaynak görseldeki ölçüler elle alınmıştır, sapma olabilir.")
 }
 
+# Genuine source-detail photography stays language-neutral. The surrounding
+# captions and all claims are genuine HTML text in the selected page language.
+DETAIL_COPY={
+ "en":("Product Detail Photography","Real usage scenes and bottle design",
+       "Lifestyle & carrying views","Drinking lid, straw and color variants",
+       "These scenes come from the supplied product detail photography. Please confirm the exact cap, straw and included accessories for your selected variant."),
+ "es":("Fotografías de producto en detalle","Escenas reales de uso y diseño",
+       "Uso diario y transporte","Tapa, pajita y colores",
+       "Imágenes extraídas de la ficha fotográfica del producto. Confirme la tapa, la pajita y los accesorios de la variante elegida."),
+ "pt":("Fotografias detalhadas do produto","Cenas reais de uso e design",
+       "Utilização e transporte","Tampa, palhinha e cores",
+       "Imagens retiradas das fotografias de detalhe. Confirme a tampa, a palhinha e os acessórios da variante escolhida."),
+ "ru":("Подробные фотографии товара","Реальные сцены использования и конструкция",
+       "Использование и переноска","Крышка, трубочка и цвета",
+       "Фото взяты из оригинальных материалов о товаре. Уточните крышку, трубочку и комплектацию выбранного варианта."),
+ "tr":("Ayrıntılı ürün fotoğrafları","Gerçek kullanım sahneleri ve tasarım",
+       "Günlük kullanım ve taşıma","Kapak, pipet ve renkler",
+       "Görseller ürünün orijinal detay fotoğraflarından alınmıştır. Seçilen varyantın kapağını, pipetini ve aksesuarlarını doğrulayın.")
+}
+
 def add_products(series):
     if DATA.get("schemaVersion")!=1 or len(LO_PRODUCTS)!=8:raise ValueError("Unexpected LO catalog")
     for p in LO_PRODUCTS:
@@ -99,6 +119,12 @@ def add_products(series):
             file=ROOT/img.lstrip("/")
             if not img.startswith("/assets/lo/") or not file.is_file():
                 raise ValueError("Missing LO photo: "+img)
+        if [x.get("purpose") for x in p.get("detailImages",[])]!=["lifestyle","design"]:
+            raise ValueError("Missing LO source-detail visual sections: "+model)
+        for img in p["detailImages"]:
+            src=str(img.get("src",""))
+            if not src.startswith("/assets/lo/detail/") or not (ROOT/src.lstrip("/")).is_file():
+                raise ValueError("Missing source-detail photo: "+src)
         row={k:p.get(k,"") for k in ("name","description","capacity","material","colors","packing","dimensions","carton_quantity","carton_size")}
         row.update({"model":model,"slug":p["slug"],"category":p["category"],"images":p["images"],
                    "variants":[{**row,"model":model}],"manualNew":True,"loNew":True})
@@ -146,8 +172,23 @@ def detail(product,locale):
     }
     q,a=faqs[locale]
     faq='<section class="section section--soft"><div class="shell"><div class="faq-list"><details><summary>'+esc(q)+'</summary><p>'+esc(a)+'</p></details></div></div></section>'
+    photo_words=DETAIL_COPY[locale]
+    photo_figure=[]
+    for i,img in enumerate(data["detailImages"]):
+        caption=photo_words[2+i]
+        photo_figure.append(
+          '<figure class="lo-photo-details__figure"><img src="'+esc(img["src"])+
+          '" width="'+str(int(img["width"]))+'" height="'+str(int(img["height"]))+
+          '" loading="lazy" decoding="async" alt="'+esc(name+" — "+caption)+
+          '"><figcaption>'+esc(caption)+'</figcaption></figure>')
+    photo_details=(
+      '<section class="section lo-photo-details" id="product-detail-photos">'
+      '<div class="shell"><div class="section__head"><div><span class="eyebrow">'+esc(photo_words[0])+
+      '</span><h2 class="section__title">'+esc(photo_words[1])+'</h2></div></div>'
+      '<div class="lo-photo-details__stack">'+''.join(photo_figure)+'</div>'
+      '<p class="lo-photo-details__note">'+esc(photo_words[4])+'</p></div></section>')
     from product_material_performance import inject
-    return inject(overview+details+order+faq,product,locale,"/products/"+data["slug"]+"/")
+    return inject(overview+details+photo_details+order+faq,product,locale,"/products/"+data["slug"]+"/")
 
 def catalog_cards(body,locale,route):
     """Append LO products into a D1-translated existing HTML catalog grid.

@@ -4,6 +4,17 @@
    This broke every catalog search/filter/pagination despite JS setting
    card.hidden=true; respect semantic [hidden] everywhere, including tabs. */
 [hidden]{display:none!important}
+/* LO model-specific long-form detail photographs: unretouched product
+   photography extracted from the supplier's Chinese annotated source panels.
+   The visible captions stay as localized searchable HTML. */
+.lo-photo-details{background:#fff;padding:70px 0}
+.lo-photo-details .section__head{margin-bottom:32px}
+.lo-photo-details__stack{width:min(100%,760px);margin:0 auto;display:grid;gap:34px}
+.lo-photo-details__figure{margin:0;border:1px solid #e8e9ed;background:#fff;overflow:hidden}
+.lo-photo-details__figure img{display:block;width:100%;height:auto;object-fit:contain}
+.lo-photo-details__figure figcaption{padding:15px 22px 18px;color:#303438;font-size:16px;font-weight:750}
+.lo-photo-details__note{max-width:760px;margin:18px auto 0;color:#676b70;font-size:13px;line-height:1.8}
+@media(max-width:760px){.lo-photo-details{padding:48px 0}.lo-photo-details__stack{gap:21px}.lo-photo-details__figure figcaption{padding:12px 15px;font-size:14px}}
 /* Compact, SKU-specific material guidance. No extra CMS fields required. */
 .material-brief{padding:64px 0;background:#fff}
 .material-brief .section__head{margin-bottom:22px}

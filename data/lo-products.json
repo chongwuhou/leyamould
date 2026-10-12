@@ -53,7 +53,21 @@
           "seoDescription": "2000ml plastik su şişesi LO-001 toptan, katalogda PC+PP. OEM logo, renk ve ambalaj sorun. BPA içermeme veya 100 °C için değerlendirme ve test gerekir.",
           "description": "Taşıma Saplı 2000 ml Degrade Spor Su Şişesi. Model LO-001, katalog malzemesi PC+PP. OEM renk, logo ve ambalaj seçeneklerini sorun; BPA içermeme veya 100 °C su gereksinimi malzeme değerlendirmesi ve test gerektirir."
         }
-      }
+      },
+      "detailImages": [
+        {
+          "src": "/assets/lo/detail/lo-001-lifestyle.webp",
+          "width": 720,
+          "height": 1951,
+          "purpose": "lifestyle"
+        },
+        {
+          "src": "/assets/lo/detail/lo-001-design.webp",
+          "width": 720,
+          "height": 1777,
+          "purpose": "design"
+        }
+      ]
     },
     {
       "model": "LO-002",
@@ -106,7 +120,21 @@
           "seoDescription": "800ml plastik su şişesi LO-002 toptan, katalogda PC+PP. OEM logo, renk ve ambalaj sorun. BPA içermeme veya 100 °C için değerlendirme ve test gerekir.",
           "description": "Taşıma Halkalı 800 ml Şeffaf Spor Su Şişesi. Model LO-002, katalog malzemesi PC+PP. OEM renk, logo ve ambalaj seçeneklerini sorun; BPA içermeme veya 100 °C su gereksinimi malzeme değerlendirmesi ve test gerektirir."
         }
-      }
+      },
+      "detailImages": [
+        {
+          "src": "/assets/lo/detail/lo-002-lifestyle.webp",
+          "width": 720,
+          "height": 2044,
+          "purpose": "lifestyle"
+        },
+        {
+          "src": "/assets/lo/detail/lo-002-design.webp",
+          "width": 720,
+          "height": 1787,
+          "purpose": "design"
+        }
+      ]
     },
     {
       "model": "LO-003",
@@ -159,7 +187,21 @@
           "seoDescription": "1300ml plastik su şişesi LO-003 toptan, katalogda PC+PP. OEM logo, renk ve ambalaj sorun. BPA içermeme veya 100 °C için değerlendirme ve test gerekir.",
           "description": "Taşıma Saplı 1300 ml Degrade Kompakt Su Matarası. Model LO-003, katalog malzemesi PC+PP. OEM renk, logo ve ambalaj seçeneklerini sorun; BPA içermeme veya 100 °C su gereksinimi malzeme değerlendirmesi ve test gerektirir."
         }
-      }
+      },
+      "detailImages": [
+        {
+          "src": "/assets/lo/detail/lo-003-lifestyle.webp",
+          "width": 720,
+          "height": 2044,
+          "purpose": "lifestyle"
+        },
+        {
+          "src": "/assets/lo/detail/lo-003-design.webp",
+          "width": 720,
+          "height": 1607,
+          "purpose": "design"
+        }
+      ]
     },
     {
       "model": "LO-004",
@@ -212,7 +254,21 @@
           "seoDescription": "1300ml plastik su şişesi LO-004 toptan, katalogda PC+PP. OEM logo, renk ve ambalaj sorun. BPA içermeme veya 100 °C için değerlendirme ve test gerekir.",
           "description": "Taşıma Saplı 1300 ml Desenli Şeffaf Kompakt Su Matarası. Model LO-004, katalog malzemesi PC+PP. OEM renk, logo ve ambalaj seçeneklerini sorun; BPA içermeme veya 100 °C su gereksinimi malzeme değerlendirmesi ve test gerektirir."
         }
-      }
+      },
+      "detailImages": [
+        {
+          "src": "/assets/lo/detail/lo-004-lifestyle.webp",
+          "width": 720,
+          "height": 2044,
+          "purpose": "lifestyle"
+        },
+        {
+          "src": "/assets/lo/detail/lo-004-design.webp",
+          "width": 720,
+          "height": 1607,
+          "purpose": "design"
+        }
+      ]
     },
     {
       "model": "LO-005",
@@ -265,7 +321,21 @@
           "seoDescription": "1000ml plastik su şişesi LO-005 toptan, katalogda PC+PP. OEM logo, renk ve ambalaj sorun. BPA içermeme veya 100 °C için değerlendirme ve test gerekir.",
           "description": "Zaman İşaretli 1000 ml Degrade Spor Su Şişesi. Model LO-005, katalog malzemesi PC+PP. OEM renk, logo ve ambalaj seçeneklerini sorun; BPA içermeme veya 100 °C su gereksinimi malzeme değerlendirmesi ve test gerektirir."
         }
-      }
+      },
+      "detailImages": [
+        {
+          "src": "/assets/lo/detail/lo-005-lifestyle.webp",
+          "width": 720,
+          "height": 1951,
+          "purpose": "lifestyle"
+        },
+        {
+          "src": "/assets/lo/detail/lo-005-design.webp",
+          "width": 720,
+          "height": 1777,
+          "purpose": "design"
+        }
+      ]
     },
     {
       "model": "LO-006",
@@ -318,7 +388,21 @@
           "seoDescription": "1000ml plastik su şişesi LO-006 toptan, katalogda PC+PP. OEM logo, renk ve ambalaj sorun. BPA içermeme veya 100 °C için değerlendirme ve test gerekir.",
           "description": "Zaman İşaretli 1000 ml Şeffaf Spor Su Şişesi. Model LO-006, katalog malzemesi PC+PP. OEM renk, logo ve ambalaj seçeneklerini sorun; BPA içermeme veya 100 °C su gereksinimi malzeme değerlendirmesi ve test gerektirir."
         }
-      }
+      },
+      "detailImages": [
+        {
+          "src": "/assets/lo/detail/lo-006-lifestyle.webp",
+          "width": 720,
+          "height": 1951,
+          "purpose": "lifestyle"
+        },
+        {
+          "src": "/assets/lo/detail/lo-006-design.webp",
+          "width": 720,
+          "height": 1777,
+          "purpose": "design"
+        }
+      ]
     },
     {
       "model": "LO-007",
@@ -371,7 +455,21 @@
           "seoDescription": "1000ml plastik su şişesi LO-007 toptan, katalogda PC+PP. OEM logo, renk ve ambalaj sorun. BPA içermeme veya 100 °C için değerlendirme ve test gerekir.",
           "description": "Açılır Kapaklı ve Zaman İşaretli 1000 ml Spor Su Şişesi. Model LO-007, katalog malzemesi PC+PP. OEM renk, logo ve ambalaj seçeneklerini sorun; BPA içermeme veya 100 °C su gereksinimi malzeme değerlendirmesi ve test gerektirir."
         }
-      }
+      },
+      "detailImages": [
+        {
+          "src": "/assets/lo/detail/lo-007-lifestyle.webp",
+          "width": 720,
+          "height": 1951,
+          "purpose": "lifestyle"
+        },
+        {
+          "src": "/assets/lo/detail/lo-007-design.webp",
+          "width": 720,
+          "height": 1777,
+          "purpose": "design"
+        }
+      ]
     },
     {
       "model": "LO-008",
@@ -424,7 +522,21 @@
           "seoDescription": "1300ml plastik su şişesi LO-008 toptan, katalogda PC+PP. OEM logo, renk ve ambalaj sorun. BPA içermeme veya 100 °C için değerlendirme ve test gerekir.",
           "description": "Omuz Askılı 1300 ml Degrade Kompakt Su Matarası. Model LO-008, katalog malzemesi PC+PP. OEM renk, logo ve ambalaj seçeneklerini sorun; BPA içermeme veya 100 °C su gereksinimi malzeme değerlendirmesi ve test gerektirir."
         }
-      }
+      },
+      "detailImages": [
+        {
+          "src": "/assets/lo/detail/lo-008-lifestyle.webp",
+          "width": 720,
+          "height": 1944,
+          "purpose": "lifestyle"
+        },
+        {
+          "src": "/assets/lo/detail/lo-008-design.webp",
+          "width": 720,
+          "height": 1607,
+          "purpose": "design"
+        }
+      ]
     }
   ]
 }

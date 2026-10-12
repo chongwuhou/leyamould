@@ -28,6 +28,11 @@ for lang in langs:
         assert len(product["images"])==3
         for im in product["images"]:
             assert im.startswith("/assets/lo/") and (DIST/im.lstrip("/")).is_file(),im
+        detail_images=product.get("detailImages",[])
+        assert [im["purpose"] for im in detail_images]==["lifestyle","design"],(model,"missing real product-detail panels")
+        for detail in detail_images:
+            assert detail["src"].startswith("/assets/lo/detail/") and (DIST/detail["src"].lstrip("/")).is_file(),detail
+            assert detail["width"]==720 and detail["height"]>1500,(model,detail)
         doc=(DIST/prefix/"products"/slug/"index.html").read_text(encoding="utf8")
         head,main=doc.split("</head>",1)
         title=unescape(re.search(r"<title>([^<]+)</title>",head).group(1))
@@ -48,6 +53,9 @@ for lang in langs:
         assert "certified BPA-free" not in main.lower()
         assert "100°C rated" not in main.lower()
         assert all(im in doc for im in product["images"])
+        assert doc.count('id="product-detail-photos"')==1,(lang,model)
+        assert doc.count('class="lo-photo-details__figure"')==2,(lang,model)
+        assert all(im["src"] in doc for im in detail_images),(lang,model,"missing long-form detail photos")
         assert "水杯_" not in doc and "/images/水杯" not in doc
         url="/"+prefix+"products/"+slug+"/"
         assert 'href="'+url+'"' in listing,(lang,model,"missing product card")
