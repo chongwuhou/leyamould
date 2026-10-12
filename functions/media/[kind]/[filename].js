@@ -19,7 +19,7 @@ export async function onRequestGet({ params, env }) {
     key = "catalog-staging/ppt/" + filename;
   } else if (kind === "capability" && CAPABILITY_IMAGES.has(filename)) {
     key = "site-capabilities/" + filename;
-  } else if (kind === "gallery" && /^(?:2095|2099|5299|5340|8563)-0[1-3]\.webp$/.test(filename)) {
+  } else if (kind === "gallery" && /^(?:(?:2095|2099|5299|5340|8563)-0[1-3]|xuyi-g(?:01|02|03|04|05|09|10|12)-0[1-4])\.webp$/.test(filename)) {
     key = "site-gallery/" + filename;
   } else if (kind === "blog" && /^[a-z0-9_-]{20,70}\.(?:jpg|png|webp)$/.test(filename)) {
     key = "site-blog/" + filename;

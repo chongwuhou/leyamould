@@ -229,7 +229,7 @@
     const request=++requestNumber;
     model.value=id;resetFields();notice.textContent="正在读取 "+id+" 的当前商品页面和 D1 商详…";
     const entry=(state.products.items||[]).find(x=>x.model===id&&!x.content?.newProduct);
-    const route="/products/"+(id.startsWith("LO-")?id.toLowerCase():encodeURIComponent(id))+"/";
+    const route="/products/"+(/^(?:LO|G)-/.test(id)?id.toLowerCase():encodeURIComponent(id))+"/";
     let original={},sourceAvailable=false;
     try{
      const response=await fetch(route,{cache:"no-store"});

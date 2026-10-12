@@ -67,11 +67,12 @@ if snapshot.is_file():
     # Eight reviewed LO source-image products are generated in five
     # languages alongside, not instead of, the D1-managed translations.
     lo_products=json.loads((ROOT/"data/lo-products.json").read_text(encoding="utf8"))["products"]
-    added=sum(1 for row in lo_products if
+    gallery_products=json.loads((ROOT/"data/gallery-reference-products.json").read_text(encoding="utf8"))["items"]
+    added=sum(1 for row in lo_products+gallery_products if
       (DIST/locale/"products"/row["slug"]/"index.html").is_file() and
       not any(item.get("locale")==locale and item.get("resourceId")=="page:/products/"+row["slug"]+"/"
               for item in data.get("translations",[])))
-    assert result[locale]==expected+added, (locale,"D1 + source-reviewed LO translation count mismatch",result[locale],expected,added)
+    assert result[locale]==expected+added, (locale,"D1 + LO + gallery photo-reference translation count mismatch",result[locale],expected,added)
 if sum(result.values()):
  assert all(result.values()),"Partial language release not allowed"
  assert sum(result.values())>=len(result),"Expected approved localized pages"

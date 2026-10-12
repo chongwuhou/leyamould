@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "model": "G-01",
+      "slug": "g-01",
+      "sourceFolder": 1,
+      "category": "Plastic Sports Water Bottles",
+      "images": [
+        "/media/gallery/xuyi-g01-01.webp",
+        "/media/gallery/xuyi-g01-02.webp",
+        "/media/gallery/xuyi-g01-03.webp"
+      ],
+      "locales": {
+        "en": "Clear Flip-Top Straw Sports Bottles",
+        "es": "Botellas deportivas transparentes con tapa abatible y pajita",
+        "pt": "Garrafas desportivas transparentes com tampa articulada e palhinha",
+        "ru": "Прозрачные спортивные бутылки с откидной крышкой и трубочкой",
+        "tr": "Şeffaf kapaklı ve pipetli spor şişeleri"
+      },
+      "referenceOnly": true
+    },
+    {
+      "model": "G-02",
+      "slug": "g-02",
+      "sourceFolder": 2,
+      "category": "Plastic Sports Water Bottles",
+      "images": [
+        "/media/gallery/xuyi-g02-01.webp",
+        "/media/gallery/xuyi-g02-02.webp",
+        "/media/gallery/xuyi-g02-03.webp"
+      ],
+      "locales": {
+        "en": "Gradient Sports Bottles with Time Markers",
+        "es": "Botellas deportivas degradadas con marcas de tiempo",
+        "pt": "Garrafas desportivas degradê com marcações de tempo",
+        "ru": "Спортивные бутылки с градиентом и отметками времени",
+        "tr": "Zaman işaretli degrade spor şişeleri"
+      },
+      "referenceOnly": true
+    },
+    {
+      "model": "G-03",
+      "slug": "g-03",
+      "sourceFolder": 3,
+      "category": "Large Capacity Water Jugs",
+      "images": [
+        "/media/gallery/xuyi-g03-01.webp",
+        "/media/gallery/xuyi-g03-02.webp",
+        "/media/gallery/xuyi-g03-03.webp"
+      ],
+      "locales": {
+        "en": "Compact Carry-Handle Water Jugs",
+        "es": "Jarras de agua compactas con asa",
+        "pt": "Garrafas compactas com alça",
+        "ru": "Компактные бутылки-кувшины с ручкой",
+        "tr": "Taşıma saplı kompakt su mataraları"
+      },
+      "referenceOnly": true
+    },
+    {
+      "model": "G-04",
+      "slug": "g-04",
+      "sourceFolder": 4,
+      "category": "Large Capacity Water Jugs",
+      "images": [
+        "/media/gallery/xuyi-g04-01.webp",
+        "/media/gallery/xuyi-g04-02.webp",
+        "/media/gallery/xuyi-g04-03.webp"
+      ],
+      "locales": {
+        "en": "Carry-Handle Fitness Water Jugs",
+        "es": "Jarras deportivas con asa de transporte",
+        "pt": "Garrafas fitness com pega",
+        "ru": "Спортивные бутылки-кувшины с ручкой",
+        "tr": "Taşıma saplı fitness su mataraları"
+      },
+      "referenceOnly": true
+    },
+    {
+      "model": "G-05",
+      "slug": "g-05",
+      "sourceFolder": 5,
+      "category": "Plastic Sports Water Bottles",
+      "images": [
+        "/media/gallery/xuyi-g05-01.webp",
+        "/media/gallery/xuyi-g05-02.webp",
+        "/media/gallery/xuyi-g05-03.webp"
+      ],
+      "locales": {
+        "en": "Gradient Sports Bottles with Carry Loops",
+        "es": "Botellas deportivas degradadas con asa",
+        "pt": "Garrafas desportivas degradê com alça",
+        "ru": "Спортивные бутылки с градиентом и петлей",
+        "tr": "Taşıma halkalı degrade spor şişeleri"
+      },
+      "referenceOnly": true
+    },
+    {
+      "model": "G-09",
+      "slug": "g-09",
+      "sourceFolder": 9,
+      "category": "Plastic Sports Water Bottles",
+      "images": [
+        "/media/gallery/xuyi-g09-01.webp",
+        "/media/gallery/xuyi-g09-02.webp",
+        "/media/gallery/xuyi-g09-03.webp",
+        "/media/gallery/xuyi-g09-04.webp"
+      ],
+      "locales": {
+        "en": "Clear Sports Bottles with Carry Rings",
+        "es": "Botellas deportivas transparentes con anillas",
+        "pt": "Garrafas desportivas transparentes com alças",
+        "ru": "Прозрачные спортивные бутылки с кольцевой ручкой",
+        "tr": "Taşıma halkalı şeffaf spor şişeleri"
+      },
+      "referenceOnly": true
+    },
+    {
+      "model": "G-10",
+      "slug": "g-10",
+      "sourceFolder": 10,
+      "category": "Plastic Sports Water Bottles",
+      "images": [
+        "/media/gallery/xuyi-g10-01.webp",
+        "/media/gallery/xuyi-g10-02.webp"
+      ],
+      "locales": {
+        "en": "Compact Flip-Top Gradient Water Bottles",
+        "es": "Botellas compactas degradadas con tapa abatible",
+        "pt": "Garrafas compactas degradê com tampa articulada",
+        "ru": "Компактные бутылки с градиентом и откидной крышкой",
+        "tr": "Açılır kapaklı kompakt degrade şişeler"
+      },
+      "referenceOnly": true
+    },
+    {
+      "model": "G-12",
+      "slug": "g-12",
+      "sourceFolder": 12,
+      "category": "Plastic Sports Water Bottles",
+      "images": [
+        "/media/gallery/xuyi-g12-01.webp",
+        "/media/gallery/xuyi-g12-02.webp",
+        "/media/gallery/xuyi-g12-03.webp"
+      ],
+      "locales": {
+        "en": "Clear Carry-Ring Water Bottles",
+        "es": "Botellas transparentes con anilla de transporte",
+        "pt": "Garrafas transparentes com alça circular",
+        "ru": "Прозрачные бутылки с кольцом для переноски",
+        "tr": "Taşıma halkalı şeffaf su şişeleri"
+      },
+      "referenceOnly": true
+    }
+  ]
+}

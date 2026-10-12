@@ -58,6 +58,8 @@ for m,item in SERIES.items():
  item["images"]=list(dict.fromkeys(item["images"]))
 from lo_catalog import add_products as add_lo_products
 add_lo_products(SERIES)
+from gallery_catalog import add_products as add_gallery_references
+add_gallery_references(SERIES)
 for row in BUILD_STATE.get("products",[]):
  model=str(row.get("model",""))
  override=row.get("content") or {}
@@ -113,6 +115,8 @@ def build_url(path,title,content):
   from editorial_support import for_route as reviewed_editorial_for_route
   main+=reviewed_editorial_for_route(route,main)
   if route=="/products/" or route.startswith("/collections/"):
+   from gallery_catalog import catalog_cards as gallery_cards
+   main=gallery_cards(main,"en",route)
    from lo_catalog import catalog_cards
    main=catalog_cards(main,"en",route)
   if route.startswith("/products/") and route!="/products/":

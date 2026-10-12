@@ -115,6 +115,9 @@ def detail(obj):
  if obj.get("loNew"):
   from lo_catalog import detail as lo_detail
   return lo_detail(obj,"en")
+ if obj.get("galleryReference"):
+  from gallery_catalog import detail as gallery_detail
+  return gallery_detail(obj,"en")
  return structured_product_details(obj)
 
 CAPABILITIES=[
@@ -314,6 +317,9 @@ def generate():
    from lo_catalog import LO_PRODUCTS
    meta=next(row["locales"]["en"] for row in LO_PRODUCTS if row["model"]==model)
    seo_name,seo_desc=meta["seoTitle"],meta["seoDescription"]
+  elif product.get("galleryReference"):
+   seo_name=public_name+" | Photo reference "+model+" | XUYI"
+   seo_desc="Explore "+public_name+". Photo reference "+model+" is not a verified factory model. Confirm capacity, materials, packing and available styles before ordering."
   else:
    seo_name=seo_name+' | XUYI Bottles'
    seo_desc=description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.'

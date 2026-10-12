@@ -63,7 +63,12 @@ def render_article(slug):
         h+='<a href="#'+anchor(item["heading"])+'">'+e(item["heading"])+'</a>'
     h+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside>'
     updated="2026-10-10" if slug in EVIDENCE else post["updated"]
-    h+='<article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>Updated '+e(updated)+'</span></div>'
+    # All 16 articles were actually published in D1 on Oct 9. The selected
+    # evidence guides were revised Oct 10. Do not manufacture staggered dates.
+    published=post["updated"]
+    timeline='<time datetime="'+e(published)+'">Published '+e(published)+'</time>'
+    if updated>published:timeline+=' · <time datetime="'+e(updated)+'">Reviewed '+e(updated)+'</time>'
+    h+='<article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div>'
     h+='<p class="blog-lede">'+e(post["intro"])+'</p>'
     h+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>'
     for tip in post["checklist"][:3]:h+='<li>'+e(tip)+'</li>'
@@ -101,16 +106,15 @@ def enrich_article_html(document, slug):
     blogpost={"@type":"BlogPosting","@id":url+"#article","headline":post["title"],
       "description":post["description"],"mainEntityOfPage":{"@type":"WebPage","@id":url},
       "image":[SITE_ORIGIN+cover_path(slug)],
-      "dateModified":updated,"inLanguage":"en","keywords":", ".join([post["primary_keyword"]]+post["secondary_keywords"]),
+      "datePublished":post["updated"],"dateModified":updated,"inLanguage":"en","keywords":", ".join([post["primary_keyword"]]+post["secondary_keywords"]),
       "author":{"@type":"Organization","name":"XUYI Bottles","url":SITE_ORIGIN+"/"},
       "publisher":{"@type":"Organization","name":"XUYI Bottles","url":SITE_ORIGIN+"/"}}
     if slug in EVIDENCE:
         blogpost["citation"]=[{"@type":"CreativeWork","name":ref["label"],"url":ref["url"]} for ref in EVIDENCE[slug]["sources"]]
-    if slug not in LEGACY_GUIDES:
-        blogpost["datePublished"]=post["updated"]
+    # Legacy articles also have D1-published Oct 9 dates, not just new guides.
     faq={"@type":"FAQPage","mainEntity":[{"@type":"Question","name":qa["question"],"acceptedAnswer":{"@type":"Answer","text":qa["answer"]}} for qa in post["faqs"]]}
     graph={"@context":"https://schema.org","@graph":[blogpost,breadcrumb,faq]}
-    metadata='<meta property="og:type" content="article"><meta property="article:modified_time" content="'+e(updated)+'">'
+    metadata='<meta property="og:type" content="article"><meta property="article:published_time" content="'+e(post["updated"])+'"><meta property="article:modified_time" content="'+e(updated)+'">'
     metadata+='<meta name="keywords" content="'+e(", ".join([post["primary_keyword"]]+post["secondary_keywords"]))+'">'
     metadata+='<meta property="og:image" content="'+e(SITE_ORIGIN+cover_path(slug))+'">'
     metadata+='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+'</script>'

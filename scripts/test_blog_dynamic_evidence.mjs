@@ -14,7 +14,7 @@ for(const [slug,evidence] of Object.entries(EVIDENCE)){
  const body=blogHtml(post);
  assert.equal(body.match(/id="primary-sources"/g)?.length,1,slug);
  assert(body.includes("SOURCE-CHECKED BUYER NOTES"),slug);
- assert(body.includes("Updated 2026-10-10"),slug);
+ assert(body.includes("Published 2026-10-09")&&body.includes("Reviewed 2026-10-10"),slug);
  assert(body.includes("This buyer guide links relevant primary"),slug);
  for(const ref of evidence.sources)assert(body.includes(ref.url),slug+" "+ref.url);
  const page=composePage(template,body,post,"/blog/"+slug+"/");

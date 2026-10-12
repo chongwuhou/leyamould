@@ -19,14 +19,14 @@ links_seen=set()
 for lang in langs:
     prefix="" if lang=="en" else lang+"/"
     listing=(DIST/prefix/"products/index.html").read_text(encoding="utf8")
-    assert listing.count('data-product-card')==93,(lang,"catalog item count")
+    assert listing.count('data-product-card')==101,(lang,"catalog item count")
     def card_urls(page):
         return [re.search(r'\bhref="([^"]+)"',m.group(0)).group(1)
                 for m in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>',page,re.I)]
     expected_lo=["/"+prefix+"products/lo-%03d/"%n for n in range(1,9)]
     listing_urls=card_urls(listing)
     assert listing_urls[:8]==expected_lo,(lang,"LO products must appear on the first page")
-    assert len(listing_urls)==len(set(listing_urls))==93,(lang,"duplicate/missing product")
+    assert len(listing_urls)==len(set(listing_urls))==101,(lang,"duplicate/missing product")
     assert listing.count('data-new-product="true"')==8,(lang,"new arrivals marker")
     assert listing.count('class="product-card__new"')==8,(lang,"visible new arrivals badge")
     for product in items:
@@ -89,7 +89,7 @@ for lang in langs:
             if product["category"]==category:
                 assert '/'+prefix+'products/'+product["slug"]+'/' in category_html,(lang,folder,product["model"])
 sitemap=(DIST/"sitemap.xml").read_text(encoding="utf8")
-assert sitemap.count("<loc>")==715
+assert sitemap.count("<loc>")==755
 assert len(links_seen)==40
 for path in ("build.py","site_renderer.py","data/products.json"):
     assert not (DIST/path).exists()

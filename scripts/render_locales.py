@@ -223,10 +223,25 @@ def main():
                 translated[(route,loc)]={
                     "title":copy["seoTitle"],"description":copy["seoDescription"],
                     "mainHtml":lo_detail(SERIES[model],loc)}
+    # Internal G-series PHOTO references have verified pictures but no factory
+    # part number or technical specifications; all five locales say so.
+    from gallery_catalog import GALLERY,detail as gallery_detail,LABELS as gallery_labels
+    for row in GALLERY:
+        route="/products/"+row["slug"]+"/"
+        src=DIST/route.lstrip("/")/"index.html"
+        if not src.is_file():continue
+        for loc in live:
+            if (route,loc) not in translated:
+                name=row["locales"][loc]
+                translated[(route,loc)]={
+                    "title":name+" | "+row["model"]+" | XUYI",
+                    "description":name+". "+gallery_labels[loc][2],
+                    "mainHtml":gallery_detail(SERIES[row["model"]],loc)}
     # D1-published catalogs are fixed HTML snapshots; add only the eight
     # source-verified LO cards to their native-language grids, without
     # replacing the approved surrounding content.
     from lo_catalog import catalog_cards
+    from gallery_catalog import catalog_cards as gallery_catalog_cards
     for loc in live:
         if ("/",loc) not in translated:
             raise RuntimeError("Refusing to publish "+loc+" without a reviewed localized homepage")
@@ -247,6 +262,7 @@ def main():
         prefix=prefix.replace("</head>",'<script type="application/json" id="xuyi-runtime-ui">'+encoded+"</script></head>",1)
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
         if route=="/products/" or route.startswith("/collections/"):
+            body=gallery_catalog_cards(body,loc,route)
             body=catalog_cards(body,loc,route)
         if route.startswith("/products/") and route!="/products/":
             # D1 translated bodies replace the English product HTML. Re-add

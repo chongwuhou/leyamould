@@ -15,6 +15,10 @@ function contentModifiedDate(post){
  const value=String(post?.updated||"").slice(0,10);
  return EDITORIAL_EVIDENCE[post?.slug] && value<"2026-10-10"?"2026-10-10":value;
 }
+function actualPublishedDate(post){
+ const raw=String(post?.published_at||post?.updated||"").slice(0,10);
+ return /^\d{4}-\d{2}-\d{2}$/.test(raw)?raw:"";
+}
 export async function ensureBlogSchema(db){
  await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_blog_posts (slug TEXT PRIMARY KEY,status TEXT NOT NULL DEFAULT 'draft',content_json TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_at TEXT)").run();
  await db.prepare("CREATE INDEX IF NOT EXISTS idx_xuyi_blog_status ON xuyi_blog_posts(status,updated_at)").run();
@@ -70,7 +74,10 @@ export function blogHtml(post){
  let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Buying Guide</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+esc(post.title)+'</h1><p>'+esc(post.description)+'</p></div></section>';
  body+='<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" loading="eager"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">';
  for(let i=0;i<post.sections.length;i++)body+='<a href="#article-section-'+i+'">'+esc(post.sections[i].heading)+'</a>';
- body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>Updated '+esc(contentModifiedDate(post))+'</span></div><p class="blog-lede">'+esc(post.intro)+'</p>';
+ const published=actualPublishedDate(post),modified=contentModifiedDate(post);
+ const timeline=(published?'<time datetime="'+esc(published)+'">Published '+esc(published)+'</time>':'')+
+   (modified&&modified>published?' · <time datetime="'+esc(modified)+'">Reviewed '+esc(modified)+'</time>':'');
+ body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div><p class="blog-lede">'+esc(post.intro)+'</p>';
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
  post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+esc(section.paragraph)+'</p></section>'});
  body+=verifiedEvidence(post);
@@ -101,6 +108,7 @@ export function composePage(template,body,post,route){
   html=html.replace(/<meta property="og:image" content="[^"]*">/,'');
   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g,'');
   const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
+  if(actualPublishedDate(post))graph.datePublished=actualPublishedDate(post);
   if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
     .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org)\//.test(s.url))
     .map(s=>({'@type':'CreativeWork',name:s.label,url:s.url}));
