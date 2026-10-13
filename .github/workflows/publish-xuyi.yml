@@ -142,6 +142,7 @@ jobs:
           node scripts/test_blog_cover_override_runtime.mjs
           python scripts/test_seo_multilingual_launch.py
           python scripts/test_priority_seo.py
+          python scripts/test_curated_buyer_seo_round2.py
           python scripts/test_buyer_journey_and_product_sharing.py
           python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py

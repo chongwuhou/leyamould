@@ -83,6 +83,8 @@ def main():
     # Share previews mirror actual schema product photos, never guessed SKUs.
     from product_share_images import apply as apply_product_share_images
     apply_product_share_images(DIST)
+    from curated_buyer_seo_round2 import apply as apply_curated_buyer_seo_round2
+    apply_curated_buyer_seo_round2(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))
