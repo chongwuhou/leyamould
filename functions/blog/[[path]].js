@@ -1,5 +1,24 @@
 import { ensureBlogSchema, listBlogPosts, findBlogPost, esc, blogCard, blogHtml, composePage } from "../_shared/blog-cms.js";
 import {englishAltFor} from "../_shared/media-alt.js";
+import COVER_OVERRIDES from "../../data/blog-cover-overrides.json" with {type:"json"};
+
+// Keep D1 as the source of published article text/status and preserve future
+// editor-chosen photos. Only the eight known, duplicated legacy image paths
+// receive an approved presentation-only override; never write to D1.
+const ORIGINAL_COVERS=Object.freeze({
+ "plastic-bottle-material-selection":"/media/ppt/slide-066.webp",
+ "custom-logo-water-bottle-checklist":"/media/ppt/slide-061.webp",
+ "tritan-vs-pp-petg-pc":"/media/ppt/slide-037.webp",
+ "water-bottle-lid-leakproof-testing":"/media/ppt/slide-055.webp",
+ "custom-water-bottle-moq-pricing":"/media/ppt/slide-061.webp",
+ "water-bottle-quality-control-checklist":"/media/ppt/slide-030.webp",
+ "custom-water-bottle-export-packaging":"/media/ppt/slide-059.webp",
+ "how-to-start-private-label-water-bottle-brand":"/media/ppt/slide-049.webp"
+});
+export function withReviewedCover(post){
+ const old=ORIGINAL_COVERS[post.slug],newCover=COVER_OVERRIDES[post.slug];
+ return old && newCover && post.cover===old ? {...post,cover:newCover}:post;
+}
 async function assetHtml(context,path){
  const url=new URL(path,context.request.url);
  const res=await context.env.ASSETS.fetch(new Request(url.toString()));
@@ -39,10 +58,11 @@ export async function onRequestGet(context){
    }
    // The route slug, not an editable content_json field, identifies which
    // article is published and which source-reviewed notes belong to it.
-   const published={...post,slug:tail,coverAlt:await englishAltFor(db,post.cover)};
+   const published=withReviewedCover({...post,slug:tail});
+   published.coverAlt=await englishAltFor(db,published.cover);
    return response(composePage(shell,blogHtml(published),published,"/blog/"+tail+"/"));
   }
-  const posts=await listBlogPosts(db,"published");
+  const posts=(await listBlogPosts(db,"published")).map(withReviewedCover);
   if(!posts.length)return context.next();
   for(const post of posts)post.coverAlt=await englishAltFor(db,post.cover);
   const template=await assetHtml(context,"/blog/index.html");

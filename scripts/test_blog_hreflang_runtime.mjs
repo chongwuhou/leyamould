@@ -9,7 +9,9 @@ function requestContext(slug,{index=false}={}){
   slug,title:"Plastic Bottle Buying Guide: Verified Materials",
   description:"Know which food-contact material documents to request before ordering.",
   intro:"A practical wholesale buying guide with original content from the D1 CMS.",
-  cover:"/media/ppt/slide-066.webp",updated:"2026-10-10",status:"published",
+  // This is a deliberate CMS cover override, different from the legacy
+  // image being corrected; user-edited D1 media must remain authoritative.
+  cover:"/media/ppt/slide-030.webp",updated:"2026-10-10",status:"published",
   sections:[{heading:"Check Each Component",paragraph:"Ask for exact model materials and approval evidence."}],
   checklist:[],faqs:[]
  };
