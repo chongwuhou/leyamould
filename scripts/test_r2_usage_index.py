@@ -13,8 +13,10 @@ assert data["site"]=="xuyi-drinkware-site" and data["schemaVersion"]==1
 assert data["publishRevision"]>=0 and data["references"]
 refs=data["references"]
 assert "/media/ppt/slide-059.webp" in refs,"Older images used by source pages are protected"
-assert "/" in refs["/media/ppt/slide-059.webp"]
-assert "/ru/" in refs["/media/ppt/slide-059.webp"] or any(v.startswith("/ru/") for v in refs["/media/ppt/slide-059.webp"])
+# The homepage's duplicated packaging thumbnail has a new reviewed cover,
+# but the original factory image must stay attached to its own buying guide.
+assert "/blog/wholesale-plastic-water-bottle-buying-guide/" in refs["/media/ppt/slide-059.webp"]
+assert "/ru/blog/wholesale-plastic-water-bottle-buying-guide/" in refs["/media/ppt/slide-059.webp"]
 assert all(all("../" not in x for x in group) for group in refs.values())
 with tempfile.TemporaryDirectory() as tmp:
  dest=Path(tmp)
