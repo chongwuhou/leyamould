@@ -47,6 +47,14 @@ for loc in LOCALES:
   assert len(re.findall('rel="alternate" hreflang="',content))==6,(route,"alternate family")
   assert re.search(r'<meta name="description" content="[^"]{35,}">',content),(route,"seo description")
   assert re.search(r'<title>[^<]{20,}</title>',content),(route,"seo title")
+  if loc=="es":
+   assert not re.search(r'variadores de plástico|bebidas de plástico',content,re.I),(route,"incorrect Spanish bottle terminology")
+  if loc=="pt":
+   assert not re.search(r'bebidas de plástico',content,re.I),(route,"incorrect Portuguese bottle terminology")
+  if obj.get("loNew") and loc!="en":
+   breadcrumb=re.search(r'<nav class="breadcrumb">(.+?)</nav>',main,re.S)
+   assert breadcrumb and UI_LABELS[loc]["Home"] in breadcrumb.group() and UI_LABELS[loc]["Products"] in breadcrumb.group(),(route,"LO breadcrumb mixed with product-spec category")
+   assert not re.search(r'main product photo|product view \d| - image \d',main,re.I),(route,"LO photo ALT still English")
   products_checked+=1
   if obj.get("galleryReference"):
    assert len(re.findall('class="gallery-reference-photos__grid"',main))==1,(route,"gallery")

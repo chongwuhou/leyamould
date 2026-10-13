@@ -14,6 +14,13 @@ ROOT=Path(__file__).resolve().parent
 DATA=json.loads((ROOT/"data/lo-products.json").read_text(encoding="utf-8"))
 LO_PRODUCTS=DATA["products"]
 LO_MODELS=frozenset(p["model"] for p in LO_PRODUCTS)
+UI_LABELS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
+IMAGE_LABELS={
+ "en":("main product photo","image","product view"),
+ "es":("foto principal del producto","imagen","vista del producto"),
+ "pt":("foto principal do produto","imagem","vista do produto"),
+ "ru":("основное фото товара","изображение","вид товара"),
+ "tr":("ana ürün fotoğrafı","görsel","ürün görünümü")}
 
 COPY={
  "en":dict(eyebrow="PLASTIC WATER BOTTLES · OEM WHOLESALE",model="Model",spec="Product Specifications",
@@ -138,10 +145,11 @@ def detail(product,locale):
     esc=lambda s:html.escape(str(s),quote=True)
     prefix="" if locale=="en" else "/"+locale
     photos=product["images"];name=item["title"]
-    photograph='<img id="main-photo" src="'+esc(photos[0])+'" alt="'+esc(name)+' - main product photo" loading="eager" decoding="async">'
+    image_labels=IMAGE_LABELS[locale]
+    photograph='<img id="main-photo" src="'+esc(photos[0])+'" alt="'+esc(name)+' - '+esc(image_labels[0])+'" loading="eager" decoding="async">'
     thumbs='<div class="product-detail__thumbs">'+''.join(
-      '<button type="button" class="product-detail__thumb" data-main-photo="'+esc(path)+'" aria-label="'+esc(name)+' - image '+str(i)+'">'
-      '<img src="'+esc(path)+'" alt="'+esc(name)+' - product view '+str(i)+'" loading="lazy"></button>'
+      '<button type="button" class="product-detail__thumb" data-main-photo="'+esc(path)+'" aria-label="'+esc(name)+' - '+esc(image_labels[1])+' '+str(i)+'">'
+      '<img src="'+esc(path)+'" alt="'+esc(name)+' - '+esc(image_labels[2])+' '+str(i)+'" loading="lazy"></button>'
       for i,path in enumerate(photos,1))+'</div>'
     def spec(label,value):return '<tr><th scope="row">'+esc(label)+'</th><td>'+esc(value)+'</td></tr>'
     rows=(spec(w["model"],model)+spec(w["capacity"],product["capacity"])+spec(w["material"],product["material"])+
@@ -149,8 +157,8 @@ def detail(product,locale):
     link=prefix+"/contact/?model="+quote(model,safe="")
     overview=(
       '<section class="section product-overview"><div class="shell"><nav class="breadcrumb"><a href="'+(prefix+"/")+'">'+
-      ('Home' if locale=="en" else w["eyebrow"])+'</a> / <a href="'+prefix+'/products/">'+
-      ('Products' if locale=="en" else w["spec"])+'</a> / '+esc(model)+'</nav>'
+      esc(UI_LABELS.get(locale,{}).get("Home","Home"))+'</a> / <a href="'+prefix+'/products/">'+
+      esc(UI_LABELS.get(locale,{}).get("Products","Products"))+'</a> / '+esc(model)+'</nav>'
       '<div class="product-detail"><div class="product-detail__photos"><div class="product-detail__main">'+
       photograph+'</div>'+thumbs+'<p class="copy-muted">'+esc(w["imagesNote"])+'</p></div>'
       '<div><span class="eyebrow">'+esc(w["eyebrow"])+' · '+esc(model)+'</span>'

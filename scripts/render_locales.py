@@ -33,6 +33,27 @@ BLOG_DATE_LABELS={
     "tr":("Yayımlandı","Gözden geçirildi")
 }
 
+def correct_reviewed_drinkware_terms(markup,locale):
+    """Repair identified false-friend translations without altering SKU/specs.
+
+    Rendered local HTML only: original D1 copy remains untouched.
+    Plastic drinkware is neither liquid beverages nor a mechanical variator.
+    """
+    changes={
+        "es":[("variadores de plástico","botellas de plástico"),
+              ("bebidas de plástico","botellas de plástico")],
+        "pt":[("bebidas de plástico","garrafas de plástico")],
+    }
+    for incorrect,correct in changes.get(locale,[]):
+        pat=re.compile(re.escape(incorrect),re.I)
+        def replacement(match):
+            raw=match.group()
+            if raw.isupper():return correct.upper()
+            if raw[:1].isupper():return correct[:1].upper()+correct[1:]
+            return correct
+        markup=pat.sub(replacement,markup)
+    return markup
+
 def localize_blog_timeline(body,original,locale,route):
     """Reflect actual source publication/review dates in the translated page.
 
@@ -341,6 +362,7 @@ def main():
         text=re.sub(r'<meta property="og:url" content="[^"]*">','<meta property="og:url" content="'+canonical+'">',text,count=1)
         text=localize_structured_data(text,loc,route,localized,fields,routes_by_locale[loc],live[loc]["pathPrefix"])
         text=polish_product_head(text,loc,route)
+        text=correct_reviewed_drinkware_terms(text,loc)
         text=polish_image_alt(text,loc)
         text=apply_media_alts(text,data,loc)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
