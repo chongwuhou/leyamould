@@ -13,7 +13,7 @@ checks={
  "Cloudflare Pages identity":cfg["cloudflare"]["pagesProjectName"]=="xuyi-drinkware-site",
  "D1 isolated":cfg["cloudflare"]["d1Database"]=="xuyi-drinkware-d1" and cfg["cloudflare"]["d1Binding"]=="XUYI_DB",
  "R2 isolated":cfg["cloudflare"]["r2Bucket"]=="xuyi-drinkware-r2" and cfg["cloudflare"]["r2Binding"]=="XUYI_ASSETS",
- "Build remains noindex":cfg["site"]["indexingApproved"] is False,
+ "Explicit indexing flag is boolean":type(cfg["site"]["indexingApproved"]) is bool,
  "Independent template files":all((ROOT/"templates/site"/(name+".html")).is_file() for name in ("shell","header","footer","sidebar")),
  "Independent Pages Functions":all((ROOT/p).is_file() for p in ("functions/blog/[[path]].js","functions/api/admin/blog.js","functions/api/admin/publish.js","functions/api/publish-state.js")),
  "GitHub Actions configured":(ROOT/".github/workflows/publish-xuyi.yml").is_file(),

@@ -13,9 +13,9 @@ sys.path.insert(0,str(ROOT/"scripts"))
 import search_submission as module
 import preindex_security_gate as gate
 
-assert module.approved() is False, "Test must never run with the launch gate open"
 site=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
 assert site["cloudflare"]["pagesProjectName"]=="xuyi-drinkware-site"
+assert module.approved() is site["site"]["indexingApproved"]
 dist=ROOT/"dist"
 manifest=module.create_manifest()
 urls=module.sitemap_urls((dist/"sitemap.xml").read_bytes())
@@ -43,16 +43,17 @@ try:
                         b'<url><loc>https://someone-else.com/</loc></url></urlset>')
 except ValueError:pass
 else:raise AssertionError("Cross-domain search submission allowed")
-with patch.dict(os.environ,{"XUYI_INDEXNOW_KEY":"a"*32},clear=False):
-    assert module.key_file() is None
-    assert not (dist/("a"*32+".txt")).exists()
-    with patch("urllib.request.urlopen",side_effect=AssertionError("Attempted external search submission")):
-        gate.check()
-        argv=sys.argv
-        try:
-            sys.argv=["search_submission.py","--submit"]
-            module.main()
-        finally:sys.argv=argv
+with patch.object(module,"approved",return_value=False),patch.object(gate,"approved",return_value=False):
+    with patch.dict(os.environ,{"XUYI_INDEXNOW_KEY":"a"*32},clear=False):
+        assert module.key_file() is None
+        assert not (dist/("a"*32+".txt")).exists()
+        with patch("urllib.request.urlopen",side_effect=AssertionError("Attempted external search submission")):
+            gate.check()
+            argv=sys.argv
+            try:
+                sys.argv=["search_submission.py","--submit"]
+                module.main()
+            finally:sys.argv=argv
 assert not any(f.name.endswith(".txt") and f.stem=="a"*32 for f in dist.iterdir())
 # Indexing authorization must check BOTH apex and www without a stale-source
 # exception. Pages returns 410 for source tombstones, which is safe like 404.
@@ -85,4 +86,4 @@ with TemporaryDirectory() as temp:
         try:module.verify_live()
         except ValueError as exc:assert "robots.txt" in str(exc)
         else:raise AssertionError("Blocked robots did not stop IndexNow submission")
-print("XUYI_SEARCH_SUBMISSION_SAFE",len(urls),"verified URLs, no outbound submissions while noindex")
+print("XUYI_SEARCH_SUBMISSION_SAFE",len(urls),"verified URLs, blocked-state and approval protections tested without external submissions")

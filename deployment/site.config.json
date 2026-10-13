@@ -5,7 +5,7 @@
     "brand": "XUYI Bottles",
     "origin": "https://xuyibottles.com",
     "defaultLocale": "en",
-    "indexingApproved": false
+    "indexingApproved": true
   },
   "cloudflare": {
     "pagesProjectName": "xuyi-drinkware-site",

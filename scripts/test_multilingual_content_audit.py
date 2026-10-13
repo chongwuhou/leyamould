@@ -17,6 +17,7 @@ DIST=ROOT/"dist"
 ORIGIN="https://xuyibottles.com"
 LOCALES=["en","es","pt","ru","tr"]
 assert len(SERIES)==101 and len(GALLERY)==8 and len(LO_PRODUCTS)==8
+INDEXABLE=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf8"))["site"]["indexingApproved"]
 dates_checked=0;products_checked=0;g_checked=0;lo_checked=0
 for loc in LOCALES:
  prefix="" if loc=="en" else loc+"/"
@@ -40,7 +41,7 @@ for loc in LOCALES:
   content=path.read_text(encoding="utf8")
   assert '<html lang="'+loc+'">' in content,(route,"language")
   assert '<link rel="canonical" href="'+ORIGIN+"/"+route+'">' in content,(route,"canonical")
-  assert 'noindex,nofollow' in content,(route,"indexing gate")
+  assert '<meta name="robots" content="'+('index,follow' if INDEXABLE else 'noindex,nofollow')+'">' in content,(route,"indexing gate")
   main=content.split('<main id="main-content">',1)[1].split("</main>",1)[0]
   assert len(re.findall(r"<h1(?:\s[^>]*)?>",main))==1,(route,"heading count")
   assert len(re.findall('rel="alternate" hreflang="',content))==6,(route,"alternate family")
@@ -77,4 +78,4 @@ for loc in LOCALES:
   assert 'property="article:published_time" content="'+published+'"' in document,(loc,slug,"head publish date")
   dates_checked+=1
 assert products_checked==505 and lo_checked==40 and g_checked==40 and dates_checked==64, (products_checked,lo_checked,g_checked,dates_checked)
-print("XUYI_MULTILINGUAL_CONTENT_AUDIT_PASSED 756 English pages, 604 localized pages, 505 product pages, 40 LO badges, 40 photo references, 64 localized blog timelines, SEO/alternate/noindex")
+print("XUYI_MULTILINGUAL_CONTENT_AUDIT_PASSED 756 English pages, 604 localized pages, 505 product pages, 40 LO badges, 40 photo references, 64 localized blog timelines, SEO/alternate/robots approval")

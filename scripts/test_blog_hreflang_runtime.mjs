@@ -28,7 +28,10 @@ function requestContext(slug,{index=false}={}){
   let body;
   try{body=await readFile(join(ROOT,"dist",path.slice(1)),"utf8");}
   catch{return new Response("Not Found",{status:404});}
+  // Test BOTH source publishing modes, independently of the live rollout flag.
+  // Do not let a now-approved site's static shell mask the noindex regression.
   if(index)body=body.replace('<meta name="robots" content="noindex,nofollow">','<meta name="robots" content="index,follow">');
+  else body=body.replace('<meta name="robots" content="index,follow">','<meta name="robots" content="noindex,nofollow">');
   return new Response(body,{status:200,headers:{"content-type":"text/html"}});
  }};
  return {request:new Request(ORIGIN+"/blog/"+slug+"/"),env:{XUYI_DB:db,ASSETS:assets},next:()=>{throw Error("Unexpected static fallback")}};

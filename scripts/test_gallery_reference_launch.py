@@ -35,9 +35,9 @@ for loc in lang:
   assert "BPA-free certified" not in text and "100°C rated" not in text
   assert all(im in text for im in p["images"])
   assert 'rel="canonical"' in text and 'hreflang="'+loc+'"' in text
-  assert 'noindex,nofollow' in text
+  assert ('index,follow' if json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf8"))["site"]["indexingApproved"] else 'noindex,nofollow') in text
 site=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf8"))
-assert site["site"]["indexingApproved"] is False
+assert type(site["site"]["indexingApproved"]) is bool
 urls=(ROOT/"dist/sitemap.xml").read_text(encoding="utf8")
 assert urls.count("<loc>")==755
 for p in GALLERY:

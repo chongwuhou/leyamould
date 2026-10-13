@@ -94,7 +94,7 @@ assert len(links_seen)==40
 for path in ("build.py","site_renderer.py","data/products.json"):
     assert not (DIST/path).exists()
 config=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf8"))
-assert config["site"]["indexingApproved"] is False
+assert type(config["site"]["indexingApproved"]) is bool
 css=(DIST/"assets/site.css").read_text(encoding="utf8")
 # Long-form detail visuals need edge-to-edge responsive width without cropped
 # photos. The lower request-quote CTA must keep the shared white-on-red button
@@ -103,4 +103,4 @@ assert re.search(r'\.lo-photo-details__stack\s*\{[^}]*width:100vw;[^}]*max-width
 assert re.search(r'\.lo-photo-details__figure img\s*\{[^}]*width:100%;height:auto;object-fit:contain',css)
 assert '.product-content__cta a:not(.button){color:var(--red)}' in css
 assert '.product-content__cta a{color:var(--red)}' not in css
-print("XUYI_LO_LAUNCH_PASSED 8 models x 5 languages, 24 local photos, SEO/schema/catalog, noindex preserved")
+print("XUYI_LO_LAUNCH_PASSED 8 models x 5 languages, 24 local photos, SEO/schema/catalog, explicit indexing gate followed")
