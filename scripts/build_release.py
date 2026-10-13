@@ -60,6 +60,10 @@ def main():
     # It does not rewrite CMS data or any translated product specifications.
     from polish_priority_seo import apply as polish_priority_seo
     polish_priority_seo(DIST)
+    # Replace only reviewed generic-category and OEM editorial images.
+    # Original catalog product photos and R2 objects remain untouched.
+    from reviewed_editorial_images import apply as replace_reviewed_editorial_images
+    replace_reviewed_editorial_images(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))
