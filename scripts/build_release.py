@@ -66,6 +66,10 @@ def main():
     replace_reviewed_editorial_images(DIST)
     from reviewed_lowres_editorial_round2 import apply as replace_lowres_round2
     replace_lowres_round2(DIST)
+    # slide-059 contains machinery, not sports bottles. Repair only the
+    # explicitly named Sports Water Bottles category cards.
+    from repair_mismatched_sports_category import apply as repair_sports_cards
+    repair_sports_cards(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))
