@@ -35,10 +35,17 @@ for lang in LANGS:
         article=(DIST/prefix/"blog"/slug/"index.html").read_text(encoding="utf8")
         assert '<meta property="og:image" content="https://xuyibottles.com'+expected+'"' in article,(lang,slug,"OG")
         assert '"image":["https://xuyibottles.com'+expected+'"]' in article,(lang,slug,"JSON-LD")
-        assert expected in article,(lang,slug,"article")
+        assert ('<div class="blog-detail__cover"><img src="'+expected+'"') in article,(lang,slug,"article hero")
         if expected.startswith("/assets/"):
             f=DIST/expected.lstrip("/")
             assert f.is_file(),("Blog image missing",f)
             data=f.read_bytes()
             assert data[:4]==b"RIFF" and data[8:12]==b"WEBP" and len(data)>30000,f
+    for slug in post_slugs:
+        article=(DIST/prefix/"blog"/slug/"index.html").read_text(encoding="utf8")
+        related=(r'<article class="blog-related__item"><a href="/'+
+                 re.escape(prefix)+r'blog/([^/]+)/"><img src="([^"]+)"')
+        for linked,img in re.findall(related,article):
+            assert linked in ORIGINALS,(lang,slug,linked)
+            assert img==OVERRIDES.get(linked,ORIGINALS[linked]),(lang,slug,linked,img)
 print("XUYI_BLOG_UNIQUE_16_THUMBNAILS_FIVE_LANGUAGES_PASSED; original unique images preserved")
