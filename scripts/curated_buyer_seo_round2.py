@@ -8,6 +8,7 @@ from pathlib import Path
 import html
 import json
 import re
+from cms_seo_curation_guard import may_curate
 
 ROOT=Path(__file__).resolve().parent.parent
 LOCALES=("en","es","pt","ru","tr")
@@ -99,6 +100,9 @@ def apply(dist):
         prefix="" if locale=="en" else locale+"/"
         for route,texts in DESCRIPTIONS.items():
             file=dist/prefix/route/"index.html"
+            key="/"+route+"/"
+            if not may_curate(locale,key,"description"):
+                continue
             content=file.read_text(encoding="utf8")
             description=texts[locale]
             if not (85<=len(description)<=190) or any(x in description for x in "<>"):
@@ -133,7 +137,7 @@ def apply(dist):
             new='<section class="seo-next-buyer"><h2>'+html.escape(heading)+'</h2><p>'+html.escape(lead)+': <a href="'+href+'">'+html.escape(TARGET_LABELS[locale][target])+' →</a></p></section>'
             file.write_text(before+new+separator+after,encoding="utf8")
             links+=1
-    if descriptions!=20 or links!=45:raise ValueError("Unexpected round2 count")
+    if descriptions>20 or links!=45:raise ValueError("Unexpected round2 count")
     print("XUYI_CURATED_BUYER_SEO_ROUND2",descriptions,"meta",links,"blog links")
     return descriptions,links
 

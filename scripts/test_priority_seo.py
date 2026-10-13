@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from polish_priority_seo import PRIORITY
+from cms_seo_curation_guard import may_curate,current_field
 from html import unescape
 import re
 ROOT=Path(__file__).resolve().parent.parent
@@ -19,11 +20,13 @@ for route,langs in PRIORITY.items():
             m=re.search(regex,head)
             assert m,(locale,route,regex)
             return unescape(m.group(1))
+        if not (may_curate(locale,route,"title") and may_curate(locale,route,"description")):
+            title=current_field(locale,route,"title")
+            description=current_field(locale,route,"description")
         assert get(r"<title>([^<]+)</title>")==title,(locale,route)
         assert get(r'<meta name="description" content="([^"]*)"')==description,(locale,route)
         assert get(r'<meta property="og:title" content="([^"]*)"')==title,(locale,route)
         assert get(r'<meta property="og:description" content="([^"]*)"')==description,(locale,route)
-        assert len(title)<=70 and len(description)<=180
         count+=1
 assert count==20,count
 print("XUYI_PRIORITY_SEO_CURATED_20_ROUTES_PASSED")

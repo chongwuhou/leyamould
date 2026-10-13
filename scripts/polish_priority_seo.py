@@ -8,6 +8,7 @@ import html
 import json
 import re
 from pathlib import Path
+from cms_seo_curation_guard import may_curate
 
 # page route -> language -> (title, description). Confirmed services are
 # invitations to discuss specifications, not promises of MOQ/certification.
@@ -85,6 +86,9 @@ def apply(dist):
     count=0
     for route,locales in PRIORITY.items():
         for locale in locales:
+            # Honor new D1/CMS copy on future all-site rebuilds.
+            if not (may_curate(locale,route,"title") and may_curate(locale,route,"description")):
+                continue
             prefix="" if locale=="en" else locale+"/"
             file=dist/prefix/route.lstrip("/")/"index.html"
             if not file.is_file():raise FileNotFoundError(str(file))

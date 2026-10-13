@@ -48,8 +48,9 @@ def apply(dist):
         )
         file.write_text(head + additions + divider + body, encoding="utf-8")
         count += 1
-    if count != 505:
-        raise ValueError("Unexpected number of reviewed Product pages: " + str(count))
+    # The catalog may expand without altering this release rule.
+    if count < 505:
+        raise ValueError("Baseline published Product pages unexpectedly missing: " + str(count))
     print("XUYI_EXACT_PRODUCT_SHARE_IMAGES", count)
     return count
 

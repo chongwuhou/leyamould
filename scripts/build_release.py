@@ -86,8 +86,16 @@ def main():
     # Share previews mirror actual schema product photos, never guessed SKUs.
     from product_share_images import apply as apply_product_share_images
     apply_product_share_images(DIST)
+    # Exact page illustrations only; no new photos and no unrelated generic
+    # preview images on privacy and contact pages.
+    from contextual_share_metadata import apply as add_contextual_share_metadata
+    add_contextual_share_metadata(DIST)
     from curated_buyer_seo_round2 import apply as apply_curated_buyer_seo_round2
     apply_curated_buyer_seo_round2(DIST)
+    # Replace excessively generic long localized snippets using model-specific
+    # catalog facts, without inventing price, stock, tests or certifications.
+    from curated_catalog_meta_clarity import apply as clarify_localized_catalog_meta
+    clarify_localized_catalog_meta(DIST)
     # Comparisons only from the 85 catalog entries with verified numeric data.
     # G-series ARE factory models, but their detailed source specs are pending.
     from model_catalog_buyer_comparison import apply as add_model_catalog_comparisons

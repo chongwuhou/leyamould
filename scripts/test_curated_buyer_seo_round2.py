@@ -9,6 +9,7 @@ import sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/"scripts"))
 from curated_buyer_seo_round2 import DESCRIPTIONS,BLOG_LINKS,LOCALES,WORDS
+from cms_seo_curation_guard import may_curate,current_field
 dist=ROOT/"dist"
 assert len(DESCRIPTIONS)==4 and len(BLOG_LINKS)==9
 meta_count=links_count=0
@@ -18,7 +19,8 @@ for lang in LOCALES:
         assert set(translations)==set(LOCALES),route
         body=(dist/prefix/route/"index.html").read_text(encoding="utf8")
         head=body.split("</head>",1)[0]
-        desc=translations[lang]
+        desc=(translations[lang] if may_curate(lang,"/"+route+"/","description")
+              else current_field(lang,"/"+route+"/","description"))
         for pattern in (r'<meta name="description" content="([^"]+)"',
                         r'<meta property="og:description" content="([^"]+)"'):
             values=[html.unescape(v) for v in re.findall(pattern,head)]

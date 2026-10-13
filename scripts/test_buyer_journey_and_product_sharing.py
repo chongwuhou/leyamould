@@ -19,7 +19,7 @@ pages = {
     for file in DIST.rglob("index.html")
     if file.relative_to(DIST).as_posix() != "admin/index.html"
 }
-assert len(pages) == 755, len(pages)
+assert len(pages) >= 755, ("Published page baseline shrank",len(pages))
 
 
 class Links(HTMLParser):
@@ -96,5 +96,5 @@ for route, file in pages.items():
         assert match == [expected], (route, pat, match, expected)
     assert '<meta name="twitter:card" content="summary_large_image">' in head
     product_count += 1
-assert product_count == 505, product_count
-print("XUYI_BUYER_CONTEXT_LINKS_75_ZERO_ORPHANS_AND_PRODUCT_OG_505_PASSED")
+assert product_count >= 505, ("Published product baseline shrank",product_count)
+print("XUYI_BUYER_CONTEXT_LINKS_75_ZERO_ORPHANS_AND_PRODUCT_OG",product_count,"PASSED")

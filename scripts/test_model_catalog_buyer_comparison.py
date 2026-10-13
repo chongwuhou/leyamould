@@ -10,7 +10,7 @@ from model_catalog_buyer_comparison import SERIES,LOCALES,LANG,SOURCE_LABELS,pee
 DIST=ROOT/"dist"
 catalog=[r for r in SERIES.values() if not r.get("manualNew")]
 manual=[r for r in SERIES.values() if r.get("manualNew")]
-assert len(catalog)==85 and len(manual)==16
+assert len(catalog)>=85 and len(manual)>=16
 assert {r["category"] for r in catalog}=={
     "Plastic Sports Water Bottles","Large Capacity Water Jugs",
     "Kids Plastic Water Bottles","Plastic Shaker Bottles"
