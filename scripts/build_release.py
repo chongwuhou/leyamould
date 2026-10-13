@@ -70,6 +70,8 @@ def main():
     # explicitly named Sports Water Bottles category cards.
     from repair_mismatched_sports_category import apply as repair_sports_cards
     repair_sports_cards(DIST)
+    from repair_remaining_category_cards import apply as repair_remaining_categories
+    repair_remaining_categories(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))

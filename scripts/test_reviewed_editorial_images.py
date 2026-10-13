@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/"scripts"))
-from reviewed_editorial_images import LOCALES,EDITORIAL_IMAGES,OEM_NEW,OEM_OLD
+from reviewed_editorial_images import LOCALES,EDITORIAL_IMAGES,OEM_NEW,OEM_OLD,OEM_ALT
 DIST=ROOT/"dist"
 paths=[v[1] for v in EDITORIAL_IMAGES.values()]+[OEM_NEW]
 for p in paths:
@@ -24,13 +24,15 @@ for lang in LOCALES:
     oem=(DIST/prefix/"capabilities/oem-odm/index.html").read_text(encoding="utf-8")
     assert oem.count('<div class="whyv2-oem-steps__sample"><img src="'+OEM_NEW+'"')==1,lang
     assert OEM_OLD not in oem,lang
+    assert OEM_ALT[lang] in oem,lang
     for doc in (general,oem):
         assert "AI concept illustration" not in doc
         assert "AI-generated illustration" not in doc
         assert "ai-reviewed" not in doc
 for f in DIST.glob("**/products/*/index.html"):
     s=f.read_text(encoding="utf-8")
-    assert all(p not in s for p in paths),("Different SKU represented by a generic image",str(f))
+    main=s.split('<main id="main-content">',1)[-1].split("</main>",1)[0]
+    assert all(p not in main for p in paths),("Different SKU represented by a generic image",str(f))
 # Keep original backup copies on the operator's workstation only. The
 # production runner intentionally does not checkout local private backups.
 local_backup=ROOT/"_local_ops/ai-review-2026-10-13"

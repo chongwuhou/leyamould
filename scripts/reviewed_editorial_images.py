@@ -23,7 +23,14 @@ EDITORIAL_IMAGES={
     ),
 }
 OEM_OLD="/media/group/oem-sampling.webp"
-OEM_NEW="/assets/editorial/plastic-sampling-workbench.webp"
+OEM_NEW="/assets/curated-hd/customizable-assortment.webp"
+OEM_ALT={
+ "en":"Plastic bottle samples in different body colors and lid styles",
+ "es":"Muestras de botellas de plástico de distintos colores y tapas",
+ "pt":"Amostras de garrafas plásticas com várias cores e tampas",
+ "ru":"Образцы пластиковых бутылок разных цветов и с разными крышками",
+ "tr":"Farklı renk ve kapak modellerinde plastik şişe örnekleri",
+}
 
 def replace_once(markup,old,new,context):
     count=markup.count(old)
@@ -53,6 +60,12 @@ def apply(dist):
         doc=oem.read_text(encoding="utf-8")
         anchor='<div class="whyv2-oem-steps__sample"><img src="'+OEM_OLD+'"'
         doc=replace_once(doc,anchor,anchor.replace(OEM_OLD,OEM_NEW),lang+" oem-sampling")
+        # A real plastic-bottle source photo replaces the unverified studio.
+        import html
+        import re
+        pattern=r'(<div class="whyv2-oem-steps__sample"><img src="'+re.escape(OEM_NEW)+r'" alt=")[^"]*(")'
+        doc,num=re.subn(pattern,lambda m:m.group(1)+html.escape(OEM_ALT[lang],quote=True)+m.group(2),doc,count=1)
+        if num!=1:raise ValueError("OEM photo ALT context mismatch "+lang)
         oem.write_text(doc,encoding="utf-8")
         count+=1
     print("XUYI_EDITORIAL_IMAGES_REVIEWED",count,"exact page-image placements")
