@@ -164,6 +164,7 @@ jobs:
           python scripts/test_localized_release.py
           python scripts/test_shared_chrome_i18n.py
           python scripts/test_curated_hq_images.py
+          python scripts/test_gpt_reviewed_shaker_hd.py
           python scripts/test_reviewed_editorial_images.py
           python scripts/test_reviewed_lowres_editorial_round2.py
           python scripts/test_repaired_sports_category.py

@@ -8,6 +8,8 @@ import sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/"scripts"))
 from repair_localized_blog_thumbnails import ORIGINALS,OVERRIDES
+SHAKER_MANIFEST=json.loads((ROOT/"data/gpt-reviewed-shaker-hd-20261013.json").read_text(encoding="utf8"))
+REVIEWED_SOURCE_IMAGES={item["old"]:item["new"] for item in SHAKER_MANIFEST["approved"]}
 
 DIST=ROOT/"dist"
 LANGS=("en","es","pt","ru","tr")
@@ -30,7 +32,9 @@ for lang in LANGS:
     assert len(found)==16 and set(found)==post_slugs,lang
     assert len(set(found.values()))==16,("Duplicate blog thumbnail",lang,found)
     for slug,path_new in found.items():
-        expected=OVERRIDES.get(slug,ORIGINALS[slug])
+        # Previously unique pictures remain unique, but a source-identical
+        # photo may now have an explicitly reviewed higher-resolution version.
+        expected=OVERRIDES.get(slug,REVIEWED_SOURCE_IMAGES.get(ORIGINALS[slug],ORIGINALS[slug]))
         assert path_new==expected,("Unexpectedly changed an originally unique image",lang,slug)
         article=(DIST/prefix/"blog"/slug/"index.html").read_text(encoding="utf8")
         assert '<meta property="og:image" content="https://xuyibottles.com'+expected+'"' in article,(lang,slug,"OG")
@@ -47,5 +51,6 @@ for lang in LANGS:
                  re.escape(prefix)+r'blog/([^/]+)/"><img src="([^"]+)"')
         for linked,img in re.findall(related,article):
             assert linked in ORIGINALS,(lang,slug,linked)
-            assert img==OVERRIDES.get(linked,ORIGINALS[linked]),(lang,slug,linked,img)
+            expected=OVERRIDES.get(linked,REVIEWED_SOURCE_IMAGES.get(ORIGINALS[linked],ORIGINALS[linked]))
+            assert img==expected,(lang,slug,linked,img)
 print("XUYI_BLOG_UNIQUE_16_THUMBNAILS_FIVE_LANGUAGES_PASSED; original unique images preserved")

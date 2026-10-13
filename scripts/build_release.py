@@ -80,6 +80,9 @@ def main():
     # application/feature pages, across all five reviewed languages.
     from buyer_journey_internal_links import apply as curate_buyer_journey_links
     curate_buyer_journey_links(DIST)
+    # Six visually audited plastic-shaker scenes only; R2 originals immutable.
+    from apply_gpt_reviewed_shaker_hd import apply as apply_gpt_reviewed_shaker_hd
+    apply_gpt_reviewed_shaker_hd(DIST)
     # Share previews mirror actual schema product photos, never guessed SKUs.
     from product_share_images import apply as apply_product_share_images
     apply_product_share_images(DIST)

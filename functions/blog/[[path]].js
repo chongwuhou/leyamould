@@ -1,6 +1,7 @@
 import { ensureBlogSchema, listBlogPosts, findBlogPost, esc, blogCard, blogHtml, composePage } from "../_shared/blog-cms.js";
 import {englishAltFor} from "../_shared/media-alt.js";
 import COVER_OVERRIDES from "../../data/blog-cover-overrides.json" with {type:"json"};
+import SHAKER_IMAGES from "../../data/gpt-reviewed-shaker-hd-20261013.json" with {type:"json"};
 
 // Keep D1 as the source of published article text/status and preserve future
 // editor-chosen photos. Only the eight known, duplicated legacy image paths
@@ -17,7 +18,14 @@ const ORIGINAL_COVERS=Object.freeze({
 });
 export function withReviewedCover(post){
  const old=ORIGINAL_COVERS[post.slug],newCover=COVER_OVERRIDES[post.slug];
- return old && newCover && post.cover===old ? {...post,cover:newCover}:post;
+ if(old && newCover && post.cover===old)return {...post,cover:newCover};
+ // Only this originally unique shaker-guide cover uses the same approved
+ // 6-bottle source as model 501. Respect new images chosen through D1 CMS.
+ if(post.slug==="shaker-bottle-wholesale"){
+  const photo=SHAKER_IMAGES.approved.find(x=>x.old==="/media/ppt/slide-091.webp");
+  if(photo && post.cover===photo.old)return {...post,cover:photo.new};
+ }
+ return post;
 }
 async function assetHtml(context,path){
  const url=new URL(path,context.request.url);
