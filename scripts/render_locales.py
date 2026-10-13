@@ -26,6 +26,33 @@ SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
 ORIGIN="https://xuyibottles.com"
 UI_TRANSLATIONS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
 RUNTIME_UI_TRANSLATIONS=json.loads((ROOT/"data/runtime-ui-translations.json").read_text(encoding="utf-8"))
+BLOG_DATE_LABELS={
+    "es":("Publicado el","Revisado el"),
+    "pt":("Publicado em","Revisto em"),
+    "ru":("Опубликовано","Проверено"),
+    "tr":("Yayımlandı","Gözden geçirildi")
+}
+
+def localize_blog_timeline(body,original,locale,route):
+    """Reflect actual source publication/review dates in the translated page.
+
+    Localized D1 HTML predates the truthful publication-vs-review distinction.
+    Read dates from the canonical article HEAD; never backdate or guess dates.
+    """
+    if not re.fullmatch(r"/blog/[a-z0-9-]+/",route):return body
+    def dated(key):
+        match=re.search(r'<meta property="article:'+key+r'_time" content="(\d{4}-\d{2}-\d{2})">',original)
+        return match.group(1) if match else None
+    published,modified=dated("published"),dated("modified")
+    if not published:return body  # No verified source date: preserve approved D1 copy.
+    first,reviewed=BLOG_DATE_LABELS[locale]
+    timeline='<time datetime="'+published+'">'+html.escape(first)+" "+published+"</time>"
+    if modified and modified>published:
+        timeline+=' · <time datetime="'+modified+'">'+html.escape(reviewed)+" "+modified+"</time>"
+    updated,count=re.subn(r'(<div class="blog-meta">\s*<span>[^<]*</span>\s*<span>).*?(</span>\s*</div>)',
+        lambda match:match.group(1)+timeline+match.group(2),body,count=1,flags=re.S)
+    if count!=1:raise RuntimeError("Cannot update localized blog date safely: "+locale+" "+route)
+    return updated
 
 def localize_structured_data(markup,locale,route,localized,fields,approved_routes,path_prefix=None):
     """Match JSON-LD to the reviewed language page, never the English source.
@@ -67,6 +94,7 @@ def localize_structured_data(markup,locale,route,localized,fields,approved_route
                     crumb["item"]=ORIGIN+"/"+(path_prefix or locale)+original_route
                     if original_route=="/":crumb["name"]=ui.get("Home",crumb.get("name","Home"))
                     elif original_route==route:crumb["name"]=heading
+                    elif original_route=="/products/":crumb["name"]=ui.get("Products",crumb.get("name","Products"))
                     elif original_route=="/blog/":crumb["name"]=ui.get("Blog",crumb.get("name","Blog"))
         return item
     def replace(match):
@@ -261,6 +289,8 @@ def main():
         encoded=json.dumps(runtime,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
         prefix=prefix.replace("</head>",'<script type="application/json" id="xuyi-runtime-ui">'+encoded+"</script></head>",1)
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
+        if route.startswith("/blog/"):
+            body=localize_blog_timeline(body,original,loc,route)
         if route=="/products/" or route.startswith("/collections/"):
             body=gallery_catalog_cards(body,loc,route)
             body=catalog_cards(body,loc,route)

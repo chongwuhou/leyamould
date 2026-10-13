@@ -214,6 +214,7 @@ def catalog_cards(body,locale,route):
             break
     if close is None:raise ValueError("Unclosed catalog grid")
     esc=lambda v:html.escape(str(v),quote=True)
+    model_labels={"en":"MODEL","es":"MODELO","pt":"MODELO","ru":"МОДЕЛЬ","tr":"MODEL"}
     markup=""
     for product in selected:
         slug=product["slug"]
@@ -231,7 +232,7 @@ def catalog_cards(body,locale,route):
         markup+=(
           '<a class="product-card" data-product-card data-category="'+esc(cat)+'" data-search="'+esc(search.lower())+'" href="'+url+'">'
           '<div class="product-card__image"><img src="'+esc(img)+'" alt="'+esc(title)+' — '+esc(product["model"])+'" loading="lazy" decoding="async"></div>'
-          '<div class="product-card__body"><span class="product-card__small">MODEL '+esc(product["model"])+'</span><h3>'+esc(title)+'</h3><span class="product-card__link">'+esc(link_text)+' ↗</span></div></a>')
+          '<div class="product-card__body"><span class="product-card__small">'+esc(model_labels[locale])+' '+esc(product["model"])+'</span><h3>'+esc(title)+'</h3><span class="product-card__link">'+esc(link_text)+' ↗</span></div></a>')
     # LO products were appended after the 85 legacy models and therefore hidden
     # by the 18-items-per-page initial view. Hoist reviewed LO cards first in
     # both D1-overridden and source-built listings, without discarding edits.
@@ -261,6 +262,10 @@ def catalog_cards(body,locale,route):
     for product in selected:
         url=("/" if locale=="en" else "/"+locale+"/")+"products/"+product["slug"]+"/"
         card=seen[url]
+        # Source-built or previously staged LO cards can already exist in D1
+        # catalog HTML. Localize just their "MODEL" badge, never their SKU.
+        card=re.sub(r'(<span class="product-card__small">)MODEL(\s+'+re.escape(product["model"])+r'</span>)',
+                    lambda m:m.group(1)+esc(model_labels[locale])+m.group(2),card,count=1)
         if 'data-new-product=' not in card:
             card=card.replace(" data-product-card ",' data-product-card data-new-product="true" ',1)
         if 'class="product-card__new"' not in card:

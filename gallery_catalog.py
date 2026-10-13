@@ -4,6 +4,7 @@ from pathlib import Path
 from urllib.parse import quote
 ROOT=Path(__file__).resolve().parent
 GALLERY=json.loads((ROOT/"data/gallery-reference-products.json").read_text(encoding="utf8"))["items"]
+UI_LABELS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf8"))
 assert {p["sourceFolder"] for p in GALLERY}=={1,2,3,4,5,9,10,12}
 LABELS={
 "en":("Photo reference — not a factory model","Unconfirmed; ask for actual product specification","Style reference only. XUYI's G code is not the factory model. Materials, capacity, size, accessory availability, packing and certification are NOT verified.","Reference product photographs","Request quote","Request sample","View Product","Capacity","Materials / components","MOQ / packing","PHOTO REF"),
@@ -30,7 +31,9 @@ def detail(product,locale):
  specs='<tr><th scope="row">'+esc(w[0])+'</th><td>'+esc(p["model"])+'</td></tr>'
  for k in w[7:10]:
   specs+='<tr><th scope="row">'+esc(k)+'</th><td>'+esc(w[1])+'</td></tr>'
- start=('<section class="section product-overview"><div class="shell"><nav class="breadcrumb"><a href="'+prefix+'/">Home</a> / <a href="'+prefix+'/products/">Products</a> / '+esc(p["model"])+'</nav>'
+ home=UI_LABELS.get(locale,{}).get("Home","Home")
+ products=UI_LABELS.get(locale,{}).get("Products","Products")
+ start=('<section class="section product-overview"><div class="shell"><nav class="breadcrumb"><a href="'+prefix+'/">'+esc(home)+'</a> / <a href="'+prefix+'/products/">'+esc(products)+'</a> / '+esc(p["model"])+'</nav>'
  '<div class="product-detail"><div class="product-detail__photos"><div class="product-detail__main">'+main+'</div><div class="product-detail__thumbs">'+thumbs+'</div></div>'
  '<div><span class="eyebrow">'+esc(w[0])+'</span><h1>'+esc(name)+'</h1><p class="copy-muted">'+esc(w[2])+'</p>'
  '<table class="spec"><tbody>'+specs+'</tbody></table><div class="actions">'

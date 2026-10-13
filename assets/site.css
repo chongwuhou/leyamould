@@ -7,6 +7,8 @@
 /* Distinguish newly added LO product cards in all five localizations. */
 .product-card__new{display:inline-block;padding:4px 9px;margin-bottom:5px;border-radius:3px;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.055em;line-height:1.4}
 .product-card__reference{display:inline-block;background:#eff1f4;color:#3d4752;border:1px solid #cfd5db;border-radius:3px;font-size:11px;font-weight:750;padding:4px 9px;margin-bottom:5px;letter-spacing:.03em}
+/* Long translated contact labels must not force the mobile grid wider than its viewport. */
+@media(max-width:760px){.contact-layout{grid-template-columns:minmax(0,1fr)}.contact-layout>*{min-width:0}.contact-layout .form{grid-template-columns:minmax(0,1fr);min-width:0}.contact-layout .form__row{grid-template-columns:minmax(0,1fr);min-width:0}.contact-layout .form__row>*{min-width:0}.contact-layout .form label{overflow-wrap:anywhere}}
 .gallery-reference-photos__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .gallery-reference-photos__grid figure{margin:0;background:#f6f7f8}
 .gallery-reference-photos__grid img{display:block;width:100%;height:auto;object-fit:contain}
