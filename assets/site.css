@@ -4,6 +4,12 @@
    This broke every catalog search/filter/pagination despite JS setting
    card.hidden=true; respect semantic [hidden] everywhere, including tabs. */
 [hidden]{display:none!important}
+.buyer-pathways{padding-block:28px;border-top:1px solid rgba(130,143,159,.16)}
+.buyer-pathways h2{font-size:clamp(1.15rem,1.8vw,1.5rem);line-height:1.35;margin:0 0 .5rem}
+.buyer-pathways p{margin:0 0 1rem;color:#64748b;max-width:62ch}
+.buyer-pathways__links{display:flex;gap:.7rem;flex-wrap:wrap}
+.buyer-pathways__links a{display:inline-flex;align-items:center;border:1px solid #dbe2e8;border-radius:999px;padding:.55rem .85rem;text-decoration:none;color:inherit;background:transparent}
+.buyer-pathways__links a:hover,.buyer-pathways__links a:focus-visible{border-color:#eb2434;color:#df2430}
 /* Distinguish newly added LO product cards in all five localizations. */
 .product-card__new{display:inline-block;padding:4px 9px;margin-bottom:5px;border-radius:3px;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.055em;line-height:1.4}
 .product-card__reference{display:inline-block;background:#eff1f4;color:#3d4752;border:1px solid #cfd5db;border-radius:3px;font-size:11px;font-weight:750;padding:4px 9px;margin-bottom:5px;letter-spacing:.03em}

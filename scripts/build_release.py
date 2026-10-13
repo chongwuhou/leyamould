@@ -76,6 +76,13 @@ def main():
     repair_remaining_categories(DIST)
     from fix_primary_image_placements import apply as fix_primary_image_placements
     fix_primary_image_placements(DIST)
+    # Exact, editorially mapped inbound links for previously isolated
+    # application/feature pages, across all five reviewed languages.
+    from buyer_journey_internal_links import apply as curate_buyer_journey_links
+    curate_buyer_journey_links(DIST)
+    # Share previews mirror actual schema product photos, never guessed SKUs.
+    from product_share_images import apply as apply_product_share_images
+    apply_product_share_images(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))
