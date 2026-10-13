@@ -88,6 +88,12 @@ def main():
     apply_product_share_images(DIST)
     from curated_buyer_seo_round2 import apply as apply_curated_buyer_seo_round2
     apply_curated_buyer_seo_round2(DIST)
+    # Comparisons only from the 85 actual catalog model records, not
+    # unknown G-series photo references or unverified manual submissions.
+    from model_catalog_buyer_comparison import apply as add_model_catalog_comparisons
+    add_model_catalog_comparisons(DIST)
+    from curated_application_feature_answers import apply as improve_application_feature_answers
+    improve_application_feature_answers(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))

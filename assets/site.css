@@ -14,6 +14,24 @@
 .seo-next-buyer h2{font-size:1.1rem;margin:0 0 .5rem}
 .seo-next-buyer p{margin:0;line-height:1.7}
 .seo-next-buyer a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.catalog-compare .catalog-compare__scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e5e7eb;border-radius:12px}
+.catalog-compare table{border-collapse:collapse;min-width:550px;width:100%;text-align:left}
+.catalog-compare thead{background:#f8fafc}
+.catalog-compare th,.catalog-compare td{padding:.8rem 1rem;border-bottom:1px solid #e5e7eb;vertical-align:top}
+.catalog-compare tbody tr:last-child th,.catalog-compare tbody tr:last-child td{border-bottom:0}
+.catalog-compare th{font-weight:600}
+.catalog-compare__brief{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1rem 0}
+.catalog-compare__brief>div{padding:1rem;background:#f8fafc;border-radius:12px}
+.catalog-compare__brief h3{font-size:1rem;margin:0 0 .5rem}
+.catalog-compare__brief p{margin:0;color:#475569}
+.catalog-compare__check-title{font-size:1.2rem;margin:1.4rem 0 .5rem}
+.catalog-compare__disclaimer{color:#64748b;font-size:.88rem;line-height:1.6}
+@media(max-width:640px){.catalog-compare__brief{grid-template-columns:1fr}}
+.buyer-evidence-checks__items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;padding:0;list-style:none;counter-reset:source-questions}
+.buyer-evidence-checks__items li{counter-increment:source-questions;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1.2rem;line-height:1.65}
+.buyer-evidence-checks__items li:before{content:counter(source-questions,decimal-leading-zero);display:block;font-weight:700;color:#e11d36;margin-bottom:.5rem}
+.buyer-evidence-checks__cta{display:inline-flex;margin-top:1rem;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:640px){.buyer-evidence-checks__items{grid-template-columns:1fr}}
 /* Distinguish newly added LO product cards in all five localizations. */
 .product-card__new{display:inline-block;padding:4px 9px;margin-bottom:5px;border-radius:3px;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.055em;line-height:1.4}
 .product-card__reference{display:inline-block;background:#eff1f4;color:#3d4752;border:1px solid #cfd5db;border-radius:3px;font-size:11px;font-weight:750;padding:4px 9px;margin-bottom:5px;letter-spacing:.03em}
