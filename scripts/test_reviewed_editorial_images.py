@@ -31,7 +31,11 @@ for lang in LOCALES:
 for f in DIST.glob("**/products/*/index.html"):
     s=f.read_text(encoding="utf-8")
     assert all(p not in s for p in paths),("Different SKU represented by a generic image",str(f))
-assert (ROOT/"_local_ops/ai-review-2026-10-13/backup-original-oem-sampling.webp").is_file()
-for x in ("slide-059.webp","slide-055.webp","slide-030.webp"):
-    assert (ROOT/"_local_ops/ai-review-2026-10-13"/("original-"+x)).is_file(),x
+# Keep original backup copies on the operator's workstation only. The
+# production runner intentionally does not checkout local private backups.
+local_backup=ROOT/"_local_ops/ai-review-2026-10-13"
+if local_backup.is_dir():
+    assert (local_backup/"backup-original-oem-sampling.webp").is_file()
+    for x in ("slide-059.webp","slide-055.webp","slide-030.webp"):
+        assert (local_backup/("original-"+x)).is_file(),x
 print("XUYI_EDITORIAL_IMAGES_FIVE_LANGUAGES_PASSED 4 reviewed placements per locale, no product SKU changes")
