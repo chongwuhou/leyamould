@@ -6,7 +6,7 @@ import sys
 
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/"scripts"))
-from curated_application_feature_answers import LOCALES,LABELS,TOPICS
+from curated_application_feature_answers import LOCALES,LABELS,TOPICS,EYEBROWS
 from model_catalog_buyer_comparison import SERIES
 DIST=ROOT/"dist"
 assert len(TOPICS)==10 and len(LOCALES)==5
@@ -23,6 +23,7 @@ for route,locale_values in TOPICS.items():
         for answer in locale_values[lang]:
             assert answer in block,(route,lang,answer)
         assert LABELS[lang][0] in block,(route,lang)
+        assert EYEBROWS[lang] in block,(route,lang)
         href="/"+prefix+"contact/#inquiry"
         assert 'href="'+href+'"' in block,(route,lang,href)
         assert "guaranteed leakproof" not in block.lower()

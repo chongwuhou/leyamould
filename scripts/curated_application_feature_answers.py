@@ -10,6 +10,10 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
 LOCALES=("en","es","pt","ru","tr")
+EYEBROWS={
+ "en":"MODEL SELECTION","es":"SELECCIÓN DE MODELOS",
+ "pt":"SELEÇÃO DE MODELOS","ru":"ВЫБОР МОДЕЛИ","tr":"MODEL SEÇİMİ"
+}
 LABELS={
  "en":("Before choosing this bottle style","Use these questions to specify an actual model and a testable sample.","Discuss sample and quotation"),
  "es":("Antes de elegir este tipo de botella","Utilice estas preguntas para definir un modelo y evaluar una muestra.","Consultar muestra y cotización"),
@@ -116,7 +120,7 @@ def apply(dist):
             block=(
                 '<section class="section buyer-evidence-checks" id="buyer-evidence-checks">'
                 '<div class="shell"><div class="section__head"><div>'
-                '<span class="eyebrow">MODEL SELECTION</span>'
+                '<span class="eyebrow">'+escape(EYEBROWS[lang])+'</span>'
                 '<h2 class="section__title">'+escape(title)+'</h2>'
                 '<p>'+escape(intro)+'</p></div></div>'
                 '<ol class="buyer-evidence-checks__items"><li>'+escape(answers[0])+

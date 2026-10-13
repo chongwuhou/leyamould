@@ -16,6 +16,13 @@ from site_renderer import SERIES
 from product_content import capacity_en, material_en
 
 LOCALES = ("en", "es", "pt", "ru", "tr")
+SOURCE_LABELS={
+    "en":"SOURCE CATALOG",
+    "es":"CATÁLOGO DE ORIGEN",
+    "pt":"CATÁLOGO ORIGINAL",
+    "ru":"ИСХОДНЫЙ КАТАЛОГ",
+    "tr":"KAYNAK KATALOG",
+}
 LANG = {
     "en": {
         "title":"Compare this model with catalog alternatives",
@@ -163,7 +170,7 @@ def html_for(row, selection, lang):
            else words["intro"]+" "+words["capacityUnknown"]+".")
     return (
         '<section class="section catalog-compare" id="catalog-comparison"><div class="shell">'
-        '<div class="section__head"><div><span class="eyebrow">XUYI · SOURCE CATALOG</span>'
+        '<div class="section__head"><div><span class="eyebrow">XUYI · '+escape(SOURCE_LABELS[lang])+'</span>'
         '<h2 class="section__title">'+escape(words["title"])+'</h2>'
         '<p>'+escape(intro)+'</p></div></div>'
         +table+'<h3 class="catalog-compare__check-title">'+escape(words["faqTitle"])+'</h3>'

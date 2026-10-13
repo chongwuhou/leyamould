@@ -5,7 +5,7 @@ import re
 import sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/"scripts"))
-from model_catalog_buyer_comparison import SERIES,LOCALES,LANG,peers,capacity_number,capacity_text,material_text,quantity_text
+from model_catalog_buyer_comparison import SERIES,LOCALES,LANG,SOURCE_LABELS,peers,capacity_number,capacity_text,material_text,quantity_text
 
 DIST=ROOT/"dist"
 catalog=[r for r in SERIES.values() if not r.get("manualNew")]
@@ -27,6 +27,7 @@ for row in catalog:
         assert source.count('id="catalog-comparison"')==1,(lang,row["slug"])
         main=source.split('id="catalog-comparison"',1)[1].split("</section>",1)[0]
         assert LANG[lang]["title"] in main
+        assert SOURCE_LABELS[lang] in main
         assert LANG[lang]["disclaimer"] in main
         assert LANG[lang]["verifyAssembly"] in main
         assert not any(x in main for x in ["InStock","AggregateRating","Best price guaranteed","FDA certified","CE certified"])
