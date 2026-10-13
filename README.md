@@ -12,6 +12,17 @@
 
 Production branch: main; Cloudflare Pages: xuyi-drinkware-site; GitHub: chongwuhou/xuyi-drinkware-site.
 
+## Current release and remaining source-photo work (2026-10-13)
+- Canonical domain https://xuyibottles.com; five published languages EN, ES, PT, RU, TR.
+- 101 product/model-reference pages per language; 755 canonical sitemap URLs.
+- Indexing gate is now explicitly ON in deployment/site.config.json. The published dist/robots.txt allows crawlers. Old dated preview/noindex notes below are historical, not current deployment instructions.
+- Live security smoke test: 23 routes passed; former leaked build.py, site_renderer.py and data/products.json endpoints (including query variants) return HTTP 410, and unauthenticated admin APIs return HTTP 401. Both apex and www legacy source URLs have been separately checked.
+- Five-language homepage: the first low-resolution slide-037.webp marketing photo is upgraded to a source-documented 1500px XUYI gallery image. SKU images are deliberately not remapped.
+- Original catalog purchasing facts (documented capacity, master-carton count/dimensions when available) added in five languages. The anomalous 2506 capacity is excluded; G references retain their unknown factory-SKU status.
+- Curated Title/Description/OG text for About, Capabilities, OEM/ODM and Custom Water Bottles in five languages (20 pages) is finalized after D1 content rendering. Unrelated approved D1 body text, product IDs, hreflang and canonical URLs remain untouched.
+- **Not finished:** roughly 33 originally low-resolution P0/P1 real product photos still require validated same-model higher-resolution originals; LO-002 category card remains the original 800x800 source photo and must not be substituted with a different product. See the offline image audit under _local_ops/image-reuse-2026-10-13/ (six of the previously listed photos were subsequently replaced). No AI-generated image is represented as a photographed SKU.
+- Always build dist/ with python scripts/build_release.py and run release / image / five-language SEO tests before publishing. Verify the GitHub Actions run and public build-meta SHA separately; local success is not proof of deployment.
+
 ## Scope
 Kreat-inspired original navigation and UI system: homepage; 4 product categories; 79 model pages; 7 capabilities subpages; About; Manufacturing; Quality Control; Shipping; FAQ; Blog; 6 buying guides; Contact; Privacy Policy and 404. Product photos are from XUYI catalogs. Relevant group-owned unwatermarked factory, QA, packing and logistics images are reused under owner-confirmed permission (docs/GROUP_MEDIA_USAGE.md).
 

@@ -328,6 +328,8 @@ def main():
         # markup. Refresh ONLY the immutable generic hero image asset; leave
         # all user-translated text and model photos unchanged.
         if route=="/":
+            from media_quality_guard import upgrade_home_visual
+            body=upgrade_home_visual(body,loc)
             prefix,count=re.subn(r'<script type="application/json" id="xuyi-home-banners">[^<]*</script>',
               lambda _:banner_tag(data,loc,routes_by_locale[loc]),prefix,count=1)
             if count!=1:raise RuntimeError("English homepage must have exactly one banner configuration")

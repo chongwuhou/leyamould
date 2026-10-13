@@ -10,6 +10,7 @@ on:
       - "site_renderer.py"
       - "product_locale_seo.py"
       - "product_material_performance.py"
+      - "media_quality_guard.py"
       - "image_alt_quality.py"
       - "media_alt_render.py"
       - "locale_registry.py"
@@ -139,6 +140,7 @@ jobs:
           node scripts/test_blog_dynamic_evidence.mjs
           node scripts/test_blog_hreflang_runtime.mjs
           python scripts/test_seo_multilingual_launch.py
+          python scripts/test_priority_seo.py
           python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py
           python scripts/test_product_material_performance.py
@@ -158,6 +160,7 @@ jobs:
           python scripts/test_localized_release.py
           python scripts/test_shared_chrome_i18n.py
           python scripts/test_curated_hq_images.py
+          python scripts/test_home_visual_upgrade.py
           python scripts/test_r2_usage_index.py
           python scripts/test_d1_navigation.py
           python scripts/test_d1_redirects.py

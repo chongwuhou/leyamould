@@ -6,6 +6,7 @@ from urllib.parse import quote
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from product_material_performance import material_codes,render,inject
+from product_material_performance import catalog_purchase_facts
 from site_renderer import SERIES
 
 root=Path(__file__).resolve().parent.parent
@@ -54,4 +55,9 @@ preview=render(dummy,"en","/products/TEST/")
 assert "UNLISTED-POLYMER" in preview and "PC: often chosen" not in preview
 assert inject('<section class="section product-overview">x</section><section class="section section--soft product-content">y',dummy,"en","/products/TEST/").count('id="material-performance"')==1
 assert inject('<section class="section product-overview">x</section><section class="section section--soft product-content">y',dummy,"en","/products/TEST/").count('id="material-performance"')==1
+assert "550ml" in catalog_purchase_facts(SERIES["2501"],"en")
+assert "80 pcs" in catalog_purchase_facts(SERIES["2501"],"en")
+assert "60ml" not in catalog_purchase_facts(SERIES["2506"],"en")
+assert "500ml" in catalog_purchase_facts(SERIES["501"],"en")
+assert not catalog_purchase_facts(SERIES["G-01"],"en")
 print("XUYI_MATERIAL_DETAIL_5_LANGUAGES_PASSED",tested,"product pages; no extra CMS configuration")

@@ -56,6 +56,10 @@ def main():
     admin_slug=resolve_admin_path(state.get("adminPath","admin") if snapshot.is_file() else "admin")
     shutil.copytree(ROOT/"admin",DIST/admin_slug)
     subprocess.run([sys.executable,"scripts/render_locales.py"],cwd=ROOT,env=env,check=True)
+    # Final, explicit buyer-landing SEO curation follows D1 reviewed HTML.
+    # It does not rewrite CMS data or any translated product specifications.
+    from polish_priority_seo import apply as polish_priority_seo
+    polish_priority_seo(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))

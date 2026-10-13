@@ -93,6 +93,52 @@ def material_codes(product):
         if found:codes.append(family)
     return sources,codes
 
+FACT_LABELS={
+ "en":("Source catalog: model-specific buying facts","Capacity listed","Carton pack listed","Carton size listed","Figures are catalog references; confirm the exact variant, sample and final packing before ordering."),
+ "es":("Datos de compra del modelo según catálogo","Capacidad indicada","Unidades por caja","Medidas de caja","Datos del catálogo; confirme la variante, la muestra y el embalaje final antes del pedido."),
+ "pt":("Dados de compra por modelo no catálogo","Capacidade indicada","Unidades por caixa","Dimensões da caixa","Dados do catálogo; confirme a variante, a amostra e a embalagem final antes de encomendar."),
+ "ru":("Данные по конкретной модели из каталога","Объём по каталогу","Штук в коробке","Размер коробки","Данные каталога: перед заказом уточните вариант, образец и конечную упаковку."),
+ "tr":("Katalogda modele özel satın alma bilgileri","Katalog kapasitesi","Koli adedi","Koli ölçüleri","Katalog verileridir; siparişten önce seçeneği, numuneyi ve ambalajı doğrulayın.")
+}
+
+def catalog_purchase_facts(product, locale):
+    """Distinct real catalog values, never performance claims or invented specs."""
+    if product.get("galleryReference"):
+        return ""
+    variants=product.get("variants") or []
+    labels=FACT_LABELS[locale]
+    def values(field, pattern):
+        found=[]
+        for item in variants:
+            raw=str(item.get(field) or "").strip()
+            value=re.fullmatch(pattern,raw,re.I)
+            if value and raw not in found:found.append(raw)
+        return found[:3]
+    # Shaker slides combine a capacity and Chinese product-size annotation
+    # in one source field. Only take the part BEFORE 产品尺寸; keep 2506's
+    # documented anomalous capacity entirely out of the new prose.
+    capacities=[]
+    if str(product.get("model"))!="2506":
+        for item in variants:
+            head=str(item.get("capacity") or "").split("产品尺寸",1)[0]
+            for value in re.findall(r"\d+(?:\.\d+)?\s*ml\b",head,re.I):
+                normalized=re.sub(r"\s+","",value)
+                if normalized not in capacities:capacities.append(normalized)
+        capacities=capacities[:3]
+    quantities=values("carton_quantity",r"\d{1,4}")
+    cartons=values("carton_size",r"\d+(?:\.\d+)?\s*[*×x]\s*\d+(?:\.\d+)?\s*[*×x]\s*\d+(?:\.\d+)?")
+    facts=[(labels[1]," / ".join(capacities)),
+           (labels[2]," / ".join(x+" pcs" for x in quantities)),
+           (labels[3]," / ".join(x+" cm" for x in cartons))]
+    facts=[(k,v) for k,v in facts if v]
+    if not facts:return ""
+    esc=lambda s:html.escape(str(s),quote=True)
+    model=esc(product.get("model",""))
+    rows="".join('<li><strong>'+esc(k)+':</strong> '+esc(v)+'</li>' for k,v in facts)
+    return ('<div class="material-brief__catalog-facts"><h3>'+esc(labels[0])+' · '+model+
+            '</h3><ul>'+rows+'</ul><p class="material-brief__note">'+esc(labels[4])+
+            '</p></div>')
+
 def render(product,locale,route,approved_routes=None):
     if locale not in TEXT:raise ValueError("Missing reviewed material copy for "+locale)
     words=TEXT[locale]
@@ -114,7 +160,8 @@ def render(product,locale,route,approved_routes=None):
         '</div></div><div class="material-brief__grid">'
         +item(words[2],'<strong class="material-brief__source">'+escape(raw.replace("硅胶","silicone"))+'</strong><p>'+escape(words[3])+'</p>')
         +item(words[4],overview+'<p class="material-brief__note">'+escape(words[5])+'</p>')
-        +'</div><div class="material-brief__bottom"><div><h3>'+escape(words[6])+'</h3><p>'+escape(words[7])+'</p></div>'
+        +'</div>'+catalog_purchase_facts(product,locale)
+        +'<div class="material-brief__bottom"><div><h3>'+escape(words[6])+'</h3><p>'+escape(words[7])+'</p></div>'
         '<div class="material-brief__links"><a href="'+escape(guide)+'">'+escape(words[9])+' →</a>'
         '<a class="button" href="'+escape(contact)+'">'+escape(words[8])+' →</a></div>'
         '</div></div></section>')

@@ -114,6 +114,11 @@ def build_url(path,title,content):
   # source-checked supplements for selected company/quality pages.
   from editorial_support import for_route as reviewed_editorial_for_route
   main+=reviewed_editorial_for_route(route,main)
+  if route=="/":
+   # Replace only the low-resolution generic homepage marketing photograph.
+   # Catalog-SKU photos and the blog thumbnails are intentionally unchanged.
+   from media_quality_guard import upgrade_home_visual
+   main=upgrade_home_visual(main,"en")
   if route=="/products/" or route.startswith("/collections/"):
    from gallery_catalog import catalog_cards as gallery_cards
    main=gallery_cards(main,"en",route)
