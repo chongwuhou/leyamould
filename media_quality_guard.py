@@ -26,6 +26,10 @@ def upgrade_home_visual(markup, locale):
         # Preserve existing imagery/ALT until that language has a reviewed
         # replacement. Do not block publication or invent foreign ALT text.
         return markup
+    # Isolated template/translation fixtures need not include every optional
+    # homepage marketing block. The full release has an explicit image gate.
+    if OLD not in markup:
+        return markup
     if not (ROOT / NEW.lstrip("/")).is_file():
         raise FileNotFoundError("Missing documented 1500px XUYI marketing image")
     pattern = r'<img\b(?=[^>]*\bsrc="' + re.escape(OLD) + r'")[^>]*>'
