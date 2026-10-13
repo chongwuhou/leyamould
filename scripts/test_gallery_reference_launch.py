@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish 8 photo-reference bottle styles without pretending to know factory SKUs."""
+"""Publish 8 confirmed G-series factory models without inventing specifications."""
 import json,re,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
@@ -7,6 +7,7 @@ sys.path.insert(0,str(ROOT))
 from gallery_catalog import GALLERY,LABELS
 from site_renderer import SERIES
 assert len(GALLERY)==8 and len(SERIES)==101
+assert all(row.get("factoryModel") for row in GALLERY)
 assert {p["sourceFolder"] for p in GALLERY}=={1,2,3,4,5,9,10,12}
 assert sum(len(p["images"]) for p in GALLERY)==24
 assert "Gemini" not in json.dumps(GALLERY)
@@ -46,4 +47,4 @@ for p in GALLERY:
   assert u in urls,u
 for group in GALLERY:
  assert group["model"] in SERIES and SERIES[group["model"]]["galleryReference"] is True
-print("XUYI_GALLERY_REFERENCE_LAUNCH_PASSED 8 photo references, 24 R2 assets, 5 languages, no fake factory specifications")
+print("XUYI_GALLERY_FACTORY_MODELS_PASSED 8 factory models, 24 original R2 images, 5 languages, no invented specifications")

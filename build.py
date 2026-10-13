@@ -318,8 +318,8 @@ def generate():
    meta=next(row["locales"]["en"] for row in LO_PRODUCTS if row["model"]==model)
    seo_name,seo_desc=meta["seoTitle"],meta["seoDescription"]
   elif product.get("galleryReference"):
-   seo_name=public_name+" | Photo reference "+model+" | XUYI"
-   seo_desc="Explore "+public_name+". Photo reference "+model+" is not a verified factory model. Confirm capacity, materials, packing and available styles before ordering."
+   seo_name=public_name+" | "+model+" Factory Model | XUYI"
+   seo_desc="Explore XUYI G-series factory model "+model+": "+public_name+". Confirm capacity, material, components and packing for the exact model before placing a wholesale order."
   else:
    seo_name=seo_name+' | XUYI Bottles'
    seo_desc=description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.'

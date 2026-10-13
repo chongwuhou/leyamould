@@ -18,7 +18,7 @@
         "ru": "Прозрачные спортивные бутылки с откидной крышкой и трубочкой",
         "tr": "Şeffaf kapaklı ve pipetli spor şişeleri"
       },
-      "referenceOnly": true
+      "factoryModel": true
     },
     {
       "model": "G-02",
@@ -37,7 +37,7 @@
         "ru": "Спортивные бутылки с градиентом и отметками времени",
         "tr": "Zaman işaretli degrade spor şişeleri"
       },
-      "referenceOnly": true
+      "factoryModel": true
     },
     {
       "model": "G-03",
@@ -56,7 +56,7 @@
         "ru": "Компактные бутылки-кувшины с ручкой",
         "tr": "Taşıma saplı kompakt su mataraları"
       },
-      "referenceOnly": true
+      "factoryModel": true
     },
     {
       "model": "G-04",
@@ -75,7 +75,7 @@
         "ru": "Спортивные бутылки-кувшины с ручкой",
         "tr": "Taşıma saplı fitness su mataraları"
       },
-      "referenceOnly": true
+      "factoryModel": true
     },
     {
       "model": "G-05",
@@ -94,7 +94,7 @@
         "ru": "Спортивные бутылки с градиентом и петлей",
         "tr": "Taşıma halkalı degrade spor şişeleri"
       },
-      "referenceOnly": true
+      "factoryModel": true
     },
     {
       "model": "G-09",
@@ -114,7 +114,7 @@
         "ru": "Прозрачные спортивные бутылки с кольцевой ручкой",
         "tr": "Taşıma halkalı şeffaf spor şişeleri"
       },
-      "referenceOnly": true
+      "factoryModel": true
     },
     {
       "model": "G-10",
@@ -132,7 +132,7 @@
         "ru": "Компактные бутылки с градиентом и откидной крышкой",
         "tr": "Açılır kapaklı kompakt degrade şişeler"
       },
-      "referenceOnly": true
+      "factoryModel": true
     },
     {
       "model": "G-12",
@@ -151,7 +151,7 @@
         "ru": "Прозрачные бутылки с кольцом для переноски",
         "tr": "Taşıma halkalı şeffaf su şişeleri"
       },
-      "referenceOnly": true
+      "factoryModel": true
     }
   ]
 }

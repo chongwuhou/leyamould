@@ -86,4 +86,4 @@ for loc in LOCALES:
   assert 'property="article:published_time" content="'+published+'"' in document,(loc,slug,"head publish date")
   dates_checked+=1
 assert products_checked==505 and lo_checked==40 and g_checked==40 and dates_checked==64, (products_checked,lo_checked,g_checked,dates_checked)
-print("XUYI_MULTILINGUAL_CONTENT_AUDIT_PASSED 756 English pages, 604 localized pages, 505 product pages, 40 LO badges, 40 photo references, 64 localized blog timelines, SEO/alternate/robots approval")
+print("XUYI_MULTILINGUAL_CONTENT_AUDIT_PASSED 756 English pages, 604 localized pages, 505 product pages, 40 LO badges, 40 G-series factory model pages, 64 localized blog timelines, SEO/alternate/robots approval")

@@ -1,4 +1,9 @@
-"""XUYI photo reference gallery: G-xx are enquiry IDs, not factory model numbers."""
+"""XUYI G-series factory model image gallery.
+
+Factory model identity has been confirmed by the business owner. Individual
+dimensions, materials, packaging and other data remain unconfirmed until
+model-specific source specifications are available.
+"""
 import json,html,re
 from pathlib import Path
 from urllib.parse import quote
@@ -7,11 +12,11 @@ GALLERY=json.loads((ROOT/"data/gallery-reference-products.json").read_text(encod
 UI_LABELS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf8"))
 assert {p["sourceFolder"] for p in GALLERY}=={1,2,3,4,5,9,10,12}
 LABELS={
-"en":("Photo reference — not a factory model","Unconfirmed; ask for actual product specification","Style reference only. XUYI's G code is not the factory model. Materials, capacity, size, accessory availability, packing and certification are NOT verified.","Reference product photographs","Request quote","Request sample","View Product","Capacity","Materials / components","MOQ / packing","PHOTO REF"),
-"es":("Referencia de foto — no es modelo de fábrica","Sin confirmar; solicite datos del producto","Referencia visual. El código G de XUYI no es el modelo de fábrica. Materiales, capacidad, dimensiones, accesorios y documentación no están verificados.","Fotos de referencia","Solicitar cotización","Solicitar muestra","Ver producto","Capacidad","Materiales y componentes","Pedido mínimo y embalaje","REF. FOTO"),
-"pt":("Referência de foto — não é modelo de fábrica","Não confirmado; consulte as especificações","Referência visual. O código G da XUYI não é um modelo de fábrica. Material, capacidade, tamanho, acessórios e certificados não estão confirmados.","Fotografias de referência","Pedir orçamento","Pedir amostra","Ver produto","Capacidade","Materiais e componentes","Pedido mínimo e embalagem","REF. FOTO"),
-"ru":("Фотоартикул — не заводская модель","Не подтверждено; запросите характеристики","Фотокаталог. Код G — внутренний номер XUYI, а не модель завода. Материал, объём, размеры, аксессуары и документы требуют подтверждения.","Фотографии модели","Запросить цену","Запросить образец","Подробнее","Объём","Материалы и комплектующие","Минимальная партия и упаковка","ФОТО"),
-"tr":("Fotoğraf referansı — fabrika modeli değil","Doğrulanmadı; ayrıntıları sorun","Fotoğraf referansı. G kodu XUYI sorgu numarasıdır, fabrika modeli değildir. Malzeme, kapasite, boyut, aksesuar ve belgeler doğrulanmalıdır.","Referans fotoğraflar","Teklif isteyin","Numune isteyin","Ürünü incele","Kapasite","Malzemeler ve bileşenler","Asgari sipariş ve paketleme","FOTO REF")}
+"en":("Factory Model","Confirm model specifications with XUYI","XUYI G-series factory bottle model. For an accurate quotation, confirm its capacity, materials, dimensions, available components, carton packing and destination-market documentation.","Factory model photographs","Request quote","Request sample","View Product","Capacity","Materials / components","MOQ / packing","FACTORY MODEL"),
+"es":("Modelo de fábrica","Confirme los datos del modelo con XUYI","Modelo de botella de fábrica de la serie G de XUYI. Para cotizar, confirme capacidad, materiales, dimensiones, componentes, embalaje y documentación del mercado de destino.","Fotos del modelo de fábrica","Solicitar cotización","Solicitar muestra","Ver producto","Capacidad","Materiales y componentes","Pedido mínimo y embalaje","MODELO DE FÁBRICA"),
+"pt":("Modelo de fábrica","Confirme as especificações com a XUYI","Modelo de garrafa de fábrica da série G da XUYI. Para cotação, confirme capacidade, materiais, dimensões, componentes, embalagem e documentação do mercado de destino.","Fotos do modelo de fábrica","Pedir orçamento","Pedir amostra","Ver produto","Capacidade","Materiais e componentes","Pedido mínimo e embalagem","MODELO DE FÁBRICA"),
+"ru":("Заводская модель","Уточните характеристики модели в XUYI","Заводская модель бутылки серии G от XUYI. Для расчёта уточните объём, материалы, размеры, комплектующие, упаковку и документы для рынка назначения.","Фотографии заводской модели","Запросить цену","Запросить образец","Подробнее","Объём","Материалы и комплектующие","Минимальная партия и упаковка","ЗАВОДСКАЯ МОДЕЛЬ"),
+"tr":("Fabrika modeli","Model özelliklerini XUYI ile doğrulayın","XUYI G serisi fabrika şişe modeli. Teklif için kapasite, malzemeler, ölçüler, bileşenler, koli ambalajı ve hedef pazar belgelerini doğrulayın.","Fabrika modeli fotoğrafları","Teklif isteyin","Numune isteyin","Ürünü incele","Kapasite","Malzemeler ve bileşenler","Asgari sipariş ve paketleme","FABRİKA MODELİ")}
 def esc(v):return html.escape(str(v),quote=True)
 def add_products(series):
  for p in GALLERY:
@@ -21,7 +26,7 @@ def add_products(series):
   v={"model":m,"capacity":"","material":"","colors":"","packing":"","dimensions":"","carton_quantity":"","carton_size":""}
   series[m]={"model":m,"slug":p["slug"],"category":p["category"],"name":p["locales"]["en"],
    "images":p["images"],"capacity":"To confirm","material":"To confirm","colors":"","packing":"",
-   "description":LABELS["en"][2],"variants":[v],"manualNew":True,"galleryReference":True}
+   "description":LABELS["en"][2],"variants":[v],"manualNew":True,"galleryReference":True,"factoryModel":True}
 def detail(product,locale):
  w=LABELS[locale];p=next(row for row in GALLERY if row["model"]==product["model"])
  prefix="" if locale=="en" else "/"+locale;name=p["locales"][locale]

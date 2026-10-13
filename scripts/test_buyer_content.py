@@ -33,9 +33,9 @@ for file in (DIST/"products").glob("*/index.html"):
     inquiry_model=model.upper() if model.startswith(("lo-","g-")) else model
     assert 'href="/contact/?model='+inquiry_model+'&amp;type=Samples#inquiry"' in source,model
     if model.startswith("g-"):
-        # These are clearly labeled internal photo references, not factory
-        # models, and therefore use an uncertainty notice instead of specs.
-        assert "not a factory model" in source.lower() and "photo" in source.lower(),model
+        # G-series numbers are actual factory models. Unprovided material,
+        # packing and capacity figures still require product-specific review.
+        assert "Factory Model" in source and "not a factory model" not in source.lower(),model
     else:
         assert 'product-detail__quote-note' in source,model
 css=(DIST/"assets/site.css").read_text(encoding="utf-8")

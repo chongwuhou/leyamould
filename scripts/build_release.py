@@ -88,8 +88,8 @@ def main():
     apply_product_share_images(DIST)
     from curated_buyer_seo_round2 import apply as apply_curated_buyer_seo_round2
     apply_curated_buyer_seo_round2(DIST)
-    # Comparisons only from the 85 actual catalog model records, not
-    # unknown G-series photo references or unverified manual submissions.
+    # Comparisons only from the 85 catalog entries with verified numeric data.
+    # G-series ARE factory models, but their detailed source specs are pending.
     from model_catalog_buyer_comparison import apply as add_model_catalog_comparisons
     add_model_catalog_comparisons(DIST)
     from curated_application_feature_answers import apply as improve_application_feature_answers

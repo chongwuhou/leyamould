@@ -152,6 +152,7 @@ jobs:
           python scripts/test_product_material_performance.py
           python scripts/test_lo_product_launch.py
           python scripts/test_gallery_reference_launch.py
+          python scripts/test_g_series_factory_model_status.py
           python scripts/test_multilingual_content_audit.py
           python scripts/test_image_alt_seo.py
           python scripts/test_catalog_visibility.py

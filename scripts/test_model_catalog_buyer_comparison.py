@@ -47,4 +47,4 @@ for row in manual:
         page=DIST/prefix/"products"/str(row["slug"])/"index.html"
         assert page.is_file()
         assert 'id="catalog-comparison"' not in page.read_text(encoding="utf8"),(lang,row["slug"])
-print("XUYI_CATALOG_COMPARISONS_SOURCE_BACKED",checked,"pages, 16 unverified/manual model records excluded")
+print("XUYI_CATALOG_COMPARISONS_SOURCE_BACKED",checked,"pages, 16 entries lacking comparable source-catalog measurements excluded")
