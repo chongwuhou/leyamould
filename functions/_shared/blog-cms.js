@@ -1,6 +1,7 @@
 // XUYI Blog CMS extends Demalong's D1-backed page-editor and revision approach.
 // Match the separately reviewed static Blog sources on D1-backed live routes.
 import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json" with {type:"json"};
+import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json" with {type:"json"};
 export const esc = value => String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function verifiedEvidence(post){
  const evidence=EDITORIAL_EVIDENCE[post?.slug];
@@ -83,7 +84,24 @@ export function blogHtml(post){
  body+=verifiedEvidence(post);
  if(post.checklist?.length){body+='<section class="blog-checklist"><h2>Buyer checklist</h2><ul>';for(const tip of post.checklist)body+='<li>'+esc(tip)+'</li>';body+='</ul></section>'}
  if(post.faqs?.length){body+='<section class="blog-faq"><h2>Frequently asked questions</h2>';for(const q of post.faqs)body+='<details><summary>'+esc(q.question)+'</summary><p>'+esc(q.answer)+'</p></details>';body+='</section>'}
- body+='<div class="blog-editorial__cta"><h2>Need a quote for a specific model?</h2><p>Send the model, expected order quantity, logo requirements and destination market. XUYI can review confirmed material and customization options.</p><a class="button" href="/contact/#inquiry">Request a Plastic Bottle Quote →</a></div></article></div></div></section>';
+ body+='<div class="blog-editorial__cta"><h2>Need a quote for a specific model?</h2><p>Send the model, expected order quantity, logo requirements and destination market. XUYI can review confirmed material and customization options.</p><a class="button" href="/contact/#inquiry">Request a Plastic Bottle Quote →</a></div>';
+ // The live EN article comes from D1, unlike reviewed translated static
+ // articles. Derive the extra reader link from the same shared 9-post map
+ // used by the static build; never overwrite any stored D1 article content.
+ const destination=BUYER_PATHWAYS[post.slug];
+ if(destination){
+  const allowed={
+   "collections/sports-water-bottles":"Compare plastic sports water bottles",
+   "collections/kids-water-bottles":"Browse children's bottle models",
+   "capabilities/custom-water-bottle":"Review custom plastic bottle options",
+   "request-sample":"Plan a product sample request",
+   "features/straw-lid":"Explore straw-lid bottle designs",
+   "capabilities/oem-odm":"Compare OEM and ODM services"
+  };
+  if(!Object.hasOwn(allowed,destination))throw Error("Unknown editorial link target");
+  body+='<section class="seo-next-buyer"><h2>Continue your sourcing research</h2><p>View this related product or buying guide: <a href="/'+esc(destination)+'/">'+esc(allowed[destination])+' →</a></p></section>';
+ }
+ body+='</article></div></div></section>';
  return body;
 }
 export function blogCard(post){

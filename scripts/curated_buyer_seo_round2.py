@@ -37,23 +37,55 @@ DESCRIPTIONS={
  "ru":"Сравните пластиковые шейкеры XUYI для фитнеса и спортивного питания. Проверьте крышки, форму и комплектацию моделей, запросите образцы и оформление.",
  "tr":"Fitness ve sporcu beslenmesi için XUYI plastik shaker modellerini karşılaştırın. Kapak, gövde ve parça seçeneklerini inceleyip numune bilgisi alın."}
 }
-BLOG_LINKS={
- "wholesale-plastic-water-bottle-buying-guide":"collections/sports-water-bottles",
- "plastic-bottle-material-selection":"capabilities/custom-water-bottle",
- "tritan-vs-pp-petg-pc":"capabilities/custom-water-bottle",
- "bpa-free-plastic-water-bottle-sourcing":"collections/kids-water-bottles",
- "custom-water-bottle-moq-pricing":"request-sample",
- "oem-vs-odm-plastic-water-bottles":"capabilities/custom-water-bottle",
- "water-bottle-quality-control-checklist":"features/straw-lid",
- "custom-water-bottle-export-packaging":"capabilities/oem-odm",
- "water-bottle-logo-printing-methods":"capabilities/custom-water-bottle",
-}
+BLOG_LINKS=json.loads((ROOT/"data/blog-buyer-pathways.json").read_text(encoding="utf8"))
 WORDS={
  "en":("Continue your sourcing research","View this related product or buying guide"),
  "es":("Continúe su investigación de compras","Consulte esta guía o producto relacionado"),
  "pt":("Continue sua pesquisa de compras","Consulte este guia ou produto relacionado"),
  "ru":("Дополнительная информация для закупки","Изучите связанный товар или руководство"),
  "tr":("Tedarik araştırmanıza devam edin","İlgili ürünü veya satın alma rehberini inceleyin"),
+}
+TARGET_LABELS={
+ "en":{
+  "collections/sports-water-bottles":"Compare plastic sports water bottles",
+  "collections/kids-water-bottles":"Browse children's bottle models",
+  "capabilities/custom-water-bottle":"Review custom plastic bottle options",
+  "request-sample":"Plan a product sample request",
+  "features/straw-lid":"Explore straw-lid bottle designs",
+  "capabilities/oem-odm":"Compare OEM and ODM services",
+ },
+ "es":{
+  "collections/sports-water-bottles":"Comparar botellas deportivas",
+  "collections/kids-water-bottles":"Explorar botellas infantiles",
+  "capabilities/custom-water-bottle":"Ver opciones de botellas a medida",
+  "request-sample":"Planificar la solicitud de muestra",
+  "features/straw-lid":"Explorar tapas con pajita",
+  "capabilities/oem-odm":"Comparar servicios OEM y ODM",
+ },
+ "pt":{
+  "collections/sports-water-bottles":"Comparar garrafas esportivas",
+  "collections/kids-water-bottles":"Explorar garrafas infantis",
+  "capabilities/custom-water-bottle":"Ver opções de garrafas personalizadas",
+  "request-sample":"Planejar pedido de amostra",
+  "features/straw-lid":"Explorar tampas com palhinha",
+  "capabilities/oem-odm":"Comparar serviços OEM e ODM",
+ },
+ "ru":{
+  "collections/sports-water-bottles":"Сравнить спортивные бутылки",
+  "collections/kids-water-bottles":"Посмотреть детские бутылки",
+  "capabilities/custom-water-bottle":"Варианты бутылок на заказ",
+  "request-sample":"Запросить образец",
+  "features/straw-lid":"Бутылки с трубочкой",
+  "capabilities/oem-odm":"Услуги OEM и ODM",
+ },
+ "tr":{
+  "collections/sports-water-bottles":"Spor şişelerini karşılaştırın",
+  "collections/kids-water-bottles":"Çocuk şişelerini inceleyin",
+  "capabilities/custom-water-bottle":"Özel plastik şişe seçenekleri",
+  "request-sample":"Numune talebini planlayın",
+  "features/straw-lid":"Pipetli kapak tasarımlarını inceleyin",
+  "capabilities/oem-odm":"OEM ve ODM hizmetlerini karşılaştırın",
+ },
 }
 
 def change_once(source,pattern,new,context):
@@ -98,7 +130,7 @@ def apply(dist):
             if 'href="'+href+'"' in main:
                 raise ValueError("Already has exact contextual link "+str(file)+" "+href)
             heading,lead=WORDS[locale]
-            new='<section class="seo-next-buyer"><h2>'+html.escape(heading)+'</h2><p>'+html.escape(lead)+': <a href="'+href+'">'+html.escape(lead)+' →</a></p></section>'
+            new='<section class="seo-next-buyer"><h2>'+html.escape(heading)+'</h2><p>'+html.escape(lead)+': <a href="'+href+'">'+html.escape(TARGET_LABELS[locale][target])+' →</a></p></section>'
             file.write_text(before+new+separator+after,encoding="utf8")
             links+=1
     if descriptions!=20 or links!=45:raise ValueError("Unexpected round2 count")
