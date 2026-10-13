@@ -64,6 +64,8 @@ def main():
     # Original catalog product photos and R2 objects remain untouched.
     from reviewed_editorial_images import apply as replace_reviewed_editorial_images
     replace_reviewed_editorial_images(DIST)
+    from reviewed_lowres_editorial_round2 import apply as replace_lowres_round2
+    replace_lowres_round2(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))
