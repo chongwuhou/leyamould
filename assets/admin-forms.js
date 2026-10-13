@@ -83,12 +83,18 @@
   async function openSubmission(id) {
     const status = $("#forms-status");
     try {
+      const editor = $("#submission-editor");
+      const title = $("#submission-editor-title");
+      const content = $("#submission-editor-content");
+      if (!editor || !title || !content || typeof editor.showModal !== "function") {
+        throw new Error("询盘详情窗口未加载，请刷新后台页面后重试。");
+      }
       const data = await api(FORMS_API + "?id=" + encodeURIComponent(id));
       const s = data.submission || {};
       let extra = {};
       try { extra = JSON.parse(s.fields_json || "{}"); } catch {}
-      $("#submission-editor-title").textContent = [s.brand, s.reference].filter(Boolean).join(" ") || s.name || "Inquiry";
-      $("#submission-editor-content").innerHTML =
+      title.textContent = [s.brand, s.reference].filter(Boolean).join(" ") || s.name || "Inquiry";
+      content.innerHTML =
         '<div class="submission-grid">' +
           detail("ID", s.id) +
           detail("时间", s.created_at) +
@@ -151,7 +157,7 @@
           if (msg) msg.textContent = "删除失败：" + error.message;
         }
       });
-      $("#submission-editor").showModal();
+      editor.showModal();
     } catch (error) {
       if (status) status.textContent = "询盘详情读取失败：" + error.message;
     }
