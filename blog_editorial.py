@@ -4,6 +4,8 @@ import re
 from site_renderer import ROOT, e, photo, intro, SITE_ORIGIN
 
 GUIDES = {post["slug"]: post for post in json.loads((ROOT / "data/blog-guides.json").read_text(encoding="utf-8"))}
+COVER_OVERRIDES = json.loads((ROOT / "data/blog-cover-overrides.json").read_text(encoding="utf-8"))
+assert set(COVER_OVERRIDES).issubset(GUIDES), "Unknown blog cover override"
 EVIDENCE=json.loads((ROOT / "data/editorial-evidence.json").read_text(encoding="utf-8"))
 assert set(EVIDENCE).issubset(GUIDES)
 LEGACY_GUIDES = {
@@ -35,7 +37,7 @@ CONTEXT_LINKS = {
 }
 
 def cover_path(slug):
-    return "/media/ppt/" + GUIDES[slug]["cover"]
+    return COVER_OVERRIDES.get(slug, "/media/ppt/" + GUIDES[slug]["cover"])
 
 def anchor(heading):
     return re.sub(r"[^a-z0-9-]+", "-", heading.lower().replace("’", "").replace("'", "")).strip("-")[:90]

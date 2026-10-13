@@ -165,6 +165,7 @@ jobs:
           python scripts/test_repaired_sports_category.py
           python scripts/test_repaired_remaining_category_cards.py
           python scripts/test_primary_image_placements.py
+          python scripts/test_unique_blog_thumbnails.py
           python scripts/test_home_visual_upgrade.py
           python scripts/test_r2_usage_index.py
           python scripts/test_d1_navigation.py
