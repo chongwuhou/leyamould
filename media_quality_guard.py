@@ -22,7 +22,10 @@ ALT = {
 def upgrade_home_visual(markup, locale):
     """Only replace the FIRST obsolete homepage photo, not blog/SKU images."""
     if locale not in ALT:
-        raise ValueError("Unreviewed marketing image locale: " + locale)
+        # Future locales may be enabled only after their translation review.
+        # Preserve existing imagery/ALT until that language has a reviewed
+        # replacement. Do not block publication or invent foreign ALT text.
+        return markup
     if not (ROOT / NEW.lstrip("/")).is_file():
         raise FileNotFoundError("Missing documented 1500px XUYI marketing image")
     pattern = r'<img\b(?=[^>]*\bsrc="' + re.escape(OLD) + r'")[^>]*>'
