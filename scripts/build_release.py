@@ -72,6 +72,8 @@ def main():
     repair_sports_cards(DIST)
     from repair_remaining_category_cards import apply as repair_remaining_categories
     repair_remaining_categories(DIST)
+    from fix_primary_image_placements import apply as fix_primary_image_placements
+    fix_primary_image_placements(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))

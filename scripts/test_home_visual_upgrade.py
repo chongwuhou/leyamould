@@ -7,6 +7,7 @@ import sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from media_quality_guard import NEW,OLD,ALT,upgrade_home_visual
+from fix_primary_image_placements import WIDE
 DIST=ROOT/"dist"
 manifest=json.loads((ROOT/"data/curated-hd-manifest.json").read_text(encoding="utf-8"))
 target=next(item for item in manifest["assets"] if item["target"]==NEW)
@@ -17,7 +18,10 @@ for locale in ALT:
     path=DIST/("" if locale=="en" else locale)/"index.html"
     source=path.read_text(encoding="utf-8")
     main=source.split('<main id="main-content">',1)[1].split("</main>",1)[0]
-    assert 'src="'+NEW+'" alt="'+ALT[locale]+'"' in main,locale
+    assert '<div class="kreat-intro__media"><img src="'+WIDE+'" alt="'+ALT[locale]+'"' in main,locale
+    # The old square XUYI marketing image remains in navigation previews,
+    # while the intro block uses the reviewed landscape original.
+    assert 'src="'+NEW+'"' in source,locale
     # Homepage blog/editorial photos stay as their original source reference.
     assert OLD in main,("Unexpected change of blog catalog image",locale)
     assert main.count('alt="'+ALT[locale]+'"')==1
