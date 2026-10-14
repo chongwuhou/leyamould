@@ -3,6 +3,29 @@
 import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json" with {type:"json"};
 import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json" with {type:"json"};
 import BLOG_FEATURE_PATHWAYS from "../../data/blog-feature-pathways.json" with {type:"json"};
+import BUYER_MATRICES from "../../data/blog-buyer-decision-tables.json" with {type:"json"};
+
+export function renderBuyerDecisionTable(post){
+ const entry=post?.buyerDecisionTable===false?null:
+             (post?.buyerDecisionTable && typeof post.buyerDecisionTable==="object"?
+               post.buyerDecisionTable:BUYER_MATRICES.articles[post?.slug]);
+ if(!entry)return "";
+ const head=entry.head,rows=entry.rows;
+ if(!Array.isArray(head)||head.length!==3||!Array.isArray(rows)||rows.length<4)return "";
+ if(rows.some(row=>!Array.isArray(row)||row.length!==3))return "";
+ const safeLinks=(Array.isArray(entry.links)?entry.links:[]).filter(([label,url])=>
+   typeof label==="string"&&typeof url==="string"&&/^\/(?!\/)[A-Za-z0-9/_#-]+$/.test(url));
+ let body='<section class="blog-buyer-matrix" id="buyer-decision-table"><h2>'+esc(entry.title)+'</h2><p>'+esc(entry.intro)+'</p><div class="blog-buyer-matrix__scroll"><table><thead><tr>';
+ body+=head.map(value=>'<th scope="col">'+esc(value)+'</th>').join('');
+ body+='</tr></thead><tbody>';
+ for(const cells of rows)
+  body+='<tr><th scope="row">'+esc(cells[0])+'</th>'+cells.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>';
+ body+='</tbody></table></div><p class="blog-buyer-matrix__note">Buyer decision criteria, not XUYI certification, published MOQ or guaranteed delivery times. Verify the exact model and market requirements.</p>';
+ body+='<nav class="blog-buyer-matrix__links" aria-label="Relevant product and collection references">';
+ body+=safeLinks.map(([label,url])=>'<a href="'+esc(url)+'">'+esc(label)+' →</a>').join('');
+ return body+'</nav></section>';
+}
+
 export const esc = value => String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function verifiedEvidence(post){
  const evidence=EDITORIAL_EVIDENCE[post?.slug];
@@ -29,6 +52,22 @@ export async function ensureBlogSchema(db){
 const str=(x,max=300)=>String(x??'').trim().slice(0,max);
 const slugOk=x=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(x)&&x.length<=120;
 const IMAGE=/^(\/media\/(?:ppt\/slide-\d{3}\.webp|excel\/row-\d{3}\.webp|group\/[a-z0-9-]+\.webp|blog\/[a-z0-9_-]+\.(?:webp|png|jpg|jpeg))|\/assets\/[a-zA-Z0-9/_-]+\.(?:webp|png|jpg|jpeg))$/;
+function normalizeBuyerDecisionTable(raw){
+ if(raw===false)return false; // Explicit CMS editorial suppression.
+ if(raw==null)return undefined; // Fall back to reviewed source for untouched posts.
+ if(typeof raw!=="object"||Array.isArray(raw))throw Error("Invalid buyer table");
+ const title=str(raw.title,180),intro=str(raw.intro,900);
+ const head=(Array.isArray(raw.head)?raw.head:[]).map(v=>str(v,100));
+ const rows=(Array.isArray(raw.rows)?raw.rows:[]).slice(0,10)
+   .map(row=>Array.isArray(row)?row.map(v=>str(v,500)):[]);
+ const links=(Array.isArray(raw.links)?raw.links:[]).slice(0,5)
+   .map(pair=>Array.isArray(pair)?[str(pair[0],120),str(pair[1],180)]:[]);
+ if(title.length<10||intro.length<35||head.length!==3||head.some(v=>v.length<3)
+    ||rows.length<4||rows.some(row=>row.length!==3||row.some(v=>v.length<2))
+    ||links.some(([label,url])=>!label||!/^\/(?!\/)[a-zA-Z0-9/_#-]+$/.test(url)))
+  throw Error("Buyer decision table needs 3 headings, 4+ valid rows and local links");
+ return {title,intro,head,rows,links};
+}
 export function normalizeBlogPost(raw){
  const slug=str(raw?.slug,140).toLowerCase();if(!slugOk(slug))throw Error('Invalid slug.');
  const title=str(raw?.title,125),description=str(raw?.description,250),intro=str(raw?.intro,2000);
@@ -44,7 +83,9 @@ export function normalizeBlogPost(raw){
  const related=(Array.isArray(raw?.related)?raw.related:[]).slice(0,5).map(x=>str(x,120)).filter(slugOk).filter(x=>x!==slug);
  const group=str(raw?.group,70)||'Buyer Resources',updated=new Date().toISOString().slice(0,10);
  const primary_keyword=str(raw?.primary_keyword,110),secondary_keywords=(Array.isArray(raw?.secondary_keywords)?raw.secondary_keywords:[]).slice(0,12).map(v=>str(v,110)).filter(Boolean);
- return {slug,title,description,intro,cover,sections,faqs,checklist,related,group,category:'Buyer Resources',primary_keyword,secondary_keywords,updated};
+ const buyerDecisionTable=normalizeBuyerDecisionTable(raw?.buyerDecisionTable);
+ return {slug,title,description,intro,cover,sections,faqs,checklist,related,group,category:'Buyer Resources',primary_keyword,secondary_keywords,updated,
+  ...(buyerDecisionTable!==undefined?{buyerDecisionTable}:{})};
 }
 export async function listBlogPosts(db,status=''){
  await ensureBlogSchema(db);
@@ -83,6 +124,7 @@ export function blogHtml(post){
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
  post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+esc(section.paragraph)+'</p></section>'});
  body+=verifiedEvidence(post);
+ body+=renderBuyerDecisionTable(post);
  if(post.checklist?.length){body+='<section class="blog-checklist"><h2>Buyer checklist</h2><ul>';for(const tip of post.checklist)body+='<li>'+esc(tip)+'</li>';body+='</ul></section>'}
  if(post.faqs?.length){body+='<section class="blog-faq"><h2>Frequently asked questions</h2>';for(const q of post.faqs)body+='<details><summary>'+esc(q.question)+'</summary><p>'+esc(q.answer)+'</p></details>';body+='</section>'}
  body+='<div class="blog-editorial__cta"><h2>Need a quote for a specific model?</h2><p>Send the model, expected order quantity, logo requirements and destination market. XUYI can review confirmed material and customization options.</p><a class="button" href="/contact/#inquiry">Request a Plastic Bottle Quote →</a></div>';
@@ -160,7 +202,16 @@ export function composePage(template,body,post,route){
     .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org)\//.test(s.url))
     .map(s=>({'@type':'CreativeWork',name:s.label,url:s.url}));
   const safe=JSON.stringify(graph).replace(/</g,'\\u003c');
-  html=html.replace('</head>','<meta property="og:image" content="'+esc('https://xuyibottles.com'+post.cover)+'"><script type="application/ld+json">'+safe+'</script></head>');
+  // Only the actual visible CMS FAQs are marked up; no Google-rich-result promise.
+  const validFaqs=Array.isArray(post.faqs)?post.faqs.filter(q=>
+    typeof q?.question==="string"&&q.question.trim()&&typeof q?.answer==="string"&&q.answer.trim()):[];
+  const faqMarkup=validFaqs.length
+   ?'<script type="application/ld+json">'+JSON.stringify({
+       '@context':'https://schema.org','@type':'FAQPage',inLanguage:'en',url,
+       mainEntity:validFaqs.map(q=>({'@type':'Question',name:q.question,
+         acceptedAnswer:{'@type':'Answer',text:q.answer}}))
+     }).replace(/</g,'\\u003c')+'</script>':'';
+  html=html.replace('</head>','<meta property="og:image" content="'+esc('https://xuyibottles.com'+post.cover)+'"><script type="application/ld+json">'+safe+'</script>'+faqMarkup+'</head>');
  }
  return html;
 }

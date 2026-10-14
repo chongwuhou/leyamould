@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "note": "Practical buyer comparison aids, not equipment/certification or stock claims",
+  "topics": {
+    "applications/everyday-hydration": {
+      "title": "Everyday bottle selection: four real-world checks",
+      "intro": "A commuter bottle is selected for repeated filling, cleaning, bag storage and carrying, not simply the largest printed volume.",
+      "rows": [
+        [
+          "Bag or desk fit",
+          "A tall bottle can be awkward even when its milliliter volume looks modest",
+          "Check actual height, base diameter and cup-holder or bag clearance"
+        ],
+        [
+          "Lid access",
+          "One-handed opening may be convenient but affects cap complexity",
+          "Test the cap with a filled sample and the intended users"
+        ],
+        [
+          "Cleaning",
+          "Small joints and removable straws influence cleaning access",
+          "Request instructions for each part and inspect reassembly"
+        ],
+        [
+          "Repeated purchasing",
+          "A brand needs consistent cap and color revisions",
+          "Save the exact factory model and accepted parts list"
+        ]
+      ],
+      "link": [
+        "Sports model 2095",
+        "/products/2095/"
+      ]
+    },
+    "applications/gym-sports": {
+      "title": "Gym-use bottles versus protein shakers",
+      "intro": "A water bottle and a mixing shaker solve different purchase needs even when both are sold to fitness channels.",
+      "rows": [
+        [
+          "Plain hydration",
+          "Simple drinking and low accessory count",
+          "Choose source sports models and validate lid design"
+        ],
+        [
+          "Powder mixing",
+          "Mixing component and removable closure are key",
+          "Check what is supplied with shaker models and shake-test a sample"
+        ],
+        [
+          "Locker-bag transport",
+          "Cap leakage and carrying design affect buyer complaints",
+          "Test the real filled bottle in sideways positions"
+        ],
+        [
+          "Gym merchandising",
+          "Brand decoration must survive handling and cleaning",
+          "Approve artwork and actual printed sample before bulk order"
+        ]
+      ],
+      "link": [
+        "Shaker model 5247",
+        "/products/5247/"
+      ]
+    },
+    "applications/kids-school": {
+      "title": "School bottle sourcing: needs vary by age and market",
+      "intro": "Child-facing product approval should start with intended age, removable parts, the drinking method and cleaning access.",
+      "rows": [
+        [
+          "Younger users",
+          "Complex lids can be hard to operate or clean",
+          "Review age-market safety needs and sample with adult supervision"
+        ],
+        [
+          "School-bag use",
+          "Straw and valve closure leakage can affect books and bags",
+          "Test a completed sample rather than trusting photos"
+        ],
+        [
+          "Shared or repeated use",
+          "Labels, removable parts and cleaning instructions matter",
+          "Agree product warnings and part documentation"
+        ],
+        [
+          "School branding",
+          "Small artwork can lose clarity on shaped surfaces",
+          "Review final art and a decorated sample"
+        ]
+      ],
+      "link": [
+        "Kids bottle collection",
+        "/collections/kids-water-bottles/"
+      ]
+    },
+    "applications/outdoor-travel": {
+      "title": "Outdoor and travel: assess the filled product",
+      "intro": "Actual filled weight, carrying attachment and exposure to movement can determine whether a bottle is suitable.",
+      "rows": [
+        [
+          "Trail carrying",
+          "Filled balance can be more important than label volume",
+          "Inspect full sample and handle/strap attachment"
+        ],
+        [
+          "Car or transport use",
+          "Fit, side orientation and closure security vary",
+          "Measure external dimensions and test cap configuration"
+        ],
+        [
+          "Temperature exposure",
+          "Material grade and seals have different permitted use ranges",
+          "Request confirmed resin and temperature instructions"
+        ],
+        [
+          "Travel packing",
+          "Multiple items and larger volumes change freight and carton requirements",
+          "Confirm actual carton packing and pallet data"
+        ]
+      ],
+      "link": [
+        "1000ml sports bottle reference",
+        "/products/2514/"
+      ]
+    },
+    "applications/promotional-gifts": {
+      "title": "Promotional campaigns: approve three separate deliverables",
+      "intro": "Campaign deadlines are best managed by freezing the decorated bottle, individual gift packaging and carton label as separate revisions.",
+      "rows": [
+        [
+          "Product choice",
+          "The pictured color or capacity may not match the order variant",
+          "Match factory code and sample to the quotation"
+        ],
+        [
+          "Printed logo",
+          "Screen, digital and transfer effects vary by substrate",
+          "Check print method, position, adhesion and color"
+        ],
+        [
+          "Gift packing",
+          "Unboxing quality and carton volume affect landed cost",
+          "Approve real box dieline and inner protection"
+        ],
+        [
+          "Delivery coordination",
+          "A fixed campaign date requires an agreed production plan",
+          "Record signed sample, quantities and shipping terms"
+        ]
+      ],
+      "link": [
+        "Custom logo service",
+        "/capabilities/custom-logo/"
+      ]
+    },
+    "features/straw-lid": {
+      "title": "Straw lid: compare hygiene and assembly details",
+      "intro": "A straw lid should be assessed as a removable assembly rather than a single marketing feature.",
+      "rows": [
+        [
+          "Straw geometry",
+          "Bent, long or soft parts can change flow and cleaning",
+          "Check length and replacement availability on the exact model"
+        ],
+        [
+          "Mouthpiece",
+          "Open/close operation influences usability",
+          "Test sealing and accessible cleaning areas"
+        ],
+        [
+          "Seal and joints",
+          "More interfaces create more components to maintain",
+          "Request component breakdown and reassembly instructions"
+        ],
+        [
+          "Age-market fit",
+          "Removable parts may require market-specific review",
+          "Confirm destination requirements before school procurement"
+        ]
+      ],
+      "link": [
+        "Kids plastic bottles",
+        "/collections/kids-water-bottles/"
+      ]
+    },
+    "features/flip-top": {
+      "title": "Flip-top: design variables buyers should test",
+      "intro": "A hinge, latch, spring or seal can affect the experience more than the visual flip-top style.",
+      "rows": [
+        [
+          "Opening method",
+          "Latch force and travel differ by model",
+          "Test actual cap using intended users"
+        ],
+        [
+          "Seal position",
+          "Leak paths can occur around the mouthpiece or threads",
+          "Record the filled sample and agreed leak test"
+        ],
+        [
+          "Hinge fatigue",
+          "Repeated opening may affect function",
+          "Agree opening-cycle acceptance method if necessary"
+        ],
+        [
+          "Cleaning",
+          "Hidden hinge areas and seals may retain residue",
+          "Review part accessibility and cleaning instructions"
+        ]
+      ],
+      "link": [
+        "Sports bottle models",
+        "/collections/sports-water-bottles/"
+      ]
+    },
+    "features/carry-handle": {
+      "title": "Carry attachment: choose the actual full-bottle load",
+      "intro": "Handle, loop and strap products cannot be evaluated from empty catalog photography alone.",
+      "rows": [
+        [
+          "Handle grip",
+          "Grip shape changes carrying comfort when full",
+          "Compare an actual filled sample"
+        ],
+        [
+          "Loop or strap",
+          "Attachment, removability and secure fit matter",
+          "Request exact included component list"
+        ],
+        [
+          "Load behavior",
+          "Weight increases with capacity and contents",
+          "Do not claim load rating without tested supplier evidence"
+        ],
+        [
+          "Carton packaging",
+          "Protruding handles affect carton fit",
+          "Inspect final outer carton layout"
+        ]
+      ],
+      "link": [
+        "Large-capacity collection",
+        "/collections/large-capacity-water-jugs/"
+      ]
+    },
+    "features/large-capacity": {
+      "title": "Large-capacity selection: volume is only the starting point",
+      "intro": "Two large jugs with similar printed capacity can differ greatly in carrying balance, closure access and landed freight.",
+      "rows": [
+        [
+          "Usable volume",
+          "Nominal capacity and comfortable fill may differ",
+          "Validate fill instructions and source milliliters"
+        ],
+        [
+          "Handle leverage",
+          "A full jug requires safe grip and stable base",
+          "Compare real filled samples"
+        ],
+        [
+          "Mouthpiece design",
+          "Large body size does not imply easy one-handed drinking",
+          "Test spout, straw or cap version"
+        ],
+        [
+          "Export carton",
+          "Cube and carton quantity influence freight cost",
+          "Obtain measured packed dimensions"
+        ]
+      ],
+      "link": [
+        "Large water jugs",
+        "/collections/large-capacity-water-jugs/"
+      ]
+    },
+    "features/gradient-colors": {
+      "title": "Gradient-color approval: a photo is not a color master",
+      "intro": "Gradient plastic finish should be reviewed under consistent light and against a physical master reference, especially with custom logos.",
+      "rows": [
+        [
+          "Resin color",
+          "Pigment and translucency change visual appearance",
+          "Approve the actual molded sample"
+        ],
+        [
+          "Color transition",
+          "Gradient start and end position affect design consistency",
+          "Agree color master and tolerance with manufacturer"
+        ],
+        [
+          "Logo contrast",
+          "Text can become unreadable against variable backgrounds",
+          "Check physical print on both light and dark zones"
+        ],
+        [
+          "Repeat orders",
+          "Finish control needs a retained signed reference",
+          "Keep production revision and accepted sample"
+        ]
+      ],
+      "link": [
+        "Gradient example model 2095",
+        "/products/2095/"
+      ]
+    }
+  }
+}

@@ -7,8 +7,10 @@ at runtime. No photos, product database or structured product facts change.
 """
 from html import escape
 from pathlib import Path
+import json
 
 ROOT=Path(__file__).resolve().parent.parent
+TOPIC_GRIDS=json.loads((ROOT/"data/topic-decision-grids-en.json").read_text(encoding="utf8"))
 LOCALES=("en","es","pt","ru","tr")
 EYEBROWS={
  "en":"MODEL SELECTION","es":"SELECCIÓN DE MODELOS",
@@ -95,6 +97,54 @@ TOPICS={
   "tr":["Degrade renk geçişini düzenlenmiş fotoğrafa değil fiziksel numuneye göre onaylayın; renk referanslarını ve yöntemi netleştirin.","Logonun açık ve koyu alanlarda okunabilirliğini ve konumunu doğrulayın. Parti karşılaştırması için onaylı numuneyi saklayın."]
  },
 }
+
+def render_topic_grid(route, lang):
+    """English source-authored decision grid; never machine-translate the prose."""
+    if lang!="en":
+        return ""
+    data=TOPIC_GRIDS["topics"].get(route)
+    if not data:
+        return ""
+    rows=data["rows"]
+    if len(rows)<4 or any(len(item)!=3 for item in rows):
+        raise ValueError("Invalid reviewed topic decision grid: "+route)
+    out='<div class="topic-decision-grid"><h3>'+escape(data["title"])+'</h3><p>'+escape(data["intro"])+'</p>'
+    out+='<div class="topic-decision-grid__scroll"><table><thead><tr><th scope="col">Scenario</th><th scope="col">Buying consideration</th><th scope="col">Confirm with the selected model</th></tr></thead><tbody>'
+    for row in rows:
+        out+='<tr><th scope="row">'+escape(row[0])+'</th><td>'+escape(row[1])+'</td><td>'+escape(row[2])+'</td></tr>'
+    label,url=data["link"]
+    if not url.startswith("/") or url.startswith("//") or any(c in url for c in ('<','>','"',"'",' ')):
+        raise ValueError("Invalid buyer link: "+route)
+    return out+'</tbody></table></div><p><a href="'+escape(url)+'">'+escape(label)+' →</a></p></div>'
+
+def render_buyer_evidence(route, lang, existing_main=""):
+    """Shared rendering component, called BEFORE final HTML is generated.
+
+    D1 main body is authoritative. If the administrator already wrote this
+    module, never replace it; a newly approved locale can be added to TOPICS.
+    """
+    route=route.strip("/")
+    if route not in TOPICS or 'id="buyer-evidence-checks"' in existing_main:
+        return ""
+    if lang not in LOCALES:
+        return ""
+    answers=TOPICS[route].get(lang)
+    if not answers or len(answers)!=2 or any(len(a)<55 for a in answers):
+        raise ValueError("Incomplete reviewed buyer guidance: "+route+"/"+lang)
+    title,intro,cta=LABELS[lang]
+    url="/"+("" if lang=="en" else lang+"/")+"contact/#inquiry"
+    return (
+        '<section class="section buyer-evidence-checks" id="buyer-evidence-checks">'
+        '<div class="shell"><div class="section__head"><div>'
+        '<span class="eyebrow">'+escape(EYEBROWS[lang])+'</span>'
+        '<h2 class="section__title">'+escape(title)+'</h2>'
+        '<p>'+escape(intro)+'</p></div></div>'
+        '<ol class="buyer-evidence-checks__items"><li>'+escape(answers[0])+
+        '</li><li>'+escape(answers[1])+'</li></ol>'
+        +render_topic_grid(route,lang)+
+        '<a href="'+url+'" class="buyer-evidence-checks__cta">'+escape(cta)+' →</a>'
+        '</div></section>'
+    )
 
 def apply(dist):
     dist=Path(dist)

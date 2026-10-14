@@ -22,7 +22,8 @@
     "Website": "Sitio web",
     "Send Inquiry →": "Enviar consulta →",
     "e.g. 3000 pcs": "p. ej. 3000 unidades",
-    "e.g. 2501": "p. ej. 2501"
+    "e.g. 2501": "p. ej. 2501",
+    "Only company name, work email and your project requirements are required. Other details are optional; privacy consent is needed to send.": "Solo son obligatorios la empresa, el correo de trabajo y los requisitos del proyecto. Los demás datos son opcionales; se requiere consentimiento de privacidad para enviar."
   },
   "pt": {
     "Wholesale inquiry form": "Formulário de consulta para atacado",
@@ -47,7 +48,8 @@
     "Website": "Site",
     "Send Inquiry →": "Enviar consulta →",
     "e.g. 3000 pcs": "ex.: 3000 unidades",
-    "e.g. 2501": "ex.: 2501"
+    "e.g. 2501": "ex.: 2501",
+    "Only company name, work email and your project requirements are required. Other details are optional; privacy consent is needed to send.": "Apenas empresa, e-mail de trabalho e requisitos do projeto são obrigatórios. Os demais dados são opcionais; é necessário consentimento de privacidade para enviar."
   },
   "ru": {
     "Wholesale inquiry form": "Форма оптового запроса",
@@ -72,7 +74,8 @@
     "Website": "Сайт",
     "Send Inquiry →": "Отправить запрос →",
     "e.g. 3000 pcs": "например, 3000 шт.",
-    "e.g. 2501": "например, 2501"
+    "e.g. 2501": "например, 2501",
+    "Only company name, work email and your project requirements are required. Other details are optional; privacy consent is needed to send.": "Обязательны только название компании, рабочая почта и требования к проекту. Остальные поля необязательны; для отправки необходимо согласие на обработку данных."
   },
   "tr": {
     "Wholesale inquiry form": "Toptan satış talep formu",
@@ -97,6 +100,7 @@
     "Website": "Web sitesi",
     "Send Inquiry →": "Talebi gönder →",
     "e.g. 3000 pcs": "ör. 3000 adet",
-    "e.g. 2501": "ör. 2501"
+    "e.g. 2501": "ör. 2501",
+    "Only company name, work email and your project requirements are required. Other details are optional; privacy consent is needed to send.": "Yalnızca şirket adı, iş e-postası ve proje gereksinimleri zorunludur. Diğer bilgiler isteğe bağlıdır; göndermek için gizlilik onayı gerekir."
   }
 }

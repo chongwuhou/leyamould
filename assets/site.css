@@ -1071,4 +1071,36 @@ body:has(#xuyi-home-banners) .home-bpa-verification small{display:block;font-siz
 .blog-author-byline{font-size:13px;line-height:1.6;margin:8px 0 19px;color:#486350}
 .blog-author-byline a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 .blog-author-byline a:hover{color:#247b51}
+/* Canonical blog buyer comparison component. Content from the reviewed
+   data/blog-buyer-decision-tables.json or approved D1 post field, never dist edits. */
+.blog-buyer-matrix{margin:31px 0;padding:23px 22px;background:#f4f9f6;border:1px solid #cfe3d4;border-radius:13px}
+.blog-buyer-matrix h2{margin:0 0 12px}
+.blog-buyer-matrix>p{margin:0 0 16px;line-height:1.75}
+.blog-buyer-matrix__scroll{overflow-x:auto;overscroll-behavior-x:contain}
+.blog-buyer-matrix table{width:100%;min-width:540px;border-collapse:collapse;font-size:13px;line-height:1.65}
+.blog-buyer-matrix th,.blog-buyer-matrix td{padding:12px 13px;border-bottom:1px solid #d1dfd6;text-align:left;vertical-align:top}
+.blog-buyer-matrix thead th{background:#e0efe5;color:#1c5339;font-weight:800}
+.blog-buyer-matrix tbody th{width:23%;color:#244e36;font-weight:700}
+.blog-buyer-matrix tbody tr:nth-child(even){background:#edf6ef}
+.blog-buyer-matrix .blog-buyer-matrix__note{font-size:12px;line-height:1.65;color:#516c5d;margin:15px 0 8px}
+.blog-buyer-matrix__links{display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:13px}
+.blog-buyer-matrix__links a{color:#1f6948;text-decoration:underline;text-underline-offset:3px;font-weight:650}
+/* The 10 distinct Applications/Features purchase matrices are rendered in
+   the page template from data/topic-decision-grids-en.json, NOT patched dist. */
+.topic-decision-grid{margin:24px 0;padding:18px 19px;background:#fff;border:1px solid #cbded4;border-radius:11px}
+.topic-decision-grid h3{margin:0 0 10px;font-size:20px;color:#245b40}
+.topic-decision-grid>p{line-height:1.7;margin:0 0 15px}
+.topic-decision-grid__scroll{overflow-x:auto}
+.topic-decision-grid table{width:100%;min-width:560px;border-collapse:collapse;font-size:13px;line-height:1.6}
+.topic-decision-grid th,.topic-decision-grid td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid #d9e5dc}
+.topic-decision-grid thead th{color:#1f5e41;background:#e8f2ec}
+.topic-decision-grid tbody th{font-weight:800;color:#32644d}
+.topic-decision-grid a{font-weight:700;color:#226a48;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:650px){.topic-decision-grid{padding:13px}.topic-decision-grid table{font-size:12px;min-width:490px}}
+
+@media(max-width:650px){.blog-buyer-matrix{padding:16px 13px;margin:24px 0}.blog-buyer-matrix table{font-size:12px;min-width:480px}.blog-buyer-matrix th,.blog-buyer-matrix td{padding:10px}}
+/* Source contact form: prefilled fields stay editable; only three business
+   fields and privacy consent are required. No API contract changes. */
+.inquiry-required-note{border-left:3px solid #2d875b;padding:9px 13px;margin:0 0 18px;color:#315946;background:#f1f9f4;font-size:13px;line-height:1.7}
+
 

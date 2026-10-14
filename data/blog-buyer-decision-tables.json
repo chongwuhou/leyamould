@@ -1,0 +1,662 @@
+{
+  "schemaVersion": 1,
+  "editorialStatus": "source-reviewed buyer decision aids, not product certifications or published supplier prices",
+  "articles": {
+    "wholesale-plastic-water-bottle-buying-guide": {
+      "title": "Wholesale quotation: compare like-for-like offers",
+      "intro": "A low unit price is meaningful only when two suppliers are quoting the same product configuration, packing and delivery scope. Use this purchasing matrix before selecting a supplier.",
+      "head": [
+        "Check",
+        "Lower-risk choice",
+        "Question for the RFQ"
+      ],
+      "rows": [
+        [
+          "Bottle and closure",
+          "One exact model, nominal capacity, actual lid components and approved photo",
+          "Is the offered article identical to the pictured version, including seals and straw?"
+        ],
+        [
+          "Customization",
+          "Artwork revision, method, color count and approved sample included in scope",
+          "Are screens, plates, tooling, print setup and rejected-sample revisions charged separately?"
+        ],
+        [
+          "Logistics",
+          "Carton count, dimensions, gross weight and Incoterm stated in writing",
+          "Is freight included, and who pays duties, export clearance and destination handling?"
+        ],
+        [
+          "Document control",
+          "Reference sample, revision code and inspection criteria specified",
+          "Which documents will be supplied for this finished SKU and destination market?"
+        ]
+      ],
+      "links": [
+        [
+          "Compare sports bottle model 2095",
+          "/products/2095/"
+        ],
+        [
+          "Explore shaker model 5247",
+          "/products/5247/"
+        ]
+      ]
+    },
+    "plastic-bottle-material-selection": {
+      "title": "Material selection by part, use and evidence",
+      "intro": "A resin name alone does not describe the finished bottle. Specify body, cap, straw, seals and printing separately and compare evidence for the intended market.",
+      "head": [
+        "Resin or component",
+        "Buyer consideration",
+        "Evidence to ask for"
+      ],
+      "rows": [
+        [
+          "PP body or lid",
+          "Common option for molded components; physical properties depend on grade and design",
+          "Component-level resin specification, allowed use conditions and sample trials"
+        ],
+        [
+          "PC body",
+          "Can be transparent and rigid; BPA-related needs and market rules require careful assessment",
+          "Specific PC grade, regulatory suitability and relevant substance tests"
+        ],
+        [
+          "Tritan copolyester",
+          "A possible custom resin choice, not a blanket attribute of XUYI stock models",
+          "Part-by-part resin confirmation, food-contact documentation and real sample"
+        ],
+        [
+          "PETG and seals",
+          "PETG appearance and gasket compatibility vary by grade and assembly",
+          "Document for actual body resin, gasket material and complete finished bottle"
+        ]
+      ],
+      "links": [
+        [
+          "Model 2095: verify listed PP/PC materials",
+          "/products/2095/"
+        ],
+        [
+          "Material FAQ",
+          "/faq/"
+        ]
+      ]
+    },
+    "custom-logo-water-bottle-checklist": {
+      "title": "Logo decoration decision matrix",
+      "intro": "The best branding method depends on the actual curved plastic surface, artwork coverage, batch size and wear expectations.",
+      "head": [
+        "Method",
+        "Good starting scenario",
+        "Approval before production"
+      ],
+      "rows": [
+        [
+          "Screen printing",
+          "Simple artwork with limited spot colors on a suitable print area",
+          "Confirm registration, adhesion, color and artwork position"
+        ],
+        [
+          "UV digital printing",
+          "Detailed multicolor artwork where substrate and geometry are compatible",
+          "Approve printed physical sample and surface durability checks"
+        ],
+        [
+          "Heat transfer",
+          "Wraparound or larger graphic layouts where the part shape allows transfer",
+          "Check seam, edge alignment, adhesion and sample appearance"
+        ],
+        [
+          "Laser marking",
+          "Only where actual polymer/additive and finish can achieve an acceptable readable mark",
+          "Do not assume every clear polymer can be laser marked; test the exact resin"
+        ]
+      ],
+      "links": [
+        [
+          "Custom logo services",
+          "/capabilities/custom-logo/"
+        ],
+        [
+          "Sports bottle model 2501",
+          "/products/2501/"
+        ]
+      ]
+    },
+    "sports-bottle-vs-water-jug": {
+      "title": "Sports bottle versus large water jug: use-case choice",
+      "intro": "Compare full-bottle handling rather than nominal capacity alone. The best fit changes between single-handed travel and stationary hydration.",
+      "head": [
+        "Requirement",
+        "Compact sports bottle",
+        "Large-capacity jug"
+      ],
+      "rows": [
+        [
+          "Carry method",
+          "Check strap, loop and cup-holder fit",
+          "Check filled weight, handle balance and leak exposure"
+        ],
+        [
+          "Drinking",
+          "Assess lid opening, straw/flip-top compatibility and cleaning",
+          "Confirm spout design and safe tilting when full"
+        ],
+        [
+          "Packing",
+          "Compare units per carton and retail shelf space",
+          "Confirm larger-volume outer cartons and shipping volume"
+        ],
+        [
+          "Branding",
+          "Small curved imprint zone may constrain logo size",
+          "Larger surface does not guarantee every print method fits"
+        ]
+      ],
+      "links": [
+        [
+          "Sports model 2514",
+          "/products/2514/"
+        ],
+        [
+          "Large-capacity range",
+          "/collections/large-capacity-water-jugs/"
+        ]
+      ]
+    },
+    "kids-water-bottle-procurement": {
+      "title": "Children's bottles: approval decisions by risk",
+      "intro": "Age suitability, detachable parts and cleaning matter more than decorative style. Treat the assembled bottle as the product under evaluation.",
+      "head": [
+        "Inspection point",
+        "Questions to resolve",
+        "Required proof"
+      ],
+      "rows": [
+        [
+          "Mouthpiece and straw",
+          "Can children operate it, and can caregivers clean hidden surfaces?",
+          "Physical sample and cleaning demonstration"
+        ],
+        [
+          "Straps and removable parts",
+          "Are there components, edges or attachments subject to age-market rules?",
+          "Destination-specific product safety review"
+        ],
+        [
+          "Material and intended drinks",
+          "What touches liquid, and what temperature/use is permitted?",
+          "Component list and finished-article contact evidence"
+        ],
+        [
+          "Label and packaging",
+          "Do warnings, age designation and language fit the destination?",
+          "Approved retail artwork and market-specific labeling review"
+        ]
+      ],
+      "links": [
+        [
+          "Kids bottle collection",
+          "/collections/kids-water-bottles/"
+        ],
+        [
+          "Sample request checklist",
+          "/request-sample/"
+        ]
+      ]
+    },
+    "shaker-bottle-wholesale": {
+      "title": "Shaker procurement: choose the assembled configuration",
+      "intro": "A shaker without the expected mixing element, seal or measurement scale may be unsuitable even when the nominal milliliter capacity is correct.",
+      "head": [
+        "Feature",
+        "Buyer decision",
+        "Verification"
+      ],
+      "rows": [
+        [
+          "Capacity choices",
+          "Choose listed size variant and distinguish nominal from working fill",
+          "Review real 450ml / 700ml options for model 5247"
+        ],
+        [
+          "Mixing element",
+          "Ball, screen, insert or none; each changes cleaning and use",
+          "Confirm included accessory in quotation and production sample"
+        ],
+        [
+          "Lid and seal",
+          "Evaluate closure, pour function and mixing leakage",
+          "Shake test the assembled reference product"
+        ],
+        [
+          "Scale and decoration",
+          "Graduations and logo location may compete for print area",
+          "Approve readable markings and physical branded sample"
+        ]
+      ],
+      "links": [
+        [
+          "Model 5247: two shaker capacities",
+          "/products/5247/"
+        ],
+        [
+          "Model 501: source shaker",
+          "/products/501/"
+        ]
+      ]
+    },
+    "tritan-vs-pp-petg-pc": {
+      "title": "Tritan vs PP vs PETG vs PC: buyer-oriented comparison",
+      "intro": "These are material-family tradeoffs, not claims about existing XUYI stock. Grade, colorants, intended use, component design and documentation must be verified separately.",
+      "head": [
+        "Resin family",
+        "Why buyers consider it",
+        "What cannot be assumed"
+      ],
+      "rows": [
+        [
+          "Tritan copolyester",
+          "Transparent appearance and potential alternate resin selection where suitable",
+          "Do not presume every factory model is Tritan or meets specific BPA-free tests"
+        ],
+        [
+          "PP",
+          "Useful for a range of molded bottle and lid designs",
+          "Clarity, hot-fill suitability and impact behavior depend on grade and design"
+        ],
+        [
+          "PETG",
+          "Possible transparent molded components or decoration-compatible surface",
+          "Do not assume temperature tolerance or food contact clearance for all grades"
+        ],
+        [
+          "PC",
+          "Rigid transparent options in some existing source configurations",
+          "BPA, destination-specific rules and declared grades require explicit verification"
+        ]
+      ],
+      "links": [
+        [
+          "Model 2095: catalog PP+PC example",
+          "/products/2095/"
+        ],
+        [
+          "Custom material inquiry",
+          "/contact/#inquiry"
+        ]
+      ]
+    },
+    "bpa-free-plastic-water-bottle-sourcing": {
+      "title": "BPA-free sourcing: claims and proof are not interchangeable",
+      "intro": "A consumer-facing BPA-free statement should follow an exact material/component declaration and an evidence review, not a generic supplier brochure.",
+      "head": [
+        "Claim layer",
+        "What to request",
+        "Common error"
+      ],
+      "rows": [
+        [
+          "Resin selection",
+          "Bill of materials for body, lid, straw, valve and seals",
+          "Testing the body alone while ignoring other wetted parts"
+        ],
+        [
+          "Migration or material tests",
+          "Product and destination-relevant methods, limits and lab report details",
+          "Presenting a supplier-level certificate as article-level proof"
+        ],
+        [
+          "Repeated use",
+          "Instructions for temperature, cleaning, wear and replacement",
+          "Assuming the finished assembly has unlimited lifetime"
+        ],
+        [
+          "Packaging claim",
+          "Consistent artwork and supported statement on the approved SKU",
+          "Printing 'BPA-free' before evidence and buyer approval"
+        ]
+      ],
+      "links": [
+        [
+          "Source-backed quality controls",
+          "/quality-control/"
+        ],
+        [
+          "FAQ on materials",
+          "/faq/"
+        ]
+      ]
+    },
+    "water-bottle-lid-leakproof-testing": {
+      "title": "Lid checks: define the test before claiming leak resistance",
+      "intro": "A flip-top, straw or screw closure has different potential failure points. Record sample condition, orientation and acceptance criteria for the real design.",
+      "head": [
+        "Test scenario",
+        "Possible failure",
+        "Recommended record"
+      ],
+      "rows": [
+        [
+          "Upside-down hold",
+          "Seepage at gasket, threads or mouthpiece",
+          "Filled sample, orientation, hold period and observations"
+        ],
+        [
+          "Sideways travel",
+          "Valve or straw opening may leak in a bag",
+          "Vibration/handling scenario and cap state"
+        ],
+        [
+          "Repeated opening",
+          "Seal may shift or closure latch may wear",
+          "Open/close cycle target agreed with buyer"
+        ],
+        [
+          "Cleaning and reassembly",
+          "Removed seals may be misplaced or installed incorrectly",
+          "Assembly instructions and post-cleaning retest"
+        ]
+      ],
+      "links": [
+        [
+          "Flip-top bottle styles",
+          "/features/flip-top/"
+        ],
+        [
+          "Sample request process",
+          "/request-sample/"
+        ]
+      ]
+    },
+    "custom-water-bottle-moq-pricing": {
+      "title": "What drives MOQ and total project cost?",
+      "intro": "Separate factory tooling economics from order packing and decoration. These are decision factors, not claimed XUYI price or MOQ commitments.",
+      "head": [
+        "Cost driver",
+        "Lower-complexity route",
+        "Higher-complexity route"
+      ],
+      "rows": [
+        [
+          "Bottle platform",
+          "Existing model, mold and components",
+          "New mold or changed mechanical structure"
+        ],
+        [
+          "Printing",
+          "Existing compatible surface, simple one-color artwork",
+          "Multiple colors, registration, special finishes"
+        ],
+        [
+          "Colors and packing",
+          "Current color where available, standard carton",
+          "New resin color, branded inserts and small mixed batches"
+        ],
+        [
+          "Order and destination",
+          "Known carton volume and selected freight term",
+          "Multiple destinations, mixed packaging or special labels"
+        ]
+      ],
+      "links": [
+        [
+          "Existing catalog bottle models",
+          "/products/"
+        ],
+        [
+          "Submit quantity for real quote",
+          "/contact/#inquiry"
+        ]
+      ]
+    },
+    "oem-vs-odm-plastic-water-bottles": {
+      "title": "OEM versus ODM: define the real project boundary",
+      "intro": "Buying an existing model with artwork is operationally different from creating a new drinking mechanism or bottle geometry.",
+      "head": [
+        "Decision",
+        "Existing-model OEM",
+        "New-design ODM"
+      ],
+      "rows": [
+        [
+          "Design inputs",
+          "Factory model code, approved artwork and color",
+          "Dimensions, drawings, parts, performance brief"
+        ],
+        [
+          "Tooling",
+          "Existing tooling subject to model compatibility",
+          "Tool ownership, trials and new tooling charges"
+        ],
+        [
+          "Sampling",
+          "Decoration/reference samples and packing confirmation",
+          "Functional prototypes, revisions and production trials"
+        ],
+        [
+          "Change control",
+          "Color, logo, box and component-approved version",
+          "Drawing revision, mold modifications and design validation"
+        ]
+      ],
+      "links": [
+        [
+          "OEM/ODM capability",
+          "/capabilities/oem-odm/"
+        ],
+        [
+          "Molding capability",
+          "/capabilities/custom-molding/"
+        ]
+      ]
+    },
+    "water-bottle-quality-control-checklist": {
+      "title": "QC plan: which inspection stage answers which question?",
+      "intro": "Agree test methods and sampling criteria before shipment. AQL is a method for interpreting an agreed sampling plan, not proof every bottle has been tested.",
+      "head": [
+        "Stage",
+        "What can be checked",
+        "Decision record"
+      ],
+      "rows": [
+        [
+          "Incoming components",
+          "Resin identity declarations, cap/gasket supplies and artwork revision",
+          "Approved supplier and component specification"
+        ],
+        [
+          "In-process assembly",
+          "Lid seating, visual finish and printing registration",
+          "Defect classification and inspection frequency"
+        ],
+        [
+          "Final sampling",
+          "Dimensions, color, basic function, packaging and agreed leak test",
+          "Sampling plan, defect categories, acceptance outcome"
+        ],
+        [
+          "Pre-shipment",
+          "Carton count, pallet/marking and photo evidence",
+          "Lot ID, signed inspection report, release decision"
+        ]
+      ],
+      "links": [
+        [
+          "XUYI quality-control workflow",
+          "/quality-control/"
+        ],
+        [
+          "Shaker model 5247",
+          "/products/5247/"
+        ]
+      ]
+    },
+    "custom-water-bottle-export-packaging": {
+      "title": "Carton planning: avoid hidden landed-cost differences",
+      "intro": "Outer cartons and handling often matter as much as printed branding for importers. Ask for real box dimensions and weights from the chosen production configuration.",
+      "head": [
+        "Packing choice",
+        "Cost or handling implication",
+        "Buyer check"
+      ],
+      "rows": [
+        [
+          "Individual retail box",
+          "Adds protection and shelf presentation; changes carton cube",
+          "Artwork, dimensions and drop-test needs"
+        ],
+        [
+          "OPP bag or simple wrap",
+          "May reduce component packaging; protection requirements differ",
+          "Scratch risk and pack count"
+        ],
+        [
+          "Master carton",
+          "Determines cube, handling and lot identification",
+          "Units/carton, gross weight, size and markings"
+        ],
+        [
+          "Palletization",
+          "Changes handling and container fill",
+          "Pallet count, height and destination rules"
+        ]
+      ],
+      "links": [
+        [
+          "Shipping and logistics",
+          "/shipping-logistics/"
+        ],
+        [
+          "Custom packaging",
+          "/capabilities/custom-packaging/"
+        ]
+      ]
+    },
+    "how-to-start-private-label-water-bottle-brand": {
+      "title": "Private-label launch: choose the next irreversible decision",
+      "intro": "Build a traceable approval record rather than ordering solely from a mockup. Each stage determines which future corrections become costly.",
+      "head": [
+        "Milestone",
+        "Deliverable to approve",
+        "Reason it matters"
+      ],
+      "rows": [
+        [
+          "Product brief",
+          "Audience, route to market, exact base model and capacity",
+          "Avoids promoting a pictured version that is not the shipped version"
+        ],
+        [
+          "Identity and packaging",
+          "Logo rights, print file, box dieline and labels",
+          "Prevents expensive design rework"
+        ],
+        [
+          "Preproduction sample",
+          "Physical bottle, cap function, print and material documents",
+          "Connects brochure promises to physical evidence"
+        ],
+        [
+          "First shipment",
+          "Carton packing, inspections, Incoterm and reorder reference",
+          "Ensures repeatable landed-cost comparison"
+        ]
+      ],
+      "links": [
+        [
+          "Custom logo capability",
+          "/capabilities/custom-logo/"
+        ],
+        [
+          "First product comparison",
+          "/products/2095/"
+        ]
+      ]
+    },
+    "water-bottle-logo-printing-methods": {
+      "title": "Print technique selection: match method to substrate",
+      "intro": "A method description should never substitute for a trial on the actual resin and surface. Ask for physical samples for appearance and wear.",
+      "head": [
+        "Method",
+        "Possible advantage",
+        "Limitation to check"
+      ],
+      "rows": [
+        [
+          "Silk screen",
+          "Simple, repeatable spot-color logos",
+          "Curved surface coverage and multicolor registration"
+        ],
+        [
+          "UV direct digital",
+          "Detailed imagery without a traditional screen for each color",
+          "Adhesion and curing on selected bottle material"
+        ],
+        [
+          "Heat transfer",
+          "Larger graphic treatments on compatible shapes",
+          "Film edges, seams, curvature and transfer durability"
+        ],
+        [
+          "Laser marking",
+          "Permanent-looking contrast on eligible materials",
+          "Some plastics cannot show useful contrast or may mark poorly"
+        ]
+      ],
+      "links": [
+        [
+          "Logo production questions",
+          "/capabilities/custom-logo/"
+        ],
+        [
+          "Sample approval",
+          "/request-sample/"
+        ]
+      ]
+    },
+    "sports-water-bottle-customization": {
+      "title": "Customization feasibility by bottle component",
+      "intro": "Body color, lid mechanism, strap and branding can have different tooling and material constraints. Approval must specify the exact variant.",
+      "head": [
+        "Customization",
+        "Typical information needed",
+        "Risk if omitted"
+      ],
+      "rows": [
+        [
+          "Body finish",
+          "Selected SKU, current resin/color and finish target",
+          "Appearance may change with resin or molding conditions"
+        ],
+        [
+          "Lid/strap",
+          "Technical drawing or catalog compatible components",
+          "Mechanical fit and sealing may require fresh validation"
+        ],
+        [
+          "Graphic decoration",
+          "Vector artwork, colors, coverage and sample",
+          "Durability and printed result can differ from renderings"
+        ],
+        [
+          "Retail packaging",
+          "Destination, barcode, box dimensions and language",
+          "Incorrect labels or carton count can delay shipments"
+        ]
+      ],
+      "links": [
+        [
+          "Sports bottle collection",
+          "/collections/sports-water-bottles/"
+        ],
+        [
+          "Sports model 2501",
+          "/products/2501/"
+        ]
+      ]
+    }
+  }
+}

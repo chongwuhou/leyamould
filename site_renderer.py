@@ -114,6 +114,11 @@ def build_url(path,title,content):
   # source-checked supplements for selected company/quality pages.
   from editorial_support import for_route as reviewed_editorial_for_route
   main+=reviewed_editorial_for_route(route,main)
+  # Render reviewed buyer guidance at the CMS/template stage, not by
+  # rewriting output HTML. D1-owned modules always take precedence.
+  if route.startswith(("/applications/","/features/")):
+   from scripts.curated_application_feature_answers import render_buyer_evidence
+   main+=render_buyer_evidence(route,"en",main)
   if route=="/":
    # Replace only the low-resolution generic homepage marketing photograph.
    # Catalog-SKU photos and the blog thumbnails are intentionally unchanged.

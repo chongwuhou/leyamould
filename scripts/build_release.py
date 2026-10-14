@@ -111,8 +111,8 @@ def main():
     # G-series ARE factory models, but their detailed source specs are pending.
     from model_catalog_buyer_comparison import apply as add_model_catalog_comparisons
     add_model_catalog_comparisons(DIST)
-    from curated_application_feature_answers import apply as improve_application_feature_answers
-    improve_application_feature_answers(DIST)
+    # Application/feature buyer guidance is rendered by site_renderer.py and
+    # render_locales.py using their shared pre-output component (not dist edits).
     # Verified technical SEO and trust metadata on SOURCE/CMS merged pages.
     # Never infer stock, product prices, reviews, staff names or R2 image sizes.
     from verified_trust_technical_seo import apply as enrich_trust_and_technical_seo

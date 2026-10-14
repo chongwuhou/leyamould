@@ -54,6 +54,26 @@ def render_primary_evidence(slug):
     h+='</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>'
     return h
 
+BUYER_MATRICES = json.loads((ROOT / "data/blog-buyer-decision-tables.json").read_text(encoding="utf-8"))["articles"]
+assert set(BUYER_MATRICES)==set(GUIDES),"Every reviewed buyer guide needs its own decision table"
+
+def render_buyer_matrix(slug, override=None):
+    """Render a source-backed editorial table, not post-build HTML rewrites."""
+    matrix=override if override is not None else BUYER_MATRICES[slug]
+    assert len(matrix["head"])==3 and len(matrix["rows"])>=4
+    h='<section class="blog-buyer-matrix" id="buyer-decision-table"><h2>'+e(matrix["title"])+'</h2>'
+    h+='<p>'+e(matrix["intro"])+'</p><div class="blog-buyer-matrix__scroll"><table>'
+    h+='<thead><tr>'+''.join('<th scope="col">'+e(v)+'</th>' for v in matrix["head"])+'</tr></thead><tbody>'
+    for cells in matrix["rows"]:
+        assert len(cells)==3,(slug,cells)
+        h+='<tr><th scope="row">'+e(cells[0])+'</th>'+''.join('<td>'+e(v)+'</td>' for v in cells[1:])+'</tr>'
+    h+='</tbody></table></div><p class="blog-buyer-matrix__note">Buyer decision criteria, not XUYI certification, published MOQ or guaranteed delivery times. Verify the exact model and market requirements.</p>'
+    h+='<nav class="blog-buyer-matrix__links" aria-label="Relevant product and collection references">'
+    for label,url in matrix.get("links",[]):
+        assert url.startswith("/") and not url.startswith("//"),url
+        h+='<a href="'+e(url)+'">'+e(label)+' →</a>'
+    return h+'</nav></section>'
+
 def render_article(slug):
     post=GUIDES[slug]
     related=[GUIDES[s] for s in post["related"]]
@@ -78,6 +98,7 @@ def render_article(slug):
     for section in post["sections"]:
         h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+'</p></section>'
     h+=render_primary_evidence(slug)
+    h+=render_buyer_matrix(slug)
     h+='<section class="blog-checklist"><h2>Buyer checklist</h2><p>Use these points when comparing a factory sample, artwork approval and purchase quotation.</p><ul>'
     for tip in post["checklist"]:h+='<li>'+e(tip)+'</li>'
     h+='</ul></section><section class="blog-faq"><h2>Frequently asked questions</h2>'

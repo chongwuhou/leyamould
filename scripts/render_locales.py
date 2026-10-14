@@ -310,6 +310,11 @@ def main():
         encoded=json.dumps(runtime,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
         prefix=prefix.replace("</head>",'<script type="application/json" id="xuyi-runtime-ui">'+encoded+"</script></head>",1)
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
+        # Translated D1 body takes precedence; add common scenario-specific
+        # buyer guidance inside the locale renderer before final HTML write.
+        if route.startswith(("/applications/","/features/")):
+            from curated_application_feature_answers import render_buyer_evidence
+            body+=render_buyer_evidence(route,loc,body)
         if route.startswith("/blog/"):
             body=localize_blog_timeline(body,original,loc,route)
         if route=="/products/" or route.startswith("/collections/"):
