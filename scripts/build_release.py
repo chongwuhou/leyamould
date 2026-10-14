@@ -113,6 +113,10 @@ def main():
     add_model_catalog_comparisons(DIST)
     from curated_application_feature_answers import apply as improve_application_feature_answers
     improve_application_feature_answers(DIST)
+    # Verified technical SEO and trust metadata on SOURCE/CMS merged pages.
+    # Never infer stock, product prices, reviews, staff names or R2 image sizes.
+    from verified_trust_technical_seo import apply as enrich_trust_and_technical_seo
+    enrich_trust_and_technical_seo(DIST)
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         valid=redirect_lines(state.get("redirects",[]))

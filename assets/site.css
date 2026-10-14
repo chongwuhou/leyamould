@@ -1067,4 +1067,8 @@ body:has(#xuyi-home-banners) .home-bpa-verification small{display:block;font-siz
 .volume-heading-extra{font-size:clamp(15px,1.5vw,21px);color:#3c624e;vertical-align:middle}
 .product-card__capacity{display:block;margin:-7px 0 11px;color:#257d52;font-size:12px;font-weight:750;line-height:1.5}
 @media(max-width:680px){.product-custom-material-options{padding:16px}.product-card__capacity{font-size:11px}}
+/* Verified editorial authorship: visible and accessible in every translated guide. */
+.blog-author-byline{font-size:13px;line-height:1.6;margin:8px 0 19px;color:#486350}
+.blog-author-byline a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.blog-author-byline a:hover{color:#247b51}
 

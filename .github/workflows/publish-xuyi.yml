@@ -155,6 +155,7 @@ jobs:
           python scripts/test_verified_capacity_gradient.py
           python scripts/test_source_catalog_capacity_oz.py
           python scripts/test_retail_size_class_audit.py
+          python scripts/test_verified_trust_technical_seo.py
           python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py
           python scripts/test_product_material_performance.py

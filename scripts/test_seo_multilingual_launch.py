@@ -105,7 +105,12 @@ for rel,html in all_published_documents():
                     refer=node.get("@id") if isinstance(node,dict) else node
                     if refer!=expected:errors.append((route,"BlogPosting main page mismatch",refer))
             if locale!="en" and typ=="FAQPage":
-                errors.append((route,"English FAQ structured data incorrectly inherited"))
+                # Approved translated homepage FAQs may be marked up ONLY when
+                # the five translated Q&As are visible on that home route.
+                if route!="/"+PREFIX[locale].strip("/")+"/": 
+                    errors.append((route,"FAQPage unexpectedly inherited by a non-home translation"))
+                elif len(obj.get("mainEntity",[]))!=5 or 'class="dark-faq"' not in html:
+                    errors.append((route,"Localized homepage FAQPage mismatch"))
     records[expected]={"route":route,"locale":locale,"title":title,"description":desc,"hreflang":hrefs}
 expected_published=sum(len(manifest["routes"].get(code,[])) for code in LOCALES)
 if len(records)!=expected_published:

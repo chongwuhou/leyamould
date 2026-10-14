@@ -193,6 +193,19 @@ def new_seo(locale,row,numbers):
         kind=({"en":"Gradient Sports Bottle","es":"Botella degradada",
                "pt":"Garrafa degradê","ru":"Градиентная бутылка","tr":"Degrade spor şişesi"}[locale])
     title=f"{vol} {kind} | {model} XUYI"
+    # Customize only the headline language; real resin/lid claims require SKU
+    # evidence. Keep the factory model as a secondary identifier.
+    if locale=="en" and len(numbers)==1:
+        buyer_kind={
+          "Sports Water Bottle":"Custom Logo Sports Bottle",
+          "Kids Water Bottle":"Custom Kids Water Bottle",
+          "Large Water Jug":"Custom Large Water Jug",
+          "Protein Shaker":"Custom Logo Protein Shaker",
+          "Gradient Sports Bottle":"Gradient Custom Logo Bottle",
+        }.get(kind)
+        if buyer_kind:
+            buyer_title=f"{vol} {buyer_kind} | XUYI {model}"
+            if len(buyer_title)<=70:title=buyer_title
     small={"en":"Bottle","es":"Botella","pt":"Garrafa","ru":"Бутылка","tr":"Şişe"}[locale]
     if len(title)>70:title=f"{vol} {small} | {model} XUYI"
     if len(title)>75 and len(numbers)>1:
