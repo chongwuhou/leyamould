@@ -13,6 +13,7 @@ import sys,re,json
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from sku_unique_openings import COPY,EN,CATEGORY,LOCALES,OWNER,editor_intro
+from sku_unique_openings_phase2 import COPY as PHASE2_COPY
 from site_renderer import SERIES
 DIST=ROOT/"dist"
 langs=("en","es","pt","ru","tr")
@@ -70,7 +71,7 @@ for lang in langs:
         starts=[" ".join(COPY[slug][lang].split()[:24]).lower() for slug in items]
         assert len(starts)==len(set(starts)),(category,lang)
 
-others=[r for r in SERIES.values() if r["slug"] not in COPY]
+others=[r for r in SERIES.values() if r["slug"] not in COPY and r["slug"] not in PHASE2_COPY]
 for row in others[:7]:
     sample=(DIST/"products"/row["slug"]/"index.html").read_text(encoding="utf8")
     assert 'data-pilot-intro="' not in sample,row["slug"]

@@ -182,6 +182,7 @@ jobs:
           python scripts/test_search_intent_three_routes.py
           python scripts/test_turkish_bottle_cap_terminology.py
           python scripts/test_pilot_20_unique_sku_openings.py
+          python scripts/test_phase2_six_unique_sku_openings.py
           node scripts/test_blog_search_intent_runtime.mjs
           python scripts/test_retail_size_class_audit.py
           python scripts/test_verified_trust_technical_seo.py

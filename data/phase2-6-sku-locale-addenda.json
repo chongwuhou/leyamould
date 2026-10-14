@@ -1,0 +1,26 @@
+{
+  "2280": {
+    "ru": "При согласовании нескольких градиентных расцветок сохраняйте отдельные фотографии и печатные образцы каждой одобренной комбинации для повторных закупок.",
+    "tr": "Birden fazla geçişli renk onaylanıyorsa, sonraki siparişler için her onaylanan renk kombinasyonunun fotoğrafını ve baskı örneğini saklayın."
+  },
+  "2302": {
+    "ru": "При выборе фасовки для розничной торговли отдельно проверьте фактическую высоту с крышкой и вес упакованной единицы.",
+    "tr": "Perakende paketleme seçiminde gerçek kapaklı yüksekliği ve paketlenmiş birimin ağırlığını onaylanan numune üzerinden ayrıca kontrol edin."
+  },
+  "2310": {
+    "ru": "Перед повторным заказом отдельно зафиксируйте согласованную конструкцию дополнительного элемента и его положение на изделии в техническом приложении.",
+    "tr": "Tekrar siparişler için ek parçanın gerçek konumunu ve onaylanan malzeme açıklamasını teknik belgede ayrıca kaydedin."
+  },
+  "2319": {
+    "ru": "Точный состав силиконового элемента и возможность его демонтажа должны быть подтверждены по каждой заказанной модификации отдельно.",
+    "tr": "Silikon parçanın yeri, sökülebilirliği ve tam bileşimi her seçilen varyant için numune üzerinden doğrulanmalıdır."
+  },
+  "2410": {
+    "ru": "Также сравните измеренную высоту коробки с ограничениями полок покупателя, не полагаясь только на размеры корпуса.",
+    "tr": "Alıcının raf yüksekliği sınırlarını da ölçülmüş ambalaj boyutlarıyla karşılaştırın; yalnızca gövde ölçüsüne güvenmeyin."
+  },
+  "2511": {
+    "ru": "Для этой цветовой серии отдельно сохраните утвержденный цветовой образец и номер согласованного макета в документах заказа.",
+    "tr": "Bu renk serisi için onaylanan baskı örneğini ve seçilen renk kodunu satın alma belgelerinde ayrı ayrı kaydedin."
+  }
+}

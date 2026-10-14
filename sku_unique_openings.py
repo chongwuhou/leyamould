@@ -35,7 +35,10 @@ def editor_intro(body,row,locale,owner_edited=False):
     if owner_edited:return body
     slug=str(row.get("slug",""))
     item=COPY.get(slug)
-    if item is None or locale not in item:return body
+    if item is None:
+        from sku_unique_openings_phase2 import editor_intro as phase2_editor_intro
+        return phase2_editor_intro(body,row,locale,owner_edited=owner_edited)
+    if locale not in item:return body
     if row.get("category")!=CATEGORY[SELECTED_GROUP[slug]]:
         raise ValueError("Pilot SKU category mismatch: "+slug)
     if 'data-pilot-intro="'+slug+'"' in body:return body
