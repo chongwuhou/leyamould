@@ -382,14 +382,19 @@ def generate():
  # This stays ready for the later approved SEO launch without publishing
  # unreviewed multilingual paths.
  sitemap=['<?xml version="1.0" encoding="utf-8"?>',
-          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">']
  from sitemap_modification import source_lastmod
+ from product_image_sitemap import xml_image_for_product
  for file_path in sorted(path for path in URLS if path.endswith('index.html')):
   route='/'+file_path[:-len('index.html')]
   lastmod=source_lastmod(route,'en',next((x for x in BUILD_STATE.get('pages',[]) if x.get('route')==route),None))
+  # Published canonical main image is selected from the shared catalog
+  # and the active D1 product/page body, not a guessed filename or R2 rename.
+  body_owner=BODY_OVERRIDES.get(route) if route in BODY_OVERRIDES else None
+  image_xml=xml_image_for_product(route,SERIES,body_owner,SITE_ORIGIN)
   sitemap.append(' <url><loc>'+e(SITE_ORIGIN+route)+'</loc>'
                  +('<lastmod>'+e(lastmod)+'</lastmod>' if lastmod else '')
-                 +'</url>')
+                 +image_xml+'</url>')
  sitemap.append('</urlset>')
  write('sitemap.xml','\n'.join(sitemap)+'\n')
  write('data/route-manifest.json',json.dumps([{'path':'/'+x.replace('index.html',''),'title':title} for x,title in sorted(URLS.items()) if x.endswith('index.html')],ensure_ascii=False,indent=2))

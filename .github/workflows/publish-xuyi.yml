@@ -163,6 +163,7 @@ jobs:
           python scripts/test_verified_capacity_gradient.py
           python scripts/test_source_catalog_capacity_oz.py
           python scripts/test_source_sitemap_titles_h1_images.py
+          python scripts/test_product_image_sitemap.py
           python scripts/test_search_intent_three_routes.py
           node scripts/test_blog_search_intent_runtime.mjs
           python scripts/test_retail_size_class_audit.py

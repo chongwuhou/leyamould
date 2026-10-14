@@ -457,8 +457,15 @@ def main():
                     # The D1 translation is the authoritative locale content.
                     # Baseline records change only on significant editorial edits.
                     modified=source_lastmod(url,_,translated.get((route,_),{}))
+                    from product_image_sitemap import xml_image_for_product
+                    from site_renderer import SERIES
+                    # The translated D1 main photo takes precedence; do not
+                    # manufacture different URLs for repeated source imagery.
+                    owner_body=translated.get((route,_),{}).get("mainHtml")
+                    image_xml=xml_image_for_product(route,SERIES,owner_body,ORIGIN)
                     added.append(" <url><loc>"+html.escape(absolute)+"</loc>"
-                      +("<lastmod>"+modified+"</lastmod>" if modified else "")+"</url>")
+                      +("<lastmod>"+modified+"</lastmod>" if modified else "")
+                      +image_xml+"</url>")
         if added:
             if "</urlset>" not in xml:raise RuntimeError("Invalid XUYI sitemap: no urlset closing tag")
             xml=xml.replace("</urlset>","\n".join(added)+"\n</urlset>",1)
