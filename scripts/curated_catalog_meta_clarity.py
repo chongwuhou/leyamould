@@ -14,6 +14,7 @@ sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
 from scripts.model_catalog_buyer_comparison import capacity_number,raw_value
 from cms_seo_curation_guard import may_curate
+from product_locale_seo import VARIANT_ROUTES,TRANSPARENT
 
 LOCALES=("es","pt","ru","tr")
 PRODUCT_NAMES={
@@ -45,6 +46,18 @@ PRODUCT_NAMES={
 
 def copy(locale,model,kind,capacity,material):
     material=material or "-"
+    if "透明款" in model:
+        # Preserve the numeric factory identity, but not an untranslated
+        # Chinese variant suffix on Spanish/Portuguese/Russian/Turkish pages.
+        number=re.match(r"^\d{3,4}",model)
+        if not number:
+            raise ValueError("Unrecognized transparent factory model")
+        model=number.group(0)+" ("+TRANSPARENT[locale]+")"
+        # Keep the genuine transparent variant visible in full even when the
+        # long generic product-category name is shortened for this title.
+        compact={"es":"Botella plástica","pt":"Garrafa plástica",
+                 "ru":"Пластиковая бутылка","tr":"Plastik şişe"}[locale]
+        kind=compact
     if locale=="es":
         title=f"{kind.title()}"+(f" {capacity:g} mL" if capacity else "")+f" | {model} | XUYI"
         desc=f"Modelo {model}: {kind}"+(f", {capacity:g} mL" if capacity else "")+f". Material del catálogo: {material}. Compare tapa y embalaje; solicite muestra y cotización."
@@ -87,7 +100,8 @@ def apply(dist):
             old_title=unescape(m.group(1))
             old_description=unescape(n.group(1))
             candidate_title,candidate_desc=copy(locale,sku,PRODUCT_NAMES[locale][category],cap,material)
-            if sku not in candidate_title or sku not in candidate_desc or (cap and f"{cap:g}" not in candidate_title):
+            expected_id=(re.match(r"^\d{3,4}",sku).group(0) if "透明款" in sku else sku)
+            if expected_id not in candidate_title or expected_id not in candidate_desc or (cap and f"{cap:g}" not in candidate_title):
                 raise ValueError("Model identity lost: "+sku)
             allowed_title=may_curate(locale,"/products/"+str(model["slug"])+"/","title")
             allowed_desc=may_curate(locale,"/products/"+str(model["slug"])+"/","description")

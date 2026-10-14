@@ -24,7 +24,9 @@ for row in catalog:
         # The legacy 2400 transparent variant deliberately localizes its
         # Chinese suffix in snippets while retaining the numeric factory ID.
         model_id=re.match(r"\d+",sku).group(0) if re.match(r"\d+",sku) else sku
-        assert sku in title and (sku in desc or model_id in desc),(lang,sku,title,desc)
+        expected_id=(model_id if "透明款" in sku else sku)
+        assert expected_id in title and expected_id in desc,(lang,sku,title,desc)
+        assert "透明款" not in title+desc,(lang,sku,"untranslated source variant")
         route="/products/"+str(row["slug"])+"/"
         if may_curate(lang,route,"title"):
             assert len(title)<=70,(lang,sku,len(title))
