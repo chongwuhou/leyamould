@@ -3,7 +3,7 @@ import BLOGS from "../data/blog-guides.json" with {type:"json"};
 import PART1 from "../data/blog-deep-research-part1.json" with {type:"json"};
 import PART2 from "../data/blog-deep-research-part2.json" with {type:"json"};
 import PART3 from "../data/blog-deep-research-part3.json" with {type:"json"};
-import {blogHtml,renderDepthEvidence,composePage,normalizeBlogPost} from "../functions/_shared/blog-cms.js";
+import {esc,blogHtml,renderDepthEvidence,composePage,normalizeBlogPost} from "../functions/_shared/blog-cms.js";
 const parts=[PART1,PART2,PART3];
 const all={...PART1.articles,...PART2.articles,...PART3.articles};
 assert.equal(Object.keys(all).length,15);
@@ -17,7 +17,7 @@ for(const post of BLOGS){
  if(all[post.slug]){
   count++;
   assert(supplement.includes("Research references from official authorities"),post.slug);
-  assert(supplement.includes(all[post.slug].title.replaceAll("&","&amp;")),post.slug);
+  assert(supplement.includes(esc(all[post.slug].title)),post.slug);
   assert.equal(supplement.match(/blog-deep-dive__section/g)?.length,6,post.slug);
   assert(!renderDepthEvidence({...post,intro:"A substantive CMS-edited introduction replaces the initial factory guide."}),post.slug);
   assert(!renderDepthEvidence({...post,depthEvidence:false}),post.slug);
