@@ -63,6 +63,8 @@ def details(obj):
  if str(obj['model'])=='2506':name="Plastic Sports Water Bottle — Model 2506"
  capacity=join_unique(variants,'capacity',lambda x:capacity_en(x,obj['model']))
  materials=join_unique(variants,'material',material_en)
+ if obj.get('manualNew') and re.fullmatch(r'G-\d+',str(obj['model']),re.I):
+  materials='Customizable plastic materials including PP, PC, PETG, Tritan, PE and ABS; request and approve component-specific specification (not stock material confirmation)'
  dims=join_unique(variants,'dimensions',lambda x: str(x)+" cm (source figure; confirm)") 
  colors=join_unique(variants,'colors',localize_colors)
  packing=join_unique(variants,'packing',pack_en)

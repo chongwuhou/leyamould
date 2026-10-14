@@ -139,6 +139,8 @@ def build_url(path,title,content):
    product=next((obj for obj in SERIES.values() if "/products/"+obj["slug"]+"/"==route),None)
    if product is None:raise ValueError("No material source for product route: "+route)
    main=inject(main,product,"en",route)
+   from g_series_material_options import render_g_material_options
+   main+=render_g_material_options(route,'en',main)
   # D1's English homepage body predates the five-language logo carousel.
   # Restore the same six-logo section already present in the four reviewed
   # translations, regardless of whether D1 overrides the English template.

@@ -5,15 +5,30 @@ import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json" with {type:"jso
 import BLOG_FEATURE_PATHWAYS from "../../data/blog-feature-pathways.json" with {type:"json"};
 import BUYER_MATRICES from "../../data/blog-buyer-decision-tables.json" with {type:"json"};
 import BLOG_DEPTH from "../../data/blog-depth-evidence-en.json" with {type:"json"};
+import DEEP_PART1 from "../../data/blog-deep-research-part1.json" with {type:"json"};
+import DEEP_PART2 from "../../data/blog-deep-research-part2.json" with {type:"json"};
+import DEEP_PART3 from "../../data/blog-deep-research-part3.json" with {type:"json"};
+import SOURCE_BLOG_GUIDES from "../../data/blog-guides.json" with {type:"json"};
+const ORIGINAL_GUIDE_INTROS=Object.fromEntries(SOURCE_BLOG_GUIDES.map(post=>[post.slug,post.intro]));
+const DEEP_ENTRIES={...BLOG_DEPTH.articles,...DEEP_PART1.articles,...DEEP_PART2.articles,...DEEP_PART3.articles};
 
 export function renderDepthEvidence(post){
- const row=BLOG_DEPTH.articles[post?.slug];
+ const row=DEEP_ENTRIES[post?.slug];
  // Any D1 editor update to the article intro overrides this stock source
  // expansion. An explicit false also wins and survives normalized CMS saves.
- if(!row||post?.depthEvidence===false||String(post?.intro||"").trim()!==row.baselineIntro)return "";
- let out='<section class="blog-deep-dive" id="source-reviewed-deep-dive"><h2>Material sourcing: detailed buyer decisions</h2>';
+ const original=row?.baselineIntro??ORIGINAL_GUIDE_INTROS[post?.slug];
+ if(!row||!original||post?.depthEvidence===false||String(post?.intro||"").trim()!==original)return "";
+ let out='<section class="blog-deep-dive" id="source-reviewed-deep-dive"><h2>'+esc(row.title||'Material sourcing: detailed buyer decisions')+'</h2>';
  for(const section of row.sections)
   out+='<section class="blog-deep-dive__section"><h3>'+esc(section.heading)+'</h3><p>'+esc(section.paragraph)+'</p></section>';
+ if(Array.isArray(row.sources)&&row.sources.length){
+  out+='<nav class="blog-deep-dive__sources" aria-label="Official research references"><h3>Research references from official authorities</h3><ul>';
+  for(const source of row.sources){
+   if(!/^https:\/\/(?:www\.fda\.gov|www\.cpsc\.gov|www\.iso\.org|www\.ftc\.gov|www\.ista\.org|www\.eastman\.com|food\.ec\.europa\.eu|eur-lex\.europa\.eu|echa\.europa\.eu|iccwbo\.org|www\.uspto\.gov)\//.test(source.url))continue;
+   out+='<li><a href="'+esc(source.url)+'" rel="noopener noreferrer" target="_blank">'+esc(source.label)+' ↗</a></li>';
+  }
+  out+='</ul><p>These independent educational sources are not certificates of any XUYI product, material or factory.</p></nav>';
+ }
  return out+'</section>';
 }
 export function renderBuyerDecisionTable(post){
@@ -49,6 +64,7 @@ function verifiedEvidence(post){
 }
 function contentModifiedDate(post){
  const value=String(post?.updated||"").slice(0,10);
+ if(renderDepthEvidence(post)&&value<"2026-10-14")return "2026-10-14";
  return EDITORIAL_EVIDENCE[post?.slug] && value<"2026-10-10"?"2026-10-10":value;
 }
 function actualPublishedDate(post){

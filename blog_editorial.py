@@ -76,12 +76,29 @@ def render_buyer_matrix(slug, override=None):
 
 BLOG_DEPTH=json.loads((ROOT/"data/blog-depth-evidence-en.json").read_text(encoding="utf8"))["articles"]
 
+for dataset in ("part1","part2","part3"):
+    extra=json.loads((ROOT/("data/blog-deep-research-"+dataset+".json")).read_text(encoding="utf8"))["articles"]
+    for slug,entry in extra.items():
+        if slug not in GUIDES:raise ValueError("Unknown deep article source: "+slug)
+        if slug in BLOG_DEPTH:raise ValueError("Duplicate reviewed deep article: "+slug)
+        # The published CMS article is authoritative: if its introduction
+        # differs, do not insert a baseline supplement on the live route.
+        BLOG_DEPTH[slug]={**entry,"baselineIntro":GUIDES[slug]["intro"]}
+
 def render_depth_evidence(slug):
     entry=BLOG_DEPTH.get(slug)
     if not entry:return ""
-    out='<section class="blog-deep-dive" id="source-reviewed-deep-dive"><h2>Material sourcing: detailed buyer decisions</h2>'
+    out='<section class="blog-deep-dive" id="source-reviewed-deep-dive"><h2>'+e(entry.get("title","Material sourcing: detailed buyer decisions"))+'</h2>'
     for item in entry["sections"]:
         out+='<section class="blog-deep-dive__section"><h3>'+e(item["heading"])+'</h3><p>'+e(item["paragraph"])+'</p></section>'
+    if entry.get("sources"):
+        out+='<nav class="blog-deep-dive__sources" aria-label="Official research references"><h3>Research references from official authorities</h3><ul>'
+        for source in entry["sources"]:
+            url=source["url"]
+            if not url.startswith(("https://www.fda.gov/","https://www.cpsc.gov/","https://www.iso.org/","https://www.ftc.gov/","https://www.ista.org/","https://www.eastman.com/","https://food.ec.europa.eu/","https://eur-lex.europa.eu/","https://echa.europa.eu/","https://iccwbo.org/","https://www.uspto.gov/")):
+                raise ValueError("Unreviewed reference domain: "+url)
+            out+='<li><a href="'+e(url)+'" rel="noopener noreferrer" target="_blank">'+e(source["label"])+' ↗</a></li>'
+        out+='</ul><p>These are independent educational sources; they do not certify any XUYI bottle, factory or material.</p></nav>'
     return out+'</section>'
 
 def owner_safe_depth(route,body):
@@ -105,7 +122,7 @@ def render_article(slug):
     for item in post["sections"]:
         h+='<a href="#'+anchor(item["heading"])+'">'+e(item["heading"])+'</a>'
     h+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside>'
-    updated="2026-10-10" if slug in EVIDENCE else post["updated"]
+    updated="2026-10-14" if slug in BLOG_DEPTH else "2026-10-10" if slug in EVIDENCE else post["updated"]
     # All 16 articles were actually published in D1 on Oct 9. The selected
     # evidence guides were revised Oct 10. Do not manufacture staggered dates.
     published=post["updated"]
@@ -142,7 +159,7 @@ def render_article(slug):
 
 def enrich_article_html(document, slug):
     post=GUIDES[slug]
-    updated="2026-10-10" if slug in EVIDENCE else post["updated"]
+    updated="2026-10-14" if slug in BLOG_DEPTH else "2026-10-10" if slug in EVIDENCE else post["updated"]
     url=SITE_ORIGIN+"/blog/"+slug+"/"
     breadcrumb={"@type":"BreadcrumbList","itemListElement":[
       {"@type":"ListItem","position":1,"name":"Home","item":SITE_ORIGIN+"/"},

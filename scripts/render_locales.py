@@ -329,6 +329,8 @@ def main():
             product=next((obj for obj in SERIES.values() if obj["slug"]==model),None)
             if product is None:raise ValueError("Missing material source for "+route)
             body=inject_materials(body,product,loc,route,routes_by_locale[loc])
+            from g_series_material_options import render_g_material_options
+            body+=render_g_material_options(route,loc,body)
         # The homepage body is a D1-approved translation of previous English
         # markup. Refresh ONLY the immutable generic hero image asset; leave
         # all user-translated text and model photos unchanged.

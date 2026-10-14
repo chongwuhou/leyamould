@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "articles": {
+    "shaker-bottle-wholesale": {
+      "title": "Shaker specification, mixing performance and distribution checks",
+      "sections": [
+        {
+          "heading": "Specify usable mixing space, not only printed capacity",
+          "paragraph": "The nominal capacity printed on a shaker is often misunderstood. A bottle can have 700 ml nominal volume but need a lower practical fill level to leave room for powders, a mixing screen or shaking action. Retail buyers should distinguish the factory's actual measured capacity from a marketing size class and should record any volume markings separately. For source model 5247, the catalog provides two capacity options, so a wholesaler must decide which version the quote, master carton and product page actually describe. Request a physical example of each selected size if both will be sold. Agree how the graduated scale is measured, whether markings remain readable after decoration, and whether color or translucency affects visibility. Do not use a generic shaker image to imply that every version contains a mixing ball or screen. The included mixing assembly belongs on the bill of materials and should be specified in the purchase order. A clearly defined fill line and cleaning method can prevent customer complaints better than exaggerated mixing claims."
+        },
+        {
+          "heading": "Choose the actual mixing element and lid assembly",
+          "paragraph": "A protein shaker may use a free-moving mixing ball, fixed grid, integrated insert or another geometry; some catalog models have no separate accessory at all. Each arrangement affects perceived convenience, mixing behavior, cleaning, product cost and whether parts can be lost. Ask which element is included with the quoted SKU and whether the accessory is removable and replaceable. Evaluate leakage at the screw connection, flip closure and drinking spout after the bottle has been shaken, not only while it sits upright. A gasket suitable for static storage may behave differently under vigorous repeated movement. The buyer should confirm lid material, sealing element, color, hinge and mouthpiece type separately from the body. If a powder scoop, internal compartment or carry loop is shown in marketing, check that it is actually packed. For gym retailers, a reliable list of included parts and simple assembly instructions are part of the product experience. Avoid promising '100 percent leakproof' without defined tests on the finished assembly."
+        },
+        {
+          "heading": "Define a repeatable shake test without fabricating performance",
+          "paragraph": "A useful evaluation compares identical samples with a known volume and realistic powder mixture. State the liquid temperature, fill volume, amount and nature of the powder, lid condition, duration of shaking, and inspection criteria. Mixing quality may differ between fine powders, thick drinks and recipes containing sticky ingredients, so a single demonstration cannot prove universal performance. For leakage, record observations around threads, cap hinge, drinking mouth and seals during and after a defined sequence. Also check whether the exterior becomes slippery when wet and whether the bottle can be opened without excessive force after shaking. A buyer may test appearance of graduation marks after repeated washing, but should not call the product dishwasher-safe without part-specific evidence. Request the supplier's real test documentation if performance claims appear in packaging. Keep sample photos and acceptance notes with the purchasing record. This converts an informal gym-product trial into a practical, repeatable quality check without inventing a factory pass rate."
+        },
+        {
+          "heading": "Treat material and food contact as separate approval layers",
+          "paragraph": "A shaker may use PP for some components and other compatible polymers or elastomers for lids, inserts and seals. A company offering custom Tritan or other body materials does not imply that the existing shaker SKU already uses those resins or that each component is approved for the final use. Ask for a parts-level material list and the intended beverage contact, operating temperatures, cleaning instructions and destination market. The FDA explains that constituents expected to migrate need an appropriate regulatory basis for the conditions of use. European requirements follow their own framework and plastic-specific rules. If a buyer is selling reusable drinkware in several markets, build one evidence register for each finished configuration rather than putting the same generic certification graphic on all colors and cap variations. Artwork and print additives should also be reviewed where relevant. A material substitution after approving the mixing action may require new seal, fit or contact checks because chemical and mechanical suitability are distinct questions."
+        },
+        {
+          "heading": "Private-label decoration should not obscure information",
+          "paragraph": "Fitness brands often want large logos, bold gradients and visible measurement scales. Those demands may compete for the same curved surface. Before quoting a custom shaker, define the exact area for the main brand mark, any side scale, size indicator, safety text and retail barcode. If a transparent body is required to read liquid levels, a full-surface opaque print may undermine the user experience. Ask for a physical decorated sample and inspect it under typical gym lighting, including how it looks when filled. Screen printing and digital printing have different artwork and adhesion constraints; process suitability should be proven for the actual selected resin. When an order includes more than one bottle size, confirm that the printing artwork is positioned acceptably on each geometry rather than mechanically copying the same coordinates. Include accessory count and cap configuration on the retail box so consumers do not assume an insert is supplied merely because it appears in a lifestyle photograph."
+        },
+        {
+          "heading": "Reorder management and shipment economics",
+          "paragraph": "Wholesale shakers may have bulky lids, separate mixing components and individual cartons that change freight efficiency. Request a measured finished-pack sample, carton count, gross weight and outer dimensions for every chosen size and accessory combination. Make sure removable parts are protected and cannot be lost during packing. For fulfillment distribution, choose a transport validation method appropriate to the carrier and route; ISTA publishes distinct programs for parcel handling and consolidated loads. Document whether the quotation is for unprinted inventory, a decorated batch or a new packaging design, since each can have different minimum quantities and production timing. Save a signed assembled reference sample and its accessory list; a cap revision that looks minor on a photo can affect leakage and customer satisfaction. A distributor should also determine who handles missing-piece complaints and whether replacement lids or mixing inserts are available. The most reliable supplier comparison considers function, evidence, packing and repeat-order continuity rather than simply the headline shaker price."
+        }
+      ],
+      "sources": [
+        {
+          "label": "FDA: food-contact components and intended-use conditions",
+          "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
+        },
+        {
+          "label": "ISTA: testing parcels and distribution packaging",
+          "url": "https://www.ista.org/test_procedures.php"
+        }
+      ]
+    },
+    "bpa-free-plastic-water-bottle-sourcing": {
+      "title": "BPA-free claims: a traceable product and market evidence workflow",
+      "sections": [
+        {
+          "heading": "Define exactly what the BPA-free statement covers",
+          "paragraph": "A buyer needs to distinguish a resin supplier's declaration, a manufacturer's component claim and an independent test on a finished multi-part bottle. Each has a different evidentiary scope. The word 'BPA-free' should not be copied from a generic material brochure onto every SKU merely because the factory can source alternate copolyester materials. Record the actual drinking-contact parts: body, lid, drinking spout, straw, valve, seals and other accessories. Identify the resin and any relevant additives or inks separately for each part. If the product is offered with multiple caps or body materials, the claim may require configuration-specific evidence. Ask whether the declaration applies to the chosen material grade, a date range or a particular tested batch. A supplier should be able to identify which document supports which sentence on the retail package. Without that traceability, a seemingly simple positive claim may be both inaccurate and difficult to defend if a distributor later changes components."
+        },
+        {
+          "heading": "EU bisphenol restrictions require a current-date check",
+          "paragraph": "The European Union adopted Commission Regulation (EU) 2024/3190 governing BPA and certain other bisphenols in food-contact materials, including restrictions and transitional provisions. Those provisions vary according to article type and certain special applications, so a blanket sentence about all existing plastic bottles reaching one deadline can be misleading. The legislation must be evaluated in its current amended form at the date of the transaction. An importer's compliance review should first identify whether the bottle or any food-contact component contains a bisphenol within the rules, then determine whether an exemption or transition is actually applicable. The source text contains requirements around declarations of compliance and relevant evidence; a logo or old general certificate is not a substitute. If a buyer changes from PC to another copolyester for an EU launch, assess the complete new assembly rather than assuming that the trade name by itself settles every food-contact requirement. Keep the revised bill of materials and the applicable regulatory analysis with the purchase order and shipment record."
+        },
+        {
+          "heading": "US FDA status cannot be reduced to an FDA stamp",
+          "paragraph": "The FDA food-contact framework evaluates the regulatory status of constituent substances that are reasonably expected to migrate under the intended use. Relevant bases can include specified regulations, qualifying exemptions or effective food-contact substance notifications tied to manufacturers and conditions of use. That is not equivalent to the FDA certifying every bottle as a finished branded product. If a seller shows an 'FDA approved' icon, ask what exactly was authorized, whether the listed supplier matches, and which food-contact and temperature conditions were evaluated. For an import product with a PP lid and a proposed Tritan body, the body and cap materials may require separate documentation; print or gasket choices may create additional questions. An independent laboratory report can support a claim but should be checked against the actual chosen specimen and its limitations. A buyer should not confuse a passing result for a specific analyte with comprehensive compliance across every US requirement. State the target market and actual use early so a responsible supplier can propose the correct evidence package."
+        },
+        {
+          "heading": "Free-of claims must not disguise unrelated risks",
+          "paragraph": "A BPA-related marketing statement does not by itself mean a bottle is safe for all liquids, temperatures, cleaning methods or consumer ages. Other substances, physical hazards and incorrect usage remain possible. The US Federal Trade Commission's Green Guides discuss how certain 'free-of' environmental claims can mislead when the absence of one material is not relevant or when substitutes introduce similar concerns. Although BPA-free in drinkware also raises distinct food-contact issues, the general lesson is to define the claim precisely and support it with competent evidence. For a child-directed product, any relevant mechanical or chemical safety checks must be addressed separately. For a reusable adult bottle, cleaning instructions and performance claims need their own support. A brand should not combine 'BPA-free,' 'non-toxic,' 'eco-friendly' and 'certified' into one banner without separate substantiation for each assertion. Precise, limited statements are more credible to wholesale buyers and easier to maintain when requirements change."
+        },
+        {
+          "heading": "Audit real certificates and laboratory reports",
+          "paragraph": "Create a document register with model ID, version, specimen photo, tested components, resin grades, report issuer, date, method, tested substances and intended country. Mark gaps explicitly. Ask whether the report covers the finished bottle with its current mouthpiece and seals or a precursor component. For migration-related tests, confirm the use conditions, including contact duration and temperature, match how the bottle will be sold. If only a body material declaration exists, note that the assembled product has not yet been fully documented. An importer may decide to commission additional tests through an appropriately scoped laboratory, but which tests are needed is a market-specific compliance decision. Avoid backdating a new product description to a previous report without a version trace. Changes to colorants, cap suppliers, surface coatings or recycled content can warrant an updated risk assessment. In a B2B buying guide, showing the fields buyers should verify gives more useful technical detail than inventing a certificate number."
+        },
+        {
+          "heading": "A claim-approval workflow that survives product updates",
+          "paragraph": "Before printing packaging or publishing online listings, assign a person responsible for verifying each product claim against its evidence file. Lock the bill of materials and sales market, request and review source documentation, evaluate any necessary testing, then approve the precise wording in each destination language. Keep a revision identifier for the label, product page and physical sample. If the sales team offers a custom PP, PC, PETG or Tritan configuration, describe it as a requested option until the factory confirms suitability and documents the resulting production item. On a reorder, ask whether any contact part, additive or supplier has changed and decide whether the evidence still applies. Retain a record of who reviewed the regulatory references and at what date. If the existing evidence does not support a strong BPA-free statement, remove or qualify that claim rather than implying the factory has tests that cannot be shown. This is the practical way to turn a vague customization promise into a trustworthy buyer-facing specification."
+        }
+      ],
+      "sources": [
+        {
+          "label": "EU: Commission Regulation 2024/3190 on BPA in food-contact materials",
+          "url": "https://eur-lex.europa.eu/eli/reg/2024/3190/oj"
+        },
+        {
+          "label": "EU: 2025/351 amendment to plastics rules",
+          "url": "https://eur-lex.europa.eu/eli/reg/2025/351/oj"
+        },
+        {
+          "label": "FDA: determine food-contact regulatory status",
+          "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
+        },
+        {
+          "label": "FTC: substantiation of free-of environmental claims",
+          "url": "https://www.ftc.gov/business-guidance/resources/environmental-claims-summary-green-guides"
+        }
+      ]
+    },
+    "water-bottle-lid-leakproof-testing": {
+      "title": "Closure leakage testing: orient the bottle, define failure and repeat",
+      "sections": [
+        {
+          "heading": "Identify every possible leakage route on the assembled lid",
+          "paragraph": "A cap is a small assembly with several sealing interfaces. Water can escape past the neck threads, an incorrectly seated gasket, a hinged drinking port, a straw valve or a vent designed for pressure equalization. A supplier claiming 'leakproof' without defining how the test was performed is offering an ambiguous promise. Start by requesting a parts diagram and verifying that the quoted product includes the exact cap shown in the pictures. Record material and assembly details of the gasket, mouthpiece, drinking tube and cap body. An elastomer part may look correctly placed when dry yet twist during assembly. A flip-top latch that feels secure with an empty bottle may behave differently under liquid motion. If the buyer requests a customized resin or alternative cap on an existing bottle, do not inherit the old lid's test result automatically. Evaluate the final production configuration and document what has changed. The aim is to define a specific failure path before picking a test that can reveal it."
+        },
+        {
+          "heading": "Use position, duration and fill level as controlled inputs",
+          "paragraph": "A meaningful leakage check should define exactly how much liquid is placed inside, its temperature, how the lid is secured, the observation time, and the orientation. A bottle held vertically on a table is not equivalent to one lying on its side in a backpack or stored upside down. A buyer can build an internal test matrix that includes upright storage, sideways travel, an inverted hold and a shaking scenario, choosing only those that match realistic use. The results should note visible droplets, seal movement, wet packaging and any need to retighten a cap. Compare the same sample after dismantling and reassembling the lid to simulate cleaning. For straw-lid designs, specify whether the mouthpiece was open or closed during each stage. If a closure vents pressure, determine whether the intended liquid and temperature make that relevant. A 'pass' should refer to a documented condition, not the unsupported claim that nothing will ever leak under any circumstances."
+        },
+        {
+          "heading": "Reassembly and wear explain many apparent manufacturing defects",
+          "paragraph": "Customers may remove a gasket or straw for cleaning and install it incorrectly, resulting in a leak that was not visible in initial inspection. A good qualification program therefore includes disassembly, cleaning according to instructions, drying, and correct reassembly before repeating the leakage observation. Define how a user recognizes the gasket orientation and whether replacement parts are available. For screw caps, consider thread engagement and cross-threading; for hinged mouthpieces, assess whether the latch still catches reliably after repeated opening. If cycle-life targets are commercially important, set an explicit number of opening or closing operations and an acceptance criterion with the buyer. The target should come from the product's intended use, not a generic marketing phrase like 'ten thousand times' that no one has verified. A changed seal supplier or alternate plastic grade can influence fit and compression, so reorder documentation should track these components. Photograph any observed failure and record whether it was caused by material defects, assembly or incorrect operation."
+        },
+        {
+          "heading": "Sample inspection cannot establish zero-defect production",
+          "paragraph": "Manufacturers and importers sometimes use AQL terminology to describe lot acceptance plans. ISO published a new edition of ISO 2859-1 in 2026 for attributes sampling, reflecting how acceptance criteria are selected for lot-by-lot inspection. The existence of this standard does not prove that every shipped bottle was checked, or that 'AQL 1.0' alone describes the supplier's leakage test. A buyer should specify which defects are critical, major and minor, what sample method applies and what independent functional tests are required in addition to visual inspection. Safety-critical failures may require stronger control or separate testing depending on the product. A small subset of production samples that passes a sideways leak check cannot mathematically guarantee that an entire lot contains no leaking items. Keep a written sampling plan and record the lot reference, inspection date, testers, observed failures, corrective action and disposition. Do not publish a universal no-leak guarantee from a generic factory quality-control overview."
+        },
+        {
+          "heading": "Child-use lids require additional component scrutiny",
+          "paragraph": "A straw cap sold for younger users may include removable valves, mouthpieces, little clips or other components that introduce additional risks beyond liquid leakage. Ask whether the article is intended for children under three, older children or general adult use; different regulatory frameworks can apply. The CPSC's small-parts guidance explains specific US obligations for qualifying children's articles but does not classify every drinkware accessory the same way. A practical test review should look for parts that detach under expected handling, latch pieces that break, sharp edges that develop and components that could be swallowed by the intended audience. A passing leak check will not establish compliance with applicable child-product standards. Likewise, a material declaration alone does not assess mechanical safety. Keep the component and age claims linked to the exact cap supplied with the bottle. If a promotional brand substitutes a different straw assembly, review the classification and acceptance procedure again."
+        },
+        {
+          "heading": "Write leak language that a retailer can defend",
+          "paragraph": "Instead of making broad '100% leakproof' claims, document what was tested and what conditions are excluded. Retail instructions can state that the cap must be fully closed, seals correctly installed and parts inspected periodically, if those directions are supported by the selected product. A supplier's quotation should identify the lid style and any agreed leakage acceptance test. For ecommerce copy, say 'closure available for evaluation' until results on the real SKU are available. If the product is being customized for outdoor sports, define the relevant motion and temperature exposure. For a commuter carrying liquid near electronics or documents, buyer acceptance may be more conservative. Keep a reference sample from the approved production version and record the latest revision of the gasket and closure. If consumers report problems, classify returns by actual failure mode rather than treating all issues as one generic 'bottle quality' figure. This makes the next product improvement concrete and allows procurement teams to distinguish design tradeoffs from supplier process defects."
+        }
+      ],
+      "sources": [
+        {
+          "label": "ISO: attributes sampling using ISO 2859-1:2026",
+          "url": "https://www.iso.org/standard/2859-1"
+        },
+        {
+          "label": "CPSC: small-parts and breakage considerations for young consumers",
+          "url": "https://www.cpsc.gov/Business--Manufacturing/Business-Education/Business-Guidance/Small-Parts-for-Toys-and-Childrens-Products"
+        }
+      ]
+    },
+    "custom-water-bottle-moq-pricing": {
+      "title": "Transparent MOQ and unit economics without fictional price promises",
+      "sections": [
+        {
+          "heading": "One factory can have several valid minimum quantities",
+          "paragraph": "An MOQ is not a permanent attribute of the company; it is a condition attached to a specific production configuration. A plain stocked model, a new bottle color, a printed logo, a retail gift box and a newly tooled cap may all have different setup and sourcing requirements. A factory may support a smaller sample or trial when compatible stock or production is available, while the regular manufacturing quantity for a repeat customized order remains different. Ask explicitly whether a quoted minimum applies per model, per color, per capacity, per print design or to a mixed assortment. When suppliers mention '500 pieces' or '1,000 pieces' on a marketing page, do not assume those figures apply to a completely customized product; require a written quote for your selected SKU. Likewise, competitor MOQ ranges must never be copied into XUYI's product description without approval. The meaningful number is the conditional quantity that corresponds to an exact approved configuration, packing plan and production date."
+        },
+        {
+          "heading": "Separate tooling, decoration and recurring costs",
+          "paragraph": "A buyer comparing bottle offers should split one-time charges from costs that vary with the units ordered. New molds, changes to a cap mechanism, color matching, print screens, artwork setup and special samples can create project-specific fixed costs. Resin, molding, lid components, decoration runs, individual packaging and cartons may contribute to variable unit costs. The structure matters even when no public price is available: ask whether the tooling fee is refundable, what design ownership terms apply and whether the supplier will maintain the mold for later orders. Request a separate sample and testing cost if the selected material or market needs new checks. The same logo design may cost differently on two bottle shapes because their fixtures and printing areas vary. Avoid using 'free tooling' in an advertisement unless the commercial conditions are fully documented. When a supplier offers a lower unit price at a higher quantity, ask which cost driver was reduced rather than assuming production economics alone explain the difference. This is especially important for mixed-color orders."
+        },
+        {
+          "heading": "Model costs with variables before using supplier quotes",
+          "paragraph": "A simple planning model can expose purchasing tradeoffs without claiming any actual supplier price. Let F represent agreed one-time charges, U the unit manufacturing quote, P per-unit packaging and decoration charges, and Q the approved quantity. The goods-only estimate is F plus Q multiplied by U plus P; divide the total by Q to compare a project-level unit estimate. Separately account for independent testing, logistics, duties, taxes, finance costs and expected inspection work. When doing scenario analysis, label inputs clearly as hypothetical and replace them with written supplier quotations before signing a purchase order. This model makes it obvious why a smaller trial can have a higher effective unit cost when a fixed screen or tooling charge applies. It also helps evaluate whether removing an unnecessary retail insert or choosing an existing color could be more valuable than simply asking for another discount. For multiple SKUs, create separate setup lines and confirm whether quantities can truly be aggregated. The supplier should not be expected to honor a calculated target as a firm offer."
+        },
+        {
+          "heading": "Understand Incoterms instead of treating DDP as a free upgrade",
+          "paragraph": "The International Chamber of Commerce's Incoterms rules clarify which party has responsibility for delivery tasks, costs and risks under eleven named terms. An EXW quotation, a FOB quotation and a DDP quotation therefore cannot be compared as if their numbers covered the same expenses. Ask for the exact Incoterms 2020 term and named place, along with who arranges export clearance, main carriage, import formalities, duties and final delivery. The buyer should not assume that any bottle factory will offer DDP to any destination; feasibility varies by destination and the supplier's service arrangement. Shipping cost also depends on the final carton geometry rather than only bottle capacity. If a promotional gift bottle is individually boxed, the cube per unit may change substantially from bulk packed stock. Request measured carton dimensions and weights for the final packaging and use them in a landed-cost comparison. A low unit quote with uncertain shipping scope can expose an importer to more risk than a clear higher quote."
+        },
+        {
+          "heading": "Trial sample, pilot and bulk production are different gates",
+          "paragraph": "Buyers often use the word 'sample' for several stages that serve different purposes. A catalog stock sample is for checking ergonomics, capacity, cap function and source materials. A custom decorated sample can test graphic placement and print adhesion, while a new mold may require an engineering trial before a production-representative approval sample exists. Ask which stage each supplier's quoted sample fee covers. A small pilot production lot can reveal packing and process consistency, but it should follow sign-off on the target SKU, artwork and components. Do not accept a material swap during the pilot without a documented engineering and compliance review. When an order is time-sensitive, set milestone dates for sample approval, production, inspection and shipping rather than repeating a generic 'fast delivery' claim. An estimate from a rival supplier's public FAQ is not a lead-time guarantee for the specific XUYI factory configuration. A documented production plan is more credible and easier to verify than a single promised number without conditions."
+        },
+        {
+          "heading": "A usable RFQ table for repeatable supplier comparisons",
+          "paragraph": "Ask every supplier for the same product photo or model code, body resin, lid and accessory specifications, capacity in milliliters, logo file, exact color requirement, retail packing, target quantity and sales market. Require a quotation broken down by existing mold, special material, print setup, packaging and testing where applicable. Capture minimum per variant, quote validity, production lead-time assumptions, Incoterm, sample approval route and reordering constraints. When information is not confirmed, mark the blank as 'supplier confirmation required' rather than filling it with an attractive guess. After the first order, record actual delivered carton quantity, inspection outcome and whether the supplier honored the agreed version. Review changes in tooling, print components or package configuration before the next order. This produces a reliable procurement system rather than an isolated spreadsheet of low prices. A website can give buyers such a checklist immediately, even before commercial facts like an exact factory MOQ are approved for public display."
+        }
+      ],
+      "sources": [
+        {
+          "label": "ICC: Incoterms 2020 and responsibility allocation",
+          "url": "https://iccwbo.org/business-solutions/incoterms-rules/"
+        },
+        {
+          "label": "ISTA: packaging and shipping distribution testing",
+          "url": "https://www.ista.org/test_procedures.php"
+        }
+      ]
+    },
+    "oem-vs-odm-plastic-water-bottles": {
+      "title": "OEM versus ODM as a practical engineering and ownership decision",
+      "sections": [
+        {
+          "heading": "Separate existing-platform customization from new product design",
+          "paragraph": "An OEM project in everyday bottle sourcing often begins with an existing factory model and applies an approved combination of color, logo and packaging. An ODM project usually introduces significant supplier-led or jointly developed design decisions such as a new body form, closure mechanism or tooling approach. These terms are used differently by different businesses, so put the exact scope in the project specification instead of trusting the label. If you are changing only decoration, ask what physical process is used and whether the current molded body remains unchanged. If you are changing lid threads, the liquid path or the ergonomics, you are entering engineering validation even if the seller calls the order OEM. A buyer should list frozen features, changeable components and items that require a new tool or sample. Request the baseline model code and design revision. This will clarify costs, development responsibility, and whether the delivered article genuinely matches an existing catalog product or constitutes a new configuration."
+        },
+        {
+          "heading": "Tooling quotes are incomplete without ownership terms",
+          "paragraph": "A new mold can be a major cost driver in a custom bottle development project, but the buyer should not assume that paying a tooling fee automatically gives unrestricted legal ownership or access to all technical files. Establish who designs the mold, who pays for corrections, which party maintains it, where it is stored and whether it can be transferred. Ask who owns the bottle design, drawings, artwork and any customer-supplied intellectual property. Printing screens and decoration fixtures may be separate from injection or blow-molding tooling. A commercial agreement should define trial allowances, how many sample revisions are included, and what triggers a charge for geometry changes. Consider how production reorders will be handled if a supplier changes the lid, gasket or resin grade. For a private-label brand, clarify the rights to its trademark and logos before any factory artwork work begins. The USPTO provides general resources explaining the nature of trademark rights; an ability to reproduce a logo is not proof of license to use it."
+        },
+        {
+          "heading": "Engineering milestones should be tied to physical deliverables",
+          "paragraph": "A practical development schedule separates concept drawings, tooling design, trial samples, functional samples, appearance approval, documentation and final production release. A computer rendering demonstrates proposed aesthetics but not cap leakage, material behavior or print adhesion. At each milestone, ask for a deliverable and decision record: dimensional drawing approved, a prototype with fit issues logged, a revised mold sample accepted, a confirmed resin and printed reference established. Where the project uses an existing bottle design, avoid overengineering; approve the blank sample before spending on artwork or packaging. Where a new closure is involved, check drinking comfort, cleaning access and replacement-part compatibility under realistic use. Do not claim a fixed tooling lead time or cycle count without an actual engineering schedule for the chosen model. A supplier's confident estimate should specify which inputs are frozen and which changes would reset the schedule. This reduces the risk of marketing an unreleased concept as an available production SKU."
+        },
+        {
+          "heading": "Materials and compliance decisions must be incorporated early",
+          "paragraph": "Changing the body resin, seal or drinking component can affect regulatory evidence as well as mechanical fit. The FDA's food-contact guidance emphasizes constituent substances and intended-use conditions; European food-contact legislation has separate requirements. The project should record the target country, intended beverage contact, consumer audience, temperature exposure and cleaning requirements before the mold is finalized. Otherwise a material that achieves the desired transparency or processing speed could create expensive compliance revisions after tools are cut. A factory can offer multiple customizable plastics, but not every resin is suitable for every part or destined market without new checks. Ask for source-grade details and an approval plan, not blanket 'food-grade' assurances. For children's product lines, evaluate applicable safety classification and labeling independently. Build packaging warnings and final claims into the design approval, since a product that cannot be accurately described or documented can be difficult to sell despite attractive molding."
+        },
+        {
+          "heading": "Sample approval and AQL are different controls",
+          "paragraph": "A preproduction sample answers whether a proposed article can meet the buyer's design and functional needs. A quality inspection plan answers whether the subsequent production lot matches the accepted specification sufficiently to ship. Treat those as related but separate controls. Document body dimensions, cap fit, sealing, logo positioning, color, assembly and carton packing on the sample. Then agree defect classes, inspection sample selection and acceptance rules for the bulk order. ISO 2859-1 provides recognized procedures for attributes sampling, but the correct plan depends on what is being inspected and the supplier's quality history. A seller stating 'QC done' without an agreed defect definition is not providing an acceptance method. New designs may need tighter monitoring during process stabilization. Do not advertise a specific AQL figure as proof that the product has passed every mechanical or food-contact requirement. Keep dated signed samples and inspection reports associated with the same design revision to make later claims verifiable."
+        },
+        {
+          "heading": "Choose the business model with a clear ownership and cost matrix",
+          "paragraph": "Compare an existing factory-platform project with a new-design project across six areas: tooling, intellectual property, sample cycles, component availability, validation documents, and reorder continuity. For each area, identify the party responsible for decisions and the evidence required before payment. An existing bottle can deliver quicker concept validation when the right blank sample exists, but new branding and packaging can still add approval steps. A new design may offer differentiation, but it can demand engineering trials and ongoing spare-part management. Ask for a project budget that separates recurring unit costs from one-time design and mold expenses. Set production checkpoints in the order and define the trade term for final shipment rather than relying on the supplier's generic promise. If a supplier can customize many plastic materials, request a feasibility matrix per component instead of describing every possible resin as an off-the-shelf variation. A well-scoped OEM or ODM inquiry saves time because it identifies actual decisions, not marketing categories."
+        }
+      ],
+      "sources": [
+        {
+          "label": "FDA: food-contact regulatory status of constituent substances",
+          "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
+        },
+        {
+          "label": "ICC: international delivery responsibilities",
+          "url": "https://iccwbo.org/business-solutions/incoterms-rules/"
+        },
+        {
+          "label": "USPTO: trademarks and brand ownership basics",
+          "url": "https://www.uspto.gov/trademarks/basics"
+        }
+      ]
+    }
+  }
+}
