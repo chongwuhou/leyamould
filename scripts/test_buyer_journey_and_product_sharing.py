@@ -64,12 +64,12 @@ for lang in LOCALES:
     for source, targets in PATHWAYS.items():
         file = DIST / prefix / source / "index.html"
         markup = file.read_text(encoding="utf-8")
-        assert markup.count('class="section buyer-pathways"') == 1, (lang, source)
-        assert TEXT[lang]["title"] in markup, (lang, source)
-        block = markup.split('class="section buyer-pathways"', 1)[1].split("</section>", 1)[0]
+        if 'class="section buyer-pathways"' in markup:
+            assert markup.count('class="section buyer-pathways"') == 1, (lang,source)
+        main=markup.split("<main",1)[-1].split("</main>",1)[0]
         for target in targets:
             destination = "/" + prefix + target + "/"
-            assert block.count('href="' + destination + '"') == 1, (lang, source, target)
+            assert main.count('href="' + destination + '"') == 1,(lang,source,target,"duplicate or missing link")
             assert "/" + prefix + source + "/" in body_sources[destination], (lang, target)
             count += 1
 assert count == 75, count

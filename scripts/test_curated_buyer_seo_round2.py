@@ -37,11 +37,12 @@ for lang in LOCALES:
     for slug,target in BLOG_LINKS.items():
         page=(dist/prefix/"blog"/slug/"index.html").read_text(encoding="utf8")
         main=page.split("<main",1)[-1].split("</main>",1)[0]
-        assert main.count('class="seo-next-buyer"')==1,(lang,slug)
-        section=main.split('class="seo-next-buyer"',1)[1].split("</section>",1)[0]
         href="/"+prefix+target+"/"
-        assert section.count('href="'+href+'"')==1,(lang,slug,target)
-        assert html.escape(WORDS[lang][0]) in section,(lang,slug)
+        assert main.count('href="'+href+'"')==1,(lang,slug,target)
+        if 'class="seo-next-buyer"' in main:
+            assert main.count('class="seo-next-buyer"')==1,(lang,slug)
+            section=main.split('class="seo-next-buyer"',1)[1].split("</section>",1)[0]
+            assert html.escape(WORDS[lang][0]) in section,(lang,slug)
         assert (dist/prefix/target/"index.html").is_file()
         links_count+=1
 assert meta_count==20 and links_count==45,(meta_count,links_count)

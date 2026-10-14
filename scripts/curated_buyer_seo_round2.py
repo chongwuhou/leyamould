@@ -95,7 +95,7 @@ def change_once(source,pattern,new,context):
     return result
 
 def apply(dist):
-    dist=Path(dist); descriptions=0; links=0
+    dist=Path(dist); descriptions=0; links=0; existing_links=0
     for locale in LOCALES:
         prefix="" if locale=="en" else locale+"/"
         for route,texts in DESCRIPTIONS.items():
@@ -127,18 +127,24 @@ def apply(dist):
                 raise FileNotFoundError(str(file)+" or "+target)
             content=file.read_text(encoding="utf8")
             before,separator,after=content.partition("</main>")
-            if not separator or 'class="seo-next-buyer"' in before:
+            if not separator:
                 raise ValueError("Unexpected article layout "+str(file))
             main=before.split("<main",1)[-1]
             href="/"+prefix+target+"/"
             if 'href="'+href+'"' in main:
-                raise ValueError("Already has exact contextual link "+str(file)+" "+href)
+                existing_links+=1
+                continue
+            if 'class="seo-next-buyer"' in main:
+                existing_links+=1
+                continue
             heading,lead=WORDS[locale]
             new='<section class="seo-next-buyer"><h2>'+html.escape(heading)+'</h2><p>'+html.escape(lead)+': <a href="'+href+'">'+html.escape(TARGET_LABELS[locale][target])+' →</a></p></section>'
             file.write_text(before+new+separator+after,encoding="utf8")
             links+=1
-    if descriptions>20 or links!=45:raise ValueError("Unexpected round2 count")
-    print("XUYI_CURATED_BUYER_SEO_ROUND2",descriptions,"meta",links,"blog links")
+    if descriptions>20 or links+existing_links!=45:
+        raise ValueError("Unexpected round2 count")
+    print("XUYI_CURATED_BUYER_SEO_ROUND2",descriptions,"meta",links,
+          "new blog links",existing_links,"CMS links preserved")
     return descriptions,links
 
 if __name__=="__main__":apply(ROOT/"dist")

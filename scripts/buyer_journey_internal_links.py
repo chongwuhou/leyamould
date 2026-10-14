@@ -109,6 +109,7 @@ TEXT = {
 def apply(dist):
     dist = Path(dist)
     changed = 0
+    preserved = 0
     for lang in LOCALES:
         prefix = "" if lang == "en" else lang + "/"
         words = TEXT[lang]
@@ -117,8 +118,14 @@ def apply(dist):
             if not page.is_file():
                 raise FileNotFoundError("Reviewed contextual source missing: " + str(page))
             markup = page.read_text(encoding="utf-8")
-            if markup.count("</main>") != 1 or 'class="buyer-pathways"' in markup:
+            if markup.count("</main>") != 1:
                 raise ValueError("Unexpected main/article layout on " + str(page))
+            if 'class="section buyer-pathways"' in markup:
+                # An owner may have kept or customized this whole block in
+                # CMS. Rebuilding must not append a second version.
+                preserved += len(targets)
+                continue
+            main = markup.split("<main", 1)[-1].split("</main>", 1)[0]
             links = []
             for target in targets:
                 linked = dist / prefix / target / "index.html"
@@ -127,9 +134,12 @@ def apply(dist):
                 href = "/" + prefix + target + "/"
                 # The target previously had no incoming contextual link. Do
                 # not create a second identical anchor inside the same source.
-                if 'href="' + href + '"' in markup.split("<main", 1)[-1].split("</main>", 1)[0]:
-                    raise ValueError("Existing duplicate link: " + str(page) + " " + href)
+                if 'href="' + href + '"' in main:
+                    preserved += 1
+                    continue
                 links.append('<a href="' + href + '">' + html.escape(words[target]) + " →</a>")
+            if not links:
+                continue
             block = (
                 '<section class="section buyer-pathways" aria-label="' +
                 html.escape(words["title"], quote=True) + '"><div class="shell">'
@@ -140,7 +150,8 @@ def apply(dist):
             markup = markup.replace("</main>", block + "</main>", 1)
             page.write_text(markup, encoding="utf-8")
             changed += len(links)
-    print("XUYI_CONTEXTUAL_BUYER_LINKS", changed, "five locales")
+    print("XUYI_CONTEXTUAL_BUYER_LINKS", changed, "added,",preserved,
+          "existing CMS links preserved, five locales")
     return changed
 
 
