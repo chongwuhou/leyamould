@@ -27,6 +27,19 @@ for loc in ("en","es","pt","ru","tr"):
     assert body.count('class="xac-quality"')==1
     assert body.count('<figure>')==4,loc
     assert body.count('class="xac-no-claims"')==1,loc
+    # The owner-requested section must appear in the source-rendered page,
+    # with all three complete statements, not just shortened headings.
+    assert body.count('id="what-you-wont-find-here"')==1,loc
+    assert d['noClaimsTitle'] in unescape(body),loc
+    no_claims=body.split('id="what-you-wont-find-here"',1)[1].split('</section>',1)[0]
+    assert no_claims.count('<article>')==3,loc
+    for label,description in d['noClaims']:
+        assert label in unescape(no_claims),(loc,label)
+        assert description in unescape(no_claims),(loc,description)
+    if loc=='en':
+        assert 'Plastic drinkware is all we do — focus is a feature.' in unescape(no_claims)
+        assert 'What you see is the model we discuss.' in unescape(no_claims)
+        assert "We'd rather answer precisely late than impressively wrong." in unescape(no_claims)
     assert '"/assets/about-company.css"' not in body
     assert '/assets/about-company.css' in head
     for url in ASSETS:assert body.count('src="'+url+'"')==1,(loc,url)

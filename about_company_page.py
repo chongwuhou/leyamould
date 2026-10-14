@@ -70,7 +70,7 @@ def render(locale):
         caption=data.get("photoCaptions",[])[index] if locale!="en" else data["photos"][index]["caption"]
         h+='<figure><img src="'+url+'" loading="lazy" decoding="async" alt="'+safe_text(alt)+'"><figcaption>'+safe_text(caption)+'</figcaption></figure>'
     h+='</div></div></section>'
-    h+='<section class="rs-section"><div class="shell"><h2>'+safe_text(data["noClaimsTitle"])+'</h2><div class="xac-no-claims">'
+    h+='<section class="rs-section rs-section--soft xac-no-claims-section" id="what-you-wont-find-here"><div class="shell"><h2>'+safe_text(data["noClaimsTitle"])+'</h2><div class="xac-no-claims">'
     for heading,detail in data["noClaims"]:
         h+='<article><h3>'+safe_text(heading)+'</h3><p>'+safe_text(detail)+'</p></article>'
     h+='</div></div></section>'

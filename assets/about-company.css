@@ -34,6 +34,9 @@
 .xac-gallery figure{margin:0;overflow:hidden;border-radius:11px;background:#25312e}
 .xac-gallery img{display:block;width:100%;height:205px;object-fit:cover}
 .xac-gallery figcaption{font-size:12px;line-height:1.6;color:#e0e8e3;padding:13px 14px}
+.xac-no-claims-section{scroll-margin-top:110px;background:#edf5f0;border-top:1px solid #d6e4d9;border-bottom:1px solid #d6e4d9}
+.xac-no-claims-section h2{color:#194b36;max-width:870px;margin-bottom:29px}
+.xac-no-claims-section .xac-no-claims article{background:#fff;border-left:4px solid #327854;box-shadow:0 7px 21px rgba(19,71,48,.06)}
 .xac-no-claims{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
 .xac-final .button{color:#fff;border:1px solid #b5ccc3;background:transparent}
 .xac-final .button:first-child{background:#fff;color:#1c3630}
