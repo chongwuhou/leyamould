@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import DATA from "../data/blog-buyer-decision-tables.json" with {type:"json"};
-import {blogHtml,renderBuyerDecisionTable,normalizeBlogPost,composePage} from "../functions/_shared/blog-cms.js";
+import {esc,blogHtml,renderBuyerDecisionTable,normalizeBlogPost,composePage} from "../functions/_shared/blog-cms.js";
 
 const titles=new Set();
 for(const [slug,row] of Object.entries(DATA.articles)){
@@ -9,7 +9,7 @@ for(const [slug,row] of Object.entries(DATA.articles)){
  titles.add(row.title);
  const module=renderBuyerDecisionTable({slug});
  assert(module.includes('id="buyer-decision-table"'),slug);
- assert(module.includes(row.title),slug);
+ assert(module.includes(esc(row.title)),slug);
  assert.equal(module.match(/<tr>/g)?.length,5,slug);
  assert(module.includes(row.links[0][1]),slug);
  assert.equal(renderBuyerDecisionTable({slug,buyerDecisionTable:false}),"","CMS opt-out must win");
