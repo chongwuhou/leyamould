@@ -1,0 +1,39 @@
+{
+  "2099": {
+    "tr": "Gerekirse fabrikadan iki modelin ayrı üretim çizimlerini de talep edin."
+  },
+  "2212": {
+    "ru": "Отдельно сохраните утвержденный цвет и номер заводского образца.",
+    "tr": "Seçilen geçişli rengi ve üretim numunesini sipariş belgelerine kaydedin."
+  },
+  "2400": {
+    "ru": "Для повторных партий сохраняйте утвержденную цветовую пробу и оригинальный номер модели.",
+    "tr": "Sonraki siparişlerde onaylanan renk ve fabrika model numarasını saklayın."
+  },
+  "5299": {
+    "tr": "Gövde ölçüsünü çizim üzerinde değil bitmiş numunede doğrulayın."
+  },
+  "5340": {
+    "tr": "Yazılı üretim onayını saklayın."
+  },
+  "6252": {
+    "tr": "Gerçek koli numunesini ayrıca inceleyin."
+  },
+  "8563": {
+    "tr": "Seçilen renk için yazılı üretim onayı da isteyin."
+  },
+  "2306---": {
+    "ru": "Подтверждение заводской идентичности сохраняйте вместе с изображениями обеих моделей.",
+    "tr": "Her iki fabrikanın model kodunu ürün fotoğraflarıyla birlikte kaydedin."
+  },
+  "2308---": {
+    "ru": "Для повторных поставок закрепите заводской код за конкретным утвержденным образцом.",
+    "tr": "Onaylanan şişe numunesini ve fabrika model kodunu sonraki siparişler için ayrıca saklayın."
+  },
+  "2401---": {
+    "tr": "Onaylı baskı örneğini saklayın."
+  },
+  "2307---": {
+    "tr": "Her model için onaylanan ayrı fabrikasyon numunesini kaydedin."
+  }
+}
