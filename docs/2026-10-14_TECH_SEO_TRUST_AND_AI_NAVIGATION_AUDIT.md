@@ -17,5 +17,6 @@ Applies only to xuyi-drinkware-site. Permanent source/CMS build flow, not one-of
 - Main build hook: scripts/verified_trust_technical_seo.py invoked from scripts/build_release.py.
 - Permanent regression: scripts/test_verified_trust_technical_seo.py and updated scripts/test_seo_multilingual_launch.py, in GitHub Actions release gates.
 - Shared styling: assets/site.css, no direct dist-only edit.
+- Important live-route parity fix: published English articles are rendered from Cloudflare D1 by functions/_shared/blog-cms.js, not directly from static HTML. It now renders the same visible organizational byline and BlogPosting.author About URL; if a CMS-edited cover differs from its static shell, stale OG image width/height are stripped. Node runtime tests scripts/test_blog_dynamic_evidence.mjs and scripts/test_blog_hreflang_runtime.mjs enforce this behavior.
 - Local tests: 55 Python release gates passed; full source rebuild repeated twice; SHA256 stable across 9 representative artifacts.
 - Production publication and Node tests must be verified from official GitHub Actions before claiming the site is live.

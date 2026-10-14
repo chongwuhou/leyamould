@@ -52,6 +52,11 @@ assert(html.includes('<meta property="og:title" content="Plastic Bottle Buying G
 assert(html.includes("A practical wholesale buying guide with original content from the D1 CMS"));
 assert(html.includes('alt="Plastic bottle material choices shown in a wholesale sourcing guide"'),
   "Dynamic D1 Blog must use edited R2 image ALT, not only the post headline");
+assert(html.includes('class="blog-author-byline"')&&html.includes('rel="author" href="/about/"'),
+  "D1 blog must show organization editorial byline like the static pages");
+const data=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1]||"{}");
+assert.equal(data.author?.name,"XUYI Bottles");
+assert.equal(data.author?.url,ORIGIN+"/about/");
 const newer=await onRequestGet(requestContext("buyer-guide-only-in-d1"));
 const newerHtml=await newer.text();
 assert(newerHtml.includes('href="'+ORIGIN+'/blog/buyer-guide-only-in-d1/"'));

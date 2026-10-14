@@ -79,7 +79,7 @@ export function blogHtml(post){
  const published=actualPublishedDate(post),modified=contentModifiedDate(post);
  const timeline=(published?'<time datetime="'+esc(published)+'">Published '+esc(published)+'</time>':'')+
    (modified&&modified>published?' · <time datetime="'+esc(modified)+'">Reviewed '+esc(modified)+'</time>':'');
- body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div><p class="blog-lede">'+esc(post.intro)+'</p>';
+ body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div><p class="blog-author-byline"><a rel="author" href="/about/">By XUYI Bottles · Product Sourcing Editorial Team</a></p><p class="blog-lede">'+esc(post.intro)+'</p>';
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
  post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+esc(section.paragraph)+'</p></section>'});
  body+=verifiedEvidence(post);
@@ -146,9 +146,15 @@ export function composePage(template,body,post,route){
    const match=new RegExp('<meta property="'+key+'" content="[^"]*">');
    html=match.test(html)?html.replace(match,tag):html.replace('</head>',tag+'</head>');
   }
+  // If the owner changes a D1 article cover, do not reuse dimensions of
+  // the old immutable static shell's image (they may be incorrect).
+  const oldOg=html.match(/<meta property="og:image" content="([^"]*)">/);
+  const newOgUrl='https://xuyibottles.com'+post.cover;
+  if(!oldOg || oldOg[1]!==newOgUrl)
+   html=html.replace(/<meta property="og:image:(?:width|height)" content="\d+">/g,'');
   html=html.replace(/<meta property="og:image" content="[^"]*">/,'');
   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g,'');
-  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
+  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:{'@type':'Organization',name:'XUYI Bottles',url:'https://xuyibottles.com/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
   if(actualPublishedDate(post))graph.datePublished=actualPublishedDate(post);
   if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
     .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org)\//.test(s.url))
