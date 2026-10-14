@@ -114,6 +114,11 @@ def build_url(path,title,content):
   # source-checked supplements for selected company/quality pages.
   from editorial_support import for_route as reviewed_editorial_for_route
   main+=reviewed_editorial_for_route(route,main)
+  # Owner-approved Blog content remains primary. Add a verified long-form
+  # source supplement only while its exact baseline introduction survives.
+  if route.startswith('/blog/'):
+   from blog_editorial import owner_safe_depth
+   main+=owner_safe_depth(route,main)
   # Render reviewed buyer guidance at the CMS/template stage, not by
   # rewriting output HTML. D1-owned modules always take precedence.
   if route.startswith(("/applications/","/features/")):
@@ -207,6 +212,16 @@ def build_url(path,title,content):
  content=polish_image_alt(content,"en")
  from media_alt_render import apply_media_alts
  content=apply_media_alts(content,BUILD_STATE,"en")
+ # Render source-verified component materials and retail capacity into
+ # default SEO before writing the page. Owner D1 title edits win.
+ if route.startswith('/products/') and route!='/products/':
+  from scripts.source_catalog_capacity_oz import pre_render_verified_meta
+  row=next((v for v in SERIES.values() if v['slug']==route.strip('/').split('/')[-1]),None)
+  if row:content=pre_render_verified_meta(content,'en',row,BUILD_STATE)
+ # Source-rendered Product FAQ and collection ItemList schemas are based
+ # on the final D1/CMS-selected body, not on post-build HTML mutations.
+ from seo_structured_components import add_at_render
+ content=add_at_render(content,route,'en')
  URLS[path]=title
  write(path,content)
 ICONS={

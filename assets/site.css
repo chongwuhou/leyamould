@@ -1085,6 +1085,14 @@ body:has(#xuyi-home-banners) .home-bpa-verification small{display:block;font-siz
 .blog-buyer-matrix .blog-buyer-matrix__note{font-size:12px;line-height:1.65;color:#516c5d;margin:15px 0 8px}
 .blog-buyer-matrix__links{display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:13px}
 .blog-buyer-matrix__links a{color:#1f6948;text-decoration:underline;text-underline-offset:3px;font-weight:650}
+/* Source-reviewed long-form editorial, attached only if D1 article baseline survives. */
+.blog-deep-dive{margin:32px 0;padding:23px 24px;border:1px solid #d5e4dc;border-radius:12px;background:#fff}
+.blog-deep-dive>h2{margin:0 0 23px;color:#244e36}
+.blog-deep-dive__section{margin:0 0 25px}
+.blog-deep-dive__section h3{font-size:19px;line-height:1.45;color:#24573b;margin:0 0 9px}
+.blog-deep-dive__section p{line-height:1.85;margin:0;color:#33483d}
+@media(max-width:650px){.blog-deep-dive{padding:16px 13px}}
+
 /* The 10 distinct Applications/Features purchase matrices are rendered in
    the page template from data/topic-decision-grids-en.json, NOT patched dist. */
 .topic-decision-grid{margin:24px 0;padding:18px 19px;background:#fff;border:1px solid #cbded4;border-radius:11px}

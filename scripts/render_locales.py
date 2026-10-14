@@ -91,7 +91,7 @@ def localize_structured_data(markup,locale,route,localized,fields,approved_route
     def localize_item(item):
         if not isinstance(item,dict):return item
         typ=item.get("@type")
-        if typ=="FAQPage":return None
+        if typ in ("FAQPage","ItemList"):return None  # regenerate from visible translated page
         if typ=="Organization":return item  # One globally identifiable legal company.
         if typ in ("Product","BlogPosting","Service","WebPage"):
             for key in ("@id","url"):
@@ -372,6 +372,16 @@ def main():
         text=correct_reviewed_drinkware_terms(text,loc)
         text=polish_image_alt(text,loc)
         text=apply_media_alts(text,data,loc)
+        if route.startswith('/products/') and route!='/products/':
+            from source_catalog_capacity_oz import pre_render_verified_meta
+            from site_renderer import SERIES
+            model=route.removeprefix('/products/').strip('/')
+            source_row=next((v for v in SERIES.values() if v['slug']==model),None)
+            if source_row:text=pre_render_verified_meta(text,loc,source_row,data)
+        # Build visible FAQs and product card listings from the approved
+        # translated D1 body during rendering; never patch generated pages.
+        from seo_structured_components import add_at_render
+        text=add_at_render(text,localized,loc)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
         created+=1

@@ -184,6 +184,23 @@ def current_baseline(locale,row,data=None):
     actual=hashlib.sha256((title+"\x1f"+desc).encode("utf8")).hexdigest()
     return actual==expected
 
+def verified_source_material(row):
+    """Catalog/CMS component list, not an inferred single body resin."""
+    raw=str(row.get("material") or "").strip()
+    parts=[piece.strip().upper() for piece in raw.replace("/","+").split("+")]
+    permitted={"PC","PP","ABS","PE","PETG","TRITAN"}
+    if not parts or len(parts)>3 or any(part not in permitted for part in parts):
+        return ""
+    return "/".join(dict.fromkeys(parts))
+
+def pre_render_verified_meta(page,locale,row,owner_override=None):
+    """Run BEFORE writing a CMS-reviewed template page; no dist HTML edit."""
+    volumes=catalog_volume_numbers(row)
+    if not volumes or "</head>" not in page:return page
+    head,body=page.split("</head>",1)
+    head,_=seo_head(head,locale,row,volumes,owner_override)
+    return head+"</head>"+body
+
 def new_seo(locale,row,numbers):
     kind=KIND[locale][row["category"]]
     model=slug_label(row,locale)
@@ -192,7 +209,8 @@ def new_seo(locale,row,numbers):
             and row["category"]=="Plastic Sports Water Bottles"):
         kind=({"en":"Gradient Sports Bottle","es":"Botella degradada",
                "pt":"Garrafa degradê","ru":"Градиентная бутылка","tr":"Degrade spor şişesi"}[locale])
-    title=f"{vol} {kind} | {model} XUYI"
+    material=verified_source_material(row)
+    title=f"{vol} {material+' ' if material else ''}{kind} | {model} XUYI"
     # Customize only the headline language; real resin/lid claims require SKU
     # evidence. Keep the factory model as a secondary identifier.
     if locale=="en" and len(numbers)==1:
@@ -204,14 +222,17 @@ def new_seo(locale,row,numbers):
           "Gradient Sports Bottle":"Gradient Custom Logo Bottle",
         }.get(kind)
         if buyer_kind:
-            buyer_title=f"{vol} {buyer_kind} | XUYI {model}"
+            buyer_title=f"{vol} {material+' ' if material else ''}{buyer_kind} | XUYI {model}"
             if len(buyer_title)<=70:title=buyer_title
     small={"en":"Bottle","es":"Botella","pt":"Garrafa","ru":"Бутылка","tr":"Şişe"}[locale]
-    if len(title)>70:title=f"{vol} {small} | {model} XUYI"
-    if len(title)>75 and len(numbers)>1:
-        compact_ml="/".join(format_ml(n) for n in numbers)
+    if len(title)>70:title=f"{vol} {material+' ' if material else ''}{small} | {model} XUYI"
+    if len(numbers)>1:
+        compact_ml="/".join(f"{n:g}" for n in numbers)+"ml"
         compact_oz="/".join(oz_number(n) for n in numbers)
-        title=f"{compact_ml} ({compact_oz}oz classes) {small} | {model} XUYI"
+        capacity=f"{compact_ml} ({compact_oz} oz classes)"
+        detailed=f"{capacity} {material+' ' if material else ''}{kind} | XUYI {model}"
+        if len(detailed)<=75:title=detailed
+        elif len(title)>75:title=f"{capacity} {material+' ' if material else ''}{small} | {model} XUYI"
     assert len(title)<=75,(locale,row["slug"],title)
     description=COPY[locale]["description"].format(
        volume=volume_terms(numbers,locale),kind=kind,model=model)

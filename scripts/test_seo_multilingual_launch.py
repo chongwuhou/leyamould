@@ -11,6 +11,7 @@ import json,re,sys,xml.etree.ElementTree as ET
 sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT=Path(__file__).resolve().parent.parent
+sys.path.insert(0,str(ROOT))
 DIST=ROOT/"dist"
 ORIGIN="https://xuyibottles.com"
 manifest=json.loads((DIST/"locale-manifest.json").read_text(encoding="utf-8"))
@@ -105,12 +106,16 @@ for rel,html in all_published_documents():
                     refer=node.get("@id") if isinstance(node,dict) else node
                     if refer!=expected:errors.append((route,"BlogPosting main page mismatch",refer))
             if locale!="en" and typ=="FAQPage":
-                # Approved translated homepage FAQs may be marked up ONLY when
-                # the five translated Q&As are visible on that home route.
-                if route!="/"+PREFIX[locale].strip("/")+"/": 
-                    errors.append((route,"FAQPage unexpectedly inherited by a non-home translation"))
-                elif len(obj.get("mainEntity",[]))!=5 or 'class="dark-faq"' not in html:
-                    errors.append((route,"Localized homepage FAQPage mismatch"))
+                # Homepage and product FAQs are only valid if CMS language matches.
+                if route=="/"+PREFIX[locale].strip("/")+"/":
+                    if len(obj.get("mainEntity",[]))!=5 or 'class="dark-faq"' not in html:
+                        errors.append((route,"Localized homepage FAQPage mismatch"))
+                elif re.fullmatch(r"/(?:es|pt|ru|tr)/products/[a-z0-9_-]+/",route):
+                    from seo_structured_components import visible_faq
+                    pairs=visible_faq(html)
+                    if [x.get("name") for x in obj.get("mainEntity",[])]!=[q for q,a in pairs]:
+                        errors.append((route,"Product FAQPage differs from visible translation"))
+                else:errors.append((route,"FAQPage on unsupported translated page"))
     records[expected]={"route":route,"locale":locale,"title":title,"description":desc,"hreflang":hrefs}
 expected_published=sum(len(manifest["routes"].get(code,[])) for code in LOCALES)
 if len(records)!=expected_published:

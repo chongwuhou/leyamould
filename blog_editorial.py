@@ -74,6 +74,27 @@ def render_buyer_matrix(slug, override=None):
         h+='<a href="'+e(url)+'">'+e(label)+' →</a>'
     return h+'</nav></section>'
 
+BLOG_DEPTH=json.loads((ROOT/"data/blog-depth-evidence-en.json").read_text(encoding="utf8"))["articles"]
+
+def render_depth_evidence(slug):
+    entry=BLOG_DEPTH.get(slug)
+    if not entry:return ""
+    out='<section class="blog-deep-dive" id="source-reviewed-deep-dive"><h2>Material sourcing: detailed buyer decisions</h2>'
+    for item in entry["sections"]:
+        out+='<section class="blog-deep-dive__section"><h3>'+e(item["heading"])+'</h3><p>'+e(item["paragraph"])+'</p></section>'
+    return out+'</section>'
+
+def owner_safe_depth(route,body):
+    """Never add baseline text when a D1 owner changed the article introduction."""
+    slug=route.strip("/").split("/")[-1]
+    entry=BLOG_DEPTH.get(slug)
+    if not entry or 'id="source-reviewed-deep-dive"' in body:return ""
+    match=re.search(r'<p class="blog-lede">(.*?)</p>',body,re.S)
+    if not match:return ""
+    from html import unescape
+    intro=unescape(re.sub(r'<[^>]*>','',match.group(1))).strip()
+    return render_depth_evidence(slug) if intro==entry["baselineIntro"] else ""
+
 def render_article(slug):
     post=GUIDES[slug]
     related=[GUIDES[s] for s in post["related"]]
@@ -99,6 +120,7 @@ def render_article(slug):
         h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+'</p></section>'
     h+=render_primary_evidence(slug)
     h+=render_buyer_matrix(slug)
+    h+=render_depth_evidence(slug)
     h+='<section class="blog-checklist"><h2>Buyer checklist</h2><p>Use these points when comparing a factory sample, artwork approval and purchase quotation.</p><ul>'
     for tip in post["checklist"]:h+='<li>'+e(tip)+'</li>'
     h+='</ul></section><section class="blog-faq"><h2>Frequently asked questions</h2>'

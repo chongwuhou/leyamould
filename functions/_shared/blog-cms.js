@@ -4,7 +4,18 @@ import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json" with {type:"
 import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json" with {type:"json"};
 import BLOG_FEATURE_PATHWAYS from "../../data/blog-feature-pathways.json" with {type:"json"};
 import BUYER_MATRICES from "../../data/blog-buyer-decision-tables.json" with {type:"json"};
+import BLOG_DEPTH from "../../data/blog-depth-evidence-en.json" with {type:"json"};
 
+export function renderDepthEvidence(post){
+ const row=BLOG_DEPTH.articles[post?.slug];
+ // Any D1 editor update to the article intro overrides this stock source
+ // expansion. An explicit false also wins and survives normalized CMS saves.
+ if(!row||post?.depthEvidence===false||String(post?.intro||"").trim()!==row.baselineIntro)return "";
+ let out='<section class="blog-deep-dive" id="source-reviewed-deep-dive"><h2>Material sourcing: detailed buyer decisions</h2>';
+ for(const section of row.sections)
+  out+='<section class="blog-deep-dive__section"><h3>'+esc(section.heading)+'</h3><p>'+esc(section.paragraph)+'</p></section>';
+ return out+'</section>';
+}
 export function renderBuyerDecisionTable(post){
  const entry=post?.buyerDecisionTable===false?null:
              (post?.buyerDecisionTable && typeof post.buyerDecisionTable==="object"?
@@ -85,7 +96,9 @@ export function normalizeBlogPost(raw){
  const primary_keyword=str(raw?.primary_keyword,110),secondary_keywords=(Array.isArray(raw?.secondary_keywords)?raw.secondary_keywords:[]).slice(0,12).map(v=>str(v,110)).filter(Boolean);
  const buyerDecisionTable=normalizeBuyerDecisionTable(raw?.buyerDecisionTable);
  return {slug,title,description,intro,cover,sections,faqs,checklist,related,group,category:'Buyer Resources',primary_keyword,secondary_keywords,updated,
-  ...(buyerDecisionTable!==undefined?{buyerDecisionTable}:{})};
+  ...(buyerDecisionTable!==undefined?{buyerDecisionTable}:{}),
+  ...(raw?.depthEvidence===false?{depthEvidence:false}:{}),
+  ...(vettedBlogPerson(raw)?{authorPerson:{...vettedBlogPerson(raw),verified:true}}:{})};
 }
 export async function listBlogPosts(db,status=''){
  await ensureBlogSchema(db);
@@ -113,6 +126,15 @@ export async function findEditableBlogPost(db,slug){
  try{return {...JSON.parse(draft.draft_json),status:post.status,isDraftVersion:true,slug,published_at:post.published_at}}
  catch{return post}
 }
+function vettedBlogPerson(post){
+ const person=post?.authorPerson;
+ if(!person||person.verified!==true)return null;
+ const name=str(person.name,100),jobTitle=str(person.jobTitle,120),url=str(person.url,300);
+ if(name.length<2||jobTitle.length<3)return null;
+ if(!/^https:\/\/(?:xuyibottles\.com\/[a-z0-9/_-]+\/|(?:www\.)?linkedin\.com\/in\/[a-z0-9_-]+\/?)$/i.test(url))
+   return null;
+ return {"@type":"Person",name,jobTitle,url};
+}
 export function blogHtml(post){
  let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Buying Guide</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+esc(post.title)+'</h1><p>'+esc(post.description)+'</p></div></section>';
  body+='<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" loading="eager"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">';
@@ -120,11 +142,16 @@ export function blogHtml(post){
  const published=actualPublishedDate(post),modified=contentModifiedDate(post);
  const timeline=(published?'<time datetime="'+esc(published)+'">Published '+esc(published)+'</time>':'')+
    (modified&&modified>published?' · <time datetime="'+esc(modified)+'">Reviewed '+esc(modified)+'</time>':'');
- body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div><p class="blog-author-byline"><a rel="author" href="/about/">By XUYI Bottles · Product Sourcing Editorial Team</a></p><p class="blog-lede">'+esc(post.intro)+'</p>';
+ const person=vettedBlogPerson(post);
+ const byline='<p class="blog-author-byline"><a rel="author" href="'+esc(person?.url||'/about/')+'">'+
+   (person?'By '+esc(person.name)+' · '+esc(person.jobTitle):
+     'By XUYI Bottles · Product Sourcing Editorial Team')+'</a></p>';
+ body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div>'+byline+'<p class="blog-lede">'+esc(post.intro)+'</p>';
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
  post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+esc(section.paragraph)+'</p></section>'});
  body+=verifiedEvidence(post);
  body+=renderBuyerDecisionTable(post);
+ body+=renderDepthEvidence(post);
  if(post.checklist?.length){body+='<section class="blog-checklist"><h2>Buyer checklist</h2><ul>';for(const tip of post.checklist)body+='<li>'+esc(tip)+'</li>';body+='</ul></section>'}
  if(post.faqs?.length){body+='<section class="blog-faq"><h2>Frequently asked questions</h2>';for(const q of post.faqs)body+='<details><summary>'+esc(q.question)+'</summary><p>'+esc(q.answer)+'</p></details>';body+='</section>'}
  body+='<div class="blog-editorial__cta"><h2>Need a quote for a specific model?</h2><p>Send the model, expected order quantity, logo requirements and destination market. XUYI can review confirmed material and customization options.</p><a class="button" href="/contact/#inquiry">Request a Plastic Bottle Quote →</a></div>';
@@ -196,7 +223,7 @@ export function composePage(template,body,post,route){
    html=html.replace(/<meta property="og:image:(?:width|height)" content="\d+">/g,'');
   html=html.replace(/<meta property="og:image" content="[^"]*">/,'');
   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g,'');
-  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:{'@type':'Organization',name:'XUYI Bottles',url:'https://xuyibottles.com/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
+  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'XUYI Bottles',url:'https://xuyibottles.com/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
   if(actualPublishedDate(post))graph.datePublished=actualPublishedDate(post);
   if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
     .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org)\//.test(s.url))

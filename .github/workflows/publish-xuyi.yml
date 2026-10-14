@@ -138,10 +138,12 @@ jobs:
           python scripts/test_model_catalog_buyer_comparison.py
           python scripts/test_curated_application_feature_answers.py
           python scripts/test_source_buyer_decision_content.py
+          python scripts/test_visible_catalog_schemas.py
           python scripts/test_editorial_evidence.py
           python scripts/test_editorial_d1_overrides.py
           node scripts/test_blog_dynamic_evidence.mjs
           node scripts/test_blog_buyer_decisions_runtime.mjs
+          node scripts/test_verified_blog_depth_and_authors.mjs
           node scripts/test_blog_buyer_pathways_runtime.mjs
           node scripts/test_blog_hreflang_runtime.mjs
           node scripts/test_blog_cover_override_runtime.mjs
