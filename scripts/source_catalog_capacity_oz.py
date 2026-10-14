@@ -233,7 +233,12 @@ def new_seo(locale,row,numbers):
         detailed=f"{capacity} {material+' ' if material else ''}{kind} | XUYI {model}"
         if len(detailed)<=75:title=detailed
         elif len(title)>75:title=f"{capacity} {material+' ' if material else ''}{small} | {model} XUYI"
-    assert len(title)<=75,(locale,row["slug"],title)
+    if len(title)>70:
+        short_model=re.match(r'^\d+',str(row['model']))
+        model_id=short_model.group(0) if short_model else model
+        title=f"{vol} {material+' ' if material else ''}{small} | {model_id} XUYI"
+        if len(title)>70:title=f"{vol} {small} | {model_id} XUYI"
+    assert len(title)<=70,(locale,row["slug"],title)
     description=COPY[locale]["description"].format(
        volume=volume_terms(numbers,locale),kind=kind,model=model)
     if len(description)>180:
