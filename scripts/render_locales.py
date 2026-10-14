@@ -330,6 +330,12 @@ def main():
             if previous and fields["title"]==previous["original"]:
                 fields={**fields,"title":previous["revised"]}
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
+        if route.startswith("/products/") and route!="/products/":
+            from site_renderer import SERIES
+            from sku_unique_openings import editor_intro
+            current_product=next((v for v in SERIES.values() if v["slug"]==route.split("/")[2]),None)
+            if current_product is not None:
+                body=editor_intro(body,current_product,loc)
         # Translated D1 body takes precedence; add common scenario-specific
         # buyer guidance inside the locale renderer before final HTML write.
         if route.startswith(("/applications/","/features/")):

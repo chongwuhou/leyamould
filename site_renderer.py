@@ -157,6 +157,8 @@ def build_url(path,title,content):
    # previously generated product template.
    if not BODY_OVERRIDES.get(route):
     main=source_product_identity(main,product,"en",collections.Counter(x["images"][0] for x in SERIES.values()))
+    from sku_unique_openings import editor_intro
+    main=editor_intro(main,product,"en")
    from g_series_material_options import render_g_material_options
    main+=render_g_material_options(route,'en',main)
   # D1's English homepage body predates the five-language logo carousel.

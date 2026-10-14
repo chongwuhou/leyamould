@@ -1,0 +1,102 @@
+{
+  "501": {
+    "pt": "Ao comparar com o 507, confirme que a listagem PP/PE deste modelo não foi confundida com a ficha de PP do concorrente interno.",
+    "ru": "В линейке также есть модель 507 объёмом 500 мл, но с другой записью материалов. Не подставляйте сведения PP/PE для двух разных артикулов без проверки состава и комплектации образцов.",
+    "tr": "Aynı 500 ml hacimdeki 507 modelinin malzeme kaydı farklıdır. 501 için PP/PE bilgisini kullanırken diğer ürüne aynı bileşimi otomatik aktarmayın; parça ve aksesuar listelerini ayrı doğrulayın."
+  },
+  "502": {
+    "pt": "O tamanho maior exige atenção especial ao fechamento montado e à altura da embalagem; não deduza medidas apenas dos 700 ml.",
+    "ru": "Для более высокой бутылки особенно важно измерить общую высоту вместе с крышкой. Значение 700 мл само по себе не позволяет определить габариты коробки или число единиц в партии.",
+    "tr": "Daha uzun ürünlerde kapak takıldıktan sonraki toplam yükseklik özellikle önemlidir. Yalnızca 700 ml hacme bakarak raf aralığı, koli yüksekliği veya bir kutuya sığacak parça sayısı tahmin edilmemelidir."
+  },
+  "507": {
+    "pt": "Registre a composição efetivamente aprovada; o mesmo volume do modelo 501 não comprova identidade das peças.",
+    "ru": "Перед повторной закупкой закрепите в спецификации именно тот материал и набор компонентов, который был подтверждён для 507. Совпадение вместимости с 501 не является доказательством общей конструкции.",
+    "tr": "Onaylanan malzeme bileşimini ve aksesuar setini 507 koduyla birlikte kaydedin. 501 ile aynı hacimde olması, bu iki shaker ürününün kapaklarının veya diğer parçalarının ortak kullanılabileceğini kanıtlamaz."
+  },
+  "509": {
+    "pt": "Ao compará-lo com o 510, destaque que ambos registram 400 ml, mas dimensões e materiais não são iguais.",
+    "ru": "Сравнивая его с шейкером 510, отдельно укажите совпадающий объём 400 мл и отличающиеся габариты и материалы. Так покупатель не перепутает две позиции при заказе коробок и аксессуаров.",
+    "tr": "510 ile karşılaştırma yaparken iki modelin de 400 ml olduğunu, buna karşın boyut ve malzeme kayıtlarının farklılaştığını gösterin. Koli ve aksesuar seçiminde aynı hacimden otomatik uyum sonucu çıkarılmamalıdır."
+  },
+  "510": {
+    "pt": "Nas propostas, mantenha o código 510 separado do 509 apesar dos mesmos 400 ml, com desenhos e embalagens próprios.",
+    "ru": "При подготовке коммерческого предложения отличайте 510 от модели 509, несмотря на одинаковую вместимость. Для каждой позиции нужны собственные размеры, образец печати и транспортная спецификация, особенно при продаже комплектами.",
+    "tr": "Her iki shaker modelinin 400 ml olması onları aynı ürün yapmaz. 510 için ayrı ölçü çizimi, baskı örneği ve koli planı kaydedin; 509'a ait aksesuar ve kapak bilgilerinin burada geçerli olduğunu varsaymayın."
+  },
+  "2095": {
+    "pt": "Na comparação comercial, mantenha a referência 2095 separada das outras fotografias de catálogo para impedir a associação errada de cor.",
+    "ru": "При подготовке интернет-каталога следите, чтобы фотография 2095 не была подставлена вместо другой модели. Цветовой переход и размещение логотипа согласовывайте только по настоящему образцу конкретного артикула.",
+    "tr": "Çevrimiçi katalog hazırlanırken 2095 görselinin farklı bir modelin ürünüymüş gibi kullanılmaması önemlidir. Degrade renk, logo konumu ve kapak parçalarını bu SKU'nun fiziksel numunesi üzerinde ayrı ayrı kayıt altına alın."
+  },
+  "2106": {
+    "pt": "Como a ficha não lista ABS, evite reproduzir automaticamente a composição dos modelos vizinhos na descrição deste SKU.",
+    "ru": "Поскольку ABS в исходной записи 2106 не указан, не копируйте состав соседних моделей в карточку товара. Для честной закупочной спецификации нужны отдельные сведения о корпусе, крышке и уплотняющих элементах.",
+    "tr": "2106 kaydında ABS listelenmediği için komşu çocuk mataralarının malzeme bileşimini bu modele kopyalamayın. Gerçek gövde, kapak ve conta malzemelerini ayrı teyit ederek teklif ve teknik tabloyu aynı SKU üzerinden hazırlayın."
+  },
+  "2108": {
+    "pt": "Registre os 650 ml como capacidade do modelo e não transfira aos demais tamanhos a mesma configuração de fechamento.",
+    "ru": "Объём 650 мл следует закрепить за конкретным артикулом. Если ассортимент включает и другие размеры, необходимо отдельно подтвердить крышки и детали каждого варианта, особенно при планировании общих запасных компонентов.",
+    "tr": "650 ml kapasiteyi model bazında kaydedin. Aynı ürün ailesindeki farklı hacimlere ortak kapak veya yedek parça uyumu atfetmeden önce her birinin montajlı örneğini ve parça listesini ayrıca doğrulayın."
+  },
+  "2215": {
+    "pt": "Mesmo entre volumes próximos, a confirmação individual de tampas e caixas evita erros de reposição e custos de frete.",
+    "ru": "Даже при близких объёмах разные артикулы могут требовать отдельных крышек и транспортных коробок. Для повторных закупок сохраните утверждённый комплект деталей и упаковочную спецификацию модели 2215 в документах заказа.",
+    "tr": "Yakın kapasitedeki bidonlar arasında kapak ve koli uyumu önceden kanıtlanmış sayılmamalıdır. Tekrar siparişlerde 2215 için onaylanan parça ve ambalaj listesini saklamak, farklı ürünlerin karışmasını ve gereksiz lojistik giderlerini önler."
+  },
+  "2271": {
+    "pt": "Se o distribuidor listar também o 2281, destaque corretamente a diferença entre 2.300 e 2.200 ml sem transferir especificações.",
+    "ru": "Если дистрибьютор одновременно предлагает модель 2281, важно ясно различать 2300 и 2200 мл. Однако дополнительный объём не доказывает другую конструкцию крышки или повышенную прочность: нужны настоящие образцы обеих позиций.",
+    "tr": "Dağıtıcı 2281'i de satacaksa 2.300 ile 2.200 ml farkını doğru belirtmelidir. Kapasite farkı tek başına daha güçlü gövde veya başka kapak yapısı anlamına gelmez; iki kodu ayrı numunelerle karşılaştırın."
+  },
+  "2281": {
+    "pt": "Separe este código do 2291, que também registra 2.200 ml, antes de aprovar fotos, tampas ou caixas de transporte.",
+    "ru": "В каталоге также существует модель 2291 объёмом 2200 мл. Поэтому при согласовании фотографий, крышек и транспортной тары всегда указывайте код 2281 и не считайте две позиции взаимозаменяемыми только по числу миллилитров.",
+    "tr": "Aynı 2.200 ml hacminde 2291 adlı başka bir SKU da bulunur. Fotoğraf, kapak ve sevkiyat kolisini onaylarken 2281 kodunu kullanın; iki farklı modelin yalnızca hacim nedeniyle birbirinin yerine geçebileceğini varsaymayın."
+  },
+  "2290": {
+    "pt": "Documente a variante de 1.600 ml e as vistas fotográficas utilizadas para não confundir esta garrafa com a 2280.",
+    "ru": "Укажите в заказе именно код 2290: в каталоге есть другая позиция 1600 мл, модель 2280. Совпадение объёма не означает совпадения корпуса, крышки или транспортных размеров, и эти детали проверяются раздельно.",
+    "tr": "Siparişte 2290 kodunu açıkça kullanın; katalogda aynı 1.600 ml hacme sahip 2280 de vardır. Kapasitenin aynı olması gövde, kapak ve koli ölçülerinin ortak olduğu anlamına gelmez; bunları bağımsız kontrol edin."
+  },
+  "2292": {
+    "pt": "Não misture a ficha deste código com a do 2282, também de 3.800 ml: peça desenhos e amostras independentes.",
+    "ru": "Не путайте эту позицию с моделью 2282, имеющей такую же заявленную вместимость 3800 мл. При оформлении крупного заказа запросите отдельные чертежи и образцы, чтобы исключить подмену одной конструкции другой.",
+    "tr": "Katalogda 3.800 ml hacimli 2282 modeli de yer alır; aynı rakam bu iki ürünün aynı kalıp veya kapak kullandığını göstermez. Büyük siparişten önce ayrı çizimleri ve fiziksel örnekleri doğrulayın."
+  },
+  "2408": {
+    "pt": "Num projeto familiar, diferencie este volume elevado das pequenas garrafas infantis e peça aprovação explícita do público pretendido.",
+    "ru": "В семейной линейке явно отделите этот большой объём от небольших детских бутылок. Целевую возрастную группу, переноску полного изделия и параметры упаковки следует утверждать индивидуально, а не копировать с компактных моделей.",
+    "tr": "Aileye yönelik ürün dizisinde 1.200 ml seçeneği küçük çocuk mataralarından açıkça ayırın. Hedef kullanıcı, dolu taşıma koşulları ve ambalaj ölçüleri bağımsız değerlendirilmeden bu modeli standart okul şişesi olarak tanıtmayın."
+  },
+  "2501": {
+    "pt": "Na comparação com o modelo 2502, informe ao comprador a diferença de 200 ml e peça aprovação separada de cada fechamento.",
+    "ru": "При сравнении с моделью 2502 отдельно укажите разницу в объёме на 200 мл и не переносите параметры крышки с одной позиции на другую. Согласуйте комплектность до выставления счёта.",
+    "tr": "2502 modeline göre 200 ml daha az hacim bulunduğunu teklifte açıkça belirtin. İki ürün aynı koleksiyonda olsa bile kapak takımını, baskı alanını ve sevkiyat ölçülerini ayrı onaylayın; müşteriye doğrulanmamış uyumluluk sözü vermeyin."
+  },
+  "2502": {
+    "pt": "Para séries corporativas de diferentes capacidades, registre o tamanho 750 ml como referência independente e evite misturar especificações de tampas.",
+    "ru": "Если фирменная серия включает бутылки разного объёма, согласуйте для 750 мл отдельный артикул крышки и размер печатной зоны. Коммерческое предложение должно различать комплектующие соседних размеров, а не объединять их без проверки.",
+    "tr": "Kurumsal koleksiyonda başka hacimler de varsa 750 ml gövde için kapak uyumunu ayrıca doğrulayın. Müşteriye model bazında parça listesi ve ayrı ambalaj ölçüsü verin; ortak bir takımın tüm şişelere uyduğu varsayılmamalıdır."
+  },
+  "2505": {
+    "pt": "Se o pedido prevê transporte individual em eventos, solicite também confirmação de peso e tipo de acondicionamento por unidade.",
+    "ru": "Для событий с индивидуальной выдачей попросите массу каждой готовой бутылки и вариант штучной упаковки. Эти сведения важны отдельно от номинального объёма и помогут сравнить транспортные затраты между размерами.",
+    "tr": "Etkinlikte şişeler tek tek verilecekse bitmiş ağırlık ve tekli paketleme koşullarını öğrenin. Böylece 800 ml hacmi farklı model seçenekleriyle yalnızca katalog başlığına göre değil, gerçek dağıtım planına göre karşılaştırabilirsiniz."
+  },
+  "2507": {
+    "pt": "Compare a amostra cheia com uma referência de 800 ml e documente o custo adicional de embalagem sem presumir alças.",
+    "ru": "Покупателю полезно физически сравнить наполненные версии 800 и 1200 мл. При этом нельзя обещать наличие ручки только потому, что больший размер кажется удобным для переноски: запросите подтверждение конструкции.",
+    "tr": "Alıcıya 800 ml ve 1.200 ml dolu numuneleri yan yana değerlendirmeyi önerin. Büyük kapasiteye bakarak sap bulunduğunu varsaymayın; taşıma biçimi, kapak bağlantısı ve tek ürün paketleme kararı gerçek örnekten sonra verilmeli."
+  },
+  "2508": {
+    "pt": "Para compras escolares, documente separadamente idade pretendida, componentes removíveis e critérios de inspeção do mercado de destino.",
+    "ru": "Для школьных заказов письменно укажите предполагаемый возраст пользователей и перечень съёмных деталей, но не превращайте эти сведения в недоказанное утверждение о безопасности. Образец и проверки должны соответствовать стране продажи.",
+    "tr": "Okul alımlarında hedeflenen yaş grubunu, sökülebilir parçaları ve satış ülkesindeki kontrol gerekliliklerini ayrı kaydedin. Modelin güvenli olduğuna ilişkin genel bir iddia yerine gerçek ürüne ait numune ve belge üzerinden karar verin."
+  },
+  "2509": {
+    "pt": "Compare o peso e a altura da opção 550 ml com referências maiores antes de definir kits para diferentes idades.",
+    "ru": "При сравнении с более крупными школьными моделями попросите точную массу и высоту изделия 550 мл. Это позволит обсуждать комплектацию наборов на основании измерений, а не рекламных предположений о возрасте.",
+    "tr": "550 ml ürünü daha büyük okul mataralarıyla karşılaştırırken gerçek yüksekliği ve ağırlığı da isteyin. Paket seçimi yaş grubuna dair doğrulanmamış varsayımlara değil, incelenen örnek ve alıcının ihtiyaçlarına dayanmalıdır."
+  }
+}

@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""Proof: twenty genuinely SKU-specific 100-150 word source introductions.
+
+Four product collections x five reviewed catalog models x five languages.
+Owner-edited D1 copy wins, untouched SKUs stay untouched, rerenders do not
+duplicate and the next catalog SKU isn't trapped by a historic page count.
+"""
+from pathlib import Path
+from collections import Counter
+from html import unescape
+from hashlib import sha256
+import sys,re,json
+ROOT=Path(__file__).resolve().parent.parent
+sys.path.insert(0,str(ROOT))
+from sku_unique_openings import COPY,EN,CATEGORY,LOCALES,OWNER,editor_intro
+from site_renderer import SERIES
+DIST=ROOT/"dist"
+langs=("en","es","pt","ru","tr")
+assert len(EN)==4
+assert all(len(items)==5 for items in EN.values()),{k:len(v) for k,v in EN.items()}
+assert len(COPY)==20
+assert len(OWNER)==20
+assert all(len(fields)==4 for fields in OWNER.values())
+assert len(SERIES)>20
+
+snapshot=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
+D1={(v["resourceId"][5:],v["locale"]):v["content"]["mainHtml"]
+    for v in snapshot["translations"]
+    if v.get("resourceId","").startswith("page:") and v["locale"] in langs[1:]}
+for slug,contents in COPY.items():
+    row=next((r for r in SERIES.values() if r["slug"]==slug),None)
+    assert row is not None and row["category"] in CATEGORY.values(),slug
+    assert set(contents)==set(langs),slug
+    for lang in langs:
+        copy=contents[lang]
+        assert 100<=len(copy.split())<=150,(slug,lang,len(copy.split()))
+        assert str(row["model"]) in copy,(slug,lang)
+        if lang=="tr":assert "spor şapkalar" not in copy,slug
+        doc=(DIST/("" if lang=="en" else lang)/"products"/slug/"index.html").read_text(encoding="utf8")
+        excerpts=re.findall(r'<p\b(?=[^>]*data-pilot-intro="([^"]+)")[^>]*>(.*?)</p>',doc,re.S)
+        assert len(excerpts)==1,(slug,lang,len(excerpts))
+        assert excerpts[0][0]==slug
+        assert unescape(re.sub(r"<[^>]*>","",excerpts[0][1]))==copy,(slug,lang,"wrong rendered content")
+        intro_at=doc.find('data-pilot-intro="'+slug+'"')
+        h1=doc.find("<h1",doc.find('<main id="main-content">'))
+        specs=doc.find("product-detail__spec",h1)
+        assert h1>=0 and h1<intro_at and (specs<0 or intro_at<specs),(slug,lang)
+        assert doc.count('data-pilot-intro="'+slug+'"')==1
+        if lang!="en":
+            source=D1[("/products/"+slug+"/",lang)]
+            assert sha256(source.encode("utf8")).hexdigest()==OWNER[slug][lang]
+            expected=editor_intro(source,row,lang)
+            assert expected!=source
+            assert copy in unescape(expected)
+            assert editor_intro(expected,row,lang)==expected,(slug,lang,"double injection")
+            # Any subsequent D1 owner change, including one unrelated to the
+            # first paragraph, must block the entire historic source injection.
+            edited=source.replace("<nav class=", '<nav data-owner-revised="yes" class=',1)
+            assert edited!=source
+            assert editor_intro(edited,row,lang)==edited,(slug,lang,"CMS override lost")
+            assert editor_intro(source,row,"en",owner_edited=True)==source
+
+# All twenty prose introductions must be genuinely different, not a
+# one-paragraph category template with a substituted model code.
+for lang in langs:
+    paragraphs=[COPY[slug][lang] for slug in COPY]
+    assert len(paragraphs)==len(set(paragraphs))
+    # First 24 words must vary for every model within the same collection.
+    for category,items in EN.items():
+        starts=[" ".join(COPY[slug][lang].split()[:24]).lower() for slug in items]
+        assert len(starts)==len(set(starts)),(category,lang)
+
+others=[r for r in SERIES.values() if r["slug"] not in COPY]
+for row in others[:7]:
+    sample=(DIST/"products"/row["slug"]/"index.html").read_text(encoding="utf8")
+    assert 'data-pilot-intro="' not in sample,row["slug"]
+    assert editor_intro('<h1>Another SKU</h1><p class="copy-muted">Owner text</p>',
+                        row,"en")=='<h1>Another SKU</h1><p class="copy-muted">Owner text</p>'
+# New models don't require changing a historical 20/101/505 URL count.
+new_model={**SERIES["2501"],"slug":"new-factory-sku-2027","model":"NEW-SKU-2027"}
+assert editor_intro('<h1>Future</h1><p class="copy-muted">Future copy</p>',new_model,'en')=='<h1>Future</h1><p class="copy-muted">Future copy</p>'
+
+print("XUYI_TWENTY_UNIQUE_SKU_OPENINGS_PASSED",len(COPY),"models",len(COPY)*len(langs),"localized", "words",{
+  lang:(min(len(COPY[s][lang].split()) for s in COPY),
+        max(len(COPY[s][lang].split()) for s in COPY)) for lang in langs})
