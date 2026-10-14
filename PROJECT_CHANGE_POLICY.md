@@ -28,3 +28,8 @@
 
 This project policy stays in the repository for future maintainers and code
 assistants independently of chat history.
+
+**Entry point for future coding sessions:** [AGENTS.md](AGENTS.md). All
+template, metadata, internal-link, Blog and image cleanups must use the same
+CMS-priority and repeat-build rules. Source-image URL changes by the owner are
+not regressions merely because a legacy rewrite no longer finds its old input.

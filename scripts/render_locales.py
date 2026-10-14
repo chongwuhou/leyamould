@@ -272,8 +272,8 @@ def main():
                 translated[(route,loc)]={
                     "title":copy["seoTitle"],"description":copy["seoDescription"],
                     "mainHtml":lo_detail(SERIES[model],loc)}
-    # Internal G-series PHOTO references have verified pictures but no factory
-    # part number or technical specifications; all five locales say so.
+    # G-series numbers ARE factory model IDs. Do not invent their currently
+    # unprovided per-SKU capacity, material, packaging or test specifications.
     from gallery_catalog import GALLERY,detail as gallery_detail,LABELS as gallery_labels
     for row in GALLERY:
         route="/products/"+row["slug"]+"/"

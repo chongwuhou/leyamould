@@ -2,6 +2,7 @@
 """Target reviewed plastic sports photos to only matching generic page slots."""
 import re
 from pathlib import Path
+from reviewed_media_slot_guard import replace_if_original
 
 ROOT=Path(__file__).resolve().parent.parent
 LOCALES=("en","es","pt","ru","tr")
@@ -33,22 +34,24 @@ def apply(dist):
         loc="" if lang=="en" else lang+"/"
         home=dist/loc/"index.html"
         markup=home.read_text(encoding="utf-8")
-        pat=r'(<div class="kreat-intro__media"><img src=")'+re.escape(SMALL)+r'(")'
-        markup=once(markup,pat,lambda m:m.group(1)+WIDE+m.group(2),lang+" home")
+        markup,changed=replace_if_original(markup,'<div class="kreat-intro__media"><img src="',SMALL,WIDE,lang+" home")
         home.write_text(markup,encoding="utf-8")
-        count+=1
+        count+=int(changed)
         about=dist/loc/"about/index.html"
         markup=about.read_text(encoding="utf-8")
-        pat=r'(<figure class="rs-photo"><img src=")'+re.escape(OLD)+r'(")'
-        markup=once(markup,pat,lambda m:m.group(1)+ASSORTMENT+m.group(2),lang+" about overview")
-        count+=1
+        markup,changed=replace_if_original(markup,'<figure class="rs-photo"><img src="',OLD,ASSORTMENT,lang+" about overview")
+        count+=int(changed)
         href="/"+loc+"collections/sports-water-bottles/"
-        pat=r'(<a href="'+re.escape(href)+r'"><div><img src=")'+re.escape(OLD)+r'" alt="[^"]*"'
+        prefix_tag='<a href="'+href+'"><div><img src="'
         alt=html.escape(SPORTS_ALT[lang],quote=True)
-        markup=once(markup,pat,lambda m:m.group(1)+SQUARE+'" alt="'+alt+'"',lang+" about sports")
+        markup,changed=replace_if_original(markup,prefix_tag,OLD,SQUARE,lang+" about sports")
+        if changed:
+            pat=r'(<a href="'+re.escape(href)+r'"><div><img src="'+re.escape(SQUARE)+r'" alt=")[^"]*(")'
+            markup,n=re.subn(pat,lambda m:m.group(1)+alt+m.group(2),markup,count=1)
+            if n!=1:raise ValueError("Reviewed sports ALT binding mismatch "+lang)
         about.write_text(markup,encoding="utf-8")
-        count+=1
-    print("XUYI_PRIMARY_VISUAL_PLACEMENTS",count)
+        count+=int(changed)
+    print("XUYI_PRIMARY_VISUAL_PLACEMENTS",count,"new, CMS image choices retained")
     return count
 
 if __name__=="__main__":apply(ROOT/"dist")

@@ -26,12 +26,17 @@ def apply(dist):
             old=ORIGINALS[slug]
             pattern=(r'(<a class="news-card__image" href="/'+lang+
                 r'/blog/'+re.escape(slug)+
-                r'/"><img src=")'+re.escape(old)+r'(")')
-            body,n=re.subn(pattern,lambda m:m.group(1)+new+m.group(2),body)
-            if n!=1:
-                raise ValueError("Expected one translated blog listing card "+
-                                 lang+"/"+slug+"; got "+str(n))
-            updated+=n
+                r'/"><img src=")([^"]+)(")')
+            replaced=[0]
+            def keep_owner_cover(m):
+                if m.group(2)==old:
+                    replaced[0]+=1
+                    return m.group(1)+new+m.group(3)
+                return m.group(0)
+            body,n=re.subn(pattern,keep_owner_cover,body,count=1)
+            # A future CMS owner may replace a cover or unpublish an article.
+            # Never force it back to the old reviewed selection.
+            updated+=replaced[0]
         page.write_text(body,encoding="utf8")
 
         # The translated article body still contained the old PPT cover,
@@ -42,12 +47,15 @@ def apply(dist):
             if slug in OVERRIDES:
                 old=ORIGINALS[slug]
                 new=OVERRIDES[slug]
-                cover=(r'(<div class="blog-detail__cover"><img src=")'
-                       +re.escape(old)+r'(")')
-                document,n=re.subn(cover,lambda m:m.group(1)+new+m.group(2),document)
-                if n!=1:
-                    raise ValueError("Translated article cover mismatch "+lang+"/"+slug+": "+str(n))
-                details+=n
+                cover=r'(<div class="blog-detail__cover"><img src=")([^"]+)(")'
+                upgraded=[0]
+                def keep_owner_hero(m):
+                    if m.group(2)==old:
+                        upgraded[0]+=1
+                        return m.group(1)+new+m.group(3)
+                    return m.group(0)
+                document,n=re.subn(cover,keep_owner_hero,document,count=1)
+                details+=upgraded[0]
 
             for linked,new in OVERRIDES.items():
                 original=ORIGINALS[linked]

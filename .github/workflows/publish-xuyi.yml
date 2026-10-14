@@ -172,12 +172,15 @@ jobs:
           python scripts/test_shared_chrome_i18n.py
           python scripts/test_curated_hq_images.py
           python scripts/test_gpt_reviewed_shaker_hd.py
+          python scripts/test_product_photo_cms_override_policy.py
           python scripts/test_reviewed_editorial_images.py
+          python scripts/test_reviewed_media_owner_overrides.py
           python scripts/test_reviewed_lowres_editorial_round2.py
           python scripts/test_repaired_sports_category.py
           python scripts/test_repaired_remaining_category_cards.py
           python scripts/test_primary_image_placements.py
           python scripts/test_unique_blog_thumbnails.py
+          python scripts/test_localized_blog_cover_cms_policy.py
           python scripts/test_home_visual_upgrade.py
           python scripts/test_r2_usage_index.py
           python scripts/test_d1_navigation.py

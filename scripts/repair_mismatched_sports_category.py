@@ -30,9 +30,8 @@ def apply(dist):
         if count:
             f.write_text(replaced,encoding="utf-8")
             changed+=count
-    if changed!=45:
-        raise ValueError("Unexpected category-card image count: "+str(changed))
-    print("XUYI_SPORTS_CARD_FACTORY_PHOTO_MISMATCH_FIXED",changed)
+    print("XUYI_SPORTS_CARD_FACTORY_PHOTO_MISMATCH_FIXED",changed,
+          "legacy image swaps; later CMS image replacements preserved")
     return changed
 
 

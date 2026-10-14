@@ -8,6 +8,7 @@ from collections import Counter
 from pathlib import Path
 import hashlib
 import json
+import re
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "data/gpt-reviewed-shaker-hd-20261013.json"
@@ -41,18 +42,24 @@ def apply(dist):
                 changed[old] += count
         if updated != source:
             file.write_text(updated, encoding="utf-8")
-    if set(changed) != {x["old"] for x in approved}:
-        raise ValueError("Approved source absent from published HTML: " + str(changed))
+    # The old media source may disappear when an editor replaces all
+    # instances with a newer verified photo in D1. Never force the previous
+    # approved asset back or fail a release just because its source vanished.
     for item in approved:
         for model in item["skuIds"]:
             for locale in ("", "es/", "pt/", "ru/", "tr/"):
                 page = dist / locale / "products" / model / "index.html"
-                if not page.is_file() or item["new"] not in page.read_text(encoding="utf-8"):
-                    raise ValueError("SKU image/locale missing: " + str(page))
-    for rejected in data["rejected"]:
-        page = dist / "products" / rejected["skuIds"][0] / "index.html"
-        if rejected["old"] not in page.read_text(encoding="utf-8"):
-            raise ValueError("Rejected original accidentally removed: " + str(page))
+                if not page.is_file():
+                    raise FileNotFoundError("SKU page/locale missing: " + str(page))
+                body=page.read_text(encoding="utf-8")
+                main=re.search(r'<img id="main-photo" src="([^"]+)"',body)
+                if not main or not main.group(1).startswith(("/assets/","/media/")):
+                    raise ValueError("Invalid SKU source image: " + str(page))
+                if main.group(1)==item["old"]:
+                    raise ValueError("Unreplaced legacy SKU source image: " + str(page))
+    # Rejected images stay untouched by the pipeline, but an editor may
+    # later upload an authentic updated model photo. Never require the
+    # rejected, low-resolution original to stay on the site forever.
     print("XUYI_GPT_APPROVED_SHAKERS", sum(changed.values()), "HTML URL substitutions")
     return sum(changed.values())
 

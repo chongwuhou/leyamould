@@ -3,6 +3,7 @@
 import html
 import re
 from pathlib import Path
+from reviewed_media_slot_guard import replace_if_original
 
 ROOT=Path(__file__).resolve().parent.parent
 LANGS=("en","es","pt","ru","tr")
@@ -38,23 +39,23 @@ def apply(dist):
         for app in APPLICATIONS:
             file=dist/prefix/"applications"/app/"index.html"
             body=file.read_text(encoding="utf8")
-            pattern=(r'(<a class="category" href="'+re.escape(href)+
-              r'collections/plastic-shaker-bottles/"><div class="category__photo"><img src=")'
-              +re.escape(SHAKER_OLD)+r'(")')
-            body=once(body,pattern,lambda m:m.group(1)+SHAKER_NEW+m.group(2),
-                      lang+" applications/"+app)
+            prefix_tag='<a class="category" href="'+href+'collections/plastic-shaker-bottles/"><div class="category__photo"><img src="'
+            body,changed=replace_if_original(body,prefix_tag,SHAKER_OLD,SHAKER_NEW,lang+" applications/"+app)
             file.write_text(body,encoding="utf8")
-            modified+=1
+            modified+=int(changed)
         file=dist/prefix/"manufacturing/index.html"
         body=file.read_text(encoding="utf8")
-        pattern=(r'(<div class="whyv2-factory-detail__image"><img src=")'
-                 +re.escape(DESIGN_OLD)+r'" alt="[^"]*"')
+        prefix_tag='<div class="whyv2-factory-detail__image"><img src="'
         alt=html.escape(DESIGN_ALT[lang],quote=True)
-        body=once(body,pattern,lambda m:m.group(1)+DESIGN_NEW+'" alt="'+alt+'"',
-                  lang+" manufacturing")
+        body,changed=replace_if_original(body,prefix_tag,DESIGN_OLD,DESIGN_NEW,lang+" manufacturing")
+        if changed:
+            pattern=(r'(<div class="whyv2-factory-detail__image"><img src="'
+                     +re.escape(DESIGN_NEW)+r'" alt=")[^"]*(")')
+            body,count=re.subn(pattern,lambda m:m.group(1)+alt+m.group(2),body,count=1)
+            if count!=1:raise ValueError("Review ALT binding mismatch "+lang)
         file.write_text(body,encoding="utf8")
-        modified+=1
-    print("XUYI_ROUND2_REVIEWED_EDITORIAL_PLACEMENTS",modified)
+        modified+=int(changed)
+    print("XUYI_ROUND2_REVIEWED_EDITORIAL_PLACEMENTS",modified,"new; CMS edits retained")
     return modified
 
 if __name__=="__main__":

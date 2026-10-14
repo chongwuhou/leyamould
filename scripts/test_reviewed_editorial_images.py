@@ -2,6 +2,7 @@
 """Five-language page scope, integrity and no-SKU-art-substitution gate."""
 import sys
 from pathlib import Path
+import re
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/"scripts"))
 from reviewed_editorial_images import LOCALES,EDITORIAL_IMAGES,OEM_NEW,OEM_OLD,OEM_ALT
@@ -19,12 +20,14 @@ for lang in LOCALES:
     href_prefix="/" if lang=="en" else "/"+lang+"/"
     general=(DIST/prefix/"applications/everyday-hydration/index.html").read_text(encoding="utf-8")
     for category,(old,new) in EDITORIAL_IMAGES.items():
-        text='<a class="category" href="'+href_prefix+'collections/'+category+'/"><div class="category__photo"><img src="'+new+'"'
-        assert general.count(text)==1,(lang,category)
+        prefix_tag='<a class="category" href="'+href_prefix+'collections/'+category+'/"><div class="category__photo"><img src="'
+        found=re.findall(re.escape(prefix_tag)+r'([^"]+)"',general)
+        assert len(found)==1 and found[0]!=old and found[0].startswith(("/media/","/assets/")),(lang,category,found)
     oem=(DIST/prefix/"capabilities/oem-odm/index.html").read_text(encoding="utf-8")
-    assert oem.count('<div class="whyv2-oem-steps__sample"><img src="'+OEM_NEW+'"')==1,lang
-    assert OEM_OLD not in oem,lang
-    assert OEM_ALT[lang] in oem,lang
+    oem_sources=re.findall(re.escape('<div class="whyv2-oem-steps__sample"><img src="')+r'([^"]+)"',oem)
+    assert len(oem_sources)==1 and oem_sources[0]!=OEM_OLD,(lang,oem_sources)
+    if oem_sources[0]==OEM_NEW:
+        assert OEM_ALT[lang] in oem,lang
     for doc in (general,oem):
         assert "AI concept illustration" not in doc
         assert "AI-generated illustration" not in doc
