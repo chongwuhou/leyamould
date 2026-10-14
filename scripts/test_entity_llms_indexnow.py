@@ -50,4 +50,7 @@ workflow=(ROOT/".github/workflows/publish-xuyi.yml").read_text(encoding="utf8")
 assert workflow.index("Verify XUYI live deployment")<workflow.index("Notify IndexNow of verified changed URLs")
 assert "python scripts/search_submission.py --submit" in workflow
 assert "XUYI_INDEXNOW_KEY" in workflow
+assert "Prepare stable IndexNow ownership key" in workflow
+assert "hmac.new(" in workflow and "indexnow:xuyibottles.com:v1" in workflow
+assert workflow.index("Prepare stable IndexNow ownership key")<workflow.index("Build from shared templates and source data")
 print("XUYI_ENTITY_LLM_GUIDE_INDEXNOW_GUARDS_PASSED",len(facts["questionRefs"]),"FAQs",15,"page schemas")

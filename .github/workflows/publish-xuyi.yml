@@ -69,6 +69,19 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::warning::XUYI Pages publication requires its independent Cloudflare GitHub Actions secrets."
           fi
+      # Prefer a dedicated IndexNow secret. For the currently configured
+      # XUYI deployment, derive a stable, domain-specific verification key
+      # from the already-protected Cloudflare token without exposing it.
+      - name: Prepare stable IndexNow ownership key
+        if: steps.credential.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${XUYI_INDEXNOW_KEY}" ]; then
+            derived="$(python -c 'import hashlib,hmac,os; print(hmac.new(os.environ["CLOUDFLARE_API_TOKEN"].encode(), b"indexnow:xuyibottles.com:v1", hashlib.sha256).hexdigest()[:32])')"
+            echo "XUYI_INDEXNOW_KEY=$derived" >> "$GITHUB_ENV"
+            echo "XUYI IndexNow ownership key prepared from the protected deployment credential."
+          fi
       - name: Guard against competing Cloudflare Git auto deployments
         if: steps.credential.outputs.ready == 'true'
         shell: bash
