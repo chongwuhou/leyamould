@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "locale": "tr",
+  "legacy": "Şeffaf şişeler, spor şapkalar ve uygun fiyatlı içecek takımları planlayan OEM alıcıları için dört plastiğin pratik bir karşılaştırması.",
+  "corrected": "Şeffaf su şişeleri, spor şişesi kapakları ve ekonomik plastik içecek ürünlerini değerlendiren OEM alıcıları için Tritan, PP, PETG ve PC karşılaştırması.",
+  "originalFields": {
+    "/blog/": {
+      "mainHtml": "6a20686d1cc7b9af5a02092cb6dbd91bba72fc8cd80a453d0172eac4728dd543"
+    },
+    "/blog/bpa-free-plastic-water-bottle-sourcing/": {
+      "mainHtml": "c7f19627e32f77cb272a037687667b204a7b27afc54cf6cbeb07a0c8782bd573"
+    },
+    "/blog/plastic-bottle-material-selection/": {
+      "mainHtml": "b420a6f978192e0b0d0eae76b09f06840d58a6f1405a12fa7b388e8728806715"
+    },
+    "/blog/tritan-vs-pp-petg-pc/": {
+      "description": "3b4e359082213ac5cfaf2ef417ae1630aa1140109ab23a3c955fd1c824720287",
+      "mainHtml": "db3bc77de28c5d158c2f0da43d35d70f0513f409f0a8050465f8a414c0b29ee3"
+    }
+  }
+}

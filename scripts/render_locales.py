@@ -298,6 +298,11 @@ def main():
                         for locale in live}
     created=0
     for (route,loc),fields in translated.items():
+        # Correct a reviewed Turkish bottle-cap false friend in D1 source
+        # fields *before* constructing HTML, SEO, OG and JSON-LD. Owner-edited
+        # D1 text takes precedence; do not patch rendered dist files.
+        from turkish_bottle_cap_source import reviewed_turkish_bottle_caps
+        fields=reviewed_turkish_bottle_caps(route,loc,fields)
         original=(DIST/route.lstrip("/")/"index.html" if route!="/" else DIST/"index.html").read_text(encoding="utf-8")
         if '<main id="main-content">' not in original:continue
         prefix,remainder=original.split('<main id="main-content">',1)

@@ -180,6 +180,7 @@ jobs:
           python scripts/test_source_sitemap_titles_h1_images.py
           python scripts/test_product_image_sitemap.py
           python scripts/test_search_intent_three_routes.py
+          python scripts/test_turkish_bottle_cap_terminology.py
           node scripts/test_blog_search_intent_runtime.mjs
           python scripts/test_retail_size_class_audit.py
           python scripts/test_verified_trust_technical_seo.py
