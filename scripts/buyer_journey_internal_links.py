@@ -7,9 +7,13 @@ no D1 edits, no new URL creation, and no unreviewed product assertions.
 """
 from pathlib import Path
 import html
+import json
 
 ROOT = Path(__file__).resolve().parent.parent
 LOCALES = ("en", "es", "pt", "ru", "tr")
+BLOG_FEATURE_PATHWAYS=json.loads((ROOT/"data/blog-feature-pathways.json").read_text(encoding="utf8"))
+if len(BLOG_FEATURE_PATHWAYS)!=6:
+    raise ValueError("Unexpected reviewed blog feature pathway mapping")
 
 # Six catalog and editorial contexts, selected for natural purchasing intent.
 # The first four cover exactly the eight previously zero-body-inbound routes.
@@ -29,17 +33,7 @@ PATHWAYS = {
         "features/large-capacity",
     ),
     "capabilities/custom-logo": ("applications/promotional-gifts",),
-    "blog/kids-water-bottle-procurement": ("applications/kids-school",),
-    "blog/water-bottle-lid-leakproof-testing": ("features/straw-lid",),
-    "blog/sports-bottle-vs-water-jug": ("features/large-capacity",),
-    "blog/custom-logo-water-bottle-checklist": ("applications/promotional-gifts",),
-    "blog/sports-water-bottle-customization": (
-        "applications/outdoor-travel",
-        "features/carry-handle",
-    ),
-    "blog/how-to-start-private-label-water-bottle-brand": (
-        "features/gradient-colors",
-    ),
+    **BLOG_FEATURE_PATHWAYS,
 }
 
 TEXT = {

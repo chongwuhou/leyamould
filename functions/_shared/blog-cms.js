@@ -2,6 +2,7 @@
 // Match the separately reviewed static Blog sources on D1-backed live routes.
 import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json" with {type:"json"};
 import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json" with {type:"json"};
+import BLOG_FEATURE_PATHWAYS from "../../data/blog-feature-pathways.json" with {type:"json"};
 export const esc = value => String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function verifiedEvidence(post){
  const evidence=EDITORIAL_EVIDENCE[post?.slug];
@@ -102,6 +103,28 @@ export function blogHtml(post){
   body+='<section class="seo-next-buyer"><h2>Continue your sourcing research</h2><p>View this related product or buying guide: <a href="/'+esc(destination)+'/">'+esc(allowed[destination])+' →</a></p></section>';
  }
  body+='</article></div></div></section>';
+ // D1 replaces the built English article's <main>, so this must share the
+ // same source mapping as the static five-language builder. Append *outside*
+ // the article, retaining the original approved page layout and D1 content.
+ const features=BLOG_FEATURE_PATHWAYS["blog/"+post.slug]||[];
+ if(features.length){
+  const labels={
+   "applications/everyday-hydration":"Everyday hydration applications",
+   "applications/kids-school":"Kids and school bottle applications",
+   "applications/outdoor-travel":"Outdoor and travel applications",
+   "applications/promotional-gifts":"Promotional gift bottle applications",
+   "features/large-capacity":"Large-capacity bottle designs",
+   "features/carry-handle":"Carry-handle bottle options",
+   "features/gradient-colors":"Gradient-color bottle options",
+   "features/straw-lid":"Straw-lid bottle options"
+  };
+  let links="";
+  for(const target of features){
+   if(!Object.hasOwn(labels,target))throw Error("Unexpected curated feature pathway");
+   links+='<a href="/'+esc(target)+'/">'+esc(labels[target])+' →</a>';
+  }
+  body+='<section class="section buyer-pathways" aria-label="Explore related bottle choices"><div class="shell"><h2>Explore related bottle choices</h2><p>Compare bottle use cases and design features before selecting a specific model.</p><div class="buyer-pathways__links">'+links+'</div></div></section>';
+ }
  return body;
 }
 export function blogCard(post){
