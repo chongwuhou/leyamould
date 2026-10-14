@@ -1,4 +1,6 @@
 # XUYI Drinkware — B2B Static Frontend
+> **P0 OWNER DIRECTIVE — READ BEFORE EVERY TASK:** `AGENTS.md` and `PROJECT_CHANGE_POLICY.md`. All batch content or UI changes must originate in **shared templates / authoritative source datasets / D1-CMS**, not manually patched pages, dist files, or post-render HTML rewrites. Testing generated pages is temporary only; finalize at the source and verify CMS owner edits survive subsequent rebuilds.
+
 
 > **2026-10-09 architecture hardening:** The canonical build source is now
 > `templates/site/` + the Python content modules + XUYI datasets.

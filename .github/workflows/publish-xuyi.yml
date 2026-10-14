@@ -146,6 +146,7 @@ jobs:
           python scripts/test_seo_multilingual_launch.py
           python scripts/test_priority_seo.py
           python scripts/test_cms_seo_rebuild_policy.py
+          python scripts/test_source_of_truth_policy.py
           python scripts/test_contextual_share_metadata.py
           python scripts/test_curated_catalog_meta_clarity.py
           python scripts/test_curated_buyer_seo_round2.py

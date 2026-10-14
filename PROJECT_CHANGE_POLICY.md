@@ -1,6 +1,19 @@
 # XUYI site — durable change rules
 
 **The site owner requires all fixes to survive subsequent complete rebuilds.**
+## P0 / Mandatory owner directive — Template or CMS only (2026-10-14; applies to every future task)
+
+**Read AGENTS.md and this file at the beginning of EVERY task, without waiting for reminders.** This section overrides historical descriptions that accepted post-generation HTML rewrites as permanent implementations.
+
+- **Batch change scope:** Product details, titles, material/capacity copy, FAQ, Blog, locale translations, schema, OG, images, internal links, headers/footers, components, and any large multi-page change **MUST** originate in the relevant shared template/component, canonical source record, or the Cloudflare D1 CMS (the true owner of that field). A reusable postprocessor doing find/replace across generated `dist/**/*.html` is NOT a shared template and is not a compliant final implementation even if it is version-controlled and runs in build_release.
+- **Resolve field ownership first:** Determine which value comes from D1, catalog data, the template renderer, and any administrator override. For D1-owned page copy or SEO, correct it in D1/CMS or the schema/renderer that uses D1, never in a hardcoded fallback that silently supersedes an operator change. For template-owned layout, correct the actual shared template/component. Source data and templates may be edited only after confirming which one owns the field.
+- **Temporary testing is allowed:** Snapshot/backup and test on disposable generated HTML or fixtures, then discard test edits. The production change must still be implemented upstream and verified from a **clean build**. Never publish a patched `dist/`, hand-edited live HTML, or temporary test output.
+- **No regression on future admin updates:** Regression tests must simulate an administrator changing at least one relevant product/Blog/SEO/image/translation/link field and confirm that two clean rebuilds retain the owner's change and do not reinsert old content; new SKUs and approved locales must be allowed.
+- **Evidence in every final handoff:** Identify the shared template or D1 record updated (with file path or named table/field), tests performed, CMS override behavior, source rebuild evidence, and production status. If only generated HTML or an obsolete postprocessor was edited, the job is **incomplete** and must not be presented as a finished fix.
+- **Legacy migration:** Existing post-render HTML mutation scripts are technical debt to refactor when their feature is next modified. A newly introduced mass rewrite after rendering is prohibited. This priority supersedes existing pipeline comments endorsing old dist postprocessing.
+- **Required CI guard:** Check this policy, ignore tracked built HTML, and run the CMS/rebuild regressions before deployment. Never call a policy document alone a complete compliance guarantee; ensure each feature is actually sourced from the right template/database.
+
+
 
 1. **Change the source of truth.** Prefer shared page templates, CMS/data inputs
    or versioned build functions. Do not hand-edit generated dist output, edit
