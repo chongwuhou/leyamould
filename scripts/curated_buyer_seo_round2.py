@@ -13,12 +13,6 @@ from cms_seo_curation_guard import may_curate
 ROOT=Path(__file__).resolve().parent.parent
 LOCALES=("en","es","pt","ru","tr")
 DESCRIPTIONS={
- "collections/sports-water-bottles":{
- "en":"Compare XUYI plastic sports water bottles by capacity, lid and carry style. Browse models, consider branding options and request a model-specific wholesale quote.",
- "es":"Compare botellas deportivas de plástico XUYI por capacidad, tapa y asa. Explore modelos, opciones de personalización y solicite una cotización por modelo.",
- "pt":"Compare garrafas esportivas de plástico XUYI por capacidade, tampa e alça. Explore modelos, personalização e solicite uma cotação por modelo.",
- "ru":"Сравните спортивные пластиковые бутылки XUYI по объему, крышке и ручке. Изучите модели, варианты оформления и запросите расчет для нужной модели.",
- "tr":"XUYI plastik spor şişelerini hacim, kapak ve taşıma sapına göre karşılaştırın. Modelleri inceleyin, özelleştirme ve teklif koşullarını sorun."},
  "collections/kids-water-bottles":{
  "en":"Explore XUYI plastic kids water bottles with different straw lids, handles and colors. Compare models and confirm samples, artwork and ordering details before buying.",
  "es":"Explore botellas infantiles de plástico XUYI con distintos tipos de pajita, asa y color. Compare modelos y consulte muestras, diseños y condiciones de pedido.",

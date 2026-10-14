@@ -402,6 +402,8 @@ def main():
         # translated D1 body during rendering; never patch generated pages.
         from seo_structured_components import add_at_render
         text=add_at_render(text,localized,loc)
+        from search_intent_roles import render_search_intent
+        text=render_search_intent(text,route,loc)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
         created+=1

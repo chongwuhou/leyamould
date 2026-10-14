@@ -242,6 +242,10 @@ def build_url(path,title,content):
  # on the final D1/CMS-selected body, not on post-build HTML mutations.
  from seo_structured_components import add_at_render
  content=add_at_render(content,route,'en')
+ # Search intent for these three URLs belongs to the source renderer, not
+ # a post-build HTML rewrite. D1 owner-edited SEO is always authoritative.
+ from search_intent_roles import render_search_intent
+ content=render_search_intent(content,route,'en')
  URLS[path]=title
  write(path,content)
 ICONS={

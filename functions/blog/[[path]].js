@@ -2,6 +2,16 @@ import { ensureBlogSchema, listBlogPosts, findBlogPost, esc, blogCard, blogHtml,
 import {englishAltFor} from "../_shared/media-alt.js";
 import COVER_OVERRIDES from "../../data/blog-cover-overrides.json" with {type:"json"};
 import SHAKER_IMAGES from "../../data/gpt-reviewed-shaker-hd-20261013.json" with {type:"json"};
+import SEARCH_ROLES from "../../data/search-intent-three-landing-roles.json" with {type:"json"};
+
+// D1 text is authoritative. Only the original reviewed article headline and
+// description acquire the new informational search intent.
+export function withInformationalIntent(post){
+ if(post?.slug!=="sports-water-bottle-customization")return post;
+ const role=SEARCH_ROLES.languages.en.blog;
+ if(post.title!==role.baseline.title || post.description!==role.baseline.description)return post;
+ return {...post,title:role.preferred.title,description:role.preferred.description};
+}
 
 // Keep D1 as the source of published article text/status and preserve future
 // editor-chosen photos. Only the eight known, duplicated legacy image paths
@@ -66,11 +76,11 @@ export async function onRequestGet(context){
    }
    // The route slug, not an editable content_json field, identifies which
    // article is published and which source-reviewed notes belong to it.
-   const published=withReviewedCover({...post,slug:tail});
+   const published=withInformationalIntent(withReviewedCover({...post,slug:tail}));
    published.coverAlt=await englishAltFor(db,published.cover);
    return response(composePage(shell,blogHtml(published),published,"/blog/"+tail+"/"));
   }
-  const posts=(await listBlogPosts(db,"published")).map(withReviewedCover);
+  const posts=(await listBlogPosts(db,"published")).map(withReviewedCover).map(withInformationalIntent);
   if(!posts.length)return context.next();
   for(const post of posts)post.coverAlt=await englishAltFor(db,post.cover);
   const template=await assetHtml(context,"/blog/index.html");

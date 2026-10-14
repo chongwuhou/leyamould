@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "scope": "Only 3 URLs; five reviewed locales; D1 baseline fields must match or owner edit wins.",
+  "routes": {
+    "home": "/",
+    "collection": "/collections/sports-water-bottles/",
+    "blog": "/blog/sports-water-bottle-customization/"
+  },
+  "languages": {
+    "en": {
+      "home": {
+        "baseline": {
+          "title": "Custom Plastic Water Bottle Manufacturer in China | XUYI Bottles",
+          "description": "Factory-backed plastic sports, kids and shaker bottles for wholesale and OEM/ODM sourcing."
+        },
+        "preferred": {
+          "title": "Custom Plastic Drinkware Manufacturer & OEM | XUYI",
+          "description": "XUYI manufactures and supplies reusable plastic drinkware for OEM/ODM projects: sports bottles, kids bottles, large water jugs and shakers. Discuss your brand requirements."
+        }
+      },
+      "collection": {
+        "baseline": {
+          "title": "Sports Water Bottles Wholesale | XUYI Bottles",
+          "description": "Lightweight reusable plastic bottles for daily hydration and active lifestyles.",
+          "h1": "Sports Water Bottles"
+        },
+        "preferred": {
+          "title": "Wholesale Sports Water Bottles & Custom OEM | XUYI",
+          "description": "Source wholesale plastic sports water bottles from XUYI. Compare bottle capacity, lids and designs, then request custom logo options, samples and an OEM quotation.",
+          "h1": "Wholesale Sports Water Bottles"
+        }
+      },
+      "blog": {
+        "baseline": {
+          "title": "Custom Sports Water Bottles: Lid, Capacity and Branding Options",
+          "description": "A wholesale sports bottle buying guide covering practical lid styles, carrying design, materials and branded collections.",
+          "h1": "Custom Sports Water Bottles: Lid, Capacity and Branding Options"
+        },
+        "preferred": {
+          "title": "How to Customize Sports Water Bottles: A Guide | XUYI",
+          "description": "Learn how to choose sports bottle lids, sizes, carrying features and logo methods. Follow this customization guide to prepare and compare physical samples.",
+          "h1": "How to Customize Sports Water Bottles: Lid, Size & Logo Guide"
+        }
+      }
+    },
+    "es": {
+      "home": {
+        "baseline": {
+          "title": "Fabricante de botellas de agua de plástico personalizadas en China | Botellas XUYI",
+          "description": "Botellas de plástico para deportes, niños y mezcladoras respaldadas por fábrica para abastecimiento al por mayor y OEM/ODM."
+        },
+        "preferred": {
+          "title": "Fabricante de botellas plásticas OEM/ODM | XUYI",
+          "description": "XUYI fabrica y suministra recipientes plásticos reutilizables para proyectos OEM/ODM: botellas deportivas, infantiles, garrafas y mezcladoras."
+        }
+      },
+      "collection": {
+        "baseline": {
+          "title": "Botellas de agua deportivas al por mayor | Botellas XUYI",
+          "description": "Botellas de plástico livianas y reutilizables para hidratación diaria y estilos de vida activos.",
+          "h1": "Botellas de agua deportivas"
+        },
+        "preferred": {
+          "title": "Botellas deportivas al por mayor y OEM | XUYI",
+          "description": "Compre botellas deportivas de plástico al por mayor en XUYI. Compare capacidades y tapas, consulte logotipos personalizados, muestras y presupuestos OEM.",
+          "h1": "Botellas deportivas al por mayor y OEM"
+        }
+      },
+      "blog": {
+        "baseline": {
+          "title": "Botellas de agua deportivas personalizadas: tapa, capacidad y opciones de marca",
+          "description": "Una guía de compra de botellas deportivas al por mayor que cubre estilos prácticos de tapas, diseños de transporte, materiales y colecciones de marcas.",
+          "h1": "Botellas de agua deportivas personalizadas: tapa, capacidad y opciones de marca"
+        },
+        "preferred": {
+          "title": "Cómo personalizar botellas deportivas: guía | XUYI",
+          "description": "Aprenda a elegir tapas, capacidades, asas y técnicas de logotipo. Esta guía explica cómo preparar y comparar muestras de botellas deportivas.",
+          "h1": "Cómo personalizar botellas deportivas: guía de tapas y logotipos"
+        }
+      }
+    },
+    "pt": {
+      "home": {
+        "baseline": {
+          "title": "Fabricante de garrafa de água de plástico personalizada na China | Garrafas XUYI",
+          "description": "Garrafas esportivas, infantis e shaker de plástico apoiadas pela fábrica para atacado e fornecimento de OEM/ODM."
+        },
+        "preferred": {
+          "title": "Fabricante de garrafas plásticas OEM/ODM | XUYI",
+          "description": "A XUYI fabrica e fornece garrafas plásticas reutilizáveis para projetos OEM/ODM: modelos esportivos, infantis, galões e shakers."
+        }
+      },
+      "collection": {
+        "baseline": {
+          "title": "Garrafas de água esportiva no atacado | Garrafas XUYI",
+          "description": "Garrafas plásticas reutilizáveis ​​leves para hidratação diária e estilos de vida ativos.",
+          "h1": "Garrafas de água esportivas"
+        },
+        "preferred": {
+          "title": "Garrafas esportivas no atacado e OEM | XUYI",
+          "description": "Compre garrafas esportivas plásticas no atacado com a XUYI. Compare capacidades e tampas, consulte logotipos personalizados, amostras e cotações OEM.",
+          "h1": "Garrafas esportivas no atacado e OEM"
+        }
+      },
+      "blog": {
+        "baseline": {
+          "title": "Garrafas de água esportivas personalizadas: opções de tampa, capacidade e marca",
+          "description": "Um guia de compra de garrafas esportivas no atacado que cobre uma tampa prática estilos, design, materiais e coleções de marca.",
+          "h1": "Garrafas de água esportivas personalizadas: opções de tampa, capacidade e marca"
+        },
+        "preferred": {
+          "title": "Como personalizar garrafas esportivas: guia | XUYI",
+          "description": "Aprenda a escolher tampas, capacidades, alças e métodos de logotipo. Este guia explica como preparar e comparar amostras de garrafas esportivas.",
+          "h1": "Como personalizar garrafas esportivas: guia de tampas e logos"
+        }
+      }
+    },
+    "ru": {
+      "home": {
+        "baseline": {
+          "title": "Производитель пластиковых бутылок для воды на заказ в Китае | Бутылки XUYI",
+          "description": "Пластиковые спортивные и детские бутылки, а также бутылки-шейкеры заводского изготовления для оптовой продажи и поставок OEM/ODM."
+        },
+        "preferred": {
+          "title": "Производитель пластиковых бутылок OEM/ODM | XUYI",
+          "description": "XUYI производит и поставляет многоразовые пластиковые бутылки, детские модели, большие ёмкости и шейкеры для проектов OEM/ODM."
+        }
+      },
+      "collection": {
+        "baseline": {
+          "title": "Спортивные бутылки для воды оптом | Бутылки XUYI",
+          "description": "Легкие многоразовые пластиковые бутылки для ежедневного питья и активного образа жизни.",
+          "h1": "Спортивные бутылки для воды"
+        },
+        "preferred": {
+          "title": "Спортивные бутылки оптом и OEM | XUYI",
+          "description": "Оптовые пластиковые спортивные бутылки XUYI: сравните вместимость, крышки и конструкции. Запросите нанесение логотипа, образцы и расчёт OEM.",
+          "h1": "Спортивные бутылки оптом и OEM"
+        }
+      },
+      "blog": {
+        "baseline": {
+          "title": "Специальные спортивные бутылки для воды: крышка, емкость и варианты брендинга",
+          "description": "Оптовая продажа Руководство по покупке спортивных бутылок, в котором описаны практичные стили крышек, дизайн, материалы и фирменные коллекции.",
+          "h1": "Специальные спортивные бутылки для воды: крышка, емкость и варианты брендинга"
+        },
+        "preferred": {
+          "title": "Как заказать дизайн спортивной бутылки: руководство | XUYI",
+          "description": "Узнайте, как выбрать крышку, объём, ручку и способ нанесения логотипа. Пошаговое руководство по подготовке и сравнению образцов.",
+          "h1": "Как персонализировать спортивную бутылку: руководство"
+        }
+      }
+    },
+    "tr": {
+      "home": {
+        "baseline": {
+          "title": "Çin'de Özel Plastik Su Şişesi Üreticisi | XUYI Şişeler",
+          "description": "Toptan satış ve OEM/ODM tedariki için fabrika destekli plastik spor, çocuk ve çalkalayıcı şişeleri."
+        },
+        "preferred": {
+          "title": "Plastik Matara Üreticisi ve OEM/ODM | XUYI",
+          "description": "XUYI spor, çocuk, büyük hacimli su şişeleri ve shaker modelleri için OEM/ODM plastik içecek ürünü üretimi ve tedariki sunar."
+        }
+      },
+      "collection": {
+        "baseline": {
+          "title": "Spor Su Şişeleri Toptan Satış | XUYI Şişeler",
+          "description": "Günlük sıvı alımı ve aktif yaşam tarzları için yeniden kullanılabilir hafif plastik şişeler.",
+          "h1": "Spor Su Şişeleri"
+        },
+        "preferred": {
+          "title": "Toptan Spor Su Şişeleri ve Özel OEM | XUYI",
+          "description": "XUYI'den toptan plastik spor mataraları tedarik edin. Kapasite ve kapakları karşılaştırın; özel logo, numune ve OEM fiyat teklifi isteyin.",
+          "h1": "Toptan Spor Su Şişeleri ve OEM"
+        }
+      },
+      "blog": {
+        "baseline": {
+          "title": "Özel Spor Su Şişeleri: Kapak, Kapasite ve Markalama Seçenekleri",
+          "description": "Pratik kapak stillerini kapsayan, tasarım, malzeme ve markalı koleksiyonlar taşıyan toptan spor şişesi satın alma kılavuzu.",
+          "h1": "Özel Spor Su Şişeleri: Kapak, Kapasite ve Markalama Seçenekleri"
+        },
+        "preferred": {
+          "title": "Spor Matarası Nasıl Özelleştirilir? Rehber | XUYI",
+          "description": "Kapak, hacim, taşıma detayları ve logo uygulaması nasıl seçilir? Bu rehber numune hazırlama ve seçenekleri karşılaştırma adımlarını açıklar.",
+          "h1": "Spor Matarası Nasıl Özelleştirilir? Kapak ve Logo Rehberi"
+        }
+      }
+    }
+  }
+}

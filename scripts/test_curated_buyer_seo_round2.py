@@ -11,7 +11,7 @@ sys.path.insert(0,str(ROOT/"scripts"))
 from curated_buyer_seo_round2 import DESCRIPTIONS,BLOG_LINKS,LOCALES,WORDS
 from cms_seo_curation_guard import may_curate,current_field
 dist=ROOT/"dist"
-assert len(DESCRIPTIONS)==4 and len(BLOG_LINKS)==9
+assert len(DESCRIPTIONS)==3 and len(BLOG_LINKS)==9
 meta_count=links_count=0
 for lang in LOCALES:
     prefix="" if lang=="en" else lang+"/"
@@ -45,5 +45,5 @@ for lang in LOCALES:
             assert html.escape(WORDS[lang][0]) in section,(lang,slug)
         assert (dist/prefix/target/"index.html").is_file()
         links_count+=1
-assert meta_count==20 and links_count==45,(meta_count,links_count)
+assert meta_count==15 and links_count==45,(meta_count,links_count)
 print("XUYI_BUYER_SEO_ROUND2_VERIFIED",meta_count,"locale meta",links_count,"context links")
