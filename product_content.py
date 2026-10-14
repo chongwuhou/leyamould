@@ -106,7 +106,7 @@ def details(obj):
    ("Closure and seal design","Different lid types have different threads and gasket locations. Request real samples before making leakproof performance claims."),
    ("Brand-ready customization","Choose compatible colors, logos and packing based on this model's tooling and decoration area.") ]
  spec=render_template("product-spec",ROWS=''.join('<tr><th scope="row">'+e(k)+'</th><td>'+e(v)+'</td></tr>' for k,v in data))
- thumbs=render_template("product-thumbnails",ITEMS=''.join('<button type="button" class="product-detail__thumb" data-main-photo="'+e(x)+'" aria-label="Show product image '+str(i+1)+'">'+photo(x,name+" view "+str(i+1))+'</button>' for i,x in enumerate(photos)))
+ thumbs=render_template("product-thumbnails",ITEMS=''.join('<button type="button" class="product-detail__thumb" data-main-photo="'+e(x)+'" aria-label="Show model '+e(model)+' product image '+str(i+1)+'">'+photo(x,"")+'</button>' for i,x in enumerate(photos)))
  breadcrumb='<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/products/">Products</a> / <a href="/collections/'+e(CAT[category][1])+'/">'+e(display)+'</a> / '+e(model)+'</nav>'
  h=render_template("product-overview",BREADCRUMB=breadcrumb,
    MAIN_PHOTO=photo(img,name+" model "+model,"eager").replace('<img ','<img id="main-photo" ',1),

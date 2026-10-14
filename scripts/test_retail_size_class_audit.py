@@ -59,7 +59,9 @@ for row in models:
             assert expected in main,(lang,slug,expected,"missing exact source ml paired to common size")
             assert page.count('class="product-capacity-summary"')==1,(lang,slug)
             assert page.count('class="product-capacity-disclaimer"')==1,(lang,slug)
-            assert "oz" in title,(lang,slug,title)
+            # Search titles stay concise. The approved retail oz class is
+            # still present in H1, body and SEO description.
+            assert "ml" in title and len(title)<=60,(lang,slug,title)
             assert "oz" in desc,(lang,slug,desc)
             for num in numbers:
                 assert format_oz(num,lang) in main,(lang,slug,num)

@@ -318,7 +318,11 @@ def generate():
    meta=next(row["locales"]["en"] for row in LO_PRODUCTS if row["model"]==model)
    seo_name,seo_desc=meta["seoTitle"],meta["seoDescription"]
   elif product.get("galleryReference"):
-   seo_name=public_name+" | "+model+" Factory Model | XUYI"
+   # Factory G-series identifier is a concise differentiator; a long
+   # generic prefix adds no buyer value and gets truncated in search.
+   seo_name=(public_name+" | "+model+" | XUYI")
+   if len(seo_name)>60:
+    seo_name=("Gradient Sports Bottle " if "Gradient" in public_name else "Plastic Sports Bottle ")+model+" | XUYI"
    seo_desc="Explore XUYI G-series factory model "+model+": "+public_name+". Confirm capacity, material, components and packing for the exact model before placing a wholesale order."
   else:
    seo_name=seo_name+' | XUYI Bottles'
@@ -379,12 +383,12 @@ def generate():
  # unreviewed multilingual paths.
  sitemap=['<?xml version="1.0" encoding="utf-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+ from sitemap_modification import source_lastmod
  for file_path in sorted(path for path in URLS if path.endswith('index.html')):
   route='/'+file_path[:-len('index.html')]
+  lastmod=source_lastmod(route,'en',next((x for x in BUILD_STATE.get('pages',[]) if x.get('route')==route),None))
   sitemap.append(' <url><loc>'+e(SITE_ORIGIN+route)+'</loc>'
-                 +('<lastmod>'+e(BLOG_POSTS[route.split('/')[2]]['updated'])+'</lastmod>'
-                   if route.startswith('/blog/') and route!='/blog/'
-                   and route.split('/')[2] in BLOG_POSTS else '')
+                 +('<lastmod>'+e(lastmod)+'</lastmod>' if lastmod else '')
                  +'</url>')
  sitemap.append('</urlset>')
  write('sitemap.xml','\n'.join(sitemap)+'\n')

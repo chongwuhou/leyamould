@@ -57,10 +57,10 @@ for row in SERIES.values():
             assert exact in main,(lang,row["model"],exact)
             title=unescape(re.search(r"<title>([^<]+)</title>",head).group(1))
             desc=unescape(re.search(r'<meta name="description" content="([^"]+)"',head).group(1))
-            assert "oz" in title and "oz" in desc,(lang,row["model"],title,desc)
+            assert "ml" in title and "oz" in desc,(lang,row["model"],title,desc)
             assert 'class="product-capacity-disclaimer"' in main,(lang,row["model"],"missing size-class caveat")
             assert "Tritan" in desc and "BPA" in desc,(lang,row["model"])
-            assert len(title)<=75 and len(desc)<=180,(lang,row["model"],len(title),len(desc))
+            assert len(title)<=60 and len(desc)<=180,(lang,row["model"],len(title),len(desc))
             for val in numbers:
                 assert format_oz(val,lang) in markup,(lang,row["model"],val)
         else:
@@ -112,7 +112,8 @@ future={"slug":"future-source-1500","model":"F-1500", "capacity":"1500ml",
         "category":"Plastic Sports Water Bottles","name":"1500ml Plastic Sports Bottle"}
 assert catalog_volume_numbers(future)==(1500.0,)
 assert current_baseline("en",future,original)
-assert "50 oz class" in new_seo("en",future,(1500.0,))[0]
+assert "1500ml" in new_seo("en",future,(1500.0,))[0]
+assert "50 oz class" in new_seo("en",future,(1500.0,))[1]
 future_with_owner=deepcopy(original)
 future_with_owner["pages"].append({"route":"/products/future-source-1500/","seo_title":"Owner preferred title"})
 assert not current_baseline("en",future,future_with_owner)

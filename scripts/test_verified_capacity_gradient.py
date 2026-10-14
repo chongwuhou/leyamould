@@ -28,7 +28,8 @@ for slug,(ml,gradient) in SOURCE_CAPACITY.items():
     exp_title,exp_desc=new_seo('en',row,catalog_volume_numbers(row))
     assert (title,desc)==(exp_title,exp_desc),(slug,title,desc)
     expected_oz="28 oz class" if ml==800 else "32 oz class"
-    assert expected_oz in title,slug
+    assert f"{ml}ml" in title and len(title)<=60,slug
+    assert expected_oz in desc,slug
     assert expected_oz in re.search(r"<h1>(.*?)</h1>",html).group(1),slug
     assert title.count(str(row["model"]))==1,slug
     assert "Tritan" in desc and "BPA-free" in desc,slug

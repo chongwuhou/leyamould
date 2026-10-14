@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "route": "/products/2506/",
+  "reason": "Source catalog 2506 capacity is disputed (60ml). Use shorter product title only while D1 localized field matches reviewed original; no false capacity/material claim.",
+  "locales": {
+    "es": {
+      "original": "Botella de agua deportiva de plástico — Modelo 2506 | Botellas XUYI",
+      "revised": "Botella deportiva plástica 2506 | XUYI"
+    },
+    "pt": {
+      "original": "Garrafa de água esportiva de plástico - Modelo 2506 | Garrafas XUYI",
+      "revised": "Garrafa esportiva plástica 2506 | XUYI"
+    },
+    "ru": {
+      "original": "Пластиковая спортивная бутылка для воды — Модель 2506 | Бутылки XUYI",
+      "revised": "Спортивная пластиковая бутылка 2506 | XUYI"
+    }
+  }
+}

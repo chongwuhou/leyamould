@@ -79,7 +79,10 @@ NEW_PRODUCT_COUNT=append_new_products(SERIES,BUILD_STATE.get("products",[]))
 assert len(SERIES)>=85,(len(SERIES))
 assert all(v["images"] for v in SERIES.values()),[(k,v["images"]) for k,v in SERIES.items() if not v["images"]]
 def e(v):return html.escape(str(v or ""),quote=True)
-def photo(src,alt,loading='lazy'):return f'<img src="{e(src)}" alt="{e(alt)}" loading="{loading}" decoding="async">'
+def photo(src,alt,loading='lazy'):
+ from product_source_identity import GENERIC_ALT
+ if src in GENERIC_ALT:alt=GENERIC_ALT[src]
+ return f'<img src="{e(src)}" alt="{e(alt)}" loading="{loading}" decoding="async">' 
 def write(path,content):
  out=ROOT/BUILD_OUTPUT_DIR/path;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding="utf-8")
 URLS={}
@@ -149,6 +152,11 @@ def build_url(path,title,content):
    product=next((obj for obj in SERIES.values() if "/products/"+obj["slug"]+"/"==route),None)
    if product is None:raise ValueError("No material source for product route: "+route)
    main=inject(main,product,"en",route)
+   from product_source_identity import source_product_identity
+   # Never revise an English CMS-managed body after an editor replaces the
+   # previously generated product template.
+   if not BODY_OVERRIDES.get(route):
+    main=source_product_identity(main,product,"en",collections.Counter(x["images"][0] for x in SERIES.values()))
    from g_series_material_options import render_g_material_options
    main+=render_g_material_options(route,'en',main)
   # D1's English homepage body predates the five-language logo carousel.

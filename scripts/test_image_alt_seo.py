@@ -12,9 +12,16 @@ from image_alt_quality import readable_alt
 DIST=ROOT/"dist"
 
 class ImageTags(HTMLParser):
-    def __init__(self):super().__init__();self.images=[]
+    def __init__(self):super().__init__();self.images=[];self.button_stack=[]
     def handle_starttag(self,tag,attrs):
-        if tag=="img":self.images.append(dict(attrs))
+        if tag=="button":
+            self.button_stack.append(bool(dict(attrs).get("aria-label")))
+        if tag=="img":
+            row=dict(attrs)
+            row["_decorative_ok"]=bool(self.button_stack and self.button_stack[-1])
+            self.images.append(row)
+    def handle_endtag(self,tag):
+        if tag=="button" and self.button_stack:self.button_stack.pop()
 
 counts=Counter()
 for file in DIST.rglob("*.html"):
@@ -25,7 +32,9 @@ for file in DIST.rglob("*.html"):
         counts["total"]+=1
         if "alt" not in item:counts["missing"]+=1
         value=item.get("alt","")
-        if not value.strip():counts["empty"]+=1
+        if not value.strip():
+            if item.get("_decorative_ok"):counts["decorative_thumbnail"]+=1
+            else:counts["empty"]+=1
         if re.search(r"[\u4e00-\u9fff]",value):counts["untranslated_cjk"]+=1
         if re.search(r"(?i)(?:view|visualizar|вид|görünüm)\s+1\b",value):
             counts["unhelpful_gallery_view"]+=1

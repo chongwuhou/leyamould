@@ -204,13 +204,15 @@ def pre_render_verified_meta(page,locale,row,owner_override=None):
 def new_seo(locale,row,numbers):
     kind=KIND[locale][row["category"]]
     model=slug_label(row,locale)
-    vol=short_oz(numbers,locale)
+    # Keep verified mL in the snippet title; precise mL + approximate retail
+    # oz size classes remain in the detailed description and visible H1.
+    vol="/".join(f"{n:g}" for n in numbers)+"ml"
     if (re.search(r"渐变|gradient",str(row.get("colors",""))+" "+str(row.get("name","")),re.I)
             and row["category"]=="Plastic Sports Water Bottles"):
         kind=({"en":"Gradient Sports Bottle","es":"Botella degradada",
                "pt":"Garrafa degradê","ru":"Градиентная бутылка","tr":"Degrade spor şişesi"}[locale])
     material=verified_source_material(row)
-    title=f"{vol} {material+' ' if material else ''}{kind} | {model} XUYI"
+    title=f"{vol} {material+' ' if material else ''}{kind} {model} | XUYI"
     # Customize only the headline language; real resin/lid claims require SKU
     # evidence. Keep the factory model as a secondary identifier.
     if locale=="en" and len(numbers)==1:
@@ -222,28 +224,20 @@ def new_seo(locale,row,numbers):
           "Gradient Sports Bottle":"Gradient Custom Logo Bottle",
         }.get(kind)
         if buyer_kind:
-            buyer_title=f"{vol} {material+' ' if material else ''}{buyer_kind} | XUYI {model}"
-            if len(buyer_title)<=70:title=buyer_title
+            buyer_title=f"{vol} {material+' ' if material else ''}{buyer_kind} {model} | XUYI"
+            if len(buyer_title)<=60:title=buyer_title
     small={"en":"Bottle","es":"Botella","pt":"Garrafa","ru":"Бутылка","tr":"Şişe"}[locale]
-    if len(title)>70:title=f"{vol} {material+' ' if material else ''}{small} | {model} XUYI"
-    if len(numbers)>1:
-        compact_ml="/".join(f"{n:g}" for n in numbers)+"ml"
-        compact_oz="/".join(oz_number(n) for n in numbers)
-        capacity=f"{compact_ml} ({compact_oz} oz classes)"
-        detailed=f"{capacity} {material+' ' if material else ''}{kind} | XUYI {model}"
-        if len(detailed)<=75:title=detailed
-        elif len(title)>75:title=f"{capacity} {material+' ' if material else ''}{small} | {model} XUYI"
-    if len(title)>70 and '透明款' in str(row['model']):
-        # Keep the already-reviewed transparent-variant localization: the
-        # source component material remains visible in the specs below.
-        title=f"{vol} {small} | {model} XUYI"
-        if len(title)>70:title=f"{vol} | {model} XUYI"
-    if len(title)>70:
-        short_model=re.match(r'^\d+',str(row['model']))
-        model_id=short_model.group(0) if short_model else model
-        title=f"{vol} {material+' ' if material else ''}{small} | {model_id} XUYI"
-        if len(title)>70:title=f"{vol} {small} | {model_id} XUYI"
-    assert len(title)<=70,(locale,row["slug"],title)
+    if len(title)>60:title=f"{vol} {material+' ' if material else ''}{small} {model} | XUYI"
+    # Transparent variants and long translations retain their exact factory
+    # identity in the body and SKU field. Never cut SEO titles mid-word.
+    if len(title)>60:
+        raw=str(row["model"])
+        base=re.match(r"^\\d+",raw)
+        short_model=(base.group(0)+" Clear") if base and "透明款" in raw else (base.group(0) if base else model)
+        title=f"{vol} {material+' ' if material else ''}{small} {short_model} | XUYI"
+    if len(title)>60:title=f"{vol} {small} {short_model} | XUYI"
+    if len(title)>60:title=f"{vol} {short_model} | XUYI"
+    assert len(title)<=60,(locale,row["slug"],title)
     description=COPY[locale]["description"].format(
        volume=volume_terms(numbers,locale),kind=kind,model=model)
     if len(description)>180:
@@ -347,13 +341,10 @@ def enrich_detail(path,locale,row,owner_override=None):
     head,sep,body=source.partition("</head>")
     if not sep:raise ValueError("Missing product HTML head: "+str(path))
     if numbers:
-        head,_=seo_head(head,locale,row,numbers,owner_override)
-        # Only update the visible product heading, never a class/header phrase.
+        # Titles and H1 are now owned by pre_render_verified_meta and the
+        # source product identity component before page output. The remaining
+        # legacy summary is not allowed to rewrite either field.
         if 'class="product-capacity-summary"' not in body:
-            h1=re.search(r"(<h1[^>]*>)(.*?)(</h1>)",body,re.S)
-            if h1:
-                revised=add_to_heading(h1.group(2),numbers,locale)
-                body=body[:h1.start(2)]+revised+body[h1.end(2):]
             summary=('<p class="product-capacity-summary" data-volume-us="verified"><strong>'
                      +escape({"en":"Overseas size class","es":"Clase comercial aproximada","pt":"Classe de tamanho comercial","ru":"Примерный торговый размер","tr":"Yaklaşık satış boyutu"}[locale])+':</strong> '
                      +escape(volume_terms(numbers,locale))+'<small class="product-capacity-disclaimer">'

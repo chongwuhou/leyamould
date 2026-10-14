@@ -283,7 +283,7 @@ def main():
             if (route,loc) not in translated:
                 name=row["locales"][loc]
                 translated[(route,loc)]={
-                    "title":name+" | "+row["model"]+" | XUYI",
+                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else ({"es":"Botella deportiva","pt":"Garrafa esportiva","ru":"Спортивная бутылка","tr":"Spor şişesi"}[loc]+" "+row["model"]+" | XUYI"),
                     "description":name+". "+gallery_labels[loc][2],
                     "mainHtml":gallery_detail(SERIES[row["model"]],loc)}
     # D1-published catalogs are fixed HTML snapshots; add only the eight
@@ -317,6 +317,13 @@ def main():
             if owner_body_is_baseline and metadata_unchanged(fields.get('title',''),fields.get('description',''),loc):
                 fields['title']=about_source(loc)['title']
                 fields['description']=about_source(loc)['description']
+        # 2506 source capacity is unverified. Shorten only known factory
+        # default title; D1 owner-rewritten titles retain absolute priority.
+        if route=="/products/2506/":
+            source_titles=json.loads((ROOT/"data/product-2506-short-titles.json").read_text(encoding="utf8"))["locales"]
+            previous=source_titles.get(loc)
+            if previous and fields["title"]==previous["original"]:
+                fields={**fields,"title":previous["revised"]}
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
         # Translated D1 body takes precedence; add common scenario-specific
         # buyer guidance inside the locale renderer before final HTML write.
@@ -337,6 +344,9 @@ def main():
             product=next((obj for obj in SERIES.values() if obj["slug"]==model),None)
             if product is None:raise ValueError("Missing material source for "+route)
             body=inject_materials(body,product,loc,route,routes_by_locale[loc])
+            from collections import Counter
+            from product_source_identity import source_product_identity
+            body=source_product_identity(body,product,loc,Counter(x["images"][0] for x in SERIES.values()))
             from g_series_material_options import render_g_material_options
             body+=render_g_material_options(route,loc,body)
         # The homepage body is a D1-approved translation of previous English
@@ -441,7 +451,12 @@ def main():
             for _,url in sorted(alts):
                 absolute=ORIGIN+url
                 if "<loc>"+html.escape(absolute)+"</loc>" not in xml:
-                    added.append(" <url><loc>"+html.escape(absolute)+"</loc></url>")
+                    from sitemap_modification import source_lastmod
+                    # The D1 translation is the authoritative locale content.
+                    # Baseline records change only on significant editorial edits.
+                    modified=source_lastmod(url,_,translated.get((route,_),{}))
+                    added.append(" <url><loc>"+html.escape(absolute)+"</loc>"
+                      +("<lastmod>"+modified+"</lastmod>" if modified else "")+"</url>")
         if added:
             if "</urlset>" not in xml:raise RuntimeError("Invalid XUYI sitemap: no urlset closing tag")
             xml=xml.replace("</urlset>","\n".join(added)+"\n</urlset>",1)
