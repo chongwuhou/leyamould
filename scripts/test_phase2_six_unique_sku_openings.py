@@ -15,7 +15,10 @@ d1={(v["resourceId"][5:],v["locale"]):v["content"]["mainHtml"]
     for v in snapshot["translations"]
     if v.get("resourceId","").startswith("page:") and v["locale"] in langs[1:]}
 assert len(set(COPY))==len(COPY)
-for sku,paragraphs in COPY.items():
+D1_SKUS=tuple(sku for sku in COPY if not sku.startswith("lo-"))
+assert len(D1_SKUS)+len([sku for sku in COPY if sku.startswith("lo-")])==len(COPY) # LO template-owned translations tested separately
+for sku in D1_SKUS:
+ paragraphs=COPY[sku]
  row=next(r for r in SERIES.values() if r["slug"]==sku)
  assert row["category"]==CATEGORY[SELECTED_GROUP[sku]]
  assert set(paragraphs)==set(langs)
@@ -40,12 +43,12 @@ for sku,paragraphs in COPY.items():
    assert editor_intro(owner_revised,row,locale)==owner_revised
    assert editor_intro(source,row,locale,owner_edited=True)==source
 for locale in langs:
- leads=[COPY[sku][locale] for sku in COPY]
+ leads=[COPY[sku][locale] for sku in D1_SKUS]
  assert len(set(leads))==len(leads)
  # Different facts and framing beyond the SKU and numerical capacity.
- starts=[" ".join(COPY[sku][locale].split()[:16]).lower() for sku in COPY]
+ starts=[" ".join(COPY[sku][locale].split()[:16]).lower() for sku in D1_SKUS]
  assert len(set(starts))==len(starts)
 new={**SERIES["2511"],"slug":"new-factory-model-2027","model":"NEW-2027"}
 original='<h1>Future</h1><p class="copy-muted">Source text</p>'
 assert editor_intro(original,new,"en")==original
-print("PHASE2_PLUS_THIRD_BATCH_SOURCE_COPY_PASSED",len(COPY)*len(langs),"localized routes")
+print("PHASE2_TO_PHASE5_D1_SOURCE_COPY_PASSED",len(D1_SKUS)*len(langs),"localized routes")

@@ -56,6 +56,18 @@ for slug in (sku for group in FIFTH.values() for sku in group):
  LOCALES[slug]={lang:FIFTH_TRANSLATIONS[lang][slug] for lang in FIFTH_TRANSLATIONS}
 OWNER.update(json.loads((ROOT/"data/phase5-next14-d1-baselines.json").read_text(encoding="utf8"))["hashes"])
 ADDENDA.update(json.loads((ROOT/"data/phase5-next14-locale-addenda.json").read_text(encoding="utf8")))
+# Sixth reviewed batch: LO source-photo products use a pinned native-template
+# baseline (not D1); a later CMS-owned body cannot be replaced by this copy.
+LO_BATCH=json.loads((ROOT/"data/phase6-lo8-openings-en.json").read_text(encoding="utf8"))["groups"]
+assert all(group in EN and not set(items).intersection(EN[group]) for group,items in LO_BATCH.items())
+for group,items in LO_BATCH.items():
+ EN[group].update(items)
+LO_LANGS={lang:json.loads((ROOT/f"data/phase6-lo8-openings-{lang}.json").read_text(encoding="utf8"))
+          for lang in ("es","pt","ru","tr")}
+for slug in (model for group in LO_BATCH.values() for model in group):
+ LOCALES[slug]={lang:LO_LANGS[lang][slug] for lang in LO_LANGS}
+OWNER.update(json.loads((ROOT/"data/phase6-lo8-template-baselines.json").read_text(encoding="utf8"))["hashes"])
+ADDENDA.update(json.loads((ROOT/"data/phase6-lo8-locale-addenda.json").read_text(encoding="utf8")))
 CATEGORY={"sports":"Plastic Sports Water Bottles","kids":"Kids Plastic Water Bottles",
           "jugs":"Large Capacity Water Jugs"}
 SELECTED_GROUP={slug:group for group,items in EN.items() for slug in items}
@@ -80,6 +92,6 @@ def editor_intro(body,row,locale,owner_edited=False):
  remainder=body[h1.end():]
  original=re.match(r'\s*<p class="copy-muted">[\s\S]*?</p>',remainder)
  if not original:return body
- if slug not in paragraph:raise ValueError("Second-wave model missing: "+slug+"/"+locale)
+ if slug.casefold() not in paragraph.casefold():raise ValueError("Reviewed model missing: "+slug+"/"+locale)
  rendered='<p class="copy-muted product-buyer-intro" data-pilot-intro="'+escape(slug)+'">'+escape(paragraph)+'</p>'
  return body[:h1.end()]+rendered+remainder[original.end():]
