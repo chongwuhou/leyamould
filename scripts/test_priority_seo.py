@@ -28,5 +28,5 @@ for route,langs in PRIORITY.items():
         assert get(r'<meta property="og:title" content="([^"]*)"')==title,(locale,route)
         assert get(r'<meta property="og:description" content="([^"]*)"')==description,(locale,route)
         count+=1
-assert count==20,count
-print("XUYI_PRIORITY_SEO_CURATED_20_ROUTES_PASSED")
+assert count==15,count
+print("XUYI_PRIORITY_SEO_CURATED_15_ROUTES_PASSED_ABOUT_NOW_TEMPLATE_CMS_OWNED")

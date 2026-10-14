@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "reason": "Baseline from current approved D1 About in 5 languages; owner edits always win.",
+  "locales": {
+    "en": {
+      "body": "93949e018bc55e9e7b053cf10ebed573d27bc49f4326f1c3550f01c90dfd580b",
+      "meta": "a3b0dbc272c5efb2ccb7f614960a7b767196796730f33a99ea3721ed06775a6e"
+    },
+    "es": {
+      "body": "bdd5cb3f507b0df15f704c56a26ff95be053c0a59b3d17eeaa83e6a74c7326ee",
+      "meta": "adeb2e91ed548c77d1fd9a51394b3730498e4d29716d74162369832ba2711546"
+    },
+    "pt": {
+      "body": "7ad8a6230d0bc39cf1db00928527bf80557c4c47358323ce592bb50f964e3ed4",
+      "meta": "279af08e548c4c43a7221f410807ef9ff4db5fee667fd409ac13de664cb2ef83"
+    },
+    "ru": {
+      "body": "f2e59c20d5c6343110bb6a188fb21a4a2dae6a5962df3345fa43adf4db68fb71",
+      "meta": "1bc481ae9466dd6e3df58f7ae2a383a0c7310b0d258ac52024ddc57b2a23bf09"
+    },
+    "tr": {
+      "body": "c954496b3d9b75c6884403c5584add43021f05e1b9abc1d28d53130b940a22d6",
+      "meta": "c5ed49045806a00c68f54af6626003ab9a3e17bb343e32e4e2f59c68bbf6e5be"
+    }
+  }
+}

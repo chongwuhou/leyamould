@@ -37,20 +37,7 @@ def apply(dist):
         markup,changed=replace_if_original(markup,'<div class="kreat-intro__media"><img src="',SMALL,WIDE,lang+" home")
         home.write_text(markup,encoding="utf-8")
         count+=int(changed)
-        about=dist/loc/"about/index.html"
-        markup=about.read_text(encoding="utf-8")
-        markup,changed=replace_if_original(markup,'<figure class="rs-photo"><img src="',OLD,ASSORTMENT,lang+" about overview")
-        count+=int(changed)
-        href="/"+loc+"collections/sports-water-bottles/"
-        prefix_tag='<a href="'+href+'"><div><img src="'
-        alt=html.escape(SPORTS_ALT[lang],quote=True)
-        markup,changed=replace_if_original(markup,prefix_tag,OLD,SQUARE,lang+" about sports")
-        if changed:
-            pat=r'(<a href="'+re.escape(href)+r'"><div><img src="'+re.escape(SQUARE)+r'" alt=")[^"]*(")'
-            markup,n=re.subn(pat,lambda m:m.group(1)+alt+m.group(2),markup,count=1)
-            if n!=1:raise ValueError("Reviewed sports ALT binding mismatch "+lang)
-        about.write_text(markup,encoding="utf-8")
-        count+=int(changed)
+        # About is now rendered from about_company_page.py source templates.\n        # Do not mutate it after build or overwrite future D1 editor changes.
     print("XUYI_PRIMARY_VISUAL_PLACEMENTS",count,"new, CMS image choices retained")
     return count
 

@@ -15,9 +15,12 @@ for lang in LOCALES:
     assert home.count('<div class="kreat-intro__media"><img src="'+WIDE+'"')==1,lang
     assert home.count('src="'+SMALL+'"')>=1,("Navigation changed",lang)
     about=(dist/loc/"about/index.html").read_text(encoding="utf-8")
-    assert about.count('<figure class="rs-photo"><img src="'+ASSORTMENT+'"')==1,lang
-    href="/"+loc+"collections/sports-water-bottles/"
-    assert about.count('<a href="'+href+'"><div><img src="'+SQUARE+'"')==1,lang
+    # The refreshed About source template shows four actual factory/QA
+    # photographs, not the older generic assortment and catalog cards.
+    for src in ("/media/group/factory-bottle-packing.webp","/media/group/factory-final-pack.webp",
+                "/media/group/qa-color-box.webp","/media/group/factory-shipment.webp"):
+        assert about.count('src="'+src+'"')==1,(lang,src)
+    assert about.count('id="xuyi-about-company"')==1,lang
     assert OLD not in about,("Factory photo remains in About",lang)
     for page in (dist/loc/"products").glob("*/index.html"):
         markup=page.read_text(encoding="utf-8")

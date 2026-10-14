@@ -100,6 +100,12 @@ def build_url(path,title,content):
    content=re.sub(r"<title>.*?</title>","<title>"+e(str(override["seo_title"])[:90])+"</title>",content,count=1,flags=re.S)
   if override.get("meta_description"):
    content=re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="'+e(str(override["meta_description"])[:240])+'">',content,count=1)
+ if route=="/about/":
+  from about_company_page import replace_head_if_original,baseline_body
+  old=PAGE_OVERRIDES.get(route) or {}
+  original_body=BODY_OVERRIDES.get(route)
+  if not original_body or baseline_body(original_body,'en'):
+   content=replace_head_if_original(content,'en',old.get('seo_title',''),old.get('meta_description',''))
  family="home" if route=="/" else "listing" if route=="/products/" or route.startswith("/collections/") else "content" if route.startswith(("/products/","/blog/")) else "static"
  marker='<main id="main-content">'
  if marker in content and "</main>" in content:
@@ -110,10 +116,14 @@ def build_url(path,title,content):
      r"<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:",
      body_override,re.I):
    main=body_override
+  if route=="/about/":
+   from about_company_page import apply_body
+   main=apply_body(main,'en')
   # Retain D1-edited body as the primary page, and append only distinct
   # source-checked supplements for selected company/quality pages.
   from editorial_support import for_route as reviewed_editorial_for_route
-  main+=reviewed_editorial_for_route(route,main)
+  if route!='/about/' or 'id="xuyi-about-company"' not in main:
+   main+=reviewed_editorial_for_route(route,main)
   # Owner-approved Blog content remains primary. Add a verified long-form
   # source supplement only while its exact baseline introduction survives.
   if route.startswith('/blog/'):

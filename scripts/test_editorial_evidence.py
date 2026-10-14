@@ -29,7 +29,7 @@ for marker in ("SOURCE-CHECKED QUALITY GUIDANCE","ISO 2859-1:2026","2024/3190","
     assert marker in quality,marker
 for marker in ("PRODUCTION HANDOFF","Part and Material Record","Packing and Inspection Release"):
     assert marker in factory,marker
-for marker in ("Four Traceable Model References","2501","2292","2508","501"):
+for marker in ("Plastic Drinkware, Built Around Your Project","Company at a Glance","How We Work","Quality as Verification","Taizhou Xuyi Household Goods Co., Ltd."):
     assert marker in about,marker
 assert '<table class="spec">' in (DIST/"products/2501/index.html").read_text(encoding="utf-8")
 print("XUYI_EDITORIAL_EVIDENCE_PASSED",len(items),"sourced buyer guides; 3 company/QA pages")

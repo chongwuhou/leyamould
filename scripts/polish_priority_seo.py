@@ -13,13 +13,6 @@ from cms_seo_curation_guard import may_curate
 # page route -> language -> (title, description). Confirmed services are
 # invitations to discuss specifications, not promises of MOQ/certification.
 PRIORITY={
- "/about/":{
-  "en":("About XUYI | Plastic Bottle Supplier in Taizhou","Meet XUYI, a plastic drinkware supplier in Taizhou, China. Explore sports, kids, large-capacity and shaker models; confirm samples and OEM options by project."),
-  "es":("Sobre XUYI | Proveedor de botellas plásticas en Taizhou","Conozca XUYI en Taizhou, China: botellas deportivas, infantiles, de gran capacidad y mezcladoras. Consulte modelos, muestras y opciones OEM según su proyecto."),
-  "pt":("Sobre a XUYI | Fornecedor de garrafas plásticas em Taizhou","Conheça a XUYI em Taizhou, China: garrafas esportivas, infantis, de grande capacidade e shakers. Confirme modelos, amostras e opções OEM por projeto."),
-  "ru":("О компании XUYI | Пластиковые бутылки из Тайчжоу","XUYI — поставщик пластиковых бутылок из Тайчжоу, Китай. Спортивные, детские и большие бутылки, шейкеры; образцы и OEM-возможности уточняются по заказу."),
-  "tr":("XUYI Hakkında | Taizhou Plastik Su Şişesi Tedarikçisi","XUYI, Çin'in Taizhou şehrinde plastik içecek şişeleri tedarik eder. Spor, çocuk, büyük hacimli ve shaker modelleri için numune ve OEM seçeneklerini görüşün.")
- },
  "/capabilities/":{
   "en":("Custom Plastic Bottles: OEM, Logos & Packaging | XUYI","Plan a custom plastic bottle project with XUYI: logo artwork, colors, lids, samples and packaging. Feasibility and minimum quantities depend on the exact model."),
   "es":("Botellas de plástico a medida: OEM y logotipos | XUYI","Planifique botellas de plástico personalizadas con XUYI: logotipo, colores, tapas, muestras y embalaje. La viabilidad y el pedido mínimo dependen del modelo."),

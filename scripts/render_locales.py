@@ -309,6 +309,14 @@ def main():
         runtime=RUNTIME_UI_TRANSLATIONS.get(loc,{})
         encoded=json.dumps(runtime,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
         prefix=prefix.replace("</head>",'<script type="application/json" id="xuyi-runtime-ui">'+encoded+"</script></head>",1)
+        if route=="/about/":
+            from about_company_page import source as about_source,apply_body,metadata_unchanged,baseline_body
+            fields={**fields}
+            owner_body_is_baseline=baseline_body(fields['mainHtml'],loc)
+            fields['mainHtml']=apply_body(fields['mainHtml'],loc)
+            if owner_body_is_baseline and metadata_unchanged(fields.get('title',''),fields.get('description',''),loc):
+                fields['title']=about_source(loc)['title']
+                fields['description']=about_source(loc)['description']
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
         # Translated D1 body takes precedence; add common scenario-specific
         # buyer guidance inside the locale renderer before final HTML write.
