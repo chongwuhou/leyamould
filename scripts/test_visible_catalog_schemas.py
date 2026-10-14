@@ -18,7 +18,6 @@ countfaq=countlists=countmaterials=0
 for lang in ("en","es","pt","ru","tr"):
     prefix="" if lang=="en" else lang+"/"
     for obj in SERIES.values():
-        file=D/prefix/"products"/(obj["slug"]+".")  # use the existing slug, not a new URL
         file=D/prefix/"products"/obj["slug"]/"index.html"
         assert file.is_file(),file
         page=file.read_text(encoding="utf8")
@@ -35,7 +34,7 @@ for lang in ("en","es","pt","ru","tr"):
             countfaq+=1
         title=re.search(r"<title>(.*?)</title>",page).group(1)
         material=verified_source_material(obj)
-        if material and catalog_volume_numbers(obj) and current_baseline(lang,obj):
+        if material and catalog_volume_numbers(obj) and current_baseline(lang,obj) and "透明款" not in str(obj["model"]):
             assert material in title,(lang,obj["slug"],material,title)
             countmaterials+=1
     for kind in ("sports-water-bottles","kids-water-bottles","large-capacity-water-jugs","plastic-shaker-bottles"):

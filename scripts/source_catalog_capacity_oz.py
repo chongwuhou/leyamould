@@ -233,6 +233,11 @@ def new_seo(locale,row,numbers):
         detailed=f"{capacity} {material+' ' if material else ''}{kind} | XUYI {model}"
         if len(detailed)<=75:title=detailed
         elif len(title)>75:title=f"{capacity} {material+' ' if material else ''}{small} | {model} XUYI"
+    if len(title)>70 and '透明款' in str(row['model']):
+        # Keep the already-reviewed transparent-variant localization: the
+        # source component material remains visible in the specs below.
+        title=f"{vol} {small} | {model} XUYI"
+        if len(title)>70:title=f"{vol} | {model} XUYI"
     if len(title)>70:
         short_model=re.match(r'^\d+',str(row['model']))
         model_id=short_model.group(0) if short_model else model
