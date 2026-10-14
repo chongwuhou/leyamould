@@ -168,6 +168,7 @@ jobs:
           node scripts/test_blog_search_intent_runtime.mjs
           python scripts/test_retail_size_class_audit.py
           python scripts/test_verified_trust_technical_seo.py
+          python scripts/test_entity_llms_indexnow.py
           python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py
           python scripts/test_product_material_performance.py
@@ -237,6 +238,17 @@ jobs:
           done
           echo "::error::XUYI production build-meta did not update"
           exit 1
-      # User opted to submit Google/Bing sitemaps manually and Yandex later.
-      # Never fire automatic IndexNow notifications for this launch.
-      # Keep the verification/submission script for a separately approved action.
+      # Owner-approved IndexNow: notify ONLY after Cloudflare deploy and live
+      # revision checks. The verified root key is generated from the
+      # XUYI_INDEXNOW_KEY secret during the standard build, if configured.
+      - name: Notify IndexNow of verified changed URLs
+        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${XUYI_INDEXNOW_KEY}" ]; then
+            echo "::warning::IndexNow inactive: add XUYI_INDEXNOW_KEY repository secret."
+            exit 0
+          fi
+          python scripts/search_submission.py --submit

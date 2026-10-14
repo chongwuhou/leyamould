@@ -157,7 +157,12 @@ def main():
     prev_robots=ROOT/args.previous_robots
     previous_crawl_blocked=(not prev_robots.is_file() or
         re.search(r"(?im)^Disallow:\s*/\s*$",prev_robots.read_text(encoding="utf-8")) is not None)
-    urls=new_or_changed(old,current,first_launch=previous_crawl_blocked)
+    # Never re-ping the entire website just because an older manifest
+    # is absent. Only a verified prior manifest permits incremental submits.
+    if old is None:
+        print("XUYI_INDEXNOW_NO_VERIFIED_PREVIOUS_MANIFEST: skip bulk ping")
+        return
+    urls=new_or_changed(old,current,first_launch=False)
     # If the D1 build changed after this release, never submit stale snapshots.
     built=json.loads((DIST/"build-meta.json").read_text(encoding="utf-8"))
     if deployed.get("sourceRevision")!=built.get("sourceRevision"):

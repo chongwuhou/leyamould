@@ -223,6 +223,31 @@ def build_llms(dist):
       "## Official source pages",
       ""
     ]
+    facts=json.loads((ROOT/"data/llms-verified-facts.json").read_text(encoding="utf8"))
+    faq=json.loads((ROOT/"data/faq-expanded.json").read_text(encoding="utf8"))
+    categories={g["id"]:g["questions"] for g in faq["categories"]}
+    visible_faq=clean_text((dist/"faq/index.html").read_text(encoding="utf8"))
+    summaries=[]
+    for group,index in facts["questionRefs"]:
+        q,a,related=categories[group][index]
+        # CMS content is authoritative. If an editor has changed the live FAQ
+        # answer, do not re-publish obsolete source copy in llms.txt.
+        if q not in visible_faq or a not in visible_faq:continue
+        sentences=re.split(r"(?<=\.)\s+",a)
+        summary=" ".join(sentences[:2])
+        summaries.extend(["**Q: "+q+"**","A: "+summary,"Source: "+ORIGIN+"/faq/",""])
+    facts_lines=[
+        "## Verified company facts",
+        "",
+        "- Legal name: "+facts["legalName"]+" ("+facts["englishLegalName"]+").",
+        "- Operating base: "+facts["base"]+".",
+        "- Product scope: "+facts["scope"],
+        "- Content review date: "+facts["lastSubstantiveReview"]+" (substantive update; not regenerated on every deployment).",
+        "",
+        "## Frequently asked buyer questions (reviewed summaries)",
+        ""
+    ]+summaries
+    lines[lines.index("## Official source pages"):lines.index("## Official source pages")]=facts_lines
     for title,path in paths:
         local=dist/(path.lstrip("/")+"index.html")
         if local.is_file():lines.append("- ["+title+"]("+ORIGIN+path+")")

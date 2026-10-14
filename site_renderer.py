@@ -210,6 +210,8 @@ def build_url(path,title,content):
     "name":html.unescape(page_title.group(1)) if page_title else "XUYI Bottles",
     "description":html.unescape(page_desc.group(1)) if page_desc else "",
     "inLanguage":"en","isPartOf":{"@id":SITE_ORIGIN+"/#website"}}]}
+  from organization_source_schema import enrich_organization
+  graph["@graph"]=[enrich_organization(node) for node in graph["@graph"]]
   schema='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")+'</script>'
   content=content.replace("</head>",schema+"</head>",1)
  if route=="/":

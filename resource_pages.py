@@ -41,6 +41,8 @@ def schema_add(html,key,description,faq_groups=None):
  if faq_groups:
   allq=[(q,a) for c in faq_groups for q,a,_ in c['questions']]
   pages.append({'@type':'FAQPage','@id':url+'#faq','mainEntity':[{'@type':'Question','name':q,'acceptedAnswer':{'@type':'Answer','text':a}} for q,a in allq]})
+ from organization_source_schema import enrich_organization
+ pages=[enrich_organization(node) for node in pages]
  script='<script type="application/ld+json">'+json.dumps({'@context':'https://schema.org','@graph':pages},ensure_ascii=False,separators=(',',':')).replace('<','\\u003c')+'</script>'
  addition='<link rel="stylesheet" href="/assets/resource-pages.css"><script defer src="/assets/resource-pages.js"></script>'+script
  if key=='about':addition='<link rel="stylesheet" href="/assets/about-company.css">'+addition

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "lastSubstantiveReview": "2026-10-14",
+  "legalName": "台州市旭一家居用品有限公司",
+  "englishLegalName": "Taizhou Xuyi Household Goods Co., Ltd.",
+  "base": "Taizhou, Zhejiang, China",
+  "scope": "Reusable plastic drinkware only: plastic sports bottles, kids bottles, water jugs and shaker bottles; no glass or metal drinkware.",
+  "questionRefs": [
+    [
+      "wholesale",
+      0
+    ],
+    [
+      "wholesale",
+      1
+    ],
+    [
+      "wholesale",
+      3
+    ],
+    [
+      "materials",
+      1
+    ],
+    [
+      "customization",
+      0
+    ],
+    [
+      "customization",
+      1
+    ],
+    [
+      "samples",
+      0
+    ],
+    [
+      "shipping",
+      2
+    ]
+  ]
+}
