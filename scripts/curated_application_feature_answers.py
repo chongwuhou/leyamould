@@ -110,8 +110,13 @@ def apply(dist):
             if not file.is_file():
                 raise FileNotFoundError(file)
             source=file.read_text(encoding="utf8")
-            if source.count("</main>")!=1 or 'id="buyer-evidence-checks"' in source:
+            # Preserve an existing source/CMS authored decision block and
+            # avoid duplication when the build step runs more than once.
+            existing=source.count('id="buyer-evidence-checks"')
+            if source.count("</main>")!=1 or existing>1:
                 raise ValueError("Unexpected original page: "+str(file))
+            if existing==1:
+                continue
             answers=content[lang]
             if len(answers)!=2 or min(map(len,answers))<55:
                 raise ValueError("Missing specific buyer guidance: "+str(file))

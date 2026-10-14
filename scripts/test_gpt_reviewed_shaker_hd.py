@@ -25,7 +25,12 @@ for item in data["approved"]:
             assert hero and hero.group(1)!=original,(file,"legacy low-res source still used for main SKU")
             main_image=hero.group(1)
             assert main_image.startswith(("/media/","/assets/")),(file,"invalid CMS main image")
-            assert f'<meta property="og:image" content="https://xuyibottles.com{main_image}">' in content, (file, "OG must match selected model photo")
+            # A later editor-chosen social preview can differ from the catalog
+            # product hero; never reject a CMS-approved first-party OG image.
+            og = re.findall(r'<meta property="og:image" content="([^"]+)"', content.split("</head>",1)[0])
+            twitter = re.findall(r'<meta name="twitter:image" content="([^"]+)"', content.split("</head>",1)[0])
+            assert len(og)<=1 and len(twitter)<=1 and (og or twitter),(file,"social preview missing/duplicated")
+            assert all(u.startswith("https://xuyibottles.com/") for u in og+twitter),(file,"invalid social preview")
             assert '"image":["https://xuyibottles.com'+main_image+'"' in content or \
                 '"image": ["https://xuyibottles.com'+main_image+'"' in content, (file, "Product schema must match selected model photo")
 # Rejected source images may be replaced with real, approved SKU photos by the

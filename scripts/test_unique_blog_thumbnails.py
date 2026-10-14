@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""All 16 XUYI Blog cards must be unique in each language; only duplicate slots change."""
+"""All published XUYI Blog cards must be unique, even as the CMS adds posts."""
 from collections import Counter
 from pathlib import Path
 import json
@@ -13,10 +13,10 @@ REVIEWED_SOURCE_IMAGES={item["old"]:item["new"] for item in SHAKER_MANIFEST["app
 
 DIST=ROOT/"dist"
 LANGS=("en","es","pt","ru","tr")
-assert len(ORIGINALS)==16,len(ORIGINALS)
-assert len(OVERRIDES)==8,len(OVERRIDES)
+assert len(ORIGINALS)>=16,len(ORIGINALS)
+assert len(OVERRIDES)>=8,len(OVERRIDES)
 initial=Counter(ORIGINALS.values())
-assert sum(n-1 for n in initial.values())==8
+assert sum(n-1 for n in initial.values())>=8
 assert all(initial[ORIGINALS[slug]]>=2 for slug in OVERRIDES)
 assert len(set(OVERRIDES.values()))==len(OVERRIDES.values())
 post_slugs=set(ORIGINALS)

@@ -1,0 +1,106 @@
+{
+  "site": "xuyi-drinkware-site",
+  "schemaVersion": 1,
+  "description": "Explicitly curated overseas retail size-class search aliases for actual factory ml capacities. These are approximate marketing classes, NOT physical capacities in US fluid ounces. Actual catalog ml remains authoritative.",
+  "units": "US fluid ounce",
+  "maxRelativeDifference": 0.08,
+  "classes": {
+    "380": {
+      "oz": 12,
+      "kind": "class"
+    },
+    "400": {
+      "oz": 14,
+      "kind": "approx"
+    },
+    "450": {
+      "oz": 16,
+      "kind": "class"
+    },
+    "500": {
+      "oz": 16.9,
+      "kind": "class"
+    },
+    "550": {
+      "oz": 18,
+      "kind": "class"
+    },
+    "600": {
+      "oz": 20,
+      "kind": "class"
+    },
+    "650": {
+      "oz": 22,
+      "kind": "class"
+    },
+    "700": {
+      "oz": 24,
+      "kind": "class"
+    },
+    "750": {
+      "oz": 24,
+      "kind": "class"
+    },
+    "800": {
+      "oz": 28,
+      "kind": "class"
+    },
+    "900": {
+      "oz": 30,
+      "kind": "class"
+    },
+    "1000": {
+      "oz": 32,
+      "kind": "class"
+    },
+    "1100": {
+      "oz": 36,
+      "kind": "class"
+    },
+    "1200": {
+      "oz": 40,
+      "kind": "class"
+    },
+    "1300": {
+      "oz": 44,
+      "kind": "approx"
+    },
+    "1500": {
+      "oz": 50,
+      "kind": "class"
+    },
+    "1600": {
+      "oz": 56,
+      "kind": "class"
+    },
+    "1800": {
+      "oz": 60,
+      "kind": "class"
+    },
+    "2000": {
+      "oz": 64,
+      "kind": "class"
+    },
+    "2200": {
+      "oz": 72,
+      "kind": "class"
+    },
+    "2300": {
+      "oz": 80,
+      "kind": "class"
+    },
+    "2400": {
+      "oz": 80,
+      "kind": "class"
+    },
+    "3800": {
+      "oz": 128,
+      "kind": "class"
+    }
+  },
+  "notes": [
+    "Sourced market labels such as 24, 32, 40, 64, and 128 oz are established search categories; other less common aliases are editorial size classes rather than verified marketplace standards.",
+    "Do not write 1000ml=32USfl oz, 2000ml=64USfl oz, or 750ml=24USfl oz as exact physical conversions.",
+    "For new capacities not reviewed in this table, find an eligible familiar retail class within maxRelativeDifference; if no safe class, skip the size-class alias until the source list is reviewed."
+  ]
+}

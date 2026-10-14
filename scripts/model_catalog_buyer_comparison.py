@@ -2,7 +2,7 @@
 """Add genuinely model-specific, source-catalog product comparisons to five locales.
 
 No prices, availability, test results, certifications or unverified factory
-models are invented. Reference-only (G-) and manual submissions are excluded.
+models are invented. G-series factory models and LO manual records without source-catalog comparison data are excluded.
 This is a non-destructive release enrichment of generated static HTML.
 """
 from html import escape
@@ -181,8 +181,8 @@ def html_for(row, selection, lang):
 def apply(dist):
     dist=Path(dist)
     models=[r for r in SERIES.values() if not r.get("manualNew")]
-    if len(models)!=85:
-        raise ValueError(f"Unexpected catalog model population: {len(models)}")
+    if len(models)<85:
+        raise ValueError(f"Source-catalog baseline models missing: {len(models)}")
     edits=0
     for row in models:
         nearby=peers(row,models)
@@ -192,8 +192,13 @@ def apply(dist):
             prefix="" if lang=="en" else lang+"/"
             file=dist/prefix/"products"/str(row["slug"])/"index.html"
             source=file.read_text(encoding="utf8")
-            if source.count("</main>")!=1 or 'class="section catalog-compare"' in source:
+            # Existing comparison blocks may be a CMS owner revision or a
+            # previous pass of this builder; never replace or duplicate them.
+            existing=source.count('id="catalog-comparison"')
+            if existing>1 or source.count("</main>")!=1:
                 raise ValueError("Unexpected product body: "+str(file))
+            if existing==1:
+                continue
             content=html_for(row,nearby,lang)
             for other in nearby:
                 path=dist/prefix/"products"/str(other["slug"])/"index.html"
@@ -201,7 +206,7 @@ def apply(dist):
                     raise FileNotFoundError(str(path))
             file.write_text(source.replace("</main>",content+"</main>",1),encoding="utf8")
             edits+=1
-    print("XUYI_MODEL_FACT_BACKED_COMPARISONS",edits,"pages, 85 catalog models in five locales")
+    print("XUYI_MODEL_FACT_BACKED_COMPARISONS",edits,"new;",len(models),"source-catalog models in five locales; existing editor blocks preserved")
     return edits
 
 if __name__=="__main__":

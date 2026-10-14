@@ -1022,3 +1022,49 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:non
 .production-buyer-evidence .button{margin-top:12px}
 @media(max-width:900px){.quality-reference-cards{grid-template-columns:1fr}.rs-model-proof{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.rs-model-proof{grid-template-columns:1fr}.blog-evidence{padding:20px}}
+
+/* 2026-10: Fresh green eco visual direction on the HOMEPAGE ONLY.
+   No model-wide BPA-free claims: the visible badge asks for source verification.
+   :has() identifies actual homepage banner data, so other routes remain untouched. */
+body:has(#xuyi-home-banners){--red:#187e51;--ink:#18392d;--soft:#eef8f0}
+body:has(#xuyi-home-banners) .header{background:#fbfefa;border-bottom:1px solid #d8eadd}
+body:has(#xuyi-home-banners) .hero{background:linear-gradient(118deg,#e7f7e9 0%,#f7fcf3 56%,#d6ebdb 100%)}
+body:has(#xuyi-home-banners) .hero__watermark{color:#9accaa;opacity:.42}
+body:has(#xuyi-home-banners) .hero__copy h1 span{color:#146b49}
+body:has(#xuyi-home-banners) .hero__dot:hover{background:#e2f2e6;color:#135f40}
+body:has(#xuyi-home-banners) .hero__dot.active,
+body:has(#xuyi-home-banners) .hero__dot[aria-pressed="true"]{background:#ddf1e2;color:#146b49}
+body:has(#xuyi-home-banners) .hero__dot.active::after{background:#187e51}
+body:has(#xuyi-home-banners) .hero__arrow:hover{background:#187e51}
+body:has(#xuyi-home-banners) .kreat-intro,
+body:has(#xuyi-home-banners) .kreat-collections{background:#f8fcf8}
+body:has(#xuyi-home-banners) .target-why{background:#eff7ef}
+body:has(#xuyi-home-banners) .strengths{background:#f2f9f2}
+body:has(#xuyi-home-banners) .button:hover{background:#11643e;border-color:#11643e}
+body:has(#xuyi-home-banners) .home-bpa-verification{display:inline-flex;align-items:center;gap:11px;
+ max-width:min(440px,100%);padding:9px 15px;border:1px solid #9fcdb0;border-radius:999px;
+ color:#1f603f;background:#fffffff0;margin:0 0 12px;box-shadow:0 3px 14px #1b673012}
+body:has(#xuyi-home-banners) .home-bpa-verification__icon{display:grid;place-items:center;
+ height:32px;min-width:32px;border-radius:50%;border:2px solid #2b8559;
+ font-weight:900;font-size:17px;line-height:1}
+body:has(#xuyi-home-banners) .home-bpa-verification strong{display:block;font-size:11px;letter-spacing:.08em}
+body:has(#xuyi-home-banners) .home-bpa-verification small{display:block;font-size:11px;line-height:1.5;color:#466c55}
+.product-gradient-finish{margin:15px 0 0;padding:14px 17px;background:#f1f9f3;
+ border-left:3px solid #278654;border-radius:4px;color:#26553e;font-size:14px;line-height:1.7}
+@media(max-width:750px){body:has(#xuyi-home-banners) .home-bpa-verification{border-radius:15px;align-items:flex-start;
+ padding:10px 12px}body:has(#xuyi-home-banners) .home-bpa-verification small{font-size:10px}}
+/* Shared source-template components: verified US fluid ounces and optional
+   material sourcing only. Existing catalog material values remain unchanged. */
+.product-capacity-summary{margin:14px 0 23px;padding:12px 16px;background:#eff8f2;
+ border-left:3px solid #2e8557;border-radius:4px;font-size:14px;line-height:1.6;color:#265741}
+.product-capacity-summary strong{font-weight:800}
+.product-capacity-disclaimer{display:block;margin-top:5px;color:#516b5a;font-size:11px;line-height:1.65;font-weight:500}
+.product-capacity-warning{border-left:3px solid #ba6d25;background:#fff8ed;color:#6b4c25;padding:12px 16px;margin:14px 0 19px;font-size:13px;line-height:1.7}
+.product-custom-material-options{margin:26px auto 0;max-width:1260px;padding:20px 23px;
+ border:1px solid #d9eadf;border-radius:12px;background:#f4fbf6;color:#265740}
+.product-custom-material-options h2{font-size:clamp(18px,2vw,23px);margin:0 0 9px}
+.product-custom-material-options p{font-size:14px;line-height:1.75;margin:0}
+.volume-heading-extra{font-size:clamp(15px,1.5vw,21px);color:#3c624e;vertical-align:middle}
+.product-card__capacity{display:block;margin:-7px 0 11px;color:#257d52;font-size:12px;font-weight:750;line-height:1.5}
+@media(max-width:680px){.product-custom-material-options{padding:16px}.product-card__capacity{font-size:11px}}
+

@@ -151,6 +151,10 @@ jobs:
           python scripts/test_curated_buyer_seo_round2.py
           python scripts/test_buyer_journey_and_product_sharing.py
           python scripts/test_owner_contextual_links_survive_rebuild.py
+          python scripts/test_source_modules_survive_owner_rebuild.py
+          python scripts/test_verified_capacity_gradient.py
+          python scripts/test_source_catalog_capacity_oz.py
+          python scripts/test_retail_size_class_audit.py
           python scripts/test_search_submission.py
           python scripts/test_product_locale_metadata.py
           python scripts/test_product_material_performance.py

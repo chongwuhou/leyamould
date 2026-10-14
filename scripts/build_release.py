@@ -96,6 +96,17 @@ def main():
     # catalog facts, without inventing price, stock, tests or certifications.
     from curated_catalog_meta_clarity import apply as clarify_localized_catalog_meta
     clarify_localized_catalog_meta(DIST)
+    # Source-reviewed ml/fl oz search wording, real gradient color details
+    # and an explicitly CONDITIONAL BPA material-verification prompt on home.
+    # Preserve later CMS titles/descriptions and original factory model IDs.
+    from verified_capacity_gradient_en import apply as add_verified_capacity_gradient
+    add_verified_capacity_gradient(DIST)
+    # Every real capacity in every current/future source-backed model receives
+    # its US-fluid-ounce counterpart, all 5 locales, search snippets/cards
+    # and a conditional Tritan/BPA-free CUSTOMIZATION inquiry (not certification).
+    # User-authored CMS SEO fields are protected by checked-in D1 fingerprints.
+    from source_catalog_capacity_oz import apply as apply_all_volume_and_custom_materials
+    apply_all_volume_and_custom_materials(DIST)
     # Comparisons only from the 85 catalog entries with verified numeric data.
     # G-series ARE factory models, but their detailed source specs are pending.
     from model_catalog_buyer_comparison import apply as add_model_catalog_comparisons

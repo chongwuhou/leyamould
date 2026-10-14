@@ -16,10 +16,13 @@ ORIGIN = "https://xuyibottles.com"
 def apply(dist):
     dist = Path(dist)
     count = 0
+    preserved = 0
+    eligible = 0
     for file in sorted(dist.rglob("index.html")):
         relative = file.relative_to(dist).as_posix()
         if not re.fullmatch(r"(?:(?:es|pt|ru|tr)/)?products/[^/]+/index\.html", relative):
             continue
+        eligible += 1
         source = file.read_text(encoding="utf-8")
         head, divider, body = source.partition("</head>")
         if not divider:
@@ -38,8 +41,13 @@ def apply(dist):
         image = images[0] if isinstance(images, list) and images else images if isinstance(images, str) else ""
         if not image.startswith(ORIGIN + "/"):
             raise ValueError("Unsafe or absent original Product image: " + relative)
-        if re.search(r'<meta\s+property="og:image"', head):
-            raise ValueError("OG image already exists; review before changing: " + relative)
+        # CMS editor images always outrank historical auto-generated previews.
+        # Re-running a release step must neither duplicate tags nor reject
+        # an owner-selected OG/Twitter image.
+        if (re.search(r'<meta\s+property="og:image"', head) or
+                re.search(r'<meta\s+name="twitter:image"', head)):
+            preserved += 1
+            continue
         url = html.escape(image, quote=True)
         additions = (
             '<meta property="og:image" content="' + url + '">'
@@ -49,9 +57,9 @@ def apply(dist):
         file.write_text(head + additions + divider + body, encoding="utf-8")
         count += 1
     # The catalog may expand without altering this release rule.
-    if count < 505:
-        raise ValueError("Baseline published Product pages unexpectedly missing: " + str(count))
-    print("XUYI_EXACT_PRODUCT_SHARE_IMAGES", count)
+    if eligible < 505:
+        raise ValueError("Baseline published Product pages unexpectedly missing: " + str(eligible))
+    print("XUYI_EXACT_PRODUCT_SHARE_IMAGES", count, "new;", preserved, "owner/existing previews preserved;", eligible, "product pages")
     return count
 
 
