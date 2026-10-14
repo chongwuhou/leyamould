@@ -8,6 +8,7 @@ ORIGIN="https://xuyibottles.com"
 SUBJECTS=[
     "plastic drinkware",
     "reusable plastic water bottles",
+    "plastic water bottle wholesale",
     "plastic sports water bottles",
     "kids plastic water bottles",
     "plastic shaker bottles",

@@ -78,7 +78,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${XUYI_INDEXNOW_KEY}" ]; then
-            derived="$(python -c 'import hashlib,hmac,os; print(hmac.new(os.environ["CLOUDFLARE_API_TOKEN"].encode(), b"indexnow:xuyibottles.com:v1", hashlib.sha256).hexdigest()[:32])')"
+            derived="$(python -c 'import hashlib,hmac,os; print(hmac.new(os.environ["CLOUDFLARE_API_TOKEN"].encode(), b"indexnow:xuyibottles.com:v2", hashlib.sha256).hexdigest()[:32])')"
+            # Keep the public ownership key out of CI step environment logs.
+            echo "::add-mask::$derived"
             echo "XUYI_INDEXNOW_KEY=$derived" >> "$GITHUB_ENV"
             echo "XUYI IndexNow ownership key prepared from the protected deployment credential."
           fi
