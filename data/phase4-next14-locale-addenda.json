@@ -1,0 +1,22 @@
+{
+  "2308": {
+    "ru": "Зафиксируйте выбранный цвет в сопроводительных документах.",
+    "tr": "Onaylanan renk ve koli düzenini sipariş dosyasında ayrıca saklayın."
+  },
+  "2309": {
+    "tr": "Her renk geçişini ayrı onaylayın; toplu siparişten önce gerçek fotoğrafı kaydedin."
+  },
+  "2315": {
+    "tr": "Seçilen model numarasını sipariş belgelerine yazın ve numuneyle eşleştirin."
+  },
+  "2401": {
+    "tr": "Özellikle dar gövde için baskı örneğini, gerçek paketin boyunu ve seçilen rengin tekrar üretilebilirliğini ayrı ayrı doğrulayın."
+  },
+  "2403": {
+    "ru": "Сохраните одобренный образец оформления для повторной партии.",
+    "tr": "Seçilen modelin onaylı baskı örneğini sonraki siparişler için saklayın."
+  },
+  "2459": {
+    "ru": "Каждую разновидность фиксируйте отдельно в заказе."
+  }
+}

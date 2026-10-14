@@ -34,6 +34,17 @@ for slug in (sku for group in THIRD.values() for sku in group):
  LOCALES[slug]={lang:THIRD_TRANSLATIONS[lang][slug] for lang in THIRD_TRANSLATIONS}
 OWNER.update(json.loads((ROOT/"data/phase3-next14-d1-baselines.json").read_text(encoding="utf8"))["hashes"])
 ADDENDA.update(json.loads((ROOT/"data/phase3-next14-locale-addenda.json").read_text(encoding="utf8")))
+# Fourth source-reviewed 14-model batch, merged before D1-aware rendering.
+FOURTH=json.loads((ROOT/"data/phase4-next14-openings-en.json").read_text(encoding="utf8"))["groups"]
+assert all(group in EN and not set(models).intersection(EN[group]) for group,models in FOURTH.items())
+for group,models in FOURTH.items():
+ EN[group].update(models)
+FOURTH_TRANSLATIONS={lang:json.loads((ROOT/f"data/phase4-next14-openings-{lang}.json").read_text(encoding="utf8"))
+                     for lang in ("es","pt","ru","tr")}
+for slug in (sku for group in FOURTH.values() for sku in group):
+ LOCALES[slug]={lang:FOURTH_TRANSLATIONS[lang][slug] for lang in FOURTH_TRANSLATIONS}
+OWNER.update(json.loads((ROOT/"data/phase4-next14-d1-baselines.json").read_text(encoding="utf8"))["hashes"])
+ADDENDA.update(json.loads((ROOT/"data/phase4-next14-locale-addenda.json").read_text(encoding="utf8")))
 CATEGORY={"sports":"Plastic Sports Water Bottles","kids":"Kids Plastic Water Bottles",
           "jugs":"Large Capacity Water Jugs"}
 SELECTED_GROUP={slug:group for group,items in EN.items() for slug in items}

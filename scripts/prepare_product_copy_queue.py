@@ -11,8 +11,7 @@ sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
 from sku_unique_openings import COPY as PILOT
 from sku_unique_openings_phase2 import COPY as PHASE2
-PRIORITY=("2458","2459","2309","2403","2401","2406",
-          "2315","2316","2411","2412","2282","2306","2308","2418")
+PRIORITY=() # Rank the 33 remaining by measured similarity; manually verify facts before future batching.
 HOLD={"5247":"Same nominal dimensions and components as 5248: confirm a genuine model-specific difference first",
       "5248":"Same nominal dimensions and components as 5247: confirm a genuine model-specific difference first",
       "2506":"Source says anomalous 60 ml; factory capacity confirmation required"}
