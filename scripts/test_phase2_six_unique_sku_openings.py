@@ -8,8 +8,8 @@ from sku_unique_openings import editor_intro
 from sku_unique_openings_phase2 import COPY,CATEGORY,EN,OWNER,SELECTED_GROUP
 from site_renderer import SERIES
 langs=("en","es","pt","ru","tr")
-assert len(COPY)==20 and set(EN)=={"sports","kids","jugs"}
-assert set(COPY)==set("2511 2310 2319 2410 2280 2302 2512 2513 2514 2209 2311 2402 2109 2409 2413 2350 2250 2270 2416 2305".split())
+assert len(COPY)>=34 and {"sports","kids","jugs"}.issubset(EN)
+assert set("2511 2310 2319 2410 2280 2302 2512 2513 2514 2209 2311 2402 2109 2409 2413 2350 2250 2270 2416 2305".split()).issubset(COPY)
 snapshot=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
 d1={(v["resourceId"][5:],v["locale"]):v["content"]["mainHtml"]
     for v in snapshot["translations"]
@@ -48,4 +48,4 @@ for locale in langs:
 new={**SERIES["2511"],"slug":"new-factory-model-2027","model":"NEW-2027"}
 original='<h1>Future</h1><p class="copy-muted">Source text</p>'
 assert editor_intro(original,new,"en")==original
-print("PHASE2_TWENTY_SOURCE_COPY_PASSED",len(COPY)*len(langs),"localized routes")
+print("PHASE2_PLUS_THIRD_BATCH_SOURCE_COPY_PASSED",len(COPY)*len(langs),"localized routes")
