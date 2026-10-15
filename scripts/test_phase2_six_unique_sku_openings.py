@@ -7,11 +7,12 @@ sys.path.insert(0,str(ROOT))
 from sku_unique_openings import editor_intro
 from sku_unique_openings_phase2 import COPY,CATEGORY,EN,OWNER,SELECTED_GROUP
 from site_renderer import SERIES
+from product_slug_fix import route as canonical_product_route
 langs=("en","es","pt","ru","tr")
 assert len(COPY)>=48 and {"sports","kids","jugs"}.issubset(EN)
 assert set("2511 2310 2319 2410 2280 2302 2512 2513 2514 2209 2311 2402 2109 2409 2413 2350 2250 2270 2416 2305".split()).issubset(COPY)
 snapshot=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
-d1={(v["resourceId"][5:],v["locale"]):v["content"]["mainHtml"]
+d1={(canonical_product_route(v["resourceId"][5:]),v["locale"]):v["content"]["mainHtml"]
     for v in snapshot["translations"]
     if v.get("resourceId","").startswith("page:") and v["locale"] in langs[1:]}
 assert len(set(COPY))==len(COPY)
