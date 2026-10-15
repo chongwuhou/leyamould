@@ -9,6 +9,45 @@ import DEEP_PART1 from "../../data/blog-deep-research-part1.json" with {type:"js
 import DEEP_PART2 from "../../data/blog-deep-research-part2.json" with {type:"json"};
 import DEEP_PART3 from "../../data/blog-deep-research-part3.json" with {type:"json"};
 import SOURCE_BLOG_GUIDES from "../../data/blog-guides.json" with {type:"json"};
+import INLINE_PART1 from "../../data/blog-inline-edits-reviewed-part1.json" with {type:"json"};
+import INLINE_PART2 from "../../data/blog-inline-edits-reviewed-part2.json" with {type:"json"};
+const REVIEWED_INLINE={...INLINE_PART1,...INLINE_PART2};
+const SOURCE_GUIDE_BY_SLUG=Object.fromEntries(SOURCE_BLOG_GUIDES.map(p=>[p.slug,p]));
+/** Genuine paragraph-level editorial links, conditional on unchanged D1
+ * intro, section heading and paragraph. Owner changes take priority.
+ */
+export function reviewedBlogParagraphNote(post,section,index){
+ const source=SOURCE_GUIDE_BY_SLUG[post?.slug],reviewed=REVIEWED_INLINE[post?.slug];
+ if(!source||!reviewed||post?.intro!==source.intro
+    ||!Array.isArray(post?.sections)||post.sections.length!==source.sections.length
+    ||section?.heading!==source.sections[index]?.heading
+    ||section?.paragraph!==source.sections[index]?.paragraph)return "";
+ const item=reviewed.find(n=>n.section===index);
+ if(!item)return "";
+ const writing=item.text?.en;
+ if(typeof writing!=="string"||writing.split("{model}").length!==2||!/^[0-9]+$/.test(item.sku))
+    throw Error("Invalid reviewed model annotation "+post.slug);
+ const [before,after]=writing.split("{model}");
+ const link='<a class="blog-editorial__product-link" href="/products/'+esc(item.sku)+'/">model '+esc(item.sku)+'</a>';
+ return ' <span class="blog-editorial__product-note" data-editorial-model="'+esc(item.sku)+'">'+esc(before)+link+esc(after)+'</span>';
+}
+export function reviewedBlogRelatedAtEnd(post){
+ // Retain the D1 owner's chosen related articles, their order and opt-out.
+ if(!SOURCE_GUIDE_BY_SLUG[post?.slug]||!Array.isArray(post?.related))return "";
+ const used=new Set(),items=[];
+ for(const slug of post.related){
+  if(typeof slug!=="string"||slug===post.slug||used.has(slug))continue;
+  const info=SOURCE_GUIDE_BY_SLUG[slug];
+  if(!info)continue;
+  items.push(info);used.add(slug);
+  if(items.length===3)break;
+ }
+ if(!items.length)return "";
+ let out='<section class="section section--soft blog-related"><div class="shell"><div class="section__head"><div><span class="eyebrow">CONTINUE READING</span><h2 class="section__title">Related Buying Guides</h2></div></div><div class="blog-related__grid">';
+ for(const info of items)
+  out+='<article class="blog-related__item"><a href="/blog/'+esc(info.slug)+'/"><strong>'+esc(info.title)+'</strong></a><p>'+esc(info.description)+'</p></article>';
+ return out+'</div></div></section>';
+}
 const ORIGINAL_GUIDE_INTROS=Object.fromEntries(SOURCE_BLOG_GUIDES.map(post=>[post.slug,post.intro]));
 const DEEP_ENTRIES={...BLOG_DEPTH.articles,...DEEP_PART1.articles,...DEEP_PART2.articles,...DEEP_PART3.articles};
 
@@ -164,7 +203,7 @@ export function blogHtml(post){
      'By XUYI Bottles · Product Sourcing Editorial Team')+'</a></p>';
  body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div>'+byline+'<p class="blog-lede">'+esc(post.intro)+'</p>';
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
- post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+esc(section.paragraph)+'</p></section>'});
+ post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+esc(section.paragraph)+reviewedBlogParagraphNote(post,section,i)+'</p></section>'});
  body+=verifiedEvidence(post);
  body+=renderBuyerDecisionTable(post);
  body+=renderDepthEvidence(post);
@@ -187,6 +226,8 @@ export function blogHtml(post){
   if(!Object.hasOwn(allowed,destination))throw Error("Unknown editorial link target");
   body+='<section class="seo-next-buyer"><h2>Continue your sourcing research</h2><p>View this related product or buying guide: <a href="/'+esc(destination)+'/">'+esc(allowed[destination])+' →</a></p></section>';
  }
+ // Place the D1 editor-selected related reading INSIDE the article end.
+ body+=reviewedBlogRelatedAtEnd(post);
  body+='</article></div></div></section>';
  // D1 replaces the built English article's <main>, so this must share the
  // same source mapping as the static five-language builder. Append *outside*

@@ -38,6 +38,16 @@ The existing **three carefully selected related-guide entries** per article alre
 - The D1 CMS database, inquiries, hero images and R2 are not written. These edits exist in canonical reviewed source records / shared renderers, **not generated HTML replacement scripts**. A normal CMS rebuild reproduces them while original D1 baseline remains unchanged. When a CMS user edits that body later, the new version wins and should be manually rechecked against the editorial checklist.
 - Historical `blog_source_product_bridges.py` remains only as a dormant module for comparison and review, not an active source renderer path. No new article outside this reviewed set is forced into the historical 16 count.
 
+## Critical production route correction (after checking live English HTML)
+
+The English public `/blog/<slug>/` URLs are **served dynamically from the D1 `xuyi_blog_posts.content_json` rows by `functions/blog/[[path]].js` / `functions/_shared/blog-cms.js`**, even after the local static English article builds have passed. On the earlier successful GitHub run #150, the English *static artifact* contained the revised paragraphs but the true English *public D1 route* still did not. This caused misleading local-green vs production-red testing. The four translations were rendered from D1 `mainHtml` through the source builder and appeared correctly.
+
+The correct, durable implementation now imports the **same two versioned paragraph-specific editorial records** in the actual D1-aware Worker template. `reviewedBlogParagraphNote(post,section,index)` only supplies a note if the **D1 post intro, section heading and original paragraph** still match the approved source. An administrator editing a paragraph, changing the article introduction, or selecting a new article is never replaced. The normalized owner D1 body is neither mutated nor posted from CI.
+
+The Worker also renders **the D1 owner's own selected `post.related` list** (up to three valid, unique published-guide slugs) inside the article ending after the quote CTA; selecting a different order or clearing related picks is honored. The old initial live D1 layout had no article-end related section. A separate new Node test `scripts/test_blog16_live_d1_render.mjs` covers all 16 actual Worker article pages and realistic owner edits in the dynamic route, and is mandatory in GitHub CI. Production final acceptance **must HTTP GET actual public English routes**, not infer them from a successfully built static file.
+
+Run #151/#152 attempted protected D1 article writes but were blocked by HTTP 401 due mismatched admin authority. Those failed writes must never be reported as a production article update. This source-template solution avoids secret workarounds, keeps the correct D1 ownership, and survives Cloudflare rebuilds.
+
 ## Release acceptance
 
 `scripts/test_16_blog_editorial_internal_links.py` checks each of the 80 actual built pages, the two in-paragraph links in different sections, exact real model and locale URLs, all 3 selected related articles within the article, and simulated changed CMS source. No whole-document anchor-count shortcut. The Phase14 image/Why Us test is updated to distinguish true article-level link acceptance. Permanent CI gate added to `.github/workflows/publish-xuyi.yml`.
