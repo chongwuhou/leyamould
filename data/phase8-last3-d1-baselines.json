@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "source": "audited D1 snapshot mainHtml (not live writes)",
+  "hashes": {
+    "2506": {
+      "es": "c371c16873fab69cd69454f6ae85ae68174e782a9893308f6ec8b1a4efb054f0",
+      "pt": "f57275bdb3d453e9599d77ad5de21fc63498faa96fce85c0500886cf5a9c6cea",
+      "ru": "fc0ebadbedf9e58b523e5e56203b2a4a81c72449c80578ef314c9f1b9061147a",
+      "tr": "b675c313a2159b667d7fb4f5a9b3ccdf5cbe69345b3c96b865c7484db40a2614"
+    },
+    "5247": {
+      "es": "fa43f4891a15a28d7ae510d2573bb622a9ff5d3a04e659b8f9951c543951d942",
+      "pt": "ff1a7507155f858843434a542710290495bda7745175093589b7a57cf9c3a29d",
+      "ru": "dd9b48f507fbc94f3a50a7f2ee5708aae8525a7773164c8fc7860984b9a7e6b2",
+      "tr": "054c24b676d100296be3659d84209af04662592b66335da5b1fa7d6d3afdb954"
+    },
+    "5248": {
+      "es": "61f86b6b81a70eff6c86ae7a01230b692b2669fe35794e58a861bfb1d3f6b2bd",
+      "pt": "4a76818ad49fcd935ee17693eb8a340fd0d787e4cd4f3e3e239087207ad12838",
+      "ru": "75c8732013fe4af68184f3ab7357640fcec71feba33a67fc330d864739b6f68e",
+      "tr": "f3b87d3581f8d6f52f02ea92c801471df5fdc0272a3052fe93d813d2addf4524"
+    }
+  }
+}

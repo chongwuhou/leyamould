@@ -36,6 +36,9 @@ def grams(s):
  return set(tuple(x[i:i+3]) for i in range(max(0,len(x)-2)))
 def score(a,b):
  return round(len(a&b)/len(a|b),4) if a and b else 0.0
+def median_or_none(values):
+ values=list(values)
+ return round(statistics.median(values),3) if values else None
 def audit():
  pages={}
  for row in SERIES.values():
@@ -63,8 +66,8 @@ def audit():
   for pilot in (True,False):
    sub=[r for r in results if r['locale']==lang and r['pilot']==pilot]
    summary.append(dict(locale=lang,cohort='edited' if pilot else 'remaining',
-    count=len(sub),median_nearest_main=round(statistics.median(r['nearest_main'] for r in sub),3),
-    median_nearest_intro=round(statistics.median(r['nearest_intro'] for r in sub),3)))
+    count=len(sub),median_nearest_main=median_or_none(r['nearest_main'] for r in sub),
+    median_nearest_intro=median_or_none(r['nearest_intro'] for r in sub)))
  return dict(method='Visible main and first post-H1 paragraph; Jaccard 3-word shingles, digits masked; nearest same-category within same locale; diagnostic not Google score',
   models=len(SERIES),pages=len(pages),pilots=len(COPY)+len(PHASE2_COPY),summary=summary,rows=results)
 if __name__=='__main__':

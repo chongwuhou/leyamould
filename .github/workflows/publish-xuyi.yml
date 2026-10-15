@@ -188,6 +188,7 @@ jobs:
           python scripts/test_phase5_fourteen_unique_sku_openings.py
           python scripts/test_phase6_lo8_unique_sku_openings.py
           python scripts/test_phase7_g8_unique_factory_model_guides.py
+          python scripts/test_phase8_last3_source_discrepancy_guides.py
           node scripts/test_blog_search_intent_runtime.mjs
           python scripts/test_retail_size_class_audit.py
           python scripts/test_verified_trust_technical_seo.py

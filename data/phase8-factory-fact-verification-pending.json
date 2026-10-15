@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Keep unresolved factory facts separate from completed multilingual buyer-guide editorial coverage. Do not mark capacities/components/photo differentiation as verified without primary supplier evidence.",
+  "items": [
+    {
+      "sku": "2506",
+      "verificationStatus": "pending_factory",
+      "catalogEvidence": {
+        "rawCapacityField": "60ml (unverified, anomalous)",
+        "dimensions": "8.3*26.8 cm (catalog figure)",
+        "materialFamilies": "PC+PP+ABS",
+        "colors": "blue/green/black/brown",
+        "photo": "/media/excel/row-006.webp"
+      },
+      "requestedEvidence": [
+        "Factory-signed model 2506 original specification sheet with actual measured capacity in ml",
+        "Photograph of the same 2506 assembled product with identifying factory code and measuring container",
+        "Component-level lid/body/gasket material list and applicable finished-product test documents",
+        "Confirmed production colors and packing counts, matching this specific 2506 version"
+      ],
+      "doNotAssume": [
+        "600ml",
+        "800ml",
+        "any oz size class",
+        "closure type or waterproof performance"
+      ]
+    },
+    {
+      "sku": "5247",
+      "verificationStatus": "pending_factory",
+      "catalogEvidence": {
+        "sharedImage": "/media/ppt/slide-096.webp",
+        "combinedSizes": "450 ml and 700 ml options; mapping to individual model not established",
+        "combinedMaterials": "PP",
+        "sourceExample": "450ml 6.5*16.8cm; cannot transfer to 5247 without source confirmation"
+      },
+      "requestedEvidence": [
+        "Factory model-numbered image and physical sample for 5247",
+        "Written 5247-specific volume options and size diagram, distinguished from 5248",
+        "Exact component list: lid, spout, any strainer/mixing insert, and protective parts",
+        "Confirmed material grades, logo placement, colors and unit/master carton packaging"
+      ],
+      "doNotAssume": [
+        "5247 is necessarily 450ml",
+        "5247 is necessarily 700ml",
+        "different lid from 5248",
+        "shared image provides exact-model proof"
+      ]
+    },
+    {
+      "sku": "5248",
+      "verificationStatus": "pending_factory",
+      "catalogEvidence": {
+        "sharedImage": "/media/ppt/slide-096.webp",
+        "combinedSizes": "450 ml and 700 ml options; mapping to individual model not established",
+        "combinedMaterials": "PP",
+        "sourceExample": "450ml 6.5*16.8cm; cannot transfer to 5248 without source confirmation"
+      },
+      "requestedEvidence": [
+        "Factory model-numbered image and physical sample for 5248",
+        "Supplier's written comparison of 5248 versus 5247, including whether only colors/model codes differ",
+        "Confirmed 5248-specific capacity, dimensions, closure/mixing parts and material grades",
+        "Exact production colors, branding zone, test reports and unit/master carton specification"
+      ],
+      "doNotAssume": [
+        "5248 is necessarily 450ml",
+        "5248 is necessarily 700ml",
+        "different lid from 5247",
+        "shared image provides exact-model proof"
+      ]
+    }
+  ]
+}

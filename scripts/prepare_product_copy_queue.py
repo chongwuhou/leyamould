@@ -15,6 +15,11 @@ PRIORITY=() # Only evidence-incomplete SKUs remain; request verified factory fac
 HOLD={"5247":"Same nominal dimensions and components as 5248: confirm a genuine model-specific difference first",
       "5248":"Same nominal dimensions and components as 5247: confirm a genuine model-specific difference first",
       "2506":"Source says anomalous 60 ml; factory capacity confirmation required"}
+def write_queue(rows,target):
+ with target.open("w",newline="",encoding="utf-8-sig") as f:
+  columns=("rank","category","sku","nearest_main_jaccard","capacity_source","dimensions_source","material_source","colors_source","image_reference","detail_url","decision")
+  w=csv.DictWriter(f,fieldnames=columns)
+  w.writeheader();w.writerows(rows)
 def main():
  a=json.loads((ROOT/"_local_ops/product-body-similarity-2026-10-14.json").read_text(encoding="utf8"))
  scores={r["sku"]:r["nearest_main"] for r in a["rows"] if r["locale"]=="en"}
@@ -37,9 +42,8 @@ def main():
  rows.sort(key=lambda r:(r["rank"],-r["nearest_main_jaccard"],r["category"],r["sku"]))
  assert len(rows)==len(SERIES)-len(PILOT)-len(PHASE2)
  target=ROOT/"_local_ops/phase2-remaining-sku-priority.csv"
- with target.open("w",newline="",encoding="utf-8-sig") as f:
-  w=csv.DictWriter(f,fieldnames=list(rows[0]))
-  w.writeheader();w.writerows(rows)
- print("REMAINING_PRODUCT_EDITORIAL_QUEUE",len(rows),"manual_next",len(PRIORITY),"held_5247_5248","yes")
+ write_queue(rows,target)
+ pending=json.loads((ROOT/"data/phase8-factory-fact-verification-pending.json").read_text(encoding="utf8"))["items"]
+ print("REMAINING_PRODUCT_EDITORIAL_QUEUE",len(rows),"manual_next",len(PRIORITY),"FACTORY_VERIFICATION_PENDING",sum(x["verificationStatus"]=="pending_factory" for x in pending))
  print("FILE",target)
 if __name__=="__main__":main()

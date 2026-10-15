@@ -80,8 +80,19 @@ for slug in (sku for group in G_BATCH.values() for sku in group):
  LOCALES[slug]={lang:G_TRANSLATIONS[lang][slug] for lang in G_TRANSLATIONS}
 OWNER.update(json.loads((ROOT/"data/phase7-g8-gallery-template-baselines.json").read_text(encoding="utf8"))["hashes"])
 ADDENDA.update(json.loads((ROOT/"data/phase7-g8-buyer-guides-addenda.json").read_text(encoding="utf8")))
+# Eighth closing batch: source-discrepancy-safe buyer guides for the last
+# three catalog IDs. Copy is unique, but underlying factory facts stay held.
+LAST3=json.loads((ROOT/"data/phase8-last3-buyer-intros-en.json").read_text(encoding="utf8"))["groups"]
+assert all(group in ("sports","shakers") and (group not in EN or not set(items).intersection(EN[group])) for group,items in LAST3.items())
+for group,items in LAST3.items():
+ EN.setdefault(group,{}).update(items)
+LAST3_LANGS={loc:json.loads((ROOT/f"data/phase8-last3-buyer-intros-{loc}.json").read_text(encoding="utf8"))
+             for loc in ("es","pt","ru","tr")}
+for slug in (sku for group in LAST3.values() for sku in group):
+ LOCALES[slug]={loc:LAST3_LANGS[loc][slug] for loc in LAST3_LANGS}
+OWNER.update(json.loads((ROOT/"data/phase8-last3-d1-baselines.json").read_text(encoding="utf8"))["hashes"])
 CATEGORY={"sports":"Plastic Sports Water Bottles","kids":"Kids Plastic Water Bottles",
-          "jugs":"Large Capacity Water Jugs"}
+          "jugs":"Large Capacity Water Jugs","shakers":"Plastic Shaker Bottles"}
 SELECTED_GROUP={slug:group for group,items in EN.items() for slug in items}
 COPY={slug:{"en":paragraph,**LOCALES[slug]} for group,items in EN.items() for slug,paragraph in items.items()}
 for sku,extras in ADDENDA.items():
