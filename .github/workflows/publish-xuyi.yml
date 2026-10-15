@@ -160,6 +160,7 @@ jobs:
           python scripts/test_editorial_d1_overrides.py
           node scripts/test_blog_dynamic_evidence.mjs
           node scripts/test_blog16_live_d1_render.mjs
+          node scripts/test_blog_d1_paragraph_links.mjs
           node scripts/test_blog_buyer_decisions_runtime.mjs
           node scripts/test_verified_blog_depth_and_authors.mjs
           node scripts/test_researched_blog_depth_runtime.mjs

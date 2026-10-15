@@ -101,6 +101,14 @@ export function renderBuyerDecisionTable(post){
 }
 
 export const esc = value => String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+/** CMS body paragraphs are plain text with optional trusted local links.
+ * Editors persist [Model 2095](/products/2095/) in D1. Escape all text
+ * first, then turn only reviewed local product-link syntax into <a> tags.
+ */
+export function renderEditableParagraph(value){
+  return esc(value).replace(/\[([^\]\n]{2,100})\]\(\/products\/([a-zA-Z0-9_-]{2,80})\/\)/g,
+    (_,label,slug)=>'<a class="blog-editorial__product-link" href="/products/'+slug+'/">'+label+'</a>');
+}
 function verifiedEvidence(post){
  const evidence=EDITORIAL_EVIDENCE[post?.slug];
  if(!evidence)return "";
@@ -213,7 +221,7 @@ export function blogHtml(post){
      'By XUYI Bottles · Product Sourcing Editorial Team')+'</a></p>';
  body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div>'+byline+'<p class="blog-lede">'+esc(post.intro)+'</p>';
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
- post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+esc(section.paragraph)+reviewedBlogParagraphNote(post,section,i)+'</p></section>'});
+ post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+renderEditableParagraph(section.paragraph)+reviewedBlogParagraphNote(post,section,i)+'</p></section>'});
  body+=verifiedEvidence(post);
  body+=renderBuyerDecisionTable(post);
  body+=renderDepthEvidence(post);
