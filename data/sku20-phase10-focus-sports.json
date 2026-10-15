@@ -1,0 +1,42 @@
+{
+  "2209": {
+    "topic": "same_capacity_diff_height",
+    "en": "2209 and 2402 both list 800 ml in PC+PP+ABS, but their source heights are 26 cm and 24.5 cm respectively. The gradient color combinations differ, too; ask for labeled sample pairs before assuming the same body, lid or decoration template.",
+    "es": "2209 y 2402 indican 800 ml y PC+PP+ABS, pero registran alturas de 26 y 24,5 cm. También difieren los degradados: solicite muestras etiquetadas antes de asumir cuerpo, tapa o impresión iguales.",
+    "pt": "2209 e 2402 têm 800 ml e PC+PP+ABS, mas alturas de 26 e 24,5 cm. Os degradês também mudam; peça amostras identificadas antes de considerar corpo, tampa ou arte comuns.",
+    "ru": "У 2209 и 2402 одинаковые каталожные 800 мл и PC+PP+ABS, но высота 26 и 24,5 см соответственно. Градиенты тоже отличаются: сравните маркированные образцы перед заказом общих крышек или печати.",
+    "tr": "2209 ve 2402 için 800 ml ve PC+PP+ABS ortak, fakat boyları sırasıyla 26 ve 24,5 cm. Gradyanlar da farklıdır; ortak gövde, kapak veya baskı varsaymadan kodlu numuneleri karşılaştırın."
+  },
+  "2402": {
+    "topic": "compact_gradient",
+    "en": "The 800 ml 2402 has a 7.7×24.5 cm catalog outline, shorter than 2209's 7.7×26 cm despite their matching nominal capacity. Its black-gray, blue-pink and other gradient references need separate print proofs; neither entry establishes an identical lid.",
+    "es": "2402 registra 800 ml y 7,7×24,5 cm, menos alto que 2209 (7,7×26 cm) pese a igual capacidad. Los degradados negro-gris y azul-rosa requieren pruebas de impresión propias; no se acredita la misma tapa.",
+    "pt": "2402 indica 800 ml e 7,7×24,5 cm, menor altura que 2209 (7,7×26 cm) com igual volume. Os degradês preto-cinza e azul-rosa pedem provas próprias; a tampa igual não está demonstrada.",
+    "ru": "У 2402 на 800 мл указан размер 7,7×24,5 см, ниже 2209 (7,7×26 см) при том же объеме. Черно-серые и сине-розовые градиенты требуют отдельных проб печати; общая крышка не подтверждена.",
+    "tr": "2402 800 ml ve 7,7×24,5 cm olarak, aynı hacimli 2209'un 7,7×26 cm ölçüsünden kısadır. Siyah-gri ve mavi-pembe geçişleri için baskı provası isteyin; aynı kapak kanıtlanmamıştır."
+  },
+  "2512": {
+    "topic": "gradient_750",
+    "en": "For 2512, the 750 ml catalog entry and 8×21.5 cm outline accompany gradient-blue and other color references. Unlike 2095's 500 ml PP+PC entry, 2512 lists PC+PP+ABS; verify the real gradient and polymer assignment before using the same branding artwork.",
+    "es": "La ficha 2512 registra 750 ml y 8×21,5 cm con referencias degradadas. Frente a 2095 de 500 ml y PP+PC, 2512 indica PC+PP+ABS: confirme el degradado real y los componentes antes de reutilizar el diseño.",
+    "pt": "A ficha 2512 indica 750 ml e 8×21,5 cm com referências em degradê. Contra 2095 de 500 ml e PP+PC, 2512 registra PC+PP+ABS; confira cores e componentes antes de repetir a arte.",
+    "ru": "Для 2512 указаны 750 мл, 8×21,5 см и градиентные варианты. В отличие от 2095 на 500 мл с PP+PC, здесь список PC+PP+ABS: подтвердите окраску и состав деталей до переноса макета.",
+    "tr": "2512 kaydı 750 ml, 8×21,5 cm ve geçişli renkleri gösterir. 500 ml PP+PC 2095'ten farklı olarak PC+PP+ABS listelenir; aynı baskıyı uygulamadan gerçek renk ve parçaları doğrulayın."
+  },
+  "2513": {
+    "topic": "height_800",
+    "en": "2513 moves the stated volume to 800 ml and height to 25.5 cm while retaining the 8 cm width recorded for 2512 at 750 ml and 21.5 cm. Both list 60 pieces per carton, but their carton dimensions differ; verify product height with its real lid and packaging.",
+    "es": "2513 indica 800 ml y 25,5 cm de alto con 8 cm de ancho, frente a los 750 ml y 21,5 cm de 2512. Ambos registran 60 unidades por caja, pero las medidas de caja difieren; mida el producto con tapa.",
+    "pt": "2513 registra 800 ml e 25,5 cm de altura com largura de 8 cm; 2512 indica 750 ml e 21,5 cm. Ambos têm 60 por caixa, mas caixas de dimensões diferentes; meça a tampa no produto real.",
+    "ru": "У 2513 указаны 800 мл и высота 25,5 см при ширине 8 см, а у 2512 — 750 мл и 21,5 см. В коробках обоих по 60 штук, но габариты отличаются; измерьте собранный образец с крышкой.",
+    "tr": "2513 800 ml, 25,5 cm boy ve 8 cm genişlikte; 2512 750 ml ve 21,5 cm boydadır. İkisi de kolide 60 adettir ancak koli ölçüleri farklıdır; kapakla birlikte örneği ölçün."
+  },
+  "2514": {
+    "topic": "litre_tall",
+    "en": "The 1,000 ml 2514 is listed at 7.3×29 cm, narrower and taller on paper than 800 ml 2513 at 8×25.5 cm. The catalog does not establish holder compatibility or identical closures; verify filled handling and carton height before a one-litre retail claim.",
+    "es": "2514 aparece con 1.000 ml y 7,3×29 cm, más estrecho y alto en ficha que 2513 de 800 ml (8×25,5 cm). El catálogo no prueba compatibilidad con soportes o tapas; confirme la muestra y la caja.",
+    "pt": "2514 registra 1.000 ml e 7,3×29 cm, mais estreito e alto que 2513 de 800 ml (8×25,5 cm). A fonte não comprova encaixe ou tampa igual; verifique a amostra e altura de caixa.",
+    "ru": "Для 2514 указаны 1000 мл и 7,3×29 см: по каталогу он уже и выше, чем 2513 на 800 мл (8×25,5 см). Совместимость держателей и крышек не подтверждена; проверяйте образец и коробку.",
+    "tr": "2514 için 1.000 ml ve 7,3×29 cm, 800 ml 2513 için 8×25,5 cm kayıtlıdır; 2514 daha dar ve uzundur. Tutucu uyumu ya da ortak kapak kanıtlanmaz; numune ve koli boyunu kontrol edin."
+  }
+}

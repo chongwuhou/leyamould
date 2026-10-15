@@ -153,7 +153,7 @@ def render(product,locale,route,approved_routes=None):
     contact=prefix+"/contact/?model="+quote(str(product["model"]),safe="")+"#inquiry"
     def item(heading,content):
         return '<div class="material-brief__item"><h3>'+escape(heading)+'</h3>'+content+'</div>'
-    # Curated 20-SKU material briefs replace generic resin-family boilerplate
+    # Curated SKU material briefs replace generic resin-family boilerplate
     # with verified model facts. The combined material field NEVER assigns
     # body/lid/seal chemistry, nor establishes certification or test results.
     if product.get("slug") in PEERS:

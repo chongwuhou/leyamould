@@ -7,10 +7,10 @@ ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
 from product_content import details
-from sku_factual_sections import PEERS,BASE,LANGS,apply,section,material_annotation,facts
+from sku_factual_sections import FIRST20 as PEERS,BASE,LANGS,apply,section,material_annotation,facts
 from seo_structured_components import visible_faq
 
-assert len(PEERS)==20 and len(BASE)==20
+assert len(PEERS)==20 and len(BASE)>=len(PEERS)
 cohorts=collections.Counter(SERIES[s]["category"] for s in PEERS)
 assert set(cohorts.values())=={5} and len(cohorts)==4,cohorts
 snapshot=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
