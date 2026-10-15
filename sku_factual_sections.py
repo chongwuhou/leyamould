@@ -15,15 +15,19 @@ DATA=json.loads((ROOT/"data/product-20-module-source-baselines.json").read_text(
 FIRST20=DATA["models"]
 NEXT20_DATA=json.loads((ROOT/"data/product-20-module-source-baselines-phase10.json").read_text(encoding="utf8"))
 NEXT20=NEXT20_DATA["models"]
-assert not set(FIRST20).intersection(NEXT20), "SKU editorial releases overlap"
-PEERS={**FIRST20,**NEXT20}
-BASE={**DATA["baselines"],**NEXT20_DATA["baselines"]}
+THIRD20_DATA=json.loads((ROOT/"data/product-20-module-source-baselines-phase11.json").read_text(encoding="utf8"))
+THIRD20=THIRD20_DATA["models"]
+assert not set(FIRST20).intersection(NEXT20) and not set(THIRD20).intersection(set(FIRST20)|set(NEXT20)), "SKU editorial releases overlap"
+PEERS={**FIRST20,**NEXT20,**THIRD20}
+BASE={**DATA["baselines"],**NEXT20_DATA["baselines"],**THIRD20_DATA["baselines"]}
 LANGS=("en","es","pt","ru","tr")
 FOCUS={}
 for group in ("sports","kids","jugs","shakers"):
     FOCUS.update(json.loads((ROOT/f"data/sku20-focus-{group}.json").read_text(encoding="utf8")))
 for group in ("sports","kids","jugs"):
     FOCUS.update(json.loads((ROOT/f"data/sku20-phase10-focus-{group}.json").read_text(encoding="utf8")))
+for group in ("sports","kids","jugs"):
+    FOCUS.update(json.loads((ROOT/f"data/sku20-phase11-focus-{group}.json").read_text(encoding="utf8")))
 assert set(FOCUS)==set(PEERS)
 assert all(set(item)==set(LANGS)|{"topic"} for item in FOCUS.values())
 # Each locale has approved native questions and procurement-oriented wording,

@@ -191,6 +191,7 @@ jobs:
           python scripts/test_phase8_last3_source_discrepancy_guides.py
           python scripts/test_20_product_modules_and_faq_schema.py
           python scripts/test_phase10_next20_sku_h2_sections.py
+          python scripts/test_phase11_third20_sku_h2_sections.py
           node scripts/test_blog_search_intent_runtime.mjs
           python scripts/test_retail_size_class_audit.py
           python scripts/test_verified_trust_technical_seo.py
