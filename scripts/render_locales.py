@@ -298,6 +298,7 @@ def main():
                         for locale in live}
     created=0
     for (route,loc),fields in translated.items():
+        original_owner_body=fields.get("mainHtml")
         # Correct a reviewed Turkish bottle-cap false friend in D1 source
         # fields *before* constructing HTML, SEO, OG and JSON-LD. Owner-edited
         # D1 text takes precedence; do not patch rendered dist files.
@@ -305,6 +306,9 @@ def main():
         fields=reviewed_turkish_bottle_caps(route,loc,fields)
         from spanish_reviewed_copy import reviewed_spanish_copy
         fields=reviewed_spanish_copy(route,loc,fields)
+        if route.startswith("/blog/"):
+            from blog_source_product_bridges import product_bridges
+            fields={**fields,"mainHtml":product_bridges(fields["mainHtml"],route,loc,source_original=original_owner_body)}
         original=(DIST/route.lstrip("/")/"index.html" if route!="/" else DIST/"index.html").read_text(encoding="utf-8")
         if '<main id="main-content">' not in original:continue
         prefix,remainder=original.split('<main id="main-content">',1)
@@ -335,6 +339,9 @@ def main():
         if route=="/":
             from home_bpa_source import add_home_bpa_note
             body=add_home_bpa_note(body,loc)
+        if route=="/why-us/":
+            from why_us_source import augment as why_us_buyer_evidence
+            body=why_us_buyer_evidence(body,loc)
         if route.startswith("/products/") and route!="/products/":
             from site_renderer import SERIES
             from sku_unique_openings import editor_intro
@@ -373,6 +380,8 @@ def main():
         if route=="/":
             from media_quality_guard import upgrade_home_visual
             body=upgrade_home_visual(body,loc)
+            from home_intro_source_photo import reviewed_home_intro_photo
+            body=reviewed_home_intro_photo(body)
             prefix,count=re.subn(r'<script type="application/json" id="xuyi-home-banners">[^<]*</script>',
               lambda _:banner_tag(data,loc,routes_by_locale[loc]),prefix,count=1)
             if count!=1:raise RuntimeError("English homepage must have exactly one banner configuration")
@@ -390,6 +399,10 @@ def main():
               lambda m:m.group(1)+html.escape(slide["img"])+m.group(2),body,count=1)
             body=re.sub(r'(<a\b(?=[^>]*\bid="hero-cta")[^>]*\bhref=")[^"]+(")',
               lambda m:m.group(1)+html.escape(slide["link"])+m.group(2),body,count=1)
+        if route=="/":
+            # Selected the final hero slide; now reserve its image geometry.
+            from home_source_image_geometry import source_image_geometry
+            body=source_image_geometry(body,route,loc)
         text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+body+'</main>'+translate_chrome(suffix,loc,ui)
         text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])
         text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)

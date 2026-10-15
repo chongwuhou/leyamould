@@ -1119,4 +1119,21 @@ body:has(#xuyi-home-banners) .home-bpa-verification small{display:block;font-siz
    fields and privacy consent are required. No API contract changes. */
 .inquiry-required-note{border-left:3px solid #2d875b;padding:9px 13px;margin:0 0 18px;color:#315946;background:#f1f9f4;font-size:13px;line-height:1.7}
 
+/* Source-rendered supplier decision guidance on Why Us / five locales. */
+.xuyi-why-buyer-proof{padding-block:56px 64px}
+.xuyi-why-buyer-proof>.shell{max-width:1100px}
+.xuyi-why-buyer-proof h2{max-width:860px;line-height:1.18;margin:0 0 25px}
+.xuyi-why-explainer{max-width:960px;margin:24px 0}
+.xuyi-why-explainer h3,.xuyi-why-quality-check h3{font-size:clamp(20px,2vw,27px);margin:0 0 13px}
+.xuyi-why-explainer p,.xuyi-why-quality-check>p{line-height:1.85;color:var(--muted,#45514c);max-width:950px}
+.xuyi-why-quality-check{padding:22px;background:#f4f8f5;border:1px solid #d8e7dc;border-radius:16px;margin:28px 0}
+.xuyi-why-quality-check dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 0}
+.xuyi-why-quality-check dl>div{background:#fff;border:1px solid #e0ebe3;border-radius:11px;padding:16px}
+.xuyi-why-quality-check dt{font-weight:800;color:#215d43;margin:0 0 6px}
+.xuyi-why-quality-check dd{margin:0;line-height:1.65}
+.xuyi-why-call-to-action{font-weight:650;max-width:850px;margin:24px 0}
+.blog-product-proof{background:#f4f8f5;border-left:3px solid #2d875b;padding:13px 17px;margin:18px 0;line-height:1.75}
+.blog-product-proof a{color:#17633f;font-weight:750;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:650px){.xuyi-why-buyer-proof{padding-block:36px 42px}.xuyi-why-quality-check{padding:15px}.xuyi-why-quality-check dl{grid-template-columns:minmax(0,1fr)}}
+
 

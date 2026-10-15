@@ -219,7 +219,8 @@ def topic_page(kind,entry):
  body+='<section class="section section--soft"><div class="shell">'+sec('Questions for Wholesale Buyers','Check model-specific availability, decoration, materials and destination requirements.','SOURCING FAQ')+faq_html(FAQS[:6])+'</div></section>'
  return body
 def why_us():
- return why_us_expanded()
+ from why_us_source import augment
+ return augment(why_us_expanded(),"en")
 
 def sample_page():
  return sample_expanded()

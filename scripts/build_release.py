@@ -74,8 +74,8 @@ def main():
     repair_sports_cards(DIST)
     from repair_remaining_category_cards import apply as repair_remaining_categories
     repair_remaining_categories(DIST)
-    from fix_primary_image_placements import apply as fix_primary_image_placements
-    fix_primary_image_placements(DIST)
+    # Original wide homepage marketing slot is now source-rendered by
+    # home_intro_source_photo; do not overwrite its verified geometry in dist.
     # Exact, editorially mapped inbound links for previously isolated
     # application/feature pages, across all five reviewed languages.
     from buyer_journey_internal_links import apply as curate_buyer_journey_links

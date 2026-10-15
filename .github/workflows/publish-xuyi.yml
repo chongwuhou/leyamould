@@ -177,6 +177,7 @@ jobs:
           python scripts/test_source_modules_survive_owner_rebuild.py
           python scripts/test_verified_capacity_gradient.py
           python scripts/test_spanish_microcopy_about_source.py
+          python scripts/test_home_blog_why_us_buyer_quality.py
           python scripts/test_source_catalog_capacity_oz.py
           python scripts/test_source_sitemap_titles_h1_images.py
           python scripts/test_product_image_sitemap.py

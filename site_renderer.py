@@ -127,6 +127,12 @@ def build_url(path,title,content):
   from editorial_support import for_route as reviewed_editorial_for_route
   if route!='/about/' or 'id="xuyi-about-company"' not in main:
    main+=reviewed_editorial_for_route(route,main)
+  if route.startswith('/blog/'):
+   from blog_source_product_bridges import product_bridges
+   main=product_bridges(main,route,'en',owner_managed=bool(BODY_OVERRIDES.get(route)))
+  if route=='/why-us/':
+   from why_us_source import augment as why_us_buyer_evidence
+   main=why_us_buyer_evidence(main,'en',owner_override=bool(BODY_OVERRIDES.get(route)))
   # Owner-approved Blog content remains primary. Add a verified long-form
   # source supplement only while its exact baseline introduction survives.
   if route.startswith('/blog/'):
@@ -144,6 +150,10 @@ def build_url(path,title,content):
    main=upgrade_home_visual(main,"en")
    from home_bpa_source import add_home_bpa_note
    main=add_home_bpa_note(main,"en")
+   from home_intro_source_photo import reviewed_home_intro_photo
+   main=reviewed_home_intro_photo(main)
+   from home_source_image_geometry import source_image_geometry
+   main=source_image_geometry(main,route,"en")
   if route=="/products/" or route.startswith("/collections/"):
    from gallery_catalog import catalog_cards as gallery_cards
    main=gallery_cards(main,"en",route)
@@ -406,7 +416,8 @@ def header():
                         for lang in approved_locales(BUILD_STATE))
  actions='<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language">'+locale_options+'</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
  search='<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="/products/" method="get"><input type="search" name="q" placeholder="Search product model or type…" aria-label="Search product models"><button class="button" type="submit">Search →</button></form></div>'
- return render_template("header",TOPBAR=top,LOGO=logo,NAV_DESKTOP=''.join(navitems),ACTIONS=actions,SEARCH=search,NAV_MOBILE=mobile)
+ from home_source_image_geometry import source_image_geometry
+ return source_image_geometry(render_template("header",TOPBAR=top,LOGO=logo,NAV_DESKTOP=''.join(navitems),ACTIONS=actions,SEARCH=search,NAV_MOBILE=mobile),"/","en")
 def whatsapp_display_number():
  contact=BRAND_CONFIG.get("contact") or {}
  digits=re.search(r"^https://wa\.me/([1-9][0-9]{7,14})$",str(contact.get("whatsappUrl") or ""))

@@ -1,0 +1,183 @@
+{
+  "versions": 1,
+  "modelPairs": {
+    "bpa-free-plastic-water-bottle-sourcing": [
+      "2501",
+      "2095",
+      "materials"
+    ],
+    "custom-logo-water-bottle-checklist": [
+      "2095",
+      "2501",
+      "branding"
+    ],
+    "custom-water-bottle-export-packaging": [
+      "2501",
+      "2281",
+      "packing"
+    ],
+    "custom-water-bottle-moq-pricing": [
+      "2095",
+      "2501",
+      "sourcing"
+    ],
+    "how-to-start-private-label-water-bottle-brand": [
+      "2095",
+      "2501",
+      "branding"
+    ],
+    "kids-water-bottle-procurement": [
+      "2106",
+      "2350",
+      "kids"
+    ],
+    "oem-vs-odm-plastic-water-bottles": [
+      "2095",
+      "2281",
+      "sourcing"
+    ],
+    "plastic-bottle-material-selection": [
+      "2501",
+      "2095",
+      "materials"
+    ],
+    "shaker-bottle-wholesale": [
+      "501",
+      "502",
+      "shaker"
+    ],
+    "sports-bottle-vs-water-jug": [
+      "2514",
+      "2281",
+      "comparison"
+    ],
+    "sports-water-bottle-customization": [
+      "2095",
+      "2501",
+      "branding"
+    ],
+    "tritan-vs-pp-petg-pc": [
+      "2501",
+      "2095",
+      "materials"
+    ],
+    "water-bottle-lid-leakproof-testing": [
+      "2501",
+      "2106",
+      "quality"
+    ],
+    "water-bottle-logo-printing-methods": [
+      "2095",
+      "2501",
+      "branding"
+    ],
+    "water-bottle-quality-control-checklist": [
+      "2501",
+      "2106",
+      "quality"
+    ],
+    "wholesale-plastic-water-bottle-buying-guide": [
+      "2095",
+      "2281",
+      "sourcing"
+    ]
+  },
+  "cmsLocaleSourceHashes": {
+    "bpa-free-plastic-water-bottle-sourcing": {
+      "es": "40a37374bc5dace42eef685815efb13a6e0cafd72abdacf5a8c776a6d040e548",
+      "pt": "7ade0100090fe4607c7374dfdcffbe169bdcb735d6a0bfd40f0b10b3d86cf3f7",
+      "ru": "97908f26230198b49ba2eba8534142a1017ed60e1e4f8d4bb86655e45fb820b7",
+      "tr": "c7f19627e32f77cb272a037687667b204a7b27afc54cf6cbeb07a0c8782bd573"
+    },
+    "custom-logo-water-bottle-checklist": {
+      "es": "5288c232f3fff48d808dc4933bcfdef954902a485b30f9585873ef2690361781",
+      "pt": "ad8626ddc85949788961d93de85f57d6f7daa2232aa091d1b69398bd9b23dbea",
+      "ru": "aa9f44241e410ef04fbde9f0dda7eec10230529237adbce4594c9f2645e2c8cf",
+      "tr": "f115d6ac7df5a2d976c1f5bd23198e356a617ee1639c9c7425226a2279df88d7"
+    },
+    "custom-water-bottle-export-packaging": {
+      "es": "b6d394c4126ff9c609d8deae859009b9a2a637e37f3cf25d8b15ee80481bee2f",
+      "pt": "b597f2dd0e8863a877057dfe888fb49e4a1fd536192edbc3bd8122b73fad6e60",
+      "ru": "1c925ad3fea9e8215574393af9f8ec5c0d1875c07f6ba5972e4e79a820f1b323",
+      "tr": "968de4eeb76345f247adf4fea59b95d8bcb6d7531a9de90fc9efa7927420b999"
+    },
+    "custom-water-bottle-moq-pricing": {
+      "es": "65231d1f83cee4bcc7f81a1f41d90f5c70414288ccf1b7d00d9cb99f984bd4b3",
+      "pt": "cfc9e48585f2a0092c4792a1d56dc49901c936539571e37aeda70aaf987459bc",
+      "ru": "6935a2991611f21d0414913916d0b45bd92b262fe17b266814f220bceb8aba8b",
+      "tr": "f147dac9939962fc55ca617f45fb1375d865ef571b96d83bcd01078196971d93"
+    },
+    "how-to-start-private-label-water-bottle-brand": {
+      "es": "28ac985e981be64f4c48860c7ed3ef67554a0f16c7ae2b95ace7ba12b772cea0",
+      "pt": "b56b344b592124a13435081f7592083a935676ca14f55a8d9fe45cb9a652db67",
+      "ru": "da8ca6c80696091089bdd22017c323a81e3aad0aff8a77b2a7e897061c348aba",
+      "tr": "620f42945600e1ba6320bfca0129a76d42dfd5d1eae33e444e3e3a83cc4c5f20"
+    },
+    "kids-water-bottle-procurement": {
+      "es": "7796e09fc514dfc541c64cdcdc6f350260cbcfc7416fb2ff4dbe7c65c3089063",
+      "pt": "b5a6132b87e2407b2b60e1f5a56f86224494e924950c23412bf2a02e1a764928",
+      "ru": "262d6e515aea156c533e90ad8c046f397156ea972e8e15dc45a53df8c41c8dd8",
+      "tr": "8f725bee2aa8861a75a47a3ba965860bb54d19f422cf9f8418136837b11e5270"
+    },
+    "oem-vs-odm-plastic-water-bottles": {
+      "es": "ebfa10ccd164826ebedec0f8fa4baa96d1dae77e5da41d849159ac1fbe016430",
+      "pt": "cc610d334c7644fc23a57b82bacd9c5c6768c04e0b53dbc2a13d90e60e1ca4f2",
+      "ru": "34049d84b5c9a42c17e5aee9dfef85cdecbd4b1b21f24d1d2e45b48d8e5dd7d4",
+      "tr": "6fe18849eb6ef51b8bdef36fa4acc8dc1dcdf11c9c315a824eeb518603c1ff93"
+    },
+    "plastic-bottle-material-selection": {
+      "es": "80e5a9e0de876eaeffbd318f917628057206b6d3023395c065f48278c45c7c90",
+      "pt": "0a2c001900351fb24fef0ed2216cbe6a960d2b928e7e74654dfd939e771fc12d",
+      "ru": "138a7a3bf252af345d135492219e175768a5124a43ba869595948588768077ee",
+      "tr": "b420a6f978192e0b0d0eae76b09f06840d58a6f1405a12fa7b388e8728806715"
+    },
+    "shaker-bottle-wholesale": {
+      "es": "d9f28d61eed715f4cb124ed292aab7dd8d5ccc2c40ffec87db1a0b943d9ac766",
+      "pt": "adfadc79cbd2919bcc45d94c8b41879806add61fbfaa55d01ce1ecdb45dbc7df",
+      "ru": "0ff3c91b9208ef00a5ba03b00dab3aee413ad502084e9378a277d4644ecc2b07",
+      "tr": "9d3515360ece92d3296759501e6bdf4493b11330619544206cf8af1f149600fb"
+    },
+    "sports-bottle-vs-water-jug": {
+      "es": "0a1003105c4f25934fc6308b642d6117706e75bd9020b413e41dc031def5adf7",
+      "pt": "4af5929f2839d4e2aeea19df68cd7c8d8cba7f6548dc2a29f0fd3fdf0a64d8b4",
+      "ru": "9c653a5b9daa0f1e0bd73b8fb0e35caa9b304b43769bc90bba503a30d7486972",
+      "tr": "d834b8d9fe643341d198b9258dc1034d59132ac3f877fa4ca96cd1c71846115d"
+    },
+    "sports-water-bottle-customization": {
+      "es": "0d62676ca0e5d9862f4916f8894b12b5173b8479f5b62bb3a210836edc624b42",
+      "pt": "2eeb224929eb04d4dd311d276a2ac96cb10d9254400e206261f1cdc0b2206a92",
+      "ru": "8079d32475f37eab03c14e1be4cd106f199c7c02a0a95223df4e29dd6e46692b",
+      "tr": "f1cc3c8ed4751d61077bfa65c197349e6216cb14357edf6d030735dbc80a9add"
+    },
+    "tritan-vs-pp-petg-pc": {
+      "es": "524a6e09a4a50af334d6714746a32e7dcb1341de7b80bc4c36c327d48004dc4d",
+      "pt": "dadd013957970e2eca8448c715cc012146b8705400b49514e80fc0116a059d20",
+      "ru": "de32d1887c3891a79f09ffd4cd819b35fb573ca96099c499ded9b273e11ee4b6",
+      "tr": "db3bc77de28c5d158c2f0da43d35d70f0513f409f0a8050465f8a414c0b29ee3"
+    },
+    "water-bottle-lid-leakproof-testing": {
+      "es": "5d1cb144584598c358955b79ed7bd0589c4e0a87de2eba52211a818821f6e483",
+      "pt": "8bc7b7282c3f9277cacb98486edfbe1e6e33923218cdd39b81b27ec773893436",
+      "ru": "f91ddd3c0b1748af1247c57f41ad5f0ab629612176bd9c50efce88ab05ddf78f",
+      "tr": "51592308f0bfce98678d13de28049f0d319124b703963f4cea64c86493680fa8"
+    },
+    "water-bottle-logo-printing-methods": {
+      "es": "0143c16772022ad0b93fdc3c3b4dd453fe23bbcbaab6a0f9373f8a56308d59fc",
+      "pt": "a126fe7360291dc6b6cbe79fbc2ad34a2984aaa319be89c389488d3d7b0e3a8b",
+      "ru": "43d9a5fd7a58c75d92093ad69fe11cb0c3f4cd80dd016ccb5f450c51564ed971",
+      "tr": "d54ee82bf1c6837e2e14f4f94419269454a0b7a6eeef2b5399127ebf92b7e290"
+    },
+    "water-bottle-quality-control-checklist": {
+      "es": "39406e7d4d142fb03a1e11ae2415b5d22d50cab1d34cb5e5fd9cafcaff7d6032",
+      "pt": "73b7a32db1f5a593408dce96f59f79563e7b59ccedc61483595db27ffac7ca2f",
+      "ru": "b463b044960a484688e390942e63f8c9fd6fe8309548b07507be3699b2d16589",
+      "tr": "135b4891b2ed69e5fb975b0041cf7b432030a8826d428efcbd150ed2319fe09d"
+    },
+    "wholesale-plastic-water-bottle-buying-guide": {
+      "es": "5b2a093b8325b108c9e5c96951681195a150d60ad4ffafe8c5c1db454fef4abf",
+      "pt": "fd166283a1cf5d19a5a386a86405d566c5484e6d3309a695ccf2cde3ee12caed",
+      "ru": "1cf3fe3d9b1939b6e125092a0524de1a0ce885417afd9d3c9e6e3aa3b579bc8e",
+      "tr": "6320b3b0df425b9cebb06289f42a91caf0ef420f88280f8c4d0c8f8bcd8f082b"
+    }
+  }
+}

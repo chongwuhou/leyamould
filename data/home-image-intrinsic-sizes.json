@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "type": "verified dimensions from local asset pixel header or exact Excel media-image source metadata, never guessed",
+  "dimensions": {
+    "/assets/blog/bottle-inspection-topics-20261013.webp": [
+      960,
+      720
+    ],
+    "/assets/blog/custom-product-planning-20261013.webp": [
+      960,
+      720
+    ],
+    "/assets/blog/export-packing-topics-20261013.webp": [
+      960,
+      720
+    ],
+    "/assets/blog/plastic-lid-details-20261013.webp": [
+      960,
+      720
+    ],
+    "/assets/curated-hd/customizable-assortment.webp": [
+      1500,
+      1500
+    ],
+    "/assets/curated-hd/feature-flip-top.webp": [
+      1500,
+      1500
+    ],
+    "/assets/curated-hd/gradient-sports.webp": [
+      1500,
+      1500
+    ],
+    "/assets/curated-hd/outdoor-lifestyle.webp": [
+      1500,
+      1500
+    ],
+    "/assets/customer-logos/amazon.png": [
+      260,
+      50
+    ],
+    "/assets/customer-logos/carrefour.png": [
+      260,
+      50
+    ],
+    "/assets/customer-logos/coca-cola.png": [
+      260,
+      50
+    ],
+    "/assets/customer-logos/costco.png": [
+      260,
+      50
+    ],
+    "/assets/customer-logos/ebay.png": [
+      260,
+      50
+    ],
+    "/assets/customer-logos/walmart.png": [
+      260,
+      50
+    ],
+    "/assets/hero/sports-bottles-wide-20261013.webp": [
+      1672,
+      941
+    ],
+    "/assets/sku-hd/slide-091-gpt-reviewed-20261013.webp": [
+      1586,
+      992
+    ],
+    "/assets/sku-hd/slide-092-gpt-reviewed-20261013.webp": [
+      1448,
+      1086
+    ],
+    "/assets/sku-hd/slide-093-gpt-reviewed-20261013.webp": [
+      1448,
+      1086
+    ],
+    "/assets/sku-hd/slide-094-gpt-reviewed-20261013.webp": [
+      1402,
+      1122
+    ],
+    "/assets/sku-hd/slide-095-gpt-reviewed-20261013.webp": [
+      1448,
+      1086
+    ],
+    "/assets/sku-hd/slide-096-gpt-reviewed-20261013.webp": [
+      1448,
+      1086
+    ],
+    "/media/excel/row-003.webp": [
+      800,
+      800
+    ],
+    "/media/excel/row-005.webp": [
+      800,
+      800
+    ],
+    "/media/excel/row-008.webp": [
+      800,
+      800
+    ],
+    "/media/excel/row-009.webp": [
+      800,
+      800
+    ],
+    "/media/excel/row-010.webp": [
+      800,
+      800
+    ],
+    "/media/excel/row-012.webp": [
+      800,
+      800
+    ],
+    "/media/excel/row-014.webp": [
+      800,
+      800
+    ],
+    "/media/excel/row-017.webp": [
+      980,
+      626
+    ],
+    "/media/excel/row-018.webp": [
+      800,
+      699
+    ],
+    "/media/excel/row-021.webp": [
+      744,
+      685
+    ],
+    "/media/excel/row-022.webp": [
+      215,
+      195
+    ],
+    "/media/excel/row-025.webp": [
+      915,
+      645
+    ],
+    "/media/excel/row-028.webp": [
+      822,
+      647
+    ],
+    "/media/excel/row-030.webp": [
+      737,
+      494
+    ],
+    "/media/excel/row-031.webp": [
+      896,
+      766
+    ],
+    "/media/excel/row-032.webp": [
+      886,
+      775
+    ],
+    "/media/excel/row-042.webp": [
+      395,
+      381
+    ],
+    "/media/excel/row-043.webp": [
+      456,
+      507
+    ],
+    "/media/excel/row-044.webp": [
+      625,
+      634
+    ],
+    "/media/excel/row-045.webp": [
+      231,
+      135
+    ],
+    "/media/excel/row-046.webp": [
+      300,
+      331
+    ],
+    "/media/excel/row-047.webp": [
+      630,
+      314
+    ],
+    "/media/excel/row-054.webp": [
+      451,
+      367
+    ],
+    "/media/excel/row-056.webp": [
+      425,
+      479
+    ]
+  }
+}
