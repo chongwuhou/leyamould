@@ -86,7 +86,7 @@ assert len([x for x in graphs if x.get("@type")=="FAQPage"])==1
 editor_material=owner_source.replace('</section><section class="section section--soft product-content">',
  '</section><section class="section material-brief" id="material-performance"><div>Owner-selected exact 2095 materials</div></section><section class="section section--soft product-content">',1)
 assert editor_material!=owner_source and inject_materials(editor_material,owner_product,"en","/products/2512/")==editor_material
-unselected=SERIES["2407"]
+unselected=SERIES["2506"] # still held: anomalous 60ml source, no factual H2 curation
 plain=details(unselected)
 assert apply(plain,unselected,"en")==plain
 assert material_annotation(unselected,"en")==""

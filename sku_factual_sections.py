@@ -17,9 +17,11 @@ NEXT20_DATA=json.loads((ROOT/"data/product-20-module-source-baselines-phase10.js
 NEXT20=NEXT20_DATA["models"]
 THIRD20_DATA=json.loads((ROOT/"data/product-20-module-source-baselines-phase11.json").read_text(encoding="utf8"))
 THIRD20=THIRD20_DATA["models"]
-assert not set(FIRST20).intersection(NEXT20) and not set(THIRD20).intersection(set(FIRST20)|set(NEXT20)), "SKU editorial releases overlap"
-PEERS={**FIRST20,**NEXT20,**THIRD20}
-BASE={**DATA["baselines"],**NEXT20_DATA["baselines"],**THIRD20_DATA["baselines"]}
+FOURTH20_DATA=json.loads((ROOT/"data/product-20-module-source-baselines-phase12.json").read_text(encoding="utf8"))
+FOURTH20=FOURTH20_DATA["models"]
+assert len(set(FIRST20)|set(NEXT20)|set(THIRD20)|set(FOURTH20))==sum(map(len,(FIRST20,NEXT20,THIRD20,FOURTH20))), "SKU editorial releases overlap"
+PEERS={**FIRST20,**NEXT20,**THIRD20,**FOURTH20}
+BASE={**DATA["baselines"],**NEXT20_DATA["baselines"],**THIRD20_DATA["baselines"],**FOURTH20_DATA["baselines"]}
 LANGS=("en","es","pt","ru","tr")
 FOCUS={}
 for group in ("sports","kids","jugs","shakers"):
@@ -28,6 +30,8 @@ for group in ("sports","kids","jugs"):
     FOCUS.update(json.loads((ROOT/f"data/sku20-phase10-focus-{group}.json").read_text(encoding="utf8")))
 for group in ("sports","kids","jugs"):
     FOCUS.update(json.loads((ROOT/f"data/sku20-phase11-focus-{group}.json").read_text(encoding="utf8")))
+for group in ("sports-a","sports-b","sports-c","kids","jugs"):
+    FOCUS.update(json.loads((ROOT/f"data/sku20-phase12-focus-{group}.json").read_text(encoding="utf8")))
 assert set(FOCUS)==set(PEERS)
 assert all(set(item)==set(LANGS)|{"topic"} for item in FOCUS.values())
 # Each locale has approved native questions and procurement-oriented wording,
@@ -158,7 +162,7 @@ def _finish(row,locale):
     return text
 
 MATERIAL_VARIATION={
- "en":"For the sourcing brief, {sku} shows finish references {colors}, unit packing {pack}, and {qty} units per carton. Its nominal capacity is {relative} than {peer} in the catalog; these are not component-level test results.",
+ "en":"For the sourcing brief, {sku} shows finish references {colors}, unit packing {pack}, and {qty} units per carton. Catalog nominal capacity compared with {peer}: {relative}; these are not component-level test results.",
  "es":"Para compras, {sku} presenta colores {colors}, embalaje individual {pack} y {qty} unidades por caja. Su capacidad nominal es {relative} que la de {peer}; no son ensayos de componentes.",
  "pt":"Na compra, {sku} apresenta cores {colors}, embalagem {pack} e {qty} unidades por caixa. A capacidade nominal é {relative} à de {peer}; não são testes de componentes.",
  "ru":"Для заказа {sku} записаны цвета {colors}, упаковка {pack} и {qty} штук в коробке. Номинальный объём {relative} по сравнению с {peer}; это не испытания деталей.",
@@ -169,6 +173,14 @@ RELATIVE={
  "pt":("menor","igual","maior"),"ru":("меньше","равен","больше"),
  "tr":("daha düşük","eşit","daha yüksek")
 }
+def _catalog_model_label(value,locale):
+    """Display a source transparent-variant model without leaking a Chinese suffix into other locales."""
+    name=str(value)
+    if name.endswith("透明款"):
+        suffix={"en":"transparent variant","es":"variante transparente","pt":"variante transparente","ru":"прозрачный вариант","tr":"şeffaf varyant"}[locale]
+        return name[:-len("透明款")]+" "+suffix
+    return name
+
 def facts(row,locale,series):
     peer=series[PEERS[row["slug"]]]
     def numeric_capacity(product):
@@ -176,7 +188,7 @@ def facts(row,locale,series):
         return float(m.group(1)) if m else None
     a=numeric_capacity(row);b=numeric_capacity(peer)
     relative=RELATIVE[locale][0 if a is not None and b is not None and a<b else 2 if a is not None and b is not None and a>b else 1]
-    return dict(relative=relative,sku=str(row["model"]),peer=str(peer["model"]),
+    return dict(relative=relative,sku=_catalog_model_label(row["model"],locale),peer=_catalog_model_label(peer["model"],locale),
       cap=_source_capacity(row),pcap=_source_capacity(peer),
       dims=_source_dimensions(row,locale),pdims=_source_dimensions(peer,locale),
       mat=_value(row.get("material"),locale).replace("硅胶","silicone"),
