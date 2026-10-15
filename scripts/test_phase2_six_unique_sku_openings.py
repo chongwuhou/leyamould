@@ -15,8 +15,8 @@ d1={(v["resourceId"][5:],v["locale"]):v["content"]["mainHtml"]
     for v in snapshot["translations"]
     if v.get("resourceId","").startswith("page:") and v["locale"] in langs[1:]}
 assert len(set(COPY))==len(COPY)
-D1_SKUS=tuple(sku for sku in COPY if not sku.startswith("lo-"))
-assert len(D1_SKUS)+len([sku for sku in COPY if sku.startswith("lo-")])==len(COPY) # LO template-owned translations tested separately
+D1_SKUS=tuple(sku for sku in COPY if not sku.startswith(("lo-","g-")))
+assert len(D1_SKUS)+sum(sku.startswith(("lo-","g-")) for sku in COPY)==len(COPY) # G/LO template-owned translated bodies tested separately
 for sku in D1_SKUS:
  paragraphs=COPY[sku]
  row=next(r for r in SERIES.values() if r["slug"]==sku)

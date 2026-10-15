@@ -68,6 +68,18 @@ for slug in (model for group in LO_BATCH.values() for model in group):
  LOCALES[slug]={lang:LO_LANGS[lang][slug] for lang in LO_LANGS}
 OWNER.update(json.loads((ROOT/"data/phase6-lo8-template-baselines.json").read_text(encoding="utf8"))["hashes"])
 ADDENDA.update(json.loads((ROOT/"data/phase6-lo8-locale-addenda.json").read_text(encoding="utf8")))
+# Seventh source-photo batch: eight verified G-series factory model IDs.
+# No unconfirmed capacity, dimensions, material, tests or stock is asserted.
+G_BATCH=json.loads((ROOT/"data/phase7-g8-buyer-guides-en.json").read_text(encoding="utf8"))["groups"]
+assert all(group in EN and not set(models).intersection(EN[group]) for group,models in G_BATCH.items())
+for group,models in G_BATCH.items():
+ EN[group].update(models)
+G_TRANSLATIONS={lang:json.loads((ROOT/f"data/phase7-g8-buyer-guides-{lang}.json").read_text(encoding="utf8"))
+                for lang in ("es","pt","ru","tr")}
+for slug in (sku for group in G_BATCH.values() for sku in group):
+ LOCALES[slug]={lang:G_TRANSLATIONS[lang][slug] for lang in G_TRANSLATIONS}
+OWNER.update(json.loads((ROOT/"data/phase7-g8-gallery-template-baselines.json").read_text(encoding="utf8"))["hashes"])
+ADDENDA.update(json.loads((ROOT/"data/phase7-g8-buyer-guides-addenda.json").read_text(encoding="utf8")))
 CATEGORY={"sports":"Plastic Sports Water Bottles","kids":"Kids Plastic Water Bottles",
           "jugs":"Large Capacity Water Jugs"}
 SELECTED_GROUP={slug:group for group,items in EN.items() for slug in items}

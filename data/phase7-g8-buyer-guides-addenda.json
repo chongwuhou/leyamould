@@ -1,0 +1,34 @@
+{
+  "g-01": {
+    "ru": "Отдельно запросите перечень съемных деталей и подтвердите их количество в комплекте.",
+    "tr": "Her çıkarılabilir parçanın adını ve siparişte bulunup bulunmadığını ayrıca doğrulayın."
+  },
+  "g-02": {
+    "ru": "Утвержденное изображение шкалы и цветовой образец приложите к заказу.",
+    "tr": "Ayrıca gerçek zaman ölçeğinin fotoğrafını ve onaylanan renk numunesini sipariş dosyanızda saklayın."
+  },
+  "g-05": {
+    "ru": "Не используйте изображения похожего заводского номера при утверждении заказа.",
+    "tr": "Benzer şişelerin fotoğraflarını kullanmadan G-05 koduyla işaretli gerçek üretim örneğini ayrıca isteyin."
+  },
+  "g-09": {
+    "ru": "Отдельно сравните все четыре фотографии с фактическим образцом выбранного изделия.",
+    "tr": "Kaydedilmiş dört kaynak fotoğrafını gerçek monte numuneyle karşılaştırın ve seçilen halka türünü yazılı belgeye ekleyin."
+  },
+  "g-10": {
+    "ru": "Любую оценку дорожного удобства делайте после измерения реального изделия.",
+    "tr": "Kullanılacak ambalaj malzemesinin türünü de örnek üzerinden kontrol ederek yazılı onay alın."
+  },
+  "g-12": {
+    "ru": "Отдельно подтвердите комплектность деталей для серийного поставляемого варианта.",
+    "tr": "Her üretim varyantında sunulacak parçaların listesini de fabrikadan yazılı olarak doğrulatın."
+  },
+  "g-03": {
+    "ru": "Не переносите измерения или характеристики другого заводского кода на данную модель.",
+    "tr": "Başka bir fabrika modeline ait ölçü veya fotoğrafları bu ürün için kullanmayın."
+  },
+  "g-04": {
+    "ru": "Любые эксплуатационные обещания согласуйте только после испытания реального образца.",
+    "tr": "Gerçek taşıma sapının bağlantısı ve dolu ürünün ağırlığı için de ayrı fabrika onayı isteyin."
+  }
+}
