@@ -37,4 +37,9 @@ def polish_product_head(markup,locale,route):
     title=re.search(r"<title>(.*?)</title>",head,re.S)
     if title and html.unescape(title.group(1))==candidate.get("baseline"):
         head=head[:title.start(1)]+html.escape(candidate["short"])+head[title.end(1):]
+        # Mirror only the exact original Open Graph headline. A later owner
+        # edit to either field must never be overwritten by source fallback.
+        og=re.search(r'(<meta property="og:title" content=")([^"]*)(">)',head)
+        if og and html.unescape(og.group(2))==candidate["baseline"]:
+            head=head[:og.start(2)]+html.escape(candidate["short"],quote=True)+head[og.end(2):]
     return head+"</head>"+body
