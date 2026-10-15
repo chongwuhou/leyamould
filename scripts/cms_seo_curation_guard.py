@@ -7,10 +7,12 @@ It never stores private form data or raw SEO copy in the repository.
 """
 import hashlib
 import json
+import sys
 from functools import lru_cache
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
 BASELINE=ROOT/"data/seo_curation_cms_baseline_sha256.json"
 SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
 
@@ -37,6 +39,23 @@ def current_field(locale,route,field,snapshot_data=None):
     data=snapshot() if snapshot_data is None else snapshot_data
     if data is None:
         return None
+    # Five catalog variants were published with malformed legacy slugs.
+    # Keep the D1 owner's existing SEO under the old key while the public
+    # canonical URL changes. If an editor later creates the new-route record,
+    # that direct edit takes precedence over the historical alias.
+    from product_slug_fix import REVERSE
+    if route.startswith("/products/"):
+        clean_slug=route.removeprefix("/products/").strip("/")
+        legacy=REVERSE.get(clean_slug)
+        if legacy:
+            if locale=="en":
+                direct=any(x.get("route")==route for x in data.get("pages",[]))
+            else:
+                direct=any(x.get("locale")==locale and
+                           x.get("resourceId")=="page:"+route
+                           for x in data.get("translations",[]))
+            if not direct:
+                route="/products/"+legacy+"/"
     if locale=="en":
         row=next((x for x in data.get("pages",[]) if x.get("route")==route),None)
         if route.startswith("/products/"):

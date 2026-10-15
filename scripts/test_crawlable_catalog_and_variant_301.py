@@ -105,5 +105,22 @@ assert 'Owner deliberately selected' in polish_product_head(owned,"en","/product
 # Legacy original imported D1 routes must normalize before output.
 assert route("/products/2400---/")=="/products/2400-transparent/"
 assert not any(re.search(r"/products/[0-9]{4}---/",x.split()[1]) for x in redirects)
+# Future D1 edits remain authoritative under the old imported route until
+# the owner creates a new canonical route record. The direct new key wins.
+import copy
+from scripts.cms_seo_curation_guard import current_field,may_curate
+assert may_curate("es","/products/2400-transparent/","title",state)
+changed=copy.deepcopy(state)
+legacy_record=next(x for x in changed["translations"]
+    if x.get("locale")=="es" and x.get("resourceId")=="page:/products/2400---/")
+legacy_record["content"]["title"]="Owner chooses a brand-new Spanish title"
+assert current_field("es","/products/2400-transparent/","title",changed)=="Owner chooses a brand-new Spanish title"
+assert not may_curate("es","/products/2400-transparent/","title",changed)
+canonical_record=copy.deepcopy(legacy_record)
+canonical_record["resourceId"]="page:/products/2400-transparent/"
+canonical_record["content"]["title"]="Owner canonical route selected title"
+changed["translations"].append(canonical_record)
+assert current_field("es","/products/2400-transparent/","title",changed)=="Owner canonical route selected title"
+assert not may_curate("es","/products/2400-transparent/","title",changed)
 print("XUYI_CRAWLABLE_QUERY_PAGING_101_DYNAMIC_PRODUCTS_25_CANONICAL_301_CMS_PASSED",
       "models",total,"pages",pages,"languages",len(locales),"redirects",len(expected))
