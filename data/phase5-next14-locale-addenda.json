@@ -22,18 +22,18 @@
   "8563": {
     "tr": "Seçilen renk için yazılı üretim onayı da isteyin."
   },
-  "2306---": {
+  "2306-transparent": {
     "ru": "Подтверждение заводской идентичности сохраняйте вместе с изображениями обеих моделей.",
     "tr": "Her iki fabrikanın model kodunu ürün fotoğraflarıyla birlikte kaydedin."
   },
-  "2308---": {
+  "2308-transparent": {
     "ru": "Для повторных поставок закрепите заводской код за конкретным утвержденным образцом.",
     "tr": "Onaylanan şişe numunesini ve fabrika model kodunu sonraki siparişler için ayrıca saklayın."
   },
-  "2401---": {
+  "2401-transparent": {
     "tr": "Onaylı baskı örneğini saklayın."
   },
-  "2307---": {
+  "2307-transparent": {
     "tr": "Her model için onaylanan ayrı fabrikasyon numunesini kaydedin."
   }
 }

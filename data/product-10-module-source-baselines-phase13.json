@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "models": {
-    "2306---": "2306",
-    "2308---": "2308",
+    "2306-transparent": "2306",
+    "2308-transparent": "2308",
     "lo-001": "2281",
     "lo-002": "2470",
     "lo-003": "LO-004",
@@ -13,7 +13,7 @@
     "lo-008": "LO-003"
   },
   "baselines": {
-    "2306---": {
+    "2306-transparent": {
       "en": {
         "design": "127f966bc6a97469",
         "faq": "194b1e89c2ab8c18"
@@ -35,7 +35,7 @@
         "faq": "064559bae0844b7c"
       }
     },
-    "2308---": {
+    "2308-transparent": {
       "en": {
         "design": "127f966bc6a97469",
         "faq": "ac13d9ed28ed3dc1"

@@ -246,14 +246,20 @@ def main():
     for item in data.get("translations",[]):
         rid=item.get("resourceId","")
         if not rid.startswith("page:"):continue
-        route=rid[5:];loc=item.get("locale");fields=item.get("content") or {}
+        from product_slug_fix import route as canonical_product_route
+        route=canonical_product_route(rid[5:]);loc=item.get("locale");fields=item.get("content") or {}
         if not valid_route(route) or loc not in live:continue
         if not all(isinstance(fields.get(k),str) and fields[k].strip() for k in ("title","description","mainHtml")):continue
         body=fields["mainHtml"]
         if len(body)<120 or re.search(r"<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:",body,re.I):continue
         src=DIST/route.lstrip("/")/"index.html"
         if route=="/":src=DIST/"index.html"
-        if src.is_file():translated[(route,loc)]=fields
+        if src.is_file():
+            # A newer D1 edit stored under the clean route wins over the
+            # old imported Chinese-variant URL record, independent of order.
+            direct=(rid[5:]==route)
+            if direct or (route,loc) not in translated:
+                translated[(route,loc)]=fields
     # Reviewed source-photo LO additions have their own five-language native
     # content and SEO copy. Existing D1 translations always win, and no older
     # page translation is changed or auto-translated.
@@ -360,6 +366,13 @@ def main():
         if route=="/products/" or route.startswith("/collections/"):
             body=gallery_catalog_cards(body,loc,route)
             body=catalog_cards(body,loc,route)
+        if route=="/products/":
+            from catalog_crawlable_pagination import upgrade_localized_cms
+            body=upgrade_localized_cms(body)
+        # Canonicalize only known broken transparent-variant hyperlinks.
+        # Preserves owner-edited text, images, SEO and approved custom links.
+        from product_slug_fix import normalize_local_links
+        body=normalize_local_links(body)
         if route.startswith("/products/") and route!="/products/":
             # D1 translated bodies replace the English product HTML. Re-add
             # the same reviewed presentation module in this locale, without

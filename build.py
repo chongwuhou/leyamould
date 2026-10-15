@@ -106,7 +106,7 @@ def catalog(cat_name=None):
  else:
   arr=list(SERIES.values());heading="Explore All Plastic Water Bottles";subtitle="Browse sports water bottles, large capacity water jugs, kids bottles and shaker bottles."
  pagehtml=intro("Products" if not cat_name else "Products / "+CAT[cat_name][0],heading,subtitle)
- pagehtml+='<section class="section"><div class="shell"><div class="catalog-layout">'+catnav(CAT[cat_name][1] if cat_name else None)+'<div>'+filters(not cat_name)+product_grid(arr)+pagination()+'</div></div></div></section>'
+ pagehtml+='<section class="section"><div class="shell"><div class="catalog-layout">'+catnav(CAT[cat_name][1] if cat_name else None)+'<div>'+filters(not cat_name)+product_grid(arr)+pagination(len(arr) if not cat_name else None)+'</div></div></div></section>'
  pagehtml+=catalog_buying_guide(cat_name)
  if cat_name=="Plastic Shaker Bottles":
   # Source-authored, model-verified wholesale guidance; never patch dist HTML.

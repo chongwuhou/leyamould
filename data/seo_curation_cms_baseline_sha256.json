@@ -148,7 +148,7 @@
       "description": "7641b272ba2f2c89999b7a10a370b4c2173211801b8f13dd8e0b1983fa760057",
       "title": "a5c220b4a59f45675dd1f38755f582dfc457a9565075ded03cf7954d2ecf0612"
     },
-    "es:/products/2306---/": {
+    "es:/products/2306-transparent/": {
       "description": "7d8587be980e425f6e712168cd0a402c0c21ede667b5e3b15925e22e439f67ec",
       "title": "76365f3277f69d60ce2658487e4c6efc3ea09a1da3153fdfd21dbadeca855426"
     },
@@ -156,7 +156,7 @@
       "description": "a3d4691616562f32708c95c95efd6fcb48e91aa1dbbc4b67ab65c44177847f1d",
       "title": "1bbd3fae839335ccfe581861beeb434072f9d04e77e6f64dfef7787506c6dc85"
     },
-    "es:/products/2307---/": {
+    "es:/products/2307-transparent/": {
       "description": "0d77ddfdb5ac5fb6c31d00093d91a64f1badb457aecd11b80f55f646d4e89d8f",
       "title": "02fca797a7be77a2175cfcc6dbe69ddcefc7867d9499655f1a30734316638000"
     },
@@ -164,7 +164,7 @@
       "description": "7115a52af7696727b0280c9c3501cf25be5fe1a7db33a1231d6768b739961a35",
       "title": "b92ba05951d3f25d11b7ff2023f3ca67aae76ba9151783916d4b6fd4d6599c31"
     },
-    "es:/products/2308---/": {
+    "es:/products/2308-transparent/": {
       "description": "f3672abd1e9d09dcb0bc017446dee088506123968f6891f350deddd03e822645",
       "title": "87e033687d62dc8099218d37c28380753786c3061e0a5e496d5ab139c1f16098"
     },
@@ -212,7 +212,7 @@
       "description": "bfe699b18e03eddafdb3ff76b0fa25771a13325c03b9ea23f7f806af897259f8",
       "title": "b44f47272fceba28852f0269dee92967771df4a1c980bd26e5735d036522cc7c"
     },
-    "es:/products/2400---/": {
+    "es:/products/2400-transparent/": {
       "description": "f7210fa9f3be5384577a390c58a1229d1e6b3ac5994702daec15eab6e9e98913",
       "title": "4b97ae3b3d82097344f367ee2f035a9f4af4b4e3e93b72a21aab3818642401c7"
     },
@@ -220,7 +220,7 @@
       "description": "60fcebe97d748be616592216d7cb39baa8b14af59a10cc355e4a3d027c724a8b",
       "title": "111f1024f831717bb6cc8a6b5f310d2dff14b849e6bcf0ed1d37df5052a360d7"
     },
-    "es:/products/2401---/": {
+    "es:/products/2401-transparent/": {
       "description": "60b87580f48aad301983ad41b6fb4d2fe1a69fdf9b96e45041725df02fc97309",
       "title": "a6902ac31f5f7a18a9701193f137f9beafbb8434919a475993fb6b3b2f229bcc"
     },
@@ -520,7 +520,7 @@
       "description": "6c60688719e0c5ca6f19dbaf5bb2be569062f521b982472bb2de87e6db83d4bb",
       "title": "fe510ef86deb00cc24598dac289cbfed5e7e412b64de61641b13f0b557e2ad05"
     },
-    "pt:/products/2306---/": {
+    "pt:/products/2306-transparent/": {
       "description": "fb80d0416d5fb934414432725e5eb107bb38363a0c4781cbf1c7ebef308ca42a",
       "title": "e4ff249580ce1e29c0ecf82023603e45fc3c378a4c2c01ebdabb819fa998060e"
     },
@@ -528,7 +528,7 @@
       "description": "e5a8cf7a29650a7f1dd876b2b72a9ae5275ac91ef493f32449480b59ea7823d6",
       "title": "a45ecaaf2495f3379cd1a6ce7e4573989d757b204b3a411c050a7baefff0290f"
     },
-    "pt:/products/2307---/": {
+    "pt:/products/2307-transparent/": {
       "description": "84cb5570f3ae25732f3a67155569d7305ae69f3dc35115bb909283eacc690741",
       "title": "90f74954f509ce1e85d84ede685ba6f66d23db338023ec8102a00d70a95d3f13"
     },
@@ -536,7 +536,7 @@
       "description": "488a7415c161578850124de8235a80db2908394b0a1e63bb6e92d3e990d06cee",
       "title": "721790782b72c2dc6610c3a45628e99c5fb65eed61b7778cf19feeda39dd5c4c"
     },
-    "pt:/products/2308---/": {
+    "pt:/products/2308-transparent/": {
       "description": "8fe3b1409dd6e56ae50ff75b117e26bff7f9b47435adcc8a6c6e55fb5d4d2170",
       "title": "b9a8a78131f621e66d2b86f3b3cb87df2df67688cd10919170ad60e00f084f76"
     },
@@ -584,7 +584,7 @@
       "description": "582624998801720cc7dc956b5c62f4a9f13ac1f7bc4a5fb7e00d26e6b83e0642",
       "title": "3f9ecf17fe5f2dbfaf673118b612bd5ae078ca7c99391f0063a52ad624048658"
     },
-    "pt:/products/2400---/": {
+    "pt:/products/2400-transparent/": {
       "description": "370551958c113bb8c295e28e4c1e77857aa3840f469958e0f08a7a062358491c",
       "title": "0e8eb84b7485e066267a8048f3142068a4a1b7c04e8d1969360a09a82b8dc039"
     },
@@ -592,7 +592,7 @@
       "description": "bd6e6529415d94a2f154c036ab5976527b2825ab408024b1b559549c6a05e59b",
       "title": "7f317e0b07546ce44fc269e0127e51935267c65f2094222a13b78c63f7befed6"
     },
-    "pt:/products/2401---/": {
+    "pt:/products/2401-transparent/": {
       "description": "f13b66a5488269cdc05bff5929464755f86e387e12cbee87264bae5e3103691b",
       "title": "ac2ca05696e2112d87b15b244cbcb6a798d437ff2e3dbeef5914ba9b0456cbc0"
     },
@@ -892,7 +892,7 @@
       "description": "99be518b204690019ad30f21e2c3b85df2b310f59393ecb9d2a63d348738b91d",
       "title": "d4b7dbb36390f9745a345a5919d43c7f33cfc7daf06cca410bad5bf51bb80e8c"
     },
-    "ru:/products/2306---/": {
+    "ru:/products/2306-transparent/": {
       "description": "840a386b6e4cff7cbe061f2fc7b5b11b6b7b8535f14a6060b2515b17dd3d31ca",
       "title": "f39be3663dac81b3796e3539122f41beab379f6ac0d97b97a9dbde5cea816ae5"
     },
@@ -900,7 +900,7 @@
       "description": "3f1d8c4b0375efce15780e7718738670d87389a412a870fd4b2a698ed212030a",
       "title": "ea07baaa09f9ea6202924cfac1a05a85fca6009f8512e7cb14a882d0f3a82950"
     },
-    "ru:/products/2307---/": {
+    "ru:/products/2307-transparent/": {
       "description": "0ac9ec88d79d3c41de5468db1d6a3b93be895c143d53e5425564556747f48117",
       "title": "ed29fcef5d438a838717638fe3e141da63d033fa6c4a2b576b7a56b7d1896ed1"
     },
@@ -908,7 +908,7 @@
       "description": "85cd278fb580626088a95ad26b26eb81d93549954112cf2482bed7472b46b586",
       "title": "87eb1d91c1e821b32e8437b0445ec4ec69fe276490c07a6717ca19b82274ed79"
     },
-    "ru:/products/2308---/": {
+    "ru:/products/2308-transparent/": {
       "description": "999149ec445e2844b9199e0e53ee6d1458d5444866e35507687517f898f9f814",
       "title": "3a5e32a9de5a270a2ce04a7c8a038d2f341642d64309a53a9f9bd0426ca7833f"
     },
@@ -956,7 +956,7 @@
       "description": "a816820ac7755c9c6504e88d567821aaf0fa256a8adb1fe38dc65d211f15207f",
       "title": "0d5008f7c7e712477a3e6a1a9eb69a3f81b0a06d89f26d3b7238901632feabe9"
     },
-    "ru:/products/2400---/": {
+    "ru:/products/2400-transparent/": {
       "description": "17662f303a01e96e59064f07f18b88a10551a3d97963196840c5a96f068616c2",
       "title": "4cf77834916ac6fae5617533ab62bcbdd6311af29f27c8bd211c7bfc541041c8"
     },
@@ -964,7 +964,7 @@
       "description": "36dab87b9e2d92bc0c0572c26ea78e6049f3e91423a8ae369c0b9457f21da495",
       "title": "43f519fd370109a472b8dd3b179bf2e028d23039c6c52a2e94628a52c2c0808c"
     },
-    "ru:/products/2401---/": {
+    "ru:/products/2401-transparent/": {
       "description": "379f741ef48b2fed14f7d7da28933736f85bcbd9f69f5b644a9251fa0eb498b4",
       "title": "cd4f5f84d6d91827563a742a9f1a2a8e5606fef9da6cbb9257f57fc96484e977"
     },
@@ -1264,7 +1264,7 @@
       "description": "952034ce81bc2b54f79791963f8c011bc4a345356f8831dcd51caf93cb936609",
       "title": "a6ae06e4016987492f121807526ac48f371e6484cc0983f4d031bbe932e04b07"
     },
-    "tr:/products/2306---/": {
+    "tr:/products/2306-transparent/": {
       "description": "7a9c05246c2d986f7eaa16b3cae0fd6da6960585730da4534fea0eddcc196142",
       "title": "2419c2da013e7570b448cab70c2c66fc3162daf416ec53ef11934cb415239883"
     },
@@ -1272,7 +1272,7 @@
       "description": "64697cf8d1e59d4c90f22733903a3343ea646256a31d4da0e13309facb866138",
       "title": "ae3c4a16a527504d54b74e8384fdeb4ae2ae3c48490ea433fe889a4b7fe296f1"
     },
-    "tr:/products/2307---/": {
+    "tr:/products/2307-transparent/": {
       "description": "bcf2cd8f9fd3b6e1c4bc7721e0c18c2982134cf487d950ae468342342beefc73",
       "title": "55fdf582bd7f1fc0c106c143d21ef0819c6904aaed76714020d55a5f10fefabb"
     },
@@ -1280,7 +1280,7 @@
       "description": "f9725dbf02a00eccef367be0fde85ef14194f0a877b6c79e721ef932271ef8f6",
       "title": "25c1a82116400ec498b44cd4af7119f1e2a5962e60559302ca7e851e719a3150"
     },
-    "tr:/products/2308---/": {
+    "tr:/products/2308-transparent/": {
       "description": "7e7ac353b4d997eee6c7035b6277e47152abb2761ec9d8b0321612fd6033da83",
       "title": "32142ac4250c9ad72238c583d21f96e1d936d6ebb766b2522f43807664d2d5d2"
     },
@@ -1328,7 +1328,7 @@
       "description": "8ba04cac0a0d933679f651fa86af9e050e95da7ec1fc9dfb683997d44ecb75a2",
       "title": "362c5fae078f100a287032988a57f18950ad20ecdb06315732fa23ae762ae780"
     },
-    "tr:/products/2400---/": {
+    "tr:/products/2400-transparent/": {
       "description": "c64893ef19c65ad8f14cb26a465dc50f3a52b05c2c744b9756e7609f58eb638a",
       "title": "c1eb8878f9f62667fc438265c631d4f796685dcf377ecc15ac86630620719abe"
     },
@@ -1336,7 +1336,7 @@
       "description": "c84b260c80e63e30ab8b56c809b3ca546af8b1948c796a1c1ee8d8c375c5f069",
       "title": "5661ab5cfd8852b8792727f2d3b44bc1e410c49f8363b649a227573bb5b0a03a"
     },
-    "tr:/products/2401---/": {
+    "tr:/products/2401-transparent/": {
       "description": "dc80d2ec086bc36d0ed5e7d6690e684c0db4a901644184e596db841b3c173292",
       "title": "7d9390786252f4529e50b8cb25adb071cf6d08d8d1432de7b5d9a06c146fac19"
     },

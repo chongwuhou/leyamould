@@ -70,14 +70,14 @@ for loc in LANGS:
  for name in ("XUYI","BOTTLES",*[x["nativeName"] for x in MANIFEST["locales"]]):
   assert name in other.nodes,(loc,"brand or language name changed",name)
  # Metadata: a source-language English title is never published on a localized product page.
- for model in ("2250","2282","2307---"):
+ for model in ("2250","2282","2307-transparent"):
   if loc=="pt":
    source=(DIST/"products"/model/"index.html").read_text(encoding="utf8")
    target=(DIST/"pt/products"/model/"index.html").read_text(encoding="utf8")
    assert re.search(r"<title>(.*?)</title>",source).group(1)!=re.search(r"<title>(.*?)</title>",target).group(1)
 # Previously untranslated source image Alt attributes in the Portuguese
 # D1 product body must not regress when a site revision is rebuilt.
-for model in ("2215","2250","2281","2291","2307","2308","2308---"):
+for model in ("2215","2250","2281","2291","2307","2308","2308-transparent"):
  page=(DIST/"pt/products"/model/"index.html").read_text(encoding="utf8")
  assert "Large Capacity Plastic Water Jug view 1" not in page,("pt",model,"English product image alt")
 print("XUYI_SHARED_CHROME_I18N_PASSED",checks,"localized pages,",len(LANGS),"languages, menu/attributes/runtime tested")

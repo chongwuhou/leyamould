@@ -19,6 +19,14 @@ PRODUCT_OVERRIDES={str(v.get("model")):v.get("content",{}) for v in BUILD_STATE.
 BRAND_CONFIG=BUILD_STATE.get("brand") or {}
 BODY_OVERRIDES={str(r.get("route")):r.get("mainHtml","")
                 for r in BUILD_STATE.get("pageBodies",[]) if isinstance(r,dict)}
+from product_slug_fix import ALIASES as LEGACY_PRODUCT_SLUGS
+for _old,_new in LEGACY_PRODUCT_SLUGS.items():
+ _old_route='/products/'+_old+'/'
+ _new_route='/products/'+_new+'/'
+ # Legacy D1 SEO/body records remain authoritative until the owner migrates
+ # the CMS route. A later explicit new-route edit always wins.
+ if _old_route in PAGE_OVERRIDES:PAGE_OVERRIDES.setdefault(_new_route,PAGE_OVERRIDES[_old_route])
+ if _old_route in BODY_OVERRIDES:BODY_OVERRIDES.setdefault(_new_route,BODY_OVERRIDES[_old_route])
 BUILD_OUTPUT_DIR=os.environ.get("XUYI_OUTPUT_DIR",".")
 if BUILD_OUTPUT_DIR not in (".","dist"):
  raise ValueError("XUYI_OUTPUT_DIR must be . or dist")
@@ -485,7 +493,11 @@ def filters(with_categories=True):
  options='<option value="">All product categories</option>'+''.join('<option value="'+x[1]+'">'+e(x[0])+'</option>' for x in CAT.values())
  category='<select aria-label="Filter category" data-catalog-category>'+options+'</select>' if with_categories else ""
  return render_template("catalog-filter",CATEGORY_FILTER=category)
-def pagination():return render_template("catalog-pagination")
+def pagination(count=None):
+ if count is not None:
+  from catalog_crawlable_pagination import navigation
+  return navigation(count)
+ return render_template("catalog-pagination")
 def faq_html(items=None):
  arr=items or FAQS
  rows="".join("<details><summary>"+e(q)+"</summary><p>"+e(a)+"</p></details>" for q,a in arr)

@@ -7,17 +7,18 @@ import json,re,sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
+from product_slug_fix import route as canonical_product_route
 from sku_unique_openings import editor_intro
 from sku_unique_openings_phase2 import COPY,SELECTED_GROUP,CATEGORY
 LANGS=("en","es","pt","ru","tr")
 CATEGORIES=json.loads((ROOT/"data/phase5-next14-openings-en.json").read_text(encoding="utf8"))["groups"]
 BASELINES=json.loads((ROOT/"data/phase5-next14-d1-baselines.json").read_text(encoding="utf8"))["hashes"]
 SELECTED={slug:group for group,entries in CATEGORIES.items() for slug in entries}
-EXPECTED=set("2470 2400--- 2401--- 2212 2400 2099 2100 5299 5340 8563 2307--- 2306--- 2308--- 6252".split())
+EXPECTED=set("2470 2400-transparent 2401-transparent 2212 2400 2099 2100 5299 5340 8563 2307-transparent 2306-transparent 2308-transparent 6252".split())
 assert len(SELECTED)==14 and set(SELECTED)==EXPECTED
 assert set(BASELINES)==EXPECTED and all(len(v)==4 for v in BASELINES.values())
 STATE=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
-D1={(r["resourceId"][5:],r["locale"]):r["content"]["mainHtml"]
+D1={(canonical_product_route(r["resourceId"][5:]),r["locale"]):r["content"]["mainHtml"]
     for r in STATE["translations"] if r.get("resourceId","").startswith("page:")}
 records=[]
 for sku,group in SELECTED.items():

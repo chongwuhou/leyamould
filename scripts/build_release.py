@@ -117,10 +117,17 @@ def main():
     # Never infer stock, product prices, reviews, staff names or R2 image sizes.
     from verified_trust_technical_seo import apply as enrich_trust_and_technical_seo
     enrich_trust_and_technical_seo(DIST)
-    if snapshot.is_file():
-        state=json.loads(snapshot.read_text(encoding="utf-8"))
-        valid=redirect_lines(state.get("redirects",[]))
-        if valid:(DIST/"_redirects").write_text("\n".join(valid)+"\n",encoding="utf-8")
+    # Compile redirects from authority-controlled sources BEFORE deployment:
+    # approved D1 redirects first, plus only the five proven slug-format fixes
+    # across published locales. Never overwrite a CMS owner-authored redirect.
+    state=json.loads(snapshot.read_text(encoding="utf-8")) if snapshot.is_file() else {}
+    valid=redirect_lines(state.get("redirects",[]))
+    from product_slug_fix import source_redirects
+    from locale_registry import approved_locales
+    prefixes=[entry["pathPrefix"] for entry in approved_locales(state)]
+    seen={line.split(" ",1)[0] for line in valid}
+    valid += [line for line in source_redirects(prefixes) if line.split(" ",1)[0] not in seen]
+    if valid:(DIST/"_redirects").write_text("\n".join(valid)+"\n",encoding="utf-8")
     for name in ("favicon.svg","favicon.ico","favicon-16.png","favicon-32.png",
                  "apple-touch-icon.png","icon-192.png","icon-512.png",
                  "site.webmanifest","_headers"):

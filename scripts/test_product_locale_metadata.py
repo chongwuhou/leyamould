@@ -10,7 +10,7 @@ import json,re
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
 manifest=json.loads((DIST/"locale-manifest.json").read_text(encoding="utf-8"))
-variants={"2306---","2307---","2308---","2400---","2401---"}
+variants={"2306-transparent","2307-transparent","2308-transparent","2400-transparent","2401-transparent"}
 phrases={
  "en":"Transparent Variant","es":"variante transparente",
  "pt":"versão transparente","ru":"прозрачный вариант","tr":"şeffaf model"

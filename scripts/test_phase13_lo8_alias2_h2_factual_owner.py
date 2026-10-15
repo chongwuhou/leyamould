@@ -5,6 +5,7 @@ from hashlib import sha256
 import json,re,sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from site_renderer import SERIES
+from product_slug_fix import route as canonical_product_route
 from product_content import details
 from lo_catalog import detail as lo_detail
 from sku_factual_sections import PEERS,FIFTH10,BASE,FOCUS,LANGS,section,apply,facts,material_annotation
@@ -13,7 +14,7 @@ from product_material_performance import inject as inject_materials
 ROOT=Path(__file__).resolve().parent.parent
 by_slug={r["slug"]:r for r in SERIES.values()}
 d1=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))["translations"]
-owner={(r["resourceId"][5:],r["locale"]):r["content"]["mainHtml"] for r in d1 if r.get("resourceId","").startswith("page:")}
+owner={(canonical_product_route(r["resourceId"][5:]),r["locale"]):r["content"]["mainHtml"] for r in d1 if r.get("resourceId","").startswith("page:")}
 assert len(PEERS)==90 and len(FIFTH10)==10 and len(BASE)==len(FOCUS)==90
 seen=0
 for slug,peer in FIFTH10.items():
@@ -66,9 +67,9 @@ assert mat!=base and inject_materials(mat,lo,"es","/products/lo-003/")==mat
 for sku in ("2506","5247","5248","G-01","G-03"):
  row=SERIES[sku]
  assert apply(details(row),row,"en")==details(row) and not material_annotation(row,"en")
-assert by_slug["2306---"]["model"]=="2306透明款"
-assert by_slug["2308---"]["model"]=="2308透明款"
-assert by_slug["2306---"]["capacity"]=="1600ml" and by_slug["2308---"]["capacity"]=="2400ml"
+assert by_slug["2306-transparent"]["model"]=="2306透明款"
+assert by_slug["2308-transparent"]["model"]=="2308透明款"
+assert by_slug["2306-transparent"]["capacity"]=="1600ml" and by_slug["2308-transparent"]["capacity"]=="2400ml"
 future={**lo,"slug":"lo-new-2027","model":"LO-NEW"}
 assert apply(base,future,"es")==base
 print("XUYI_PHASE13_LO8_ALIAS2_H2_CMS_OWNER_FIVE_LOCALE_SCHEMA_PASSED",seen)

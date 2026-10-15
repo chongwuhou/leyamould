@@ -213,6 +213,7 @@ jobs:
           python scripts/test_multilingual_content_audit.py
           python scripts/test_image_alt_seo.py
           python scripts/test_catalog_visibility.py
+          python scripts/test_crawlable_catalog_and_variant_301.py
           python scripts/test_future_locale_framework.py
           node scripts/test_future_locale_runtime.mjs
           node scripts/test_language_switch_failover.mjs

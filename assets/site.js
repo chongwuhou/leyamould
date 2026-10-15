@@ -116,10 +116,59 @@ if(inquiryForm){inquiryForm.addEventListener('submit',async event=>{
  }catch(error){status.textContent=error.message||t('The request could not be sent.')}
  finally{button.disabled=false}
 })}
-const q=document.querySelector('[data-catalog-query]');if(q){const searchVal=new URLSearchParams(location.search).get('q');if(searchVal)q.value=searchVal.slice(0,120)}const category=document.querySelector('[data-catalog-category]');const count=document.getElementById('filter-count');const cards=[...document.querySelectorAll('[data-product-card]')];let visible=0;const perPage=18;let page=1;
+// Every model already has a real <a href> in HTML. Page links additionally
+// make the selected visible group directly shareable/crawlable as ?page=N.
+// Without JavaScript all source-authored model anchors remain readable.
+const params=new URLSearchParams(location.search);
+const q=document.querySelector('[data-catalog-query]');
+if(q&&params.has('q'))q.value=(params.get('q')||'').slice(0,120);
+const category=document.querySelector('[data-catalog-category]');
+if(category&&params.has('category'))category.value=params.get('category')||'';
+const count=document.getElementById('filter-count');
+const cards=[...document.querySelectorAll('[data-product-card]')];
+const perPage=18;
+let page=Math.max(1,Math.floor(Number(params.get('page'))||1));
 const pageStatus=document.getElementById('page-status'),prev=document.getElementById('page-prev'),next=document.getElementById('page-next');
-function render(){const query=(q?.value||'').toLowerCase().trim();const cat=category?.value||'';const matching=cards.filter(c=>(!cat||c.dataset.category===cat)&&(!query||(c.dataset.search||'').includes(query)));const totalPages=Math.max(1,Math.ceil(matching.length/perPage));page=Math.min(page,totalPages);cards.forEach(c=>{c.hidden=true});matching.slice((page-1)*perPage,page*perPage).forEach(c=>{c.hidden=false});if(count)count.textContent=matching.length+' '+t('models');if(pageStatus)pageStatus.textContent=page+' / '+totalPages;if(prev)prev.disabled=page<=1;if(next)next.disabled=page>=totalPages;}
-if(cards.length){q?.addEventListener('input',()=>{page=1;render()});category?.addEventListener('change',()=>{page=1;render()});prev?.addEventListener('click',()=>{page--;render();q?.scrollIntoView({block:'center'})});next?.addEventListener('click',()=>{page++;render();q?.scrollIntoView({block:'center'})});render()}
+const isLinkPager=prev?.tagName==='A'&&next?.tagName==='A';
+function pageHref(n){const u=new URLSearchParams();if(q?.value.trim())u.set('q',q.value.trim().slice(0,120));if(category?.value)u.set('category',category.value);if(n>1)u.set('page',String(n));return '?'+(u.toString()||'page=1')}
+function render(){
+ const query=(q?.value||'').toLowerCase().trim(),cat=category?.value||'';
+ const matching=cards.filter(c=>(!cat||c.dataset.category===cat)&&(!query||(c.dataset.search||'').includes(query)));
+ const totalPages=Math.max(1,Math.ceil(matching.length/perPage));
+ page=Math.max(1,Math.min(page,totalPages));
+ cards.forEach(c=>{c.hidden=true});
+ matching.slice((page-1)*perPage,page*perPage).forEach(c=>{c.hidden=false});
+ if(count)count.textContent=matching.length+' '+t('models');
+ if(pageStatus)pageStatus.textContent=page+' / '+totalPages;
+ if(isLinkPager){
+  for(const [element,n,disabled] of [[prev,page-1,page<=1],[next,page+1,page>=totalPages]]){
+   element.href=pageHref(Math.max(1,Math.min(n,totalPages)));
+   if(disabled){element.setAttribute('aria-disabled','true');element.tabIndex=-1}
+   else{element.removeAttribute('aria-disabled');element.removeAttribute('tabindex')}
+  }
+  document.querySelectorAll('[data-page-link]').forEach(a=>{
+   const n=Number(a.dataset.pageLink);
+   a.href=pageHref(n);a.hidden=n>totalPages;
+   if(n===page)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+  });
+ }else{
+  if(prev)prev.disabled=page<=1;
+  if(next)next.disabled=page>=totalPages;
+ }
+}
+if(cards.length){
+ function filterChanged(){page=1;render()}
+ q?.addEventListener('input',filterChanged);
+ category?.addEventListener('change',filterChanged);
+ if(isLinkPager){
+  prev?.addEventListener('click',event=>{if(prev.getAttribute('aria-disabled')==='true')event.preventDefault()});
+  next?.addEventListener('click',event=>{if(next.getAttribute('aria-disabled')==='true')event.preventDefault()});
+ }else{
+  prev?.addEventListener('click',()=>{page--;render();q?.scrollIntoView({block:'center'})});
+  next?.addEventListener('click',()=>{page++;render();q?.scrollIntoView({block:'center'})});
+ }
+ render();
+}
 
 const hero=document.querySelector('[data-hero]');
 if(hero){

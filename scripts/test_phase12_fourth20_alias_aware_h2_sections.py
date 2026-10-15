@@ -6,6 +6,7 @@ import collections,json,re,sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
+from product_slug_fix import route as canonical_product_route
 from product_content import details
 from sku_factual_sections import FOURTH20 as PEERS,BASE,LANGS,apply,section,material_annotation,facts
 from seo_structured_components import visible_faq
@@ -16,7 +17,7 @@ assert len(BY_SLUG)==len(SERIES)
 cohorts=collections.Counter(BY_SLUG[s]["category"] for s in PEERS)
 assert sorted(cohorts.values())==[1,2,17] and len(cohorts)==3,cohorts
 snapshot=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
-D1={(x["resourceId"][5:],x["locale"]):x["content"]["mainHtml"]
+D1={(canonical_product_route(x["resourceId"][5:]),x["locale"]):x["content"]["mainHtml"]
     for x in snapshot["translations"] if x.get("resourceId","").startswith("page:")}
 seen=0
 for sku,peer in PEERS.items():
@@ -72,7 +73,7 @@ for sku,peer in PEERS.items():
 from sku_factual_sections import section as chosen_section
 from product_material_performance import inject as inject_materials
 from seo_structured_components import add_at_render
-owner_product=BY_SLUG["2400---"]
+owner_product=BY_SLUG["2400-transparent"]
 owner_source=details(owner_product)
 old_faq=chosen_section(owner_source,"faq")
 assert old_faq
@@ -80,14 +81,14 @@ editor_section='<section class="section section--soft"><div class="shell"><div c
 owner_body=owner_source[:old_faq[0]]+editor_section+owner_source[old_faq[1]:]
 assert chosen_section(apply(owner_body,owner_product,"en"),"faq")[2]==editor_section
 envelope='<html><head></head><body><main id="main-content">'+apply(owner_body,owner_product,"en")+'</main></body></html>'
-with_schema=add_at_render(envelope,"/products/2400---/","en")
+with_schema=add_at_render(envelope,"/products/2400-transparent/","en")
 assert len(visible_faq(with_schema))==1
 assert visible_faq(with_schema)[0][0]=="Owner selected lid for transparent 2400?"
 graphs=[json.loads(raw) for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>',with_schema,re.S)]
 assert len([x for x in graphs if x.get("@type")=="FAQPage"])==1
 editor_material=owner_source.replace('</section><section class="section section--soft product-content">',
  '</section><section class="section material-brief" id="material-performance"><div>Owner-selected exact 2400 transparent materials</div></section><section class="section section--soft product-content">',1)
-assert editor_material!=owner_source and inject_materials(editor_material,owner_product,"en","/products/2400---/")==editor_material
+assert editor_material!=owner_source and inject_materials(editor_material,owner_product,"en","/products/2400-transparent/")==editor_material
 unselected=SERIES["2506"]
 plain=details(unselected)
 assert apply(plain,unselected,"en")==plain
@@ -96,7 +97,7 @@ future={**unselected,"model":"NEW","slug":"approved-2027-new"}
 assert apply(plain,future,"en")==plain
 # Catalogue factory identity and URL slug are deliberately distinct for these three;
 # do not accidentally map the 1600 ml transparent 2307 to regular 2307.
-for slug,expected_model in (("2400---","2400透明款"),("2401---","2401透明款"),("2307---","2307透明款")):
+for slug,expected_model in (("2400-transparent","2400透明款"),("2401-transparent","2401透明款"),("2307-transparent","2307透明款")):
     row=BY_SLUG[slug]
     assert row["model"]==expected_model
     assert row["slug"]!=row["model"]
@@ -104,5 +105,5 @@ for slug,expected_model in (("2400---","2400透明款"),("2401---","2401透明�
     assert "transparent variant" in f["sku"]
     for locale in LANGS:
         assert "透明款" not in facts(row,locale,SERIES)["sku"]
-assert BY_SLUG["2307---"]["capacity"]=="1600ml" and SERIES["2307"]["capacity"]!="1600ml"
+assert BY_SLUG["2307-transparent"]["capacity"]=="1600ml" and SERIES["2307"]["capacity"]!="1600ml"
 print("XUYI_FOURTH20_ALIAS_AWARE_FACTUAL_MATERIAL_DESIGN_FAQ_CMS_SCHEMA_PASSED",seen,"pages")
