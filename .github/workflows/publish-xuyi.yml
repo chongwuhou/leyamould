@@ -130,6 +130,11 @@ jobs:
       - name: Block indexing launch if old raw source cache is still public
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/preindex_security_gate.py
+      - name: Save 16 reviewed English blog interlinks into actual D1 CMS article bodies
+        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
+        # One-time, compare-and-swap D1 content migration. NEVER a page template
+        # or generated HTML injection. The CMS owner keeps final control.
+        run: python scripts/publish_existing_blog_interlinks_d1.py
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         # The public site must run the authenticated XUYI snapshot endpoint.
