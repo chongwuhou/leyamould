@@ -83,9 +83,8 @@ def main():
     # Six visually audited plastic-shaker scenes only; R2 originals immutable.
     from apply_gpt_reviewed_shaker_hd import apply as apply_gpt_reviewed_shaker_hd
     apply_gpt_reviewed_shaker_hd(DIST)
-    # Share previews mirror actual schema product photos, never guessed SKUs.
-    from product_share_images import apply as apply_product_share_images
-    apply_product_share_images(DIST)
+    # OG/Product image selection now occurs in the shared source renderers.
+    # Do not run the obsolete product_share_images dist mutator.
     # Exact page illustrations only; no new photos and no unrelated generic
     # preview images on privacy and contact pages.
     from contextual_share_metadata import apply as add_contextual_share_metadata

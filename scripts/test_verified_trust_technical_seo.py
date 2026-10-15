@@ -55,7 +55,9 @@ for lang,prefix in LANGS.items():
         products=[v for obj in objs for v in obj.get("@graph",[]) if v.get("@type")=="Product"]
         assert len(products)==1,(lang,route)
         product=products[0]
-        assert product.get("name") and product.get("sku") and product.get("image")
+        assert product.get("name") and product.get("sku")
+        images=product.get("image",[])
+        assert all("/excel/" not in path for path in images),(lang,route)
         assert product["potentialAction"]["@type"]=="CommunicateAction"
         assert str(product.get("sku")) in product["potentialAction"]["target"]["urlTemplate"]
         assert not any(field in product for field in ("offers","review","aggregateRating")),(lang,route,"fabricated commerce data")

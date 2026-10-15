@@ -85,9 +85,10 @@ for route, file in pages.items():
         data = json.loads(raw)
         product_nodes.extend(item for item in data.get("@graph", [data]) if item.get("@type") == "Product")
     assert len(product_nodes) == 1, route
-    original_images = product_nodes[0]["image"]
-    expected = original_images[0] if isinstance(original_images, list) else original_images
-    assert expected.startswith(ORIGIN + "/"), route
+    original_images = product_nodes[0].get("image", [])
+    if isinstance(original_images, str):original_images=[original_images]
+    assert all(x.startswith(ORIGIN+"/") and "/excel/" not in x
+               for x in original_images),route
     # The D1 editor may select a different product sharing image. A custom
     # OG/Twitter image is authoritative; validate uniqueness and safe URLs,
     # rather than forcing it to equal the old JSON-LD catalog photo.
@@ -101,6 +102,7 @@ for route, file in pages.items():
         assert all(url.startswith(ORIGIN + "/") for url in matches), (route,"invalid social image",matches)
         previews.extend(matches)
     assert previews, (route,"No social image was provided")
+    assert all("/excel/" not in value for value in previews),route
     product_count += 1
 assert product_count >= 505, ("Published product baseline shrank",product_count)
 print("XUYI_BUYER_CONTEXT_LINKS_75_ZERO_ORPHANS_AND_PRODUCT_OG",product_count,"PASSED")

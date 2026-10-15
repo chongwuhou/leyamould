@@ -7,8 +7,10 @@ import shutil
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
-import product_share_images as previews
+from product_share_source import add_social_head
+from site_renderer import SERIES
 import model_catalog_buyer_comparison as comparisons
 import curated_application_feature_answers as decisions
 
@@ -48,8 +50,12 @@ with TemporaryDirectory(prefix="xuyi-owner-source-rebuild-") as temporary:
     assert count == 1
     own_product.write_text(changed, encoding="utf8")
 
-    # Another SKU needs its first preview, despite the other 504 pages
-    # already having OG/Twitter tags.
+    # The source renderer, not a dist postprocessor, builds missing preview
+    # tags while respecting the independent D1 owner image above.
+    preserved=add_social_head(own_product.read_text(encoding="utf8"),SERIES["501"])
+    assert owner_image in preserved
+    assert add_social_head(preserved,SERIES["501"])==preserved
+    # A freshly approved model receives social tags from the shared renderer.
     fresh_product = stage / "pt/products/502/index.html"
     fresh_body = fresh_product.read_text(encoding="utf8")
     for key in (r'<meta property="og:image" content="[^"]+">',
@@ -57,11 +63,11 @@ with TemporaryDirectory(prefix="xuyi-owner-source-rebuild-") as temporary:
                 r'<meta name="twitter:card" content="[^"]+">'):
         fresh_body, count = re.subn(key, "", fresh_body, count=1)
         assert count == 1, key
-    fresh_product.write_text(fresh_body, encoding="utf8")
-    assert previews.apply(stage) == 1
+    generated=add_social_head(fresh_body,SERIES["502"])
+    fresh_product.write_text(generated, encoding="utf8")
     assert owner_image in own_product.read_text(encoding="utf8")
     assert 'property="og:image"' in fresh_product.read_text(encoding="utf8")
-    assert previews.apply(stage) == 0
+    assert add_social_head(generated,SERIES["502"])==generated
 
     # The entire catalog comparison is CMS-owned; neither a repeat pass
     # nor a later catalog growth may delete or replace it.

@@ -49,6 +49,8 @@ def image_path(value,origin="https://xuyibottles.com"):
     if parts.query or parts.fragment:return None
     path=parts.path
     if not VALID_MEDIA.fullmatch(path) or "/../" in path or "/./" in path or "//" in path:return None
+    # Excel row captures and shared category art are not model photographs.
+    if "/excel/" in path.lower() or path.startswith("/assets/products/"):return None
     # The normal release maps six previously approved shaker originals to
     # stable published assets. Use that *same* reviewed mapping at source time
     # so sitemap URLs exactly equal the actual page main image.
@@ -59,8 +61,12 @@ def source_main_photo(row,translated_body=None,origin="https://xuyibottles.com")
     if translated_body is not None:
         parser=_ProductMainPhoto()
         parser.feed(translated_body)
-        return image_path(parser.found,origin)
-    images=row.get("images") or []
+        path=image_path(parser.found,origin)
+        if str(row.get("model"))=="2100" and path and "/gallery/2099-" in path:
+            return None
+        return path
+    from product_share_source import real_product_images
+    images=real_product_images(row)
     return image_path(images[0],origin) if images else None
 
 def image_for_product_route(route,series,localized_body=None,origin="https://xuyibottles.com"):

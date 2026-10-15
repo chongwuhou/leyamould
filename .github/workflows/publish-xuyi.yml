@@ -185,6 +185,7 @@ jobs:
           python scripts/test_source_catalog_capacity_oz.py
           python scripts/test_source_sitemap_titles_h1_images.py
           python scripts/test_product_image_sitemap.py
+          python scripts/test_source_product_social_image_truth.py
           python scripts/test_search_intent_three_routes.py
           python scripts/test_turkish_bottle_cap_terminology.py
           python scripts/test_pilot_20_unique_sku_openings.py

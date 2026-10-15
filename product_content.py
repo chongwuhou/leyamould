@@ -135,18 +135,20 @@ def details(obj):
  if similar:h+='<section class="section"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT RANGE</span><h2 class="section__title">Related Bottle Models</h2></div></div>'+product_grid(similar)+'</div></section>'
  return h
 def add_schema(html,obj):
+ from product_share_source import real_product_images
  model=model_en(obj["model"])
  title=public_display_name(obj)
  site=SITE_ORIGIN+"/products/"+obj['slug']+"/"
  product={
   "@type":"Product","name":title,"sku":model,"description":"Wholesale "+title+". Confirm model materials, capacity, colors, logo options and packaging with XUYI before ordering.",
-  "image":[SITE_ORIGIN+x for x in obj["images"]],
   "brand":{"@type":"Brand","name":"XUYI Bottles"},
   "category":CAT[obj['category']][0],
   "url":site,
   "additionalProperty":[{"@type":"PropertyValue","name":"Material (catalog reference)","value":join_unique(obj['variants'],'material',material_en)},
                         {"@type":"PropertyValue","name":"Capacity (catalog reference)","value":join_unique(obj['variants'],'capacity',lambda x:capacity_en(x,obj['model']))}]
  }
+ authentic=real_product_images(obj)
+ if authentic:product["image"]=[SITE_ORIGIN+src for src in authentic]
  breadcrumb={"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":SITE_ORIGIN+"/"},{"@type":"ListItem","position":2,"name":"Products","item":SITE_ORIGIN+"/products/"},{"@type":"ListItem","position":3,"name":model,"item":site}]}
  graph={"@context":"https://schema.org","@graph":[product,breadcrumb]}
  fragment='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False).replace("</","<\\/")+'</script>'

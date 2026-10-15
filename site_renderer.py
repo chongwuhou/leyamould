@@ -270,6 +270,10 @@ def build_url(path,title,content):
  # on the final D1/CMS-selected body, not on post-build HTML mutations.
  from seo_structured_components import add_at_render
  content=add_at_render(content,route,'en')
+ if route.startswith('/products/') and route!='/products/':
+  from product_share_source import add_social_head
+  product=next((x for x in SERIES.values() if x["slug"]==route.split("/")[2]),None)
+  if product:content=add_social_head(content,product)
  # Search intent for these three URLs belongs to the source renderer, not
  # a post-build HTML rewrite. D1 owner-edited SEO is always authoritative.
  from search_intent_roles import render_search_intent

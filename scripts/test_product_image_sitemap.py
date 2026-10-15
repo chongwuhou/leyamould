@@ -50,19 +50,26 @@ for item in urls:
     if not route.startswith("/products/") or route.count("/")!=3:
         assert not children,(url,"Image sitemap is deliberately scoped to product main photos")
         continue
-    assert len(children)==1,(url,"Every published model must have one main photo")
+    assert len(children)<=1,(url,"No model should have multiple image sitemap entries")
     doc=(DIST/local_path.lstrip("/")/"index.html").read_text(encoding="utf8")
     parser=MainPhoto();parser.feed(doc)
     assert parser.src,(url,"missing visible main product photo")
-    expected=SITE_ORIGIN+parser.src
+    # Excel row screenshots are not Google Image Search product photographs.
+    # Omit the image extension, preserving the regular product URL.
+    selected=image_path(parser.src)
+    if not selected or "2100/" in route and "/gallery/2099-" in selected:
+        assert not children,(url,"Unverified source image leaked to sitemap")
+        continue
+    assert len(children)==1,(url,"Real product image is missing")
+    expected=SITE_ORIGIN+selected
     assert children[0][0].text==expected,(url,children[0][0].text,expected)
     if route==local_path:english+=1
     else:localized+=1
     count+=1
-assert english>=101 and localized>=404,(english,localized)
+assert english>=20 and localized>=80,(english,localized)
 assert len(approved_shaker_image_aliases())==6
 assert image_for_product_route("/products/2095/",SERIES)=="/media/gallery/2095-01.webp"
-assert image_for_product_route("/products/2100/",SERIES)=="/media/gallery/2099-01.webp"
+assert image_for_product_route("/products/2100/",SERIES) is None
 assert image_for_product_route("/products/5247/",SERIES)=="/assets/sku-hd/slide-096-gpt-reviewed-20261013.webp"
 # The source path does not mutate between rebuilds, and repeated calls are
 # deterministic. Shared image URLs stay shared, without unique-SKU fiction.
@@ -70,7 +77,8 @@ for code in ("2095","2099","2100","5247","g-02"):
     route="/products/"+code+"/"
     x=xml_image_for_product(route,SERIES)
     assert x==xml_image_for_product(route,SERIES)
-    assert x.count("<image:image>")==1 and x.count("<image:loc>")==1
+    if code=="2100":assert not x
+    else:assert x.count("<image:image>")==1 and x.count("<image:loc>")==1
 # Simulated D1 admin change of localized product main image:
 owner='<article><img id="main-photo" alt="Owner reviewed" src="/media/gallery/owner-new-2095.webp"></article>'
 new=xml_image_for_product("/products/2095/",SERIES,owner)
@@ -83,6 +91,7 @@ assert image_path("https://other.example/photo.webp") is None
 assert image_path("/media/gallery/2095-01.webp?v=20261014") is None
 assert image_path("/media/../secret.webp") is None
 assert image_path("/media/gallery/2095-01.webp")=="/media/gallery/2095-01.webp"
+assert image_path("/media/excel/row-042.webp") is None
 # Future D1-approved SKU or locale follows the same source component.
 future={**SERIES["2095"],"model":"TEST-NEW","slug":"future-photo-model",
         "images":["/media/gallery/future-approved.webp"]}
