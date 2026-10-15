@@ -71,12 +71,16 @@ for slug,notes in POSTS.items():
         if locale!="en":
             route="/blog/"+slug+"/"
             original=D1[(route,locale)]["mainHtml"]
-            assert hashlib.sha256(original.encode("utf8")).hexdigest()==BASE[slug][locale]
-            fields=reviewed_turkish_bottle_caps(route,locale,D1[(route,locale)])
-            fields=reviewed_spanish_copy(route,locale,fields)
-            reviewed=reviewed_localized_article(fields["mainHtml"],route,locale,source_original=original)
-            assert reviewed.count('data-editorial-model="')==2
-            assert reviewed_localized_article(reviewed,route,locale,source_original=original)==reviewed
+            if hashlib.sha256(original.encode("utf8")).hexdigest()==BASE[slug][locale]:
+                fields=reviewed_turkish_bottle_caps(route,locale,D1[(route,locale)])
+                fields=reviewed_spanish_copy(route,locale,fields)
+                reviewed=reviewed_localized_article(fields["mainHtml"],route,locale,source_original=original)
+                assert reviewed.count('data-editorial-model="')==2
+                assert reviewed_localized_article(reviewed,route,locale,source_original=original)==reviewed
+            else:
+                # Real CMS-owned direct D1 authoring now carries the links.
+                assert original.count('data-editorial-model="')==2,(slug,locale,"DB body links missing")
+                assert reviewed_localized_article(original,route,locale,source_original=original)==original
             owner=original.replace('<p class="blog-lede">','<p class="blog-lede">Manual CMS edit: ',1)
             assert owner!=original
             assert reviewed_localized_article(owner,route,locale,source_original=owner)==owner,(slug,locale,"owner overwritten")

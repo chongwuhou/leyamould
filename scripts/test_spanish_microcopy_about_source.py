@@ -40,7 +40,11 @@ for route in blog_routes:
  assert '<span class="eyebrow">XUYI · BOTELLAS DE PLÁSTICO</span>' in new["mainHtml"]
  assert '<span class="eyebrow">XUYI · VASOS DE PLÁSTICO</span>' not in new["mainHtml"]
  assert reviewed_spanish_copy(route,"es",new)==new
- owner=original["mainHtml"].replace("XUYI · VASOS DE PLÁSTICO","XUYI · ARTÍCULOS APROBADOS",1)
+ # The admin may already have persisted the correction directly in D1.
+ # Either reviewed source is valid; a subsequent CMS edit still wins.
+ existing="XUYI · VASOS DE PLÁSTICO" if "XUYI · VASOS DE PLÁSTICO" in original["mainHtml"] else "XUYI · BOTELLAS DE PLÁSTICO"
+ assert existing in original["mainHtml"]
+ owner=original["mainHtml"].replace(existing,"XUYI · ARTÍCULOS APROBADOS",1)
  assert "XUYI · ARTÍCULOS APROBADOS" in reviewed_spanish_copy(route,"es",{**original,"mainHtml":owner})["mainHtml"]
  page=(ROOT/"dist/es"/route.lstrip("/")/"index.html").read_text(encoding="utf8")
  assert '<span class="eyebrow">XUYI · BOTELLAS DE PLÁSTICO</span>' in page,(route,"blog eyebrow drift")

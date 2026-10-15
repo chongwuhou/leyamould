@@ -17,14 +17,18 @@ checked=0
 for route,checks in _RULES["originalFields"].items():
     d1=translations[(route,"tr")]
     fixed=reviewed_turkish_bottle_caps(route,"tr",d1)
-    assert fixed is not d1,route
+    # Corrected mainHtml may now live directly in D1; source renderer must
+    # never reinsert the obsolete Turkish translation or touch CMS edits.
     assert reviewed_turkish_bottle_caps(route,"tr",fixed) is fixed,(route,"idempotence")
     for key,hash_value in checks.items():
         original=d1[key]
-        assert hashlib.sha256(original.encode("utf8")).hexdigest()==hash_value,route
-        assert fixed[key]==original.replace(old,correct)
+        if hashlib.sha256(original.encode("utf8")).hexdigest()==hash_value:
+            assert old in original
+            assert fixed[key]==original.replace(old,correct)
+        else:
+            assert old not in original and correct in original,(route,key,"unexpected CMS data")
+            assert fixed[key]==original,(route,key,"existing owner-approved correction changed")
         assert old not in fixed[key]
-        assert old in original
         # CMS replaces its own content; the source transform must preserve
         # exactly the editor's new text and other previously edited fields.
         updated=dict(d1,**{key:original.replace(old,"Yönetici tarafından gözden geçirilmiş şişe kapakları.")})
