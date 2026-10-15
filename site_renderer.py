@@ -142,6 +142,8 @@ def build_url(path,title,content):
    # Catalog-SKU photos and the blog thumbnails are intentionally unchanged.
    from media_quality_guard import upgrade_home_visual
    main=upgrade_home_visual(main,"en")
+   from home_bpa_source import add_home_bpa_note
+   main=add_home_bpa_note(main,"en")
   if route=="/products/" or route.startswith("/collections/"):
    from gallery_catalog import catalog_cards as gallery_cards
    main=gallery_cards(main,"en",route)

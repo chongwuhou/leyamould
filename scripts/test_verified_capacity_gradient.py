@@ -10,9 +10,10 @@ import sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/"scripts"))
 from verified_capacity_gradient_en import (
-    SOURCE_CAPACITY,GRADIENT_HINTS,HOME_BPA_VERIFICATION,actual_model,
-    source_baseline,seo_copy,update_one,update_home,apply
+    SOURCE_CAPACITY,GRADIENT_HINTS,actual_model,
+    source_baseline,seo_copy,update_one,apply
 )
+from home_bpa_source import add_home_bpa_note,_SOURCE as HOME_VERIFICATION_SOURCE
 from source_catalog_capacity_oz import catalog_volume_numbers,new_seo
 
 DIST=ROOT/"dist"
@@ -43,7 +44,7 @@ for slug,(ml,gradient) in SOURCE_CAPACITY.items():
 assert checked==23,checked
 css=(DIST/"assets/site.css").read_text(encoding="utf8")
 assert "body:has(#xuyi-home-banners)" in css
-for loc,(headline,detail) in HOME_BPA_VERIFICATION.items():
+for loc,(hero_note,headline,detail) in HOME_VERIFICATION_SOURCE.items():
     f=DIST/("index.html" if loc=="en" else loc+"/index.html")
     body=f.read_text(encoding="utf8")
     assert body.count('class="home-bpa-verification"')==1,(loc,"duplicate home prompt")
@@ -72,8 +73,8 @@ with TemporaryDirectory(prefix="xuyi-capacity-owner-") as td:
         regenerated=dst.read_text(encoding="utf8")
         assert update_one(dst,slug,SOURCE_CAPACITY[slug][0],True,model)==(0,0)
         assert dst.read_text(encoding="utf8")==regenerated
-    home=root/"index.html"
-    shutil.copy2(DIST/"index.html",home)
-    old=home.read_bytes()
-    assert update_home(home,"en")==0 and old==home.read_bytes()
+    home=(DIST/"index.html").read_text(encoding="utf8")
+    assert add_home_bpa_note(home,"en")==home
+    owner=home.replace("Taizhou, China · Plastic drinkware · OEM/ODM inquiries","Owner-selected hero text")
+    assert add_home_bpa_note(owner,"en")==owner
 print("XUYI_CAPACITY_GRADIENT_BPA_CONDITIONAL_23_MODELS_13_GRADIENTS_5_LOCALES_OWNER_POLICY_PASSED")

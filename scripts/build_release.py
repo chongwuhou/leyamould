@@ -96,9 +96,9 @@ def main():
     # catalog facts, without inventing price, stock, tests or certifications.
     from curated_catalog_meta_clarity import apply as clarify_localized_catalog_meta
     clarify_localized_catalog_meta(DIST)
-    # Source-reviewed ml/fl oz search wording, real gradient color details
-    # and an explicitly CONDITIONAL BPA material-verification prompt on home.
-    # Preserve later CMS titles/descriptions and original factory model IDs.
+    # Source-reviewed ml/fl oz search wording and real gradient color details.
+    # Conditional home BPA inquiry now belongs to the shared source renderer,
+    # never to the old generated-HTML postprocessor.
     from verified_capacity_gradient_en import apply as add_verified_capacity_gradient
     add_verified_capacity_gradient(DIST)
     # Every real capacity in every current/future source-backed model receives

@@ -41,13 +41,6 @@ LO_REVIEWED_SOURCE_DIGEST = {
     "lo-006":"7e53fa0b23cf85aa95eebbc15c8a6d8a19a382d680089698fe498b136a47ad49",
     "lo-007":"fe2d0725f68cd62acdf22005545e1f9696b1ad039508cb838876b4b2481ea653",
 }
-HOME_BPA_VERIFICATION = {
-    "en":("BPA-FREE?","Ask for material and test verification by model"),
-    "es":("SIN BPA?","Solicite verificación del material y ensayos según el modelo"),
-    "pt":("SEM BPA?","Peça verificação de material e ensaios por modelo"),
-    "ru":("БЕЗ BPA?","Запросите документы на материал и испытания для модели"),
-    "tr":("BPA İÇERMEZ Mİ?","Modele özel malzeme ve test doğrulaması isteyin"),
-}
 GRADIENT_HINTS = {
     "2513":"blue, pink, black and cyan gradient selections",
     "2514":"blue, pink, black and cyan gradient selections",
@@ -111,18 +104,6 @@ def update_one(path,slug,ml,gradient,row):
     if n:path.write_text(updated,encoding="utf8")
     return n,n
 
-def update_home(path,locale):
-    source=path.read_text(encoding="utf8")
-    if 'class="home-bpa-verification"' in source:return 0
-    if 'id="xuyi-home-banners"' not in source:return 0
-    label,explanation=HOME_BPA_VERIFICATION[locale]
-    pattern=r'(<p class="hero__note">[^<]*</p>)'
-    marker=('<div class="home-bpa-verification"><span class="home-bpa-verification__icon" aria-hidden="true">?</span>'
-            '<span><strong>'+escape(label)+'</strong><small>'+escape(explanation)+'</small></span></div>')
-    new,number=re.subn(pattern,lambda m:m.group(1)+marker,source,count=1)
-    if number:path.write_text(new,encoding="utf8")
-    return number
-
 def apply(dist):
     dist=Path(dist)
     changed=notes=0
@@ -136,13 +117,11 @@ def apply(dist):
         if not page.is_file():raise FileNotFoundError(page)
         edits,added=update_one(page,slug,ml,gradient,row)
         changed+=edits;notes+=added
-    homepage=0
-    for locale in LOCALES:
-        path=dist/("index.html" if locale=="en" else f"{locale}/index.html")
-        if path.is_file():homepage+=update_home(path,locale)
+    # Conditional home material enquiry is now rendered at source stage by
+    # home_bpa_source.add_home_bpa_note. Never mutate generated home HTML.
     print("XUYI_SOURCE_CAPACITY_GRADIENT_SEO",changed,"models updated;",
-          notes,"verified gradient explanations;",homepage,"BPA-verification home notes")
-    return changed,notes,homepage
+          notes,"verified gradient explanations; home note is source-rendered")
+    return changed,notes,0
 
 if __name__=="__main__":
     apply(ROOT/"dist")

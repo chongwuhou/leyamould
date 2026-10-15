@@ -303,6 +303,8 @@ def main():
         # D1 text takes precedence; do not patch rendered dist files.
         from turkish_bottle_cap_source import reviewed_turkish_bottle_caps
         fields=reviewed_turkish_bottle_caps(route,loc,fields)
+        from spanish_reviewed_copy import reviewed_spanish_copy
+        fields=reviewed_spanish_copy(route,loc,fields)
         original=(DIST/route.lstrip("/")/"index.html" if route!="/" else DIST/"index.html").read_text(encoding="utf-8")
         if '<main id="main-content">' not in original:continue
         prefix,remainder=original.split('<main id="main-content">',1)
@@ -330,6 +332,9 @@ def main():
             if previous and fields["title"]==previous["original"]:
                 fields={**fields,"title":previous["revised"]}
         body=(localized_contact_body(original,fields["mainHtml"],loc) if route=="/contact/" else fields["mainHtml"])
+        if route=="/":
+            from home_bpa_source import add_home_bpa_note
+            body=add_home_bpa_note(body,loc)
         if route.startswith("/products/") and route!="/products/":
             from site_renderer import SERIES
             from sku_unique_openings import editor_intro

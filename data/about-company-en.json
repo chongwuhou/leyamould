@@ -95,18 +95,19 @@
   ],
   "qualityAfter": "Where relevant to the product and order, inspection work includes color assessment, print-wear evaluation, temperature and humidity exposure, transport vibration, carton edge-crush, and packaging burst-strength checks. Methods, sample scope, and reporting are agreed before testing. We share the actual results rather than claiming every product carries the same certificate.",
   "noClaimsTitle": "What You Won't Find Here",
+  "noClaimsIntro": "Most supplier pages tell you what they are. We think it's just as useful to tell you what we're not.",
   "noClaims": [
     [
-      "No metal, no glass.",
-      "Plastic drinkware is all we do — focus is a feature."
+      "No metal. No glass.",
+      "We make reusable plastic drinkware — sports bottles, kids' bottles, water jugs, shaker bottles — and nothing else. Focus is a feature: every process, every quality check, every packing decision behind this site answers to one material family."
     ],
     [
-      "No stock-photo factory.",
-      "Our catalog images are photographs of our catalog. What you see is the model we discuss."
+      "No stock photography.",
+      "The bottles in our catalog are photographs of our catalog — the actual models, shot as they are. What you see is the model we discuss, not a rendering of something we wish we made."
     ],
     [
       "No unverified numbers.",
-      "Where a figure isn't yet verified — a rate, a capacity, a timeline — we mark it \"to be confirmed,\" and then we confirm it. We'd rather answer precisely late than impressively wrong."
+      "Where a figure isn't yet verified — a rate, a timeline, a capacity — we mark it \"to be confirmed,\" and then we confirm it against the physical sample and the order specification. We'd rather answer precisely late than impressively wrong on time."
     ]
   ],
   "photoTitle": "Production and Inspection in Pictures",
