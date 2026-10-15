@@ -133,8 +133,9 @@ def render_article(slug):
     h+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>'
     for tip in post["checklist"][:3]:h+='<li>'+e(tip)+'</li>'
     h+='</ul></div>'
-    for section in post["sections"]:
-        h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+'</p></section>'
+    from blog_editorial_inline import english_note
+    for index,section in enumerate(post["sections"]):
+        h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+english_note(slug,index)+'</p></section>'
     h+=render_primary_evidence(slug)
     h+=render_buyer_matrix(slug)
     h+=render_depth_evidence(slug)
@@ -149,12 +150,12 @@ def render_article(slug):
     h+='</div><div class="blog-editorial__cta"><h2>Need a quote for a specific model?</h2>'
     h+='<p>Send the intended model, material requirements, expected order quantity, artwork and destination market. We will review the options for that exact product rather than assume one specification fits every bottle.</p>'
     h+='<a class="button" href="/contact/#inquiry">Request a Plastic Bottle Quote →</a></div>'
-    h+='</article></div></div></section>'
+    # Selected related guides belong at the article end, not outside it.
     h+='<section class="section section--soft blog-related"><div class="shell"><div class="section__head"><div><span class="eyebrow">CONTINUE READING</span><h2 class="section__title">Related Buying Guides</h2></div></div>'
     h+='<div class="blog-related__grid">'
     for item in related:
         h+='<article class="blog-related__item"><a href="/blog/'+e(item["slug"])+'/">'+photo(cover_path(item["slug"]),item["title"])+'<strong>'+e(item["title"])+'</strong></a><p>'+e(item["description"])+'</p></article>'
-    h+='</div><p class="blog-related__all"><a href="/blog/">View all XUYI buyer guides →</a></p></div></section>'
+    h+='</div><p class="blog-related__all"><a href="/blog/">View all XUYI buyer guides →</a></p></div></section></article></div></div></section>'
     return h
 
 def enrich_article_html(document, slug):

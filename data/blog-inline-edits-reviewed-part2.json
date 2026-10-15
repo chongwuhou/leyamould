@@ -1,0 +1,194 @@
+{
+  "water-bottle-lid-leakproof-testing": [
+    {
+      "section": 1,
+      "sku": "2501",
+      "text": {
+        "en": "Inspect the actual cap, neck and gasket on {model}; a listing photo cannot establish where a specific assembly might leak.",
+        "es": "Revise tapa, cuello y junta de {model}; una foto no demuestra por dónde podría perder agua.",
+        "pt": "Confira tampa, gargalo e vedação de {model}; uma foto não mostra onde pode haver fugas.",
+        "ru": "Осмотрите крышку, горловину и прокладку образца {model}; фотография не подтверждает герметичность.",
+        "tr": "{model} kapak, ağız ve contasını gerçek numunede inceleyin; fotoğraf sızıntı yolunu kanıtlamaz."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2106",
+      "text": {
+        "en": "If the product is intended for children, keep the approved lid and component inspection record for {model} separate from adult sports-bottle results.",
+        "es": "Si se destina a niños, mantenga el control de tapa y piezas de {model} separado del ensayo de botellas adultas.",
+        "pt": "Se for infantil, guarde os controlos de tampa e peças de {model} separados dos ensaios de garrafas adultas.",
+        "ru": "Для детского применения храните результаты проверки крышки {model} отдельно от взрослых спортивных моделей.",
+        "tr": "Çocuklar içinse {model} kapak ve parça kontrolünü yetişkin spor şişesi testinden ayrı tutun."
+      }
+    }
+  ],
+  "custom-water-bottle-moq-pricing": [
+    {
+      "section": 0,
+      "sku": "2095",
+      "text": {
+        "en": "Use {model} to request a specific price break for an existing gradient sports-bottle variant instead of relying on a factory-wide MOQ.",
+        "es": "Para {model}, solicite escalas de precio de la variante deportiva degradada, no un MOQ general de fábrica.",
+        "pt": "Para {model}, peça faixas de preço da variante desportiva degradê, não um MOQ geral.",
+        "ru": "Для {model} запрашивайте цены по объему заказа на конкретный градиентный вариант, а не общий MOQ.",
+        "tr": "{model} geçişli spor şişesi seçeneği için ayrı fiyat kademeleri isteyin; fabrika genelinde tek MOQ varsaymayın."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2501",
+      "text": {
+        "en": "For repeat buying, keep the model code, artwork and confirmed packing for {model} on the reorder sheet so quotations remain comparable.",
+        "es": "Para reponer {model}, guarde el código, arte y embalaje confirmado en la ficha de repetición.",
+        "pt": "Ao repetir {model}, registe código, arte e embalagem confirmada para comparar cotações.",
+        "ru": "При повторной закупке {model} сохраняйте код, макет и подтвержденную упаковку для сопоставимых цен.",
+        "tr": "{model} tekrar siparişinde kod, baskı ve onaylı paketlemeyi saklayarak teklifleri karşılaştırın."
+      }
+    }
+  ],
+  "oem-vs-odm-plastic-water-bottles": [
+    {
+      "section": 1,
+      "sku": "2095",
+      "text": {
+        "en": "An existing catalog reference such as {model} may be a starting point for discussing artwork and colors; any proposed modifications still require approval.",
+        "es": "Un modelo existente como {model} ayuda a discutir logotipo y colores; cada modificación requiere aprobación.",
+        "pt": "Um modelo existente como {model} permite discutir logótipo e cores; alterações exigem aprovação.",
+        "ru": "Готовая каталожная модель {model} помогает обсудить логотип и цвет, но изменения требуют согласования.",
+        "tr": "{model} gibi katalog modeli logo ve renk görüşmesi için başlangıçtır; değişiklikler yine onay gerektirir."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2281",
+      "text": {
+        "en": "Document the approved graphic files and component revisions for {model} separately, rather than assuming one design approval transfers across bottle types.",
+        "es": "Archive dibujos y revisiones de {model} por separado; aprobar un diseño no aprueba automáticamente otras botellas.",
+        "pt": "Arquive artes e revisões de {model} separadamente; aprovar um desenho não aprova todas as garrafas.",
+        "ru": "Храните макеты и редакции деталей {model} отдельно; согласование одной бутылки не относится ко всем.",
+        "tr": "{model} çizim ve parça revizyonlarını ayrı tutun; bir şişe onayını diğerine aktarmayın."
+      }
+    }
+  ],
+  "water-bottle-quality-control-checklist": [
+    {
+      "section": 0,
+      "sku": "2501",
+      "text": {
+        "en": "Use the exact source listing for {model} to draft its measurable acceptance checklist; the listing does not itself document passed inspections.",
+        "es": "Utilice la ficha de {model} para definir criterios medibles; el catálogo no acredita inspecciones aprobadas.",
+        "pt": "Use a ficha de {model} para critérios mensuráveis; o catálogo não comprova inspeções concluídas.",
+        "ru": "По записи {model} составьте измеримый контрольный перечень; каталог не подтверждает успешные проверки.",
+        "tr": "{model} ürün kaydını ölçülebilir kabul kriterlerine temel alın; katalog geçmiş denetim kanıtı değildir."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2106",
+      "text": {
+        "en": "Include the actual finished pack and required market labeling for {model} in pre-shipment inspection, especially for a children's product brief.",
+        "es": "Incluya el embalaje terminado y las etiquetas exigidas de {model} en la inspección previa al envío infantil.",
+        "pt": "Inclua embalagem final e rótulos exigidos de {model} na inspeção de embarque, sobretudo para o público infantil.",
+        "ru": "Включите готовую упаковку {model} и нужную маркировку детского товара в предгрузовую проверку.",
+        "tr": "Özellikle çocuk pazarı için {model} son paketini ve etiketlerini sevkiyat öncesi kontrolde değerlendirin."
+      }
+    }
+  ],
+  "custom-water-bottle-export-packaging": [
+    {
+      "section": 0,
+      "sku": "2501",
+      "text": {
+        "en": "Before selecting a sleeve or retail box, measure the actual assembled {model} sample, including the lid and any protruding accessories.",
+        "es": "Antes de elegir una caja, mida la muestra montada de {model}, incluida la tapa y accesorios.",
+        "pt": "Antes de escolher a caixa, meça {model} montado, inclusive tampa e acessórios.",
+        "ru": "Прежде чем выбирать коробку, измерьте собранный {model}, включая крышку и выступающие детали.",
+        "tr": "Kutu seçmeden önce {model} montajlı numunesini kapak ve ek parçalarla ölçün."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2281",
+      "text": {
+        "en": "For the larger jug {model}, confirm carton marks, item count and shipping documents against the signed packing specification rather than copied model data.",
+        "es": "Para la jarra de mayor tamaño {model}, valide marcas de caja, cantidad y documentos con la especificación aprobada.",
+        "pt": "Para o jarro maior {model}, confira marcas de caixa, quantidades e documentos com a especificação aprovada.",
+        "ru": "Для большой емкости {model} сверьте маркировку коробки, количество и документы с согласованной спецификацией.",
+        "tr": "Büyük su kabı {model} için koli işaretleri, adet ve evrakı onaylı paketleme şartnamesiyle karşılaştırın."
+      }
+    }
+  ],
+  "how-to-start-private-label-water-bottle-brand": [
+    {
+      "section": 1,
+      "sku": "2095",
+      "text": {
+        "en": "Use the physical gradient-finish example of {model} to test how your first brand palette will look in product photos and on shelves.",
+        "es": "Utilice la muestra degradada de {model} para probar cómo se verá la primera paleta de marca.",
+        "pt": "Use a amostra degradê de {model} para testar a aparência das cores da marca.",
+        "ru": "Оцените градиентный образец {model}, чтобы проверить будущую фирменную палитру на фото.",
+        "tr": "İlk marka paletinin görünümünü {model} geçişli renk numunesinde deneyin."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2501",
+      "text": {
+        "en": "Add a specific pilot quotation for {model}, including approved printing and packing, before assuming that higher volume means a better launch.",
+        "es": "Pida una cotización piloto de {model} con impresión y embalaje aprobados antes de aumentar el volumen.",
+        "pt": "Peça cotação piloto de {model} com impressão e embalagem aprovadas antes de aumentar o volume.",
+        "ru": "Запросите пилотную цену для {model} с согласованной печатью и упаковкой до увеличения тиража.",
+        "tr": "Hacmi artırmadan {model} onaylı baskı ve paketlemeli pilot teklifini isteyin."
+      }
+    }
+  ],
+  "water-bottle-logo-printing-methods": [
+    {
+      "section": 0,
+      "sku": "2095",
+      "text": {
+        "en": "With the gradient finish recorded for {model}, check ink contrast on that specific surface rather than borrowing a proof from a plain-color bottle.",
+        "es": "En el acabado degradado de {model}, verifique contraste y adhesión de tinta sobre la superficie elegida.",
+        "pt": "No acabamento degradê de {model}, confirme contraste e aderência da tinta nessa superfície.",
+        "ru": "Для градиентной отделки {model} проверьте контраст печати на выбранном образце, а не на однотонной бутылке.",
+        "tr": "{model} gradyan yüzeyinde baskı kontrastını seçilen numunede kontrol edin; düz renk provasını yeterli saymayın."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2501",
+      "text": {
+        "en": "Approve the exact artwork placement and rub-check conditions on a printed sample of {model} before treating the method as production-ready.",
+        "es": "Apruebe la posición y el ensayo de roce en una muestra impresa de {model} antes de producir.",
+        "pt": "Aprove posição do desenho e ensaio de atrito na amostra impressa de {model} antes da produção.",
+        "ru": "До тиража согласуйте расположение рисунка и проверку истирания на образце {model}.",
+        "tr": "Üretimden önce {model} baskılı örneğinde logo yerini ve sürtünme kontrolünü onaylayın."
+      }
+    }
+  ],
+  "sports-water-bottle-customization": [
+    {
+      "section": 0,
+      "sku": "2095",
+      "text": {
+        "en": "Compare a real sample of sports model {model} against the intended gym or retail use, including how customers will carry and refill it.",
+        "es": "Compare la muestra deportiva de {model} con su uso previsto en gimnasio o tienda, transporte y rellenado.",
+        "pt": "Compare a amostra desportiva de {model} com o uso em treino ou loja, transporte e enchimento.",
+        "ru": "Сравните образец спортивной модели {model} со сценарием использования и переноской.",
+        "tr": "{model} spor şişesi örneğini spor salonu, mağaza ve taşıma gereksinimleriyle karşılaştırın."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2501",
+      "text": {
+        "en": "For a coordinated sports assortment, test the approved logo position and retail packaging on {model} independently of the other bottle styles.",
+        "es": "Para una gama deportiva coherente, valide el logotipo y embalaje de {model} por separado.",
+        "pt": "Numa linha desportiva coerente, valide logótipo e embalagem de {model} separadamente.",
+        "ru": "Для единой спортивной линейки отдельно утвердите логотип и упаковку образца {model}.",
+        "tr": "Uyumlu spor koleksiyonu için {model} logo yeri ve ambalajını bağımsız onaylayın."
+      }
+    }
+  ]
+}

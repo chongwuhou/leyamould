@@ -307,8 +307,8 @@ def main():
         from spanish_reviewed_copy import reviewed_spanish_copy
         fields=reviewed_spanish_copy(route,loc,fields)
         if route.startswith("/blog/"):
-            from blog_source_product_bridges import product_bridges
-            fields={**fields,"mainHtml":product_bridges(fields["mainHtml"],route,loc,source_original=original_owner_body)}
+            from blog_editorial_inline import reviewed_localized_article
+            fields={**fields,"mainHtml":reviewed_localized_article(fields["mainHtml"],route,loc,source_original=original_owner_body)}
         original=(DIST/route.lstrip("/")/"index.html" if route!="/" else DIST/"index.html").read_text(encoding="utf-8")
         if '<main id="main-content">' not in original:continue
         prefix,remainder=original.split('<main id="main-content">',1)

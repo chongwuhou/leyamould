@@ -7,7 +7,6 @@ import hashlib,json,re,sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from home_source_image_geometry import source_image_geometry,KNOWN
-from blog_source_product_bridges import product_bridges,D as POSTS
 from why_us_source import augment,DATA,LOCALE_BASELINES
 from site_renderer import SERIES
 SNAP=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
@@ -42,37 +41,22 @@ sized='<img src="/assets/curated-hd/gradient-sports.webp" width="800" height="90
 assert source_image_geometry(sized,"/","en")==sized
 assert source_image_geometry(original,"/blog/","en")==original
 assert source_image_geometry('<img src="/editor-owned/new.webp">',"/","en")=='<img src="/editor-owned/new.webp">'
-# A source-pair bridge stays within the buyer's article body, not the nav.
-models={r["slug"] for r in SERIES.values()}
-assert len(POSTS["modelPairs"])==16
-for slug,(a,b,topic) in POSTS["modelPairs"].items():
- assert a in models and b in models and a!=b
- route=f"/blog/{slug}/"
+# Blog link acceptance now belongs to strict per-article paragraph-and-end checks.
+# This is deliberately NOT a whole-page anchor count or an intro-only callout.
+from blog_editorial_inline import POSTS as EDITED_GUIDES
+assert len(EDITED_GUIDES)==16
+for slug,notes in EDITED_GUIDES.items():
+ assert len(notes)==2
  for loc in LANGS:
   root=ROOT/"dist"/("" if loc=="en" else loc)
   page=(root/"blog"/slug/"index.html").read_text(encoding="utf8")
-  content=page.split('<main id="main-content">',1)[1].split('</main>',1)[0]
-  assert content.count('data-blog-product-proof="'+slug+'"')==1,(slug,loc,"missing/duplicate editorial link")
-  h=Parse();h.feed(content)
-  links={x for x in h.links if x}
-  own="/blog/"+slug+"/" if loc=="en" else "/"+loc+"/blog/"+slug+"/"
-  blog_refs={x for x in links if x.startswith("/blog/") or x.startswith("/"+loc+"/blog/")}
-  blog_refs.discard(own)
-  assert len(blog_refs)>=2,(slug,loc,"existing related buyer guides missing")
-  model_refs={x for x in links if x.startswith("/products/") or x.startswith("/"+loc+"/products/")}
-  assert len(model_refs)>=2,(slug,loc,"two product model references")
-  for uri in model_refs:
-   assert (ROOT/"dist"/uri.lstrip("/")/"index.html").exists(),(slug,loc,uri)
-  if loc!="en":
-   orig=D1[(route,loc)]["mainHtml"]
-   added=product_bridges(orig,route,loc)
-   assert added!=orig and product_bridges(added,route,loc)==added
-   user=orig.replace('<p class="blog-lede">','<p class="blog-lede">Admin edited ',1)
-   assert user!=orig and product_bridges(user,route,loc)==user,(slug,loc,"CMS edit overwritten")
-  else:
-   orig=content.replace('data-blog-product-proof="'+slug+'"','data-blog-product-proof="owner-selected"')
-   assert product_bridges(orig,route,loc,owner_managed=True)==orig
- assert product_bridges("<article>New page</article>","/blog/new-approved-topic/","en")=="<article>New page</article>"
+  main=page.split('<main id="main-content">',1)[1].split("</main>",1)[0]
+  sections=re.findall(r'<section class="blog-section"[^>]*>.*?</section>',main,re.S)
+  assert len(sections)==6
+  assert all(sections[n["section"]].count('data-editorial-model="'+n["sku"]+'"')==1 for n in notes)
+  assert main.count('class="section section--soft blog-related"')==1
+  assert 'class="blog-product-proof"' not in main
+
 # Why Us: verified source, complete buyer decision content, all 5 locales.
 for loc in LANGS:
  page=(ROOT/"dist"/("" if loc=="en" else loc)/"why-us/index.html").read_text(encoding="utf8")

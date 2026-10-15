@@ -127,9 +127,8 @@ def build_url(path,title,content):
   from editorial_support import for_route as reviewed_editorial_for_route
   if route!='/about/' or 'id="xuyi-about-company"' not in main:
    main+=reviewed_editorial_for_route(route,main)
-  if route.startswith('/blog/'):
-   from blog_source_product_bridges import product_bridges
-   main=product_bridges(main,route,'en',owner_managed=bool(BODY_OVERRIDES.get(route)))
+  # Blog product links are now authored inside two different paragraphs
+  # via blog_editorial.render_article; do not add the legacy auto callout.
   if route=='/why-us/':
    from why_us_source import augment as why_us_buyer_evidence
    main=why_us_buyer_evidence(main,'en',owner_override=bool(BODY_OVERRIDES.get(route)))

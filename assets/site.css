@@ -739,6 +739,14 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:non
 .blog-editorial__cta h2{margin:0 0 14px;color:#fff}
 .blog-editorial__cta p{color:#f0f0f0}
 .blog-editorial__cta .button{margin-top:7px}
+/* Editorially approved model links within article paragraphs; 3 manually
+   selected related guides remain at the article end (not a second carousel). */
+.blog-editorial__body .blog-editorial__product-link{font-weight:750;color:#17633f;text-decoration:underline;text-underline-offset:3px}
+.blog-editorial__body .blog-editorial__product-note{line-height:inherit}
+.blog-editorial__body>.blog-related{margin:30px 0 5px;padding:25px 0 0;border-top:1px solid #dfe6df;background:transparent}
+.blog-editorial__body>.blog-related>.shell{width:100%;max-width:none;padding:0}
+.blog-editorial__body .blog-related__grid{gap:12px}
+@media(max-width:750px){.blog-editorial__body .blog-related__grid{grid-template-columns:1fr;gap:14px}.blog-editorial__body>.blog-related{padding-top:18px}}
 .blog-related__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
 .blog-related__item{min-width:0;background:#fff;border-radius:14px;overflow:hidden}
 .blog-related__item a{display:block}

@@ -1,0 +1,194 @@
+{
+  "wholesale-plastic-water-bottle-buying-guide": [
+    {
+      "section": 0,
+      "sku": "2095",
+      "text": {
+        "en": "For a sports-retail brief, use {model} as the catalog starting point; approve its physical sample rather than treating the listing as a performance guarantee.",
+        "es": "Para una línea deportiva, use {model} como punto de partida y confirme la muestra física antes de aprobar sus prestaciones.",
+        "pt": "Para uma linha desportiva, use {model} como referência e confirme a amostra física antes de aprovar o produto.",
+        "ru": "Для спортивного ассортимента возьмите {model} как каталожный пример и проверьте физический образец перед утверждением.",
+        "tr": "Spor ürün grubunda {model} katalog örneğini inceleyin ve performans varsaymadan önce fiziksel numuneyi onaylayın."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2281",
+      "text": {
+        "en": "For the larger-format option, verify the model-specific sample and packing evidence for {model} before you approve the purchase specification.",
+        "es": "Para el formato de mayor capacidad, verifique la muestra y el embalaje de {model} antes de aprobar la orden.",
+        "pt": "Para o formato de maior volume, confira a amostra e a embalagem de {model} antes de aprovar a encomenda.",
+        "ru": "Для большой емкости сверьте образец {model} и упаковочные данные перед утверждением заказа.",
+        "tr": "Büyük hacimli seçenek için {model} numunesini ve paketleme bilgisini sipariş onayından önce inceleyin."
+      }
+    }
+  ],
+  "plastic-bottle-material-selection": [
+    {
+      "section": 0,
+      "sku": "2501",
+      "text": {
+        "en": "Use the catalog material listing for {model} to prepare questions about the body, closure and seal; that listing is not a component-level test report.",
+        "es": "Utilice la ficha de materiales de {model} para preguntar por cuerpo, tapa y junta; no equivale a un informe de ensayo por componente.",
+        "pt": "Use os materiais indicados para {model} para perguntar sobre corpo, tampa e vedação; não são relatórios de ensaio das peças.",
+        "ru": "По каталожным материалам {model} подготовьте вопросы о корпусе, крышке и уплотнении; это не протокол испытаний деталей.",
+        "tr": "{model} malzeme kaydını gövde, kapak ve conta soruları için kullanın; kayıt parça bazlı test raporu değildir."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2095",
+      "text": {
+        "en": "When checking market-specific documentation, compare the actual branded sample for {model}, not a certificate from a different resin or bottle.",
+        "es": "Para verificar documentos del mercado, compare la muestra real de {model}, no un certificado de otra resina o botella.",
+        "pt": "Ao verificar os documentos do mercado, compare a amostra real de {model}, não certificados de outra resina.",
+        "ru": "При проверке документов для рынка сопоставляйте реальный образец {model}, а не сертификат другого полимера.",
+        "tr": "Pazar belgelerini incelerken farklı reçinenin sertifikasını değil, {model} gerçek numunesini karşılaştırın."
+      }
+    }
+  ],
+  "custom-logo-water-bottle-checklist": [
+    {
+      "section": 0,
+      "sku": "2095",
+      "text": {
+        "en": "The gradient color references on {model} make it a useful proofing example: check logo contrast on the exact selected finish.",
+        "es": "Los degradados de {model} sirven para comprobar el contraste del logotipo sobre el acabado elegido.",
+        "pt": "Os degradês de {model} ajudam a avaliar o contraste do logótipo no acabamento escolhido.",
+        "ru": "Градиентные цвета {model} удобны для проверки контраста логотипа на конкретном варианте.",
+        "tr": "{model} geçişli renkleri, seçilen yüzeyde logo kontrastını kontrol etmek için yararlı örnektir."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2501",
+      "text": {
+        "en": "Keep the separately approved decoration sample for {model} with the print-position drawing so the order is not based on a generic mockup.",
+        "es": "Conserve la muestra decorada de {model} junto al plano de impresión, no únicamente un montaje genérico.",
+        "pt": "Guarde a amostra decorada de {model} com o desenho da posição de impressão, não só um mockup.",
+        "ru": "Храните согласованный образец печати {model} вместе с чертежом размещения, а не только макет.",
+        "tr": "{model} onaylı baskı numunesini, yalnızca görsel taslakla değil, baskı konumu çizimiyle saklayın."
+      }
+    }
+  ],
+  "sports-bottle-vs-water-jug": [
+    {
+      "section": 0,
+      "sku": "2514",
+      "text": {
+        "en": "Use {model} as a sports-bottle candidate when assessing carry convenience, then verify its real assembled size and closure.",
+        "es": "Considere {model} como botella deportiva y compruebe el tamaño montado y el cierre antes de elegir.",
+        "pt": "Considere {model} como garrafa desportiva e confirme tamanho montado e tampa.",
+        "ru": "Рассмотрите {model} как спортивный вариант, уточнив собранные размеры и крышку.",
+        "tr": "{model} modelini spor şişesi adayı olarak inceleyin; montajlı ölçü ve kapağı doğrulayın."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2281",
+      "text": {
+        "en": "For jug-style freight calculations, compare the verified carton configuration of {model} with the smaller sports format rather than extrapolating.",
+        "es": "Para calcular el flete de jarras, contraste el embalaje confirmado de {model} con el formato deportivo.",
+        "pt": "Para calcular o frete de jarros, compare a caixa confirmada de {model} com o formato desportivo.",
+        "ru": "Для расчета перевозки больших емкостей сопоставьте подтвержденную коробку {model} со спортивным форматом.",
+        "tr": "Büyük kapların nakliyesinde {model} doğrulanmış koli düzenini spor şişesiyle karşılaştırın."
+      }
+    }
+  ],
+  "kids-water-bottle-procurement": [
+    {
+      "section": 0,
+      "sku": "2106",
+      "text": {
+        "en": "Treat {model} as a children’s-bottle catalog example only; age suitability still depends on the exact assembly and destination-market checks.",
+        "es": "Utilice {model} como ejemplo del catálogo infantil; la idoneidad por edad depende del montaje y el mercado.",
+        "pt": "Use {model} como referência infantil; a adequação à idade depende das peças e do mercado.",
+        "ru": "Используйте {model} как пример детской бутылки; соответствие возрасту зависит от деталей и рынка.",
+        "tr": "{model} çocuk şişesi örneğidir; yaş uygunluğu parçalar ve hedef pazar kontrollerine bağlıdır."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2350",
+      "text": {
+        "en": "Before approving school-retail labels, review the actual color and printed sample of {model} along with the required warnings.",
+        "es": "Antes de aprobar etiquetas escolares, compruebe la muestra de color e impresión de {model} y las advertencias exigidas.",
+        "pt": "Antes de aprovar rótulos escolares, confirme a cor e a impressão de {model} e os avisos exigidos.",
+        "ru": "До утверждения школьной этикетки проверьте цвет и печать образца {model}, а также нужные предупреждения.",
+        "tr": "Okul ürünü etiketini onaylamadan {model} renk/baskı örneğini ve gerekli uyarıları kontrol edin."
+      }
+    }
+  ],
+  "shaker-bottle-wholesale": [
+    {
+      "section": 0,
+      "sku": "501",
+      "text": {
+        "en": "Begin a shaker RFQ with an identified physical sample of {model}; the catalog model code alone does not establish its mixing accessories.",
+        "es": "Comience la solicitud de shaker con una muestra identificada de {model}; el código no confirma los accesorios de mezcla.",
+        "pt": "Comece a cotação do shaker com a amostra identificada de {model}; o código não confirma acessórios.",
+        "ru": "Начните запрос на шейкер с маркированного образца {model}; один код не подтверждает комплектацию.",
+        "tr": "Shaker teklifine {model} kodlu numuneyle başlayın; katalog kodu karıştırma parçalarını doğrulamaz."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "502",
+      "text": {
+        "en": "For branded shaker packing, compare the finished sample, any mixer piece and the unit pack for {model} before calculating cartons.",
+        "es": "Para envasar shakers de marca, verifique muestra, mezclador y embalaje de {model} antes de calcular cajas.",
+        "pt": "Na embalagem de shaker com marca, confira amostra, misturador e pacote de {model} antes da caixa.",
+        "ru": "Для фирменной упаковки шейкера проверьте образец {model}, смеситель и индивидуальную упаковку.",
+        "tr": "Markalı shaker paketinde {model} numunesini, karıştırıcı parçayı ve tekli paketi koli hesabından önce kontrol edin."
+      }
+    }
+  ],
+  "tritan-vs-pp-petg-pc": [
+    {
+      "section": 0,
+      "sku": "2501",
+      "text": {
+        "en": "The catalog combination for {model} is a practical comparison reference, not evidence that the body, lid and gasket share one resin.",
+        "es": "La combinación de catálogo de {model} sirve de referencia, pero no prueba la resina individual de cuerpo, tapa y junta.",
+        "pt": "A combinação de catálogo de {model} é referência, não prova o polímero de corpo, tampa e vedação.",
+        "ru": "Перечень материалов {model} полезен для сравнения, но не доказывает состав корпуса, крышки и прокладки.",
+        "tr": "{model} katalog malzeme ailesi karşılaştırma içindir; gövde, kapak ve conta reçinesini tek tek kanıtlamaz."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2095",
+      "text": {
+        "en": "Before accepting any resin substitution, price and test a new physical sample for {model} instead of transferring approval from another product.",
+        "es": "Antes de aceptar otra resina, cotice y pruebe una nueva muestra de {model}, sin reutilizar aprobaciones ajenas.",
+        "pt": "Antes de trocar a resina, cote e teste uma nova amostra de {model}, sem reutilizar outras aprovações.",
+        "ru": "Перед заменой полимера запросите цену и испытайте новый образец {model}, не перенося чужие согласования.",
+        "tr": "Reçine değişikliğinde başka ürün onayını taşımadan {model} yeni numunesini fiyatlandırıp test edin."
+      }
+    }
+  ],
+  "bpa-free-plastic-water-bottle-sourcing": [
+    {
+      "section": 0,
+      "sku": "2501",
+      "text": {
+        "en": "For {model}, request the resin and component evidence before using any BPA-free claim; catalog material names are not certification.",
+        "es": "Para {model}, solicite pruebas de resinas y componentes antes de declarar «sin BPA»; el catálogo no certifica.",
+        "pt": "Para {model}, peça provas da resina e das peças antes de alegar ausência de BPA; o catálogo não certifica.",
+        "ru": "Для {model} запросите документы по полимерам и деталям до заявления «без BPA»; каталог не сертификат.",
+        "tr": "{model} için BPA içermediği iddiasından önce reçine ve parça kanıtı isteyin; katalog sertifika değildir."
+      }
+    },
+    {
+      "section": 4,
+      "sku": "2095",
+      "text": {
+        "en": "If the branded program later changes a colorant or lid component, compare the revised sample of {model} against the originally tested configuration.",
+        "es": "Si cambian el pigmento o la tapa, coteje la nueva muestra de {model} con la configuración ensayada.",
+        "pt": "Se pigmento ou tampa mudar, compare a nova amostra de {model} com a configuração ensaiada.",
+        "ru": "При изменении красителя или крышки сравните новый образец {model} с ранее испытанной комплектацией.",
+        "tr": "Renk katkısı veya kapak değişirse {model} yeni numunesini test edilen yapılandırmayla karşılaştırın."
+      }
+    }
+  ]
+}
