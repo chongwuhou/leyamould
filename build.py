@@ -108,6 +108,10 @@ def catalog(cat_name=None):
  pagehtml=intro("Products" if not cat_name else "Products / "+CAT[cat_name][0],heading,subtitle)
  pagehtml+='<section class="section"><div class="shell"><div class="catalog-layout">'+catnav(CAT[cat_name][1] if cat_name else None)+'<div>'+filters(not cat_name)+product_grid(arr)+pagination()+'</div></div></div></section>'
  pagehtml+=catalog_buying_guide(cat_name)
+ if cat_name=="Plastic Shaker Bottles":
+  # Source-authored, model-verified wholesale guidance; never patch dist HTML.
+  from shaker_category_editorial import render as shaker_wholesale_editorial
+  pagehtml+=shaker_wholesale_editorial()
  pagehtml+='<section class="section section--soft"><div class="shell">'+sec("Wholesale & Custom Bottle Solutions","Ask about available colors, custom printing, branding and packing for the models that interest you.","OEM & CUSTOMIZATION")+features()+'</div></section>'
  pagehtml+='<section class="section"><div class="shell">'+sec("Wholesale Buying Questions","Contact XUYI with model number, quantity and destination.","Product FAQ")+faq_html(FAQS[:6])+'</div></section>'
  return pagehtml

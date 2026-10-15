@@ -38,7 +38,7 @@
         ],
         [
           "Can we source sports bottles, kids bottles, jugs and shakers together?",
-          "The catalog covers all four plastic product lines. Share a model-by-model order list and ask whether production dates, packing, documentation and shipment consolidation can be coordinated for your project.",
+          "XUYI's catalog includes four plastic drinkware families: sports water bottles, kids bottles, large-capacity jugs and protein shakers. You can request a combined quotation by listing each model, color, quantity and packing requirement separately. Ask whether production schedules and carton marking can be coordinated and whether shipment consolidation is feasible; do not assume identical lead times or MOQ across families.",
           "/products/"
         ],
         [
@@ -71,7 +71,7 @@
         ],
         [
           "Can a plastic bottle be used for boiling water or hot drinks?",
-          "Only if the manufacturer provides model- and component-specific temperature/use guidance. Do not infer hot-water suitability from the material abbreviation alone; closures, seals and decoration may have different limits.",
+          "Do not pour boiling water into a plastic bottle unless the exact assembled model has documented temperature and use limits that permit it. The body material alone does not establish suitability: the lid, gasket, straw and printed decoration may behave differently. Request manufacturer guidance for the intended liquid temperature, contact duration and cleaning conditions, supported by relevant product-specific evidence.",
           "/quality-control/"
         ],
         [
@@ -134,12 +134,12 @@
         ],
         [
           "Does a custom water bottle require a new mold?",
-          "Existing-model branding often avoids new body tooling, while a changed silhouette, neck or mechanism may need tooling investment. Determine feasibility, mold ownership, maintenance and intellectual-property terms before starting work.",
+          "Applying a logo to an existing catalog bottle may use the current body and lid molds, whereas changing the silhouette, neck dimensions or closure mechanism may require new tooling. First identify which part actually changes, then ask for design feasibility, tool cost, sample approval steps and ownership terms. Tooling is not automatically included in a standard printed-bottle quotation.",
           "/capabilities/custom-molding/"
         ],
         [
           "Can my design files be treated as confidential?",
-          "Ask to agree confidentiality and intellectual-property terms before exchanging commercially sensitive drawings. Specific NDA availability, exclusivity and tooling ownership must be established in writing for the project.",
+          "Confidentiality should be agreed in writing before sharing nonpublic artwork, technical drawings or new-product specifications. Ask who may access the files, whether a nondisclosure agreement is available, how long materials will be retained and who owns any resulting tooling or design work. Do not assume exclusivity or automatic transfer of intellectual-property rights without an explicit contract.",
           "/capabilities/oem-odm/"
         ]
       ]
@@ -162,7 +162,7 @@
         ],
         [
           "What is the difference between a stock sample and a pre-production sample?",
-          "A stock sample can help check the basic model and handling. A production-representative sample should confirm the approved material, color, logo, components and packaging that the bulk order will use.",
+          "A stock sample is an existing product used to assess dimensions, handling, lid operation and general construction. A pre-production sample should represent the confirmed order, including the specified body and closure materials, colors, printed artwork and proposed packaging. For example, an undecorated shaker cannot serve as final approval of a multi-color printed logo or retail box.",
           "/request-sample/"
         ],
         [
@@ -177,12 +177,12 @@
         ],
         [
           "What happens if the prototype does not meet our requirements?",
-          "Record the discrepancy against the drawing or approved specification. Agree on design changes, revised cost, timeline and whether another prototype or test is needed before authorizing production.",
+          "Compare the prototype with the latest approved drawing, materials list and written functional requirements. Record each failed point with measurements or photographs, such as a cap that does not seat correctly or artwork outside the approved position. Agree who will revise the design, whether new tooling or samples are needed, and how the change affects cost and schedule before approval.",
           "/request-sample/"
         ],
         [
           "Can I send a competitor-style reference bottle or design sketch?",
-          "A reference can help communicate functions and dimensions, but proprietary designs and trademarks should be respected. We can review original alternatives and feasibility without promising an exact copied product.",
+          "A reference bottle or sketch can help explain preferred capacity, grip, lid operation and packing format. Identify which features are functional requirements and which are merely visual inspiration. Avoid asking a supplier to reproduce another brand's protected artwork, trademark or proprietary design. An original alternative should be assessed for technical feasibility and agreed sample requirements before any production commitment.",
           "/capabilities/oem-odm/"
         ]
       ]
@@ -205,7 +205,7 @@
         ],
         [
           "What quality checks matter most for plastic drinking bottles?",
-          "Useful checks include body appearance and dimensions, filling capacity, lid/closure function, agreed leakage conditions, seal placement, printed decoration and packaging. Agree tolerances, sample size and acceptance criteria before production.",
+          "Quality checks should match the actual bottle specification: confirm body dimensions and capacity, lid fit, gasket placement, drinking function, surface finish, approved logo placement and carton packing. Define any leakage test conditions before using a leakproof claim. Record the inspection sample size, acceptance criteria and corrective action process in the purchase order so results are comparable.",
           "/quality-control/"
         ],
         [
@@ -220,7 +220,7 @@
         ],
         [
           "Can I appoint a third-party inspector?",
-          "A buyer-appointed inspection can be discussed by purchase order. Inspection access, sampling method, laboratory work, correction procedure, cost and pre-shipment approval must be agreed with the responsible production facility.",
+          "A third-party inspection can be considered when its scope and access are agreed with the responsible factory before production or dispatch. Specify the sample selection method, approved reference sample, acceptable defects, packaging checks, report format and who pays the inspector. Laboratory testing is a separate service and should not be assumed to be included in a visual pre-shipment inspection.",
           "/quality-control/"
         ],
         [
@@ -258,7 +258,7 @@
         ],
         [
           "How are express, air freight and sea freight different?",
-          "Express may suit samples, air freight time-sensitive orders and sea freight larger carton volumes, but the right choice depends on dimensional weight, origin/destination handling, local fees and transit uncertainty.",
+          "Express services are often considered for small sample parcels, air freight for more time-sensitive consignments and sea freight for larger carton volumes. The best option depends on the total packaged dimensions, chargeable weight, customs clearance, local destination charges and required arrival window. Compare quotations for the same shipment size and Incoterm instead of looking only at headline transit time.",
           "/shipping-logistics/"
         ],
         [
@@ -268,17 +268,17 @@
         ],
         [
           "What shipping documents should accompany a bulk order?",
-          "An invoice, packing list, relevant transport documents and any destination-required declarations should be reconciled with the purchase order. The exact documentation depends on goods, origin, carrier and destination requirements.",
+          "A typical export document set may include a commercial invoice, packing list and the appropriate transport document, such as a bill of lading or air waybill. Depending on the destination and product, additional declarations or test records may be required. Match model descriptions, carton counts, quantities, consignee details and trade terms across the purchase order and shipping documents.",
           "/shipping-logistics/"
         ],
         [
           "Why can shipping cost be high for an empty large-capacity jug?",
-          "Plastic jugs can occupy significant carton space relative to their mass. Freight may depend on volumetric/chargeable weight, carton dimensions and container utilization rather than bottle weight alone.",
+          "Large empty plastic jugs may be lightweight but take up substantial shipping space. Carriers can price freight using carton dimensions and chargeable or volumetric weight, not just the product's net weight. Request outer-carton length, width, height, units per carton and total carton count for the chosen jug model before comparing air and sea freight quotations.",
           "/collections/large-capacity-water-jugs/"
         ],
         [
           "How long does delivery to the United States or Europe take?",
-          "No universal shipping duration applies. Request a route-specific estimate for the actual mode, destination, cargo-ready date and customs arrangements; account for inspections or peak-season delays.",
+          "There is no verified fixed delivery time for the United States or Europe. An estimate should distinguish factory production readiness from international transit, customs clearance and final delivery. Provide the destination city or port, approximate carton volume, desired transport mode and target arrival window. Ask which Incoterm and customs responsibilities the estimate covers.",
           "/shipping-logistics/"
         ]
       ]
@@ -296,7 +296,7 @@
         ],
         [
           "Can I reorder the same printed bottle design later?",
-          "A repeat order should reference the approved model and revision, artwork files, sample, decoration parameters and packaging. Material availability and colors should be reconfirmed before promising identical repeat delivery.",
+          "Reordering is easier when you keep the approved model code, product revision, signed print sample, vector artwork, color references and packing specification. Quote these identifiers on the new purchase order and reconfirm current material, lid, color and decoration availability. A matching model name alone does not guarantee identical components or printing across production runs, so check any documented changes.",
           "/capabilities/oem-odm/"
         ],
         [
@@ -311,7 +311,7 @@
         ],
         [
           "How can a distributor avoid mixing model revisions in warehouse stock?",
-          "Use distinct SKU/model-revision identifiers, pack labels, color breakdowns, carton-level references and a clear packing list. Keep approval and receiving records tied to the exact version.",
+          "Assign separate records to every approved bottle model, lid variant, color and production revision. Put the matching identifiers on cartons and packing lists, and record quantities by SKU when receiving stock. For example, a changed cap or gasket should not silently inherit the earlier revision label. Keep the signed sample and receiving photographs linked to each version.",
           "/shipping-logistics/"
         ],
         [
@@ -321,7 +321,7 @@
         ],
         [
           "Is this website able to receive a live inquiry right now?",
-          "Send your wholesale or OEM enquiry using the contact form. If it is temporarily unavailable, use email or WhatsApp.",
+          "This is a business-to-business quotation website, not an online checkout. Use the contact page's published email or WhatsApp details to send an enquiry; do not assume a web form has delivered a message unless you receive confirmation. Include the exact bottle model, approximate order quantity, destination country, branding requirements and preferred way to reply.",
           "/contact/"
         ]
       ]
