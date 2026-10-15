@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "source": "current approved native lo_catalog.detail locale body before source H2 and editorial intro; D1 owner edits retain priority",
+  "hashes": {
+    "lo-001": {
+      "es": "a3d365daf8f41e7dfe6d26d6d1ae875a9022f3dd8d314f2c1ca823027a3559dc",
+      "pt": "611b7e80346f0614929352ef30f9dc3717491cba4273d2c6e213b515f177d190",
+      "ru": "a2da18beedb049581a351b5b5ef5d64625714bfca81072e141c7a497e6d6fa4f",
+      "tr": "d2ef2b23a106f83f347de2b187df37dc43bc2439786f444b243fd7626b51188f"
+    },
+    "lo-002": {
+      "es": "735e2871b7a6f5c374e996d9b72f4160a99b45144069b7e757c43c59740d149d",
+      "pt": "8c972712c6b01bbfd8bf989391af0aadf456f294f96c443d855204820eb62ebf",
+      "ru": "763d7d59fb1c6e6ef177b92dbc463049aff408db94a1da2eaeb45e09213412c5",
+      "tr": "bf064554c15f37b3985a4d28b424345550bd20a2a2834ee577d85bc6ebcce930"
+    },
+    "lo-003": {
+      "es": "ec116c16c31ed0e2fdf50879571c24877cc4b9946e95426e58b64d8d10f30b43",
+      "pt": "388c8c795556fb9db37e17c14c79cdaee2d858f65df2c3353116c77e26ac1875",
+      "ru": "6acadc7241cf42fdb4109fc8ff7f8242e30b349975aa0fdf3c4e6bb47188fd63",
+      "tr": "d04187839e502b2dd2c91e88fc214d8f61f43b6a3084ff8f00a0582709cbc262"
+    },
+    "lo-004": {
+      "es": "2f54f30cb517ecf770fd82fe24a13c7c29a109da6d4c3d0d480939d46324f8f7",
+      "pt": "f004c4464fab51abe03726ea0db3d7d2de2a5cfc8d510e92b295b9da4da4b1db",
+      "ru": "d750b3d667dc3245860dcf704eea7637c3c12f842b451f088cf6cb563b1e6032",
+      "tr": "542b622335db6ff7a5a54fdb5483e4e564e541d08da3486b7ed6ce988cb8a990"
+    },
+    "lo-005": {
+      "es": "c10b283998f12c34b04fa7910e4e53df46eafd4a01ef84f7bb26c47d4286197e",
+      "pt": "7cba3ba301b6b3ec1f254cbff1684b76cee7f83c2db2b2f55af86281049ac2b0",
+      "ru": "d4da02c850d8d60072cbd6682e79d83a79a75414b3ebf9d2ec237b43d4fde334",
+      "tr": "a4a8e2473c4ffbd6b84bdde9600d560fe87c4a9d1fec8a225ddbdf63d97407f2"
+    },
+    "lo-006": {
+      "es": "97d4bd214fb8688a64c11bc77cc068b92ee5a137e5b86acd0657a391f844dcd5",
+      "pt": "d43bedb74bb92d82f7c84b47c13fddcb443762ad4be65c63f86c3ec6f0c09680",
+      "ru": "104b6be7437b2128fde577c58a14bb069d9a8c1f77c9c351b5a3d75deb78ff21",
+      "tr": "73dbebe7fad28acbadf49c594ac91789b0edd9abda0a375fb9bdf2ffaaf122d2"
+    },
+    "lo-007": {
+      "es": "e29b69622e793565682f2df59c1a9d3eb48866990eec936d790e969780d28c28",
+      "pt": "7db373ce740ad3cd1711bd487efb5e85797a7f19ead0abdd87a5a30f0a0ba00c",
+      "ru": "b5add125bea8a5634e23ae317e46ee235bcfe5d28d7cf4708386a03623f50ea9",
+      "tr": "620eda594f23b685b9a76bccb0b447af6398c9fdb1bd09672100422fd4f0d192"
+    },
+    "lo-008": {
+      "es": "ffd7e04af4714f36fe9a98f056c0dd80ca30c1e52b05ec90cfdf1abb4263accb",
+      "pt": "a75710c894a3eb7fb78786f378b4b175a39ad2cffce4c98ebabdeb42de9a9391",
+      "ru": "7c0c34160d42b09bff367044f2593e8d555790d3c83d6ce0778b9c9c562f53a7",
+      "tr": "669790eacff721ec99944b8d177e05223970d126eef89194b0f19eac20b882e2"
+    }
+  }
+}

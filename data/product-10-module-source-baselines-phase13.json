@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "models": {
+    "2306---": "2306",
+    "2308---": "2308",
+    "lo-001": "2281",
+    "lo-002": "2470",
+    "lo-003": "LO-004",
+    "lo-004": "LO-003",
+    "lo-005": "LO-006",
+    "lo-006": "LO-007",
+    "lo-007": "LO-005",
+    "lo-008": "LO-003"
+  },
+  "baselines": {
+    "2306---": {
+      "en": {
+        "design": "127f966bc6a97469",
+        "faq": "194b1e89c2ab8c18"
+      },
+      "es": {
+        "design": "84d373787f039122",
+        "faq": "ede29cec1914348f"
+      },
+      "pt": {
+        "design": "c4f48940cb469562",
+        "faq": "215b32b45afbb8dc"
+      },
+      "ru": {
+        "design": "bf236918417dadfe",
+        "faq": "bb8f54f9bf45da49"
+      },
+      "tr": {
+        "design": "c6aaba49961c7b58",
+        "faq": "064559bae0844b7c"
+      }
+    },
+    "2308---": {
+      "en": {
+        "design": "127f966bc6a97469",
+        "faq": "ac13d9ed28ed3dc1"
+      },
+      "es": {
+        "design": "84d373787f039122",
+        "faq": "bdef1599f3ad1c32"
+      },
+      "pt": {
+        "design": "c4f48940cb469562",
+        "faq": "64ab342577b43ccd"
+      },
+      "ru": {
+        "design": "bf236918417dadfe",
+        "faq": "2c704a7d12cf3d09"
+      },
+      "tr": {
+        "design": "c6aaba49961c7b58",
+        "faq": "404b2febf630d213"
+      }
+    },
+    "lo-001": {
+      "en": {
+        "design": "f7d41f0b99289792",
+        "faq": "7b897087d698187e"
+      },
+      "es": {
+        "design": "fb8df543b691b0df",
+        "faq": "58739c3ae35b24e7"
+      },
+      "pt": {
+        "design": "42178a3a38106072",
+        "faq": "92261914972aaca7"
+      },
+      "ru": {
+        "design": "ac105fe93d3b18c1",
+        "faq": "29c16fa155d78f49"
+      },
+      "tr": {
+        "design": "669463cf86e48178",
+        "faq": "68a229bda1b48e64"
+      }
+    },
+    "lo-002": {
+      "en": {
+        "design": "f7d41f0b99289792",
+        "faq": "7b897087d698187e"
+      },
+      "es": {
+        "design": "fb8df543b691b0df",
+        "faq": "58739c3ae35b24e7"
+      },
+      "pt": {
+        "design": "42178a3a38106072",
+        "faq": "92261914972aaca7"
+      },
+      "ru": {
+        "design": "ac105fe93d3b18c1",
+        "faq": "29c16fa155d78f49"
+      },
+      "tr": {
+        "design": "669463cf86e48178",
+        "faq": "68a229bda1b48e64"
+      }
+    },
+    "lo-003": {
+      "en": {
+        "design": "f7d41f0b99289792",
+        "faq": "7b897087d698187e"
+      },
+      "es": {
+        "design": "fb8df543b691b0df",
+        "faq": "58739c3ae35b24e7"
+      },
+      "pt": {
+        "design": "42178a3a38106072",
+        "faq": "92261914972aaca7"
+      },
+      "ru": {
+        "design": "ac105fe93d3b18c1",
+        "faq": "29c16fa155d78f49"
+      },
+      "tr": {
+        "design": "669463cf86e48178",
+        "faq": "68a229bda1b48e64"
+      }
+    },
+    "lo-004": {
+      "en": {
+        "design": "f7d41f0b99289792",
+        "faq": "7b897087d698187e"
+      },
+      "es": {
+        "design": "fb8df543b691b0df",
+        "faq": "58739c3ae35b24e7"
+      },
+      "pt": {
+        "design": "42178a3a38106072",
+        "faq": "92261914972aaca7"
+      },
+      "ru": {
+        "design": "ac105fe93d3b18c1",
+        "faq": "29c16fa155d78f49"
+      },
+      "tr": {
+        "design": "669463cf86e48178",
+        "faq": "68a229bda1b48e64"
+      }
+    },
+    "lo-005": {
+      "en": {
+        "design": "f7d41f0b99289792",
+        "faq": "7b897087d698187e"
+      },
+      "es": {
+        "design": "fb8df543b691b0df",
+        "faq": "58739c3ae35b24e7"
+      },
+      "pt": {
+        "design": "42178a3a38106072",
+        "faq": "92261914972aaca7"
+      },
+      "ru": {
+        "design": "ac105fe93d3b18c1",
+        "faq": "29c16fa155d78f49"
+      },
+      "tr": {
+        "design": "669463cf86e48178",
+        "faq": "68a229bda1b48e64"
+      }
+    },
+    "lo-006": {
+      "en": {
+        "design": "f7d41f0b99289792",
+        "faq": "7b897087d698187e"
+      },
+      "es": {
+        "design": "fb8df543b691b0df",
+        "faq": "58739c3ae35b24e7"
+      },
+      "pt": {
+        "design": "42178a3a38106072",
+        "faq": "92261914972aaca7"
+      },
+      "ru": {
+        "design": "ac105fe93d3b18c1",
+        "faq": "29c16fa155d78f49"
+      },
+      "tr": {
+        "design": "669463cf86e48178",
+        "faq": "68a229bda1b48e64"
+      }
+    },
+    "lo-007": {
+      "en": {
+        "design": "f7d41f0b99289792",
+        "faq": "7b897087d698187e"
+      },
+      "es": {
+        "design": "fb8df543b691b0df",
+        "faq": "58739c3ae35b24e7"
+      },
+      "pt": {
+        "design": "42178a3a38106072",
+        "faq": "92261914972aaca7"
+      },
+      "ru": {
+        "design": "ac105fe93d3b18c1",
+        "faq": "29c16fa155d78f49"
+      },
+      "tr": {
+        "design": "669463cf86e48178",
+        "faq": "68a229bda1b48e64"
+      }
+    },
+    "lo-008": {
+      "en": {
+        "design": "f7d41f0b99289792",
+        "faq": "7b897087d698187e"
+      },
+      "es": {
+        "design": "fb8df543b691b0df",
+        "faq": "58739c3ae35b24e7"
+      },
+      "pt": {
+        "design": "42178a3a38106072",
+        "faq": "92261914972aaca7"
+      },
+      "ru": {
+        "design": "ac105fe93d3b18c1",
+        "faq": "29c16fa155d78f49"
+      },
+      "tr": {
+        "design": "669463cf86e48178",
+        "faq": "68a229bda1b48e64"
+      }
+    }
+  }
+}

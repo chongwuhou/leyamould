@@ -67,6 +67,7 @@ LO_LANGS={lang:json.loads((ROOT/f"data/phase6-lo8-openings-{lang}.json").read_te
 for slug in (model for group in LO_BATCH.values() for model in group):
  LOCALES[slug]={lang:LO_LANGS[lang][slug] for lang in LO_LANGS}
 OWNER.update(json.loads((ROOT/"data/phase6-lo8-template-baselines.json").read_text(encoding="utf8"))["hashes"])
+OWNER.update(json.loads((ROOT/"data/phase13-lo8-native-intro-source-hashes.json").read_text(encoding="utf8"))["hashes"])
 ADDENDA.update(json.loads((ROOT/"data/phase6-lo8-locale-addenda.json").read_text(encoding="utf8")))
 # Seventh source-photo batch: eight verified G-series factory model IDs.
 # No unconfirmed capacity, dimensions, material, tests or stock is asserted.

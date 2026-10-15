@@ -8,6 +8,7 @@ from site_renderer import SERIES
 from lo_catalog import LO_PRODUCTS, detail
 from sku_unique_openings import editor_intro
 from sku_unique_openings_phase2 import COPY, CATEGORY
+from sku_factual_sections import FIFTH10, BASE as H2_BASE, section as native_h2_section
 LANGS=("en","es","pt","ru","tr")
 EN=json.loads((ROOT/"data/phase6-lo8-openings-en.json").read_text(encoding="utf8"))["groups"]
 BASE=json.loads((ROOT/"data/phase6-lo8-template-baselines.json").read_text(encoding="utf8"))["hashes"]
@@ -27,7 +28,16 @@ for sku in MODEL_GROUP:
         assert sku.casefold() in paragraph.casefold()
         initial=detail(product,lang)
         if lang!="en":
-            assert hashlib.sha256(initial.encode("utf8")).hexdigest()==BASE[sku][lang],(sku,lang,"source baseline drift")
+            if sku in FIFTH10:
+                # The entire LO source HTML was a legacy phase6 fingerprint.
+                # Phase13 upgrades only independently owned Design/FAQ blocks:
+                # keep exact new native-source fingerprints without freezing
+                # other owner-controlled sections or blocking true source edits.
+                for kind in ("design","faq"):
+                    found=native_h2_section(initial,kind)
+                    assert found and hashlib.sha256(found[2].encode("utf8")).hexdigest()[:16]==H2_BASE[sku][lang][kind],(sku,lang,kind,"source H2 baseline drift")
+            else:
+                assert hashlib.sha256(initial.encode("utf8")).hexdigest()==BASE[sku][lang],(sku,lang,"source baseline drift")
         converted=editor_intro(initial,product,lang)
         assert converted!=initial,(sku,lang,"missing source-stage editorial replacement")
         assert paragraph in html.unescape(converted),(sku,lang,"wrong model's intro")

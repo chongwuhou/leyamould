@@ -19,9 +19,11 @@ THIRD20_DATA=json.loads((ROOT/"data/product-20-module-source-baselines-phase11.j
 THIRD20=THIRD20_DATA["models"]
 FOURTH20_DATA=json.loads((ROOT/"data/product-20-module-source-baselines-phase12.json").read_text(encoding="utf8"))
 FOURTH20=FOURTH20_DATA["models"]
-assert len(set(FIRST20)|set(NEXT20)|set(THIRD20)|set(FOURTH20))==sum(map(len,(FIRST20,NEXT20,THIRD20,FOURTH20))), "SKU editorial releases overlap"
-PEERS={**FIRST20,**NEXT20,**THIRD20,**FOURTH20}
-BASE={**DATA["baselines"],**NEXT20_DATA["baselines"],**THIRD20_DATA["baselines"],**FOURTH20_DATA["baselines"]}
+FIFTH10_DATA=json.loads((ROOT/"data/product-10-module-source-baselines-phase13.json").read_text(encoding="utf8"))
+FIFTH10=FIFTH10_DATA["models"]
+assert len(set(FIRST20)|set(NEXT20)|set(THIRD20)|set(FOURTH20)|set(FIFTH10))==sum(map(len,(FIRST20,NEXT20,THIRD20,FOURTH20,FIFTH10))), "SKU editorial releases overlap"
+PEERS={**FIRST20,**NEXT20,**THIRD20,**FOURTH20,**FIFTH10}
+BASE={**DATA["baselines"],**NEXT20_DATA["baselines"],**THIRD20_DATA["baselines"],**FOURTH20_DATA["baselines"],**FIFTH10_DATA["baselines"]}
 LANGS=("en","es","pt","ru","tr")
 FOCUS={}
 for group in ("sports","kids","jugs","shakers"):
@@ -32,6 +34,8 @@ for group in ("sports","kids","jugs"):
     FOCUS.update(json.loads((ROOT/f"data/sku20-phase11-focus-{group}.json").read_text(encoding="utf8")))
 for group in ("sports-a","sports-b","sports-c","kids","jugs"):
     FOCUS.update(json.loads((ROOT/f"data/sku20-phase12-focus-{group}.json").read_text(encoding="utf8")))
+for group in ("transparent","lo"):
+    FOCUS.update(json.loads((ROOT/f"data/sku10-phase13-focus-{group}.json").read_text(encoding="utf8")))
 assert set(FOCUS)==set(PEERS)
 assert all(set(item)==set(LANGS)|{"topic"} for item in FOCUS.values())
 # Each locale has approved native questions and procurement-oriented wording,
@@ -113,6 +117,20 @@ PACK_TRANSLATIONS={
  "ru":{"OPP袋":"пакет OPP","磨砂束口袋混装":"смешанные матовые мешочки с завязками","Bag packaging (type to be confirmed)":"пакет (тип уточняется)"},
  "tr":{"OPP袋":"OPP poşet","磨砂束口袋混装":"karışık renkli mat büzgülü torba","Bag packaging (type to be confirmed)":"poşet (türü doğrulanmalı)"}
 }
+LO_COLOR_PHRASES={
+ "en":"Assorted colors shown; confirm availability by variant",
+ "es":"Colores variados en imágenes; confirme disponibilidad por variante",
+ "pt":"Cores variadas nas imagens; confirme disponibilidade por variante",
+ "ru":"Разные цвета на фотографиях; наличие варианта требуется уточнить",
+ "tr":"Görsellerde çeşitli renkler; varyant bulunurluğunu doğrulayın"
+}
+LO_PACK_PHRASES={
+ "en":"Confirm packaging for chosen variant",
+ "es":"Confirmar embalaje para la variante elegida",
+ "pt":"Confirmar embalagem da variante escolhida",
+ "ru":"Уточнить упаковку выбранного варианта",
+ "tr":"Seçilen varyantın ambalajını doğrulayın"
+}
 UNKNOWN={"en":"not listed; confirm","es":"sin datos; confirmar","pt":"não indicado; confirmar","ru":"не указано; уточнить","tr":"belirtilmedi; doğrulayın"}
 
 def section(body,kind):
@@ -135,6 +153,12 @@ def _source_dimensions(row,locale):
         m=re.search(r'产品尺寸\s*\d+\s*ml\s*([\d.]+\s*[*×x]\s*[\d.]+)\s*cm',str(row.get("capacity") or ""),re.I)
         if m:raw=m.group(1)
     if re.fullmatch(r'[\d.]+\s*[*×x]\s*[\d.]+(?:\s*[*×x]\s*[\d.]+)?',raw):return raw.replace("*"," × ")+" cm"
+    # LO series carries explicit approximate source dimensions; do not strip
+    # that uncertainty or replace a genuine approximate figure with unknown.
+    m=re.fullmatch(r'([\d.]+\s*[×x*]\s*[\d.]+)\s*cm\s*\(approx\.; source dimensions\)',raw,re.I)
+    if m:
+        qualifier={"en":"(approx.; source)","es":"(aprox.; fuente)","pt":"(aprox.; fonte)","ru":"(прибл.; источник)","tr":"(yaklaşık; kaynak)"}[locale]
+        return m.group(1).replace("*"," × ")+" cm "+qualifier
     return UNKNOWN[locale]
 
 def _value(v,locale):
@@ -145,6 +169,8 @@ def _finish(row,locale):
     from product_content import localize_colors
     raw=str(row.get("colors") or "")
     if not raw:return UNKNOWN[locale]
+    if raw=="Assorted colors shown; confirm availability by variant":
+        return LO_COLOR_PHRASES[locale]
     # Use actual catalog translation for EN, and internationally recognized
     # English trade-color references on other pages rather than inventing a
     # color not encoded in the source row.
@@ -193,7 +219,7 @@ def facts(row,locale,series):
       dims=_source_dimensions(row,locale),pdims=_source_dimensions(peer,locale),
       mat=_value(row.get("material"),locale).replace("硅胶","silicone"),
       pmat=_value(peer.get("material"),locale).replace("硅胶","silicone"),
-      colors=_finish(row,locale),pack=PACK_TRANSLATIONS[locale].get(str(row.get("packing") or ""),_value(row.get("packing"),locale)),
+      colors=_finish(row,locale),pack=(LO_PACK_PHRASES[locale] if str(row.get("packing") or "")=="Confirm packaging for chosen variant" else PACK_TRANSLATIONS[locale].get(str(row.get("packing") or ""),_value(row.get("packing"),locale))),
       qty=_value(row.get("carton_quantity"),locale),
       carton=(_value(row.get("carton_size"),locale).replace("*"," × ")+" cm" if row.get("carton_size") else UNKNOWN[locale]))
 
@@ -207,6 +233,13 @@ def material_annotation(row,locale):
        '<p>'+_e(words["materialNote"].format(**f))+'</p>'
        '<p>'+_e(words["materialCompare"].format(**f))+'</p></div>')
 
+LO_CUSTOM_SAFETY={
+ "en":"For LO model {sku}, BPA-free material options or water use at 100°C are custom development targets only, NOT verified capabilities of the standard PC+PP product. Agree a component-specific specification and finished-product tests before claiming them.",
+ "es":"Para LO {sku}, las opciones de material sin BPA o uso de agua a 100°C son requisitos de desarrollo personalizado, NO prestaciones verificadas del producto PC+PP estándar. Exija especificaciones por componente y pruebas del producto final.",
+ "pt":"Para LO {sku}, materiais sem BPA ou uso de água a 100°C são metas de desenvolvimento personalizado, NÃO características verificadas do modelo PC+PP padrão. Confirme os materiais de cada peça e testes do produto acabado.",
+ "ru":"Для LO {sku} материалы без BPA или использование воды при 100°C — лишь цели индивидуальной разработки, НЕ подтвержденные свойства стандартного изделия PC+PP. Необходимы спецификации по деталям и испытания готовой сборки.",
+ "tr":"LO {sku} için BPA içermeyen malzeme seçeneği veya 100°C su kullanımı yalnızca özel geliştirme hedefidir, standart PC+PP ürününün doğrulanmış özelliği DEĞİLDİR. Parça şartnamesi ve bitmiş ürün testlerini onaylayın."
+}
 def _replacement(body,row,locale,kind):
     found=section(body,kind)
     if found is None:return body
@@ -223,6 +256,8 @@ def _replacement(body,row,locale,kind):
         cards="".join('<article class="benefit"><h3>'+_e(words[t])+'</h3><p>'+_e(words[d].format(**f))+'</p></article>'
                       for t,d in (("size","sizeA"),("materials","matA"),("packing","packA")))
         note='<div class="sku-focus" data-sku-focus="'+_e(row["slug"])+'"><h3>'+_e(words["materials"])+'</h3><p>'+_e(FOCUS[row["slug"]][locale])+'</p></div>'
+        if row["slug"].startswith("lo-"):
+            note=note[:-len("</div>")]+'<p class="sku-focus__custom-validation">'+_e(LO_CUSTOM_SAFETY[locale].format(**f))+'</p></div>'
         updated=head+cards+'</div>'+note+'</div></section>'
     else:
         cut=current.find('<div class="faq-list">')
