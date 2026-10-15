@@ -336,6 +336,8 @@ def main():
             current_product=next((v for v in SERIES.values() if v["slug"]==route.split("/")[2]),None)
             if current_product is not None:
                 body=editor_intro(body,current_product,loc)
+                from sku_factual_sections import apply as verified_sku_sections
+                body=verified_sku_sections(body,current_product,loc)
         # Translated D1 body takes precedence; add common scenario-specific
         # buyer guidance inside the locale renderer before final HTML write.
         if route.startswith(("/applications/","/features/")):

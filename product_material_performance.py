@@ -6,6 +6,7 @@ inferred. A combined PC+PP+ABS material list is NOT a bill of materials.
 import html
 import re
 from urllib.parse import quote
+from sku_factual_sections import material_annotation, PEERS, FOCUS, MATERIAL_VARIATION, facts as sku_facts
 
 GUIDE="/blog/plastic-bottle-material-selection/"
 TEXT={
@@ -152,6 +153,28 @@ def render(product,locale,route,approved_routes=None):
     contact=prefix+"/contact/?model="+quote(str(product["model"]),safe="")+"#inquiry"
     def item(heading,content):
         return '<div class="material-brief__item"><h3>'+escape(heading)+'</h3>'+content+'</div>'
+    # Curated 20-SKU material briefs replace generic resin-family boilerplate
+    # with verified model facts. The combined material field NEVER assigns
+    # body/lid/seal chemistry, nor establishes certification or test results.
+    if product.get("slug") in PEERS:
+        from site_renderer import SERIES
+        specific=sku_facts(product,locale,SERIES)
+        source_variation=MATERIAL_VARIATION[locale].format(**specific)
+        model_focus=FOCUS[product["slug"]][locale].split(". ",1)[0].rstrip(".")+"."
+        evidence=material_annotation(product,locale)
+        return (
+         '<section class="section material-brief" id="material-performance" aria-labelledby="material-performance-title">'
+         '<div class="shell"><div class="section__head"><div>'
+         '<span class="eyebrow">'+escape(words[0])+'</span>'
+         '<h2 class="section__title" id="material-performance-title">'+escape(words[1])+'</h2>'
+         '</div></div><div class="material-brief__grid">'
+         +item(words[2]+' · '+str(product["model"]),'<strong class="material-brief__source">'+escape(raw.replace("硅胶","silicone"))+'</strong><p>'+escape(source_variation)+'</p>')
+         +item(words[4]+' · '+str(product["model"]),'<p>'+escape(model_focus)+'</p><p>'+escape(words[3])+'</p>')
+         +'</div>'+evidence
+         +'<div class="material-brief__bottom"><div><h3>'+escape(words[6])+'</h3><p>'+escape(words[7])+'</p></div>'
+         '<div class="material-brief__links"><a href="'+escape(guide)+'">'+escape(words[9])+' →</a>'
+         '<a class="button" href="'+escape(contact)+'">'+escape(words[8])+' →</a></div>'
+         '</div></div></section>')
     return (
         '<section class="section material-brief" id="material-performance" aria-labelledby="material-performance-title">'
         '<div class="shell"><div class="section__head"><div>'
@@ -161,7 +184,8 @@ def render(product,locale,route,approved_routes=None):
         +item(words[2],'<strong class="material-brief__source">'+escape(raw.replace("硅胶","silicone"))+'</strong><p>'+escape(words[3])+'</p>')
         +item(words[4],overview+'<p class="material-brief__note">'+escape(words[5])+'</p>')
         +'</div>'+catalog_purchase_facts(product,locale)
-        +'<div class="material-brief__bottom"><div><h3>'+escape(words[6])+'</h3><p>'+escape(words[7])+'</p></div>'
+        +material_annotation(product,locale)
+         +'<div class="material-brief__bottom"><div><h3>'+escape(words[6])+'</h3><p>'+escape(words[7])+'</p></div>'
         '<div class="material-brief__links"><a href="'+escape(guide)+'">'+escape(words[9])+' →</a>'
         '<a class="button" href="'+escape(contact)+'">'+escape(words[8])+' →</a></div>'
         '</div></div></section>')

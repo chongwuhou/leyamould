@@ -151,6 +151,11 @@ def build_url(path,title,content):
    from product_material_performance import inject
    product=next((obj for obj in SERIES.values() if "/products/"+obj["slug"]+"/"==route),None)
    if product is None:raise ValueError("No material source for product route: "+route)
+   # Per-model factual sections only replace exact untouched source modules;
+   # an English D1/CMS body override is the authoritative editor version.
+   if not BODY_OVERRIDES.get(route):
+    from sku_factual_sections import apply as verified_sku_sections
+    main=verified_sku_sections(main,product,"en")
    main=inject(main,product,"en",route)
    from product_source_identity import source_product_identity
    # Never revise an English CMS-managed body after an editor replaces the

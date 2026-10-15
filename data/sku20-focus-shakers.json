@@ -1,0 +1,42 @@
+{
+  "501": {
+    "topic": "shaker_500",
+    "en": "Shaker 501 combines PP+PE with the catalog's 500 ml, 8.5×17.5 cm reference. Compared with 700 ml 502, ask whether the same drinking opening and mixing accessories are actually supplied; no accessory is verified by the size entry.",
+    "es": "El mezclador 501 indica PP+PE, 500 ml y 8,5×17,5 cm. Frente a 502 de 700 ml, confirme abertura y accesorios reales; las medidas no prueban que se incluyan componentes de mezcla.",
+    "pt": "O shaker 501 indica PP+PE, 500 ml e 8,5×17,5 cm. Frente ao 502 de 700 ml, confira abertura e acessórios reais; as medidas não confirmam peças de mistura.",
+    "ru": "Для шейкера 501 указаны PP+PE, 500 мл и 8,5×17,5 см. При сравнении с 502 на 700 мл проверьте отверстие и комплектацию, не предполагая наличие мешающего элемента по размерам.",
+    "tr": "501 shaker için PP+PE, 500 ml ve 8,5×17,5 cm belirtilir. 700 ml 502 ile karşılaştırırken içme ağzını ve karıştırma parçalarını ayrı kontrol edin; ölçüler aksesuar kanıtı değildir."
+  },
+  "502": {
+    "topic": "shaker_700",
+    "en": "The 700 ml 502 is listed at 8.5×23.5 cm with PP+PE, taller than 500 ml 501 at 8.5×17.5 cm. Verify the taller cup's complete lid height and handling in a packed sample before promising shelf fit or shared seals.",
+    "es": "502 indica 700 ml, 8,5×23,5 cm y PP+PE; supera la altura de 501 de 500 ml y 8,5×17,5 cm. Mida con tapa y embalaje antes de prometer espacio o juntas compatibles.",
+    "pt": "502 indica 700 ml, 8,5×23,5 cm e PP+PE, mais alto que o 501 de 500 ml e 8,5×17,5 cm. Meça tampa e embalagem antes de garantir encaixe ou vedações iguais.",
+    "ru": "Модель 502 на 700 мл с PP+PE имеет размеры 8,5×23,5 см, выше 501 на 500 мл и 8,5×17,5 см. Проверьте высоту с крышкой и упаковку; не обещайте общий уплотнитель.",
+    "tr": "502 için 700 ml, 8,5×23,5 cm ve PP+PE; 501 için 500 ml ve 8,5×17,5 cm yazılıdır. Raf uygunluğu ya da ortak conta söylemeden kapaklı boyu ve ambalajı ölçün."
+  },
+  "507": {
+    "topic": "shaker_pp",
+    "en": "Model 507 is a 500 ml PP-only catalog entry at 8.5×18.5 cm, unlike the PP+PE recorded for 400 ml 509. This difference concerns the overall material list; it does not show which plastic any lid or mixing part uses.",
+    "es": "507 figura con 500 ml y solo PP, 8,5×18,5 cm, frente a PP+PE del 509 de 400 ml. La diferencia es de lista general: no asigna resinas concretas a tapas o mezcladores.",
+    "pt": "507 é listado com 500 ml e apenas PP, 8,5×18,5 cm, contra PP+PE do 509 de 400 ml. A diferença é da lista geral, sem identificar material de tampa ou misturador.",
+    "ru": "Модель 507 на 500 мл записана только с PP и размером 8,5×18,5 см, а 509 на 400 мл — с PP+PE. Это различие общего перечня, но не подтверждение состава крышки или мешалки.",
+    "tr": "507, 500 ml ve 8,5×18,5 cm ile yalnızca PP olarak; 400 ml 509 ise PP+PE olarak kayıtlıdır. Bu fark kapak ya da karıştırıcı parçanın ayrı reçinesini göstermez."
+  },
+  "509": {
+    "topic": "shaker_400pe",
+    "en": "The 400 ml 509 lists PP+PE and 8.5×18.5 cm, versus 400 ml 510 with PP alone and a taller 9×23.5 cm outline. Ask the factory to demonstrate actual closures, measurement scales and the intended mixing mechanism for each numbered sample.",
+    "es": "509 registra 400 ml, PP+PE y 8,5×18,5 cm; 510 también indica 400 ml, pero solo PP y 9×23,5 cm. Pida muestras numeradas para revisar cierres, escalas y piezas de mezcla.",
+    "pt": "509 indica 400 ml, PP+PE e 8,5×18,5 cm; 510 também 400 ml, porém PP e 9×23,5 cm. Solicite amostras numeradas para comparar fechamento, escala e mistura.",
+    "ru": "Шейкер 509 на 400 мл имеет PP+PE и 8,5×18,5 см, а 510 на 400 мл — PP и 9×23,5 см. Запросите отдельно маркированные образцы для проверки крышек, шкал и мешающих деталей.",
+    "tr": "400 ml 509 için PP+PE ve 8,5×18,5 cm, 400 ml 510 için yalnızca PP ve 9×23,5 cm kayıtlıdır. Kapak, ölçü işareti ve karıştırma parçasını ayrı numunelerde kontrol edin."
+  },
+  "510": {
+    "topic": "shaker_tall",
+    "en": "Although 510 and 509 both list 400 ml, 510 has a 9×23.5 cm reference against 509's 8.5×18.5 cm. The PP-only versus PP+PE source lists need component-level confirmation; do not infer a taller internal capacity or interchangeable lids.",
+    "es": "Aunque 510 y 509 indican 400 ml, 510 registra 9×23,5 cm frente a 8,5×18,5 cm. Las listas PP y PP+PE requieren comprobación por piezas; no suponga más capacidad ni tapas compatibles.",
+    "pt": "Apesar de 510 e 509 indicarem 400 ml, 510 registra 9×23,5 cm contra 8,5×18,5 cm. As listas PP e PP+PE precisam de confirmação por componente; não presuma mais volume.",
+    "ru": "И 510, и 509 указаны на 400 мл, но для 510 записаны 9×23,5 см против 8,5×18,5 см у 509. Перечни PP и PP+PE требуют сверки компонентов; высота не означает больший объем.",
+    "tr": "510 ve 509 ikisi de 400 ml olsa da 510 için 9×23,5 cm, 509 için 8,5×18,5 cm yazılıdır. PP ile PP+PE farkını parça bazında teyit edin; yüksekliği ek hacim saymayın."
+  }
+}
