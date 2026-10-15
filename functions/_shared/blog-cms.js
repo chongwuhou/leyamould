@@ -32,10 +32,19 @@ export function reviewedBlogParagraphNote(post,section,index){
  return ' <span class="blog-editorial__product-note" data-editorial-model="'+esc(item.sku)+'">'+esc(before)+link+esc(after)+'</span>';
 }
 export function reviewedBlogRelatedAtEnd(post){
- // Retain the D1 owner's chosen related articles, their order and opt-out.
- if(!SOURCE_GUIDE_BY_SLUG[post?.slug]||!Array.isArray(post?.related))return "";
+ // Original legacy D1 rows were imported without the manually reviewed
+ // related-guide selections; use the reviewed editorial source ONLY while
+ // the published article body remains unchanged. Later owner-picked related
+ // slugs take priority. An explicit relatedReading=false suppresses this.
+ const source=SOURCE_GUIDE_BY_SLUG[post?.slug];
+ if(!source||post?.relatedReading===false)return "";
+ const chosen=Array.isArray(post?.related)?post.related:[];
+ const pristine=post.intro===source.intro &&
+   Array.isArray(post.sections)&&post.sections.length===source.sections.length &&
+   post.sections.every((s,i)=>s.heading===source.sections[i].heading&&s.paragraph===source.sections[i].paragraph);
+ const selected=chosen.length?chosen:(pristine?source.related:[]);
  const used=new Set(),items=[];
- for(const slug of post.related){
+ for(const slug of selected){
   if(typeof slug!=="string"||slug===post.slug||used.has(slug))continue;
   const info=SOURCE_GUIDE_BY_SLUG[slug];
   if(!info)continue;
@@ -153,6 +162,7 @@ export function normalizeBlogPost(raw){
  return {slug,title,description,intro,cover,sections,faqs,checklist,related,group,category:'Buyer Resources',primary_keyword,secondary_keywords,updated,
   ...(buyerDecisionTable!==undefined?{buyerDecisionTable}:{}),
   ...(raw?.depthEvidence===false?{depthEvidence:false}:{}),
+  ...(raw?.relatedReading===false?{relatedReading:false}:{}),
   ...(vettedBlogPerson(raw)?{authorPerson:{...vettedBlogPerson(raw),verified:true}}:{})};
 }
 export async function listBlogPosts(db,status=''){
@@ -227,6 +237,7 @@ export function blogHtml(post){
   body+='<section class="seo-next-buyer"><h2>Continue your sourcing research</h2><p>View this related product or buying guide: <a href="/'+esc(destination)+'/">'+esc(allowed[destination])+' →</a></p></section>';
  }
  // Place the D1 editor-selected related reading INSIDE the article end.
+ if(post.relatedReading===false)body+='<!-- XUYI_OWNER_RELATED_READING_DISABLED -->';
  body+=reviewedBlogRelatedAtEnd(post);
  body+='</article></div></div></section>';
  // D1 replaces the built English article's <main>, so this must share the

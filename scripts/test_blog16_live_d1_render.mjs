@@ -38,7 +38,10 @@ for(const post of GUIDES){
  const swapped=blogHtml(newRelated);
  assert.equal((swapped.match(/class="blog-related__item"/g)||[]).length,2);
  assert(swapped.indexOf('/blog/'+post.related[1]+'/')<swapped.indexOf('/blog/'+post.related[0]+'/'));
- assert.equal(reviewedBlogRelatedAtEnd({...post,related:[]}),"");
+ const legacyNoRelated={...post,related:[]};
+ assert.equal((blogHtml(legacyNoRelated).match(/class="blog-related__item"/g)||[]).length,3,post.slug+':legacy D1 fallback');
+ assert.equal(reviewedBlogRelatedAtEnd({...post,related:[],relatedReading:false}),"",post.slug+':owner explicit optout');
+ assert.equal(reviewedBlogRelatedAtEnd({...ownerIntro,related:[]}),"",post.slug+':owner intro edit');
 }
 const newArticle={...GUIDES[0],slug:"a-new-2027-guide",related:[],sections:[...GUIDES[0].sections]};
 assert.equal((blogHtml(newArticle).match(/data-editorial-model="/g)||[]).length,0);
