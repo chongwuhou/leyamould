@@ -100,11 +100,16 @@ jobs:
         run: |
           set -euo pipefail
           current="$(curl --fail --silent --show-error --retry 2 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$SITE_ORIGIN/api/publish-state" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
-          deployed="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?ci_poll=${{ github.run_id }}" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
+          deployed_meta="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?ci_poll=${{ github.run_id }}" )"
+          deployed="$(printf '%s' "$deployed_meta" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})"
+          deployed_source="$(printf '%s' "$deployed_meta" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(v.sourceRevision||''))})"
           echo "revision=$current" >> "$GITHUB_OUTPUT"
           echo "deployed=$deployed" >> "$GITHUB_OUTPUT"
+          echo "deployed_source=$deployed_source" >> "$GITHUB_OUTPUT"
           echo "XUYI_PUBLISH_REVISION=$current" >> "$GITHUB_ENV"
-          if [ "${{ github.event_name }}" != "schedule" ] || [ "$current" -gt "$deployed" ]; then
+          # Scheduled runs also catch source-only commits when D1's publishRevision
+          # has not changed, so a missed push event cannot strand a release.
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$current" -gt "$deployed" ] || [ "$deployed_source" != "${GITHUB_SHA}" ]; then
             echo "needed=true" >> "$GITHUB_OUTPUT"
           else
             echo "needed=false" >> "$GITHUB_OUTPUT"
