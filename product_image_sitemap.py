@@ -49,8 +49,11 @@ def image_path(value,origin="https://xuyibottles.com"):
     if parts.query or parts.fragment:return None
     path=parts.path
     if not VALID_MEDIA.fullmatch(path) or "/../" in path or "/./" in path or "//" in path:return None
-    # Excel row captures and shared category art are not model photographs.
+    # Excel row captures, generic category art and shared category art are
+    # not model photographs for Google Image Search.
     if "/excel/" in path.lower() or path.startswith("/assets/products/"):return None
+    from product_share_source import UNVERIFIED_MAIN_IMAGES
+    if path in UNVERIFIED_MAIN_IMAGES.values():return None
     # The normal release maps six previously approved shaker originals to
     # stable published assets. Use that *same* reviewed mapping at source time
     # so sitemap URLs exactly equal the actual page main image.

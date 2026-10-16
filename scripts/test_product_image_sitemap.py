@@ -54,6 +54,7 @@ for item in urls:
     doc=(DIST/local_path.lstrip("/")/"index.html").read_text(encoding="utf8")
     parser=MainPhoto();parser.feed(doc)
     assert parser.src,(url,"missing visible main product photo")
+    assert "/excel/" not in parser.src.lower(),(url,parser.src)
     # Excel row screenshots are not Google Image Search product photographs.
     # Omit the image extension, preserving the regular product URL.
     selected=image_path(parser.src)

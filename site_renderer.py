@@ -82,6 +82,18 @@ for row in BUILD_STATE.get("products",[]):
   if isinstance(img,str) and img.startswith(("/assets/","/media/")) and ".." not in img:
    SERIES[model]["images"]=[img]+[old for old in SERIES[model]["images"] if old!=img]
 
+# Workbook row screenshots are source references, never the visible product photo.
+# Prefer a reviewed model image; otherwise use a category-level fallback rather
+# than exposing a spreadsheet capture as the product-page hero/thumbnail.
+for _model,_item in SERIES.items():
+ _item["images"]=[x for x in _item["images"]
+                  if isinstance(x,str) and "/excel/" not in x.lower()
+                  and not x.startswith("/assets/products/")]
+ if _model=="2100":
+  _item["images"]=[x for x in _item["images"] if "/gallery/2099-" not in x]
+ if not _item["images"]:
+  _item["images"]=[CAT[_item["category"]][2]]
+
 from catalog_extensions import append_new_products
 NEW_PRODUCT_COUNT=append_new_products(SERIES,BUILD_STATE.get("products",[]))
 assert len(SERIES)>=85,(len(SERIES))
