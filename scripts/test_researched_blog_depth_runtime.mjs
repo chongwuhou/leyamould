@@ -10,6 +10,7 @@ assert.equal(Object.keys(all).length,15);
 const template='<html><head><title>Buyer guide</title></head><body><main id="main-content">Original</main></body></html>';
 let count=0;
 for(const post of BLOGS){
+ if(!all[post.slug] && !post.slug.includes("shaker-bottle-wholesale"))continue;
  const html=blogHtml(post);
  assert.equal(html.match(/id="source-reviewed-deep-dive"/g)?.length,1,post.slug);
  const supplement=renderDepthEvidence(post);

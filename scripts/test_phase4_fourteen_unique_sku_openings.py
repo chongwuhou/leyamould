@@ -19,6 +19,7 @@ assert set(BASELINES)==EXPECTED and all(len(v)==4 for v in BASELINES.values())
 STATE=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
 D1={(r["resourceId"][5:],r["locale"]):r["content"]["mainHtml"]
     for r in STATE["translations"] if r.get("resourceId","").startswith("page:")}
+from scripts.ci_current_owner_assertions import check_product_page
 records=[]
 for sku,group in SELECTED.items():
  row=next(r for r in SERIES.values() if r["slug"]==sku)
@@ -50,11 +51,8 @@ for sku,group in SELECTED.items():
   dest=ROOT/"dist"/("" if lang=="en" else lang)/"products"/sku/"index.html"
   doc=dest.read_text(encoding="utf8")
   matches=re.findall(r'<p\b(?=[^>]*data-pilot-intro="'+re.escape(sku)+r'")[^>]*>(.*?)</p>',doc,re.S)
-  if lang=="en" or (source and sha256(source.encode("utf8")).hexdigest()==BASELINES[sku][lang]):
-   assert len(matches)==1,(sku,lang,"render missing")
-   assert unescape(re.sub(r"<[^>]*>","",matches[0]))==content,(sku,lang,"wrong content")
-  else:
-   assert len(matches)<=1
+  baseline=lang!="en" and source and sha256(source.encode("utf8")).hexdigest()==BASELINES[sku][lang]
+  check_product_page(dest,sku,content,requires_old_marker=bool(baseline))
   records.append((sku,lang,content))
 for lang in LANGS:
  intros=[body for sku,l,body in records if l==lang]

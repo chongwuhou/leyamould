@@ -16,6 +16,7 @@ from sku_unique_openings import COPY,EN,CATEGORY,LOCALES,OWNER,editor_intro
 from sku_unique_openings_phase2 import COPY as PHASE2_COPY
 from site_renderer import SERIES
 DIST=ROOT/"dist"
+from scripts.ci_current_owner_assertions import check_product_page
 langs=("en","es","pt","ru","tr")
 assert len(EN)==4
 assert all(len(items)==5 for items in EN.values()),{k:len(v) for k,v in EN.items()}
@@ -39,21 +40,19 @@ for slug,contents in COPY.items():
         if lang=="tr":assert "spor şapkalar" not in copy,slug
         doc=(DIST/("" if lang=="en" else lang)/"products"/slug/"index.html").read_text(encoding="utf8")
         excerpts=re.findall(r'<p\b(?=[^>]*data-pilot-intro="([^"]+)")[^>]*>(.*?)</p>',doc,re.S)
-        assert len(excerpts)==1,(slug,lang,len(excerpts))
-        assert excerpts[0][0]==slug
-        assert unescape(re.sub(r"<[^>]*>","",excerpts[0][1]))==copy,(slug,lang,"wrong rendered content")
-        intro_at=doc.find('data-pilot-intro="'+slug+'"')
-        h1=doc.find("<h1",doc.find('<main id="main-content">'))
-        specs=doc.find("product-detail__spec",h1)
-        assert h1>=0 and h1<intro_at and (specs<0 or intro_at<specs),(slug,lang)
-        assert doc.count('data-pilot-intro="'+slug+'"')==1
+        # The owner can revise the page after the legacy intro was authored.
+        # Validate real rendered model content, never demand an obsolete marker.
+        baseline=(lang!="en" and sha256(D1[("/products/"+slug+"/",lang)].encode("utf8")).hexdigest()==OWNER[slug][lang])
+        check_product_page(DIST/("" if lang=="en" else lang)/"products"/slug/"index.html",slug,copy,requires_old_marker=bool(baseline))
         if lang!="en":
             source=D1[("/products/"+slug+"/",lang)]
-            assert sha256(source.encode("utf8")).hexdigest()==OWNER[slug][lang]
-            expected=editor_intro(source,row,lang)
-            assert expected!=source
-            assert copy in unescape(expected)
-            assert editor_intro(expected,row,lang)==expected,(slug,lang,"double injection")
+            if sha256(source.encode("utf8")).hexdigest()==OWNER[slug][lang]:
+                expected=editor_intro(source,row,lang)
+                assert expected!=source and copy in unescape(expected)
+                assert editor_intro(expected,row,lang)==expected,(slug,lang,"double injection")
+            else:
+                # Genuine current D1 copy wins; never require the old hash.
+                assert editor_intro(source,row,lang)==source,(slug,lang,"CMS owner edit overwritten")
             # Any subsequent D1 owner change, including one unrelated to the
             # first paragraph, must block the entire historic source injection.
             edited=source.replace("<nav class=", '<nav data-owner-revised="yes" class=',1)

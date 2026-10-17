@@ -18,6 +18,7 @@ assert set(BASE)==set(SELECTED) and all(set(value)==set(LANGS[1:]) for value in 
 snapshot=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
 d1={(r["resourceId"][5:],r["locale"]):r["content"]["mainHtml"]
     for r in snapshot["translations"] if r.get("resourceId","").startswith("page:")}
+from scripts.ci_current_owner_assertions import check_product_page
 records=[]
 for sku,group in SELECTED.items():
     row=next(r for r in SERIES.values() if r["slug"]==sku)
@@ -51,10 +52,8 @@ for sku,group in SELECTED.items():
         html_path=ROOT/"dist"/("" if lang=="en" else lang)/"products"/sku/"index.html"
         page=html_path.read_text(encoding="utf8")
         results=re.findall(r'<p\b(?=[^>]*data-pilot-intro="'+re.escape(sku)+r'")[^>]*>(.*?)</p>',page,re.S)
-        if lang=="en" or (source and sha256(source.encode("utf8")).hexdigest()==BASE[sku][lang]):
-            assert len(results)==1,(sku,lang,"duplicate or missing intro")
-            assert unescape(re.sub(r"<[^>]*>","",results[0]))==text,(sku,lang,"wrong intro")
-        else:assert len(results)<=1
+        baseline=lang!="en" and source and sha256(source.encode("utf8")).hexdigest()==BASE[sku][lang]
+        check_product_page(html_path,sku,text,requires_old_marker=bool(baseline))
         # HTML must retain the factory discrepancy / shared-source distinction.
         if sku=="2506":
             assert "60ml" in page and "catalog discrepancy" in page if lang=="en" else True

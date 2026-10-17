@@ -37,17 +37,22 @@ assert len(blog_routes)>=17
 for route in blog_routes:
  original=D1[(route,"es")]
  new=reviewed_spanish_copy(route,"es",original)
- assert '<span class="eyebrow">XUYI · BOTELLAS DE PLÁSTICO</span>' in new["mainHtml"]
+ assert '<span class="eyebrow">XUYI · ' in new["mainHtml"],(route,"branded eyebrow")
+ assert 'XUYI · VASOS DE PLÁSTICO' not in new["mainHtml"],(route,"obsolete beverage label")
  assert '<span class="eyebrow">XUYI · VASOS DE PLÁSTICO</span>' not in new["mainHtml"]
  assert reviewed_spanish_copy(route,"es",new)==new
  # The admin may already have persisted the correction directly in D1.
  # Either reviewed source is valid; a subsequent CMS edit still wins.
- existing="XUYI · VASOS DE PLÁSTICO" if "XUYI · VASOS DE PLÁSTICO" in original["mainHtml"] else "XUYI · BOTELLAS DE PLÁSTICO"
- assert existing in original["mainHtml"]
- owner=original["mainHtml"].replace(existing,"XUYI · ARTÍCULOS APROBADOS",1)
+ # Any CMS-selected localized brand tagline is authoritative, not only the
+ # initial 2026-10-10 wording. Edit the actual current field in this fixture.
+ brand=re.search(r'<span class="eyebrow">(XUYI · [^<]+)</span>',original["mainHtml"])
+ assert brand,(route,"missing branded eyebrow")
+ owner=original["mainHtml"].replace(brand.group(1),"XUYI · ARTÍCULOS APROBADOS",1)
+ assert owner!=original["mainHtml"]
  assert "XUYI · ARTÍCULOS APROBADOS" in reviewed_spanish_copy(route,"es",{**original,"mainHtml":owner})["mainHtml"]
  page=(ROOT/"dist/es"/route.lstrip("/")/"index.html").read_text(encoding="utf8")
- assert '<span class="eyebrow">XUYI · BOTELLAS DE PLÁSTICO</span>' in page,(route,"blog eyebrow drift")
+ assert '<span class="eyebrow">XUYI · ' in page,(route,"blog eyebrow missing")
+ assert 'XUYI · VASOS DE PLÁSTICO' not in page,(route,"obsolete blog wording")
 
 for lang,(hero_note,headline,detail) in _SOURCE.items():
  if lang=="en":
