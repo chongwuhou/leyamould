@@ -115,7 +115,7 @@ jobs:
                   if completed%30==0:print('HASH_VERIFIED_PUBLIC_ASSETS',completed,flush=True)
           print('ALL_PUBLIC_ASSETS_HASH_VERIFIED',completed)
           PY
-          rm -f .github/workflows/webcodex-source-sync.yml
+          git checkout -- .github/workflows/publish-xuyi.yml
       - name: Verify full source rebuild from D1 and regression tests
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
