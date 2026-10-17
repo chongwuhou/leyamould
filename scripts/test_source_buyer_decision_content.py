@@ -22,7 +22,7 @@ DIST=ROOT/"dist"
 guides=json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf8"))
 buyer=json.loads((ROOT/"data/blog-buyer-decision-tables.json").read_text(encoding="utf8"))["articles"]
 assert set(buyer)=={item["slug"] for item in guides}
-assert len(buyer)==16
+assert len(buyer)>=16  # Historic reviewed baseline; new published blogs are allowed
 blog_links=0
 for slug,table in buyer.items():
     assert len(table["head"])==3 and len(table["rows"])>=4
