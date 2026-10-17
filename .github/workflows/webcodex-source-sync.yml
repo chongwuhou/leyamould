@@ -12,7 +12,7 @@ jobs:
   import-verified-source:
     if: github.repository == 'chongwuhou/xuyi-drinkware-site'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,46 +23,100 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Retrieve private source archive
+      - name: Restore and verify source archive from private GitHub blobs
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
-        run: |
-          test -n "$CLOUDFLARE_API_TOKEN"
-          npx --yes wrangler@4.148.0 r2 object get "xuyi-drinkware-model-pages/__internal/source-sync/20261017/xuyi-source-sync-20261017.zip" --remote --file /tmp/xuyi-webcodex-source.zip
-      - name: Verify SHA256 and safely unpack source
+          GH_TOKEN: ${{ github.token }}
         run: |
           python - <<'PY'
+          import urllib.request,json,base64,hashlib,zipfile,io
           from pathlib import Path, PurePosixPath
-          import zipfile, hashlib
-          z=Path('/tmp/xuyi-webcodex-source.zip')
-          expected='974dd1a8be2cd789cca75b16965242b0f6d571b26af35013dbe4c6e2c843d132'
-          digest=hashlib.sha256(z.read_bytes()).hexdigest()
-          assert digest==expected, 'Archive SHA256 mismatch'
-          with zipfile.ZipFile(z) as archive:
-              files=[i for i in archive.infolist() if not i.is_dir()]
-              assert len(files)==836, f'Wrong number of source files: {len(files)}'
-              paths={i.filename for i in files}
-              required={'data/blog-guides.json','data/blog-localized-copy-20261017.json',
-                        'scripts/test_20261017_blog_batch.py',
-                        'assets/blog/water-bottle-sample-approval-photo-20261017.webp',
-                        'assets/blog/water-bottle-capacity-comparison-photo-20261017.webp',
-                        'assets/blog/replacement-water-bottle-lid-parts-photo-20261017.webp'}
-              assert required.issubset(paths), 'Critical source files missing'
-              for info in files:
-                  parts=PurePosixPath(info.filename).parts
-                  assert info.filename and not info.filename.startswith('/') and '..' not in parts
-                  assert not any(p in {'.git','.env','.wrangler','node_modules','dist','_local_ops','.sync'} for p in parts)
-                  assert not any(part.startswith('.env') for part in parts)
-                  assert not (info.external_attr >> 16 & 0o170000)==0o120000, 'Unexpected symlink'
-              archive.extractall('.')
-          import json
+          chunks=[
+    '21cc4efe7d1aed940a3d053726e99fd1ad7dd82f',
+    '33021e76b85f0c7361f65817814a298660486299',
+    'eeb94eaf7dbd3c5800be8da30c68a902d8d6e438',
+    '18ea48bc2dff5ec0a0bc5f03dfd40167e0d1365e',
+    'c3507fe8d346b40e72aa2c2edf9c1b2796d8a874',
+    'aa90d1f45f025056ee0282203d313572bd4dd367',
+    'e7e0a542ba7e45924aadd47653e1da7c8c4a46b0',
+    'f6a928097b34e4f8c57f8c8f615d6628d8a6aaea',
+    '9a714a5c80f8b98103c549652c6ca08235490de0',
+    '3c4af895104e0f3f3dbbb4bea8e4399f20a17160',
+    '2297a3924da28bafecc33951e9dc83b9036e8807',
+    '0fb9773d6acb90e67280bba8e95a78aeeb2e4d39',
+    '97db362fe7f973dd7bdca52d1c45b8473a23187d',
+    '60f5e3baa188c9e23c954769052107ca4f68a3bd',
+    'e150d490c75e9c06b34c2a3cb528d422783f5c98',
+    '156a19d36a2f68ad730fda9b716fe46a1a00b2a6',
+    '4428ca5e57b1b2041706a687d0cb289ca97ad3e8',
+    'e9e14486e14413d450f9a1577f9791cb99896978',
+    '6efe6e01f992551f36b1503a7e922013d9c0e5ae',
+          ]
+          parts=[]
+          for sha in chunks:
+              u='https://api.github.com/repos/chongwuhou/xuyi-drinkware-site/git/blobs/'+sha
+              req=urllib.request.Request(u,headers={'Authorization':'Bearer '+__import__('os').environ['GH_TOKEN'],
+                                                  'Accept':'application/vnd.github+json','User-Agent':'xuyi-verified-source-sync'})
+              with urllib.request.urlopen(req,timeout=40) as response:
+                  j=json.load(response)
+              assert j.get('encoding')=='base64' and j.get('sha')==sha,sha
+              parts.append(base64.b64decode(j['content']).decode('ascii').strip())
+          payload=base64.b64decode(''.join(parts),validate=True)
+          expected='c2c20ec70f103e6629b76958d41a2dbc4d93238ac59932261af448a11c9136f4'
+          assert hashlib.sha256(payload).hexdigest()==expected, 'SOURCE ARCHIVE CHECKSUM FAILURE'
+          with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+              names=archive.namelist()
+              assert len(names)>=497 and '__sync_manifest__.json' in names
+              manifest=json.loads(archive.read('__sync_manifest__.json'))
+              assert manifest['expectedArticles']==22 and len(manifest['binaryAssets'])==151
+              assert len(set(names))==len(names)
+              for member in archive.infolist():
+                  if member.filename=='__sync_manifest__.json':continue
+                  path=PurePosixPath(member.filename)
+                  assert path.parts and not path.is_absolute() and '..' not in path.parts
+                  assert not any(part in {'.git','_local_ops','dist','node_modules','.wrangler','.sync'} or part.startswith('.env') for part in path.parts)
+                  assert (member.external_attr >> 16 & 0o170000)!=0o120000
+                  archive.extract(member,'.')
+          Path('/tmp/xuyi-binary-assets.json').write_text(json.dumps(manifest['binaryAssets']),encoding='utf8')
           guides=json.loads(Path('data/blog-guides.json').read_text(encoding='utf8'))
-          assert len(guides)==22, f'Expected 22 articles, got {len(guides)}'
-          print('VERIFIED_ARCHIVE_IMPORTED',len(files),'SOURCE_ARTICLES',len(guides))
+          assert len(guides)==22
+          print('SOURCE_TEXT_VERIFIED_AND_EXTRACTED',len(names)-1,'ARTICLES',len(guides))
+          PY
+      - name: Restore public production assets with exact content hashes
+        run: |
+          python - <<'PY'
+          import json,hashlib,time,urllib.request
+          from pathlib import Path,PurePosixPath
+          from concurrent.futures import ThreadPoolExecutor,as_completed
+          rows=json.loads(Path('/tmp/xuyi-binary-assets.json').read_text(encoding='utf8'))
+          assert len(rows)==151
+          def restore(item):
+              name=item['path']
+              assert name.startswith('assets/') and '..' not in PurePosixPath(name).parts
+              url='https://xuyibottles.com/'+name
+              last=None
+              for attempt in range(5):
+                  try:
+                      headers={'User-Agent':'Mozilla/5.0 (XUYI verified source archive)','Cache-Control':'no-cache'}
+                      with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=60) as r:
+                          assert r.status==200
+                          data=r.read()
+                      assert len(data)==int(item['size']), f'Unexpected image size {name}'
+                      assert hashlib.sha256(data).hexdigest()==item['sha256'], f'Image hash mismatch {name}'
+                      target=Path(name); target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+                      return name
+                  except Exception as e:
+                      last=e;time.sleep(2*(attempt+1))
+              raise RuntimeError(f'Unable to verify production asset {name}: {last}')
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              futures=[pool.submit(restore,x) for x in rows]
+              completed=0
+              for future in as_completed(futures):
+                  future.result();completed+=1
+                  if completed%30==0:print('HASH_VERIFIED_PUBLIC_ASSETS',completed,flush=True)
+          print('ALL_PUBLIC_ASSETS_HASH_VERIFIED',completed)
           PY
           rm -f .github/workflows/webcodex-source-sync.yml
-      - name: Validate release from canonical sources and live D1 snapshot
+      - name: Verify full source rebuild from D1 and regression tests
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
