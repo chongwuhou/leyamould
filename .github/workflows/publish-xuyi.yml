@@ -100,16 +100,11 @@ jobs:
         run: |
           set -euo pipefail
           current="$(curl --fail --silent --show-error --retry 2 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$SITE_ORIGIN/api/publish-state" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
-          deployed_meta="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?ci_poll=${{ github.run_id }}" )"
-          deployed="$(printf '%s' "$deployed_meta" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})"
-          deployed_source="$(printf '%s' "$deployed_meta" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(v.sourceRevision||''))})"
+          deployed="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?ci_poll=${{ github.run_id }}" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
           echo "revision=$current" >> "$GITHUB_OUTPUT"
           echo "deployed=$deployed" >> "$GITHUB_OUTPUT"
-          echo "deployed_source=$deployed_source" >> "$GITHUB_OUTPUT"
           echo "XUYI_PUBLISH_REVISION=$current" >> "$GITHUB_ENV"
-          # Scheduled runs also catch source-only commits when D1's publishRevision
-          # has not changed, so a missed push event cannot strand a release.
-          if [ "${{ github.event_name }}" != "schedule" ] || [ "$current" -gt "$deployed" ] || [ "$deployed_source" != "${GITHUB_SHA}" ]; then
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$current" -gt "$deployed" ]; then
             echo "needed=true" >> "$GITHUB_OUTPUT"
           else
             echo "needed=false" >> "$GITHUB_OUTPUT"
@@ -187,6 +182,9 @@ jobs:
           python scripts/test_spanish_microcopy_about_source.py
           python scripts/test_home_blog_why_us_buyer_quality.py
           python scripts/test_16_blog_editorial_internal_links.py
+          python scripts/test_20261017_blog_batch.py
+          python scripts/test_20261017_blog_cover_replacements.py
+          node scripts/test_20261017_blog_batch_runtime.mjs
           python scripts/test_source_catalog_capacity_oz.py
           python scripts/test_source_sitemap_titles_h1_images.py
           python scripts/test_product_image_sitemap.py
