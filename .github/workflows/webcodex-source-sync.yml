@@ -1,0 +1,84 @@
+name: One-time WebCodex source synchronization
+on:
+  push:
+    branches:
+      - webcodex-source-sync-20261017
+permissions:
+  contents: write
+concurrency:
+  group: xuyi-source-sync-20261017
+  cancel-in-progress: false
+jobs:
+  import-verified-source:
+    if: github.repository == 'chongwuhou/xuyi-drinkware-site'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Retrieve private source archive
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          npx --yes wrangler@4.148.0 r2 object get "xuyi-drinkware-model-pages/__internal/source-sync/20261017/xuyi-source-sync-20261017.zip" --remote --file /tmp/xuyi-webcodex-source.zip
+      - name: Verify SHA256 and safely unpack source
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import zipfile, hashlib
+          z=Path('/tmp/xuyi-webcodex-source.zip')
+          expected='974dd1a8be2cd789cca75b16965242b0f6d571b26af35013dbe4c6e2c843d132'
+          digest=hashlib.sha256(z.read_bytes()).hexdigest()
+          assert digest==expected, 'Archive SHA256 mismatch'
+          with zipfile.ZipFile(z) as archive:
+              files=[i for i in archive.infolist() if not i.is_dir()]
+              assert len(files)==836, f'Wrong number of source files: {len(files)}'
+              paths={i.filename for i in files}
+              required={'data/blog-guides.json','data/blog-localized-copy-20261017.json',
+                        'scripts/test_20261017_blog_batch.py',
+                        'assets/blog/water-bottle-sample-approval-photo-20261017.webp',
+                        'assets/blog/water-bottle-capacity-comparison-photo-20261017.webp',
+                        'assets/blog/replacement-water-bottle-lid-parts-photo-20261017.webp'}
+              assert required.issubset(paths), 'Critical source files missing'
+              for info in files:
+                  parts=PurePosixPath(info.filename).parts
+                  assert info.filename and not info.filename.startswith('/') and '..' not in parts
+                  assert not any(p in {'.git','.env','.wrangler','node_modules','dist','_local_ops','.sync'} for p in parts)
+                  assert not any(part.startswith('.env') for part in parts)
+                  assert not (info.external_attr >> 16 & 0o170000)==0o120000, 'Unexpected symlink'
+              archive.extractall('.')
+          import json
+          guides=json.loads(Path('data/blog-guides.json').read_text(encoding='utf8'))
+          assert len(guides)==22, f'Expected 22 articles, got {len(guides)}'
+          print('VERIFIED_ARCHIVE_IMPORTED',len(files),'SOURCE_ARTICLES',len(guides))
+          PY
+          rm -f .github/workflows/webcodex-source-sync.yml
+      - name: Validate release from canonical sources and live D1 snapshot
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
+        run: |
+          python scripts/preflight.py
+          python scripts/fetch_build_snapshot.py
+          python scripts/build_release.py
+          python scripts/test_release.py
+          python scripts/test_20261017_blog_batch.py
+          python scripts/test_20261017_blog_cover_replacements.py
+      - name: Commit verified source to isolated branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git status --short
+          git diff --cached --quiet && exit 0
+          git commit -m "Sync XUYI verified 22-blog five-locale WebCodex source"
+          git push origin HEAD:refs/heads/webcodex-source-sync-20261017
