@@ -8,17 +8,11 @@ from html import escape
 import re
 
 ORIGIN = "https://xuyibottles.com"
-UNVERIFIED_MAIN_IMAGES = {
-    "Plastic Sports Water Bottles": "/media/ppt/slide-059.webp",
-    "Kids Plastic Water Bottles": "/media/ppt/slide-030.webp",
-    "Large Capacity Water Jugs": "/media/ppt/slide-055.webp",
-    "Plastic Shaker Bottles": "/media/ppt/slide-094.webp",
-}
 CATEGORY_PREVIEWS = {
-    "Plastic Sports Water Bottles": "/assets/social/product-unverified-sports.webp",
-    "Kids Plastic Water Bottles": "/assets/social/product-unverified-kids.webp",
-    "Large Capacity Water Jugs": "/assets/social/product-unverified-jugs.webp",
-    "Plastic Shaker Bottles": "/assets/social/product-unverified-shaker.webp",
+    "Plastic Sports Water Bottles": "/assets/social/product-social-sports.webp",
+    "Kids Plastic Water Bottles": "/assets/social/product-social-kids.webp",
+    "Large Capacity Water Jugs": "/assets/social/product-social-jugs.webp",
+    "Plastic Shaker Bottles": "/assets/social/product-social-shaker.webp",
 }
 
 
@@ -34,8 +28,6 @@ def real_product_images(product):
         if not isinstance(image, str) or not image.startswith(("/media/", "/assets/")):
             continue
         if ".." in image or "/excel/" in image.lower() or image.startswith("/assets/products/"):
-            continue
-        if image in UNVERIFIED_MAIN_IMAGES.values():
             continue
         if str(product.get("model")) == "2100" and "/gallery/2099-" in image:
             continue

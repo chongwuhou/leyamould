@@ -5,3 +5,5 @@ node_modules/
 __pycache__/
 /_local_ops/
 dist/
+/.sync/
+/sync-manifest.jsonl

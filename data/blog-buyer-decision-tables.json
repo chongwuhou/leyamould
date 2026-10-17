@@ -657,6 +657,356 @@
           "/products/2501/"
         ]
       ]
+    },
+    "tritan-bottle-yellowing-causes-prevention": {
+      "title": "Clarity-aging questions to resolve before production",
+      "intro": "Use the same evidence and exposure assumptions when comparing bottle materials, samples and supplier claims.",
+      "head": [
+        "Buyer question",
+        "What to specify",
+        "Why it matters"
+      ],
+      "rows": [
+        [
+          "Resin identity",
+          "Exact resin grade and supplier",
+          "Tritan is a material family; grade and formulation affect performance"
+        ],
+        [
+          "UV exposure",
+          "Expected sunlight or outdoor exposure and any stabilization requirement",
+          "Cumulative UV exposure can change surface appearance"
+        ],
+        [
+          "Cleaning",
+          "Dishwasher cycle, detergent and hand-washing expectations",
+          "Heat, chemicals and abrasion can accelerate visible aging"
+        ],
+        [
+          "Bottle construction",
+          "Wall thickness, finish, color and approved sample",
+          "Geometry and molding conditions affect clarity and durability"
+        ],
+        [
+          "Evidence",
+          "Finished-bottle aging or UV test summary where available",
+          "Product-specific evidence is stronger than a generic material claim"
+        ]
+      ],
+      "links": [
+        [
+          "how Tritan compares with PP, PETG and PC",
+          "/blog/tritan-vs-pp-petg-pc/"
+        ],
+        [
+          "choosing the right bottle material",
+          "/blog/plastic-bottle-material-selection/"
+        ],
+        [
+          "sports bottles built for daily use",
+          "/collections/sports-water-bottles/"
+        ]
+      ]
+    },
+    "water-bottle-cap-types-bulk-guide": {
+      "title": "Cap approval matrix: lock the closure before the PO",
+      "intro": "At bulk scale, closure choice affects usability, leak exposure, cleaning and after-sales parts. Use this matrix to turn a cap preference into a measurable purchasing specification.",
+      "head": [
+        "Check",
+        "Lower-risk starting point",
+        "Question for the RFQ"
+      ],
+      "rows": [
+        [
+          "Cap mechanism",
+          "One clearly identified cap model with approved assembled sample",
+          "What exact cap model is quoted, and what parts are included?"
+        ],
+        [
+          "Neck finish",
+          "One documented neck finish with named compatible caps",
+          "Which flip-top, straw, screw, sport-spout or magnetic caps fit this neck?"
+        ],
+        [
+          "Sealing",
+          "Gasket or valve geometry checked on the finished bottle",
+          "What sealing surfaces are used, and how is seal fit inspected?"
+        ],
+        [
+          "Durability",
+          "Cycle and cleaning conditions agreed before production",
+          "What opening/closing and dishwasher conditions should the sample pass?"
+        ],
+        [
+          "Spare parts",
+          "Caps, straws and seals available separately where the channel needs them",
+          "What are the replacement MOQ, lead time and part numbers?"
+        ]
+      ],
+      "links": [
+        [
+          "how we test lids for leaks",
+          "/blog/water-bottle-lid-leakproof-testing/"
+        ],
+        [
+          "sports bottles vs water jugs",
+          "/blog/sports-bottle-vs-water-jug/"
+        ],
+        [
+          "browse sports bottle models",
+          "/collections/sports-water-bottles/"
+        ]
+      ]
+    },
+    "bottle-factory-rfq-template": {
+      "title": "12-line RFQ template: what to send and what the factory should confirm",
+      "intro": "Use the same twelve fields for every supplier. The buyer column defines the requested basis; the supplier column makes assumptions, pricing and missing information visible before you compare quotes.",
+      "head": [
+        "RFQ line",
+        "Buyer should provide",
+        "Supplier should return or confirm"
+      ],
+      "rows": [
+        [
+          "1. Product type",
+          "Bottle family plus model number or reference photo",
+          "Exact model/configuration quoted"
+        ],
+        [
+          "2. Capacity",
+          "Exact ml or oz",
+          "Quoted nominal capacity and variant"
+        ],
+        [
+          "3. Material",
+          "Tritan, PP, PC, PETG or recommendation requested",
+          "Exact material/resin basis and any substitution"
+        ],
+        [
+          "4. Color",
+          "Body/cap colors and Pantone requirement",
+          "Stock/custom color feasibility and cost basis"
+        ],
+        [
+          "5. Logo method",
+          "Print/decoration method, colors, size and position",
+          "Method feasibility, setup fee and sample basis"
+        ],
+        [
+          "6. Quantity tiers",
+          "Two or three target quantities",
+          "Unit price at each tier and MOQ"
+        ],
+        [
+          "7. Packaging",
+          "Bulk, retail box or custom packaging",
+          "Packing configuration, carton basis and added cost"
+        ],
+        [
+          "8. Destination",
+          "Country, port or required Incoterm",
+          "Quoted trade term and freight assumptions"
+        ],
+        [
+          "9. Timeline",
+          "Ready-to-ship date",
+          "Production lead time and schedule constraints"
+        ],
+        [
+          "10. Samples",
+          "Stock, decorated or pre-production sample",
+          "Sample cost, lead time and approval requirement"
+        ],
+        [
+          "11. Compliance",
+          "Target-market standards, food-contact or labeling needs",
+          "Available evidence and testing/documentation scope"
+        ],
+        [
+          "12. Artwork status",
+          "Vector files ready or design support needed",
+          "Accepted file format and artwork/setup requirements"
+        ]
+      ],
+      "links": [
+        [
+          "wholesale buying guide",
+          "/blog/wholesale-plastic-water-bottle-buying-guide/"
+        ],
+        [
+          "how MOQ affects pricing",
+          "/blog/custom-water-bottle-moq-pricing/"
+        ],
+        [
+          "request a sample",
+          "/request-sample/"
+        ]
+      ]
+    },
+    "water-bottle-sample-approval-checklist": {
+      "title": "Bottle sample approval: compare what the buyer signs off",
+      "intro": "A stock example, a decorated sample and a pre-production reference answer different questions. Record the accepted evidence and the remaining gap before issuing the PO.",
+      "head": [
+        "Approval area",
+        "Physical or document evidence",
+        "Decision before mass production"
+      ],
+      "rows": [
+        [
+          "Body and capacity",
+          "Specific model, nominal ml, dimensions and actual sample",
+          "Identify the accepted configuration"
+        ],
+        [
+          "Cap and seal",
+          "Thread/gasket fit, closure operation and defined leak checks",
+          "Approve complete closure revision"
+        ],
+        [
+          "Decoration",
+          "Artwork file, location, print size and physical color reference",
+          "Sign off the decorated sample"
+        ],
+        [
+          "Packaging",
+          "Retail pack, labeling, carton count and component arrangement",
+          "Approve the shipped configuration"
+        ],
+        [
+          "Documentation",
+          "Material declarations and relevant market test evidence",
+          "State applicable requirements and gaps"
+        ],
+        [
+          "Golden sample",
+          "Photo record, sample ID, exceptions and signatures",
+          "Control any later supplier substitutions"
+        ]
+      ],
+      "links": [
+        [
+          "send a complete RFQ",
+          "/blog/bottle-factory-rfq-template/"
+        ],
+        [
+          "request a sample",
+          "/request-sample/"
+        ],
+        [
+          "quality checks for bulk bottles",
+          "/blog/water-bottle-quality-control-checklist/"
+        ]
+      ]
+    },
+    "water-bottle-capacity-sizes-wholesale": {
+      "title": "Capacity comparison for wholesale bottle buyers",
+      "intro": "These are application-fit prompts, not universal rules. Verify physical size, filled weight and actual source capacity on the exact selected model.",
+      "head": [
+        "Size tier",
+        "Typical sourcing advantage",
+        "Verification before ordering"
+      ],
+      "rows": [
+        [
+          "500ml",
+          "Compact positioning for short outings, gifts or daily carry",
+          "Actual height, diameter, cap and filled weight"
+        ],
+        [
+          "750ml",
+          "Middle capacity when users have moderate refill access",
+          "Age/use fit, dimensions and sealing access"
+        ],
+        [
+          "1000ml (1L)",
+          "Higher capacity for exercise, outdoor or desk programs",
+          "Bag/holder fit and packed carton cube"
+        ],
+        [
+          "Multiple capacities",
+          "Potential range extension after proven demand",
+          "Different toolings, caps, cartons and SKU costs"
+        ],
+        [
+          "Approximate oz class",
+          "Familiar merchandising language for some markets",
+          "Do not equate rounded label with exact US fl oz"
+        ],
+        [
+          "Freight comparison",
+          "True landed-cost view across choices",
+          "Carton count, cube, weight and shipping term"
+        ]
+      ],
+      "links": [
+        [
+          "sports bottle collection",
+          "/collections/sports-water-bottles/"
+        ],
+        [
+          "sports bottles vs water jugs",
+          "/blog/sports-bottle-vs-water-jug/"
+        ],
+        [
+          "capacity details in your RFQ",
+          "/blog/bottle-factory-rfq-template/"
+        ]
+      ]
+    },
+    "replacement-water-bottle-lids-bulk": {
+      "title": "Replacement part qualification: match the exact bottle revision",
+      "intro": "Treat closure accessories as part-specific SKUs. A similar-looking cap or straw is not proof of compatibility with an earlier bottle production run.",
+      "head": [
+        "Spare part",
+        "Compatibility detail to request",
+        "Commercial detail to confirm"
+      ],
+      "rows": [
+        [
+          "Complete lid",
+          "Exact neck finish and gasket arrangement",
+          "MOQ, color variants and lead time"
+        ],
+        [
+          "Straw or tube",
+          "Inner/outer diameter, length and lid fitting",
+          "Single or multipack format"
+        ],
+        [
+          "Silicone gasket",
+          "Profile, position and retention method",
+          "Replacement availability and component ID"
+        ],
+        [
+          "Hinge/valve assembly",
+          "Approved closure revision and serviceability",
+          "Complete-lid versus component-only supply"
+        ],
+        [
+          "Service pack",
+          "Bottle SKU, photo, label and handling instructions",
+          "Barcode, carton count and support quantity"
+        ],
+        [
+          "Future reorders",
+          "Approved compatibility matrix with dated revisions",
+          "Change-control and replenishment policy"
+        ]
+      ],
+      "links": [
+        [
+          "cap family comparison",
+          "/blog/water-bottle-cap-types-bulk-guide/"
+        ],
+        [
+          "lid leak-testing guide",
+          "/blog/water-bottle-lid-leakproof-testing/"
+        ],
+        [
+          "ask for sample parts",
+          "/request-sample/"
+        ]
+      ]
     }
   }
 }

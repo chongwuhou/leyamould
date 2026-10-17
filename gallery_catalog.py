@@ -9,6 +9,7 @@ from pathlib import Path
 from urllib.parse import quote
 ROOT=Path(__file__).resolve().parent
 GALLERY=json.loads((ROOT/"data/gallery-reference-products.json").read_text(encoding="utf8"))["items"]
+G05_DEPTH=json.loads((ROOT/"data/g05-depth.json").read_text(encoding="utf8"))["g-05"]
 UI_LABELS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf8"))
 assert {p["sourceFolder"] for p in GALLERY}=={1,2,3,4,5,9,10,12}
 LABELS={
@@ -27,6 +28,14 @@ def add_products(series):
   series[m]={"model":m,"slug":p["slug"],"category":p["category"],"name":p["locales"]["en"],
    "images":p["images"],"capacity":"To confirm","material":"To confirm","colors":"","packing":"",
    "description":LABELS["en"][2],"variants":[v],"manualNew":True,"galleryReference":True,"factoryModel":True}
+def g05_depth(product,locale):
+    if product.get("model")!="G-05":return ""
+    data=G05_DEPTH.get(locale) or G05_DEPTH["en"]
+    cards="".join('<article class="benefit"><h3>'+esc(card["title"])+'</h3><p>'+esc(card["text"])+'</p></article>' for card in data["cards"])
+    return ('<section class="section product-g05-depth" data-g05-depth="true"><div class="shell">'
+      '<div class="section__head"><div><span class="eyebrow">'+esc(data["title"])+'</span><h2 class="section__title">'+esc(data["title"])+'</h2>'
+      '<p>'+esc(data["intro"])+'</p></div></div><div class="grid grid--3">'+cards+'</div></div></section>')
+
 def detail(product,locale):
  w=LABELS[locale];p=next(row for row in GALLERY if row["model"]==product["model"])
  prefix="" if locale=="en" else "/"+locale;name=p["locales"][locale]
@@ -55,7 +64,7 @@ def detail(product,locale):
    ' →</a></p></div></section>')
  faq=('<section class="section section--soft"><div class="shell"><div class="faq-list"><details><summary>'+
    esc(w[0])+'</summary><p>'+esc(w[2])+'</p></details></div></div></section>')
- return start+notes+photos+order+faq
+ return start+notes+g05_depth(product,locale)+photos+order+faq
 def catalog_cards(body,locale,route):
  from site_renderer import CAT
  if route!="/products/" and not route.startswith("/collections/"):return body

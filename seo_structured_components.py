@@ -60,3 +60,4 @@ def add_at_render(page,route,locale):
     tag=left+'script type="application/ld+json">'+payload+left+'/script>'
     return page.replace("</head>",tag+"</head>",1)
 
+

@@ -14,7 +14,7 @@ from spanish_reviewed_copy import reviewed_spanish_copy
 SNAP=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
 D1={(r["resourceId"][5:],r["locale"]):r["content"] for r in SNAP["translations"]
     if r.get("resourceId","").startswith("page:")}
-assert len(POSTS)==16 and set(POSTS)==set(GUIDES)
+assert len(POSTS)==16 and set(POSTS).issubset(GUIDES)
 real_models={r["slug"] for r in SERIES.values()}
 accepted=0
 for slug,notes in POSTS.items():
@@ -91,6 +91,13 @@ for slug,notes in POSTS.items():
         accepted+=1
 # New independently approved articles aren't restricted by the historical
 # set of 16 or given invented model references.
+blog3="bottle-factory-rfq-template"
+assert blog3 in GUIDES and len(GUIDES[blog3].get("product_notes",[]))==3
+for locale in LANGS:
+    prefix="" if locale=="en" else "/"+locale
+    page=(ROOT/"dist"/("" if locale=="en" else locale)/"blog"/blog3/"index.html").read_text(encoding="utf8")
+    assert page.count('class="blog-editorial__product-link"')==3
+    assert all(('href="'+prefix+'/products/'+sku+'/"') in page for sku in ("2095","2106","501"))
 new='<article class="article blog-editorial__body"><p>New owner copy</p></article>'
 assert reviewed_localized_article(new,"/blog/future-2027-guide/","es",new)==new
 print("XUYI_16_PUBLISHED_ARTICLES_X_5_LOCALES_2_BODY_SKU_LINKS_3_END_RELATED_OWNER_FIRST_PASSED",accepted)

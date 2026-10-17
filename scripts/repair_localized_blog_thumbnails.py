@@ -10,8 +10,8 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
 OVERRIDES=json.loads((ROOT/"data/blog-cover-overrides.json").read_text(encoding="utf8"))
-ORIGINALS={p["slug"]:"/media/ppt/"+p["cover"] for p in
-           json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf8"))}
+GUIDES=json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf8"))
+ORIGINALS={p["slug"]:(p["cover"] if str(p["cover"]).startswith("/") else "/media/ppt/"+p["cover"]) for p in GUIDES}
 LOCALES=("es","pt","ru","tr")
 
 def apply(dist):
