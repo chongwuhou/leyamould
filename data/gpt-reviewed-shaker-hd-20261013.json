@@ -17,9 +17,14 @@
         992
       ],
       "candidateSha256": "8b704affc6083dfef77d1ca6123210aa98385ffe787f51b9e806f9a22d105c79",
-      "publishedAssetSha256": "49ded0ec23c1dadf9c7300d31ca2373b50d090d14b151852858712f6baab9b6c",
-      "publishedBytes": 81920,
-      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications"
+      "publishedAssetSha256": "f92e0edb27391cff915dffd64b3914d5c8da9870659d0b97a691fa581bf3e689",
+      "publishedBytes": 337752,
+      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications",
+      "publishedDimensions": [
+        3200,
+        2002
+      ],
+      "enhancement": "original-approved-asset-upscale-only; no redraw"
     },
     {
       "old": "/media/ppt/slide-092.webp",
@@ -36,9 +41,14 @@
         1086
       ],
       "candidateSha256": "7052470ea3809566a67aa2436ba932ab63be66e66ad302facfde545ca6997a3a",
-      "publishedAssetSha256": "34743c0a76c3d82c63075dd7e85591123dc4b931309492e817ac3acb92764373",
-      "publishedBytes": 82862,
-      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications"
+      "publishedAssetSha256": "2111c303d6e466a532066afb6edadd8852800dbb80a90a8215e1b112229aebc0",
+      "publishedBytes": 355434,
+      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications",
+      "publishedDimensions": [
+        3200,
+        2400
+      ],
+      "enhancement": "original-approved-asset-upscale-only; no redraw"
     },
     {
       "old": "/media/ppt/slide-093.webp",
@@ -55,9 +65,14 @@
         1086
       ],
       "candidateSha256": "3dd5afe837f376ce20f6c205027ba4ded5fa65124997dbd4ea191833746a6dd6",
-      "publishedAssetSha256": "780b91eb39c19666fabf37a9ba1c9d1a8db88e444eb7890b8e0254ec13506be5",
-      "publishedBytes": 99704,
-      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications"
+      "publishedAssetSha256": "9786230b9038b5166d9dcad197a6efed4f4d93eae55c755d9da69ec415ec6b3d",
+      "publishedBytes": 426692,
+      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications",
+      "publishedDimensions": [
+        3200,
+        2400
+      ],
+      "enhancement": "original-approved-asset-upscale-only; no redraw"
     },
     {
       "old": "/media/ppt/slide-094.webp",
@@ -74,9 +89,14 @@
         1122
       ],
       "candidateSha256": "c09822c405ee9d6d23738c4206b5d88e16f046dc62d94992b5c87b6d4666c513",
-      "publishedAssetSha256": "b64527433e0f3ddd1b222c45d89c9e02035403e91c189dc4ad5ee3b915852605",
-      "publishedBytes": 108490,
-      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications"
+      "publishedAssetSha256": "507c7027cc4937f88210a8c52daae005e21198943a5db7a4a08a6e3d6a06274f",
+      "publishedBytes": 476128,
+      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications",
+      "publishedDimensions": [
+        3200,
+        2561
+      ],
+      "enhancement": "original-approved-asset-upscale-only; no redraw"
     },
     {
       "old": "/media/ppt/slide-095.webp",
@@ -93,9 +113,14 @@
         1086
       ],
       "candidateSha256": "61709bb87d60b3b708d3441a3a6ed2514a7c14283a55026d4835b1e6db2f0f5a",
-      "publishedAssetSha256": "5639f9315f58015d33bcb182f700a7d42c5e5882e7f9d37bb7646d6a2e752edd",
-      "publishedBytes": 83568,
-      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications"
+      "publishedAssetSha256": "0188fff687abc0023cfa3b520d622827c5b60c37a0e03abece45a4b5af66413c",
+      "publishedBytes": 359364,
+      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications",
+      "publishedDimensions": [
+        3200,
+        2400
+      ],
+      "enhancement": "original-approved-asset-upscale-only; no redraw"
     },
     {
       "old": "/media/ppt/slide-096.webp",
@@ -113,9 +138,14 @@
         1086
       ],
       "candidateSha256": "dce210dae65b8d663ff05f8a47c039b842ad701c4801c28ddec56d92a360d9d6",
-      "publishedAssetSha256": "2ad6332eae3f35b5eb9d86aead2b01efd71d6f3860a3ffd06349e419a8e17b91",
-      "publishedBytes": 61806,
-      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications"
+      "publishedAssetSha256": "71943d6eb4c7fe293811cff1c6d3f7184208f674a762f5f69db19e98bcb3ecab",
+      "publishedBytes": 265082,
+      "decision": "APPROVED - same plastic shaker photo group, count/colors/lids/layout consistent; captions/marketing context, not newly verified model specifications",
+      "publishedDimensions": [
+        3200,
+        2400
+      ],
+      "enhancement": "original-approved-asset-upscale-only; no redraw"
     }
   ],
   "rejected": [

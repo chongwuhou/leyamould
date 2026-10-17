@@ -54,6 +54,12 @@ for sku,category in SELECTED.items():
         assert unescape(re.sub(r"<[^>]*>","",matches[0]))==paragraph,(sku,locale,"wrong buyer text")
         # Current model's originally source-backed pictures stay linked.
         assert source["images"][0] in rendered,(sku,locale,"factory model photo missing")
+        if sku=="g-05":
+            depth=re.search(r'<section class="section product-g05-depth"[\s\S]*?</section>',rendered)
+            assert depth,(sku,locale,"G-05 depth section missing")
+            depth_text=re.sub(r'<[^>]+>',' ',unescape(depth.group()))
+            assert len(depth_text.split())>=220,(sku,locale,"G-05 content too thin",len(depth_text.split()))
+
         count+=1
 for lang in LANGS:
     leads=[COPY[sku][lang] for sku in SELECTED]

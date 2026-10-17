@@ -113,7 +113,7 @@ function verifiedEvidence(post){
  const evidence=EDITORIAL_EVIDENCE[post?.slug];
  if(!evidence)return "";
  const sourceLinks=evidence.sources.filter(s=>
-  /^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org)\//.test(s.url))
+  /^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com)\//.test(s.url))
   .map(s=>'<li><a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+esc(s.label)+' ↗</a></li>').join("");
  if(sourceLinks.length===0)return "";
  return '<section class="blog-evidence" id="primary-sources" aria-labelledby="primary-sources-heading"><span class="eyebrow">SOURCE-CHECKED BUYER NOTES</span><h2 id="primary-sources-heading">'+esc(evidence.title)+'</h2><p>'+esc(evidence.insight)+'</p><p><strong>Practical next step:</strong> '+esc(evidence.next_step)+'</p><h3>Primary references</h3><ul>'+sourceLinks+'</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>';
@@ -208,6 +208,27 @@ function vettedBlogPerson(post){
    return null;
  return {"@type":"Person",name,jobTitle,url};
 }
+// New editorial product annotations are fields of the CMS article itself,
+// not a frozen three-model fallback. Removing/editing notes in D1 takes precedence.
+function reviewedProductNotes(post,sectionIndex){
+ if(post?.product_notes===false||!Array.isArray(post?.product_notes))return "";
+ const notes=post.product_notes.filter(x=>Number(x?.section)===sectionIndex).slice(0,5);
+ const used=new Set();
+ let out="";
+ for(const note of notes){
+  const sku=String(note?.sku||"");
+  if(!/^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(sku)||used.has(sku))continue;
+  const pattern=str(note?.text?.en,1000);
+  const label=str(note?.label?.en,180);
+  if(pattern.split("{product}").length!==2||label.length<3)continue;
+  used.add(sku);
+  const href="/products/"+sku+"/";
+  const link='<a class="blog-editorial__product-link" href="'+href+'">'+esc(label)+'</a>';
+  const parts=pattern.split("{product}");
+  out+=' <span class="blog-editorial__product-note" data-editorial-model="'+sku+'">'+esc(parts[0])+link+esc(parts[1])+'</span>';
+ }
+ return out;
+}
 export function blogHtml(post){
  let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Buying Guide</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+esc(post.title)+'</h1><p>'+esc(post.description)+'</p></div></section>';
  body+='<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" loading="eager"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">';
@@ -221,7 +242,7 @@ export function blogHtml(post){
      'By XUYI Bottles · Product Sourcing Editorial Team')+'</a></p>';
  body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div>'+byline+'<p class="blog-lede">'+esc(post.intro)+'</p>';
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
- post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+renderEditableParagraph(section.paragraph)+reviewedBlogParagraphNote(post,section,i)+'</p></section>'});
+ post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+renderEditableParagraph(section.paragraph)+reviewedBlogParagraphNote(post,section,i)+reviewedProductNotes(post,i)+'</p></section>'});
  body+=verifiedEvidence(post);
  body+=renderBuyerDecisionTable(post);
  body+=renderDepthEvidence(post);
@@ -302,7 +323,7 @@ export function composePage(template,body,post,route){
   const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'XUYI Bottles',url:'https://xuyibottles.com/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
   if(actualPublishedDate(post))graph.datePublished=actualPublishedDate(post);
   if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
-    .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org)\//.test(s.url))
+    .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com)\//.test(s.url))
     .map(s=>({'@type':'CreativeWork',name:s.label,url:s.url}));
   const safe=JSON.stringify(graph).replace(/</g,'\\u003c');
   // Only the actual visible CMS FAQs are marked up; no Google-rich-result promise.
@@ -318,3 +339,4 @@ export function composePage(template,body,post,route){
  }
  return html;
 }
+

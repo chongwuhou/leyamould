@@ -17,7 +17,7 @@ assert len(ORIGINALS)>=16,len(ORIGINALS)
 assert len(OVERRIDES)>=8,len(OVERRIDES)
 initial=Counter(ORIGINALS.values())
 assert sum(n-1 for n in initial.values())>=8
-assert all(initial[ORIGINALS[slug]]>=2 for slug in OVERRIDES)
+assert all(initial[ORIGINALS[slug]]>=2 for slug in OVERRIDES if ORIGINALS[slug].startswith("/media/ppt/"))
 assert len(set(OVERRIDES.values()))==len(OVERRIDES.values())
 post_slugs=set(ORIGINALS)
 for lang in LANGS:

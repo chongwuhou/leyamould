@@ -37,7 +37,8 @@ CONTEXT_LINKS = {
 }
 
 def cover_path(slug):
-    return COVER_OVERRIDES.get(slug, "/media/ppt/" + GUIDES[slug]["cover"])
+    cover=GUIDES[slug]["cover"]
+    return COVER_OVERRIDES.get(slug, cover if str(cover).startswith("/") else "/media/ppt/" + cover)
 
 def anchor(heading):
     return re.sub(r"[^a-z0-9-]+", "-", heading.lower().replace("’", "").replace("'", "")).strip("-")[:90]
@@ -49,7 +50,7 @@ def render_primary_evidence(slug):
     h+='<p>'+e(evidence["insight"])+'</p><p><strong>Practical next step:</strong> '+e(evidence["next_step"])+'</p>'
     h+='<h3>Primary references</h3><ul>'
     for source in evidence["sources"]:
-        assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/"))
+        assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/"))
         h+='<li><a href="'+e(source["url"])+'" target="_blank" rel="noopener noreferrer">'+e(source["label"])+' ↗</a></li>'
     h+='</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>'
     return h
@@ -112,6 +113,20 @@ def owner_safe_depth(route,body):
     intro=unescape(re.sub(r'<[^>]*>','',match.group(1))).strip()
     return render_depth_evidence(slug) if intro==entry["baselineIntro"] else ""
 
+def render_product_notes(post, section_index, locale="en"):
+    notes=[x for x in post.get("product_notes",[]) if x.get("section")==section_index]
+    out=""
+    for note in notes:
+        pattern=note["text"][locale]
+        assert pattern.count("{product}")==1,(post["slug"],section_index,locale)
+        sku=str(note["sku"])
+        label=note.get("label",{}).get(locale) or sku
+        prefix="" if locale=="en" else "/"+locale
+        link='<a class="blog-editorial__product-link" href="'+prefix+'/products/'+e(sku)+'/">'+e(label)+'</a>'
+        front,back=pattern.split("{product}")
+        out+=' <span class="blog-editorial__product-note" data-editorial-model="'+e(sku)+'">'+e(front)+link+e(back)+'</span>'
+    return out
+
 def render_article(slug):
     post=GUIDES[slug]
     related=[GUIDES[s] for s in post["related"]]
@@ -135,7 +150,13 @@ def render_article(slug):
     h+='</ul></div>'
     from blog_editorial_inline import english_note
     for index,section in enumerate(post["sections"]):
-        h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+english_note(slug,index)+'</p></section>'
+        h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+english_note(slug,index)+render_product_notes(post,index,'en')+'</p></section>'
+    if post.get("inline_links"):
+        h+='<nav class="blog-buyer-matrix__links blog-inline-links" aria-label="Related reading">'
+        for label,href in post["inline_links"]:
+            assert href.startswith("/") and not href.startswith("//"),href
+            h+='<a href="'+e(href)+'">'+e(label)+' →</a>'
+        h+='</nav>'
     h+=render_primary_evidence(slug)
     h+=render_buyer_matrix(slug)
     h+=render_depth_evidence(slug)
@@ -144,10 +165,13 @@ def render_article(slug):
     h+='</ul></section><section class="blog-faq"><h2>Frequently asked questions</h2>'
     for qa in post["faqs"]:
         h+='<details><summary>'+e(qa["question"])+'</summary><p>'+e(qa["answer"])+'</p></details>'
-    h+='</section><div class="blog-context-links"><h2>Explore XUYI products and services</h2>'
-    for name,href in CONTEXT_LINKS.get(slug,[]):
-        h+='<a href="'+e(href)+'">'+e(name)+' →</a>'
-    h+='</div><div class="blog-editorial__cta"><h2>Need a quote for a specific model?</h2>'
+    context=CONTEXT_LINKS.get(slug,[])
+    if context:
+        h+='</section><div class="blog-context-links"><h2>Explore XUYI products and services</h2>'
+        for name,href in context:
+            h+='<a href="'+e(href)+'">'+e(name)+' →</a>'
+        h+='</div>'
+    h+='<div class="blog-editorial__cta"><h2>Need a quote for a specific model?</h2>'
     h+='<p>Send the intended model, material requirements, expected order quantity, artwork and destination market. We will review the options for that exact product rather than assume one specification fits every bottle.</p>'
     h+='<a class="button" href="/contact/#inquiry">Request a Plastic Bottle Quote →</a></div>'
     # Selected related guides belong at the article end, not outside it.
@@ -182,3 +206,4 @@ def enrich_article_html(document, slug):
     metadata+='<meta property="og:image" content="'+e(SITE_ORIGIN+cover_path(slug))+'">'
     metadata+='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+'</script>'
     return document.replace("</head>",metadata+"</head>",1)
+
