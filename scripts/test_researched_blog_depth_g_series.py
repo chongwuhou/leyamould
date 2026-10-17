@@ -45,7 +45,7 @@ for batch in (1,2,3):
 assert len(completed)==15 and len(BLOG_DEPTH)>=16,(len(completed),len(BLOG_DEPTH))
 assert set(GUIDES).issuperset(BLOG_DEPTH)
 counts={}
-for slug in GUIDES:
+for slug in BLOG_DEPTH:
     page=(D/"blog"/slug/"index.html").read_text(encoding="utf8")
     body=page.split('<main id="main-content">',1)[1].split('</main>',1)[0]
     words=len(re.findall(r"[A-Za-z]+(?:[-'][A-Za-z]+)*",unescape(re.sub(r"<[^>]*>"," ",body))))

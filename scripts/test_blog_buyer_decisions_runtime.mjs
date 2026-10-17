@@ -4,13 +4,13 @@ import {esc,blogHtml,renderBuyerDecisionTable,normalizeBlogPost,composePage} fro
 
 const titles=new Set();
 for(const [slug,row] of Object.entries(DATA.articles)){
- assert.equal(row.rows.length,4,slug);
+ assert(row.rows.length>=4,slug);
  assert(!titles.has(row.title),"Decision tables need distinct buyer intent");
  titles.add(row.title);
  const module=renderBuyerDecisionTable({slug});
  assert(module.includes('id="buyer-decision-table"'),slug);
  assert(module.includes(esc(row.title)),slug);
- assert.equal(module.match(/<tr>/g)?.length,5,slug);
+ assert.equal(module.match(/<tr>/g)?.length,row.rows.length+1,slug);
  assert(module.includes(row.links[0][1]),slug);
  assert.equal(renderBuyerDecisionTable({slug,buyerDecisionTable:false}),"","CMS opt-out must win");
  const edited={

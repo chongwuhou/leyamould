@@ -9,6 +9,7 @@ from sku_unique_openings_phase2 import COPY,CATEGORY,EN,OWNER,SELECTED_GROUP
 from site_renderer import SERIES
 from product_slug_fix import route as canonical_product_route
 langs=("en","es","pt","ru","tr")
+from scripts.ci_current_owner_assertions import check_product_page
 assert len(COPY)>=48 and {"sports","kids","jugs"}.issubset(EN)
 assert set("2511 2310 2319 2410 2280 2302 2512 2513 2514 2209 2311 2402 2109 2409 2413 2350 2250 2270 2416 2305".split()).issubset(COPY)
 snapshot=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
@@ -30,15 +31,16 @@ for sku in D1_SKUS:
   page=ROOT/"dist"/("" if locale=="en" else locale)/"products"/sku/"index.html"
   data=page.read_text(encoding="utf8")
   matches=re.findall(r'<p\b(?=[^>]*data-pilot-intro="'+sku+r'")[^>]*>(.*?)</p>',data,re.S)
-  assert len(matches)==1,(sku,locale,len(matches))
-  assert html.unescape(re.sub(r"<[^>]*>","",matches[0]))==copy,(sku,locale)
-  assert data.find("<h1")<data.find('data-pilot-intro="'+sku+'"')
+  baseline=(locale!="en" and hashlib.sha256(d1[("/products/"+sku+"/",locale)].encode("utf8")).hexdigest()==OWNER[sku][locale])
+  check_product_page(page,sku,copy,requires_old_marker=bool(baseline))
   if locale!="en":
    source=d1[("/products/"+sku+"/",locale)]
-   assert hashlib.sha256(source.encode("utf8")).hexdigest()==OWNER[sku][locale]
-   rewritten=editor_intro(source,row,locale)
-   assert rewritten!=source and copy in html.unescape(rewritten)
-   assert editor_intro(rewritten,row,locale)==rewritten
+   if hashlib.sha256(source.encode("utf8")).hexdigest()==OWNER[sku][locale]:
+    rewritten=editor_intro(source,row,locale)
+    assert rewritten!=source and copy in html.unescape(rewritten)
+    assert editor_intro(rewritten,row,locale)==rewritten
+   else:
+    assert editor_intro(source,row,locale)==source,(sku,locale,"CMS owner edit overwritten")
    owner_revised=source.replace("<nav class=", '<nav data-owner-changed="yes" class=',1)
    assert owner_revised!=source
    assert editor_intro(owner_revised,row,locale)==owner_revised

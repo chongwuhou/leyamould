@@ -90,10 +90,13 @@ NEW_PRODUCT_COUNT=append_new_products(SERIES,BUILD_STATE.get("products",[]))
 assert len(SERIES)>=85,(len(SERIES))
 assert all(v["images"] for v in SERIES.values()),[(k,v["images"]) for k,v in SERIES.items() if not v["images"]]
 def e(v):return html.escape(str(v or ""),quote=True)
-def photo(src,alt,loading='lazy'):
+def photo(src,alt,loading='lazy',aspect_ratio=None):
  from product_source_identity import GENERIC_ALT
  if src in GENERIC_ALT:alt=GENERIC_ALT[src]
- return f'<img src="{e(src)}" alt="{e(alt)}" loading="{loading}" decoding="async">' 
+ # Reserve card geometry in the shared renderer, not in generated HTML.
+ allowed={'4/3':'4 / 3','3/2':'3 / 2','16/9':'16 / 9'}
+ sizing=(' style="aspect-ratio:'+allowed[aspect_ratio]+';"' if aspect_ratio in allowed else '')
+ return f'<img src="{e(src)}" alt="{e(alt)}" loading="{loading}" decoding="async"{sizing}>' 
 def write(path,content):
  out=ROOT/BUILD_OUTPUT_DIR/path;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding="utf-8")
 URLS={}

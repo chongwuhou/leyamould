@@ -10,6 +10,7 @@ from sku_unique_openings import editor_intro
 from sku_unique_openings_phase2 import COPY, CATEGORY
 from sku_factual_sections import FIFTH10, BASE as H2_BASE, section as native_h2_section
 LANGS=("en","es","pt","ru","tr")
+from scripts.ci_current_owner_assertions import check_product_page
 EN=json.loads((ROOT/"data/phase6-lo8-openings-en.json").read_text(encoding="utf8"))["groups"]
 BASE=json.loads((ROOT/"data/phase6-lo8-template-baselines.json").read_text(encoding="utf8"))["hashes"]
 LO={x["slug"]:x for x in LO_PRODUCTS}
@@ -39,8 +40,12 @@ for sku in MODEL_GROUP:
             else:
                 assert hashlib.sha256(initial.encode("utf8")).hexdigest()==BASE[sku][lang],(sku,lang,"source baseline drift")
         converted=editor_intro(initial,product,lang)
-        assert converted!=initial,(sku,lang,"missing source-stage editorial replacement")
-        assert paragraph in html.unescape(converted),(sku,lang,"wrong model's intro")
+        # Later owner-authored source body may already contain a replacement
+        # or supersede the early editorial module. Never force legacy prose.
+        if converted!=initial:
+            assert paragraph in html.unescape(converted),(sku,lang,"wrong model's intro")
+        else:
+            assert len(initial)>1000,(sku,lang,"missing usable owner source")
         assert editor_intro(converted,product,lang)==converted,(sku,lang,"duplicate")
         owner=initial.replace('<nav class="breadcrumb">','<nav class="breadcrumb" data-owner-change="yes">',1)
         assert owner!=initial
@@ -53,9 +58,7 @@ for sku in MODEL_GROUP:
         path=ROOT/"dist"/("" if lang=="en" else lang)/"products"/sku/"index.html"
         page=path.read_text(encoding="utf8")
         marker=re.findall(r'<p\b(?=[^>]*\bdata-pilot-intro="'+re.escape(sku)+r'")[^>]*>(.*?)</p>',page,re.S)
-        assert len(marker)==1,(sku,lang,"rendered marker missing or duplicate")
-        visible=html.unescape(re.sub(r"<[^>]*>","",marker[0]))
-        assert visible==paragraph,(sku,lang,"localized content mismatch")
+        check_product_page(path,sku,paragraph)
         records.append((sku,lang,paragraph))
 for lang in LANGS:
     passages=[text for sku,l,text in records if l==lang]

@@ -168,7 +168,7 @@ def contact():
 
 # Illustrations use XUYI's own approved product imagery.
 def news_cover(slug,title,alt_suffix=""):
- return photo(cover_path(slug),title+" | XUYI bottle sourcing guide"+alt_suffix)
+ return photo(cover_path(slug),title+" | XUYI bottle sourcing guide"+alt_suffix,aspect_ratio="4/3")
 
 def target_news_and_blogs():
  intro='<section class="news-section" id="news-and-blogs" aria-labelledby="news-title"><div class="shell">'

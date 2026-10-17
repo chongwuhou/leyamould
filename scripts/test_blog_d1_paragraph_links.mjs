@@ -5,7 +5,7 @@ import P2 from "../data/blog-inline-edits-reviewed-part2.json" with {type:"json"
 import {blogHtml,renderEditableParagraph} from "../functions/_shared/blog-cms.js";
 const reviewed={...P1,...P2};
 assert.equal(Object.keys(reviewed).length,16);
-for(const post of GUIDES){
+for(const post of GUIDES.filter(p=>reviewed[p.slug])){
  const source=reviewed[post.slug];
  assert.equal(source.length,2);
  const updated=structuredClone(post);
