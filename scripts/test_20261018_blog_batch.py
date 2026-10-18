@@ -1,7 +1,6 @@
 from pathlib import Path
 import html,json,re,sys
 from xml.etree import ElementTree as ET
-from PIL import Image
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
@@ -9,6 +8,22 @@ from sitemap_modification import source_lastmod
 from scripts.prepare_blog_release_20261018 import GUIDES,MATRICES,TRANS,SLUGS,LOCALES,EVIDENCE
 GUIDE_LIST=json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf8"))
 MODELS={str(x["slug"]) for x in SERIES.values()}
+
+def webp_dimensions(path):
+ data=path.read_bytes()
+ assert data[:4]==b"RIFF" and data[8:12]==b"WEBP",(path,"invalid WebP RIFF header")
+ kind=data[12:16]
+ if kind==b"VP8X":
+  return int.from_bytes(data[24:27],"little")+1,int.from_bytes(data[27:30],"little")+1
+ if kind==b"VP8L":
+  assert data[20]==0x2f,(path,"invalid VP8L signature")
+  bits=int.from_bytes(data[21:25],"little")
+  return (bits&0x3fff)+1,((bits>>14)&0x3fff)+1
+ if kind==b"VP8 ":
+  offset=data.find(b"\x9d\x01\x2a",20,40)
+  assert offset>=0,(path,"VP8 key-frame signature missing")
+  return int.from_bytes(data[offset+3:offset+5],"little")&0x3fff,int.from_bytes(data[offset+5:offset+7],"little")&0x3fff
+ raise AssertionError((path,"unsupported WebP chunk",kind))
 assert len(GUIDE_LIST)==25
 assert set(MATRICES)=={x["slug"] for x in GUIDE_LIST}
 assert set(TRANS)==set(SLUGS)
@@ -28,8 +43,7 @@ for slug in SLUGS:
  assert post["cover"].startswith("/assets/blog/")
  cover=ROOT/post["cover"].lstrip("/")
  assert cover.is_file(),cover
- with Image.open(cover) as im:
-  assert im.format=="WEBP" and im.size==(1512,1040),(slug,im.format,im.size)
+ assert webp_dimensions(cover)==(1512,1040),(slug,webp_dimensions(cover))
  assert 30000<cover.stat().st_size<350000,(slug,cover.stat().st_size)
  covers.append(post["cover"])
  assert slug in EVIDENCE and len(EVIDENCE[slug]["sources"])>=1
