@@ -170,11 +170,26 @@ def contact():
 def news_cover(slug,title,alt_suffix=""):
  return photo(cover_path(slug),title+" | XUYI bottle sourcing guide"+alt_suffix,aspect_ratio="4/3")
 
+# Keep the homepage's eight editorial slots intentionally curated. New blog
+# posts still appear first on /blog/, but must not silently replace approved
+# homepage imagery each time the editorial catalog grows.
+HOME_ARTICLE_SLUGS = [
+ "replacement-water-bottle-lids-bulk",
+ "water-bottle-capacity-sizes-wholesale",
+ "water-bottle-sample-approval-checklist",
+ "bottle-factory-rfq-template",
+ "water-bottle-cap-types-bulk-guide",
+ "tritan-bottle-yellowing-causes-prevention",
+ "sports-water-bottle-customization",
+ "water-bottle-logo-printing-methods",
+]
+HOME_ARTICLES = [next(item for item in ARTICLES if item[0] == slug) for slug in HOME_ARTICLE_SLUGS]
+
 def target_news_and_blogs():
  intro='<section class="news-section" id="news-and-blogs" aria-labelledby="news-title"><div class="shell">'
  intro+='<div class="news-section__head"><h2 id="news-title">News <span class="news-section__symbol" aria-hidden="true"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="32" fill="#f31927"/><g transform="rotate(11 32 32)"><rect x="17" y="13" width="32" height="39" rx="2" fill="#fff"/><rect x="21" y="19" width="23" height="5" fill="#1d1d1d"/><path stroke="#8d8d8d" stroke-width="2" d="M21 29h23M21 34h23M21 39h23M21 44h17"/></g></svg></span> and Blogs</h2><p>Discover helpful plastic bottle buying guides on materials, customization, lid styles and wholesale sourcing. Compare options and plan your next brand project.</p></div>'
- intro+='<div class="news-section__layout"><div class="news-section__aside"><div class="news-section__counter" aria-live="polite"><strong id="news-active-count">01</strong><span>/ '+str(len(ARTICLES[:8])).zfill(2)+'</span></div><div class="news-section__label">Buying Guides<br>&amp; Resources</div><div class="news-section__arrows"><button type="button" id="news-prev" aria-label="Previous article" disabled>←</button><button type="button" id="news-next" aria-label="Next article">→</button></div><a class="news-section__all" href="/blog/">View All Articles ↗</a></div><div class="news-section__slider" aria-label="Latest XUYI buying guides" id="news-slider" tabindex="0">'
- for slug,title,desc in ARTICLES[:8]:
+ intro+='<div class="news-section__layout"><div class="news-section__aside"><div class="news-section__counter" aria-live="polite"><strong id="news-active-count">01</strong><span>/ '+str(len(HOME_ARTICLES[:8])).zfill(2)+'</span></div><div class="news-section__label">Buying Guides<br>&amp; Resources</div><div class="news-section__arrows"><button type="button" id="news-prev" aria-label="Previous article" disabled>←</button><button type="button" id="news-next" aria-label="Next article">→</button></div><a class="news-section__all" href="/blog/">View All Articles ↗</a></div><div class="news-section__slider" aria-label="Featured XUYI buying guides" id="news-slider" tabindex="0">'
+ for slug,title,desc in HOME_ARTICLES[:8]:
   intro+='<article class="news-card"><a href="/blog/'+e(slug)+'/" class="news-card__image">'+news_cover(slug,title)+'</a><div class="news-card__info"><span class="news-card__category">BUYING GUIDE</span><h3><a href="/blog/'+e(slug)+'/">'+e(title)+'</a></h3><p>'+e(desc)+'</p><a class="news-card__read" href="/blog/'+e(slug)+'/">Read Article →</a></div></article>'
  intro+='</div></div></div></section>'
  return intro
