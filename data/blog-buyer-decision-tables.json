@@ -1007,6 +1007,171 @@
           "/request-sample/"
         ]
       ]
+    },
+    "plastic-water-bottle-food-contact-compliance-checklist": {
+      "title": "Food-contact document review: what each record should prove",
+      "intro": "Use this matrix to check whether the supplier evidence is specific enough for the intended bottle, market and use conditions.",
+      "head": [
+        "Record",
+        "What to verify",
+        "Common gap"
+      ],
+      "rows": [
+        [
+          "Component declaration",
+          "Model, part, material grade, intended use and revision",
+          "Only a generic resin name"
+        ],
+        [
+          "Test report",
+          "Sample identity, method, conditions, result and date",
+          "Report belongs to another bottle"
+        ],
+        [
+          "US compliance basis",
+          "Applicable authorization for relevant substances and uses",
+          "Claim says FDA approved without scope"
+        ],
+        [
+          "EU documentation",
+          "Applicable Regulation (EU) No 10/2011 declaration and support",
+          "US statement offered as EU evidence"
+        ],
+        [
+          "Traceability",
+          "Component supplier, lot or revision and approved sample",
+          "No link to the shipped configuration"
+        ],
+        [
+          "Change control",
+          "Written notice and re-review before substitutions",
+          "Old documents reused after a material change"
+        ]
+      ],
+      "links": [
+        [
+          "BPA-free sourcing guide",
+          "/blog/bpa-free-plastic-water-bottle-sourcing/"
+        ],
+        [
+          "request a sample",
+          "/request-sample/"
+        ],
+        [
+          "quality control checklist",
+          "/blog/water-bottle-quality-control-checklist/"
+        ]
+      ]
+    },
+    "custom-water-bottle-mold-cost-lead-time": {
+      "title": "Custom mold quotation: compare scope before price",
+      "intro": "Use the same requirements with each supplier so the quote difference reflects a real difference in tooling or project scope.",
+      "head": [
+        "Decision item",
+        "Quote must state",
+        "Buyer approval check"
+      ],
+      "rows": [
+        [
+          "Tooling route",
+          "Existing tool, modification or new mold",
+          "Does the route satisfy the required shape and function?"
+        ],
+        [
+          "Mold construction",
+          "Cavities, components, finish and key design assumptions",
+          "Are inclusions and exclusions itemized?"
+        ],
+        [
+          "Trial and samples",
+          "Trial stages, sample rounds and revision charges",
+          "What is the acceptance gate for each stage?"
+        ],
+        [
+          "Unit price",
+          "Quantity tiers and amortization assumptions",
+          "Are volumes and setup costs comparable?"
+        ],
+        [
+          "Ownership and access",
+          "Owner, storage, use, maintenance and transfer terms",
+          "Can the tool be retrieved under stated conditions?"
+        ],
+        [
+          "Change control",
+          "Revision process and cost responsibility",
+          "What changes require a new tool or new approval?"
+        ]
+      ],
+      "links": [
+        [
+          "custom molding capability",
+          "/capabilities/custom-molding/"
+        ],
+        [
+          "MOQ pricing guide",
+          "/blog/custom-water-bottle-moq-pricing/"
+        ],
+        [
+          "12-line RFQ template",
+          "/blog/bottle-factory-rfq-template/"
+        ]
+      ]
+    },
+    "custom-water-bottle-color-matching-pantone-guide": {
+      "title": "Color approval matrix for custom plastic bottles",
+      "intro": "Use the same reference and inspection conditions at quotation, sample approval, first production and reorder stages.",
+      "head": [
+        "Color variable",
+        "What to specify",
+        "How to verify"
+      ],
+      "rows": [
+        [
+          "Reference standard",
+          "Color system, code, edition and physical chip",
+          "Compare against the named physical reference"
+        ],
+        [
+          "Bottle body",
+          "Resin basis, transparency, wall and surface finish",
+          "Review a molded bottle, not only a paper swatch"
+        ],
+        [
+          "Cap and accessories",
+          "Separate color target for each component",
+          "Inspect the assembled bottle under the same light"
+        ],
+        [
+          "Printed logo",
+          "Ink reference, print method and position",
+          "Approve a decorated sample"
+        ],
+        [
+          "Tolerance",
+          "Visual criteria or defined instrument setup",
+          "Use agreed lighting and measurement conditions"
+        ],
+        [
+          "Reorder control",
+          "Sample ID, revision, lot and change notification",
+          "Compare early production pieces to the retained standard"
+        ]
+      ],
+      "links": [
+        [
+          "custom logo checklist",
+          "/blog/custom-logo-water-bottle-checklist/"
+        ],
+        [
+          "logo printing guide",
+          "/blog/water-bottle-logo-printing-methods/"
+        ],
+        [
+          "request a sample",
+          "/request-sample/"
+        ]
+      ]
     }
   }
 }

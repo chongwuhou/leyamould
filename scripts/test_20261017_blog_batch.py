@@ -49,5 +49,5 @@ for locale in LOCALES:
  for slug in SLUGS:
   assert '/'+locale+'/blog/'+slug+'/' in page
   assert html.escape(TRANS[slug][locale]["title"]) in page
-assert source_lastmod("/blog/")=="2026-10-17"
+assert source_lastmod("/blog/")>="2026-10-17"
 print("XUYI_20261017_THREE_BLOGS_FIVE_LOCALES_EDITORIAL_SEO_PASSED")

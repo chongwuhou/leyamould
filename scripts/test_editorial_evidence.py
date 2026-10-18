@@ -16,11 +16,13 @@ for slug,item in items.items():
     reviewed=json.loads((ROOT/"data/blog-depth-evidence-en.json").read_text(encoding="utf8"))["articles"]
     for batch in (1,2,3):
         reviewed.update(json.loads((ROOT/f"data/blog-deep-research-part{batch}.json").read_text(encoding="utf8"))["articles"])
-    date="2026-10-14" if slug in reviewed else "2026-10-10"
+    guides=json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf8"))
+    post=next(item for item in guides if item["slug"]==slug)
+    date=max(post["updated"],"2026-10-14" if slug in reviewed else "2026-10-10")
     assert f'article:modified_time" content="{date}"' in doc,slug
     for ref in item["sources"]:
         assert ref["url"] in doc,(slug,ref["url"])
-        assert ref["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/"))
+        assert ref["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/","https://www.uspto.gov/","https://www.pantone.com/"))
     assert 'not product certification' in doc,slug
 quality=(DIST/"quality-control/index.html").read_text(encoding="utf-8")
 factory=(DIST/"manufacturing/index.html").read_text(encoding="utf-8")

@@ -50,7 +50,7 @@ def render_primary_evidence(slug):
     h+='<p>'+e(evidence["insight"])+'</p><p><strong>Practical next step:</strong> '+e(evidence["next_step"])+'</p>'
     h+='<h3>Primary references</h3><ul>'
     for source in evidence["sources"]:
-        assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/"))
+        assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/","https://www.uspto.gov/","https://www.pantone.com/"))
         h+='<li><a href="'+e(source["url"])+'" target="_blank" rel="noopener noreferrer">'+e(source["label"])+' ↗</a></li>'
     h+='</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>'
     return h
@@ -127,6 +127,10 @@ def render_product_notes(post, section_index, locale="en"):
         out+=' <span class="blog-editorial__product-note" data-editorial-model="'+e(sku)+'">'+e(front)+link+e(back)+'</span>'
     return out
 
+def article_modified_date(slug,post):
+    reviewed="2026-10-14" if slug in BLOG_DEPTH else "2026-10-10" if slug in EVIDENCE else post["updated"]
+    return max(post["updated"],reviewed)
+
 def render_article(slug):
     post=GUIDES[slug]
     related=[GUIDES[s] for s in post["related"]]
@@ -137,7 +141,7 @@ def render_article(slug):
     for item in post["sections"]:
         h+='<a href="#'+anchor(item["heading"])+'">'+e(item["heading"])+'</a>'
     h+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside>'
-    updated="2026-10-14" if slug in BLOG_DEPTH else "2026-10-10" if slug in EVIDENCE else post["updated"]
+    updated=article_modified_date(slug,post)
     # All 16 articles were actually published in D1 on Oct 9. The selected
     # evidence guides were revised Oct 10. Do not manufacture staggered dates.
     published=post["updated"]
@@ -184,7 +188,7 @@ def render_article(slug):
 
 def enrich_article_html(document, slug):
     post=GUIDES[slug]
-    updated="2026-10-14" if slug in BLOG_DEPTH else "2026-10-10" if slug in EVIDENCE else post["updated"]
+    updated=article_modified_date(slug,post)
     url=SITE_ORIGIN+"/blog/"+slug+"/"
     breadcrumb={"@type":"BreadcrumbList","itemListElement":[
       {"@type":"ListItem","position":1,"name":"Home","item":SITE_ORIGIN+"/"},
@@ -206,4 +210,3 @@ def enrich_article_html(document, slug):
     metadata+='<meta property="og:image" content="'+e(SITE_ORIGIN+cover_path(slug))+'">'
     metadata+='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+'</script>'
     return document.replace("</head>",metadata+"</head>",1)
-

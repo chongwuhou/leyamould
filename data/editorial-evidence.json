@@ -99,5 +99,50 @@
         "url": "https://www.eastman.com/content/dam/eastman/corporate/en/literature/t/trsmed244.pdf"
       }
     ]
+  },
+  "plastic-water-bottle-food-contact-compliance-checklist": {
+    "title": "Official references for food-contact documentation",
+    "insight": "US food-contact status depends on relevant substances and authorized conditions of use; EU plastic food-contact rules have their own documentation requirements. Neither a resin name nor a generic marketing badge establishes that every finished configuration is covered.",
+    "next_step": "Request evidence tied to the exact bottle, components, intended use and destination market.",
+    "sources": [
+      {
+        "label": "FDA: Determining the regulatory status of food-contact material components",
+        "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
+      },
+      {
+        "label": "EUR-Lex: Commission Regulation (EU) No 10/2011, current consolidated text",
+        "url": "https://eur-lex.europa.eu/eli/reg/2011/10"
+      }
+    ]
+  },
+  "custom-water-bottle-mold-cost-lead-time": {
+    "title": "Reference on design rights and ownership",
+    "insight": "Patent and design rights are legal rights that differ from the physical mold itself. Buyers should document the tool's ownership, permitted use, storage and transfer in the supply agreement, and review intellectual-property issues separately.",
+    "next_step": "Put the physical tool terms in the quotation and contract, and seek qualified legal advice for jurisdiction-specific rights.",
+    "sources": [
+      {
+        "label": "USPTO: Patent basics and managing patent ownership",
+        "url": "https://www.uspto.gov/patents/basics/manage"
+      },
+      {
+        "label": "USPTO: Design patent application guide",
+        "url": "https://www.uspto.gov/patents/basics/apply/design-patent"
+      }
+    ]
+  },
+  "custom-water-bottle-color-matching-pantone-guide": {
+    "title": "Pantone references for plastic color communication",
+    "insight": "Pantone provides plastic chips designed to communicate and evaluate color on plastic products. A reference system helps align expectations, but the actual molded component and its finish still need to be reviewed.",
+    "next_step": "Choose the reference system, identify each component and approve a physical sample before authorizing bulk production.",
+    "sources": [
+      {
+        "label": "Pantone: Plastic Standard Chips",
+        "url": "https://www.pantone.com/products/fashion-home-interiors/pantone-plastic-standard-chips"
+      },
+      {
+        "label": "Pantone: Plastics standards explained",
+        "url": "https://www.pantone.com/hk/en-hk/articles/uses-and-best-practices/did-you-know-pantone-plastics-standards-explained"
+      }
+    ]
   }
 }
