@@ -155,6 +155,7 @@ if os.environ.get("XUYI_BATCH_BOOTSTRAP_ONLY") == "1":
  assert "prepare_blog_bootstrap_snapshot.py" in workflow
 else:
  assert "python scripts/publish_blog_batch_20261019_d1.py" in workflow
+ assert "github.event.head_commit.message == 'Publish reviewed 2026-10-19 blog batch through existing CMS'" in workflow
 print("XUYI_20261019_D1_SNAPSHOT_OWNER_TRANSLATIONS_INDEX_CARDS_PASSED")
 print("XUYI_20261019_THREE_BLOGS_FIVE_LOCALES_SEO_LINKS_IMAGES_SITEMAP_PASSED")
 
