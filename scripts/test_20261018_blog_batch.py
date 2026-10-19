@@ -24,7 +24,7 @@ def webp_dimensions(path):
   assert offset>=0,(path,"VP8 key-frame signature missing")
   return int.from_bytes(data[offset+3:offset+5],"little")&0x3fff,int.from_bytes(data[offset+5:offset+7],"little")&0x3fff
  raise AssertionError((path,"unsupported WebP chunk",kind))
-assert len(GUIDE_LIST)==25
+assert len(GUIDE_LIST)>=25
 assert set(MATRICES)=={x["slug"] for x in GUIDE_LIST}
 assert set(TRANS)==set(SLUGS)
 covers=[]
@@ -106,7 +106,7 @@ for slug in SLUGS:
  for locale in ["",*LOCALES]:
   url="https://xuyibottles.com/"+(locale+"/" if locale else "")+"blog/"+slug+"/"
   assert sitemap.get(url)=="2026-10-18",(url,sitemap.get(url))
-assert sitemap.get("https://xuyibottles.com/blog/")=="2026-10-18"
+assert sitemap.get("https://xuyibottles.com/blog/") in ("2026-10-18","2026-10-19")
 robots=(ROOT/"dist"/"robots.txt").read_text(encoding="utf8")
 assert "Allow: /" in robots and "Disallow: /admin/" in robots and "Sitemap: https://xuyibottles.com/sitemap.xml" in robots
 # CI fetches this snapshot from the live XUYI D1 CMS before building.
@@ -139,3 +139,4 @@ for locale in LOCALES:
   assert matches[0].count('href="/blog/'+slug+'/"')==3,(locale,slug,"card image/title/read links")
 print("XUYI_20261018_D1_SNAPSHOT_OWNER_TRANSLATIONS_INDEX_CARDS_PASSED")
 print("XUYI_20261018_THREE_BLOGS_FIVE_LOCALES_SEO_LINKS_IMAGES_SITEMAP_PASSED")
+

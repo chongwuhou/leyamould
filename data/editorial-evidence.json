@@ -144,5 +144,50 @@
         "url": "https://www.pantone.com/hk/en-hk/articles/uses-and-best-practices/did-you-know-pantone-plastics-standards-explained"
       }
     ]
+  },
+  "can-you-put-hot-water-in-plastic-water-bottle": {
+    "title": "Temperature-related food-contact references",
+    "insight": "FDA conditions of use depend on temperature and exposure; statements about Tritan as a material do not certify every assembled bottle.",
+    "next_step": "Obtain exact-model evidence before describing a bottle as suitable for boiling or hot water.",
+    "sources": [
+      {
+        "label": "FDA food-contact conditions of use",
+        "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/food-types-conditions-use-food-contact-substances"
+      },
+      {
+        "label": "Eastman Tritan FAQs",
+        "url": "https://www.eastman.com/en/products/brands/tritan/about/faqs"
+      }
+    ]
+  },
+  "are-plastic-water-bottles-dishwasher-safe": {
+    "title": "Dishwasher material and product-care evidence",
+    "insight": "A durable resin is not proof that a specific bottle lid, seal or print survives the proposed dishwasher cycle.",
+    "next_step": "Ask for care restrictions and documented repeated-wash results for the decorated assembly.",
+    "sources": [
+      {
+        "label": "Eastman Tritan dishwasher FAQs",
+        "url": "https://www.eastman.com/en/products/brands/tritan/about/faqs"
+      },
+      {
+        "label": "FDA Food Code on cleanability",
+        "url": "https://www.fda.gov/media/164194/download"
+      }
+    ]
+  },
+  "why-does-reusable-water-bottle-smell-bad": {
+    "title": "Cleaning evidence for odor and damp bottle parts",
+    "insight": "Clinical guidance points to moisture and residue in removable seals and straw assemblies; finished-product odor claims require model-specific tests.",
+    "next_step": "Inspect lid passages and approved cleaning methods; keep material and lot records for recurring complaints.",
+    "sources": [
+      {
+        "label": "Cleveland Clinic reusable-bottle hygiene guidance",
+        "url": "https://health.clevelandclinic.org/mold-in-water-bottle"
+      },
+      {
+        "label": "Eastman Tritan hydration application overview",
+        "url": "https://www.eastman.com/en/products/brands/tritan/applications/hydration/water-bottles"
+      }
+    ]
   }
 }

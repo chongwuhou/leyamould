@@ -131,6 +131,15 @@ jobs:
       - name: Block indexing launch if old raw source cache is still public
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/preindex_security_gate.py
+      # Run the explicit, reviewed three-post D1 import only on authorized
+      # main-branch pushes; the 27 statements are insert-only / idempotent.
+      # Cloudflare D1 writes require independent D1 permissions; do not
+      # attempt this through site admin session or Pages metadata scopes.
+      - name: Publish 2026-10-19 reviewed Blog content into D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
+        run: |
+          python scripts/prepare_blog_release_20261019.py
+          python scripts/publish_blog_batch_20261019_d1.py
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         # The public site must run the authenticated XUYI snapshot endpoint.
@@ -187,6 +196,8 @@ jobs:
           python scripts/test_20261017_blog_cover_replacements.py
           node scripts/test_20261017_blog_batch_runtime.mjs
           python scripts/test_20261018_blog_batch.py
+          python scripts/test_20261019_blog_batch.py
+          node scripts/test_20261019_blog_batch_runtime.mjs
           node scripts/test_20261018_blog_batch_runtime.mjs
           python scripts/test_source_catalog_capacity_oz.py
           python scripts/test_source_sitemap_titles_h1_images.py

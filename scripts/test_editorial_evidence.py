@@ -22,7 +22,7 @@ for slug,item in items.items():
     assert f'article:modified_time" content="{date}"' in doc,slug
     for ref in item["sources"]:
         assert ref["url"] in doc,(slug,ref["url"])
-        assert ref["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/","https://www.uspto.gov/","https://www.pantone.com/"))
+        assert ref["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/","https://www.uspto.gov/","https://www.pantone.com/","https://health.clevelandclinic.org/"))
     assert 'not product certification' in doc,slug
 quality=(DIST/"quality-control/index.html").read_text(encoding="utf-8")
 factory=(DIST/"manufacturing/index.html").read_text(encoding="utf-8")

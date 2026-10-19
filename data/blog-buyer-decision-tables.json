@@ -1172,6 +1172,141 @@
           "/request-sample/"
         ]
       ]
+    },
+    "can-you-put-hot-water-in-plastic-water-bottle": {
+      "title": "Hot-water suitability: what to confirm",
+      "intro": "Compare finished-bottle use conditions and documentation, not only resin labels.",
+      "head": [
+        "Decision",
+        "Lower-risk approach",
+        "Question for the supplier"
+      ],
+      "rows": [
+        [
+          "Liquid temperature",
+          "Specify maximum temperature and contact time",
+          "What heat condition was actually tested?"
+        ],
+        [
+          "Components",
+          "Confirm body, cap, straw, gasket and valve",
+          "Does the evidence cover this assembled SKU?"
+        ],
+        [
+          "Food contact",
+          "Check destination-specific documentation",
+          "Which material and use conditions are covered?"
+        ],
+        [
+          "Claims",
+          "Approve a sample before a heat claim",
+          "What restrictions belong on the label?"
+        ]
+      ],
+      "links": [
+        [
+          "Review model 2501",
+          "/products/2501/"
+        ],
+        [
+          "Food contact checklist",
+          "/blog/plastic-water-bottle-food-contact-compliance-checklist/"
+        ],
+        [
+          "Request sample",
+          "/request-sample/"
+        ]
+      ]
+    },
+    "are-plastic-water-bottles-dishwasher-safe": {
+      "title": "Dishwasher suitability: verify every part",
+      "intro": "Check the tested wash cycle, cap, seals and custom decoration.",
+      "head": [
+        "Decision",
+        "Lower-risk approach",
+        "Question for the supplier"
+      ],
+      "rows": [
+        [
+          "Bottle body",
+          "Confirm resin grade and permitted cycle",
+          "Which wash and dry conditions were tested?"
+        ],
+        [
+          "Cap and straw",
+          "Follow documented removal instructions",
+          "Are any parts hand-wash only?"
+        ],
+        [
+          "Printed logo",
+          "Test the actual decorated sample",
+          "How did the print hold up to repeat cycles?"
+        ],
+        [
+          "Care text",
+          "State rack, cycle and drying restrictions",
+          "What care statement can be supported?"
+        ]
+      ],
+      "links": [
+        [
+          "View model 2409",
+          "/products/2409/"
+        ],
+        [
+          "Explore logo methods",
+          "/blog/water-bottle-logo-printing-methods/"
+        ],
+        [
+          "Request sample",
+          "/request-sample/"
+        ]
+      ]
+    },
+    "why-does-reusable-water-bottle-smell-bad": {
+      "title": "Odor troubleshooting: inspect the hidden areas",
+      "intro": "Locate retained residue before deciding whether to clean or replace components.",
+      "head": [
+        "Observed issue",
+        "What to check",
+        "Question for the supplier"
+      ],
+      "rows": [
+        [
+          "Straw and spout smell",
+          "Inspect channels and removable parts",
+          "How should users clean or replace the straw?"
+        ],
+        [
+          "Body smell",
+          "Review liquid use and drying",
+          "What cleaning restrictions apply?"
+        ],
+        [
+          "New bottle odor",
+          "Inspect packing and exact materials",
+          "What lot inspection criteria are used?"
+        ],
+        [
+          "Recurring complaints",
+          "Trace the cap and gasket revision",
+          "Can replacement wear parts be supplied?"
+        ]
+      ],
+      "links": [
+        [
+          "Review model 2309",
+          "/products/2309/"
+        ],
+        [
+          "Replace lid parts",
+          "/blog/replacement-water-bottle-lids-bulk/"
+        ],
+        [
+          "Check product QC",
+          "/blog/water-bottle-quality-control-checklist/"
+        ]
+      ]
     }
   }
 }

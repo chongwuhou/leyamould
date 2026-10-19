@@ -72,7 +72,7 @@ export function renderDepthEvidence(post){
  if(Array.isArray(row.sources)&&row.sources.length){
   out+='<nav class="blog-deep-dive__sources" aria-label="Official research references"><h3>Research references from official authorities</h3><ul>';
   for(const source of row.sources){
-   if(!/^https:\/\/(?:www\.fda\.gov|www\.cpsc\.gov|www\.iso\.org|www\.ftc\.gov|www\.ista\.org|www\.eastman\.com|food\.ec\.europa\.eu|eur-lex\.europa\.eu|echa\.europa\.eu|iccwbo\.org|www\.uspto\.gov|www\.uspto\.gov|www\.pantone\.com)\//.test(source.url))continue;
+   if(!/^https:\/\/(?:www\.fda\.gov|www\.cpsc\.gov|www\.iso\.org|www\.ftc\.gov|www\.ista\.org|www\.eastman\.com|food\.ec\.europa\.eu|eur-lex\.europa\.eu|echa\.europa\.eu|iccwbo\.org|www\.uspto\.gov|www\.uspto\.gov|www\.pantone\.com|health\.clevelandclinic\.org)\//.test(source.url))continue;
    out+='<li><a href="'+esc(source.url)+'" rel="noopener noreferrer" target="_blank">'+esc(source.label)+' ↗</a></li>';
   }
   out+='</ul><p>These independent educational sources are not certificates of any XUYI product, material or factory.</p></nav>';
@@ -113,7 +113,7 @@ function verifiedEvidence(post){
  const evidence=EDITORIAL_EVIDENCE[post?.slug];
  if(!evidence)return "";
  const sourceLinks=evidence.sources.filter(s=>
-  /^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com|www\.uspto\.gov|www\.pantone\.com)\//.test(s.url))
+  /^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com|www\.uspto\.gov|www\.pantone\.com|health\.clevelandclinic\.org)\//.test(s.url))
   .map(s=>'<li><a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+esc(s.label)+' ↗</a></li>').join("");
  if(sourceLinks.length===0)return "";
  return '<section class="blog-evidence" id="primary-sources" aria-labelledby="primary-sources-heading"><span class="eyebrow">SOURCE-CHECKED BUYER NOTES</span><h2 id="primary-sources-heading">'+esc(evidence.title)+'</h2><p>'+esc(evidence.insight)+'</p><p><strong>Practical next step:</strong> '+esc(evidence.next_step)+'</p><h3>Primary references</h3><ul>'+sourceLinks+'</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>';
@@ -323,7 +323,7 @@ export function composePage(template,body,post,route){
   const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'XUYI Bottles',url:'https://xuyibottles.com/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
   if(actualPublishedDate(post))graph.datePublished=actualPublishedDate(post);
   if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
-    .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com|www\.uspto\.gov|www\.pantone\.com)\//.test(s.url))
+    .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com|www\.uspto\.gov|www\.pantone\.com|health\.clevelandclinic\.org)\//.test(s.url))
     .map(s=>({'@type':'CreativeWork',name:s.label,url:s.url}));
   const safe=JSON.stringify(graph).replace(/</g,'\\u003c');
   // Only the actual visible CMS FAQs are marked up; no Google-rich-result promise.
@@ -339,3 +339,4 @@ export function composePage(template,body,post,route){
  }
  return html;
 }
+
