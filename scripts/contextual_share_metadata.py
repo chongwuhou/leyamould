@@ -25,7 +25,7 @@ IMAGES={
  "/blog/":"/assets/blog/bottle-inspection-topics-20261013.webp",
  "/capabilities/":"/media/ppt/slide-020.webp",
  "/capabilities/oem-odm/":"/media/ppt/slide-059.webp",
- "/collections/kids-water-bottles/":"/media/excel/row-008.webp",
+ "/collections/kids-water-bottles/":"/assets/social/product-social-kids.webp",
  "/collections/large-capacity-water-jugs/":"/assets/lo/lo-001-01.webp",
  "/collections/plastic-shaker-bottles/":"/assets/sku-hd/slide-091-gpt-reviewed-20261013.webp",
  "/collections/sports-water-bottles/":"/assets/lo/lo-002-01.webp",

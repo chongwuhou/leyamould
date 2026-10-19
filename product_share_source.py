@@ -16,6 +16,22 @@ CATEGORY_PREVIEWS = {
 }
 
 
+def add_kids_collection_preview(document, route):
+    """Render approved category artwork before output, preserving CMS social metadata."""
+    if route != "/collections/kids-water-bottles/":
+        return document
+    head, sep, tail = document.partition("</head>")
+    if not sep:
+        raise ValueError("Missing head")
+    if re.search(r'<meta\s+property=["\']og:image["\']', head, re.I) or re.search(r'<meta\s+name=["\']twitter:image["\']', head, re.I):
+        return document
+    image = ORIGIN + CATEGORY_PREVIEWS["Kids Plastic Water Bottles"]
+    tags = ('<meta property="og:image" content="' + escape(image, quote=True) + '">'
+            '<meta name="twitter:card" content="summary_large_image">'
+            '<meta name="twitter:image" content="' + escape(image, quote=True) + '">')
+    return head + tags + sep + tail
+
+
 def real_product_images(product):
     """Skip Excel spreadsheet rows, generic category art and mismatched reuse."""
     # The six human-reviewed shaker HD photos already have a permanent

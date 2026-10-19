@@ -284,6 +284,9 @@ def build_url(path,title,content):
  # a post-build HTML rewrite. D1 owner-edited SEO is always authoritative.
  from search_intent_roles import render_search_intent
  content=render_search_intent(content,route,'en')
+ # Source-owned Kids collection social preview; existing CMS edits take precedence.
+ from product_share_source import add_kids_collection_preview
+ content=add_kids_collection_preview(content,route)
  URLS[path]=title
  write(path,content)
 ICONS={

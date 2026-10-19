@@ -25,6 +25,17 @@ for model,product in site.SERIES.items():
     inquiry_model=product["model"] if product.get("loNew") or product.get("galleryReference") else product["slug"]
     assert 'href="/contact/?model='+inquiry_model+'&amp;type=Samples#inquiry"' in main,model
     assert 'href="/contact/?model='+inquiry_model+'#inquiry"' in main,model
+    # Intro must follow H1 in every published locale, not below the detail grid.
+    for locale in ("en","es","pt","ru","tr"):
+        localized=ROOT/"dist"/("" if locale=="en" else locale)/"products"/product["slug"]/"index.html"
+        assert localized.is_file(),(model,locale,"missing locale")
+        html=localized.read_text(encoding="utf8")
+        main_html=html.split('<main id="main-content">',1)[1].split("</main>",1)[0]
+        h1=re.search(r"</h1>",main_html,re.I)
+        assert h1,(model,locale,"missing H1")
+        after=main_html[h1.end():]
+        assert re.match(r'\s*(?:<div class="product-detail__lead"><p class="copy-muted">|<p\b[^>]*\bclass="[^"]*\bcopy-muted\b[^"]*"[^>]*>)',after),(model,locale,"intro not directly after H1")
+        assert main_html.count('class="product-detail__lead"')<=1,(model,locale,"duplicate intro")
     count+=1
 assert count==len(site.SERIES) and count>=93,count
 print("XUYI_PRODUCT_DETAILS_TEMPLATE_REGRESSION_PASSED",count,"models")

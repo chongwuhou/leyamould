@@ -162,11 +162,11 @@ def detail(product,locale):
       '<div class="product-detail"><div class="product-detail__photos"><div class="product-detail__main">'+
       photograph+'</div>'+thumbs+'<p class="copy-muted">'+esc(w["imagesNote"])+'</p></div>'
       '<div><span class="eyebrow">'+esc(w["eyebrow"])+' · '+esc(model)+'</span>'
-      '<h1>'+esc(name)+'</h1>'
+      '<h1>'+esc(name)+'</h1><div class="product-detail__lead"><p class="copy-muted">'+esc(w["introduction"])+'</p></div>'
       '<table class="spec"><tbody>'+rows+'</tbody></table><div class="actions"><a class="button" href="'+esc(link)+'#inquiry">'+
       esc(w["cta"])+' →</a><a class="button button--outline" href="'+esc(link)+'&amp;type=Samples#inquiry">'+
       esc(w["sample"])+' ↗</a></div><p class="product-detail__quote-note">'+esc(w["info"])+'</p>'
-      '<p class="notice">'+esc(w["materialNotice"])+'</p></div></div><div class="product-detail__lead"><p class="copy-muted">'+esc(w["introduction"])+'</p></div></div></section>')
+      '<p class="notice">'+esc(w["materialNotice"])+'</p></div></div></div></section>')
     benefits=''.join('<article class="benefit"><h3>'+esc(w[h])+'</h3><p>'+esc(w[t])+'</p></article>'
                      for h,t in (("design","designText"),("terms","termsText"),("special","specialText")))
     details='<section class="section section--soft product-content"><div class="shell"><div class="section__head"><div><span class="eyebrow">'+esc(w["eyebrow"])+'</span><h2 class="section__title">'+esc(w["featuresTitle"])+'</h2></div></div><div class="grid grid--3">'+benefits+'</div></div></section>'

@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 import sys
 ROOT=Path(__file__).resolve().parent.parent
+sys.path.insert(0,str(ROOT))
 sys.path.insert(0,str(ROOT/"scripts"))
 from contextual_share_metadata import IMAGES,LOCALES,ORIGIN
 
@@ -33,5 +34,20 @@ for route in ("contact","privacy-policy"):
         prefix="" if lang=="en" else lang+"/"
         head=(dist/prefix/route/"index.html").read_text(encoding="utf8").split("</head>",1)[0]
         assert 'property="og:image"' not in head,(lang,route)
+from product_share_source import add_kids_collection_preview, CATEGORY_PREVIEWS
+kids_route="/collections/kids-water-bottles/"
+kids_url=ORIGIN+CATEGORY_PREVIEWS["Kids Plastic Water Bottles"]
+for lang in LOCALES:
+    prefix="" if lang=="en" else lang+"/"
+    head=(dist/prefix/kids_route.strip("/")/"index.html").read_text(encoding="utf8").split("</head>",1)[0]
+    assert '<meta property="og:image" content="'+kids_url+'">' in head,(lang,"kids OG")
+    assert '<meta name="twitter:image" content="'+kids_url+'">' in head,(lang,"kids Twitter")
+    assert "/media/excel/row-008.webp" not in head,(lang,"legacy spreadsheet preview")
+owner='<html><head><meta property="og:image" content="https://xuyibottles.com/media/product/owner-approved.webp"></head><body></body></html>'
+assert add_kids_collection_preview(owner,kids_route)==owner,"owner CMS OG must survive"
+shell='<html><head></head><body></body></html>'
+once=add_kids_collection_preview(shell,kids_route)
+assert kids_url in once and add_kids_collection_preview(once,kids_route)==once,"idempotency"
+assert add_kids_collection_preview(shell,"/collections/sports-water-bottles/")==shell
 assert total==130
 print("XUYI_SOCIAL_PREVIEW_130_PAGES_FIVE_LOCALES_PASSED")

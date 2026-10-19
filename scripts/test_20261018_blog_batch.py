@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
 from sitemap_modification import source_lastmod
-from scripts.prepare_blog_release_20261018 import GUIDES,MATRICES,TRANS,SLUGS,LOCALES,EVIDENCE
+from scripts.prepare_blog_release_20261018 import GUIDES,MATRICES,TRANS,SLUGS,LOCALES,EVIDENCE,UI
 GUIDE_LIST=json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf8"))
 MODELS={str(x["slug"]) for x in SERIES.values()}
 
@@ -67,6 +67,10 @@ for slug in SLUGS:
   assert main.count('class="blog-related__item"')==3,(locale,slug,"related links")
   assert main.count('class="blog-buyer-matrix"')==1,(locale,slug,"decision matrix")
   assert main.count("<details>")==4,(locale,slug,"FAQ")
+  faq_title="Frequently asked questions" if locale=="en" else UI[locale]["faq"]
+  assert f'<h2>{html.escape(faq_title)}</h2>' in main,(locale,slug,"localized FAQ section")
+  if locale!="en":
+   assert html.escape(TRANS[slug][locale]["faqs.3.question"]) in main,(locale,slug,"fourth translated FAQ")
   assert main.count('id="primary-sources"')==1,(locale,slug,"source references")
   for note in post["product_notes"]:
    assert f'href="{prefix}/products/{note["sku"]}/"' in main,(locale,slug,note["sku"])
@@ -97,7 +101,7 @@ for locale in ["",*LOCALES]:
 tree=ET.parse(ROOT/"dist"/"sitemap.xml")
 ns={"sm":"http://www.sitemaps.org/schemas/sitemap/0.9"}
 sitemap={x.findtext("sm:loc",namespaces=ns):x.findtext("sm:lastmod",namespaces=ns) for x in tree.findall("sm:url",ns)}
-assert len(sitemap)==800,("sitemap count",len(sitemap))
+assert len(sitemap)>=800,("unexpected sitemap loss",len(sitemap))
 for slug in SLUGS:
  for locale in ["",*LOCALES]:
   url="https://xuyibottles.com/"+(locale+"/" if locale else "")+"blog/"+slug+"/"

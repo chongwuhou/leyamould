@@ -14,6 +14,13 @@
 
 Production branch: main; Cloudflare Pages: xuyi-drinkware-site; GitHub: chongwuhou/xuyi-drinkware-site.
 
+## Production status update (2026-10-19)
+- The published site has EN, ES, PT, RU and TR, with indexing enabled. The 2026-10-18 three-article Blog batch is live in all five locales; changes must be published through the XUYI GitHub Actions source build and checked against production build-meta SHA.
+- D1's public /api/site-settings read reported inquiry.acceptsForm=true on 2026-10-19. This indicates the form readiness gate is on, not that a new end-to-end delivery test has been completed.
+- The product introduction is positioned in the source template/locale-owned HTML directly after the H1; the Kids category social preview is selected by the source renderer without overwriting editor-defined social tags.
+- Unconfirmed catalog photos are not to be substituted without same-model proof: 2309/2310 have identical source image bytes; 2099/2100 share one gallery asset; 2409 has a 924x540 original. A higher pixel count alone does not verify product identity.
+- Older 2026-10-13 preview, form-disabled and noindex remarks below are historical. Do not treat them as current production settings.
+
 ## Current release and remaining source-photo work (2026-10-13)
 - Canonical domain https://xuyibottles.com; five published languages EN, ES, PT, RU, TR.
 - 101 product/model-reference pages per language; 755 canonical sitemap URLs.
