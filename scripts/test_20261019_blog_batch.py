@@ -137,6 +137,11 @@ for locale in LOCALES:
   matches=[card for card in cards if "/blog/"+slug+"/" in card]
   assert len(matches)==1,(locale,slug,"D1 index card count",len(matches))
   assert matches[0].count('href="/blog/'+slug+'/"')==3,(locale,slug,"card image/title/read links")
+workflow=(ROOT/".github/workflows/publish-xuyi.yml").read_text(encoding="utf8")
+publisher=(ROOT/"scripts/publish_blog_batch_20261019_d1.py").read_text(encoding="utf8")
+assert "CLOUDFLARE_D1_API_TOKEN: ${{ secrets.CLOUDFLARE_D1_API_TOKEN }}" in workflow
+assert 'os.environ.get("CLOUDFLARE_D1_API_TOKEN","")' in publisher
+assert 'os.environ.get("CLOUDFLARE_API_TOKEN","")' not in publisher
 print("XUYI_20261019_D1_SNAPSHOT_OWNER_TRANSLATIONS_INDEX_CARDS_PASSED")
 print("XUYI_20261019_THREE_BLOGS_FIVE_LOCALES_SEO_LINKS_IMAGES_SITEMAP_PASSED")
 

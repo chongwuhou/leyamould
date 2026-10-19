@@ -46,7 +46,15 @@ def req(method,url,token,payload=None):
         with urllib.request.urlopen(urllib.request.Request(url,data=data,headers=headers,method=method),timeout=55) as r:
             obj=json.load(r)
     except urllib.error.HTTPError as err:
-        raise RuntimeError("Cloudflare D1 HTTP status "+str(err.code)+", verify XUYI D1 permission") from None
+        detail=""
+        try:
+            body=json.loads(err.read().decode("utf8"))
+            errors=body.get("errors",[]) if isinstance(body,dict) else []
+            messages=[str(item.get("code"))+": "+str(item.get("message",""))[:240] for item in errors if isinstance(item,dict)]
+            if messages:detail=" ("+"; ".join(messages)+")"
+        except Exception:
+            pass
+        raise RuntimeError("Cloudflare D1 HTTP status "+str(err.code)+detail+"; verify CLOUDFLARE_D1_API_TOKEN has D1 Edit access for the XUYI account") from None
     if not isinstance(obj,dict) or not obj.get("success"):
         codes=[item.get("code") for item in obj.get("errors",[]) if isinstance(item,dict)] if isinstance(obj,dict) else []
         raise RuntimeError("D1 API reported failure "+str(codes))
@@ -58,8 +66,10 @@ def main():
     if "--dry-run" in sys.argv:
         print("DRY_RUN_NO_WRITE")
         return
-    token=os.environ.get("CLOUDFLARE_API_TOKEN","")
-    if not token or os.environ.get("GITHUB_EVENT_NAME")!="push" or os.environ.get("GITHUB_REF")!="refs/heads/main" or os.environ.get("CLOUDFLARE_ACCOUNT_ID")!=ACCOUNT:
+    token=os.environ.get("CLOUDFLARE_D1_API_TOKEN","")
+    if not token:
+        raise SystemExit("Missing CLOUDFLARE_D1_API_TOKEN GitHub Actions secret; the Pages deployment token is intentionally not reused for D1 writes")
+    if os.environ.get("GITHUB_EVENT_NAME")!="push" or os.environ.get("GITHUB_REF")!="refs/heads/main" or os.environ.get("CLOUDFLARE_ACCOUNT_ID")!=ACCOUNT:
         raise SystemExit("Only XUYI GitHub main push can publish D1 records")
     database=req("GET",BASE+"?name="+NAME,token)
     if not isinstance(database,list):raise RuntimeError("Unexpected D1 database list")
