@@ -103,14 +103,20 @@ def localized_card(post,locale):
 
 def prepare():
  total=0
+ posts=[]
+ translations=[]
+ index_cards=[]
  for slug in SLUGS:
   post=GUIDES[slug]
+  posts.append({"slug":slug,"post":post,"publishedAt":"2026-10-19T00:00:00Z"})
   payload=json.dumps(post,ensure_ascii=False,separators=(",",":"))
   stmt="INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at,updated_at) VALUES ("+sql_quote(slug)+",'published',"+sql_quote(payload)+",'2026-10-19T00:00:00Z',CURRENT_TIMESTAMP) ON CONFLICT(slug) DO NOTHING;"
   save(slug+"-post.sql",stmt);total+=1
   for loc in LOCALES:
    t=TRANS[slug][loc]
-   content={"title":t["title"],"description":t["description"],"mainHtml":local_main(post,loc)}
+   main_html=local_main(post,loc)
+   content={"title":t["title"],"description":t["description"],"mainHtml":main_html}
+   translations.append({"route":"/blog/"+slug+"/","locale":loc,**content})
    payload=json.dumps(content,ensure_ascii=(loc=="ru"),separators=(",",":"))
    rid="page:/blog/"+slug+"/"
    stmt="INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at) VALUES ("+sql_quote(rid)+","+sql_quote(loc)+","+sql_quote(payload)+",'2026-10-19') ON CONFLICT(resource_id,locale) DO NOTHING;"
@@ -120,6 +126,7 @@ def prepare():
   statements=[]
   for slug in SLUGS:
    post=GUIDES[slug];card=localized_card(post,loc)
+   index_cards.append({"locale":loc,"slug":slug,"html":card})
    # A guarded, append-only D1 CMS update: never replace existing owner copy.
    jsonpath="$.mainHtml"
    expression="json_extract(translated_json,'"+jsonpath+"')"
@@ -128,5 +135,7 @@ def prepare():
    stmt="UPDATE xuyi_translation_overrides SET translated_json=json_set(translated_json,'"+jsonpath+"',"+newhtml+"),reviewed_at='2026-10-19' WHERE resource_id='page:/blog/' AND locale="+sql_quote(loc)+" AND substr("+expression+",-length("+tail+"))="+tail+" AND instr("+expression+","+sql_quote("/blog/"+slug+"/")+")=0;"
    statements.append(stmt)
   save("index-"+loc+".sql","\n".join(statements))
- print("BLOG_CMS_SQL_PREPARED",total,"ARTICLES/TRANSLATIONS + 4 INDEX FILES")
+ manifest={"posts":posts,"translations":translations,"indexCards":index_cards}
+ (OUT/"payload.json").write_text(json.dumps(manifest,ensure_ascii=False,separators=(",",":")),encoding="utf8")
+ print("BLOG_CMS_SQL_PREPARED",total,"ARTICLES/TRANSLATIONS + 4 INDEX FILES; API_PAYLOAD",len(posts),len(translations),len(index_cards))
 if __name__=="__main__":prepare()

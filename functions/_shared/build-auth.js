@@ -61,3 +61,10 @@ export async function authorizedBuildRequest(request, env) {
   if (!BUILD_READ_PATHS.has(pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
+
+// The reviewed batch endpoint is the only write route that may accept the
+// existing CI token after it proves access to this exact Pages project.
+export async function authorizedReviewedBlogBatchRequest(request, env) {
+  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-batch") return false;
+  return verifyCloudflareProjectToken(bearerToken(request), env);
+}

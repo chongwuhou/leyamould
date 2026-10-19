@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
-"""Publish reviewed 2026-10-19 XUYI Blog sources to Cloudflare D1 from GitHub Actions.
-Insert-only articles and translations; guarded index updates; never overwrite CMS edits.
-"""
+"""Publish the reviewed XUYI Blog batch through the site's authenticated D1 CMS binding."""
 import json, os, sys, urllib.error, urllib.request
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
 BATCH=ROOT/"_local_ops/blog-batch-20261019"
 ACCOUNT="a4032d0251103d6ef680b2aaddce1afc"
-NAME="xuyi-drinkware-d1"
 SLUGS=("can-you-put-hot-water-in-plastic-water-bottle","are-plastic-water-bottles-dishwasher-safe","why-does-reusable-water-bottle-smell-bad")
 LOCALES=("es","pt","ru","tr")
-BASE=f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT}/d1/database"
 
 def planned():
-    records=[]
     for slug in SLUGS:
         for suffix in ("post",*LOCALES):
             name=f"{slug}-{suffix}.sql"
@@ -24,7 +19,6 @@ def planned():
             expected="INSERT INTO xuyi_blog_posts" if suffix=="post" else "INSERT INTO xuyi_translation_overrides"
             if len(sql)!=1 or not sql[0].startswith(expected) or "ON CONFLICT" not in sql[0]:
                 raise RuntimeError("Unsafe D1 insert "+name)
-            records.append((name,sql[0]))
     for locale in LOCALES:
         file=BATCH/f"index-{locale}.sql"
         if not file.is_file():raise RuntimeError("Missing localized index SQL")
@@ -33,65 +27,51 @@ def planned():
         for i,stmt in enumerate(sql):
             if not stmt.startswith("UPDATE xuyi_translation_overrides SET") or "ON CONFLICT" in stmt or f"resource_id='page:/blog/' AND locale='{locale}'" not in stmt or f"/blog/{SLUGS[i]}/" not in stmt or "instr(" not in stmt:
                 raise RuntimeError("Unsafe D1 index update")
-            records.append((f"index-{locale}-{i}",stmt))
-    return records
+    manifest=BATCH/"payload.json"
+    if not manifest.is_file():raise RuntimeError("Missing reviewed CMS payload; run prepare_blog_release_20261019.py first")
+    payload=json.loads(manifest.read_text(encoding="utf8"))
+    if {x.get("slug") for x in payload.get("posts",[])}!=set(SLUGS):
+        raise RuntimeError("Reviewed payload article set mismatch")
+    if len(payload.get("translations",[]))!=len(SLUGS)*len(LOCALES) or len(payload.get("indexCards",[]))!=len(SLUGS)*len(LOCALES):
+        raise RuntimeError("Reviewed payload translation/index counts mismatch")
+    return payload
 
-def req(method,url,token,payload=None):
-    headers={"Authorization":"Bearer "+token,"Accept":"application/json","User-Agent":"XUYI-Reviewed-Blog-Publisher/1.0"}
-    data=None
-    if payload is not None:
-        data=json.dumps(payload,ensure_ascii=False,separators=(",",":")).encode("utf8")
-        headers["Content-Type"]="application/json"
+def req(url,token,payload):
+    headers={"Authorization":"Bearer "+token,"Accept":"application/json","User-Agent":"XUYI-Reviewed-Blog-Publisher/1.0","Content-Type":"application/json"}
+    data=json.dumps(payload,ensure_ascii=False,separators=(",",":")).encode("utf8")
     try:
-        with urllib.request.urlopen(urllib.request.Request(url,data=data,headers=headers,method=method),timeout=55) as r:
-            obj=json.load(r)
+        with urllib.request.urlopen(urllib.request.Request(url,data=data,headers=headers,method="POST"),timeout=90) as response:
+            obj=json.load(response)
     except urllib.error.HTTPError as err:
         detail=""
         try:
             body=json.loads(err.read().decode("utf8"))
-            errors=body.get("errors",[]) if isinstance(body,dict) else []
-            messages=[str(item.get("code"))+": "+str(item.get("message",""))[:240] for item in errors if isinstance(item,dict)]
-            if messages:detail=" ("+"; ".join(messages)+")"
+            message=body.get("error","") if isinstance(body,dict) else ""
+            if message:detail=" ("+str(message)[:300]+")"
         except Exception:
             pass
-        raise RuntimeError("Cloudflare D1 HTTP status "+str(err.code)+detail+"; verify CLOUDFLARE_D1_API_TOKEN has D1 Edit access for the XUYI account") from None
+        raise RuntimeError("XUYI reviewed CMS HTTP status "+str(err.code)+detail) from None
     if not isinstance(obj,dict) or not obj.get("success"):
-        codes=[item.get("code") for item in obj.get("errors",[]) if isinstance(item,dict)] if isinstance(obj,dict) else []
-        raise RuntimeError("D1 API reported failure "+str(codes))
-    return obj["result"]
+        raise RuntimeError("XUYI reviewed CMS rejected the batch: "+str(obj.get("error","unknown error") if isinstance(obj,dict) else "invalid response"))
+    return obj
 
 def main():
-    records=planned()
-    print("XUYI_D1_REVIEWED_STATEMENTS",len(records),flush=True)
+    payload=planned()
+    print("XUYI_REVIEWED_BATCH",len(payload["posts"]),"ARTICLES",len(payload["translations"]),"TRANSLATIONS",len(payload["indexCards"]),"INDEX_CARDS",flush=True)
     if "--dry-run" in sys.argv:
         print("DRY_RUN_NO_WRITE")
         return
-    token=os.environ.get("CLOUDFLARE_D1_API_TOKEN","")
+    token=os.environ.get("CLOUDFLARE_API_TOKEN","")
     if not token:
-        raise SystemExit("Missing CLOUDFLARE_D1_API_TOKEN GitHub Actions secret; the Pages deployment token is intentionally not reused for D1 writes")
+        raise SystemExit("Missing existing CLOUDFLARE_API_TOKEN GitHub Actions secret")
     if os.environ.get("GITHUB_EVENT_NAME")!="push" or os.environ.get("GITHUB_REF")!="refs/heads/main" or os.environ.get("CLOUDFLARE_ACCOUNT_ID")!=ACCOUNT:
-        raise SystemExit("Only XUYI GitHub main push can publish D1 records")
-    database=req("GET",BASE+"?name="+NAME,token)
-    if not isinstance(database,list):raise RuntimeError("Unexpected D1 database list")
-    candidates=[row for row in database if row.get("name")==NAME and row.get("uuid")]
-    if len(candidates)!=1:raise RuntimeError("Expected exactly one XUYI D1 database")
-    endpoint=BASE+"/"+candidates[0]["uuid"]+"/query"
-    def query(sql):
-        response=req("POST",endpoint,token,{"sql":sql})
-        if not isinstance(response,list) or not response or not all(entry.get("success") for entry in response):
-            raise RuntimeError("D1 SQL execution failure")
-        return response
-    query("SELECT slug FROM xuyi_blog_posts WHERE 1=0")
-    modified=0
-    for name,sql in records:
-        result=query(sql)
-        changes=sum(int(item.get("meta",{}).get("changes",0)) for item in result)
-        modified+=changes
-        print("XUYI_D1_RECORD",name,"changes",changes,flush=True)
-    quoted=",".join("'"+slug+"'" for slug in SLUGS)
-    found=query("SELECT slug,status FROM xuyi_blog_posts WHERE slug IN ("+quoted+")")[0].get("results",[])
-    if {row.get("slug") for row in found if row.get("status")=="published"}!=set(SLUGS):
-        raise RuntimeError("D1 publication failed final three-post check")
-    print("XUYI_D1_BATCH_CONFIRMED",len(SLUGS),"ARTICLES",len(LOCALES),"LANGUAGES","D1_CHANGES",modified)
+        raise SystemExit("Only XUYI GitHub main push can publish reviewed D1 records")
+    origin=os.environ.get("SITE_ORIGIN","https://xuyibottles.com").rstrip("/")
+    result=req(origin+"/api/admin/blog-batch",token,payload)
+    print("XUYI_D1_BATCH_CONFIRMED",len(result["publishedSlugs"]),"ARTICLES",
+          len(LOCALES),"LANGUAGES","POSTS_INSERTED",result["postsInserted"],
+          "TRANSLATIONS_INSERTED",result["translationsInserted"],
+          "INDEX_CARDS_ADDED",result["indexCardsAdded"],
+          "PUBLISH_REVISION",result["publishRevision"],flush=True)
 
 if __name__=="__main__":main()

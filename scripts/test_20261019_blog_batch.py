@@ -1,5 +1,5 @@
 from pathlib import Path
-import html,json,re,sys
+import html,json,re,sys,os
 from xml.etree import ElementTree as ET
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
@@ -110,8 +110,7 @@ assert sitemap.get("https://xuyibottles.com/blog/")=="2026-10-19"
 robots=(ROOT/"dist"/"robots.txt").read_text(encoding="utf8")
 assert "Allow: /" in robots and "Disallow: /admin/" in robots and "Sitemap: https://xuyibottles.com/sitemap.xml" in robots
 # CI fetches this snapshot from the live XUYI D1 CMS before building.
-# Verify that the actual saved translations and appended index cards—not only
-# generated static HTML—contain the reviewed article content exactly once.
+# Verify saved translations and append-only index cards, not only static HTML.
 snapshot_path=ROOT/"_local_ops"/"build-snapshot.json"
 assert snapshot_path.is_file(),"Build must use a fresh authenticated XUYI D1 snapshot"
 snapshot=json.loads(snapshot_path.read_text(encoding="utf8"))
@@ -137,11 +136,25 @@ for locale in LOCALES:
   matches=[card for card in cards if "/blog/"+slug+"/" in card]
   assert len(matches)==1,(locale,slug,"D1 index card count",len(matches))
   assert matches[0].count('href="/blog/'+slug+'/"')==3,(locale,slug,"card image/title/read links")
+
 workflow=(ROOT/".github/workflows/publish-xuyi.yml").read_text(encoding="utf8")
 publisher=(ROOT/"scripts/publish_blog_batch_20261019_d1.py").read_text(encoding="utf8")
-assert "CLOUDFLARE_D1_API_TOKEN: ${{ secrets.CLOUDFLARE_D1_API_TOKEN }}" in workflow
-assert 'os.environ.get("CLOUDFLARE_D1_API_TOKEN","")' in publisher
-assert 'os.environ.get("CLOUDFLARE_API_TOKEN","")' not in publisher
+endpoint=(ROOT/"functions/api/admin/blog-batch.js").read_text(encoding="utf8")
+auth=(ROOT/"functions/_shared/build-auth.js").read_text(encoding="utf8")
+assert "CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}" in workflow
+assert "CLOUDFLARE_D1_API_TOKEN" not in workflow
+assert 'os.environ.get("CLOUDFLARE_API_TOKEN","")' in publisher
+assert '"/api/admin/blog-batch"' in publisher
+assert "api.cloudflare.com/client/v4/accounts/" not in publisher
+assert "authorizedReviewedBlogBatchRequest" in endpoint and "authorizedReviewedBlogBatchRequest" in auth
+assert "ON CONFLICT(slug) DO NOTHING" in endpoint
+assert "ON CONFLICT(resource_id,locale) DO NOTHING" in endpoint
+assert "instr(json_extract(translated_json,'$.mainHtml'),?)=0" in endpoint
+assert "CLOUDFLARE_D1_API_TOKEN" not in publisher
+if os.environ.get("XUYI_BATCH_BOOTSTRAP_ONLY") == "1":
+ assert "prepare_blog_bootstrap_snapshot.py" in workflow
+else:
+ assert "python scripts/publish_blog_batch_20261019_d1.py" in workflow
 print("XUYI_20261019_D1_SNAPSHOT_OWNER_TRANSLATIONS_INDEX_CARDS_PASSED")
 print("XUYI_20261019_THREE_BLOGS_FIVE_LOCALES_SEO_LINKS_IMAGES_SITEMAP_PASSED")
 
