@@ -8,6 +8,7 @@ on:
       - "scripts/**"
       - "build.py"
       - "site_renderer.py"
+      - "product_share_source.py"
       - "product_locale_seo.py"
       - "product_material_performance.py"
       - "media_quality_guard.py"
