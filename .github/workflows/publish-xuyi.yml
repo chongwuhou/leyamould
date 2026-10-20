@@ -148,6 +148,12 @@ jobs:
       - name: Publish approved 2026-10-20 procurement guides to existing D1 CMS
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-20 B2B procurement guides'
         run: python scripts/publish_blog_batch_20261020_d1.py
+      # Runs only AFTER the new authenticated endpoint has been separately
+      # deployed by the preceding setup commit. D1's permanent ledger guards
+      # replays, retries and manual deletions of existing public reviews.
+      - name: Publish initial three authentic spreadsheet reviews
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Initialize XUYI daily authentic review publication'
+        run: python scripts/publish_daily_product_reviews.py
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         # The public site must run the authenticated XUYI snapshot endpoint.
@@ -170,6 +176,8 @@ jobs:
           node scripts/test_single_product_api.mjs
           python scripts/test_product_reviews_source.py
           node scripts/test_product_reviews_api.mjs
+          python scripts/test_daily_product_reviews.py
+          node scripts/test_daily_product_reviews_api.mjs
           python scripts/test_product_components.py
           python scripts/test_buyer_content.py
           python scripts/test_model_catalog_buyer_comparison.py

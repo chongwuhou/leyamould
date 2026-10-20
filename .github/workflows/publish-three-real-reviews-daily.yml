@@ -1,0 +1,32 @@
+name: XUYI daily three authentic product reviews
+on:
+  schedule:
+    # 09:17 Beijing time, daily (01:17 UTC).
+    - cron: "17 1 * * *"
+  workflow_dispatch:
+concurrency:
+  group: xuyi-drinkware-production
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  publish-reviewed-excel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate exact Excel-to-SKU mapping and deduplication
+        run: |
+          python scripts/test_daily_product_reviews.py
+          node scripts/test_daily_product_reviews_api.mjs
+          python scripts/publish_daily_product_reviews.py --dry-run
+      - name: Publish up to three never-before-published SKUs to D1
+        run: python scripts/publish_daily_product_reviews.py
