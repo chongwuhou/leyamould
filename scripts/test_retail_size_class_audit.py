@@ -10,10 +10,17 @@ sys.path.insert(0,str(ROOT/"scripts"))
 from source_catalog_capacity_oz import (
     SERIES,LOCALES,MILLILITERS_PER_US_FL_OZ,RETAIL_SIZES,
     MARKET_CLASS_MAX_DIFFERENCE,volume_terms,format_oz,catalog_volume_numbers,
-    NO_CAPACITY_META_DIGESTS
+    NO_CAPACITY_META_DIGESTS,current_baseline
 )
+from cms_seo_curation_guard import snapshot
 
 DIST=ROOT/"dist"
+SOURCE_OWNER=snapshot()
+PERSISTED_PRODUCT_SEO={
+    (r.get("slug"),r.get("locale")):r
+    for r in SOURCE_OWNER.get("productSeo",[])
+    if isinstance(r,dict)
+}
 models=list(SERIES.values())
 known={n for row in models for n in catalog_volume_numbers(row)}
 assert set(RETAIL_SIZES)==known,(sorted(set(RETAIL_SIZES)-known),sorted(known-set(RETAIL_SIZES)))
@@ -45,14 +52,22 @@ for row in models:
         desc=unescape(re.search(r'<meta name="description" content="([^"]+)"',head).group(1))
         assert title not in titles[lang],(lang,slug,"duplicate SEO title")
         titles[lang].add(title)
-        assert "Tritan" in desc and "BPA" in desc,(lang,slug,"missing requested conditional SEO")
-        assert len(desc)<=180,(lang,slug,"overlong meta",len(desc))
+        owner_selected=PERSISTED_PRODUCT_SEO.get((slug,lang))
+        source_default=not owner_selected and current_baseline(lang,row,SOURCE_OWNER)
+        if owner_selected:
+            assert title==owner_selected["seoTitle"],(lang,slug,"D1 title overridden")
+            assert desc==owner_selected["metaDescription"],(lang,slug,"D1 description overridden")
+        if source_default:
+            assert "Tritan" in desc and "BPA" in desc,(lang,slug,"missing reviewed default inquiry")
+        # Owner-approved SEO entries may use longer, custom text. The D1
+        # product SEO API validates these lengths and is authoritative.
+        assert len(desc)<=(180 if source_default else 240),(lang,slug,"overlong meta",len(desc))
         assert not re.search(r'(?i)\bcertified BPA.free\b|\bmade (of|from) tritan\b',desc),(lang,slug)
         assert "Tritan" in main and "BPA" in main,(lang,slug,"no buyer material inquiry")
         assert page.count('class="product-custom-material-options"')==1,(lang,slug)
         canonical=re.search(r'<link rel="canonical" href="([^"]+)"',head)
         assert canonical and canonical.group(1)=="https://xuyibottles.com/"+pfx+"products/"+slug+"/",(lang,slug)
-        assert title.count("XUYI")>=1,(lang,slug)
+        if source_default:assert title.count("XUYI")>=1,(lang,slug)
         if numbers:
             with_sizes+=1
             expected=volume_terms(numbers,lang)
@@ -61,8 +76,9 @@ for row in models:
             assert page.count('class="product-capacity-disclaimer"')==1,(lang,slug)
             # Search titles stay concise. The approved retail oz class is
             # still present in H1, body and SEO description.
-            assert "ml" in title and len(title)<=60,(lang,slug,title)
-            assert "oz" in desc,(lang,slug,desc)
+            if source_default:
+                assert "ml" in title and len(title)<=60,(lang,slug,title)
+                assert "oz" in desc,(lang,slug,desc)
             for num in numbers:
                 assert format_oz(num,lang) in main,(lang,slug,num)
             # No legacy 1000ml=34oz marketing or old arithmetic fallback
@@ -73,7 +89,7 @@ for row in models:
             unknown+=1
             assert page.count('class="product-capacity-summary"')==0,(lang,slug)
             assert "oz" not in title+" "+desc,(lang,slug,"invented volume")
-            assert "Tritan" in desc,(lang,slug,"unknown model missing inquiry")
+            if source_default:assert "Tritan" in desc,(lang,slug,"unknown model missing inquiry")
             assert slug in NO_CAPACITY_META_DIGESTS,(lang,slug,"source SEO review missing")
         total+=1;by_locale[lang]+=1
 assert with_sizes==460 and unknown==45,(with_sizes,unknown)
