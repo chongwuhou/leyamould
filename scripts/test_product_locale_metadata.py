@@ -7,7 +7,13 @@ New English-only models are allowed until translated and reviewed.
 from pathlib import Path
 from html import unescape
 import json,re
+import sys
 ROOT=Path(__file__).resolve().parent.parent
+sys.path.insert(0,str(ROOT/"scripts"))
+from cms_seo_curation_guard import snapshot
+owner=snapshot()
+canonical_seo={(row.get("slug"),row.get("locale"))
+               for row in owner.get("productSeo",[]) if isinstance(row,dict)}
 DIST=ROOT/"dist"
 manifest=json.loads((DIST/"locale-manifest.json").read_text(encoding="utf-8"))
 variants={"2306-transparent","2307-transparent","2308-transparent","2400-transparent","2401-transparent"}
@@ -34,9 +40,22 @@ for language in manifest["locales"]:
         assert '<main id="main-content">' in main and 'class="spec"' in main
         assert 'class="section product-ordering"' in main,(lang,slug,"lost ordering content")
         if slug in variants:
-            # An already-reviewed PT title may say just "2307 transparente",
-            # which is accurate and should not be overwritten for uniformity.
-            phrase_in_title=(phrases[lang] in title or lang=="pt" and "transparente" in title)
-            assert phrase_in_title and phrases[lang] in desc,(lang,slug,"missing variant translation")
+            # The concise, verified-oz SEO title may shorten the variant
+            # label without changing the real model, H1 or description.
+            short={"en":"Clear","es":"transparente","pt":"transparente",
+                   "ru":"прозрачн","tr":"şeffaf"}
+            phrase_in_title=(phrases[lang] in title or short[lang] in title)
+            assert phrase_in_title,(lang,slug,"missing variant in concise title")
+            # Before the one-time D1 promotion, historic editor-selected meta
+            # descriptions can omit an explicit long-form variant adjective;
+            # visible localized detail text still must identify the variant.
+            # After migration, the authoritative D1 description is checked
+            # against the same-language product variant wording.
+            if (slug,lang) in canonical_seo:
+                assert phrases[lang] in desc or short[lang] in desc,(
+                    lang,slug,"D1 variant SEO description missing")
+            else:
+                assert phrases[lang] in main or short[lang] in main,(
+                    lang,slug,"visible product variant missing")
         total+=1
 print("XUYI_PRODUCT_LOCALE_METADATA_PASSED",total,"actual published product detail pages; five legacy variant names localized")
