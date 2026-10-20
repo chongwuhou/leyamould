@@ -97,6 +97,6 @@ future={**SERIES["2095"],"model":"TEST-NEW","slug":"future-photo-model",
         "images":["/media/gallery/future-approved.webp"]}
 extra={**SERIES,"future-photo-model":future}
 assert image_for_product_route("/products/future-photo-model/",extra)=="/media/gallery/future-approved.webp"
-assert source_lastmod("/products/2095/")=="2026-10-14"
+assert source_lastmod("/products/2095/")=="2026-10-20"
 assert not (DIST/"sitemap-images.xml").exists(), "No separate sitemap was requested"
 print("XUYI_EXISTING_IMAGE_SITEMAP_SOURCE_PASSED",count,"images",english,"EN",localized,"localized",len(urls),"URLs")

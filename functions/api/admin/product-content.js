@@ -5,6 +5,7 @@ import { MANAGED_MODELS } from "../../_shared/xuyi-routes.js";
 import { authorizeAdminRequest } from "../../_shared/admin-security.js";
 import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";
 import { imageKey } from "../../_shared/r2-usage.js";
+import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo} from "../../_shared/product-seo.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(v,n=500)=>String(v??"").trim().slice(0,n);
 async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_product_content(
@@ -78,6 +79,18 @@ export async function onRequestPost(context){
   }
   if(status==="published"&&(!content.name||!content.material))return respond({error:"Published product requires name and material"},400);
   const db=context.env.XUYI_DB;await ensure(db);
+  if(content.seoTitle||content.seoDescription){
+    await ensureProductSeo(db);
+    const slug=canonicalProductSlug(model);
+    const previous=await db.prepare("SELECT seo_title,meta_description FROM xuyi_product_seo WHERE slug=? AND locale='en'")
+      .bind(slug).first();
+    const title=content.seoTitle||previous?.seo_title;
+    const desc=content.seoDescription||previous?.meta_description;
+    if(!title||!desc)return respond({error:"SEO title and description must both be provided for a new record"},400);
+    try{normalizeProductSeo({slug,locale:"en",seoTitle:title,metaDescription:desc})}
+    catch(err){return respond({error:String(err.message||err)},400)}
+    await upsertProductSeo(db,{slug,locale:"en",seoTitle:title,metaDescription:desc});
+  }
   await db.prepare(`INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at) VALUES(?,?,?,CURRENT_TIMESTAMP)
     ON CONFLICT(model) DO UPDATE SET content_json=excluded.content_json,publication_status=excluded.publication_status,updated_at=CURRENT_TIMESTAMP`)
     .bind(model,JSON.stringify(content),status).run();

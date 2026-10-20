@@ -82,3 +82,11 @@ export async function authorizedDailyProductReviewRequest(request, env) {
   if (await authorizeAdminRequest(request, env)) return true;
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
+
+// Fixed, source-reviewed one-time migration: the caller may select a batch,
+// but never supply arbitrary SEO copy or model names to a write endpoint.
+export async function authorizedProductSeoPromotionRequest(request, env){
+  if(new URL(request.url).pathname!=="/api/admin/product-seo-promotion-20261020"||
+     !new Set(["GET","POST"]).has(request.method))return false;
+  return verifyCloudflareProjectToken(bearerToken(request),env);
+}

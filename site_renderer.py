@@ -296,6 +296,9 @@ def build_url(path,title,content):
  # User-selected CMS src and ALT values remain authoritative.
  from responsive_image_render import enhance_source_markup
  content=enhance_source_markup(content)
+ if route.startswith('/products/') and route!='/products/':
+  from product_seo_d1_source import apply_d1_product_seo
+  content=apply_d1_product_seo(content,route.strip('/').split('/')[-1],'en',BUILD_STATE)
  URLS[path]=title
  write(path,content)
 ICONS={

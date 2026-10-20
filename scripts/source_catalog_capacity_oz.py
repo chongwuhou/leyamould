@@ -196,47 +196,81 @@ def verified_source_material(row):
 def pre_render_verified_meta(page,locale,row,owner_override=None):
     """Run BEFORE writing a CMS-reviewed template page; no dist HTML edit."""
     volumes=catalog_volume_numbers(row)
-    if not volumes or "</head>" not in page:return page
+    if "</head>" not in page:return page
     head,body=page.split("</head>",1)
-    head,_=seo_head(head,locale,row,volumes,owner_override)
+    if volumes:
+        head,_=seo_head(head,locale,row,volumes,owner_override)
+    else:
+        # The prior postrender summary pass used to replace 2506's meta
+        # description AFTER D1/source rendering. Move that fallback here so
+        # a CMS SEO owner cannot be overwritten by later release steps.
+        head,_=seo_head_without_capacity(head,locale,row,owner_override)
     return head+"</head>"+body
+
+def seo_title_volume(numbers,locale):
+    """The same reviewed ml/approximate-oz sizes as the visible H1, condensed
+    for search-title width. For dual-size shakers pair both size classes in
+    order, never imply an exact milliliter-to-fluid-ounce conversion.
+    """
+    if len(numbers)==1:
+        return volume_terms(numbers,locale)
+    ml="/".join(format_ml(n) for n in numbers)
+    oz="/".join(oz_number(n) for n in numbers)
+    approximate=any(market_record(n)["kind"]=="approx" for n in numbers)
+    if approximate:
+        qualifier={
+            "en":f"approx. {oz} oz","es":f"aprox. {oz} oz",
+            "pt":f"aprox. {oz} oz","ru":f"около {oz} oz",
+            "tr":f"yaklaşık {oz} oz"
+        }[locale]
+    else:
+        qualifier={
+            "en":f"{oz} oz class","es":f"clase {oz} oz",
+            "pt":f"classe {oz} oz","ru":f"класс {oz} oz",
+            "tr":f"{oz} oz sınıfı"
+        }[locale]
+    return f"{ml} ({qualifier})"
 
 def new_seo(locale,row,numbers):
     kind=KIND[locale][row["category"]]
     model=slug_label(row,locale)
-    # Keep verified mL in the snippet title; precise mL + approximate retail
-    # oz size classes remain in the detailed description and visible H1.
-    vol="/".join(f"{n:g}" for n in numbers)+"ml"
+    # Keep the retail search-size term consistent with the visible product
+    # title, without calling the factory's exact milliliters an oz equivalence.
+    vol=seo_title_volume(numbers,locale)
     if (re.search(r"渐变|gradient",str(row.get("colors",""))+" "+str(row.get("name","")),re.I)
             and row["category"]=="Plastic Sports Water Bottles"):
         kind=({"en":"Gradient Sports Bottle","es":"Botella degradada",
                "pt":"Garrafa degradê","ru":"Градиентная бутылка","tr":"Degrade spor şişesi"}[locale])
     material=verified_source_material(row)
-    title=f"{vol} {material+' ' if material else ''}{kind} {model} | XUYI"
-    # Customize only the headline language; real resin/lid claims require SKU
-    # evidence. Keep the factory model as a secondary identifier.
-    if locale=="en" and len(numbers)==1:
-        buyer_kind={
-          "Sports Water Bottle":"Custom Logo Sports Bottle",
-          "Kids Water Bottle":"Custom Kids Water Bottle",
-          "Large Water Jug":"Custom Large Water Jug",
-          "Protein Shaker":"Custom Logo Protein Shaker",
-          "Gradient Sports Bottle":"Gradient Custom Logo Bottle",
-        }.get(kind)
-        if buyer_kind:
-            buyer_title=f"{vol} {material+' ' if material else ''}{buyer_kind} {model} | XUYI"
-            if len(buyer_title)<=60:title=buyer_title
     small={"en":"Bottle","es":"Botella","pt":"Garrafa","ru":"Бутылка","tr":"Şişe"}[locale]
-    if len(title)>60:title=f"{vol} {material+' ' if material else ''}{small} {model} | XUYI"
-    # Transparent variants and long translations retain their exact factory
-    # identity in the body and SKU field. Never cut SEO titles mid-word.
-    if len(title)>60:
-        raw=str(row["model"])
-        base=re.match(r"^\\d+",raw)
-        short_model=(base.group(0)+" Clear") if base and "透明款" in raw else (base.group(0) if base else model)
-        title=f"{vol} {material+' ' if material else ''}{small} {short_model} | XUYI"
-    if len(title)>60:title=f"{vol} {small} {short_model} | XUYI"
-    if len(title)>60:title=f"{vol} {short_model} | XUYI"
+    # Preserve the factory variant distinction, even where translated terms
+    # would otherwise push the 60-character suggested SEO width limit.
+    short_model=model
+    if "透明款" in str(row["model"]):
+        numeric=re.match(r"^\d+",str(row["model"]))
+        if numeric:
+            suffix={
+                "en":"Clear","es":"transparente","pt":"transparente",
+                "ru":"прозрачн.","tr":"şeffaf"
+            }[locale]
+            short_model=numeric.group(0)+" "+suffix
+    # Prefer the actual category and evidence-backed materials; only shorten
+    # them if necessary. Never omit model, real mL, retail oz qualification.
+    options=[
+        f"{vol} {material+' ' if material else ''}{kind} {model} | XUYI",
+        f"{vol} {kind} {model} | XUYI",
+        f"{vol} {small} {model} | XUYI",
+        f"{vol} {kind} {short_model} | XUYI",
+        f"{vol} {small} {short_model} | XUYI",
+        f"{vol} {short_model} | XUYI",
+    ]
+    title=next((candidate for candidate in options if len(candidate)<=60),None)
+    if title is None:
+        # Future approved multi-size models may need a shorter snippet;
+        # leave all exact sizes visible in the H1/spec table and never guess.
+        first=format_ml(numbers[0])+" ("+format_oz(numbers[0],locale)+")"
+        more=f" +{len(numbers)-1}" if len(numbers)>1 else ""
+        title=f"{first}{more} {short_model} | XUYI"
     assert len(title)<=60,(locale,row["slug"],title)
     description=COPY[locale]["description"].format(
        volume=volume_terms(numbers,locale),kind=kind,model=model)
@@ -352,8 +386,8 @@ def enrich_detail(path,locale,row,owner_override=None):
             # Insert after the specification table (unmodified original SKU data).
             body,n=re.subn(r'(</table>)',lambda m:m.group(1)+summary,body,count=1)
             if not n:body=body.replace("</main>",summary+"</main>",1)
-    if not numbers:
-        head,_=seo_head_without_capacity(head,locale,row,owner_override)
+    # SEO metadata is now strictly pre-render or D1-owned; this detail
+    # enrichment may add only source-checked visible body content.
     # Flag the actual doubtful source field and clear this flag automatically
     # if the owner later supplies a verified corrected capacity through D1.
     if str(row.get("model"))=="2506" and not numbers and 'class="product-capacity-warning"' not in body:

@@ -3,6 +3,7 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision,loadSiteSetting,defaultLanguageConfig,normalizeLanguageConfig } from "../../_shared/site-settings.js";
 import { MANAGED_ROUTES } from "../../_shared/xuyi-routes.js";
+import {ensureProductSeo,canonicalProductSlug} from "../../_shared/product-seo.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(v,n)=>String(v??"").trim().slice(0,n);
 async function requireAdmin(c){
@@ -51,10 +52,18 @@ export async function onRequestPost(c){
     if(record?.publication_status!=="published"||entry?.newProduct!==true)
       return respond({error:"New product must be published in English before translating"},409);
   }
-  await db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
+  const statements=[db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
      VALUES(?,?,?,CURRENT_TIMESTAMP)
      ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=CURRENT_TIMESTAMP`)
-    .bind("page:"+route,locale,JSON.stringify({title,description,mainHtml:html})).run();
+    .bind("page:"+route,locale,JSON.stringify({title,description,mainHtml:html}))];
+  if(route.startsWith("/products/")){
+    await ensureProductSeo(db);
+    const slug=canonicalProductSlug(route.split("/")[2].replace(/---$/,"透明款"));
+    statements.push(db.prepare("INSERT INTO xuyi_product_seo(slug,locale,seo_title,meta_description,updated_at) VALUES(?,?,?,?,CURRENT_TIMESTAMP) "+
+      "ON CONFLICT(slug,locale) DO UPDATE SET seo_title=excluded.seo_title,meta_description=excluded.meta_description,updated_at=CURRENT_TIMESTAMP")
+      .bind(slug,locale,title,description));
+  }
+  await db.batch(statements);
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,reviewed:true,route,locale,...revision});
 }

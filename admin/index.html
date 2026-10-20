@@ -17,7 +17,8 @@
 <button type="button" class="admin-module-btn" data-admin-target="advanced">05 翻译工作流</button>
 <button type="button" class="admin-module-btn" data-admin-target="content">06 页面 / 品牌 / 产品 / SEO</button>
 <button type="button" class="admin-module-btn" data-admin-target="reviews">07 客户评价 ★</button>
-<button type="button" class="admin-module-btn" data-admin-target="media">08 R2 通用媒体库</button>
+<button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品 SEO · 五语言 D1</button>
+<button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">技术模块采用 Demalong 已有实现，数据与密钥属于旭一网站。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
@@ -77,6 +78,31 @@
  <h3>已保存评价</h3>
  <label class="block-label">筛选型号 <input type="search" id="review-filter" placeholder="输入型号或姓名查找"></label>
  <div id="review-admin-list"></div>
+</section>
+<section class="panel" id="product-seo-admin-panel" data-admin-module="productseo">
+ <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO · CLOUDFLARE D1</div>
+ <h2>产品 SEO 标题和描述（正式数据库）</h2>
+ <p>101 个现有产品及以后新增型号均可按语言独立修改。SEO Title、Meta Description 和默认 OG 标题从 D1 正式记录生成；H1 仍由产品正文/正式规格管理。修改后点击顶部「一键全站重建」。</p>
+ </div></div>
+ <div class="row-actions"><button type="button" class="btn ghost" id="product-seo-reload">读取数据库</button></div>
+ <p id="product-seo-status" role="status" aria-live="polite"></p>
+ <form id="product-seo-editor">
+  <label class="block-label">产品型号页面（选择官网真实型号）
+   <input id="product-seo-slug" list="product-seo-models" placeholder="2292、lo-001、2306-transparent" required></label>
+  <datalist id="product-seo-models"></datalist>
+  <label class="block-label">语言
+   <select id="product-seo-locale">
+    <option value="en">English</option><option value="es">Español</option>
+    <option value="pt">Português</option><option value="ru">Русский</option>
+    <option value="tr">Türkçe</option>
+   </select></label>
+  <label class="block-label">SEO Title（建议自然简洁，最多 90 字符）
+   <input id="product-seo-title" required maxlength="90" minlength="12"></label>
+  <label class="block-label">Meta Description（最多 240 字符）
+   <textarea id="product-seo-description" rows="4" required maxlength="240" minlength="30"></textarea></label>
+  <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 到 D1</button>
+   <button type="button" class="btn ghost" id="product-seo-reset">重新载入当前记录</button></div>
+ </form>
 </section>
 <section class="panel" id="media-admin-panel" data-admin-module="media">
  <div class="panel-head"><div><div class="eyebrow">XUYI · R2 ASSETS</div>
@@ -253,5 +279,6 @@
 <script src="/assets/admin-site-settings.js" defer></script>
 <script src="/assets/admin-content.js" defer></script>
 <script src="/assets/admin-reviews.js" defer></script>
+<script src="/assets/admin-product-seo.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>
 </body></html>

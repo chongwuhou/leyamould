@@ -148,6 +148,9 @@ jobs:
       - name: Publish approved 2026-10-20 procurement guides to existing D1 CMS
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-20 B2B procurement guides'
         run: python scripts/publish_blog_batch_20261020_d1.py
+      - name: Persist all reviewed product SEO fields in Cloudflare D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
+        run: python scripts/promote_product_seo_to_d1_20261020.py
       # Runs only AFTER the new authenticated endpoint has been separately
       # deployed by the preceding setup commit. D1's permanent ledger guards
       # replays, retries and manual deletions of existing public reviews.
@@ -221,6 +224,9 @@ jobs:
           node scripts/test_20261019_blog_batch_runtime.mjs
           node scripts/test_20261018_blog_batch_runtime.mjs
           python scripts/test_source_catalog_capacity_oz.py
+          python scripts/test_product_seo_title_oz_release.py
+          python scripts/test_product_seo_d1_authority.py
+          node scripts/test_product_seo_promotion.mjs
           python scripts/test_source_sitemap_titles_h1_images.py
           python scripts/test_product_image_sitemap.py
           python scripts/test_source_product_social_image_truth.py

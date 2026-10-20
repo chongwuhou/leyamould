@@ -1,4 +1,5 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
+import {ensureProductSeo,canonicalProductSlug} from "../../_shared/product-seo.js";
 
 const clean = (value) => String(value ?? "").trim();
 const ROBOTS = new Set(["index,follow", "noindex,follow", "noindex,nofollow"]);
@@ -243,12 +244,31 @@ export async function onRequestPost(context) {
   if (payload.action !== "save_pages") return response({ error: "Unknown action" }, 400);
   try {
     const pages = validatePages(payload.pages);
-    const statements = [db.prepare("DELETE FROM site_pages")];
+    // NEVER DELETE all of site_pages during an ordinary editor save: source
+    // approved LO/G/transparent/new-model records would disappear forever.
+    // Update the known rows and retain every other D1-owned route.
+    const prior=(await db.prepare("SELECT route,seo_title,meta_description FROM site_pages").all()).results||[];
+    const priorByRoute=new Map(prior.map(row=>[row.route,row]));
+    const statements = [];
+    await ensureProductSeo(db);
     for (const page of pages) {
       statements.push(db.prepare(`INSERT INTO site_pages
         (route,label,seo_title,meta_description,robots,sitemap_enabled,updated_at)
-        VALUES(?,?,?,?,?,?,CURRENT_TIMESTAMP)`)
+        VALUES(?,?,?,?,?,?,CURRENT_TIMESTAMP)
+        ON CONFLICT(route) DO UPDATE SET label=excluded.label,
+        seo_title=excluded.seo_title,meta_description=excluded.meta_description,
+        robots=excluded.robots,sitemap_enabled=excluded.sitemap_enabled,
+        updated_at=CURRENT_TIMESTAMP`)
         .bind(page.route, page.label, page.seoTitle, page.metaDescription, page.robots, page.sitemapEnabled ? 1 : 0));
+      const old=priorByRoute.get(page.route);
+      if(old&&page.route.startsWith("/products/")&&page.route!=="/products/"&&
+         (old.seo_title!==page.seoTitle||old.meta_description!==page.metaDescription)&&
+         page.seoTitle&&page.metaDescription){
+        const slug=canonicalProductSlug(page.route.split("/")[2].replace(/---$/,"透明款"));
+        statements.push(db.prepare("INSERT INTO xuyi_product_seo (slug,locale,seo_title,meta_description,updated_at) VALUES(?,'en',?,?,CURRENT_TIMESTAMP) "+
+          "ON CONFLICT(slug,locale) DO UPDATE SET seo_title=excluded.seo_title,meta_description=excluded.meta_description,updated_at=CURRENT_TIMESTAMP")
+          .bind(slug,page.seoTitle,page.metaDescription));
+      }
     }
     await db.batch(statements);
     return response({ saved: true, count: pages.length, ...(await queuePublish(db)) });

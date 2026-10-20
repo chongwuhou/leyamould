@@ -494,6 +494,10 @@ def main():
             sku=route.removeprefix("/products/").strip("/")
             product=next((v for v in SERIES.values() if v["slug"]==sku),None)
             if product:text=at_product_source(text,product["model"],loc,data)
+            # D1 product SEO outranks every older localized/static fallback.
+            if product:
+                from product_seo_d1_source import apply_d1_product_seo
+                text=apply_d1_product_seo(text,product["slug"],loc,data)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
         created+=1

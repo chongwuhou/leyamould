@@ -35,7 +35,11 @@ for lang in ("en","es","pt","ru","tr"):
         title=re.search(r"<title>(.*?)</title>",page).group(1)
         material=verified_source_material(obj)
         if material and catalog_volume_numbers(obj) and current_baseline(lang,obj) and "透明款" not in str(obj["model"]):
-            assert material in title,(lang,obj["slug"],material,title)
+            # Capacity class + category + SKU are essential; a long material
+            # list may need to stay in the visible specs instead of the
+            # concise search title. Always compare to the source SEO owner.
+            from scripts.source_catalog_capacity_oz import new_seo
+            assert title==new_seo(lang,obj,catalog_volume_numbers(obj))[0],(lang,obj["slug"],title)
             countmaterials+=1
     for kind in ("sports-water-bottles","kids-water-bottles","large-capacity-water-jugs","plastic-shaker-bottles"):
         route="/"+prefix+"collections/"+kind+"/"

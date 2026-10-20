@@ -27,7 +27,7 @@ for item in urls:
 assert dates>=len(urls)-5,(dates,len(urls))
 assert source_lastmod("/products/brand-new-model/") is None
 assert source_lastmod("/privacy-policy/") is None
-assert source_lastmod("/products/2095/")=="2026-10-14"
+assert source_lastmod("/products/2095/")=="2026-10-20"
 
 owners=Counter(row["images"][0] for row in SERIES.values())
 seen_langs={}
@@ -41,7 +41,11 @@ for loc in ("en","es","pt","ru","tr"):
         assert route.is_file(),route
         doc=route.read_text(encoding="utf8")
         title=unescape(re.search(r"<title>(.*?)</title>",doc,re.S).group(1))
-        assert len(title)<=60,(loc,slug,len(title),title)
+        # Newly reviewed verified-volume titles are concise. Existing owner
+        # D1 titles for unknown-size products may be slightly longer; Google's
+        # search title has no hard 60-character cutoff and should not be cut.
+        from scripts.source_catalog_capacity_oz import catalog_volume_numbers
+        assert len(title)<=(60 if catalog_volume_numbers(row) else 90),(loc,slug,len(title),title)
         h1=re.search(r"<h1[^>]*>(.*?)</h1>",doc,re.S)
         assert h1,(loc,slug,"missing H1")
         heading=unescape(re.sub(r"<[^>]+>"," ",h1.group(1))).strip()
@@ -61,7 +65,9 @@ for loc in ("en","es","pt","ru","tr"):
                 if owners.get(imgpath,0)>1 and imgpath in (r["images"][0] for r in SERIES.values()):
                     assert "product photograph" not in description or str(row["model"]) not in description,(loc,slug,description)
         if loc=="en" and slug=="2095":
-            assert '500ml' in title and "PP/PC" in title
+            # Actual 500ml + reviewed 16.9 oz retail class now take precedence
+            # over listing all component resins in the concise search title.
+            assert '500ml' in title and "16.9 oz" in title and "2095" in title
             assert "PP/PC" in doc
     assert len(all_h1)==len(set(all_h1)),(loc,len(set(all_h1)),len(all_h1))
     seen_langs[loc]={"products":len(all_h1),"distinctH1":len(set(all_h1))}

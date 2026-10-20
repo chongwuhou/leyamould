@@ -57,7 +57,7 @@ for row in SERIES.values():
             assert exact in main,(lang,row["model"],exact)
             title=unescape(re.search(r"<title>([^<]+)</title>",head).group(1))
             desc=unescape(re.search(r'<meta name="description" content="([^"]+)"',head).group(1))
-            assert "ml" in title and "oz" in desc,(lang,row["model"],title,desc)
+            assert "ml" in title and "oz" in title and "oz" in desc,(lang,row["model"],title,desc)
             assert 'class="product-capacity-disclaimer"' in main,(lang,row["model"],"missing size-class caveat")
             assert "Tritan" in desc and "BPA" in desc,(lang,row["model"])
             assert len(title)<=60 and len(desc)<=180,(lang,row["model"],len(title),len(desc))
@@ -105,7 +105,9 @@ unmodified=deepcopy(original)
 row=next(x for x in unmodified["translations"] if x.get("locale")=="es" and x.get("resourceId")=="page:/products/2514/")
 row["content"]["description"]="OWNER EDITED description"
 assert not current_baseline("es",SERIES["2514"],unmodified)
-assert current_baseline("en",SERIES["2514"],original)
+assert (current_baseline("en",SERIES["2514"],original) or
+    any(x.get("slug")=="2514" and x.get("locale")=="en"
+        for x in original.get("productSeo",[]))),"Baseline or canonical D1 SEO owner required"
 # Future source catalog entries: automatically suggest ml/oz SEO when no
 # editor field exists, but back off when an owner later sets either field.
 future={"slug":"future-source-1500","model":"F-1500", "capacity":"1500ml",
