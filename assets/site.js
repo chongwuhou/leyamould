@@ -226,7 +226,12 @@ if(hero){
    title.append(emphasis);
   }else{title.innerHTML=slide.title;}
   desc.textContent=slide.description;
-  if(img.getAttribute('src')!==slide.img)img.src=slide.img;
+   if(img.getAttribute('src')!==slide.img){
+    // A later carousel slide must not inherit srcset for the initial hero.
+    img.removeAttribute('srcset');
+    img.removeAttribute('sizes');
+    img.src=slide.img;
+   }
   img.alt=slide.alt;
   if(artLink){
    artLink.href=slide.link;
@@ -293,7 +298,15 @@ const bottleTabs=[...document.querySelectorAll('.bottle-tab[role="tab"]')];
 function selectTab(i){bottleTabs.forEach((t,j)=>{const active=i===j;t.classList.toggle('active',active);t.setAttribute('aria-selected',String(active));const panel=document.getElementById(t.getAttribute('aria-controls'));if(panel)panel.hidden=!active})}
 bottleTabs.forEach((t,i)=>{t.addEventListener('click',()=>selectTab(i));t.addEventListener('keydown',ev=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(ev.key)){ev.preventDefault();const n=ev.key==='Home'?0:ev.key==='End'?bottleTabs.length-1:(i+(ev.key==='ArrowLeft'?-1:1)+bottleTabs.length)%bottleTabs.length;selectTab(n);bottleTabs[n].focus()}})});
 
-document.querySelectorAll('[data-main-photo]').forEach(button=>{button.addEventListener('click',()=>{const large=document.querySelector('#main-photo');if(large){large.src=button.dataset.mainPhoto;large.alt=button.querySelector('img')?.alt||'Bottle image'}})});
+document.querySelectorAll('[data-main-photo]').forEach(button=>{button.addEventListener('click',()=>{const large=document.querySelector('#main-photo');if(large){
+ // The selected photo may have different pixels and R2 content from the
+ // initial gallery picture; never retain its original responsive previews.
+ if(large.getAttribute('src')!==button.dataset.mainPhoto){
+  large.removeAttribute('srcset');large.removeAttribute('sizes');
+  large.src=button.dataset.mainPhoto;
+ }
+ large.alt=button.querySelector('img')?.alt||'Bottle image'
+}})});
 
 // News & Blogs carousel controls. Scrolling and arrow activation both update the active counter.
 const newsSlider=document.getElementById('news-slider');

@@ -58,6 +58,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Install pinned build-only image encoder
+        run: python -m pip install --disable-pip-version-check "Pillow==11.3.0"
       - name: Validate site isolation
         run: python scripts/preflight.py
       - name: Check deployment credential
@@ -149,6 +151,7 @@ jobs:
         run: |
           python scripts/test_release.py
           python scripts/test_shared_templates.py
+          python scripts/test_responsive_images.py
           python scripts/test_faq_access.py
           python scripts/test_shaker_wholesale_faq_source.py
           python scripts/test_home_banners.py

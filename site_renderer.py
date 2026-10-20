@@ -287,6 +287,10 @@ def build_url(path,title,content):
  # Source-owned Kids collection social preview; existing CMS edits take precedence.
  from product_share_source import add_kids_collection_preview
  content=add_kids_collection_preview(content,route)
+ # Attach optional responsive variants during source rendering, not in dist.
+ # User-selected CMS src and ALT values remain authoritative.
+ from responsive_image_render import enhance_source_markup
+ content=enhance_source_markup(content)
  URLS[path]=title
  write(path,content)
 ICONS={

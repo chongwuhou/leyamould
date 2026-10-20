@@ -49,6 +49,11 @@ def main():
             fail("Refusing non-XUYI build snapshot")
         env["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
         env["XUYI_PUBLISH_REVISION"]=str(int(state.get("publishRevision",0)))
+    # Generate display-only, content-addressed images from authoritative
+    # sources. Originals in R2, asset files, and owner CMS selections remain.
+    from prepare_responsive_images import prepare as prepare_responsive
+    image_manifest,image_stage=prepare_responsive(snapshot)
+    env["XUYI_RESPONSIVE_MANIFEST"]=str(image_manifest)
     subprocess.run([sys.executable,"build.py"],cwd=ROOT,env=env,check=True)
     # Keep static artifacts and Functions separate; Wrangler bundles sibling
     # functions/ during Pages deploy. Never publish source, backups or secrets.
@@ -56,6 +61,7 @@ def main():
     admin_slug=resolve_admin_path(state.get("adminPath","admin") if snapshot.is_file() else "admin")
     shutil.copytree(ROOT/"admin",DIST/admin_slug)
     subprocess.run([sys.executable,"scripts/render_locales.py"],cwd=ROOT,env=env,check=True)
+    shutil.copytree(image_stage,DIST/"assets"/"responsive",dirs_exist_ok=True)
     from repair_localized_blog_thumbnails import apply as repair_localized_blog_thumbnails
     repair_localized_blog_thumbnails(DIST)
     # Final, explicit buyer-landing SEO curation follows D1 reviewed HTML.
@@ -168,7 +174,19 @@ def main():
         image=first["img"]
         if not image.startswith(("/media/","/assets/")) or ".." in image:
             fail("Unsafe homepage preload image: "+image)
-        home_headers.extend([home_url,'  Link: <'+image+'>; rel="preload"; as="image"'])
+        prepared=json.loads(image_manifest.read_text(encoding="utf-8")).get(image)
+        variants=(prepared or {}).get("variants") or []
+        if variants:
+            srcset=", ".join(v["url"]+" "+str(v["w"])+"w" for v in variants)
+            home_headers.extend([home_url,'  Link: <'+variants[-1]["url"]+'>; rel="preload"; as="image"; imagesrcset="'+srcset+'"; imagesizes="(max-width: 760px) 92vw, 48vw"'])
+        else:
+            home_headers.extend([home_url,'  Link: <'+image+'>; rel="preload"; as="image"'])
+    # Every filename contains an immutable hash of its original image bytes.
+    # Do not apply immutable caching to mutable /media/ or editor-uploaded URLs.
+    home_headers.extend([
+        "/assets/responsive/*",
+        "  Cache-Control: public, max-age=31536000, immutable",
+    ])
     (DIST/"_headers").write_text("\n".join(home_headers)+"\n",encoding="utf-8")
     # A saved D1 Banner image must exist in the published static artifact.
     # /media references are verified by the authenticated CMS before saving.
