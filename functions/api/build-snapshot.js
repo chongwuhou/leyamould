@@ -16,7 +16,7 @@ export async function onRequestGet(context){
   const db=context.env.XUYI_DB;
   if(!db)return json({error:"XUYI_DB binding missing"},503);
   try{
-    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts]=await Promise.all([
+    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
@@ -24,7 +24,8 @@ export async function onRequestGet(context){
       list(db,"SELECT model,content_json,publication_status FROM xuyi_product_content WHERE publication_status='published' ORDER BY model"),
       list(db,"SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides ORDER BY locale,resource_id"),
       list(db,"SELECT route,main_html FROM xuyi_page_content WHERE publication_status='published' ORDER BY route"),
-      list(db,"SELECT path,alt_json FROM xuyi_media_alt ORDER BY path LIMIT 12000")
+      list(db,"SELECT path,alt_json FROM xuyi_media_alt ORDER BY path LIMIT 12000"),
+      list(db,"SELECT id,model,rating,author,review_date,content,status FROM xuyi_product_reviews WHERE status='published' ORDER BY model,review_date DESC,id")
     ]);
     const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
     const security=config.admin_security_config?JSON.parse(config.admin_security_config):{};
@@ -45,6 +46,14 @@ export async function onRequestGet(context){
       pageBodies:pageBodies.filter(r=>typeof r.route==="string"&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
       products:onlyProducts.map(r=>({model:r.model,content:JSON.parse(r.content_json)})),
+      productReviews:productReviews
+        .filter(r=>/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(r.model)
+          && Number.isInteger(r.rating)&&r.rating>=1&&r.rating<=5
+          && typeof r.author==="string"&&r.author.length>=2&&r.author.length<100
+          && /^\d{4}-\d{2}-\d{2}$/.test(r.review_date)
+          && typeof r.content==="string"&&r.content.length>=12)
+        .map(r=>({id:r.id,model:r.model,rating:r.rating,author:r.author,
+          reviewDate:r.review_date,content:r.content,status:"published"})),
       mediaAlts:mediaAlts.filter(r=>/^\/media\/(?:product|page|shared|ppt|excel|group|capability|gallery|blog)\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(r.path))
         .map(r=>({path:r.path,translations:JSON.parse(r.alt_json)})),
       translations:translations.map(r=>({resourceId:r.resource_id,locale:r.locale,content:JSON.parse(r.translated_json)}))

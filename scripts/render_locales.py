@@ -487,6 +487,13 @@ def main():
         # Enhance the D1-approved HTML at the locale source-render stage.
         from responsive_image_render import enhance_source_markup
         text=enhance_source_markup(text)
+        # Source-render public, SKU-matched customer reviews from D1.
+        if route.startswith("/products/") and route!="/products/":
+            from site_renderer import SERIES
+            from product_reviews_source import at_product_source
+            sku=route.removeprefix("/products/").strip("/")
+            product=next((v for v in SERIES.values() if v["slug"]==sku),None)
+            if product:text=at_product_source(text,product["model"],loc,data)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
         created+=1

@@ -2,10 +2,12 @@
 """Source-release SEO gate: real visible FAQ, company bylines, image dimensions.
 
 Tests dynamic published routes. No synthetic Offer, reviews, employee or price.
+Actual approved D1 SKU reviews are permitted only if visible and identical.
 """
 from pathlib import Path
 import html
 import json
+import os
 import re
 import sys
 from tempfile import TemporaryDirectory
@@ -18,6 +20,13 @@ from verified_trust_technical_seo import (
 )
 
 DIST=ROOT/"dist"
+SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
+if SNAPSHOT.is_file():os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
+sys.path.insert(0,str(ROOT))
+from site_renderer import SERIES
+from product_reviews_source import published_reviews,schema_properties
+STATE=json.loads(SNAPSHOT.read_text("utf8")) if SNAPSHOT.is_file() else {}
+MODELS_BY_SLUG={str(p["slug"]):str(p["model"]) for p in SERIES.values()}
 faq_count=blog_count=product_count=og_count=0
 for lang,prefix in LANGS.items():
     home=DIST/prefix/"index.html"
@@ -60,7 +69,22 @@ for lang,prefix in LANGS.items():
         assert all("/excel/" not in path for path in images),(lang,route)
         assert product["potentialAction"]["@type"]=="CommunicateAction"
         assert str(product.get("sku")) in product["potentialAction"]["target"]["urlTemplate"]
-        assert not any(field in product for field in ("offers","review","aggregateRating")),(lang,route,"fabricated commerce data")
+        assert "offers" not in product,(lang,route,"invented price/offer")
+        model=MODELS_BY_SLUG.get(route.parent.name)
+        assert model,(lang,route,"review model must exist in canonical product data")
+        approved=published_reviews(STATE,model)
+        if not approved:
+            assert not any(field in product for field in ("review","aggregateRating")),(lang,route,"fabricated reviews")
+            assert 'id="xuyi-customer-reviews"' not in markup,(lang,route,"unapproved visible feedback")
+        else:
+            props=schema_properties(approved)
+            assert product.get("review")==props["review"],(lang,route,"rating/body mismatch with D1")
+            assert product.get("aggregateRating")==props.get("aggregateRating"),(lang,route,"invented aggregate")
+            assert markup.count('id="xuyi-customer-reviews"')==1,(lang,route,"review must be visible")
+            assert markup.count('class="product-review"')==len(approved),(lang,route,"public count mismatch")
+            for record in approved:
+                assert html.escape(record["author"]) in markup,(lang,route,"customer name not visible")
+                assert html.escape(record["content"]).replace("\n","<br>") in markup,(lang,route,"customer words not visible")
         assert improve_product(markup,lang)==(markup,0),(lang,route,"idempotence")
         product_count+=1
 

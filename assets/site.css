@@ -1146,3 +1146,12 @@ body:has(#xuyi-home-banners) .home-bpa-verification small{display:block;font-siz
 
 
 
+
+
+/* Real, model-matched customer reviews rendered from approved D1 records. */
+#xuyi-customer-reviews .product-review__summary{margin:0 0 18px;color:var(--text,#273447)}
+#xuyi-customer-reviews .product-reviews__list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}
+#xuyi-customer-reviews .product-review{padding:18px;border:1px solid rgba(50,80,85,.16);border-radius:15px;background:var(--surface,#fff)}
+#xuyi-customer-reviews .product-review__stars{color:#b87914;font-size:1.15rem;letter-spacing:2px}
+#xuyi-customer-reviews .product-review__text{white-space:normal;overflow-wrap:anywhere;line-height:1.7;margin:12px 0}
+#xuyi-customer-reviews .product-review__meta{font-size:.88rem;opacity:.82;margin:0}

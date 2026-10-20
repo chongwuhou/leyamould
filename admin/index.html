@@ -16,7 +16,8 @@
 <button type="button" class="admin-module-btn" data-admin-target="languages">04 多语言</button>
 <button type="button" class="admin-module-btn" data-admin-target="advanced">05 翻译工作流</button>
 <button type="button" class="admin-module-btn" data-admin-target="content">06 页面 / 品牌 / 产品 / SEO</button>
-<button type="button" class="admin-module-btn" data-admin-target="media">07 R2 通用媒体库</button>
+<button type="button" class="admin-module-btn" data-admin-target="reviews">07 客户评价 ★</button>
+<button type="button" class="admin-module-btn" data-admin-target="media">08 R2 通用媒体库</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">技术模块采用 Demalong 已有实现，数据与密钥属于旭一网站。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
@@ -36,7 +37,46 @@
   <button type="button" class="btn ghost" id="content-tab-locales">多语言正式页面</button>
  </div>
  <p id="content-status" role="status" aria-live="polite"></p>
- <div id="content-form"></div>
+<div id="content-form"></div>
+</section>
+<section class="panel" id="review-admin-panel" data-admin-module="reviews">
+ <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT REVIEWS · D1</div>
+  <h2>真实客户评价管理</h2>
+  <p>评价必须对应真实产品型号。填写客户实际提供的星级、允许公开的姓名、真实日期和原文；保存草稿不公开，发布后点击顶部「一键全站重建」。</p>
+ </div></div>
+ <div class="row-actions"><button class="btn ghost" type="button" id="review-reload">读取 D1 评价</button>
+  <button class="btn ghost" type="button" id="review-new">+ 新增一条</button></div>
+ <p id="review-admin-status" role="status" aria-live="polite"></p>
+ <form id="review-editor" class="blog-admin-editor" autocomplete="off">
+  <label class="block-label">关联产品型号（必填）
+   <input name="model" id="review-model" list="review-model-options" placeholder="输入型号，如 2095、LO-001" required maxlength="80"></label>
+  <datalist id="review-model-options"></datalist>
+  <label class="block-label">客户真实星级（必填）
+   <select name="rating" id="review-rating" required>
+    <option value="">请选择客户给出的星级</option>
+    <option value="5">★★★★★ · 5 星</option>
+    <option value="4">★★★★☆ · 4 星</option>
+    <option value="3">★★★☆☆ · 3 星</option>
+    <option value="2">★★☆☆☆ · 2 星</option>
+    <option value="1">★☆☆☆☆ · 1 星</option>
+   </select></label>
+  <label class="block-label">客户姓名 / 已获授权的公开署名
+   <input name="author" id="review-author" required maxlength="99" placeholder="客户授权公开的真实姓名"></label>
+  <label class="block-label">实际评价日期
+   <input name="reviewDate" id="review-date" type="date" required></label>
+  <label class="block-label">客户评价原文
+   <textarea name="content" id="review-text" rows="5" required minlength="12" maxlength="3000" placeholder="请保持客户真实的评价内容，不要自行编造或补充星级。"></textarea></label>
+  <label class="block-label">发布状态
+   <select name="status" id="review-status"><option value="draft">草稿（不公开）</option>
+   <option value="published">审核通过并发布</option></select></label>
+  <label class="block-label"><input type="checkbox" id="review-authentic" value="yes">
+   我已核实：评价来自真实客户，星级和文字是客户实际提供的，评价针对所选型号，且获得公开客户姓名和内容的授权。</label>
+  <div class="row-actions"><button class="btn primary" type="submit" id="review-save">保存到 D1</button>
+   <button class="btn ghost" type="button" id="review-cancel">清空 / 取消编辑</button></div>
+ </form>
+ <h3>已保存评价</h3>
+ <label class="block-label">筛选型号 <input type="search" id="review-filter" placeholder="输入型号或姓名查找"></label>
+ <div id="review-admin-list"></div>
 </section>
 <section class="panel" id="media-admin-panel" data-admin-module="media">
  <div class="panel-head"><div><div class="eyebrow">XUYI · R2 ASSETS</div>
@@ -212,5 +252,6 @@
 <script src="/assets/admin-security.js" defer></script>
 <script src="/assets/admin-site-settings.js" defer></script>
 <script src="/assets/admin-content.js" defer></script>
+<script src="/assets/admin-reviews.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>
 </body></html>

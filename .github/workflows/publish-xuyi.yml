@@ -168,6 +168,8 @@ jobs:
           node scripts/test_home_banners_api.mjs
           python scripts/test_single_product_module.py
           node scripts/test_single_product_api.mjs
+          python scripts/test_product_reviews_source.py
+          node scripts/test_product_reviews_api.mjs
           python scripts/test_product_components.py
           python scripts/test_buyer_content.py
           python scripts/test_model_catalog_buyer_comparison.py

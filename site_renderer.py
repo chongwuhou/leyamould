@@ -272,6 +272,11 @@ def build_url(path,title,content):
   from scripts.source_catalog_capacity_oz import pre_render_verified_meta
   row=next((v for v in SERIES.values() if v['slug']==route.strip('/').split('/')[-1]),None)
   if row:content=pre_render_verified_meta(content,'en',row,BUILD_STATE)
+  # Review content is a separate, explicitly published D1 field owner.
+  # Source-render only after the possible English CMS body override.
+  if row:
+   from product_reviews_source import at_product_source
+   content=at_product_source(content,row["model"],"en",BUILD_STATE)
  # Source-rendered Product FAQ and collection ItemList schemas are based
  # on the final D1/CMS-selected body, not on post-build HTML mutations.
  from seo_structured_components import add_at_render
