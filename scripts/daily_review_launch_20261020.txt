@@ -1,0 +1,3 @@
+One-time workflow trigger for the first verified Excel-origin daily review batch on 2026-10-20.
+Exactly three previously unrecorded product models may be published; the append-only D1 ledger prevents replays.
+No customer data is stored in this trigger marker.
