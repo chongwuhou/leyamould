@@ -98,10 +98,11 @@ for path in ("build.py","site_renderer.py","data/products.json"):
 config=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf8"))
 assert type(config["site"]["indexingApproved"]) is bool
 css=(DIST/"assets/site.css").read_text(encoding="utf8")
-# Long-form detail visuals need edge-to-edge responsive width without cropped
-# photos. The lower request-quote CTA must keep the shared white-on-red button
-# styling, not inherit the red color of an ordinary inline text link.
-assert re.search(r'\.lo-photo-details__stack\s*\{[^}]*width:100vw;[^}]*max-width:100vw;[^}]*margin-inline:calc\(50% - 50vw\)',css)
+# Source-detail photos must not break out wider than the shared header shell.
+# Their original 100vw styling stretched the 720px source photos across the
+# whole viewport in eight LO products and all five languages.
+assert re.search(r'\.lo-photo-details__stack\s*\{[^}]*width:100%;max-width:960px;margin-inline:auto',css)
+assert not re.search(r'\.lo-photo-details__stack\s*\{[^}]*(?:100vw|50vw)',css)
 assert re.search(r'\.lo-photo-details__figure img\s*\{[^}]*width:100%;height:auto;object-fit:contain',css)
 assert '.product-content__cta a:not(.button){color:var(--red)}' in css
 assert '.product-content__cta a{color:var(--red)}' not in css
