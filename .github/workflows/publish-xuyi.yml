@@ -207,6 +207,7 @@ jobs:
           python scripts/test_20261018_blog_batch.py
           python scripts/test_20261019_blog_batch.py
           python scripts/test_20261020_b2b_blog_batch.py
+          node scripts/test_20261020_b2b_blog_batch_runtime.mjs
           node scripts/test_20261019_blog_batch_runtime.mjs
           node scripts/test_20261018_blog_batch_runtime.mjs
           python scripts/test_source_catalog_capacity_oz.py

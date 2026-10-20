@@ -17,7 +17,11 @@ const reply = (body, status = 200) => Response.json(body, {
 const count = (value, part) => String(value).split(part).length - 1;
 const unsafeHtml = /<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;
 
-function validatePayload(payload) {
+// This batch uses already-reviewed local editorial and factory catalog images.
+// Unlike the 2026-10-19 guides, these three procurement guides do not include
+// a separate primary-sources section. Do not fabricate source citations just
+// to satisfy an obsolete batch gate.
+export function validatePayload(payload) {
   if (!payload || !Array.isArray(payload.posts) || payload.posts.length !== SLUGS.length
       || !Array.isArray(payload.translations) || payload.translations.length !== SLUGS.length * LOCALES.length
       || !Array.isArray(payload.indexCards) || payload.indexCards.length !== SLUGS.length * LOCALES.length) {
@@ -32,7 +36,7 @@ function validatePayload(payload) {
     if (typeof post.title !== "string" || post.title.length < 12
         || typeof post.description !== "string" || post.description.length < 25
         || typeof post.intro !== "string" || post.intro.length < 50
-        || !/^\/assets\/blog\/[a-z0-9-]+\.webp$/.test(String(post.cover || ""))
+        || !/^\/assets\/(?:blog|editorial|curated-hd)\/[a-z0-9-]+\.webp$/.test(String(post.cover || ""))
         || !Array.isArray(post.sections) || post.sections.length !== 7
         || !Array.isArray(post.checklist) || post.checklist.length !== 10
         || !Array.isArray(post.faqs) || post.faqs.length !== 4
@@ -55,7 +59,8 @@ function validatePayload(payload) {
     if (!match || !expected.has(match[1]) || !LOCALES.includes(locale) || seenTranslations.has(key)
         || String(item?.title || "").length < 12 || String(item?.description || "").length < 25
         || html.length < 5000 || html.length > 250000 || unsafeHtml.test(html)
-        || count(html, 'id="primary-sources"') !== 1
+        || count(html, 'id="primary-sources"') > 1
+        || count(html, 'class="blog-section"') !== 7
         || count(html, 'class="blog-editorial__product-link"') !== 3
         || count(html, 'class="blog-related__item"') !== 3
         || count(html, 'class="blog-buyer-matrix"') !== 1
@@ -144,7 +149,8 @@ export async function onRequestPost(context) {
       if (!row) return reply({ error: "Final D1 check failed: missing article translation." }, 409);
       let body = "";
       try { body = JSON.parse(row.translated_json).mainHtml || ""; } catch {}
-      if (body.length < 5000 || count(body, 'id="primary-sources"') !== 1
+      if (body.length < 5000 || count(body, 'id="primary-sources"') > 1
+          || count(body, 'class="blog-section"') !== 7
           || count(body, 'class="blog-editorial__product-link"') !== 3
           || count(body, 'class="blog-related__item"') !== 3
           || count(body, 'class="blog-buyer-matrix"') !== 1 || count(body, "<details>") !== 4) {
