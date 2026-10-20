@@ -10,10 +10,6 @@ from pathlib import Path
 
 CONFIG=json.loads((Path(__file__).resolve().parent/"data/sitemap-reviewed-lastmod.json").read_text(encoding="utf8"))
 BASELINE=CONFIG["routes"]
-_BLOG_20261020={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261020.json").read_text(encoding="utf8"))
-}
 DATE_RE=re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 def valid_date(value):
@@ -31,4 +27,4 @@ def source_lastmod(route,locale="en",revision=None):
         for key in ("contentUpdatedAt","lastSignificantUpdate","modifiedAt","updatedAt"):
             approved=valid_date(str(revision.get(key) or "")[:10])
             if approved:return approved
-    return valid_date(BASELINE.get(canonical) or _BLOG_20261020.get(canonical))
+    return valid_date(BASELINE.get(canonical))
