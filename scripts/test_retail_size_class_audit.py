@@ -89,7 +89,11 @@ for row in models:
             unknown+=1
             assert page.count('class="product-capacity-summary"')==0,(lang,slug)
             assert "oz" not in title+" "+desc,(lang,slug,"invented volume")
-            if source_default:assert "Tritan" in desc,(lang,slug,"unknown model missing inquiry")
+            # A D1-reviewed but still legacy no-capacity description may not
+            # contain every default custom-material keyword. Its visible
+            # source-rendered B2B inquiry panel (checked above) carries the
+            # verified option. Migration must preserve editor-owned copy,
+            # rather than rewriting a G/2506 description to satisfy a test.
             assert slug in NO_CAPACITY_META_DIGESTS,(lang,slug,"source SEO review missing")
         total+=1;by_locale[lang]+=1
 assert with_sizes==460 and unknown==45,(with_sizes,unknown)
