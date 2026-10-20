@@ -139,6 +139,15 @@ jobs:
       - name: Publish reviewed Blog batch through existing XUYI CMS
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-19 blog batch through existing CMS'
         run: python scripts/publish_blog_batch_20261019_d1.py
+      - name: Prepare 2026-10-20 B2B procurement guides
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
+        run: |
+          # Resolve related-article titles against current owner-approved D1 copy.
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_release_20261020.py
+      - name: Publish approved 2026-10-20 procurement guides to existing D1 CMS
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-20 B2B procurement guides'
+        run: python scripts/publish_blog_batch_20261020_d1.py
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         # The public site must run the authenticated XUYI snapshot endpoint.
@@ -197,6 +206,7 @@ jobs:
           node scripts/test_20261017_blog_batch_runtime.mjs
           python scripts/test_20261018_blog_batch.py
           python scripts/test_20261019_blog_batch.py
+          python scripts/test_20261020_b2b_blog_batch.py
           node scripts/test_20261019_blog_batch_runtime.mjs
           node scripts/test_20261018_blog_batch_runtime.mjs
           python scripts/test_source_catalog_capacity_oz.py
