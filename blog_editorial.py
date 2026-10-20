@@ -3,7 +3,10 @@ import json
 import re
 from site_renderer import ROOT, e, photo, intro, SITE_ORIGIN
 
-GUIDES = {post["slug"]: post for post in json.loads((ROOT / "data/blog-guides.json").read_text(encoding="utf-8"))}
+GUIDES = {post["slug"]: post for post in (
+    json.loads((ROOT / "data/blog-guides.json").read_text(encoding="utf-8")) +
+    json.loads((ROOT / "data/blog-guides-20261020.json").read_text(encoding="utf-8"))
+)}
 COVER_OVERRIDES = json.loads((ROOT / "data/blog-cover-overrides.json").read_text(encoding="utf-8"))
 assert set(COVER_OVERRIDES).issubset(GUIDES), "Unknown blog cover override"
 EVIDENCE=json.loads((ROOT / "data/editorial-evidence.json").read_text(encoding="utf-8"))
@@ -55,7 +58,10 @@ def render_primary_evidence(slug):
     h+='</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>'
     return h
 
-BUYER_MATRICES = json.loads((ROOT / "data/blog-buyer-decision-tables.json").read_text(encoding="utf-8"))["articles"]
+BUYER_MATRICES = {
+    **json.loads((ROOT / "data/blog-buyer-decision-tables.json").read_text(encoding="utf-8"))["articles"],
+    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261020.json").read_text(encoding="utf-8"))["articles"]
+}
 assert set(BUYER_MATRICES)==set(GUIDES),"Every reviewed buyer guide needs its own decision table"
 
 def render_buyer_matrix(slug, override=None):

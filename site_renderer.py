@@ -531,5 +531,8 @@ FAQS=[
 ("Can you provide test reports for my export market?","Please specify the model, destination country and required standards. Any documents offered must match the actual product, material and valid test scope."),
 ("Are there online prices or a shopping cart?","No. This is a business-to-business quotation website. We quote based on model, quantity, customization and delivery terms.")
 ]
-BLOG_POSTS={post["slug"]:post for post in json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf-8"))}
+BLOG_POSTS={post["slug"]:post for post in (
+ json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf-8"))+
+ json.loads((ROOT/"data/blog-guides-20261020.json").read_text(encoding="utf-8"))
+)}
 ARTICLES=[(post["slug"],post["title"],post["description"]) for post in reversed(list(BLOG_POSTS.values()))]
