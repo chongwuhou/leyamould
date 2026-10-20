@@ -1,7 +1,21 @@
 import assert from "node:assert/strict";
 import {createHash} from "node:crypto";
 import {beijingDate,validateDailyInput,onRequestGet,onRequestPost} from "../functions/api/admin/daily-product-reviews.js";
+import {authorizedDailyProductReviewRequest} from "../functions/_shared/build-auth.js";
 const today=beijingDate();
+// Validate the exact Pages-project deployment-token exception offline;
+// no CI test may depend on an external Cloudflare request.
+const originalFetch=globalThis.fetch;
+globalThis.fetch=async (url,options)=>{
+ assert.equal(url,
+  "https://api.cloudflare.com/client/v4/accounts/a4032d0251103d6ef680b2aaddce1afc/pages/projects/xuyi-drinkware-site");
+ const ok=options.headers.authorization==="Bearer cloudflare-review-ci-test";
+ return Response.json({success:ok,result:{name:ok?"xuyi-drinkware-site":"other-site"}},
+  {status:ok?200:403});
+};
+const special=new Request("https://xuyibottles.com/api/admin/daily-product-reviews",
+ {method:"GET",headers:{authorization:"Bearer cloudflare-review-ci-test"}});
+assert.equal(await authorizedDailyProductReviewRequest(special,{ADMIN_TOKEN:"not-the-project-token"}),true);
 assert.match(today,/^\d{4}-\d{2}-\d{2}$/);
 assert.equal(beijingDate(new Date("2026-10-20T01:00:00Z")),"2026-10-20");
 assert.equal(beijingDate(new Date("2026-10-20T16:01:00Z")),"2026-10-21");
@@ -83,6 +97,10 @@ const context=(body,token=env.ADMIN_TOKEN)=>({env,request:new Request(
   body:body?JSON.stringify(body):undefined
  })});
 assert.equal((await onRequestGet(context(undefined,"wrong-password"))).status,401);
+assert.equal(await authorizedDailyProductReviewRequest(
+  new Request("https://xuyibottles.com/api/admin/product-reviews",{method:"GET",
+   headers:{authorization:"Bearer xuyi-test-admin"}}),env),false,
+ "Special Cloudflare project token cannot authorize arbitrary admin routes");
 let reply=await onRequestPost(context(payload));
 assert.equal(reply.status,200);
 let result=await reply.json();
@@ -107,4 +125,5 @@ assert.equal(db.ledger.size,3);
 reply=await onRequestPost(context({...payload,items:[records[3]]}));
 assert.equal(reply.status,409);
 assert.equal(db.ledger.size,3);
+globalThis.fetch=originalFetch;
 console.log("XUYI_D1_THREE_DAILY_REVIEWS_EXACT_SKU_PERMANENT_LEDGER_SECURITY_PASS");

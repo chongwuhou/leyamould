@@ -71,3 +71,14 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
   ]).has(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
+
+// Narrow exception for the reviewed 101-model daily XLSX publisher. The
+// existing GitHub CI Cloudflare token proves access to THIS XUYI project,
+// but may only call the source-validated, append-only, three-per-day endpoint.
+// Ordinary admin CRUD remains password/session protected as before.
+export async function authorizedDailyProductReviewRequest(request, env) {
+  if (new URL(request.url).pathname !== "/api/admin/daily-product-reviews" ||
+      !new Set(["GET", "POST"]).has(request.method)) return false;
+  if (await authorizeAdminRequest(request, env)) return true;
+  return verifyCloudflareProjectToken(bearerToken(request), env);
+}

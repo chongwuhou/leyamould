@@ -1,6 +1,6 @@
 // Authenticated D1 source ledger: maximum three unique SKU publications per
 // Asia/Shanghai date; no repeat even after a public review is later removed.
-import {authorizeAdminRequest} from "../../_shared/admin-security.js";
+import {authorizedDailyProductReviewRequest} from "../../_shared/build-auth.js";
 import {MANAGED_MODELS} from "../../_shared/xuyi-routes.js";
 import {ensureProductReviews} from "../../_shared/product-reviews.js";
 import {bumpPublishRevision} from "../../_shared/site-settings.js";
@@ -30,7 +30,7 @@ const dayOK=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)&&
  new Date(value+"T00:00:00Z").toISOString().slice(0,10)===value;
 async function requireDb(c){
  if(!c.env.ADMIN_TOKEN)return {error:json({error:"Admin not configured"},503)};
- if(!(await authorizeAdminRequest(c.request,c.env)))return {error:json({error:"Unauthorized"},401)};
+ if(!(await authorizedDailyProductReviewRequest(c.request,c.env)))return {error:json({error:"Unauthorized"},401)};
  if(!c.env.XUYI_DB)return {error:json({error:"Database unavailable"},503)};
  const db=c.env.XUYI_DB;
  await ensureProductReviews(db);
