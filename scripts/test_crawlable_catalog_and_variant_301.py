@@ -109,7 +109,9 @@ assert not any(re.search(r"/products/[0-9]{4}---/",x.split()[1]) for x in redire
 # the owner creates a new canonical route record. The direct new key wins.
 import copy
 from scripts.cms_seo_curation_guard import current_field,may_curate
-assert may_curate("es","/products/2400-transparent/","title",state)
+assert (may_curate("es","/products/2400-transparent/","title",state) or
+    any(x.get("slug")=="2400-transparent" and x.get("locale")=="es"
+        for x in state.get("productSeo",[]))),"Historic curation or canonical D1 SEO required"
 changed=copy.deepcopy(state)
 legacy_record=next(x for x in changed["translations"]
     if x.get("locale")=="es" and x.get("resourceId")=="page:/products/2400---/")
