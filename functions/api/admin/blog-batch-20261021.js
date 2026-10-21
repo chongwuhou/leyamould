@@ -129,7 +129,7 @@ export async function onRequestPost(context) {
     // A different administrator-selected cover or edited index card is never overwritten.
     const coverSlug = "compare-oem-water-bottle-quotes-like-for-like";
     const oldCover = "/assets/editorial/plastic-sampling-workbench.webp";
-    const correctedCover = "/assets/blog/water-bottle-sample-approval-20261017.webp";
+    const correctedCover = "/assets/curated-hd/outdoor-lifestyle.webp";
     const correctedPost = payload.posts.find(item => item.slug === coverSlug);
     if (correctedPost?.post?.cover !== correctedCover) {
       return reply({ error: "Unreviewed B2B cover correction" }, 409);

@@ -39,7 +39,7 @@ BLOG_DATE_LABELS={
 def reviewed_20261021_cover_fields(route,loc,fields):
     slug="compare-oem-water-bottle-quotes-like-for-like"
     old="/assets/editorial/plastic-sampling-workbench.webp"
-    replacement="/assets/blog/water-bottle-sample-approval-20261017.webp"
+    replacement="/assets/curated-hd/outdoor-lifestyle.webp"
     if route not in ("/blog/"+slug+"/","/blog/"):
         return fields
     if old not in fields.get("mainHtml",""):
