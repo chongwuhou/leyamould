@@ -160,6 +160,15 @@ jobs:
       - name: Persist all reviewed product SEO fields in Cloudflare D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
         run: python scripts/promote_product_seo_to_d1_20261020.py
+      # Explicit owner-requested review publication. D1 atomically enforces
+      # three per Beijing day, no duplicates, and preserves CMS owner content.
+      # The standing daily workflow uses the same reviewed random sampler.
+      - name: Publish three randomly selected authentic product reviews
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three randomly selected authentic XUYI product reviews'
+        run: |
+          python scripts/test_daily_product_reviews.py
+          node scripts/test_daily_product_reviews_api.mjs
+          python scripts/publish_daily_product_reviews.py
       # Runs only AFTER the new authenticated endpoint has been separately
       # deployed by the preceding setup commit. D1's permanent ledger guards
       # replays, retries and manual deletions of existing public reviews.
