@@ -15,6 +15,9 @@ for post in POSTS:
     assert len(post["related"])==3 and post["slug"] not in post["related"]
     assert len({note["sku"] for note in post["product_notes"]})==3
     assert len(set(post["related"]))==3
+    from sitemap_modification import source_lastmod
+    assert source_lastmod("/blog/"+post["slug"]+"/")=="2026-10-21"
+    assert source_lastmod("/pt/blog/"+post["slug"]+"/")=="2026-10-21"
     assert len(post["intro"])>150 and all(len(section["paragraph"])>450 for section in post["sections"])
     for lang in LANGS:
         prefix="" if lang=="en" else lang+"/"
