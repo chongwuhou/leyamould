@@ -5,7 +5,8 @@ from site_renderer import ROOT, e, photo, intro, SITE_ORIGIN
 
 GUIDES = {post["slug"]: post for post in (
     json.loads((ROOT / "data/blog-guides.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261020.json").read_text(encoding="utf-8"))
+    json.loads((ROOT / "data/blog-guides-20261020.json").read_text(encoding="utf-8")) +
+    json.loads((ROOT / "data/blog-guides-20261021.json").read_text(encoding="utf-8"))
 )}
 COVER_OVERRIDES = json.loads((ROOT / "data/blog-cover-overrides.json").read_text(encoding="utf-8"))
 assert set(COVER_OVERRIDES).issubset(GUIDES), "Unknown blog cover override"
@@ -60,7 +61,8 @@ def render_primary_evidence(slug):
 
 BUYER_MATRICES = {
     **json.loads((ROOT / "data/blog-buyer-decision-tables.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261020.json").read_text(encoding="utf-8"))["articles"]
+    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261020.json").read_text(encoding="utf-8"))["articles"],
+    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261021.json").read_text(encoding="utf-8"))["articles"]
 }
 assert set(BUYER_MATRICES)==set(GUIDES),"Every reviewed buyer guide needs its own decision table"
 

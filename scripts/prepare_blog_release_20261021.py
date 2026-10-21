@@ -2,8 +2,9 @@
 """Prepare three reviewed, five-language 2026-10-21 B2B articles as D1 CMS source.
 No HTML/dist mutation, no external writes; owner edits stay authoritative.
 """
-import json
+import json,sys
 from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 import scripts.prepare_blog_release_20261020 as base
 
 ROOT=Path(__file__).resolve().parent.parent
