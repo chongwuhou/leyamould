@@ -68,7 +68,8 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
   if (request.method !== "POST" || !new Set([
     "/api/admin/blog-batch",
     "/api/admin/blog-batch-20261020",
-    "/api/admin/blog-batch-20261021"
+    "/api/admin/blog-batch-20261021",
+    "/api/admin/blog-batch-20261022"
   ]).has(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
