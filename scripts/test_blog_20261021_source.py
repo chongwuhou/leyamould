@@ -3,6 +3,8 @@
 import json,re,html
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
+import sys
+sys.path.insert(0,str(ROOT))
 DIST=ROOT/"dist"
 POSTS=json.loads((ROOT/"data/blog-guides-20261021.json").read_text("utf8"))
 LANGS=("en","es","pt","ru","tr")
