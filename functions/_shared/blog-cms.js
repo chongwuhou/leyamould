@@ -11,10 +11,11 @@ import DEEP_PART3 from "../../data/blog-deep-research-part3.json" with {type:"js
 import SOURCE_BLOG_GUIDES from "../../data/blog-guides.json" with {type:"json"};
 import NEW_B2B_GUIDES from "../../data/blog-guides-20261020.json" with {type:"json"};
 import B2B_20261021_GUIDES from "../../data/blog-guides-20261021.json" with {type:"json"};
+import B2B_20261022_GUIDES from "../../data/blog-guides-20261022.json" with {type:"json"};
 import INLINE_PART1 from "../../data/blog-inline-edits-reviewed-part1.json" with {type:"json"};
 import INLINE_PART2 from "../../data/blog-inline-edits-reviewed-part2.json" with {type:"json"};
 const REVIEWED_INLINE={...INLINE_PART1,...INLINE_PART2};
-const SOURCE_GUIDE_BY_SLUG=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES].map(p=>[p.slug,p]));
+const SOURCE_GUIDE_BY_SLUG=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES].map(p=>[p.slug,p]));
 /** Genuine paragraph-level editorial links, conditional on unchanged D1
  * intro, section heading and paragraph. Owner changes take priority.
  */
@@ -59,7 +60,7 @@ export function reviewedBlogRelatedAtEnd(post){
   out+='<article class="blog-related__item"><a href="/blog/'+esc(info.slug)+'/"><strong>'+esc(info.title)+'</strong></a><p>'+esc(info.description)+'</p></article>';
  return out+'</div></div></section>';
 }
-const ORIGINAL_GUIDE_INTROS=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES].map(post=>[post.slug,post.intro]));
+const ORIGINAL_GUIDE_INTROS=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES].map(post=>[post.slug,post.intro]));
 const DEEP_ENTRIES={...BLOG_DEPTH.articles,...DEEP_PART1.articles,...DEEP_PART2.articles,...DEEP_PART3.articles};
 
 export function renderDepthEvidence(post){
