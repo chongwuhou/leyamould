@@ -47,11 +47,23 @@ assert 'data-reviewed-model="2306透明款"' in transparent_html
 for loc in ("en","es","pt","ru","tr"):
     path=ROOT/"dist"/("products/2305/index.html" if loc=="en" else loc+"/products/2305/index.html")
     assert path.is_file(),path
-    original=path.read_text("utf8")
-    # A no-feedback product must not gain fake Product.review or a blank star.
-    assert at_product_source(original,"2305",loc,{"productReviews":[]})==original
+    live=path.read_text("utf8")
+    # Published D1 reviews may now exist on model 2305. Do not assume that
+    # a production product page stays review-free after a successful rollout.
+    # This synthetic, non-published fixture tests injection independently of
+    # the changing public product-review inventory.
+    assert at_product_source(live,"2305",loc,{"productReviews":[]})==live
+    assert len(nodes(live))==1 and nodes(live)[0].get("sku")=="2305"
+    original=('<html><head><script type="application/ld+json">'
+              '{"@context":"https://schema.org","@graph":[{"@type":"Product",'
+              '"name":"Isolated test fixture","sku":"2305"}]}'
+              '</script></head><body><main>Isolated review test.</main></body></html>')
     source={"productReviews":[one,two,draft,other]}
     generated=at_product_source(original,"2305",loc,source)
+    # Real published bodies are authoritative. If D1 already placed its
+    # reviews, a later render attempt must never append synthetic duplicates.
+    if 'id="xuyi-customer-reviews"' in live:
+        assert at_product_source(live,"2305",loc,source)==live
     assert generated.count('id="xuyi-customer-reviews"')==1,(loc,"visible")
     assert generated.count('class="product-review"')==2,(loc,"draft or other model leaked")
     assert "Maria &amp; Sons" in generated and "4.5/5 ★" in generated
