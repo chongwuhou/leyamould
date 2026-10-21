@@ -1,0 +1,1548 @@
+{
+  "schemaVersion": 1,
+  "editorialStatus": "reviewed-b2b-20261021",
+  "articles": {
+    "compare-oem-water-bottle-quotes-like-for-like": {
+      "es": {
+        "title": "¿Cómo comparar dos presupuestos de fábrica para botellas de agua OEM?",
+        "description": "Guía B2B para comparar ofertas de botellas personalizadas: materiales, tapones, impresión, MOQ, embalaje, Incoterms y coste real por unidad aceptada.",
+        "intro": "Dos fábricas pueden cotizar la misma capacidad nominal y estar presupuestando productos y servicios diferentes. Una oferta puede incluir muestra, logotipo y caja comercial; otra solo el cuerpo de la botella en un cartón colectivo. El comprador debe facilitar una ficha única, registrar exclusiones y comparar el coste total de la configuración aprobada. Esta guía ayuda a convertir un precio atractivo pero ambiguo en una decisión verificable.",
+        "sections": [
+          [
+            "¿Por qué el precio unitario no permite comparar dos proveedores?",
+            "Envíe a ambos fabricantes la misma revisión de la ficha técnica, cantidades por variante y destino. Pida que confirmen qué está incluido, excluido o pendiente: material, tapa, junta, impresión, embalaje y controles. La fotografía de catálogo no define una configuración contractual. Si los proveedores ofrecen distintas tapas o materias primas, registre las diferencias antes de puntuar los precios. Una oferta incompleta debe quedar como «pendiente de comparación», no convertirse en la opción más barata por omisión."
+          ],
+          [
+            "¿Qué materiales y componentes debe especificar la oferta?",
+            "Solicite una lista de materiales por modelo: resina del cuerpo, tapón, junta, pajita cuando exista, colorantes, asa, decoración y capacidad documentada. Compruebe qué piezas son de catálogo y cuáles exigen modificación de herramienta. Los documentos de contacto alimentario deben corresponder al conjunto y uso previsto en el mercado de destino. Una declaración comercial sobre Tritan, ausencia de BPA o aprobación regulatoria no sustituye los informes aplicables. Conserve la muestra de referencia y una lista de las especificaciones aprobadas."
+          ],
+          [
+            "¿Cómo afectan la impresión, los colores y los moldes al precio final?",
+            "Separe el coste de impresión por unidad, la preparación, las pantallas, placas, muestras y moldes nuevos. Defina número de posiciones y colores, tolerancia de registro y método para validar la durabilidad. Apruebe una referencia física de color y una prueba sobre el material real; una imagen digital no confirma el acabado. Pregunte quién será propietario de las herramientas, dónde se guardarán y qué condiciones rigen nuevos pedidos. Compare el precio de la botella sin decorar y el del producto terminado de forma explícita."
+          ],
+          [
+            "¿El MOQ es por pedido total o por color, tapa y logotipo?",
+            "Pida un cuadro de variantes con modelo, color, tapón, arte, cantidad y cargo de preparación. No suponga que los mínimos por color se suman libremente ni que dos tamaños comparten lote de producción. La escala de precios puede bajar el coste unitario pero aumentar el capital inmovilizado. Compare un pedido mínimo viable, el pedido inicial previsto y una reposición posterior. Confirme la posibilidad de cajas mixtas, el redondeo a cartones y la tolerancia de cantidad que aceptará el contrato."
+          ],
+          [
+            "¿Qué costes de embalaje, inspección y exportación faltan?",
+            "Incluya protecciones interiores, caja de venta, manuales, etiquetas de SKU, cartón maestro y preparación para palés cuando corresponda. Solicite medidas y pesos del embalaje final, no estimaciones derivadas de una foto. Acuerde categorías de defectos, inspección previa al envío y responsabilidad de repetir pruebas o corregir fallos. Compruebe el manual de recepción del distribuidor o almacén externo antes de aprobar etiquetas. Una oferta EXW no incluye automáticamente las mismas tareas y riesgos que una oferta de entrega en otro punto."
+          ],
+          [
+            "¿Cómo se comparan Incoterms y coste puesto en almacén?",
+            "Escriba la regla Incoterms con el lugar designado y pida un presupuesto independiente de transporte basado en volumen, peso y destino reales. Añada los conceptos aplicables de seguro, despacho, aranceles, impuestos, gestión y entrega final. Para una estimación interna, divida la suma de mercancía, decoración, preparación imputable, transporte y costes de destino entre las unidades aceptables. No publique un arancel o plazo como fijo para todos los países. Vincule pagos a hitos de aprobación de muestra e inspección."
+          ],
+          [
+            "¿Cómo elegir una oferta después de normalizar los datos?",
+            "Use una matriz de «cumple, condicionado, pendiente» en vez de ordenar únicamente por precio. Si falta un informe, muestra o dibujo de embalaje, solicítelo antes de adjudicar. Documente qué cambios de resina, tapa o decoración requieren autorización escrita, y defina quién resuelve defectos. Valore las respuestas verificables y el plan de reposición, no solo promesas comerciales. Archive la ficha final, la muestra aprobada y el presupuesto con la orden de compra para que calidad, logística y finanzas trabajen sobre los mismos supuestos."
+          ]
+        ],
+        "checklist": [
+          "Una ficha y revisión idénticas para todos los proveedores.",
+          "Código de modelo y materiales de cuerpo, tapa y junta.",
+          "Evidencia aplicable a la configuración final.",
+          "Costes separados de impresión, moldes y preparación.",
+          "Cantidades por variante, color y logotipo.",
+          "Dibujo de embalaje comercial y cartón maestro.",
+          "Incoterm con lugar específico.",
+          "Presupuesto independiente de transporte e importación.",
+          "Muestra patrón, inspección y solución de defectos.",
+          "Coste por unidad aceptada, no solo precio de fábrica."
+        ],
+        "faqs": [
+          [
+            "¿Basta con comparar el precio más bajo?",
+            "No. Solo es comparable después de validar componentes, impresión, cantidades, embalaje, condiciones de entrega e inspección."
+          ],
+          [
+            "¿Se incluyen moldes y muestras en el coste unitario?",
+            "Indíquelos por separado y calcule su impacto en el pedido. Confirme propiedad y reutilización en reposiciones."
+          ],
+          [
+            "¿Por qué EXW y FOB no equivalen?",
+            "Distribuyen obligaciones y costes de forma diferente; escriba además el lugar o puerto nombrado y compare hasta el mismo destino."
+          ],
+          [
+            "¿Qué ocurre si no existe documentación del material?",
+            "Considere el requisito pendiente y solicite pruebas de la configuración real antes de aprobar afirmaciones de cumplimiento."
+          ]
+        ],
+        "matrix": {
+          "title": "Matriz para normalizar las ofertas",
+          "intro": "La falta de evidencia es una pregunta abierta, no un servicio incluido.",
+          "head": [
+            "Concepto",
+            "Prueba solicitada",
+            "Error frecuente"
+          ],
+          "rows": [
+            [
+              "Cuerpo y tapa",
+              "Modelo, materiales y muestra aprobada",
+              "Comparar cierres diferentes"
+            ],
+            [
+              "Logotipo y moldes",
+              "Prueba, preparación y titularidad",
+              "Ocultar coste único"
+            ],
+            [
+              "Variantes",
+              "MOQ y unidades por combinación",
+              "Confundir MOQ total y por color"
+            ],
+            [
+              "Embalaje",
+              "Cartones, pesos y códigos",
+              "Suponer embalaje incluido"
+            ],
+            [
+              "Calidad",
+              "Criterios y corrección de defectos",
+              "Aceptación de informes genéricos"
+            ],
+            [
+              "Entrega",
+              "Incoterm y lugar, gastos de destino",
+              "Comparar EXW con entrega final"
+            ]
+          ],
+          "links": [
+            "Plantilla RFQ comparable",
+            "Lista de verificación del depósito"
+          ]
+        },
+        "inline": [
+          "Aprobación de muestras",
+          "Moldes para botellas personalizadas"
+        ],
+        "product_notes": [
+          [
+            "modelo de botella 2106",
+            "Utilice {product} como ejemplo de botella infantil y confirme su cierre y materiales concretos."
+          ],
+          [
+            "modelo de jarra grande 2305",
+            "Para el formato grande consulte {product}, sin trasladar automáticamente el embalaje de otro modelo."
+          ],
+          [
+            "jarra LO-001",
+            "Un diseño decorado como {product} permite comprobar por separado el acabado, el asa y el cartón."
+          ]
+        ]
+      },
+      "pt": {
+        "title": "Como comparar cotações de duas fábricas de garrafas OEM?",
+        "description": "Guia B2B para comparar propostas de garrafas plásticas: materiais, tampas, personalização, MOQ, embalagens, Incoterms e custo total da unidade aprovada.",
+        "intro": "Duas fábricas podem informar preços por unidade para a mesma capacidade nominal, mas oferecer escopos diferentes. Uma inclui amostra aprovada, impressão e caixa individual; outra considera apenas o corpo da garrafa sem personalização. Para comparar com segurança, o comprador precisa da mesma ficha técnica, de todas as exclusões e de um cálculo dos custos até o destino. Este roteiro organiza a decisão de compra com evidências.",
+        "sections": [
+          [
+            "Por que os preços unitários não são comparáveis imediatamente?",
+            "Envie o mesmo código de modelo, revisão técnica, volume por variante e destino a todos os fornecedores. Peça uma tabela do que está incluído, excluído ou condicionado: resina, tampa, vedação, impressão, embalagem e inspeção. Foto de catálogo não define o produto contratado. Se uma proposta traz tampa ou material diferente, registre essa diferença antes de comparar valores. Marque uma cotação incompleta como pendente, em vez de classificá-la como mais econômica."
+          ],
+          [
+            "Quais materiais e componentes precisam constar na cotação?",
+            "Solicite uma lista de componentes por modelo: resina do corpo, tampa, junta, canudo quando houver, pigmentos, alça, capacidade documentada e processo decorativo. Verifique quais elementos são de linha e quais precisam de ferramenta nova. Documentos de contato com alimentos dependem do conjunto, uso e mercado de destino, não apenas do nome comercial da resina. Não apresente Tritan ou BPA Free como certificação sem comprovação aplicável. Guarde amostra aprovada e especificação assinada."
+          ],
+          [
+            "Como impressão, cores e moldes alteram o custo?",
+            "Separe impressão por unidade, taxa de preparação, telas, clichês, amostras e novos moldes. Defina posições de impressão, número de cores, acabamento e critérios de aceitação. Peça prova física no material final e referência de cor; uma simulação digital não garante o resultado. Confirme propriedade, armazenamento, manutenção e reutilização de moldes em pedidos futuros. Compare o preço da peça sem decoração com o da garrafa pronta para venda, sem esconder taxas únicas."
+          ],
+          [
+            "O MOQ é por pedido, cor, tampa ou logotipo?",
+            "Faça uma grade de modelo, cor, fechamento, arte, quantidade e taxa de configuração. O mínimo total não necessariamente atende ao mínimo de cada variante. Pergunte se embalagens mistas são aceitas e como as caixas completas afetam as quantidades. Um preço melhor para mais unidades também pode aumentar estoque parado e risco financeiro. Compare o lote inicial com uma reposição realista e deixe registradas as tolerâncias de entrega e diferenças de preço por faixa."
+          ],
+          [
+            "Quais custos de embalagem e inspeção costumam faltar?",
+            "Inclua divisórias, proteção interna, embalagem para varejo, instruções, etiquetas, caixa master e paletização quando exigida. Solicite dimensões e pesos após aprovação da embalagem real. Defina inspeção, amostragem, classes de defeitos, retrabalho e responsabilidade por novos ensaios. Antes de imprimir etiquetas, confira o guia de recebimento do varejista ou operador 3PL. O preço EXW não significa que exportação, carregamento e frete estejam incluídos na mesma medida que outra condição comercial."
+          ],
+          [
+            "Como calcular um custo comparável até o destino?",
+            "Defina a regra Incoterms e o local nomeado, e peça cotações independentes de frete com medidas e pesos corretos. Considere seguro, desembaraço, tributos, armazenagem, entrega local e tratamento de não conformidades quando aplicável. Uma análise interna pode dividir custos totais por unidades aprovadas após a inspeção. Não trate alíquotas, câmbio ou prazos como valores universais. Relacione etapas de pagamento a aprovação de amostra, arte e inspeção."
+          ],
+          [
+            "Como selecionar o fornecedor após alinhar as propostas?",
+            "Avalie cada requisito como atendido, condicional ou não comprovado. Solicite documentos, amostras, desenhos e revisão da proposta antes de decidir. Determine quais substituições de matéria-prima, tampa ou impressão exigem autorização por escrito. Inclua a capacidade de corrigir falhas e repetir o modelo aprovado no próximo pedido. A melhor escolha atende à ficha real com custo transparente e riscos controláveis. Arquive comparação, amostra, revisão técnica e pedido para orientar todas as equipes."
+          ]
+        ],
+        "checklist": [
+          "Mesma ficha técnica e revisão para cada fornecedor.",
+          "Modelo e resinas de corpo, tampa e vedação.",
+          "Documentos pertinentes ao produto final.",
+          "Taxas de impressão, preparação e moldes separadas.",
+          "Quantidades por cor, tampa e arte.",
+          "Detalhes de embalagem e caixa master.",
+          "Incoterm com local claramente nomeado.",
+          "Frete e custos de importação estimados separadamente.",
+          "Amostra padrão, inspeção e correções definidas.",
+          "Custo por unidade aprovada calculado."
+        ],
+        "faqs": [
+          [
+            "O menor preço unitário significa melhor oferta?",
+            "Somente quando materiais, componentes, decoração, quantidades, embalagem, entrega e critérios de aceitação forem equivalentes."
+          ],
+          [
+            "Amostras e moldes entram no custo?",
+            "Mostre valores separadamente e calcule o impacto por pedido; confirme titularidade e possibilidade de reutilização."
+          ],
+          [
+            "Por que EXW e FOB são diferentes?",
+            "As responsabilidades e custos variam conforme a regra e o local nomeado. Compare ambas as propostas até o mesmo destino."
+          ],
+          [
+            "E quando não há documentos do material?",
+            "Registre uma pendência e solicite evidências do conjunto exato antes de alegar conformidade."
+          ]
+        ],
+        "matrix": {
+          "title": "Matriz de comparação de cotações",
+          "intro": "Falta de evidência não é inclusão gratuita.",
+          "head": [
+            "Item",
+            "Evidência exigida",
+            "Comparação equivocada"
+          ],
+          "rows": [
+            [
+              "Corpo e tampa",
+              "Modelo, componentes e amostra",
+              "Tratar tampas diferentes como iguais"
+            ],
+            [
+              "Arte e molde",
+              "Prova, custo inicial e propriedade",
+              "Ocultar preparação"
+            ],
+            [
+              "Variantes",
+              "MOQ por cor e modelo",
+              "Confundir mínimo total"
+            ],
+            [
+              "Embalagem",
+              "Caixas, medidas e etiquetas",
+              "Assumir inclusão"
+            ],
+            [
+              "Qualidade",
+              "Inspeção e plano de correção",
+              "Aceitar laudo genérico"
+            ],
+            [
+              "Entrega",
+              "Incoterm, lugar e custos finais",
+              "Comparar EXW e entrega"
+            ]
+          ],
+          "links": [
+            "Solicitar RFQ padronizada",
+            "Conferir pagamento antecipado"
+          ]
+        },
+        "inline": [
+          "Aprovação de amostras",
+          "Questões sobre moldes personalizados"
+        ],
+        "product_notes": [
+          [
+            "modelo de garrafa 2106",
+            "Compare {product} como referência infantil e confirme a tampa e os materiais da configuração real."
+          ],
+          [
+            "modelo de jarra grande 2305",
+            "Consulte {product} para comparar embalagens de formatos grandes sem presumir que as caixas são iguais."
+          ],
+          [
+            "jarra LO-001",
+            "Um modelo decorado como {product} exige verificar impressão, alça e custo de embalagem separadamente."
+          ]
+        ]
+      },
+      "ru": {
+        "title": "Как сравнить коммерческие предложения двух фабрик бутылок OEM?",
+        "description": "Практическое руководство для оптового закупщика: состав изделия, печать, минимальные партии, упаковка, Incoterms и полная стоимость пластиковых бутылок.",
+        "intro": "Одинаковая цена за бутылку не всегда означает одинаковый продукт и набор услуг. Одно предложение включает печать, образец и индивидуальную коробку, другое — только изделие без оформления. Покупателю следует отправить единую спецификацию, проверить все исключения и рассчитать затраты до нужного склада. Это руководство помогает сравнивать предложения по подтвержденным условиям, а не по привлекательной стартовой цифре.",
+        "sections": [
+          [
+            "Почему нельзя сразу сравнивать цену за штуку?",
+            "Направьте всем фабрикам одну редакцию спецификации, таблицу вариантов и адрес назначения. Попросите отметить включенные, исключенные и условные позиции: материал корпуса, крышку, уплотнение, нанесение логотипа, упаковку, контроль качества. Фотография из каталога не является полной технической спецификацией. Если предлагаются разные крышки или полимеры, сначала зафиксируйте расхождения. Не считайте неполную смету самой выгодной, пока состав поставки не подтвержден."
+          ],
+          [
+            "Какие материалы и компоненты нужно зафиксировать?",
+            "Запросите состав по каждой модели: полимер корпуса, материал крышки, прокладки и трубочки при наличии, пигмент, ручку, подтвержденный объем и способ декора. Уточните, какие детали серийные, а какие потребуют новой оснастки. Документы для контакта с пищевыми продуктами должны относиться к конкретной сборке и рынку сбыта. Нельзя представлять название Tritan или термин BPA Free как неподтвержденную сертификацию. Сохраните утвержденный физический образец и перечень параметров."
+          ],
+          [
+            "Как печать, подбор цвета и пресс-формы влияют на стоимость?",
+            "Выделите отдельно стоимость печати на изделии, подготовку оборудования, трафареты, образцы и новую оснастку. Согласуйте расположение логотипа, число цветов, допустимые отклонения и способ оценки стойкости. Утверждайте физический образец цвета и нанесения, поскольку экранный макет не доказывает результат производства. Узнайте, кому принадлежат формы, как они хранятся и используются при повторных заказах. Не смешивайте одноразовые затраты с постоянной ценой изделия."
+          ],
+          [
+            "MOQ относится ко всему заказу или к каждому варианту?",
+            "Составьте таблицу моделей, цветов, крышек, логотипов, количеств и подготовительных платежей. Общий минимум необязательно означает возможность произвольно объединить цвета и размеры. Уточните смешанную упаковку, кратность мастер-коробам и разрешенные отклонения по количеству. Более низкая цена за крупный заказ может создать избыточный складской запас. Сравните стартовую партию, реалистичный повторный заказ и цену по каждому диапазону объема."
+          ],
+          [
+            "Какие расходы на упаковку и проверку часто забывают?",
+            "Включите защитные прокладки, индивидуальную коробку, инструкции, маркировку SKU, мастер-короб и паллетирование, если они необходимы. Попросите размеры и вес фактически упакованного образца. Установите критерии приемки, классификацию дефектов, контроль перед отправкой и ответственность за переделку. Сверьте маркировку с инструкциями розничной сети или 3PL-склада до печати тиража. Цена EXW не должна автоматически трактоваться как стоимость товара с полной доставкой."
+          ],
+          [
+            "Как сравнить Incoterms и итоговые затраты до склада?",
+            "Укажите точное правило Incoterms и названное место, затем получите отдельную ставку перевозчика для реального груза. Рассмотрите страхование, таможенные платежи, импортные налоги, локальную доставку и обработку брака. Для внутреннего расчета разделите суммарные затраты на количество единиц, соответствующих критериям приемки. Не обещайте одинаковую ставку пошлины или срок для разных рынков. Привяжите платежные этапы к утверждению образца и инспекции."
+          ],
+          [
+            "Как принять окончательное решение между фабриками?",
+            "Оцените каждый пункт как подтвержденный, условный или не закрытый документами. Попросите недостающие отчеты, образцы, чертежи упаковки и исправленную коммерческую оферту. Определите, какие замены материала, крышки или оформления требуют письменного согласования. При выборе учитывайте понятный порядок исправления дефектов и стабильность повторных партий. Сохраните итоговую спецификацию, образец и сравнительную таблицу вместе с заказом, чтобы все отделы работали по одной версии."
+          ]
+        ],
+        "checklist": [
+          "Одна редакция спецификации для всех фабрик.",
+          "Точный код и материалы корпуса, крышки, уплотнения.",
+          "Документы для конкретной готовой сборки.",
+          "Отдельные сборы за печать и оснастку.",
+          "Количество по каждому цвету и варианту.",
+          "Утвержденные розничная и транспортная упаковки.",
+          "Incoterms с указанным местом.",
+          "Независимый расчет перевозки и импорта.",
+          "Контрольный образец и критерии дефектов.",
+          "Сравнение стоимости принятой единицы."
+        ],
+        "faqs": [
+          [
+            "Можно ли выбирать только по минимальной цене?",
+            "Только после подтверждения равных материалов, крышек, оформления, количества, упаковки, доставки и критериев приемки."
+          ],
+          [
+            "Нужно ли учитывать стоимость пресс-форм?",
+            "Показывайте одноразовые затраты отдельно и распределяйте их по конкретному заказу. Уточните права собственности на оснастку."
+          ],
+          [
+            "Почему EXW не равен FOB?",
+            "Правила распределяют обязанности и расходы по-разному; необходимо также указать место и сравнивать стоимость до одинакового конечного пункта."
+          ],
+          [
+            "Что делать, если документы на материал отсутствуют?",
+            "Не считать требование закрытым; запросить подтверждение по готовой конфигурации до заявлений о соответствии."
+          ]
+        ],
+        "matrix": {
+          "title": "Матрица сопоставления предложений",
+          "intro": "Отсутствующий документ означает открытый вопрос, а не бесплатное включение.",
+          "head": [
+            "Позиция",
+            "Подтверждение",
+            "Типичная ошибка"
+          ],
+          "rows": [
+            [
+              "Корпус и крышка",
+              "Код, состав и образец",
+              "Сравнение разных крышек"
+            ],
+            [
+              "Печать и формы",
+              "Проба, подготовка, собственник",
+              "Скрытые разовые сборы"
+            ],
+            [
+              "Варианты",
+              "MOQ по каждому цвету",
+              "Путаница общего минимума"
+            ],
+            [
+              "Упаковка",
+              "Короба, размеры, этикетки",
+              "Необоснованное включение"
+            ],
+            [
+              "Контроль",
+              "Критерии и переделка",
+              "Общие сертификаты"
+            ],
+            [
+              "Доставка",
+              "Incoterms и названное место",
+              "EXW против доставки до склада"
+            ]
+          ],
+          "links": [
+            "Единый запрос цены",
+            "Контроль авансового платежа"
+          ]
+        },
+        "inline": [
+          "Приемка образцов",
+          "Расходы на пресс-формы"
+        ],
+        "product_notes": [
+          [
+            "модель бутылки 2106",
+            "Используйте {product} как пример детского формата; отдельно уточните материалы и крышку."
+          ],
+          [
+            "большая бутыль 2305",
+            "Для крупного формата сравните {product}, не предполагая одинаковую транспортную упаковку."
+          ],
+          [
+            "бутыль LO-001",
+            "Модель с оформлением, например {product}, требует отдельного учета декора и упаковки."
+          ]
+        ]
+      },
+      "tr": {
+        "title": "İki OEM su şişesi fabrikasının teklifleri nasıl adil karşılaştırılır?",
+        "description": "Plastik şişe toplu alımında malzeme, kapak, baskı, MOQ, koli, Incoterms ve gerçek birim maliyetini karşılaştırmak için B2B kontrol listesi.",
+        "intro": "Aynı nominal hacme sahip su şişesi için verilen iki fiyat aynı teslim kapsamını ifade etmeyebilir. Bir üretici baskıyı, onay numunesini ve perakende kutusunu dahil ederken diğeri yalnızca boş şişeyi fiyatlayabilir. Alıcı tek bir teknik şartname kullanmalı, tüm hariç kalemleri kaydetmeli ve doğrulanmış ürünün hedef depoya toplam maliyetini karşılaştırmalıdır. Bu rehber kararın belgelenmesini sağlar.",
+        "sections": [
+          [
+            "İki birim fiyatı neden doğrudan karşılaştıramazsınız?",
+            "Bütün tedarikçilere aynı model, teknik revizyon, varyant miktarı ve varış yeri bilgilerini gönderin. Gövde reçinesi, kapak, conta, baskı, ambalaj ve kalite kontrolün dahil mi, hariç mi yoksa koşullu mu olduğunu belirtmelerini isteyin. Katalog fotoğrafı tek başına sözleşme şartnamesi değildir. Farklı kapak ve malzemeler sunuluyorsa farkları fiyat sıralamasından önce kaydedin. Eksik teklifi ucuz seçenek olarak değil, karşılaştırılması bekleyen teklif olarak işaretleyin."
+          ],
+          [
+            "Teklifte hangi malzemeler ve parçalar bulunmalı?",
+            "Model bazında gövde malzemesini, kapak reçinesini, conta ve varsa pipeti, renk pigmentini, sapı, doğrulanmış kapasiteyi ve süsleme yöntemini isteyin. Hangi seçeneklerin mevcut seri ürün, hangilerinin yeni kalıp gerektirdiğini doğrulayın. Gıda teması belgeleri bitmiş ürün birleşimine ve hedef pazara uygun olmalıdır. Tritan veya BPA Free ifadesini doğrulanmamış sertifika gibi sunmayın. Onaylı fiziksel numuneyi ve tarihli teknik dosyayı saklayın."
+          ],
+          [
+            "Logo baskısı, renk ve kalıp toplam bedeli nasıl etkiler?",
+            "Birim baskı maliyetini, hazırlık ücretini, baskı kalıbını, numuneyi ve yeni enjeksiyon kalıbını ayrı kalemlere ayırın. Baskı konumu, renk sayısı, dayanıklılık kabul yöntemi ve hizalama toleransını tanımlayın. Ekrandaki çizim üretim renginin kanıtı değildir; gerçek yüzeyde onaylı örnek isteyin. Kalıbın kime ait olduğunu, nerede tutulduğunu ve tekrar sipariş şartlarını yazılı doğrulayın. Boş ürün bedeli ile nihai markalı ürün bedelini karıştırmayın."
+          ],
+          [
+            "MOQ toplam siparişe mi, her renge ve kapağa mı uygulanır?",
+            "Model, renk, kapak, logo, adet ve kurulum ücreti içeren varyant tablosu oluşturun. Toplam sipariş minimumunun her alt modele otomatik uygulanabileceğini varsaymayın. Karışık koli iznini ve tam koli miktarlarına yuvarlamayı sorun. Büyük miktarda düşen birim fiyat elde kalma stokunu ve nakit ihtiyacını artırabilir. İlk sipariş, mümkün olan en küçük üretim ve tekrar sipariş fiyat kademelerini ayrı ayrı değerlendirin."
+          ],
+          [
+            "Ambalaj, kontrol ve ihracatta hangi kalemler unutulur?",
+            "İç koruma, perakende kutusu, kullanım bilgisi, SKU etiketi, ana koli ve gerekiyorsa paletlemeyi yazdırın. Gerçek paketlenmiş numunenin ölçülerini ve ağırlığını isteyin. Sevkiyat öncesi kontrol kriterlerini, kusur sınıflarını, yeniden işleme ve test masraflarının sorumlusunu belirleyin. Mağaza veya 3PL deposunun kabul kılavuzunu etiketten önce kontrol edin. EXW teklifini diğer teslim koşullarıyla aynı kapsamda kabul etmeyin."
+          ],
+          [
+            "Incoterms ve depoya teslim toplam maliyeti nasıl hesaplanır?",
+            "Incoterms kuralını adlandırılmış yerle birlikte belirleyin ve gerçek ölçülere dayanan bağımsız nakliye teklifi alın. Geçerliyse sigorta, gümrük, vergi, yerel taşıma ve hata düzeltme maliyetlerini ekleyin. İç hesaplamada toplam maliyeti kabul edilen satılabilir birimlere bölün. Gümrük oranları, döviz veya taşıma sürelerini her ülke için sabit saymayın. Ödemeleri numune ve kalite kontrol onay aşamalarına bağlayın."
+          ],
+          [
+            "Son seçim hangi kanıtlara dayanmalı?",
+            "Her gerekliliği karşılandı, koşullu veya belirsiz olarak işaretleyin. Eksik rapor, onay numunesi, koli çizimi ve güncel proforma için yazılı takip yapın. Malzeme, conta, kapak ve baskı değişikliğinde önceden onay kuralı oluşturun. Hata giderme yaklaşımını ve tekrar sipariş planını değerlendirin. Doğru tedarikçi yalnızca düşük fiyat değil, onaylı kapsamı şeffaf ve tekrarlanabilir biçimde sağlayabilen taraftır. Son teknik revizyonu siparişe ekleyin."
+          ]
+        ],
+        "checklist": [
+          "Bütün satıcılara aynı teknik revizyonu gönderin.",
+          "Kesin model ve gövde/kapak/conta bilgisini alın.",
+          "Bitmiş ürüne uygun belgeleri doğrulayın.",
+          "Baskı, kurulum ve kalıp ücretlerini ayırın.",
+          "Renk, kapak ve logo başına miktar yazın.",
+          "Kutu ve ana koli teknik özelliklerini belirtin.",
+          "Incoterms ve kesin yeri yazın.",
+          "Bağımsız navlun ve ithalat maliyeti alın.",
+          "Onay numunesi ve hata düzeltmesini tanımlayın.",
+          "Kabul edilen birimin toplam maliyetini karşılaştırın."
+        ],
+        "faqs": [
+          [
+            "En ucuz birim fiyatı seçebilir miyiz?",
+            "Ancak malzeme, kapak, baskı, miktar, ambalaj, teslim ve kabul şartları gerçekten eşitse."
+          ],
+          [
+            "Numune ve kalıp masrafı birim fiyata katılır mı?",
+            "Ayrı göstermek ve sipariş için etkisini hesaplamak gerekir. Kalıbın mülkiyetini ve yeniden kullanımını teyit edin."
+          ],
+          [
+            "EXW ile FOB neden farklıdır?",
+            "Maliyet ve sorumluluk dağılımı farklıdır; isimli yer dahil edilerek aynı varış noktasına göre kıyaslanmalıdır."
+          ],
+          [
+            "Malzeme belgesi yoksa ne yapılmalı?",
+            "Eksik kanıt olarak işaretleyin ve ürüne özgü belgeyi almadan uygunluk iddiasında bulunmayın."
+          ]
+        ],
+        "matrix": {
+          "title": "Eşdeğer teklif karşılaştırma tablosu",
+          "intro": "Eksik belge ücretsiz dahil hizmet anlamına gelmez.",
+          "head": [
+            "Kalem",
+            "İstenen kanıt",
+            "Yaygın hata"
+          ],
+          "rows": [
+            [
+              "Gövde ve kapak",
+              "Model, malzeme ve örnek",
+              "Farklı kapakları eşitlemek"
+            ],
+            [
+              "Baskı ve kalıp",
+              "Prova, ücret ve mülkiyet",
+              "Kurulum ücretini gizlemek"
+            ],
+            [
+              "Varyant",
+              "Renk başına MOQ",
+              "Toplam minimumu karıştırmak"
+            ],
+            [
+              "Ambalaj",
+              "Koli ve etiket verileri",
+              "Ambalajı dahil sanmak"
+            ],
+            [
+              "Kalite",
+              "Kontrol ve düzeltme",
+              "Genel rapora güvenmek"
+            ],
+            [
+              "Teslim",
+              "Incoterms ve yer",
+              "EXW ile depoya teslimi kıyaslamak"
+            ]
+          ],
+          "links": [
+            "Standart RFQ hazırlayın",
+            "Depozito kontrol listesi"
+          ]
+        },
+        "inline": [
+          "Numune onay rehberi",
+          "Özel kalıp şartları"
+        ],
+        "product_notes": [
+          [
+            "2106 şişe modeli",
+            "{product} çocuk formatı karşılaştırma örneğidir; kapağı ve malzemeyi ayrıca doğrulayın."
+          ],
+          [
+            "2305 büyük matara",
+            "{product} büyük hacimli koli koşullarını incelemek için örnektir."
+          ],
+          [
+            "LO-001 büyük şişe",
+            "{product} gibi baskılı üründe sap, dekor ve koli maliyeti ayrı değerlendirilmelidir."
+          ]
+        ]
+      }
+    },
+    "wholesale-water-bottle-carton-label-3pl-retail-checklist": {
+      "es": {
+        "title": "¿Qué debe incluir la etiqueta del cartón de botellas para un retailer o 3PL?",
+        "description": "Lista B2B para etiquetas de cartones de botellas de plástico: SKU, códigos GTIN y SSCC, cantidad por caja, pruebas de lectura y recepción en almacén.",
+        "intro": "Un lote de botellas correctamente fabricado también puede generar costes si el almacén no identifica bien cada caja. Colores mezclados, códigos duplicados o cantidades erróneas complican la recepción y las devoluciones. Por eso las etiquetas y las instrucciones de embalaje deben acordarse antes de producir. Esta guía distingue producto, caja comercial y unidad logística, y propone un procedimiento verificable de aprobación.",
+        "sections": [
+          [
+            "¿Por qué el almacén necesita más que el modelo impreso en la caja?",
+            "El operador logístico coteja la caja física con el pedido, el catálogo de SKU y la cantidad de unidades prevista. La indicación genérica «botellas» no distingue capacidades, colores, cierres ni marcas. Defina primero si se vende una unidad, un paquete o una caja completa. Para cada variante registre SKU interno, código de fábrica, descripción, color, tapa, cantidad por caja y referencia del pedido. Pida al retailer o 3PL su guía de recepción actual; no existe un diseño genérico que sirva para todas las cadenas."
+          ],
+          [
+            "¿En qué se diferencian GTIN y SSCC?",
+            "El GTIN identifica un artículo comercial, por ejemplo una botella vendible o una caja definida como artículo de pedido. El SSCC identifica una unidad logística concreta para transporte y trazabilidad. No son códigos intercambiables. Según la guía de etiqueta logística GS1, la unidad identificada por ese tipo de etiqueta necesita un SSCC propio. Un GTIN impreso en un cartón no lo convierte automáticamente en etiqueta logística GS1. El titular autorizado de la marca debe controlar sus identificadores y acordar con el almacén qué niveles requieren códigos y qué simbologías acepta."
+          ],
+          [
+            "¿Qué datos van en el cartón maestro y cuáles en la unidad de venta?",
+            "Distinga la presentación comercial de la identificación del almacén. La botella o su caja de venta puede incluir el SKU comercial y la información revisada para el mercado de destino. El cartón maestro necesita normalmente modelo, variante, unidades, referencia de pedido, numeración y datos de lote cuando proceda, además de medidas y pesos. Son ejemplos operativos, no requisitos legales universales. Defina el responsable y el sistema fuente de cada dato. No imprima afirmaciones de certificación ni origen sin validación de la configuración y legislación aplicable."
+          ],
+          [
+            "¿Cómo identificar colores, tamaños y tapas mezcladas?",
+            "Cuando cambia un atributo que modifica el artículo entregado al cliente, revise si corresponde un SKU diferente. No mezcle bajo el mismo código una botella infantil con otra de gran capacidad o con distinta tapa. Si el almacén permite cajas mixtas, confirme si recibe un surtido identificado o abre y clasifica cada unidad. Cree una matriz con cantidades por variante y vincúlela al pedido y al aviso de expedición. Separe además versiones con y sin logotipo o embalajes específicos de un minorista. La suma total de botellas no basta si las cantidades por SKU no cuadran."
+          ],
+          [
+            "¿Cómo comprobar que los códigos de barras realmente funcionan?",
+            "Solicite una muestra impresa de la etiqueta sobre el cartón definitivo, no solo el diseño PDF. Revise contraste, tamaño, márgenes libres, posición, arrugas y posibles interferencias de cinta o flejes. Escanee el código y compare el dato decodificado con la tabla de SKU; una lectura correcta de un número equivocado sigue siendo un error. Documente con fotografías un cartón sellado aprobado. Para exigencias como etiquetas de transporte particulares o ubicación obligatoria, aplique la guía vigente del operador de destino."
+          ],
+          [
+            "¿Qué debe confirmar antes de reservar el transporte?",
+            "Conserve dimensiones y peso reales de los cartones ya embalados, unidades por caja, número total de cajas y palés si existen. La factura comercial y la lista de empaque deben coincidir con los códigos y cantidades físicas. Pida al transportista sus reglas de peso facturable y tarifas para la ruta concreta, en lugar de aplicar una fórmula genérica sin contexto. Confirme quién solicita cita de recepción, quién emite el aviso anticipado y qué documentos recibe el 3PL. No confunda la responsabilidad del fabricante con la del importador o del operador logístico."
+          ],
+          [
+            "¿Cómo se aprueba la etiqueta antes de la salida de fábrica?",
+            "Asigne una revisión única al maestro de SKU, al diseño de etiqueta y al plano de empaque. Inspeccione al menos un cartón cerrado por variante y realice una lectura real del código cuando sea posible. Compruebe nombre, variante, unidades, ubicación de etiqueta y coincidencia con la lista de empaque. Guarde fotos, resultado de escaneo y excepciones aprobadas. Si el marcado es incorrecto, exija solución por escrito antes de liberar la expedición. Una etiqueta correcta reduce problemas, pero el almacén receptor mantiene sus controles independientes."
+          ]
+        ],
+        "checklist": [
+          "Solicitar la guía actual del retailer o 3PL.",
+          "Definir unidad vendible, caja y unidad logística.",
+          "Crear SKU de cada variante comercial real.",
+          "Confirmar cuándo se requiere GTIN o SSCC.",
+          "Aprobar campos legibles y traducciones.",
+          "Validar ubicación en el cartón definitivo.",
+          "Escanear la muestra y comprobar el dato.",
+          "Cuadrar unidades, cajas y lista de empaque.",
+          "Verificar pesos, medidas y cita de recepción.",
+          "Guardar pruebas de aprobación con el pedido."
+        ],
+        "faqs": [
+          [
+            "¿Se usa el mismo código para botella y palé?",
+            "No necesariamente. El GTIN identifica artículos comerciales y el SSCC unidades logísticas individuales. Pregunte a su operador qué nivel utiliza."
+          ],
+          [
+            "¿Puede la fábrica inventar los códigos SKU?",
+            "La marca o comprador debe controlar su maestro de productos y autorizar los identificadores. El proveedor imprime solo los datos aprobados."
+          ],
+          [
+            "¿Qué ocurre con una caja de colores mezclados?",
+            "Acuerde si se recibe como surtido o si debe abrirse para separar SKU. Etiqueta, pedido y aviso deben coincidir."
+          ],
+          [
+            "¿Basta con que el lector detecte el código?",
+            "No. También deben validarse el contenido decodificado, posición, unidades y requisitos de recepción."
+          ]
+        ],
+        "matrix": {
+          "title": "Matriz de aprobación de etiquetas y 3PL",
+          "intro": "La guía del receptor prevalece sobre cualquier ejemplo genérico.",
+          "head": [
+            "Decisión",
+            "Evidencia necesaria",
+            "Comprobación"
+          ],
+          "rows": [
+            [
+              "Identidad SKU",
+              "Modelo, color, tapa y arte",
+              "Código único por variante"
+            ],
+            [
+              "GTIN comercial",
+              "Identificador autorizado",
+              "Lectura correcta"
+            ],
+            [
+              "Unidad logística",
+              "SSCC cuando se exija",
+              "Vínculo con aviso"
+            ],
+            [
+              "Contenido de caja",
+              "Cantidad y mezcla",
+              "Cuadre con pedido"
+            ],
+            [
+              "Etiqueta impresa",
+              "Prueba y fotografía",
+              "Legibilidad y posición"
+            ],
+            [
+              "Recepción",
+              "Requisitos 3PL y cita",
+              "Confirmación documentada"
+            ]
+          ],
+          "links": [
+            "Guía de cartones de exportación",
+            "Órdenes con variantes mixtas"
+          ]
+        },
+        "inline": [
+          "Embalaje de exportación",
+          "Control de muestras"
+        ],
+        "product_notes": [
+          [
+            "modelo 2106",
+            "Use {product} como referencia para diferenciar una botella infantil y su cierre al asignar el SKU."
+          ],
+          [
+            "jarra 2305",
+            "Compare el embalaje de gran formato con {product}; no copie las cantidades por caja de otra botella."
+          ],
+          [
+            "modelo LO-001",
+            "El formato con asa {product} requiere medidas reales del embalaje final."
+          ]
+        ]
+      },
+      "pt": {
+        "title": "O que a etiqueta da caixa de garrafas deve ter para varejo ou 3PL?",
+        "description": "Checklist B2B para caixas de garrafas plásticas: SKU, GTIN e SSCC, unidades por caixa, leitura de código, pallet e recebimento.",
+        "intro": "Mesmo uma encomenda de garrafas fabricada corretamente pode ter custos adicionais quando as caixas não são identificadas conforme o sistema do armazém. Cores misturadas, códigos duplicados ou quantidades erradas atrasam o recebimento. Por isso, o cliente deve aprovar etiquetas e embalagens antes da produção. Este guia diferencia produto vendável, caixa de transporte e unidade logística.",
+        "sections": [
+          [
+            "Por que o 3PL precisa de mais do que o nome do modelo?",
+            "O armazém compara cada caixa física com o pedido de compra, a lista de SKUs e as unidades esperadas. Escrever somente «garrafas» não identifica capacidade, cor, tampa ou marca. Determine se a unidade vendida é uma garrafa, multipack ou caixa. Por variante, registre SKU interno, código de fábrica, descrição, cor, fechamento, quantidade e número do pedido. Peça o manual atual de recebimento do varejista ou operador logístico, pois um modelo genérico de etiqueta pode não atender à exigência específica."
+          ],
+          [
+            "Qual é a diferença entre GTIN e SSCC?",
+            "O GTIN identifica um item comercial, como uma garrafa vendável ou uma caixa comercial. O SSCC identifica uma unidade logística específica para rastreamento. Não são intercambiáveis. A orientação de etiquetas logísticas GS1 prevê SSCC para identificar cada unidade logística sob esse padrão; apenas imprimir GTIN não torna uma caixa uma etiqueta logística GS1. O proprietário autorizado da marca deve controlar os códigos aplicáveis. Pergunte ao 3PL se exige código de unidade, caixa, palete ou uma combinação, e qual simbologia precisa ser usada."
+          ],
+          [
+            "Quais campos devem estar na caixa master e na embalagem de venda?",
+            "Separe informações ao consumidor e dados para o estoque. A unidade de venda pode exigir identificação e texto revisado para o mercado de destino. A caixa master normalmente descreve modelo, variante, quantidade, referência de compra, sequência, lote quando necessário e dados de peso e tamanho. São exemplos de planejamento, não regras legais universais. Determine o responsável pela origem de cada campo e aprove uma arte final. Não imprima alegações de certificação ou origem sem verificar produto, documentação e legislação específica."
+          ],
+          [
+            "Como identificar tamanhos, cores e tampas misturados?",
+            "Uma característica que altere o item entregue pode exigir um SKU próprio. Garrafas infantis, jarras grandes e modelos com outro fechamento não devem ser agrupados automaticamente sob o mesmo identificador. Em caixas mistas, confirme se o 3PL aceita um sortimento definido ou precisa abrir a caixa para separar os itens. Prepare matriz de conteúdo com quantidades por variante e confira com pedido e aviso de embarque. Separe também logotipos ou embalagens de varejistas diferentes."
+          ],
+          [
+            "Como testar o código impresso antes do envio?",
+            "Peça uma etiqueta impressa no papelão e posicionada no local de produção, não apenas um PDF. Verifique contraste, zona livre, tamanho, dobras, fitas e demais obstáculos. Leia o código com equipamento apropriado e compare o dado lido com a planilha oficial de SKU; uma leitura bem-sucedida com informação incorreta não resolve o problema. Fotografe a caixa fechada aprovada. Se o cliente exige posição, dimensão ou etiqueta de transporte específica, siga o manual atualizado dele."
+          ],
+          [
+            "O que confirmar antes de agendar o frete?",
+            "Registre dimensões e pesos das caixas realmente embaladas, unidades por caixa, caixas por SKU e paletes, quando usados. A fatura comercial e a packing list devem coincidir com as etiquetas físicas. Pergunte ao agente de cargas sobre o cálculo de peso cobrável e custos para a rota concreta. Confirme quem agenda recebimento, emite aviso antecipado e entrega documentos ao armazém. As responsabilidades variam conforme o contrato e Incoterms; não presuma que uma única parte executará todas as tarefas."
+          ],
+          [
+            "Qual é o procedimento final de aprovação da etiqueta?",
+            "Use uma única revisão aprovada do cadastro de SKU, arte de etiqueta e plano de embalagem. Examine uma caixa fechada de cada variante e faça um teste de leitura real, quando viável. Confira identificação, quantidade, posição, marcação e correspondência com a packing list. Registre resultados, fotografias e ações corretivas. Erros devem ser resolvidos antes da liberação, exceto quando uma exceção documentada e custeada for aceita. O receptor ainda pode realizar verificações próprias."
+          ]
+        ],
+        "checklist": [
+          "Pedir o manual vigente do varejista ou 3PL.",
+          "Definir unidade de venda, caixa e unidade logística.",
+          "Cadastrar SKU por variante real.",
+          "Confirmar necessidade de GTIN e SSCC.",
+          "Aprovar campos e idiomas da etiqueta.",
+          "Testar posição na caixa final.",
+          "Ler códigos e conferir informação.",
+          "Conferir unidades e packing list.",
+          "Validar pesos, medidas e agendamento.",
+          "Arquivar fotos e provas com a ordem de compra."
+        ],
+        "faqs": [
+          [
+            "Garrafas e paletes usam o mesmo código?",
+            "Não necessariamente. GTIN identifica itens comerciais e SSCC unidades logísticas. O operador informa quais níveis exige."
+          ],
+          [
+            "A fábrica pode criar o SKU da marca?",
+            "O comprador deve controlar o cadastro e autorizar códigos. A fábrica pode imprimir os dados aprovados."
+          ],
+          [
+            "E se a caixa tiver cores misturadas?",
+            "Confirme se será recebida como sortimento ou aberta para separar SKUs e mantenha pedido e etiqueta coerentes."
+          ],
+          [
+            "Leitura do código basta para aprovar?",
+            "Não. Também é necessário conferir dado decodificado, quantidade, posição e instruções do armazém."
+          ]
+        ],
+        "matrix": {
+          "title": "Matriz de aprovação para caixas e 3PL",
+          "intro": "Use os requisitos oficiais do destinatário como critério final.",
+          "head": [
+            "Decisão",
+            "Evidência",
+            "Conferência"
+          ],
+          "rows": [
+            [
+              "Identidade SKU",
+              "Modelo, cor, tampa e logo",
+              "Código exclusivo"
+            ],
+            [
+              "GTIN",
+              "Número autorizado",
+              "Leitura correta"
+            ],
+            [
+              "Unidade logística",
+              "SSCC quando aplicável",
+              "Vínculo com envio"
+            ],
+            [
+              "Conteúdo da caixa",
+              "Quantidade e variantes",
+              "Packing list coerente"
+            ],
+            [
+              "Impressão",
+              "Foto e prova",
+              "Posição e contraste"
+            ],
+            [
+              "Recebimento",
+              "Agendamento e regras 3PL",
+              "Exceções aprovadas"
+            ]
+          ],
+          "links": [
+            "Planejar caixa master",
+            "Pedido com variantes mistas"
+          ]
+        },
+        "inline": [
+          "Embalagem de exportação",
+          "Aprovação de amostras"
+        ],
+        "product_notes": [
+          [
+            "modelo 2106",
+            "Use {product} como referência infantil e verifique o código próprio da tampa."
+          ],
+          [
+            "jarra 2305",
+            "Um formato grande como {product} exige confirmar a quantidade por caixa."
+          ],
+          [
+            "garrafa LO-001",
+            "Para uma jarra com alça como {product}, use dimensões medidas na embalagem real."
+          ]
+        ]
+      },
+      "ru": {
+        "title": "Что писать на транспортной коробке бутылок для ритейла и 3PL?",
+        "description": "B2B-проверка маркировки пластиковых бутылок: SKU, GTIN, SSCC, количество в коробе, сканирование, паллеты и приемка на складе.",
+        "intro": "Правильно изготовленная партия бутылок все равно может привести к проблемам на складе, если короба подписаны неверно. Одинаковый код для разных цветов, неправильное число единиц и несоответствие реестру SKU мешают приемке. Маркировку нужно согласовывать до начала производства. В руководстве объясняются уровни упаковки, роль кодов GTIN и SSCC и этапы проверки готового короба.",
+        "sections": [
+          [
+            "Почему 3PL недостаточно названия модели на коробке?",
+            "Склад сопоставляет физическую упаковку с заказом, каталогом SKU и ожидаемым количеством. Надпись «бутылки» не различает объем, цвет, крышку и оформление. Определите, что продается: отдельная бутылка, набор или короб. Для каждого варианта укажите внутренний SKU, заводской код, описание, цвет корпуса, тип крышки, число изделий и номер заказа. Запросите актуальные инструкции получателя. Универсальная этикетка не обязана соответствовать требованиям каждой сети или склада."
+          ],
+          [
+            "Чем отличается GTIN от SSCC?",
+            "GTIN используется для идентификации торговой единицы — например, отдельного товара или продаваемого короба. SSCC присваивается конкретной логистической единице и помогает отслеживать ее перемещение. Эти коды не заменяют друг друга. В руководстве GS1 по логистическим этикеткам SSCC используется как обязательный идентификатор для такой этикетки; наличие одного GTIN этого не обеспечивает. Владелец бренда или уполномоченная сторона должна контролировать присвоение кодов. Уточните, какие штрихкоды нужны на товаре, коробе и паллете."
+          ],
+          [
+            "Какие данные печатать на коробе и розничной упаковке?",
+            "Не смешивайте информацию для потребителя и данные складского учета. На розничной единице могут быть нужны коммерческий SKU и тексты, проверенные для конкретного рынка. На транспортном коробе обычно указывают модель, вариант, количество, ссылку на заказ, номер короба, партию при необходимости, размеры и массу. Это примеры для технического задания, а не универсальные требования закона. Назначьте ответственного за каждое поле. Не добавляйте неподтвержденные сертификаты или сведения о происхождении товара."
+          ],
+          [
+            "Как кодировать смешанные цвета, объемы и крышки?",
+            "Если характеристика меняет товар, получаемый конечным покупателем, рассмотрите отдельный SKU. Детскую бутылку и крупную канистру не следует автоматически объединять одним складским кодом. Для смешанных коробов согласуйте приемку набора как отдельного ассортимента либо сортировку поштучно. Составьте ведомость вариантов и количеств, связанную с заказом и уведомлением об отправке. Отличайте партии с разными логотипами, розничными коробками и маркировкой конкретного заказчика. Общая сумма бутылок не заменяет детализацию."
+          ],
+          [
+            "Как доказать, что штрихкод читается правильно?",
+            "Проверьте реальную распечатку на утвержденном гофрокоробе, а не только PDF. Важны контраст, свободные поля, размеры, расположение, складки, клейкая лента и стяжки. Считайте код сканером и сравните расшифрованное значение с реестром SKU: считываемый неправильный номер остается ошибкой. Сфотографируйте закрытую коробку с утвержденной этикеткой. Если у ритейлера есть собственные требования к формату и месту нанесения, применяйте его актуальное руководство."
+          ],
+          [
+            "Что согласовать перед бронированием перевозки?",
+            "Измерьте фактические размеры и массу заполненных коробов, число изделий в коробе и общий объем по каждому SKU. Сопоставьте данные с упаковочным листом и коммерческим инвойсом. Запросите у перевозчика способ расчета оплачиваемого веса и ставки для конкретного маршрута. Уточните, кто назначает время приемки, передает электронное уведомление и документы на склад. Не смешивайте обязанности фабрики, импортера и экспедитора: они определяются договором и условиями поставки."
+          ],
+          [
+            "Как проходит окончательная приемка этикеток на фабрике?",
+            "Закрепите одну утвержденную редакцию SKU-справочника, макета этикетки и упаковочной спецификации. Осмотрите запечатанный короб каждого варианта и выполните проверочное сканирование, если это возможно. Сверьте описание, количество, позицию маркировки и строку упаковочного листа. Сохраните фотографии, результаты считывания и согласованные исключения. При ошибке требуйте письменное исправление до отгрузки. Даже правильная этикетка не отменяет контроль склада-получателя."
+          ]
+        ],
+        "checklist": [
+          "Получить актуальное руководство 3PL.",
+          "Определить уровни продажи, короба и логистики.",
+          "Уникальный SKU для реального варианта.",
+          "Согласовать GTIN и SSCC по уровню.",
+          "Утвердить поля и языки маркировки.",
+          "Проверить место на готовом коробе.",
+          "Сканировать образец и сверить данные.",
+          "Свести количество с упаковочным листом.",
+          "Подтвердить вес, габариты и запись на приемку.",
+          "Сохранить фото и утверждение с заказом."
+        ],
+        "faqs": [
+          [
+            "Одинаков ли код для бутылки и паллеты?",
+            "Нет, не обязательно. GTIN идентифицирует торговые единицы, SSCC — конкретные логистические единицы. Требования задает склад."
+          ],
+          [
+            "Может ли фабрика самостоятельно придумать наш SKU?",
+            "Реестр и присвоение идентификаторов контролирует покупатель или владелец бренда; фабрика печатает утвержденные данные."
+          ],
+          [
+            "Что делать с коробом смешанных цветов?",
+            "Заранее согласовать приемку ассортимента или вскрытие с сортировкой и привести в соответствие документы."
+          ],
+          [
+            "Достаточно ли того, что штрихкод считывается?",
+            "Нет. Нужна проверка содержимого кода, количества, размещения и требований получателя."
+          ]
+        ],
+        "matrix": {
+          "title": "Матрица согласования маркировки с 3PL",
+          "intro": "Точные требования определяет склад-получатель.",
+          "head": [
+            "Решение",
+            "Документ",
+            "Контроль"
+          ],
+          "rows": [
+            [
+              "SKU",
+              "Модель, цвет, крышка, логотип",
+              "Разные товары — разные коды"
+            ],
+            [
+              "GTIN",
+              "Код владельца",
+              "Верное сканирование"
+            ],
+            [
+              "Логистика",
+              "SSCC при необходимости",
+              "Связь с уведомлением"
+            ],
+            [
+              "Содержимое",
+              "Количество и состав короба",
+              "Соответствие заказу"
+            ],
+            [
+              "Этикетка",
+              "Физическая проба, фото",
+              "Расположение и контраст"
+            ],
+            [
+              "Приемка",
+              "Инструкции склада и запись",
+              "Согласованное исключение"
+            ]
+          ],
+          "links": [
+            "Транспортная упаковка",
+            "Смешанные варианты"
+          ]
+        },
+        "inline": [
+          "Экспортная упаковка",
+          "Проверка образцов"
+        ],
+        "product_notes": [
+          [
+            "модель 2106",
+            "Используйте {product} для примера отдельного SKU детской бутылки и ее крышки."
+          ],
+          [
+            "крупная бутыль 2305",
+            "Для больших форматов вроде {product} подтвердите фактическое количество в коробе."
+          ],
+          [
+            "бутыль LO-001",
+            "Модель с ручкой {product} требует замеров реально упакованного короба."
+          ]
+        ]
+      },
+      "tr": {
+        "title": "Perakendeci veya 3PL için su şişesi ana koli etiketinde ne olmalı?",
+        "description": "Plastik su şişesi toptan sevkiyatında SKU, GTIN, SSCC, koli adedi, barkod testi ve depo kabul kuralları için B2B rehberi.",
+        "intro": "Doğru üretilmiş şişeler bile koli etiketleri depo sistemindeki bilgilerle uyuşmuyorsa teslimatta sorun yaratabilir. Farklı renklerin aynı SKU ile işaretlenmesi, yanlış koli adedi ve okunamayan kodlar ayrıştırma masrafını artırır. Bu yüzden ambalaj ve etiket şartları üretimden önce onaylanmalıdır. Rehber satılabilir ürün, ana koli ve lojistik birimi ayırır, sevkiyat öncesi kontrol planı sunar.",
+        "sections": [
+          [
+            "3PL neden kutu üzerinde yalnızca model adını istemez?",
+            "Depo fiziksel koliyi satın alma emri, SKU listesi ve beklenen koli adediyle eşleştirir. Yalnızca 'su şişesi' yazısı renk, hacim, kapak ve marka farkını göstermez. Satış birimini tek şişe, paket veya tam koli olarak tanımlayın. Her varyant için iç SKU, fabrika modeli, açıklama, renk, kapak, logo sürümü ve kutudaki adet bilgilerini kaydedin. Perakendeci veya 3PL kuruluşundan güncel kabul yönergesini alın; tek etiket tasarımının her yerde geçerli olduğunu varsaymayın."
+          ],
+          [
+            "GTIN ile SSCC arasında ne fark var?",
+            "GTIN satılabilir ürün veya sipariş verilebilen koli gibi ticari birimi tanımlar. SSCC ise taşımada izlenen belirli bir lojistik birimin kimliğidir. İki kod birbirinin yerine kullanılamaz. GS1 lojistik etiket kılavuzunda ilgili lojistik birimin kimliği için SSCC temel unsurdur; yalnızca GTIN yazılması aynı lojistik etiket anlamına gelmez. Marka kimliklerini yetkili sahibi yönetmelidir. Depoya ürün, koli ve palet üzerinde hangi kod ve barkod biçimini istediğini açıkça sorun."
+          ],
+          [
+            "Ana koli ve tüketici ambalajında hangi alanlar bulunmalı?",
+            "Tüketiciye sunulan bilgiler ile depo izlenebilirliğini ayırın. Satış ambalajında SKU ve hedef pazara göre onaylanan metinler bulunabilir. Ana koli üzerinde genellikle model, varyant, adet, sipariş referansı, koli numarası, gerektiğinde parti ve ağırlık/ölçüler yer alır. Bunlar her ülke için yasal zorunluluk listesi değildir. Her alanın veriyi sağlayan tarafını tanımlayın. Doğrulanmamış sertifika ve menşe beyanlarını etikete eklemeyin; nihai tasarımı yazılı onaylatın."
+          ],
+          [
+            "Karışık renk, hacim ve kapaklar nasıl kodlanmalı?",
+            "Müşteriye ulaşan ürünün niteliği değiştiğinde ayrı satılabilir SKU gerekebilir. Farklı kapaklı çocuk şişesiyle büyük hacimli sürahi otomatik olarak aynı koda bağlanmamalıdır. Karışık koliler için deponun tanımlanmış set olarak mı yoksa açıp ayrıştırarak mı kabul edeceğini öğrenin. Varyant bazında adet tablosu hazırlayın ve satın alma emriyle sevk bildirimine eşleyin. Farklı logo sürümleri ve müşteri etiketleri gerektiğinde ayrıca ayrılmalıdır."
+          ],
+          [
+            "Barkodun gerçekten doğru okunduğu nasıl test edilir?",
+            "Yalnızca PDF değil, üretimde kullanılacak kartonun üzerine basılmış gerçek etiket isteyin. Kontrast, boş alan, boyut, konum, buruşma, bant veya çember etkisini kontrol edin. Okutulan veriyi ana SKU dosyasıyla karşılaştırın; yanlış numarayı başarıyla taramak doğru etiket demek değildir. Onaylı kapalı kolinin fotoğrafını saklayın. Perakendecinin belirli taşıma etiketi, format veya konum kuralı varsa kendi güncel belgesini uygulayın."
+          ],
+          [
+            "Navlun rezervasyonu öncesinde hangi bilgiler gerekir?",
+            "Paketlenmiş gerçek kolinin ölçülerini, brüt ve net ağırlıklarını, koli başına ürün sayısını, SKU başına koli miktarını ve varsa palet verilerini kayıt altına alın. Ticari fatura ve paketleme listesini fiziksel etiketlerle eşleştirin. Taşıyıcıdan o hatta geçerli ücretlendirilebilir ağırlık hesabını isteyin. Depo randevusu, ön sevk bildirimi ve belgelerden hangi tarafın sorumlu olduğunu belirleyin. Incoterms ve depo sözleşmesi görev paylaşımını etkiler."
+          ],
+          [
+            "Sevkten önce etiketler nasıl son kez onaylanır?",
+            "SKU ana kaydına, etiket sanat çalışmasına ve ambalaj çizimine aynı onay revizyonunu verin. Her ambalaj varyantından kapalı koli inceleyin ve mümkünse canlı tarama yapın. Kodu, açıklamayı, miktarı, etiket yerini ve paketleme listesi satırını doğrulayın. Hatalar için fotoğraf ve yazılı düzeltme kaydı tutun. Sorun giderilmeden sevki onaylamayın; istisnalar açıkça maliyetlendirilmiş ve kabul edilmiş olmalıdır. Depo kendi teslim kontrolünü ayrıca yapabilir."
+          ]
+        ],
+        "checklist": [
+          "Depo veya perakendecinin güncel yönergesini alın.",
+          "Satış birimi, ana koli ve lojistik birimi ayırın.",
+          "Varyant başına doğru SKU oluşturun.",
+          "GTIN ve SSCC gereğini doğrulayın.",
+          "Etiket metni ve dili onaylatın.",
+          "Gerçek koli üzerinde yerleşimi inceleyin.",
+          "Basılı kodu okutun ve veriyle karşılaştırın.",
+          "Koli adedi ve paket listesini eşleyin.",
+          "Ölçü, ağırlık ve depo randevusunu doğrulayın.",
+          "Onay fotoğraflarını siparişle saklayın."
+        ],
+        "faqs": [
+          [
+            "Şişe ve palet aynı kodu mu kullanır?",
+            "Şart değildir. GTIN ticari ürünü, SSCC ise tekil lojistik birimi tanımlar; alıcının gereğini doğrulayın."
+          ],
+          [
+            "Fabrika markanın SKU kodlarını seçebilir mi?",
+            "Kod ana verisini alıcı yönetmeli ve onaylamalıdır. Fabrika onaylanmış bilgiyi basabilir."
+          ],
+          [
+            "Aynı kolide farklı renkler varsa?",
+            "Depoyla set olarak kabul veya açılarak ayırma kararını yazılı kararlaştırın; etiket ve sipariş uyumlu olsun."
+          ],
+          [
+            "Barkodun okunması yeterli mi?",
+            "Hayır. Verinin doğruluğu, konum, miktar ve kabul kuralları da kontrol edilmelidir."
+          ]
+        ],
+        "matrix": {
+          "title": "3PL koli etiketi onay tablosu",
+          "intro": "Nihai kararı alıcı deponun kendi yönergesi belirler.",
+          "head": [
+            "Konu",
+            "Gerekli kanıt",
+            "Kontrol"
+          ],
+          "rows": [
+            [
+              "SKU kimliği",
+              "Model, renk, kapak ve logo",
+              "Her varyantın kodu"
+            ],
+            [
+              "GTIN",
+              "Onaylı ürün kimliği",
+              "Doğru tarama"
+            ],
+            [
+              "Lojistik",
+              "Gerekirse SSCC",
+              "Sevk bildirimiyle eşleşme"
+            ],
+            [
+              "Koli içeriği",
+              "Adet ve varyant listesi",
+              "Paket listesi uyumu"
+            ],
+            [
+              "Etiket baskısı",
+              "Fotoğraf ve gerçek örnek",
+              "Konum ve kontrast"
+            ],
+            [
+              "Depo kabulü",
+              "3PL kuralları ve randevu",
+              "Onaylı istisnalar"
+            ]
+          ],
+          "links": [
+            "Ana koli gereklilikleri",
+            "Karışık varyant siparişleri"
+          ]
+        },
+        "inline": [
+          "İhracat ambalajı",
+          "Numune kontrol listesi"
+        ],
+        "product_notes": [
+          [
+            "2106 şişe modeli",
+            "{product} çocuk şişesi ve kapağının ayrı SKU kodlamasını değerlendirmek için örnektir."
+          ],
+          [
+            "2305 büyük su kabı",
+            "{product} gibi büyük formda gerçek koli içi adet ve etiketini kontrol edin."
+          ],
+          [
+            "LO-001 büyük şişe",
+            "Saplı {product} için nihai paketlenmiş koli ölçülerini esas alın."
+          ]
+        ]
+      }
+    },
+    "custom-water-bottle-reorder-planning-lead-time-buffer": {
+      "es": {
+        "title": "¿Cuándo debe reponer un distribuidor sus botellas de agua personalizadas?",
+        "description": "Plan de reposición B2B para botellas privadas: demanda por SKU, etapas de fabricación, inventario de seguridad, MOQ, tapas de recambio y flujo de caja.",
+        "intro": "El segundo pedido de botellas puede resultar más complejo que el primero. Un color vende antes de lo previsto, faltan tapas de repuesto o un modelo decorado necesita más etapas de producción que uno de catálogo. Para evitar faltantes, el distribuidor debe observar ventas reales, confirmar plazos por etapa y reservar un margen de incertidumbre basado en su operación. Esta guía explica cómo decidir cuándo reponer sin inventar tiempos o promesas de fábrica.",
+        "sections": [
+          [
+            "¿Por qué una reposición no es igual al primer pedido?",
+            "El primer lote confirma viabilidad y aceptación de muestras; los siguientes necesitan continuidad de diseño y previsión comercial. Compare la muestra firmada, archivos de logotipo, embalaje y materias primas con los de la nueva orden. Un código de modelo repetido no demuestra que una junta, tapa o colorante no haya cambiado. Separe referencias estándar y personalizadas, porque la preparación y los mínimos pueden ser distintos. Pida a la fábrica qué componentes puede reservar de verdad y cuáles se comprarán tras la aprobación y el pago."
+          ],
+          [
+            "¿Cómo medir la demanda por modelo, capacidad y color?",
+            "Use ventas netas semanales por SKU, descontando devoluciones, en vez de estimar demanda solo por pedidos enviados al distribuidor. Anote existencia física, unidades comprometidas, mercancía confirmada en tránsito y piezas no vendibles. No promedie juntos un color de venta rápida y otro estacional. Marque campañas y semanas con agotamiento, porque distorsionan el historial. Una previsión de un cliente importante debe identificarse como confirmada o hipotética. Mantenga el mismo código de modelo, tapa y arte en los informes comerciales y en la orden al fabricante."
+          ],
+          [
+            "¿Cómo calcular el punto de reposición de una botella personalizada?",
+            "Como primer modelo use demanda diaria media multiplicada por días de reposición completa y añada inventario de seguridad. Ejemplo exclusivamente didáctico: si se venden 10 unidades al día, el ciclo observado es de 45 días y el comprador define una reserva de 150 unidades, el punto sería 600 unidades de posición disponible. No son plazos ni cuotas de XUYI. La posición disponible debe considerar stock, entradas confirmadas y compromisos. Prepare escenarios de demanda normal, campaña fuerte y transporte retrasado. Revise la fórmula con datos reales después de cada lote."
+          ],
+          [
+            "¿Qué etapas del plazo debe desglosar la fábrica?",
+            "Solicite fechas separadas para aprobación de diseño y muestra, reserva de resina, fabricación, compra de componentes, decoración, montaje, embalaje e inspección. Solicite al transitario otras fechas para reserva, viaje, despacho y entrega en almacén. Pregunte desde qué evento empieza cada etapa: anticipo, confirmación del arte o autorización de producción. No trate «30 días» sin fecha inicial como garantía. Verifique si el molde, colores y material de impresión del primer pedido se reutilizarán. Establezca puntos de control y escalamiento antes de reservar la venta."
+          ],
+          [
+            "¿Cómo equilibrar los MOQ con colores que rotan lentamente?",
+            "Pida cantidades mínimas y niveles de precio por modelo, color, tapa y logotipo. Las variantes de alta rotación pueden justificar reposiciones periódicas, mientras que las promocionales pueden requerir pedidos anticipados. Compruebe si se puede personalizar después un cuerpo de catálogo; no suponga compatibilidad de materiales o técnicas. Considere el coste de stock inmovilizado, almacenamiento y riesgo de obsolescencia al evaluar un descuento por volumen. Redondee las cantidades a cartones y trate una tapa o tamaño nuevo como SKU nuevo que requiere validación."
+          ],
+          [
+            "¿Conviene comprar juntas, pajitas y tapas de recambio?",
+            "Si el distribuidor vende botellas sin poder ofrecer componentes compatibles, el servicio posventa puede resultar más costoso. Solicite códigos exactos y materiales de tapas, juntas y pajitas por modelo y versión. Pregunte si la fábrica vende repuestos sueltos, cómo se inspeccionan y en qué embalaje se entregan. Calcule necesidades utilizando solicitudes reales de garantía y mantenimiento, no un porcentaje inventado. Una pieza visualmente parecida no demuestra compatibilidad. Si no hay repuestos disponibles, comunique claramente esa limitación a sus clientes."
+          ],
+          [
+            "¿Qué debe contener la orden de reposición y su plan alternativo?",
+            "Vincule la orden a la muestra física, la ficha vigente, los colores, cierre, logotipo, cantidades, cajas y criterios de calidad aprobados. Defina lugar Incoterms, fecha objetivo de entrega y puntos de actualización del fabricante. Cualquier cambio de material o arte necesita aprobación escrita. Acuerde respuestas para retrasos: entrega parcial viable, sustitución validada o actualización de fechas al cliente. Al recibir, compare venta, defectos, tiempo y coste realmente registrados con los supuestos de la previsión. Use los resultados para ajustar la próxima compra."
+          ]
+        ],
+        "checklist": [
+          "Separar stock físico, reservado y entradas confirmadas.",
+          "Pronosticar por modelo, color, tapa y arte.",
+          "Marcar promociones y semanas de agotamiento.",
+          "Calcular el punto de reposición con plazos observados.",
+          "Preparar escenarios normales y con retraso.",
+          "Confirmar las aprobaciones que inician cada etapa.",
+          "Solicitar MOQ por variante y cartón completo.",
+          "Verificar compatibilidad de repuestos.",
+          "Adjuntar muestra patrón y criterios de calidad.",
+          "Revisar costes, ventas y defectos tras recepción."
+        ],
+        "faqs": [
+          [
+            "¿Con cuánta antelación debo reponer?",
+            "Según demanda real, plazo completo fábrica-almacén y una reserva adecuada a la variación; no existe un número de días universal."
+          ],
+          [
+            "¿Puedo combinar colores para cumplir MOQ?",
+            "Solo cuando el fabricante lo confirme para esa resina, tapa, impresión y lote de producción."
+          ],
+          [
+            "¿Necesito otra muestra al repetir el pedido?",
+            "Compruebe que especificación, tapa, molde, arte y embalaje no han cambiado; las modificaciones pueden requerir una nueva aprobación."
+          ],
+          [
+            "¿Cuántas tapas adicionales debo pedir?",
+            "Use historial de averías y servicio por modelo, y confirme códigos y compatibilidad. Evite porcentajes genéricos."
+          ]
+        ],
+        "matrix": {
+          "title": "Matriz de planificación de reposición",
+          "intro": "Use cifras propias y tiempos confirmados; ningún valor es una garantía de fábrica.",
+          "head": [
+            "Variable",
+            "Evidencia",
+            "Acción ante incertidumbre"
+          ],
+          "rows": [
+            [
+              "Demanda",
+              "Ventas por SKU y compromisos",
+              "Simular escenarios"
+            ],
+            [
+              "Inventario",
+              "Existencia y entradas confirmadas",
+              "Evitar duplicados"
+            ],
+            [
+              "Producción",
+              "Hitos de aprobación y fabricación",
+              "Escalar retrasos"
+            ],
+            [
+              "Transporte",
+              "Reserva, despacho y almacén",
+              "Prever llegada tardía"
+            ],
+            [
+              "MOQ y caja",
+              "Cantidad por variante",
+              "Valorar sobrestock"
+            ],
+            [
+              "Repuestos",
+              "Código exacto y fallos históricos",
+              "Validar compatibilidad"
+            ]
+          ],
+          "links": [
+            "Guía de tapas de repuesto",
+            "Aprobación antes de reordenar"
+          ]
+        },
+        "inline": [
+          "Tapas de repuesto",
+          "MOQ de botellas personalizadas"
+        ],
+        "product_notes": [
+          [
+            "modelo de botella 2106",
+            "Analice {product} como SKU pequeño independiente de los formatos grandes."
+          ],
+          [
+            "jarra grande 2305",
+            "Un producto voluminoso como {product} requiere su propia velocidad de venta y embalaje."
+          ],
+          [
+            "jarra LO-001",
+            "Para {product}, confirme los códigos de tapa y junta antes de pedir componentes compatibles."
+          ]
+        ]
+      },
+      "pt": {
+        "title": "Quando um distribuidor deve repor garrafas plásticas personalizadas?",
+        "description": "Planejamento B2B de recompras: vendas por SKU, prazo de produção, estoque de segurança, MOQ, tampas de reposição e riscos de caixa.",
+        "intro": "O segundo pedido de garrafas pode ser mais difícil que o primeiro. Uma cor vende mais rápido, tampas de reposição acabam ou uma decoração exige novas etapas. Para evitar falta de estoque, o distribuidor precisa de demanda observada, prazos confirmados por etapa e uma reserva adequada à incerteza. Este guia apresenta um ponto de reposição inicial sem transformar suposições em promessas do fabricante.",
+        "sections": [
+          [
+            "Por que um pedido recorrente é diferente do primeiro?",
+            "O primeiro pedido estabelece a amostra e o padrão de qualidade. A recompra precisa manter o mesmo resultado para o cliente e atender à previsão de vendas. Compare amostra assinada, revisão de arte, materiais, tampa e embalagem. O mesmo código de fábrica não garante que todos os componentes personalizados continuam iguais. Separe produto de catálogo e variante customizada, pois os ciclos e mínimos podem variar. Pergunte quais matérias-primas e acessórios já estão reservados e quais dependerão de aprovação ou pagamento."
+          ],
+          [
+            "Como medir demanda por modelo, tamanho e cor?",
+            "Monte relatório semanal de vendas líquidas por SKU, incluindo devoluções, em vez de usar apenas pedidos enviados ao distribuidor. Registre estoque físico utilizável, unidades comprometidas e pedidos de entrada realmente confirmados. Analise separadamente cores principais e campanhas sazonais. Destaque semanas em que o estoque zerou, porque as vendas observadas ficam artificialmente baixas. Uma previsão de varejista deve ser marcada como contrato firme ou hipótese. Mantenha a correspondência de código, tampa e logo entre vendas, armazém e ordem para a fábrica."
+          ],
+          [
+            "Como calcular o ponto de reposição de uma garrafa OEM?",
+            "Uma aproximação inicial é demanda média por dia multiplicada pelo número de dias de reposição, mais estoque de segurança. Exemplo puramente ilustrativo: 10 unidades por dia, ciclo de 45 dias e reserva escolhida de 150 unidades resultam em gatilho de 600 unidades de posição disponível. Não são prazos ou preços prometidos pela XUYI. Considere saldo em estoque, entradas firmes e quantidades já comprometidas. Simule procura normal, promoção forte e entrega atrasada. Ajuste a reserva com histórico real de embarques e vendas."
+          ],
+          [
+            "Que etapas do lead time a fábrica deve confirmar?",
+            "Solicite marcos separados para aprovação da arte e amostra, compra de resina, produção do corpo, aquisição de tampas, decoração, montagem, inspeção e embalagem. Peça ao agente de cargas outras datas de reserva, transporte, alfândega e entrega no 3PL. Identifique o evento que inicia cada etapa, como aprovação escrita ou pagamento. Um prazo sem data inicial não deve ser tratado como garantia. Verifique reutilização de molde, telas e receitas de cor. Inclua inspeção antes da coleta e plano para corrigir atrasos."
+          ],
+          [
+            "Como lidar com MOQ e cores que vendem lentamente?",
+            "Peça faixas de preços e mínimos por modelo, cor, fechamento e arte. Variantes populares podem receber reposição regular; cores promocionais podem justificar pré-venda em vez de estoque excessivo. Só considere imprimir posteriormente um corpo neutro se a compatibilidade técnica estiver confirmada. Calcule o capital parado e a armazenagem junto do desconto por volume. Confirme múltiplos de caixas master e tolerâncias de produção. Nova tampa ou capacidade representa outra configuração e exige validação, não uma troca silenciosa para completar quantidade."
+          ],
+          [
+            "Vale comprar tampas, juntas e canudos sobressalentes?",
+            "Um distribuidor precisa saber se os acessórios realmente correspondem ao modelo vendido. Solicite códigos, materiais e revisões exatos para tampas, juntas e canudos. Confirme disponibilidade separada, embalagem, inspeção e prazo. Estime a procura por reposição com chamados reais de assistência e garantia, não com porcentagem arbitrária. Peças visualmente semelhantes podem não vedar corretamente. Caso o fabricante não ofereça reposição compatível, informe a limitação no seu atendimento pós-venda e mantenha essa informação na ficha comercial."
+          ],
+          [
+            "O que escrever na ordem de recompra e no plano de exceções?",
+            "Vincule a compra à amostra física e à última revisão de especificações, cor, tampa, arte, caixa e critérios de inspeção. Estabeleça Incoterms com local nomeado e datas verificáveis de progresso. Qualquer mudança de resina, vedação ou decoração exige aprovação. Defina como agir diante de atraso: embarque parcial validado, substituição aprovada ou nova programação com o cliente. Após o recebimento, compare vendas, falhas, lead time e custos reais com a previsão. Use o aprendizado na próxima compra."
+          ]
+        ],
+        "checklist": [
+          "Separar saldo físico, reservado e entrada confirmada.",
+          "Prever vendas por SKU, cor e tampa.",
+          "Marcar promoções e semanas sem estoque.",
+          "Calcular gatilho com lead time real.",
+          "Fazer cenários de procura e atraso.",
+          "Confirmar marcos de aprovação da fábrica.",
+          "Revisar MOQ e caixas por variante.",
+          "Validar peças sobressalentes compatíveis.",
+          "Anexar amostra padrão e inspeção.",
+          "Revisar vendas e defeitos após recebimento."
+        ],
+        "faqs": [
+          [
+            "Com quantos dias de antecedência devo recomprar?",
+            "Com base em demanda observada, prazo completo de reposição e reserva por incerteza. Nenhuma duração serve para todos os modelos."
+          ],
+          [
+            "É possível combinar cores para atingir MOQ?",
+            "Somente com confirmação da fábrica para a combinação específica de material, tampa, decoração e lote."
+          ],
+          [
+            "Preciso reaprovar uma amostra no pedido seguinte?",
+            "Confirme que materiais, forma, tampa e arte continuam iguais; alterações podem requerer nova aprovação."
+          ],
+          [
+            "Quantas tampas extras devem ser compradas?",
+            "Estime por histórico de assistência e confirme o código da peça. Não use percentual fixo sem evidência."
+          ]
+        ],
+        "matrix": {
+          "title": "Quadro de planejamento da recompra",
+          "intro": "Os números vêm da operação do comprador, não de promessa de prazo.",
+          "head": [
+            "Variável",
+            "Registro",
+            "Se houver dúvida"
+          ],
+          "rows": [
+            [
+              "Demanda por SKU",
+              "Vendas e compromissos",
+              "Simular cenários"
+            ],
+            [
+              "Saldo disponível",
+              "Estoque e entradas certas",
+              "Evitar dupla contagem"
+            ],
+            [
+              "Produção",
+              "Datas de aprovação e etapas",
+              "Escalonar atraso"
+            ],
+            [
+              "Transporte",
+              "Embarque e entrega final",
+              "Prever chegada tardia"
+            ],
+            [
+              "MOQ e caixa",
+              "Múltiplos e custos",
+              "Avaliar excesso"
+            ],
+            [
+              "Peças",
+              "Compatibilidade e suporte",
+              "Testar antes de comprar"
+            ]
+          ],
+          "links": [
+            "Peças de reposição",
+            "Aprovação de nova amostra"
+          ]
+        },
+        "inline": [
+          "Tampas sobressalentes",
+          "MOQ e preço de fábrica"
+        ],
+        "product_notes": [
+          [
+            "modelo 2106",
+            "Analise {product} separadamente como referência de garrafa menor na previsão de vendas."
+          ],
+          [
+            "jarra grande 2305",
+            "Para {product}, use um ritmo de venda e caixa master próprios."
+          ],
+          [
+            "garrafa LO-001",
+            "Antes de encomendar acessórios de {product}, confirme código e material da tampa e vedação."
+          ]
+        ]
+      },
+      "ru": {
+        "title": "Когда дистрибьютору повторно заказывать бутылки с логотипом?",
+        "description": "B2B-планирование запасов пластиковых бутылок: спрос по SKU, сроки производства и доставки, страховой запас, MOQ и запасные крышки.",
+        "intro": "Повторный заказ бутылок иногда сложнее первого. Один цвет продается быстрее других, запасные крышки заканчиваются, а декорированная версия требует дополнительных этапов производства. Чтобы уменьшить риск дефицита, дистрибьютору нужны реальные продажи по SKU, подтвержденные сроки на каждом участке и разумный запас на случай отклонений. В статье показано, как планировать закупку без выдуманных гарантий фабрики.",
+        "sections": [
+          [
+            "Почему повторный заказ отличается от первого?",
+            "Первая партия подтверждает конструкцию и образец, а повторная должна воспроизвести согласованное качество и поддержать продажи. Сравните утвержденную физическую модель, файл логотипа, упаковку, полимеры, крышку и уплотнение с новой спецификацией. Одинаковый заводской код не доказывает неизменность всех персонализированных деталей. Разделите серийный каталог и специально окрашенные или напечатанные варианты. Узнайте, какие компоненты реально зарезервированы, а какие будут закупаться после оплаты и подписания макета."
+          ],
+          [
+            "Как измерять спрос по модели, объему и цвету?",
+            "Ведите еженедельные чистые продажи по каждому SKU с учетом возвратов, а не только отгрузок дистрибьюторам. Фиксируйте пригодный запас, уже обещанные клиентам единицы и подтвержденные входящие заказы. Быстро продающиеся цвета не следует усреднять с сезонными. Отметьте рекламные акции и недели без наличия товара: они искажают обычный спрос. Прогноз крупного ритейлера обозначайте как подтвержденный заказ или предположение. В продажах и у фабрики используйте одну карту SKU, крышек и версий оформления."
+          ],
+          [
+            "Как рассчитать точку повторного заказа?",
+            "Исходная формула: средний спрос в день умножить на полный цикл пополнения в днях и прибавить страховой запас. Только учебный пример: 10 единиц в день, наблюдаемый цикл 45 дней и выбранный покупателем резерв 150 единиц дают триггер 600 единиц доступной позиции. Это не срок и не расчет фабрики XUYI. Учитывайте фактический запас, подтвержденные поступления и уже принятые обязательства. Проверьте как минимум обычный спрос, сильную акцию и задержку транспорта. После получения реальных данных пересчитайте резерв."
+          ],
+          [
+            "Какие этапы срока фабрика и экспедитор подтверждают отдельно?",
+            "Запросите этапы утверждения макета и образца, резервирования сырья, изготовления корпуса, закупки крышек, декора, сборки, упаковки и инспекции. У экспедитора отдельно проверьте бронирование, транспорт, таможню и доставку на склад. Уточните событие начала каждого периода: платеж, подпись образца или запуск заказа. Фраза «30 дней» без отправной даты двусмысленна. Проверьте сохранность пресс-форм, экранов и рецептур окрашивания. Установите точки проверки и порядок уведомлений об отклонениях."
+          ],
+          [
+            "Как учитывать MOQ и редко продающиеся цвета?",
+            "Попросите таблицу минимальных объемов и цен по модели, цвету, крышке и печати. Основные варианты можно пополнять регулярно, а редкие цвета — по предварительным заказам, чтобы не замораживать капитал. Возможность позже декорировать стандартный корпус нужно технически подтвердить, а не предполагать. Сопоставляйте скидку крупной партии со стоимостью хранения и устаревания товара. Учитывайте кратность мастер-коробам. Новая крышка или объем — отдельная конфигурация с новой проверкой, а не незаметная замена."
+          ],
+          [
+            "Нужен ли отдельный запас крышек, прокладок и трубочек?",
+            "Без совместимых аксессуаров послепродажное обслуживание может оказаться дороже. Получите точные коды и версии крышек, прокладок и трубочек для каждой модели. Согласуйте доступность отдельных деталей, упаковку, контроль качества и время поставки. Оценку запасных частей стройте на обращениях клиентов и истории гарантий, а не на выдуманном фиксированном проценте. Внешне похожие крышки могут не подходить по резьбе или уплотнению. Если запасных деталей нет, честно сообщите это клиентам."
+          ],
+          [
+            "Что включать в повторный заказ и план на случай задержки?",
+            "Приложите ссылку на утвержденный образец, актуальную редакцию материалов, цветов, крышек, логотипа, коробов и критериев приемки. Укажите Incoterms с названным местом и контрольные даты этапов. Любая замена сырья или декора требует письменного согласования. При риске задержки заранее определите варианты действий: разрешенная частичная поставка, проверенная замена или новый график для покупателей. После получения партии сопоставьте дефекты, срок, продажи и реальную себестоимость с прогнозом и исправьте следующую модель закупки."
+          ]
+        ],
+        "checklist": [
+          "Разделить запас, резервы и подтвержденные поступления.",
+          "Прогнозировать по SKU, цвету, крышке, оформлению.",
+          "Помечать акции и дефицитные недели.",
+          "Считать точку заказа по наблюдаемым срокам.",
+          "Моделировать обычный спрос и задержку.",
+          "Получить даты начала этапов производства.",
+          "Уточнить MOQ и кратность коробам.",
+          "Проверить совместимость аксессуаров.",
+          "Приложить образец и критерии инспекции.",
+          "Анализировать результаты после приемки."
+        ],
+        "faqs": [
+          [
+            "За сколько дней нужно повторять заказ?",
+            "По фактическому спросу, полному циклу пополнения и обоснованному резерву. Универсального числа дней нет."
+          ],
+          [
+            "Можно ли объединять цвета ради MOQ?",
+            "Только после письменного подтверждения фабрики для конкретных материалов, крышек, печати и производственной партии."
+          ],
+          [
+            "Нужен ли новый образец для повторной партии?",
+            "Сначала подтвердите неизменность состава, оснастки, крышки и оформления. Изменения могут потребовать нового утверждения."
+          ],
+          [
+            "Сколько запасных крышек покупать?",
+            "Ориентируйтесь на историю сервиса и точные коды совместимых компонентов, а не на произвольный процент."
+          ]
+        ],
+        "matrix": {
+          "title": "Матрица повторного заказа",
+          "intro": "Количество и сроки рассчитывают по данным покупателя и подтвержденным датам партнеров.",
+          "head": [
+            "Переменная",
+            "Что фиксировать",
+            "При неопределенности"
+          ],
+          "rows": [
+            [
+              "Спрос",
+              "Продажи и резервирование по SKU",
+              "Моделировать сценарии"
+            ],
+            [
+              "Доступный запас",
+              "Склад и подтвержденные поставки",
+              "Не учитывать дважды"
+            ],
+            [
+              "Производство",
+              "Утверждение и этапы",
+              "Контрольные точки"
+            ],
+            [
+              "Логистика",
+              "Бронирование, таможня, склад",
+              "Сценарий задержки"
+            ],
+            [
+              "MOQ и короба",
+              "Кратность и стоимость",
+              "Оценить избыток"
+            ],
+            [
+              "Запасные детали",
+              "Коды и обращения",
+              "Подтвердить совместимость"
+            ]
+          ],
+          "links": [
+            "Руководство по запасным крышкам",
+            "Проверка утвержденного образца"
+          ]
+        },
+        "inline": [
+          "Запасные крышки",
+          "MOQ и затраты"
+        ],
+        "product_notes": [
+          [
+            "модель бутылки 2106",
+            "Для учета спроса модель {product} следует вести отдельно от крупных форматов."
+          ],
+          [
+            "большая бутыль 2305",
+            "У {product} могут быть собственные характеристики продаж и упаковки; проверьте их отдельно."
+          ],
+          [
+            "бутыль LO-001",
+            "Для {product} запрашивайте точные коды крышки и уплотнения до заказа запасных частей."
+          ]
+        ]
+      },
+      "tr": {
+        "title": "Distribütör özel logolu su şişelerini ne zaman tekrar sipariş etmeli?",
+        "description": "Plastik şişede SKU bazlı talep, üretim ve nakliye süresi, güvenlik stoku, MOQ ve yedek kapak yönetimi için B2B yeniden sipariş rehberi.",
+        "intro": "İkinci özel su şişesi siparişi bazen ilkinden daha zor olur. Bir renk beklenenden hızlı satılır, uyumlu yedek kapak tükenir veya baskılı ürün stok yenilemede ek üretim adımlarına ihtiyaç duyar. Distribütör gerçek satış hızını, doğrulanmış tedarik aşamalarını ve belirsizlik payını bilmelidir. Bu rehber stok tükenme riskini azaltmak için başlangıç hesaplarını anlatır; hiçbir üretici süresini garanti gibi sunmaz.",
+        "sections": [
+          [
+            "Tekrar sipariş neden ilk satın almadan farklıdır?",
+            "İlk sipariş ürünün örneğini ve uygunluğunu kurar; sonraki sipariş aynı tüketici deneyimini korurken satış hızına yetişmelidir. Onaylı fiziksel numuneyi, logo dosyasını, koli sürümünü ve malzeme listesini yeni siparişle karşılaştırın. Aynı fabrika kodu bütün conta veya renk katkılarının değişmediğini kanıtlamaz. Standart katalog modelini özel baskılı veya renklendirilmiş varyanttan ayırın. Hangi malzemenin gerçekten ayrıldığını, hangisinin ödeme ve onaydan sonra alınacağını tedarikçiye sorun."
+          ],
+          [
+            "Talep model, hacim ve renk bazında nasıl izlenir?",
+            "Satışın depoya giriş miktarını değil, müşteri satışlarını ve iadeleri SKU bazında haftalık takip edin. Elde satılabilir miktarı, müşteriye ayrılmış stokları ve kesinleşmiş yoldaki siparişleri ayrı tutun. Hızlı satan temel renkleri sezonluk renklerle tek ortalamada birleştirmeyin. Kampanya ve stok tükenen haftaları işaretleyin; bunlar normal talebi yanıltabilir. Büyük müşteri tahmininin kesin sipariş mi varsayım mı olduğunu kaydedin. Satış, depo ve fabrikada aynı model, kapak ve logo revizyonunu kullanın."
+          ],
+          [
+            "Yeniden sipariş noktası nasıl hesaplanır?",
+            "İlk yaklaşım günlük ortalama talep çarpı uçtan uca yenileme günü, artı belirsizlik için güvenlik stokudur. Tamamen öğretici bir örnek: günde 10 adet, kaydedilmiş 45 günlük yenileme döngüsü ve alıcının seçtiği 150 birim tampon, 600 birim kullanılabilir stok pozisyonu eşiği verir. Bunlar XUYI teslim taahhütleri değildir. Mevcut stok, kesin girişler ve müşteri taahhütlerini birlikte hesaplayın. Normal talep, kampanya artışı ve geciken navlun için ayrı senaryolar oluşturun. Her gerçek sevkiyattan sonra tahmini güncelleyin."
+          ],
+          [
+            "Fabrika ve taşıyıcı hangi süreleri ayrı bildirmeli?",
+            "Baskı/numune onayı, hammadde ayırma, gövde üretimi, kapak tedariki, dekorasyon, montaj, paketleme ve denetim için ayrı aşamalar isteyin. Taşıyıcıdan rezervasyon, taşıma, gümrük ve son depo teslimini ayrıca alın. Her aşamanın ödemeden mi, yazılı onaydan mı başladığını sorun; başlangıcı tanımsız tek bir '30 gün' ifadesi belirsizdir. Önceki kalıp, baskı şablonu ve renk reçetesinin yeniden kullanılacağını doğrulayın. Gecikme için kontrol ve bildirim noktaları belirleyin."
+          ],
+          [
+            "Yavaş dönen renklerde MOQ nasıl yönetilir?",
+            "Model, renk, kapak ve logo başına gerçek minimum ve fiyat kademelerini isteyin. Hızlı satılan seçenekler düzenli üretime uygun olabilir; nadir renkler için ön sipariş veya daha az parti gerekebilir. Baskısız gövdeyi sonradan dekore etme seçeneğini teknik doğrulama olmadan varsaymayın. Büyük sipariş indirimi karşısında elde kalmış stok, depo ve nakit maliyetini hesaplayın. Ana koli katlarını ve adet toleranslarını netleştirin. Yeni kapak veya boyut, yeniden onaylanacak ayrı bir SKU olabilir."
+          ],
+          [
+            "Yedek kapak, conta ve pipet stoklamak gerekir mi?",
+            "Satılan şişe için uyumlu parçalar bulunamaması müşteri hizmetini zorlaştırabilir. Her model ve üretim revizyonu için gerçek kapak, conta ve pipet parça numarası ile malzemesini isteyin. Parçanın ayrı satılıp satılmadığını, ambalajını, denetimini ve teslim planını sorun. Yedek parça ihtiyacını gerçek servis ve garanti talebiyle hesaplayın; keyfi sabit oran kullanmayın. Benzer görünen bir parça uyumlu kabul edilemez. Parça tedariki mümkün değilse satış sonrası politikanızı buna göre şeffaf düzenleyin."
+          ],
+          [
+            "Tekrar sipariş emrine hangi yedek plan eklenmeli?",
+            "Siparişi son onaylı fiziksel numuneye, teknik revizyona, kapak, malzeme, renk, baskı ve koli kayıtlarına bağlayın. Incoterms adlandırılmış yerini, denetim şartlarını ve tarihli kontrol noktalarını yazın. Malzeme veya tasarım değişikliği yazılı alıcı onayı gerektirmelidir. Gecikmede uygun kısmi sevk, onaylı alternatif veya müşteriye güncellenmiş teslim planı seçeneklerini önceden değerlendirin. Teslim aldıktan sonra gerçek kusur, satış hızı, maliyet ve süreyi tahminle karşılaştırıp bir sonraki planı düzeltin."
+          ]
+        ],
+        "checklist": [
+          "Eldeki, ayrılmış ve kesin giriş stokunu ayırın.",
+          "Model, renk, kapak ve logo bazında tahmin yapın.",
+          "Kampanya ve stok yokluğu haftalarını işaretleyin.",
+          "Gerçek sürelerle sipariş tetik noktası hesaplayın.",
+          "Normal, yoğun ve gecikme senaryosu oluşturun.",
+          "Fabrika başlangıç ve onay aşamalarını doğrulayın.",
+          "Varyant MOQ ve koli katlarını inceleyin.",
+          "Yedek parçanın uyumunu test edin.",
+          "Onay numunesi ve kalite ölçütlerini ekleyin.",
+          "Teslimden sonra satış ve kusurları değerlendirin."
+        ],
+        "faqs": [
+          [
+            "Tekrar siparişi kaç gün önce vermeliyiz?",
+            "Gerçek talep, tam tedarik çevrimi ve değişkenlik için uygun tampon kullanın; herkese uyan tek gün sayısı yoktur."
+          ],
+          [
+            "Renkleri MOQ için birleştirebilir miyiz?",
+            "Yalnızca fabrika, malzeme, kapak, baskı ve üretim kuralını bu kombinasyon için doğrularsa."
+          ],
+          [
+            "Aynı şişeyi tekrar alırken numune şart mı?",
+            "Malzeme, kalıp, kapak, baskı ve paket sürümünün değişmediğini doğrulayın; değişiklik yeni onay gerektirebilir."
+          ],
+          [
+            "Kaç yedek kapak satın alınmalı?",
+            "Model bazında satış sonrası verileri ve gerçek parça kodlarını kullanın, sabit yüzde varsaymayın."
+          ]
+        ],
+        "matrix": {
+          "title": "Yeniden sipariş planlama tablosu",
+          "intro": "Tüm miktar ve tarihler alıcının verilerinden ve teyit edilen programdan hesaplanır.",
+          "head": [
+            "Değişken",
+            "Gerekli kanıt",
+            "Belirsizlik varsa"
+          ],
+          "rows": [
+            [
+              "SKU talebi",
+              "Satış ve müşteri taahhüdü",
+              "Senaryo çalışın"
+            ],
+            [
+              "Stok",
+              "Depo ve kesin girişler",
+              "Çift saymayın"
+            ],
+            [
+              "Üretim",
+              "Onay ve kontrol tarihleri",
+              "Gecikmeyi bildirin"
+            ],
+            [
+              "Nakliye",
+              "Rezervasyon ve depo varışı",
+              "Geç varış hesaplayın"
+            ],
+            [
+              "MOQ ve koli",
+              "Varyant miktarı ve maliyet",
+              "Fazla stok riskini inceleyin"
+            ],
+            [
+              "Parçalar",
+              "Kod ve servis geçmişi",
+              "Uyumu doğrulayın"
+            ]
+          ],
+          "links": [
+            "Yedek kapak planı",
+            "Sipariş numunesi kontrolü"
+          ]
+        },
+        "inline": [
+          "Yedek kapak tedariki",
+          "Toptan MOQ rehberi"
+        ],
+        "product_notes": [
+          [
+            "2106 şişe modeli",
+            "{product} gibi küçük formatları büyük su kaplarından ayrı satış hızıyla planlayın."
+          ],
+          [
+            "2305 büyük su kabı",
+            "{product} büyük modelinin koli ve talep varsayımlarını ayrı kontrol edin."
+          ],
+          [
+            "LO-001 büyük şişe",
+            "{product} için kapak ve conta parça numarasını doğrulamadan yedek parça sipariş etmeyin."
+          ]
+        ]
+      }
+    }
+  }
+}

@@ -46,7 +46,7 @@ def local_main(post,locale):
  out='<section class="page-intro"><div class="shell"><div class="breadcrumb">'+A("/",u["home"])+' / '+A("/blog/","Blog")+' / '+E(u["guide"])+'</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+T("title")+'</h1><p>'+T("description")+'</p></div></section>'
  out+='<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="'+E(post["cover"])+'" alt="'+T("title")+' | XUYI" loading="lazy" decoding="async"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">'+E(u["in"])+'</span><nav aria-label="'+E(u["in"])+'">'
  for i in range(len(post["sections"])):out+='<a href="#article-section-'+str(i)+'">'+T(f"sections.{i}.heading")+'</a>'
- out+='</nav>'+A("/contact/#inquiry",u["quote"],"blog-toc__quote")+'</div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>'+E(u["resources"])+'</span><span><time datetime="2026-10-20">'+E(u["published"])+' 2026-10-20</time></span></div>'
+ out+='</nav>'+A("/contact/#inquiry",u["quote"],"blog-toc__quote")+'</div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>'+E(u["resources"])+'</span><span><time datetime="'+E(post["updated"])+'">'+E(u["published"])+' '+E(post["updated"])+'</time></span></div>'
  out+='<p class="blog-lede">'+T("intro")+'</p><div class="blog-takeaway"><strong>'+E(u["before"])+'</strong><ul>'
  for i in range(3):out+='<li>'+T(f"checklist.{i}")+'</li>'
  out+='</ul></div>'
