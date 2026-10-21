@@ -125,6 +125,35 @@ export async function onRequestPost(context) {
     }
 
     const results = await db.batch(statements);
+    // Source-reviewed, one-off correction of the original shared photo.
+    // A different administrator-selected cover or edited index card is never overwritten.
+    const coverSlug = "compare-oem-water-bottle-quotes-like-for-like";
+    const oldCover = "/assets/editorial/plastic-sampling-workbench.webp";
+    const correctedCover = "/assets/blog/water-bottle-sample-approval-20261017.webp";
+    const correctedPost = payload.posts.find(item => item.slug === coverSlug);
+    if (correctedPost?.post?.cover !== correctedCover) {
+      return reply({ error: "Unreviewed B2B cover correction" }, 409);
+    }
+    const coverUpdates = [
+      db.prepare("UPDATE xuyi_blog_posts SET content_json=json_set(content_json,'$.cover',?), updated_at=CURRENT_TIMESTAMP WHERE slug=? AND json_extract(content_json,'$.cover')=?")
+        .bind(correctedCover,coverSlug,oldCover)
+    ];
+    for (const locale of LOCALES) {
+      coverUpdates.push(
+        db.prepare("UPDATE xuyi_translation_overrides SET translated_json=json_set(translated_json,'$.mainHtml',replace(json_extract(translated_json,'$.mainHtml'),?,?)), reviewed_at=? WHERE resource_id=? AND locale=? AND instr(json_extract(translated_json,'$.mainHtml'),?)>0")
+          .bind(oldCover,correctedCover,REVIEWED_AT,"page:/blog/"+coverSlug+"/",locale,oldCover)
+      );
+      const newCard=payload.indexCards.find(item => item.slug===coverSlug && item.locale===locale)?.html;
+      if (!newCard || !newCard.includes(correctedCover)) return reply({error:"Missing approved localized cover card"},409);
+      const oldCard=newCard.replace(correctedCover,oldCover);
+      coverUpdates.push(
+        db.prepare("UPDATE xuyi_translation_overrides SET translated_json=json_set(translated_json,'$.mainHtml',replace(json_extract(translated_json,'$.mainHtml'),?,?)),reviewed_at=? WHERE resource_id='page:/blog/' AND locale=? AND instr(json_extract(translated_json,'$.mainHtml'),?)>0")
+          .bind(oldCard,newCard,REVIEWED_AT,locale,oldCard)
+      );
+    }
+    const coverResults=await db.batch(coverUpdates);
+    const coverCorrections=coverResults.reduce((n,row)=>n+Number(row?.meta?.changes||0),0);
+
     const postsInserted = results.slice(0, SLUGS.length)
       .reduce((sum, row) => sum + Number(row?.meta?.changes || 0), 0);
     const translationsInserted = results.slice(SLUGS.length, SLUGS.length + payload.translations.length)
@@ -178,6 +207,7 @@ export async function onRequestPost(context) {
       postsInserted,
       translationsInserted,
       indexCardsAdded,
+      coverCorrections,
       publishRevision: revision.revision,
       publishedSlugs: SLUGS
     });

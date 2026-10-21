@@ -33,6 +33,38 @@ BLOG_DATE_LABELS={
     "tr":("Yayımlandı","Gözden geçirildi")
 }
 
+# Temporary, guarded CMS-source reconciliation for the 2026-10-21 B2B
+# quote article's originally duplicated cover. This acts before page rendering;
+# future owner-selected photo URLs are left as-is. Remove after D1 migration.
+def reviewed_20261021_cover_fields(route,loc,fields):
+    slug="compare-oem-water-bottle-quotes-like-for-like"
+    old="/assets/editorial/plastic-sampling-workbench.webp"
+    replacement="/assets/blog/water-bottle-sample-approval-20261017.webp"
+    if route not in ("/blog/"+slug+"/","/blog/"):
+        return fields
+    if old not in fields.get("mainHtml",""):
+        return fields
+    import json as _json
+    source=_json.loads((ROOT/"data/blog-localized-copy-20261021.json").read_text(encoding="utf8"))["articles"][slug][loc]
+    body=fields["mainHtml"]
+    if route=="/blog/"+slug+"/":
+        if fields.get("title")!=source["title"] or ('<h1>'+html.escape(source["title"])+'</h1>') not in body:
+            return fields
+        old_img='<img src="'+old+'"'
+        if body.count(old_img)!=1:return fields
+        return {**fields,"mainHtml":body.replace(old_img,'<img src="'+replacement+'"',1)}
+    # Existing blog listing card must match the source-reviewed copy and slug
+    # exactly; no global replacement since another article uses the old image.
+    pat=r'<article class="news-card">(?:(?!</article>).)*?</article>'
+    def change_card(match):
+        card=match.group(0)
+        if card.count('/blog/'+slug+'/')!=3 or source["title"] not in card:
+            return card
+        if card.count(old)!=1:return card
+        return card.replace(old,replacement,1)
+    updated=re.sub(pat,change_card,body,flags=re.S)
+    return {**fields,"mainHtml":updated} if updated!=body else fields
+
 def correct_reviewed_drinkware_terms(markup,locale):
     """Repair identified false-friend translations without altering SKU/specs.
 
@@ -338,7 +370,9 @@ def main():
                         for locale in live}
     created=0
     for (route,loc),fields in translated.items():
-        original_owner_body=fields.get("mainHtml")
+        original_owner_body=fields.get("mainHtml")
+        if route=="/blog/" or route=="/blog/compare-oem-water-bottle-quotes-like-for-like/":
+            fields=reviewed_20261021_cover_fields(route,loc,fields)
         # Correct a reviewed Turkish bottle-cap false friend in D1 source
         # fields *before* constructing HTML, SEO, OG and JSON-LD. Owner-edited
         # D1 text takes precedence; do not patch rendered dist files.
