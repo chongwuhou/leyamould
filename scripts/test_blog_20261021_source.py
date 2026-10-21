@@ -24,7 +24,8 @@ for post in POSTS:
         assert text.count("blog-editorial__product-link")==3,(lang,post["slug"],"SKU count")
         assert text.count('class="blog-related__item"')==3,(lang,post["slug"],"related count")
         assert text.count('class="blog-buyer-matrix"')==1,(lang,post["slug"],"buyer table")
-        assert text.count("<details>")==4,(lang,post["slug"],"FAQs")
+        faq=re.search(r'<section class="blog-faq">(.*?)</section>',text,re.S)
+        assert faq and faq.group(1).count("<details>")==4,(lang,post["slug"],"FAQs")
         assert text.count('class="blog-section"')==7,(lang,post["slug"],"sections")
         for note in post["product_notes"]:
             url="/"+(lang+"/" if lang!="en" else "")+"products/"+note["sku"]+"/"
