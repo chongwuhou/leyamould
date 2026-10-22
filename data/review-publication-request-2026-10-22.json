@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "requestedBeijingDate": "2026-10-22",
+  "source": "101-zhenshipingjia.xlsx",
+  "requestedCount": 3,
+  "selection": "SystemRandom.sample among verified unposted exact-model entries",
+  "constraints": [
+    "Per Asia/Shanghai calendar date, total newly posted <= 3",
+    "Never publish a model already in D1 permanent ledger",
+    "Preserve existing CMS owner review",
+    "Use original spreadsheet author, rating, content unchanged"
+  ],
+  "target": "Cloudflare D1 append-only review publisher",
+  "note": "This audit request does not itself insert reviews. Publication and daily limit are guarded by the D1 endpoint."
+}
