@@ -166,6 +166,15 @@ jobs:
       - name: Publish reviewed 2026-10-22 B2B guides to D1 CMS
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-22 B2B sector procurement guides'
         run: python scripts/publish_blog_batch_20261022_d1.py
+      - name: Prepare 2026-10-23 three reviewed B2B sector guides
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_release_20261023.py
+          python scripts/publish_blog_batch_20261023_d1.py --dry-run
+      - name: Publish reviewed 2026-10-23 B2B sector guides to D1 CMS
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-23 B2B sector procurement guides'
+        run: python scripts/publish_blog_batch_20261023_d1.py
       - name: Persist all reviewed product SEO fields in Cloudflare D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
         run: python scripts/promote_product_seo_to_d1_20261020.py
@@ -209,6 +218,7 @@ jobs:
           python scripts/test_daily_product_reviews.py
           python scripts/test_blog_20261021_source.py
           python scripts/test_blog_20261022_source.py
+          python scripts/test_blog_20261023_source.py
           node scripts/test_daily_product_reviews_api.mjs
           python scripts/test_product_components.py
           python scripts/test_buyer_content.py
