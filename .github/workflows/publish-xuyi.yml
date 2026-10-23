@@ -193,11 +193,6 @@ jobs:
       - name: Publish initial three authentic spreadsheet reviews
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Initialize XUYI daily authentic review publication'
         run: python scripts/publish_daily_product_reviews.py
-      - name: Persist 2026-10-23 approved nonduplicated Blog covers to D1
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Persist reviewed 2026-10-23 Blog covers in D1'
-        run: |
-          python scripts/publish_blog_cover_fix_20261023_d1.py --dry-run
-          python scripts/publish_blog_cover_fix_20261023_d1.py
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         # The public site must run the authenticated XUYI snapshot endpoint.
@@ -224,7 +219,6 @@ jobs:
           python scripts/test_blog_20261021_source.py
           python scripts/test_blog_20261022_source.py
           python scripts/test_blog_20261023_source.py
-          python scripts/test_blog_cover_20261023_source_guard.py
           node scripts/test_daily_product_reviews_api.mjs
           python scripts/test_product_components.py
           python scripts/test_buyer_content.py

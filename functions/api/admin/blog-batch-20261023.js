@@ -93,100 +93,6 @@ export function validatePayload(payload) {
   }
 }
 
-
-// One-time, scope-locked correction of three source-reviewed cover collisions.
-// No client-provided URLs, slugs, SQL or arbitrary blog edits are accepted.
-const COVER_REPAIRS = [
- ["hotel-resort-reusable-water-bottle-guest-amenity-sourcing",
-  "/assets/editorial/large-capacity-plastic-jug.webp",
-  "/assets/products/jug.webp"],
- ["ecommerce-private-label-water-bottle-marketplace-launch-checklist",
-  "/assets/blog/custom-product-planning-20261013.webp",
-  "/assets/products/sports.webp"],
- ["wholesale-water-bottle-distributor-assortment-planning",
-  "/assets/editorial/sports-bottles-category-20261013.webp",
-  "/assets/products/kids.webp"]
-];
-function correctedIndex(source) {
-  const prefix='<article class="news-card">';
-  const chunks=source.split(prefix);
-  for (const [slug,oldCover,newCover] of COVER_REPAIRS) {
-    const needle='href="/blog/'+slug+'/"';
-    let matching=0;
-    for (let i=1;i<chunks.length;i++) {
-      const index=chunks[i].indexOf("</article>");
-      if(index<0)throw new Error("Unclosed Blog card");
-      let card=chunks[i].slice(0,index),tail=chunks[i].slice(index);
-      if(!card.includes(needle))continue;
-      matching++;
-      const old='src="'+oldCover+'"',next='src="'+newCover+'"';
-      if(card.includes(old))card=card.replace(old,next);
-      else if(!card.includes(next))throw new Error("Owner-edited Blog index cover; manual review required: "+slug);
-      chunks[i]=card+tail;
-    }
-    if(matching!==1)throw new Error("Missing or duplicate approved Blog card: "+slug);
-  }
-  return chunks.join(prefix);
-}
-async function repairApprovedCovers(db) {
-  try {
-    await ensureBlogSchema(db);
-    const rows=(await db.prepare("SELECT slug,status,content_json FROM xuyi_blog_posts WHERE slug IN (?,?,?)")
-      .bind(...SLUGS).all()).results||[];
-    if(rows.length!==3||rows.some(r=>r.status!=="published"))throw new Error("Reviewed Blog posts missing");
-    const statements=[], updatedSlugs=[];
-    for (const [slug,oldCover,newCover] of COVER_REPAIRS) {
-      const row=rows.find(r=>r.slug===slug);
-      if(!row)throw new Error("Unexpected missing model");
-      const source=JSON.parse(row.content_json);
-      if(source.cover!==oldCover && source.cover!==newCover)
-        throw new Error("Owner-edited Blog cover is authoritative: "+slug);
-      if(source.cover===oldCover) {
-        statements.push(db.prepare("UPDATE xuyi_blog_posts SET content_json=?,updated_at=CURRENT_TIMESTAMP WHERE slug=? AND content_json=?")
-          .bind(JSON.stringify({...source,cover:newCover}),slug,row.content_json));
-        updatedSlugs.push(slug);
-      }
-    }
-    const resources=COVER_REPAIRS.map(row=>"page:/blog/"+row[0]+"/");
-    const translations=(await db.prepare(
-      "SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN (?,?,?,?) AND locale IN (?,?,?,?)"
-    ).bind("page:/blog/",...resources,...LOCALES).all()).results||[];
-    if(translations.length!==16)throw new Error("Expected 12 localized articles and four Blog index pages");
-    let translatedRows=0,indexRows=0;
-    for(const row of translations) {
-      let content=JSON.parse(row.translated_json);
-      if(typeof content.mainHtml!=="string")throw new Error("Invalid CMS translated body");
-      let next=content.mainHtml;
-      if(row.resource_id==="page:/blog/") {
-        next=correctedIndex(next);
-        if(next!==content.mainHtml)indexRows++;
-      } else {
-        const fixture=COVER_REPAIRS.find(x=>row.resource_id==="page:/blog/"+x[0]+"/");
-        if(!fixture)throw new Error("Unexpected locale Blog row");
-        const [,oldCover,newCover]=fixture;
-        const begin='<div class="blog-detail__cover"><img src="';
-        const oldHero=begin+oldCover+'"',newHero=begin+newCover+'"';
-        if(next.includes(oldHero))next=next.replace(oldHero,newHero);
-        else if(!next.includes(newHero))throw new Error("Owner-modified localized Blog hero; no automatic rewrite");
-        if(next!==content.mainHtml)translatedRows++;
-      }
-      if(next!==content.mainHtml) {
-        statements.push(db.prepare(
-          "UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=? WHERE resource_id=? AND locale=? AND translated_json=?"
-        ).bind(JSON.stringify({...content,mainHtml:next}),REVIEWED_AT,row.resource_id,row.locale,row.translated_json));
-      }
-    }
-    if(!statements.length)return reply({success:true,alreadyFixed:true,updatedSlugs:[],translatedRows:0,indexRows:0});
-    const result=await db.batch(statements);
-    if(result.some(r=>Number(r?.meta?.changes||0)!==1))
-      throw new Error("D1 optimistic cover repair conflict; investigate before retry");
-    const revision=await bumpPublishRevision(db);
-    return reply({success:true,updatedSlugs,translatedRows,indexRows,publishRevision:revision.revision});
-  }catch(error){
-    return reply({error:"Reviewed cover repair not applied: "+String(error?.message||"unknown").slice(0,180)},409);
-  }
-}
-
 export async function onRequestPost(context) {
   if (!(await authorizedReviewedBlogBatchRequest(context.request, context.env))) {
     return reply({ error: "Unauthorized reviewed batch request" }, 401);
@@ -197,9 +103,6 @@ export async function onRequestPost(context) {
   let payload;
   try { payload = await context.request.json(); }
   catch { return reply({ error: "Invalid JSON" }, 400); }
-  // Only this exact, one-time reviewed cover correction can run before normal batch validation.
-  if(payload?.fixApprovedCovers===true && Object.keys(payload).length===1)
-    return repairApprovedCovers(db);
   try { validatePayload(payload); }
   catch (error) { return reply({ error: String(error?.message || "Invalid reviewed batch").slice(0, 240) }, 400); }
 
