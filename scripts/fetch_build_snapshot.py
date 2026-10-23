@@ -24,6 +24,10 @@ def main():
         raise RuntimeError("Build snapshot did not identify XUYI")
     if not isinstance(payload.get("pages"),list) or not isinstance(payload.get("products"),list):
         raise RuntimeError("Build snapshot schema missing")
+    # Transitional, owner-safe Oct-23 cover correction at CMS input level.
+    # The limited D1 endpoint will persist these rows before this bridge is removed.
+    from reviewed_20261023_blog_covers import curate_snapshot
+    payload=curate_snapshot(payload)
     OUTPUT.parent.mkdir(parents=True,exist_ok=True)
     OUTPUT.write_text(json.dumps(payload,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     print("XUYI_BUILD_INPUT_READY",
