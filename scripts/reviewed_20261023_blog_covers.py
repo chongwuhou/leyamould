@@ -7,13 +7,13 @@ from copy import deepcopy
 FIXES={
  "hotel-resort-reusable-water-bottle-guest-amenity-sourcing":(
   "/assets/editorial/large-capacity-plastic-jug.webp",
-  "/assets/blog/water-bottle-capacity-guide-20261017.webp"),
+  "/assets/products/jug.webp"),
  "ecommerce-private-label-water-bottle-marketplace-launch-checklist":(
   "/assets/blog/custom-product-planning-20261013.webp",
-  "/assets/blog/water-bottle-sample-approval-20261017.webp"),
+  "/assets/products/sports.webp"),
  "wholesale-water-bottle-distributor-assortment-planning":(
   "/assets/editorial/sports-bottles-category-20261013.webp",
-  "/assets/blog/replacement-water-bottle-lids-20261017.webp")
+  "/assets/products/kids.webp")
 }
 LOCALES={"es","pt","ru","tr"}
 CARD='<article class="news-card">'

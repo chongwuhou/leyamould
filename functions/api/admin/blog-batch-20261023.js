@@ -36,7 +36,7 @@ export function validatePayload(payload) {
     if (typeof post.title !== "string" || post.title.length < 12
         || typeof post.description !== "string" || post.description.length < 25
         || typeof post.intro !== "string" || post.intro.length < 50
-        || !/^\/assets\/(?:blog|editorial|curated-hd)\/[a-z0-9-]+\.webp$/.test(String(post.cover || ""))
+        || !/^\/assets\/(?:blog|editorial|curated-hd|products)\/[a-z0-9-]+\.webp$/.test(String(post.cover || ""))
         || !Array.isArray(post.sections) || post.sections.length !== 7
         || !Array.isArray(post.checklist) || post.checklist.length !== 10
         || !Array.isArray(post.faqs) || post.faqs.length !== 4
@@ -99,13 +99,13 @@ export function validatePayload(payload) {
 const COVER_REPAIRS = [
  ["hotel-resort-reusable-water-bottle-guest-amenity-sourcing",
   "/assets/editorial/large-capacity-plastic-jug.webp",
-  "/assets/blog/water-bottle-capacity-guide-20261017.webp"],
+  "/assets/products/jug.webp"],
  ["ecommerce-private-label-water-bottle-marketplace-launch-checklist",
   "/assets/blog/custom-product-planning-20261013.webp",
-  "/assets/blog/water-bottle-sample-approval-20261017.webp"],
+  "/assets/products/sports.webp"],
  ["wholesale-water-bottle-distributor-assortment-planning",
   "/assets/editorial/sports-bottles-category-20261013.webp",
-  "/assets/blog/replacement-water-bottle-lids-20261017.webp"]
+  "/assets/products/kids.webp"]
 ];
 function correctedIndex(source) {
   const prefix='<article class="news-card">';
