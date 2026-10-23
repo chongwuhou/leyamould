@@ -166,9 +166,6 @@ jobs:
       - name: Publish reviewed 2026-10-22 B2B guides to D1 CMS
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-22 B2B sector procurement guides'
         run: python scripts/publish_blog_batch_20261022_d1.py
-      - name: Repair 2026-10-23 source-reviewed Blog covers in D1
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Repair reviewed 2026-10-23 Blog covers in XUYI D1'
-        run: python scripts/repair_blog_covers_20261023_d1.py
       - name: Prepare 2026-10-23 three reviewed B2B sector guides
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
@@ -196,6 +193,11 @@ jobs:
       - name: Publish initial three authentic spreadsheet reviews
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Initialize XUYI daily authentic review publication'
         run: python scripts/publish_daily_product_reviews.py
+      - name: Persist 2026-10-23 approved nonduplicated Blog covers to D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Persist reviewed 2026-10-23 Blog covers in D1'
+        run: |
+          python scripts/publish_blog_cover_fix_20261023_d1.py --dry-run
+          python scripts/publish_blog_cover_fix_20261023_d1.py
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         # The public site must run the authenticated XUYI snapshot endpoint.
