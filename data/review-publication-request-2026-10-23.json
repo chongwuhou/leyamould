@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "requestedBeijingDate": "2026-10-23",
+  "source": "101-zhenshipingjia.xlsx",
+  "requestedCount": 3,
+  "selection": "SystemRandom.sample among verified unposted exact-model entries",
+  "constraints": [
+    "Per Asia/Shanghai calendar date, total newly posted <= 3",
+    "Never publish a model already in the D1 permanent ledger",
+    "Preserve any existing CMS owner review",
+    "Keep original Excel reviewer, rating and text unchanged"
+  ],
+  "target": "Cloudflare D1 append-only review publisher",
+  "note": "Audit record only: the existing guarded GitHub Actions publisher independently checks D1's live ledger, available candidates and daily cap before inserting."
+}
