@@ -1,6 +1,6 @@
 // Five approved source-owned photo choices. Never accept caller-supplied cover URLs.
 export const PHOTO_COVERS = Object.freeze({
-  "water-bottle-cap-types-bulk-guide": ["/assets/blog/water-bottle-cap-types-bulk-20261016.webp","/assets/curated-hd/feature-flip-top.webp"],
+  "water-bottle-cap-types-bulk-guide": ["/assets/blog/water-bottle-cap-types-bulk-20261016.webp","/assets/lo/detail/lo-006-lifestyle.webp"],
   "bottle-factory-rfq-template": ["/assets/blog/bottle-factory-rfq-template-20261016.webp","/assets/lo/detail/lo-002-lifestyle.webp"],
   "outdoor-tour-operator-group-water-bottle-wholesale": ["/assets/blog/water-bottle-capacity-guide-20261017.webp","/assets/lo/detail/lo-004-lifestyle.webp"],
   "supplement-brand-shaker-bottle-bundle-oem-sourcing": ["/assets/blog/replacement-water-bottle-lids-20261017.webp","/assets/sku-hd/slide-094-gpt-reviewed-20261013.webp"],
