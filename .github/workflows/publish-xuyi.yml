@@ -184,9 +184,6 @@ jobs:
       - name: Publish reviewed 2026-10-24 B2B sector guides to D1 CMS
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-24 B2B sector procurement guides'
         run: python scripts/publish_blog_batch_20261024_d1.py
-      - name: Publish five reviewed photographic Blog covers to D1
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish five reviewed photographic covers and unified blog index'
-        run: python scripts/publish_five_blog_photo_covers_20261024_d1.py
       - name: Persist all reviewed product SEO fields in Cloudflare D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
         run: python scripts/promote_product_seo_to_d1_20261020.py
