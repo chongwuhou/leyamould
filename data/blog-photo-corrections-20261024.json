@@ -6,13 +6,13 @@
   },
   "bottle-factory-rfq-template": {
     "baseline": "/assets/lo/detail/lo-002-lifestyle.webp",
-    "photo": "/assets/editorial/plastic-sampling-workbench.webp",
-    "scene": "Photographed sampling workbench with bottles, cap options, and specification materials"
+    "photo": "/assets/catalog/excel/row-003.webp",
+    "scene": "Photographed OEM bottle sample assortment with different materials and closure styles for RFQ comparisons"
   },
   "outdoor-tour-operator-group-water-bottle-wholesale": {
     "baseline": "/assets/lo/detail/lo-004-lifestyle.webp",
-    "photo": "/assets/curated-hd/outdoor-lifestyle.webp",
-    "scene": "Reusable sports water bottles photographed in an outdoor sports setting; illustrative, not a documented group tour"
+    "photo": "/assets/catalog/excel/row-021.webp",
+    "scene": "Photographed reusable water bottle samples during an outdoor recreation activity; illustrative rather than a documented group tour"
   },
   "supplement-brand-shaker-bottle-bundle-oem-sourcing": {
     "baseline": "/assets/sku-hd/slide-094-gpt-reviewed-20261013.webp",
@@ -21,7 +21,7 @@
   },
   "trade-show-promotional-water-bottle-deadline-procurement": {
     "baseline": "/assets/lo/detail/lo-005-lifestyle.webp",
-    "photo": "/assets/blog/branding-logo-options-20261013.webp",
-    "scene": "Branded plastic bottle samples and logo options on an ordering desk; not a photographed actual trade show"
+    "photo": "/assets/catalog/excel/row-050.webp",
+    "scene": "Photo of colorful logo-printing examples on water bottle samples suitable for promotional giveaways; not an actual trade show"
   }
 }
