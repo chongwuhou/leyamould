@@ -1,6 +1,7 @@
 import { ensureBlogSchema, listBlogPosts, findBlogPost, esc, blogCard, blogHtml, composePage } from "../_shared/blog-cms.js";
 import {englishAltFor} from "../_shared/media-alt.js";
 import COVER_OVERRIDES from "../../data/blog-cover-overrides.json" with {type:"json"};
+import PHOTO_CORRECTIONS from "../../data/blog-photo-corrections-20261024.json" with {type:"json"};
 import SHAKER_IMAGES from "../../data/gpt-reviewed-shaker-hd-20261013.json" with {type:"json"};
 import SEARCH_ROLES from "../../data/search-intent-three-landing-roles.json" with {type:"json"};
 
@@ -27,6 +28,10 @@ const ORIGINAL_COVERS=Object.freeze({
  "how-to-start-private-label-water-bottle-brand":"/media/ppt/slide-049.webp"
 });
 export function withReviewedCover(post){
+ // Five reviewed actual-photo selections: only upgrade the specific image
+ // present when the defect was reported. Future owner CMS covers always win.
+ const approved=PHOTO_CORRECTIONS[post.slug];
+ if(approved && post.cover===approved.baseline)return {...post,cover:approved.photo};
  const old=ORIGINAL_COVERS[post.slug],newCover=COVER_OVERRIDES[post.slug];
  if(old && newCover && post.cover===old)return {...post,cover:newCover};
  // Only this originally unique shaker-guide cover uses the same approved
@@ -85,7 +90,8 @@ export async function onRequestGet(context){
   for(const post of posts)post.coverAlt=await englishAltFor(db,post.cover);
   const template=await assetHtml(context,"/blog/index.html");
   let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / Blog</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>Water Bottle Buying Guides</h1><p>Practical guides to material choice, wholesale sourcing, OEM customization and quality assurance.</p></div></section>';
-  body+='<section class="section blog-listing"><div class="shell"><div class="section__head"><div><span class="eyebrow">BUYER RESOURCES</span><h2 class="section__title">Sourcing Knowledge Center</h2><p>Explore '+posts.length+' buying guides written for B2B customers.</p></div></div>';
+  // One shared page header, followed directly by the D1-owned article grid.
+  body+='<section class="section blog-listing"><div class="shell">';
   body+='<div class="blog-listing__grid">'+posts.map(blogCard).join('')+'</div></div></section>';
   return response(composePage(template,body,null,"/blog/"));
  }catch(error){

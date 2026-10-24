@@ -339,7 +339,16 @@ def main():
     created=0
     for (route,loc),fields in translated.items():
         original_owner_body=fields.get("mainHtml")
-
+        # Apply known photo corrections before localized CMS HTML rendering.
+        # Only unchanged legacy covers are affected; admin edits take priority.
+        if route.startswith("/blog/"):
+            from blog_media_source import blog_cover_from_cms_source
+            fields={**fields,"mainHtml":blog_cover_from_cms_source(fields["mainHtml"],route,loc)}
+        # Blog list: normalize only the reviewed legacy secondary title.
+        # This changes the source render, never dist or the CMS record.
+        if route=="/blog/":
+            from blog_listing_layout import single_blog_index_heading
+            fields={**fields,"mainHtml":single_blog_index_heading(fields["mainHtml"],loc)}
         # Correct a reviewed Turkish bottle-cap false friend in D1 source
         # fields *before* constructing HTML, SEO, OG and JSON-LD. Owner-edited
         # D1 text takes precedence; do not patch rendered dist files.

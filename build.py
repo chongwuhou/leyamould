@@ -196,7 +196,8 @@ def target_news_and_blogs():
 
 def blog_index():
  h=intro("Blog","Water Bottle Buying Guides","Practical plastic water bottle buying guides for material selection, customization, quality control and wholesale procurement.")
- h+='<section class="section blog-listing"><div class="shell">'+sec("Sourcing Knowledge Center",f"Explore {len(ARTICLES)} in-depth resources for importers, distributors and private-label bottle brands.","BUYER RESOURCES")
+ # The page intro is the single Blog listing heading; render cards below it.
+ h+='<section class="section blog-listing"><div class="shell">'
  h+='<div class="blog-listing__grid">'
  for slug,title,description in ARTICLES:
   post=BLOG_POSTS[slug]
