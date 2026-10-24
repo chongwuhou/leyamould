@@ -544,6 +544,7 @@ BLOG_POSTS={post["slug"]:post for post in (
  json.loads((ROOT/"data/blog-guides-20261020.json").read_text(encoding="utf-8"))+
   json.loads((ROOT/"data/blog-guides-20261021.json").read_text(encoding="utf-8"))+
   json.loads((ROOT/"data/blog-guides-20261022.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261023.json").read_text(encoding="utf-8"))
+  json.loads((ROOT/"data/blog-guides-20261023.json").read_text(encoding="utf-8"))+
+  json.loads((ROOT/"data/blog-guides-20261024.json").read_text(encoding="utf-8"))
 )}
 ARTICLES=[(post["slug"],post["title"],post["description"]) for post in reversed(list(BLOG_POSTS.values()))]
