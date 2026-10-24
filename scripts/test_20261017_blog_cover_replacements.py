@@ -39,7 +39,7 @@ for slug,(old,new) in REPLACEMENTS.items():
     assert old_hero not in html,(slug,locale,"old hero reintroduced")
    else:
     cards=re.findall(r'<article class="news-card">.*?</article>',html,re.S)
-    matches=[c for c in cards if 'href="/blog/'+slug+'/"' in c]
+    matches=[c for c in cards if 'href="/'+prefix+'blog/'+slug+'/"' in c]
     assert len(matches)==1,(slug,locale,"card count")
     assert 'src="/assets/blog/'+old+'"' not in matches[0],(slug,locale,"old card reintroduced")
     assert expected in matches[0],(slug,locale,"revised card missing")
