@@ -1155,3 +1155,14 @@ body:has(#xuyi-home-banners) .home-bpa-verification small{display:block;font-siz
 #xuyi-customer-reviews .product-review__stars{color:#b87914;font-size:1.15rem;letter-spacing:2px}
 #xuyi-customer-reviews .product-review__text{white-space:normal;overflow-wrap:anywhere;line-height:1.7;margin:12px 0}
 #xuyi-customer-reviews .product-review__meta{font-size:.88rem;opacity:.82;margin:0}
+
+
+/* XUYI blog archive unified spacing 2026-10-24: one hero and one article index. */
+main > .page-intro:has(+ .blog-listing) {padding-top:46px;padding-bottom:40px}
+main > .page-intro + .blog-listing {padding-top:44px}
+main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
+@media(max-width:700px){
+ main > .page-intro:has(+ .blog-listing) {padding-top:34px;padding-bottom:30px}
+ main > .page-intro + .blog-listing {padding-top:30px}
+ main > .page-intro + .blog-listing .section__head {margin-bottom:23px}
+}
