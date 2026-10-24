@@ -1,0 +1,10 @@
+
+/* One shared responsive pager for D1 and translated Blog listing pages. */
+.blog-listing__grid{scroll-margin-top:110px}
+.blog-pager__summary{margin:30px 0 12px;text-align:center;color:var(--muted,#64666b);font-size:14px}
+.blog-pager{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:9px;margin:0 auto 20px}
+.blog-pager__link{display:inline-flex;align-items:center;justify-content:center;min-width:42px;min-height:42px;padding:10px 14px;border:1px solid var(--line,#e6e6e6);border-radius:12px;background:#fff;color:var(--ink,#0e1013);font-size:14px;font-weight:700;text-decoration:none;transition:background .15s,border-color .15s}
+.blog-pager__link:hover,.blog-pager__link:focus-visible{border-color:var(--red,#f31927);outline-offset:3px}
+.blog-pager__link[aria-current="page"]{background:var(--red,#f31927);border-color:var(--red,#f31927);color:#fff}
+.blog-pager__ellipsis{padding:0 3px;color:var(--muted,#64666b)}
+@media(max-width:640px){.blog-pager{gap:6px}.blog-pager__link{min-width:38px;min-height:40px;padding:8px 11px}.blog-pager__link--prev,.blog-pager__link--next{flex:0 1 auto}}

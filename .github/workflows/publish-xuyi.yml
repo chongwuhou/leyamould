@@ -273,6 +273,8 @@ jobs:
           python scripts/test_20261019_blog_batch.py
           python scripts/test_20261020_b2b_blog_batch.py
           python scripts/test_blog_listing_single_header.py
+          python scripts/test_blog_pagination_source.py
+          node scripts/test_blog_pagination_runtime.mjs
           node scripts/test_20261020_b2b_blog_batch_runtime.mjs
           node scripts/test_20261019_blog_batch_runtime.mjs
           node scripts/test_20261018_blog_batch_runtime.mjs

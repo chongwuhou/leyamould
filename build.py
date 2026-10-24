@@ -376,7 +376,7 @@ def generate():
    meta=RESOURCE_SEO[slug]
    body_markup=resources_schema(page(meta[0],meta[1],fn()),slug,meta[1],RESOURCE_DATA['categories'] if slug=='faq' else None)
   else:
-   body_markup=page(title+' | XUYI Bottles',description,fn())
+   body_markup=page(title+' | XUYI Bottles',description,fn(),blog_pager=(slug=="blog"))
   build_url(slug+'/index.html',title,body_markup)
  build_url('why-us/index.html','Why Us',resources_schema(page(*RESOURCE_SEO['why-us'],why_us()),'why-us',RESOURCE_SEO['why-us'][1]))
  build_url('request-sample/index.html','Request a Sample',resources_schema(page(*RESOURCE_SEO['request-sample'],sample_page()),'request-sample',RESOURCE_SEO['request-sample'][1],[c for c in RESOURCE_DATA['categories'] if c['id']=='samples']))

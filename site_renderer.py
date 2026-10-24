@@ -486,10 +486,15 @@ def footer():
  if contact.get("whatsappUrl") and str(contact["whatsappUrl"]).startswith("https://wa.me/"):
   result=result.replace("https://wa.me/8615395897937",e(str(contact["whatsappUrl"])))
  return result
-def page(title,description,body,canonical=None):
+def page(title,description,body,canonical=None,blog_pager=False):
  # The release gate defaults to noindex until business approval. Once explicitly
  # enabled, all public locales inherit the same indexable head from this template.
  head=render_template("head",TITLE=e(title),DESCRIPTION=e(description)[:220])
+ if blog_pager:
+  # Blog-only shared source component; the English D1 runtime and all four
+  # localized builds inherit this exact head. Never patch generated HTML.
+  pager='<link rel="stylesheet" href="/assets/blog-pagination.css"><script defer src="/assets/blog-pagination.js"></script>'
+  head=head.replace('</head>',pager+'</head>',1)
  if INDEXING_APPROVED:
   head=head.replace('<meta name="robots" content="noindex,nofollow">',
                     '<meta name="robots" content="index,follow">',1)
