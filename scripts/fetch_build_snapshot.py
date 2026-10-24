@@ -24,8 +24,6 @@ def main():
         raise RuntimeError("Build snapshot did not identify XUYI")
     if not isinstance(payload.get("pages"),list) or not isinstance(payload.get("products"),list):
         raise RuntimeError("Build snapshot schema missing")
-    from reviewed_20261024_blog_covers import curate_snapshot
-    payload=curate_snapshot(payload)
     OUTPUT.parent.mkdir(parents=True,exist_ok=True)
     OUTPUT.write_text(json.dumps(payload,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     print("XUYI_BUILD_INPUT_READY",

@@ -184,6 +184,9 @@ jobs:
       - name: Publish reviewed 2026-10-24 B2B sector guides to D1 CMS
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-24 B2B sector procurement guides'
         run: python scripts/publish_blog_batch_20261024_d1.py
+      - name: Repair reviewed 2026-10-24 B2B Blog covers in D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Repair reviewed 2026-10-24 B2B Blog covers in XUYI D1'
+        run: python scripts/repair_blog_covers_20261024_d1.py
       - name: Persist all reviewed product SEO fields in Cloudflare D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
         run: python scripts/promote_product_seo_to_d1_20261020.py
@@ -229,7 +232,6 @@ jobs:
           python scripts/test_blog_20261022_source.py
           python scripts/test_blog_20261023_source.py
           python scripts/test_blog_20261024_source.py
-          python scripts/test_blog_cover_20261024_owner_guard.py
           node scripts/test_daily_product_reviews_api.mjs
           python scripts/test_product_components.py
           python scripts/test_buyer_content.py
