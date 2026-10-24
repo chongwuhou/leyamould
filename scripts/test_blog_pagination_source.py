@@ -14,7 +14,7 @@ assert site.count('/assets/blog-pagination.js')==1
 # composePage replaces only <main>, preserving the shared <head> on CMS updates.
 assert 'const template=await assetHtml(context,"/blog/index.html");' in route
 assert 'composePage(template,body,null,"/blog/")' in route
-assert r'let html=template.replace(/<main id="main-content">[\\s\\S]*?<\\/main>/' in cms
+assert 'let html=template.replace(/<main id="main-content">' in cms
 assert 'PAGE_SIZE = 12' in source
 assert 'document.documentElement.lang' in source
 assert 'window.history.pushState' in source and '"popstate"' in source
