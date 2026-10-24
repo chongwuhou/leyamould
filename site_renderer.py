@@ -133,6 +133,11 @@ def build_url(path,title,content):
      r"<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:",
      body_override,re.I):
    main=body_override
+  # Normalize the exact legacy English CMS Blog list section at the shared
+  # render entry point. Never touch generated HTML or owner-rewritten titles.
+  if route=="/blog/":
+   from blog_listing_layout import single_blog_index_heading
+   main=single_blog_index_heading(main,"en")
   if route=="/about/":
    from about_company_page import apply_body
    main=apply_body(main,'en')
@@ -541,10 +546,6 @@ FAQS=[
 ]
 BLOG_POSTS={post["slug"]:post for post in (
  json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf-8"))+
- json.loads((ROOT/"data/blog-guides-20261020.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261021.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261022.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261023.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261024.json").read_text(encoding="utf-8"))
+ json.loads((ROOT/"data/blog-guides-20261020.json").read_text(encoding="utf-8"))
 )}
 ARTICLES=[(post["slug"],post["title"],post["description"]) for post in reversed(list(BLOG_POSTS.values()))]

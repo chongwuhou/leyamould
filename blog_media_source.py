@@ -42,3 +42,46 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
                  r'/"><img src=")'+re.escape(old)+r'(?=")')
         markup=re.sub(pattern,lambda m:m.group(1)+new,markup)
     return markup
+
+def article_social_image_from_cms_source(markup: str, route: str) -> str:
+    """Use the final CMS-selected localized Blog hero for OG and BlogPosting.
+
+    Translated article markup is owner-controlled. English fallback social
+    metadata must not describe an image different from the actual D1 hero.
+    This is a pre-write render operation, never a dist-file mutation.
+    """
+    import html
+    if not re.fullmatch(r"/blog/[a-z0-9-]+/", route):
+        return markup
+    match = re.search(r'<div class="blog-detail__cover"><img\b[^>]*\bsrc="([^"]+)"', markup)
+    if not match:
+        return markup
+    source = html.unescape(match.group(1))
+    if not source.startswith(("/assets/", "/media/")) or ".." in source or any(c in source for c in "<>\\\"'"):
+        return markup
+    absolute = "https://xuyibottles.com" + source
+    for attr in ('property="og:image"', 'name="twitter:image"'):
+        pattern = r'(<meta ' + re.escape(attr) + r' content=")[^"]*(")'
+        markup = re.sub(pattern, lambda m: m.group(1) + html.escape(absolute, quote=True) + m.group(2),
+                        markup, count=1)
+
+    def update_schema(found):
+        try:
+            data = json.loads(found.group(1))
+        except (TypeError, ValueError):
+            return found.group(0)
+        nodes = data.get("@graph", []) if isinstance(data, dict) else []
+        if isinstance(data, dict):
+            nodes = list(nodes) + [data] if isinstance(nodes, list) else [data]
+        changed = False
+        for node in nodes:
+            if isinstance(node, dict) and node.get("@type") == "BlogPosting":
+                node["image"] = [absolute]
+                changed = True
+        if not changed:
+            return found.group(0)
+        return '<script type="application/ld+json">' + json.dumps(
+            data, ensure_ascii=False, separators=(",", ":")).replace("<", r"\u003c") + "</script>"
+
+    return re.sub(r'<script type="application/ld\+json">(.*?)</script>',
+                  update_schema, markup, flags=re.S)

@@ -3,6 +3,7 @@
 import json
 import urllib.request
 import urllib.error
+from time import time_ns
 
 BASE="https://xuyibottles.com"
 cases={
@@ -37,9 +38,13 @@ cases={
 failed=[]
 for path,expected in cases.items():
  try:
-  req=urllib.request.Request(BASE+path,headers={"User-Agent":"XUYI-site-preflight/1.0","Cache-Control":"no-cache"})
+  req=urllib.request.Request(BASE+path+("?blog_header_ci="+str(time_ns()) if path=="/blog/" else ""),headers={"User-Agent":"XUYI-site-preflight/1.0","Cache-Control":"no-cache"})
   with urllib.request.urlopen(req,timeout=20) as resp:
    status=resp.status
+   if path=="/blog/" and status==200:
+    markup=resp.read().decode("utf-8","replace")
+    if 'Sourcing Knowledge Center' in markup or markup.count('<h1')!=1:
+     failed.append((path,"duplicate legacy Blog heading on live site"))
    if path=="/build-meta.json":
     meta=json.load(resp)
     if meta.get("pagesProject")!="xuyi-drinkware-site" or meta.get("templateSet")!="templates/site":

@@ -17,6 +17,8 @@ def fixture(title):
             '<div class="blog-listing__grid"><article class="news-card">Post one</article>'
             '<article class="news-card">Post two</article></div></div></section>')
 
+assert LEGACY_SECONDARY_TITLES.get('en')=='Sourcing Knowledge Center', 'English CMS Blog route must be covered'
+
 for loc,title in LEGACY_SECONDARY_TITLES.items():
     original=fixture(title)
     cleaned=single_blog_index_heading(original,loc)
@@ -41,6 +43,18 @@ if snapshot.is_file():
         cleaned=single_blog_index_heading(original,loc)
         assert cleaned.count('class="news-card"')==original.count('class="news-card"')
         assert single_blog_index_heading(cleaned,loc)==cleaned
+
+# Read the historical English Blog HTML as a fixture only; never modify it.
+legacy=(ROOT/'blog/index.html').read_text(encoding='utf8')
+assert 'Sourcing Knowledge Center' in legacy, 'Legacy fixture no longer reproduces report'
+legacy_main=legacy.split('<main id="main-content">',1)[1].split('</main>',1)[0]
+fixed=single_blog_index_heading(legacy_main,'en')
+assert 'Sourcing Knowledge Center' not in fixed
+assert fixed.count('class="news-card"')==legacy_main.count('class="news-card"')
+assert single_blog_index_heading(fixed,'en')==fixed
+
+renderer=(ROOT/'site_renderer.py').read_text(encoding='utf8')
+assert 'main=single_blog_index_heading(main,"en")' in renderer
 
 source=(ROOT/'build.py').read_text(encoding='utf8')
 portion=source[source.index('def blog_index():'):source.index('\ndef blog_article(')]

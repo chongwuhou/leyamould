@@ -478,6 +478,13 @@ def main():
         text=re.sub(r'<link rel="canonical" href="[^"]*">','<link rel="canonical" href="'+canonical+'">',text,count=1)
         text=re.sub(r'<meta property="og:url" content="[^"]*">','<meta property="og:url" content="'+canonical+'">',text,count=1)
         text=localize_structured_data(text,loc,route,localized,fields,routes_by_locale[loc],live[loc]["pathPrefix"])
+        # Reflect the final D1/CMS localized Blog cover into OG/BlogPosting
+        # at the source render boundary, never after dist is generated.
+        if route.startswith("/blog/") and route!="/blog/":
+            from blog_media_source import article_social_image_from_cms_source
+            text=article_social_image_from_cms_source(text,route)
+
+
         text=polish_product_head(text,loc,route)
         text=correct_reviewed_drinkware_terms(text,loc)
         text=polish_image_alt(text,loc)

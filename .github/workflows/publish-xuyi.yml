@@ -374,6 +374,9 @@ jobs:
           done
           echo "::error::XUYI production build-meta did not update"
           exit 1
+      - name: Verify live Blog single heading and critical routes
+        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
+        run: python scripts/verify_live.py
       # Owner-approved IndexNow: notify ONLY after Cloudflare deploy and live
       # revision checks. The verified root key is generated from the
       # XUYI_INDEXNOW_KEY secret during the standard build, if configured.

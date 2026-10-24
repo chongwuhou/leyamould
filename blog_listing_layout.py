@@ -3,6 +3,7 @@ import html
 import re
 
 LEGACY_SECONDARY_TITLES = {
+    "en": "Sourcing Knowledge Center",
     "es": "Centro de conocimientos sobre abastecimiento",
     "pt": "Centro de conhecimento sobre compras e fornecimento",
     "ru": "Центр знаний по источникам",
