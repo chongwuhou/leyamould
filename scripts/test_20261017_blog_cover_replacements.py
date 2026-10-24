@@ -32,7 +32,17 @@ for slug,(old,new) in REPLACEMENTS.items():
   for file in (blog,index):
    html=file.read_text(encoding="utf8")
    assert expected in html,(slug,locale,file)
-   assert old not in html,(slug,locale,"old cover reintroduced")
+   # Only the original article/card is pinned to the revised photo.
+   # New unrelated articles may legitimately use the former photo asset.
+   if file==blog:
+    old_hero='<div class="blog-detail__cover"><img src="/assets/blog/'+old+'"'
+    assert old_hero not in html,(slug,locale,"old hero reintroduced")
+   else:
+    cards=re.findall(r'<article class="news-card">.*?</article>',html,re.S)
+    matches=[c for c in cards if 'href="/blog/'+slug+'/"' in c]
+    assert len(matches)==1,(slug,locale,"card count")
+    assert 'src="/assets/blog/'+old+'"' not in matches[0],(slug,locale,"old card reintroduced")
+    assert expected in matches[0],(slug,locale,"revised card missing")
   document=blog.read_text(encoding="utf8")
   assert '<meta property="og:image" content="https://xuyibottles.com'+expected+'"' in document,(slug,locale)
 # Simulate an owner changing the cover in D1 before a historical maintenance
