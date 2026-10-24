@@ -14,7 +14,9 @@ for(const post of applied){
  const reviewedGuideCover=post.slug==="shaker-bottle-wholesale"
    ? reviewedShakers.approved.find(x=>x.old===original[post.slug])?.new
    : undefined;
- const expected=overrides[post.slug]||reviewedGuideCover||original[post.slug];
+ const approved=photoCorrections[post.slug];
+ const approvedPhoto=approved && original[post.slug]===approved.baseline ? approved.photo : undefined;
+ const expected=approvedPhoto||overrides[post.slug]||reviewedGuideCover||original[post.slug];
  assert.equal(post.cover,expected,post.slug);
  assert.equal(withReviewedCover({slug:post.slug,cover:"/assets/media/editor-updated.webp"}).cover,
               "/assets/media/editor-updated.webp",
