@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Randomly publish up to three unseen, exact-SKU reviews per Beijing date to D1.
+"""Publish up to three unseen, exact-SKU reviews per Beijing date to D1.
 
 The append-only D1 ledger is authoritative: retries, review deletion, and
 repeated workflow_dispatch calls never create an extra customer rating.
 Unpublished personal data stays only in this site's private GitHub repo.
 """
 from datetime import datetime
-from random import SystemRandom
 from hashlib import sha256
 from pathlib import Path
 from urllib.error import HTTPError
@@ -60,25 +59,22 @@ def request(token,method="GET",payload=None):
                            err.read(400).decode("utf8","replace")) from None
 
 def plan(entries,state,today,rng=None):
-    """Randomly sample never-published authentic SKU rows; never recycle a model.
-
-    D1's permanent ledger and any existing CMS owner review both exclude an SKU.
-    A fixed seed may be injected by tests only; production uses OS randomness.
-    """
+    """Cryptographically random eligible Excel rows, never reuse any D1 SKU/ledger entry."""
+    from secrets import SystemRandom
     ledger=state.get("recorded",[])
     occupied=set(state.get("existingModels",[]))|{r["model"] for r in ledger}
     count=sum(x.get("published_date")==today for x in ledger)
     if not 0<=count<=3:raise RuntimeError("D1 daily publication count invalid")
-    eligible=[x for x in entries if x["model"] not in occupied]
-    wanted=min(3-count,len(eligible))
-    if not wanted:return [],count
-    return (rng if rng is not None else SystemRandom()).sample(eligible,wanted),count
+    remaining=[x for x in entries if x["model"] not in occupied]
+    size=min(3-count,len(remaining))
+    if not size:return [],count
+    return (rng or SystemRandom()).sample(remaining,size),count
 
 def main():
     entries=check_source()
     print("SOURCE_OK",len(entries),"EXACT_MODELS",len(ALIASES),"APPROVED_ALIASES")
     if "--dry-run" in sys.argv:
-        print("DRY_RUN_NO_D1_WRITE", "AUTHENTIC_SOURCE_ROWS",len(entries),"RANDOM_SAMPLING_ON_LIVE_D1_SELECTION")
+        print("DRY_RUN_NO_D1_WRITE", [x["model"] for x in entries[:3]])
         return
     token=os.environ.get("CLOUDFLARE_API_TOKEN","")
     if not token:raise RuntimeError("Cloudflare credential missing")
