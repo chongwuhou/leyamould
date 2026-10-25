@@ -1,0 +1,458 @@
+{
+  "es": {
+    "title": "Botellas personalizadas para librerías universitarias: guía de compra al por mayor",
+    "description": "Cómo comprar botellas para una tienda universitaria: licencias de marca, muestras, impresión, inventario por campus, cajas y reposición.",
+    "intro": "Una librería de universidad atiende a estudiantes, antiguos alumnos y visitantes. El equipo necesita licencias de los emblemas, muestras físicas y entregas compatibles con el semestre. El catálogo es una referencia; no sustituye el producto aprobado.",
+    "sections": [
+      [
+        "Separe las ventas de tienda, exalumnos y eventos",
+        "Separe el inventario del mostrador, los regalos de orientación y las compras de asociaciones de antiguos alumnos. Registre cantidades, códigos, colores y fechas por canal. Utilice ventas reales cuando existan y no suponga que cada asistente comprará un artículo. Designe quién aprueba cambios de producto y quién administra excedentes."
+      ],
+      [
+        "Verifique el producto físico y la tapa elegida",
+        "Solicite los mililitros reales, material, piezas del cierre y medidas de la caja. Compruebe la botella ensamblada en un estante y una mochila y conserve imágenes del modelo. Una descripción deportiva no garantiza estanqueidad ni resistencia al calor. Pida documentación aplicable antes de publicar afirmaciones de seguridad, materiales o lavado."
+      ],
+      [
+        "Confirme la licencia del logotipo universitario",
+        "Comprar productos para el campus no autoriza por sí solo a imprimir todos los emblemas o símbolos deportivos. Consulte al titular de derechos sobre versiones, colores y condiciones. Entregue logotipo vectorial con número de revisión. Apruebe una prueba de impresión real, ya que el color en una pantalla puede variar sobre un cuerpo curvo."
+      ],
+      [
+        "Compare el coste de un artículo listo para la venta",
+        "Compare cada oferta con el mismo cuerpo, color, arte, protección, etiqueta, unidades por caja y condiciones de entrega. Añada las pérdidas por daños y el manejo cuando sean relevantes. Revise tamaño de estantería y formato de código de barras. Una caja de exportación no se convierte automáticamente en presentación comercial; aclare quién la prepara."
+      ],
+      [
+        "Coordine las entregas con el calendario académico",
+        "Parta de las fechas de clase, orientación y recepción del almacén. Construya un calendario inverso de licencia, prueba, fabricación, inspección y transporte con plazos verificados. Para varios campus, etiquete cajas por sucursal y diseño. Nombre un responsable de faltantes y recepciones parciales; un margen de planificación no es una garantía de fábrica."
+      ],
+      [
+        "Inspeccione la tirada frente a la muestra aprobada",
+        "Compare cuerpo, tapa, color, logotipo, componentes y marcas de cajas con el modelo autorizado. Busque rayones, piezas faltantes, impresión incorrecta y cambios de versión. Solicite ensayos específicos si el anuncio promete prestaciones concretas. Fotografíe defectos por lote antes de liberar el transporte y no use pruebas de otro modelo como evidencia."
+      ],
+      [
+        "Use ventas y devoluciones para planificar la reposición",
+        "Revise ventas y devoluciones por modelo, color, diseño y tienda, no solo por la categoría botella. Clasifique incidencias de cierre, apariencia y transporte. Archive muestra física, arte autorizado, especificación de tapa y etiquetas. Antes de repetir la compra, vuelva a confirmar disponibilidad y no acepte cambios de componentes sin aprobación."
+      ]
+    ],
+    "checklist": [
+      "Distinguir tienda y eventos.",
+      "Confirmar licencia de marca.",
+      "Verificar muestra y mililitros.",
+      "Revisar cuerpo y cierre.",
+      "Aprobar la impresión.",
+      "Comparar coste entregado.",
+      "Revisar códigos y cajas.",
+      "Reservar recepción del semestre.",
+      "Inspeccionar cada versión.",
+      "Guardar datos de reposición."
+    ],
+    "faqs": [
+      [
+        "¿Se pueden agrupar varios logos en un mínimo?",
+        "Solo cuando se confirmen condiciones y costes por diseño, color y modelo."
+      ],
+      [
+        "¿Basta una maqueta digital?",
+        "Una nueva versión necesita aprobación del titular y prueba física o controlada."
+      ],
+      [
+        "¿Qué tamaño conviene vender primero?",
+        "Compare la demanda real y las muestras, no solo el tamaño publicitario."
+      ],
+      [
+        "¿Qué conservar para repetir el pedido?",
+        "SKU, tapa, versión autorizada, caja, muestra e inspección."
+      ]
+    ],
+    "matrix": {
+      "title": "Matriz de compra para campus",
+      "intro": "Conserve pruebas y decisiones por referencia.",
+      "head": [
+        "Etapa",
+        "Prueba",
+        "Decisión"
+      ],
+      "rows": [
+        [
+          "Canal",
+          "Demanda por grupo",
+          "Cantidad fijada"
+        ],
+        [
+          "Marca",
+          "Licencia y archivo",
+          "Diseño autorizado"
+        ],
+        [
+          "Muestra",
+          "Cuerpo y cierre",
+          "Modelo aceptado"
+        ],
+        [
+          "Coste",
+          "Unidad recibida",
+          "Margen revisado"
+        ],
+        [
+          "Empaque",
+          "Etiqueta y destino",
+          "Almacén listo"
+        ],
+        [
+          "Control",
+          "Lote y defectos",
+          "Recompra trazable"
+        ]
+      ],
+      "links": [
+        "Aprobar el logotipo",
+        "Comparar surtidos"
+      ]
+    },
+    "inline": [
+      "Revisar el logo",
+      "Comparar capacidades"
+    ]
+  },
+  "pt": {
+    "title": "Garrafas personalizadas para lojas universitárias: guia de atacado",
+    "description": "Compras para lojas de campus: licença de marca, amostras, decoração, inventário, recebimento por semestre e reposição.",
+    "intro": "Lojas de universidades atendem estudantes, ex-alunos e visitantes. Para cada grupo, é necessário conferir licença de símbolos, amostra montada, preço completo e data de recebimento. Fotografias de catálogo não substituem especificações e aprovação do produto real.",
+    "sections": [
+      [
+        "Separe vendas no campus, eventos e ex-alunos",
+        "Divida o estoque de prateleira, os presentes de recepção e as encomendas de associações de ex-alunos. Registre quantidades, cores, versões do logo e datas por canal. Use dados de vendas quando disponíveis, sem supor uma taxa de conversão. Defina quem autoriza alterações de modelo e como o excesso de evento será tratado."
+      ],
+      [
+        "Verifique amostra física, corpo e tampa",
+        "Solicite volume real em mililitros, materiais, peças da tampa e dimensões da embalagem. Teste a garrafa montada na prateleira e dentro de mochilas. A palavra esportiva não comprova vedação ou lavagem em máquina. Guarde imagens do conjunto aprovado e peça documentos específicos antes de anunciar características de segurança ou composição."
+      ],
+      [
+        "Obtenha permissão para marcas universitárias",
+        "Uma compra institucional não garante licença para imprimir brasões, símbolos esportivos ou marcas de ex-alunos. Consulte o detentor dos direitos, versões de logo, cores e regras de utilização. Entregue arte vetorial e número de revisão. A imagem digital não comprova o resultado da impressão em plástico curvo; aprove uma prova real."
+      ],
+      [
+        "Compare o preço da unidade pronta para venda",
+        "Avalie propostas com corpo idêntico, cores, arte autorizada, proteção individual, códigos, caixas e entrega. Considere danos e custos de recebimento na unidade vendável. Confira peso das caixas, medida de prateleira e código de barras. A embalagem de exportação comum não é necessariamente uma apresentação comercial. Registre serviços extras separadamente."
+      ],
+      [
+        "Alinhe entregas ao início do semestre",
+        "Comece pelas datas de aulas, recepção de alunos e agendamento do depósito. Organize para trás aprovação da marca, prova, produção, inspeção e transporte com prazos confirmados. Para várias lojas, identifique caixas por unidade e arte. Determine responsáveis por falta, avaria e entrega parcial; a folga do cronograma não é promessa da fábrica."
+      ],
+      [
+        "Inspecione a produção com o padrão aprovado",
+        "Compare corpo, tampa, cor, posição do logo, peças e etiqueta da caixa com a amostra aprovada. Procure riscos, componentes faltantes e versões de arte incorretas. Uma alegação técnica exige prova do conjunto real. Fotografe falhas por lote e registre a decisão antes do transporte. Resultado de outro modelo não deve ser reutilizado."
+      ],
+      [
+        "Use devoluções e vendas na reposição futura",
+        "Acompanhe saída e reclamações por SKU, cor, versão da marca e loja. Separe problemas da tampa, visual e transporte. Preserve arte vetorial, amostra, especificação da tampa e marcação da caixa. Antes do próximo semestre, confira de novo materiais, disponibilidade e prazos. Não aceite troca silenciosa por produto de foto semelhante."
+      ]
+    ],
+    "checklist": [
+      "Separar eventos e varejo.",
+      "Validar licença da marca.",
+      "Solicitar volume e amostra.",
+      "Testar corpo e tampa.",
+      "Aprovar prova de impressão.",
+      "Calcular custo entregue.",
+      "Conferir código e embalagem.",
+      "Agendar recebimento.",
+      "Inspecionar lotes decorados.",
+      "Guardar histórico de reposição."
+    ],
+    "faqs": [
+      [
+        "É possível reunir logos em um mínimo?",
+        "Depende de mínimos e custos confirmados por arte, cor e modelo."
+      ],
+      [
+        "Arte na tela basta para aprovar?",
+        "Para um novo conjunto, aprove uma prova no processo real e a licença."
+      ],
+      [
+        "Que tamanho vender primeiro?",
+        "Compare amostras e histórico, mantendo o volume verdadeiro em mililitros."
+      ],
+      [
+        "O que manter para recomprar?",
+        "SKU, tampa, desenho autorizado, amostra, caixas e inspeção."
+      ]
+    ],
+    "matrix": {
+      "title": "Controle de compras universitárias",
+      "intro": "Cada modelo exige evidência e aprovação.",
+      "head": [
+        "Fase",
+        "Prova",
+        "Resultado"
+      ],
+      "rows": [
+        [
+          "Público",
+          "Canal e lote",
+          "Demanda definida"
+        ],
+        [
+          "Licença",
+          "Uso da marca",
+          "Arte liberada"
+        ],
+        [
+          "Amostra",
+          "Garrafa e tampa",
+          "Conjunto aceito"
+        ],
+        [
+          "Preço",
+          "Custo entregue",
+          "Margem analisada"
+        ],
+        [
+          "Embalagem",
+          "Código e loja",
+          "Recepção pronta"
+        ],
+        [
+          "Qualidade",
+          "Lote e falhas",
+          "Reposição segura"
+        ]
+      ],
+      "links": [
+        "Aprovar logo",
+        "Comparar mix"
+      ]
+    },
+    "inline": [
+      "Rever a licença",
+      "Comparar tamanhos"
+    ]
+  },
+  "ru": {
+    "title": "Оптовые бутылки с логотипом для университетских магазинов: как закупать",
+    "description": "Проверка закупки для кампуса: права на эмблему, образец, ассортимент, доставка к семестру, коробки и повторные заказы.",
+    "intro": "Университетский магазин обслуживает студентов, выпускников и посетителей. Для разных покупателей нужны подтверждённые модели и сроки. Проверьте права на символику, собранный образец, тару и складскую приёмку. Нельзя делать выводы о качестве по одному рекламному снимку.",
+    "sections": [
+      [
+        "Разделите спрос студентов, выпускников и мероприятий",
+        "Ведите отдельно обычные продажи, подарки первокурсникам и партии выпускников. Укажите объёмы, цвета, версии символики и даты для каждого канала. Опирайтесь на кассовые данные, если они есть, а не на случайные прогнозы. Назначьте ответственного за замену модели и распределение остатков по магазинам."
+      ],
+      [
+        "Проверьте корпус и крышку на настоящем образце",
+        "Запросите фактический объём в миллилитрах, материалы, детали крышки и размеры коробов. Проверьте сборку на полке и в рюкзаке. Название спортивная не гарантирует герметичность или пригодность для горячей воды. Сохраните фотографии принятого комплекта. Для заявлений о характеристиках нужны подходящие документы."
+      ],
+      [
+        "Уточните права на университетскую символику",
+        "Право покупать товар не всегда включает разрешение печатать герб, спортивные знаки и символы выпускников. Согласуйте владельца марки, цветовую палитру и ограничения использования. Передайте векторный макет и номер редакции. Картинка на экране не показывает реальный результат печати на пластике; требуется согласованная проба."
+      ],
+      [
+        "Рассчитайте цену готового товара для магазина",
+        "Сравнивайте одну комплектацию с печатью, защитой, штрихкодом, количеством в коробе и доставкой. Учитывайте повреждения и работу склада при расчёте цены пригодной единицы. Уточните размеры полок и фактический вес тары. Экспортная коробка не становится розничной упаковкой автоматически. Дополнительные работы выделяйте отдельно."
+      ],
+      [
+        "Привяжите поставку к учебному календарю",
+        "Зафиксируйте начало семестра, ориентацию и часы приёмки склада. Планируйте назад согласование марки, образец, производство, проверку и транспорт по подтверждённым срокам. Для нескольких кампусов подписывайте короба по филиалу и дизайну. Укажите, кто оформляет недостачи и частичную доставку. Запас времени не равен гарантии."
+      ],
+      [
+        "Проверьте серийную партию по утверждённому образцу",
+        "Сверьте корпус, крышку, цвет, логотип, компоненты и обозначения коробок. Ищите царапины, отсутствие деталей и неверную редакцию дизайна. Технические заявления требуют испытаний именно нужной конфигурации. Фиксируйте недостатки фотографиями и номером партии до отправки. Не переносите доказательства от другого артикула."
+      ],
+      [
+        "Используйте возвраты для планирования нового семестра",
+        "Учитывайте продажи по модели, цвету, редакции эмблемы и магазину. Разделяйте жалобы на крышку, внешний вид и перевозку. Храните утверждённый макет, образец, состав комплекта и этикетки. При новом заказе подтверждайте материалы и доступность деталей. Похожая фотография не разрешает замену товара без согласования."
+      ]
+    ],
+    "checklist": [
+      "Разделить магазины и мероприятия.",
+      "Проверить права на марку.",
+      "Получить образец и объём.",
+      "Осмотреть корпус и крышку.",
+      "Утвердить пробу печати.",
+      "Сравнить цену поставки.",
+      "Уточнить штрихкод и короб.",
+      "Назначить срок приёмки.",
+      "Проверить серийную печать.",
+      "Сохранить данные для повтора."
+    ],
+    "faqs": [
+      [
+        "Можно объединить разные логотипы?",
+        "Только если поставщик подтвердил минимумы и расходы для каждого варианта."
+      ],
+      [
+        "Достаточно ли цифрового макета?",
+        "Для новой конфигурации нужна принятая проба и разрешение владельца знака."
+      ],
+      [
+        "Какой объём выбрать?",
+        "Сравните реальные продажи и образцы, указывая точные миллилитры."
+      ],
+      [
+        "Что хранить к повторному заказу?",
+        "Артикул, крышку, лицензированный дизайн, образец и проверку."
+      ]
+    ],
+    "matrix": {
+      "title": "Матрица закупки университета",
+      "intro": "Для каждого SKU сохраняйте доказательства.",
+      "head": [
+        "Этап",
+        "Данные",
+        "Решение"
+      ],
+      "rows": [
+        [
+          "Спрос",
+          "Группа и объём",
+          "План принят"
+        ],
+        [
+          "Марка",
+          "Право на печать",
+          "Макет согласован"
+        ],
+        [
+          "Образец",
+          "Корпус и крышка",
+          "Модель принята"
+        ],
+        [
+          "Цена",
+          "Стоимость поставки",
+          "Маржа проверена"
+        ],
+        [
+          "Короба",
+          "Код и отделение",
+          "Склад готов"
+        ],
+        [
+          "Контроль",
+          "Фото и дефекты",
+          "Повтор отслеживается"
+        ]
+      ],
+      "links": [
+        "Проверка логотипа",
+        "Сравнить ассортимент"
+      ]
+    },
+    "inline": [
+      "Подтвердить дизайн",
+      "Сравнить вместимость"
+    ]
+  },
+  "tr": {
+    "title": "Üniversite mağazaları için özel logolu su şişesi toptan alım rehberi",
+    "description": "Kampüs ürünleri için logo izni, fiziksel numune, model karması, akademik teslim, koli kontrolü ve tekrar sipariş.",
+    "intro": "Üniversite mağazaları öğrenci, mezun ve ziyaretçilere farklı ürünler sunar. Satın alma ekibi okul logosu kullanma hakkını, gerçek şişe numunesini, ambalajı ve teslim gününü birlikte planlamalıdır. Katalog görseli ürünün performansını veya teslim süresini kanıtlamaz.",
+    "sections": [
+      [
+        "Öğrenci, mezun ve etkinlik stoklarını ayırın",
+        "Raf satışını, kayıt dönemi hediyelerini ve mezun siparişlerini ayrı takip edin. Her kanal için adet, renk, logo sürümü ve tarih belirleyin. Varsa kasa satışlarını kullanın; herkesin aynı şişeyi alacağını varsaymayın. Model değişikliğini onaylayacak sorumluyu ve kalan stoğun dağıtımını yazılı netleştirin."
+      ],
+      [
+        "Tam şişe ve kapağı gerçek numuneyle test edin",
+        "Seçilen modelin mililitre hacmini, gövde malzemesini, kapak parçalarını ve koli ölçülerini isteyin. Numuneyi rafta ve çantada deneyin. Spor şişesi adı sızdırmazlık veya makinede yıkama garantisi vermez. Onaylı gövde ve kapağı fotoğraflayın. Teknik beyanlar için ürünün kendi kanıtlarını kontrol edin."
+      ],
+      [
+        "Üniversite logosu için resmi izin alın",
+        "Satın alma yetkisi okul arması, spor takımı işareti veya mezun logosunu basma hakkı sağlamayabilir. Marka sahibiyle kullanım sınırını, rengi ve gerekirse lisans ücretini doğrulayın. Vektör tasarımı ve sürüm numarasını saklayın. Ekrandaki maket eğimli plastik yüzeydeki gerçek baskıyı kanıtlamaz; uygun numuneyi onaylayın."
+      ],
+      [
+        "Sadece boş şişe fiyatını değil toplam maliyeti inceleyin",
+        "Aynı model, renk, izinli baskı, tekli koruma, barkod, koli sayısı ve teslim koşuluyla fiyat alın. Hasar ve depo maliyetini satılabilir ürün başına değerlendirin. Raf ölçülerini ve koli ağırlığını karşılaştırın. Standart ihracat kolisi otomatik olarak mağaza ambalajı değildir. Ek hizmetleri açık ayrı kalem olarak yazdırın."
+      ],
+      [
+        "Teslimatı akademik takvime bağlayın",
+        "Ders başlangıcı, karşılama etkinliği ve depo randevusundan geriye doğru plan yapın. Logo izni, numune, üretim, kontrol ve taşıma sürelerini gerçek tedarikçi bilgisiyle doldurun. Birden fazla kampüste kolileri mağaza ve tasarım sürümüne göre işaretleyin. Eksik ve kısmi teslimden kimin sorumlu olduğunu önceden belirleyin."
+      ],
+      [
+        "Üretim lotunu onaylı baskı provasına göre inceleyin",
+        "Gövde, kapak, renk, logo konumu, parçalar ve koli işaretlerini kabul edilen numuneyle karşılaştırın. Çizik, eksik aksesuar ve yanlış tasarım sürümünü kayıt altına alın. Teknik iddialar seçilen ürün için geçerli test ister. Kusurları sevkiyat öncesi lot numarasıyla fotoğraflayın; başka modelin raporuna dayanmayın."
+      ],
+      [
+        "İade ve satış verisini yeni döneme taşıyın",
+        "Satışları model, renk, logo sürümü ve mağazaya göre raporlayın. Kapak, görünüm ve taşıma şikayetlerini ayrı sınıflayın. Onaylı numuneyi, vektör dosyayı, kapak özelliğini ve etiketi saklayın. Tekrar siparişte malzeme ve parça durumunu yeniden doğrulayın. Benzer katalog fotoğrafı sessiz ürün değişikliğine izin vermez."
+      ]
+    ],
+    "checklist": [
+      "Mağaza ve etkinlik talebini ayırın.",
+      "Logo kullanım hakkını teyit edin.",
+      "Numune ve gerçek hacim isteyin.",
+      "Gövde ve kapağı kontrol edin.",
+      "Baskı provasını onaylayın.",
+      "Teslim maliyetini kıyaslayın.",
+      "Barkod ve koli bilgisini alın.",
+      "Dönem teslim randevusu yapın.",
+      "Üretim baskısını denetleyin.",
+      "Tekrar sipariş kaydı saklayın."
+    ],
+    "faqs": [
+      [
+        "Farklı logo baskıları tek MOQ içinde olabilir mi?",
+        "Her renk, baskı ve modelin minimumu tedarikçiyle yazılı doğrulanmalıdır."
+      ],
+      [
+        "Dijital tasarım onay için yeterli mi?",
+        "Yeni ürün için lisans izni ve gerçek yöntemle hazırlanmış prova gerekir."
+      ],
+      [
+        "Mağaza hangi hacmi seçmeli?",
+        "Gerçek satış geçmişini, numune ölçüsünü ve mililitre kapasitesini karşılaştırın."
+      ],
+      [
+        "Yeni dönem için ne saklanmalı?",
+        "Model, kapak, logo sürümü, koli etiketi, numune ve kalite kayıtları."
+      ]
+    ],
+    "matrix": {
+      "title": "Kampüs satın alma kontrol matrisi",
+      "intro": "Her model için doğrulama ve onay kaydı tutun.",
+      "head": [
+        "Aşama",
+        "Kanıt",
+        "Karar"
+      ],
+      "rows": [
+        [
+          "Talep",
+          "Kanal ve adet",
+          "Dağıtım belirlendi"
+        ],
+        [
+          "Marka",
+          "Logo izni",
+          "Baskı onaylı"
+        ],
+        [
+          "Numune",
+          "Gövde ve kapak",
+          "Ürün kabul"
+        ],
+        [
+          "Maliyet",
+          "Teslim edilmiş birim",
+          "Marj kontrolü"
+        ],
+        [
+          "Koli",
+          "Barkod ve mağaza",
+          "Depo hazır"
+        ],
+        [
+          "Kalite",
+          "Lot ve hata kaydı",
+          "Tekrar sipariş izlenir"
+        ]
+      ],
+      "links": [
+        "Logo onayları",
+        "Ürün karması"
+      ]
+    },
+    "inline": [
+      "Logo iznini doğrulayın",
+      "Hacimleri karşılaştırın"
+    ]
+  }
+}
