@@ -17,6 +17,8 @@ ORIGINALS={p['slug']:(p['cover'] if p['cover'].startswith('/') else '/media/ppt/
 # Compare exact old image URLs; never overwrite later operator-selected paths.
 SOURCE_REPAIRS={slug:(ORIGINALS[slug],new) for slug,new in COVERS.items() if slug in ORIGINALS}
 SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_CORRECTIONS.items()})
+PHOTO_20261025=json.loads((ROOT/'data/blog-photo-corrections-20261025.json').read_text(encoding='utf8'))
+SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_20261025.items()})
 
 
 def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:

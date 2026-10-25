@@ -240,6 +240,7 @@ jobs:
           python scripts/test_blog_20261023_source.py
           python scripts/test_blog_20261024_source.py
           python scripts/test_blog_20261025_source.py
+          python scripts/test_20261025_blog_photos_cms_priority.py
           python scripts/test_five_photo_sources_20261024.py
           node scripts/test_five_blog_photo_cover_owner_guard.mjs
           node scripts/test_daily_product_reviews_api.mjs
