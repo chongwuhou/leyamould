@@ -51,8 +51,13 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
     """
     if locale not in ('en','es','pt','ru','tr') or not route.startswith('/blog/'):
         return markup
+    # English CMS pages need only the three current contextual replacements.
+    # Older general corrections remain limited to the four localized renders.
+    repairs=SOURCE_REPAIRS
+    if locale=='en':
+        repairs={slug:SOURCE_REPAIRS[slug] for slug in PHOTO_CONTEXT_20261026 if slug in SOURCE_REPAIRS}
     if route=='/blog/':
-        for slug,(old,new) in SOURCE_REPAIRS.items():
+        for slug,(old,new) in repairs.items():
             prefix=(r'(<a class="news-card__image" href="/blog/'+re.escape(slug)+r'/"><img src=")')
             markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
         for slug,(old,new) in PHOTO_CONTEXT_LOCALIZED_REPAIRS.items():
@@ -60,15 +65,15 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
             markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
         return markup
     slug=route[len('/blog/'):].strip('/')
-    if slug in SOURCE_REPAIRS:
-        old,new=SOURCE_REPAIRS[slug]
+    if slug in repairs:
+        old,new=repairs[slug]
         prefix=r'(<div class="blog-detail__cover"><img src=")'
         markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
     if slug in PHOTO_CONTEXT_LOCALIZED_REPAIRS:
         old,new=PHOTO_CONTEXT_LOCALIZED_REPAIRS[slug]
         prefix=r'(<div class="blog-detail__cover"><img src=")'
         markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
-    for linked,(old,new) in SOURCE_REPAIRS.items():
+    for linked,(old,new) in repairs.items():
         prefix=(r'(<article class="blog-related__item"><a href="/blog/'+re.escape(linked)+r'/"><img src=")')
         markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(linked))
     for linked,(old,new) in PHOTO_CONTEXT_LOCALIZED_REPAIRS.items():

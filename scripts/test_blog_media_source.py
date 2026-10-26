@@ -9,7 +9,7 @@ from blog_media_source import blog_cover_from_cms_source,SOURCE_REPAIRS
 assert len(SOURCE_REPAIRS)>=13
 for slug,(old,new) in SOURCE_REPAIRS.items():
     assert new.startswith('/assets/'),(slug,new)
-    for loc in ('en','es','pt','ru','tr'):
+    for loc in ('es','pt','ru','tr'):
         index='<div class="blog-listing__grid"><a class="news-card__image" href="/blog/'+slug+'/"><img src="'+old+'" alt="CMS title"></a></div>'
         detail='<div class="blog-detail__cover"><img src="'+old+'" alt="CMS title"></div>'
         related='<article class="blog-related__item"><a href="/blog/'+slug+'/"><img src="'+old+'" alt="CMS title"></a></article>'
