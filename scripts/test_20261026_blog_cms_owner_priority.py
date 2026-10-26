@@ -2,6 +2,7 @@
 """Guard the 2026-10-26 append-only CMS article batch and source ownership."""
 import json,sys
 from pathlib import Path
+from PIL import Image
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from blog_media_source import blog_cover_from_cms_source
