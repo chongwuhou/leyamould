@@ -1,17 +1,17 @@
 {
   "coffee-shop-branded-water-bottles-wholesale": {
     "baseline": "/assets/blog/branding-logo-options-20261013.webp",
-    "photo": "/assets/blog/water-bottle-sample-approval-20261017.webp",
-    "scene": "Realistic reusable bottle sample approval photograph, illustrating buyer review of a decorated cafe bottle without implying a specific cafe customer."
+    "photo": "/assets/catalog/excel/row-004.webp",
+    "scene": "Product-catalog photo of reusable bottles in several colorways, illustrative of branded cafe bottle options and not a documented cafe order."
   },
   "museum-gift-shop-custom-water-bottles-wholesale": {
     "baseline": "/assets/blog/bottle-inspection-topics-20261013.webp",
-    "photo": "/assets/blog/water-bottle-capacity-guide-20261017.webp",
-    "scene": "Bottle capacity comparison photograph for a gift-shop retail assortment, without implying museum branding or a named institution."
+    "photo": "/assets/catalog/excel/row-017.webp",
+    "scene": "Catalog product image of a four-color reusable bottle assortment, illustrative of gift-shop merchandise options and not a named museum."
   },
   "auto-dealership-branded-water-bottles-bulk": {
     "baseline": "/assets/blog/bottle-factory-rfq-template-20261016.webp",
-    "photo": "/assets/blog/water-bottle-cap-types-bulk-20261016.webp",
-    "scene": "Photographed bottle cap and style assortment, illustrating model selection for dealership handover bottles without implying a specific dealership."
+    "photo": "/assets/catalog/excel/row-020.webp",
+    "scene": "Product-catalog photo of clear sports bottles in several cap colors; illustrative of bottle options, not a specific dealership order."
   }
 }
