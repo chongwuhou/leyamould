@@ -29,7 +29,7 @@ if (existsSync(payloadPath)) {
 }
 
 const cmsSource=readFileSync("functions/api/admin/blog-batch-20261020.js","utf8");
-assert.match(cmsSource,/ON CONFLICT\\(slug\\) DO NOTHING/,"Existing editor post is authoritative");
-assert.match(cmsSource,/ON CONFLICT\\(resource_id,locale\\) DO NOTHING/,"Existing editor translation is authoritative");
-assert.match(cmsSource,/instr\\(json_extract\\(translated_json,'\\$\\.mainHtml'\\),\\?\\)=0/,"Localized index append is idempotent");
+assert.ok(cmsSource.includes("ON CONFLICT(slug) DO NOTHING"),"Existing editor post is authoritative");
+assert.ok(cmsSource.includes("ON CONFLICT(resource_id,locale) DO NOTHING"),"Existing editor translation is authoritative");
+assert.ok(cmsSource.includes("instr(json_extract(translated_json,'$.mainHtml'),?)=0"),"Localized index append is idempotent");
 console.log("XUYI_20261020_B2B_CMS_RUNTIME_GUARDS_PASSED");
