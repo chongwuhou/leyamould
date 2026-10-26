@@ -201,7 +201,7 @@ jobs:
           python scripts/prepare_blog_release_20261026.py
           python scripts/publish_blog_batch_20261026_d1.py --dry-run
       - name: Publish reviewed 2026-10-26 B2B long-tail articles to D1 CMS
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-26 B2B long-tail guides'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish reviewed 2026-10-26 B2B long-tail guides')
         run: python scripts/publish_blog_batch_20261026_d1.py
       - name: Persist all reviewed product SEO fields in Cloudflare D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
@@ -376,7 +376,7 @@ jobs:
           python scripts/test_release.py
           python scripts/test_20261026_blog_cms_owner_priority.py
       - name: Verify 15 localized 2026-10-26 source article routes
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-26 B2B long-tail guides'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish reviewed 2026-10-26 B2B long-tail guides')
         run: python scripts/test_blog_20261026_source.py
       - name: No changes in the XUYI D1 publish revision
         if: github.event_name == 'schedule' && steps.revision.outputs.needed == 'false'
@@ -411,7 +411,7 @@ jobs:
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         run: python scripts/verify_live.py
       - name: Verify all 15 live 2026-10-26 article routes
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-26 B2B long-tail guides'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish reviewed 2026-10-26 B2B long-tail guides')
         shell: bash
         run: |
           set -euo pipefail
