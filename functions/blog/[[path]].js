@@ -3,6 +3,7 @@ import {englishAltFor} from "../_shared/media-alt.js";
 import COVER_OVERRIDES from "../../data/blog-cover-overrides.json" with {type:"json"};
 import PHOTO_CORRECTIONS from "../../data/blog-photo-corrections-20261024.json" with {type:"json"};
 import PHOTO_20261025 from "../../data/blog-photo-corrections-20261025.json" with {type:"json"};
+import PHOTO_20261026 from "../../data/blog-photo-corrections-20261026.json" with {type:"json"};
 import SHAKER_IMAGES from "../../data/gpt-reviewed-shaker-hd-20261013.json" with {type:"json"};
 import SEARCH_ROLES from "../../data/search-intent-three-landing-roles.json" with {type:"json"};
 
@@ -29,8 +30,10 @@ const ORIGINAL_COVERS=Object.freeze({
  "how-to-start-private-label-water-bottle-brand":"/media/ppt/slide-049.webp"
 });
 export function withReviewedCover(post){
- // Five reviewed actual-photo selections: only upgrade the specific image
- // present when the defect was reported. Future owner CMS covers always win.
+ // Reviewed photo corrections are presentation-only: a future owner-selected
+ // cover wins because each correction applies only to its exact baseline.
+ const todayApproved=PHOTO_20261026[post.slug];
+ if(todayApproved && post.cover===todayApproved.baseline)return {...post,cover:todayApproved.photo};
  const newApproved=PHOTO_20261025[post.slug];
  if(newApproved && post.cover===newApproved.baseline)return {...post,cover:newApproved.photo};
  const approved=PHOTO_CORRECTIONS[post.slug];
