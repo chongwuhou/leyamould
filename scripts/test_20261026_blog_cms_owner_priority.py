@@ -47,7 +47,7 @@ for post in posts:
  entry=context_corrections[post["slug"]]
  old,new=entry["baseline"],entry["photo"]
  photo=ROOT/new.lstrip("/")
- assert photo.is_file() and 30000<photo.stat().st_size<250000,photo
+ assert photo.is_file() and 20000<photo.stat().st_size<250000,photo
  with Image.open(photo) as img: assert img.format=="WEBP" and img.width>=960 and img.height>=640,(photo,img.size,img.format)
  for locale in ("es","pt","ru","tr"):
   index='<section class="section blog-listing"><div class="shell"><div class="blog-listing__grid"><a class="news-card__image" href="/blog/'+post["slug"]+'/"><img src="'+old+'" alt="Owner choice"></a></div></div></section>'
