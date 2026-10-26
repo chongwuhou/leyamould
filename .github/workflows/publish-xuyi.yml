@@ -246,7 +246,6 @@ jobs:
           python scripts/test_blog_20261023_source.py
           python scripts/test_blog_20261024_source.py
           python scripts/test_blog_20261025_source.py
-          python scripts/test_blog_20261026_source.py
           python scripts/test_20261026_blog_cms_owner_priority.py
           python scripts/test_20261025_blog_photos_cms_priority.py
           python scripts/test_five_photo_sources_20261024.py
@@ -375,8 +374,10 @@ jobs:
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_release.py
-          python scripts/test_blog_20261026_source.py
           python scripts/test_20261026_blog_cms_owner_priority.py
+      - name: Verify 15 localized 2026-10-26 source article routes
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-26 B2B long-tail guides'
+        run: python scripts/test_blog_20261026_source.py
       - name: No changes in the XUYI D1 publish revision
         if: github.event_name == 'schedule' && steps.revision.outputs.needed == 'false'
         run: echo "No changes; skipped build and deploy to preserve GitHub Actions usage."
