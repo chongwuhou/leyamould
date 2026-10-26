@@ -38,12 +38,13 @@ assert "PHOTO_20261026" in media_source
 assert "data/blog-photo-context-corrections-20261026.json" in media_source
 assert "PHOTO_CONTEXT_20261026" in media_source
 assert "PHOTO_CONTEXT_LOCALIZED_REPAIRS" in media_source
-assert all(corrections[p["slug"]]["photo"]==p["cover"] for p in posts)
-assert all(p["cover"].startswith("/assets/catalog/excel/") for p in posts)
+assert all(corrections[p["slug"]]["photo"]==context_corrections[p["slug"]]["baseline"] for p in posts)
+assert all(context_corrections[p["slug"]]["photo"]==p["cover"] for p in posts)
+assert all(p["cover"].startswith("/assets/blog/") for p in posts)
 assert len({p["cover"] for p in posts})==3
 assert set(context_corrections)==SLUGS
-assert all(context_corrections[p["slug"]]["baseline"]==p["cover"] for p in posts)
-assert all(context_corrections[p["slug"]]["photo"]!=p["cover"] for p in posts)
+assert all(context_corrections[p["slug"]]["baseline"]==corrections[p["slug"]]["photo"] for p in posts)
+assert all(context_corrections[p["slug"]]["photo"]!=context_corrections[p["slug"]]["baseline"] for p in posts)
 for post in posts:
  entry=context_corrections[post["slug"]]
  new=entry["photo"]
