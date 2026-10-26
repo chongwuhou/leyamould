@@ -4,6 +4,7 @@ Preserve all later CMS-selected covers, even when their URLs differ from the
 initial XUYI guide. Never walk, edit or depend upon generated dist pages.
 """
 from __future__ import annotations
+import html
 import json
 import re
 from pathlib import Path
@@ -21,6 +22,19 @@ PHOTO_20261025=json.loads((ROOT/'data/blog-photo-corrections-20261025.json').rea
 SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_20261025.items()})
 PHOTO_20261026=json.loads((ROOT/'data/blog-photo-corrections-20261026.json').read_text(encoding='utf8'))
 SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_20261026.items()})
+PHOTO_CONTEXT_20261026=json.loads((ROOT/'data/blog-photo-context-corrections-20261026.json').read_text(encoding='utf8'))
+SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_CONTEXT_20261026.items()})
+SOURCE_ALTS={slug:value['alt'] for slug,value in PHOTO_CONTEXT_20261026.items()}
+
+
+def _replace_reviewed_cover(markup: str, prefix: str, old: str, new: str, alt: str | None = None) -> str:
+    if alt:
+        pattern=prefix+re.escape(old)+r'(" alt=")[^"]*(")'
+        updated,count=re.subn(pattern,lambda m:m.group(1)+new+m.group(2)+html.escape(alt,quote=True)+m.group(3),markup,count=1)
+        if count:
+            return updated
+    pattern=prefix+re.escape(old)+r'(?=")'
+    return re.sub(pattern,lambda m:m.group(1)+new,markup,count=1)
 
 
 def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
@@ -32,19 +46,17 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
         return markup
     if route=='/blog/':
         for slug,(old,new) in SOURCE_REPAIRS.items():
-            pattern=(r'(<a class="news-card__image" href="/blog/'+re.escape(slug)+
-                     r'/"><img src=")'+re.escape(old)+r'(?=")')
-            markup=re.sub(pattern,lambda m:m.group(1)+new,markup,count=1)
+            prefix=(r'(<a class="news-card__image" href="/blog/'+re.escape(slug)+r'/"><img src=")')
+            markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
         return markup
     slug=route[len('/blog/'):].strip('/')
     if slug in SOURCE_REPAIRS:
         old,new=SOURCE_REPAIRS[slug]
-        pattern=r'(<div class="blog-detail__cover"><img src=")'+re.escape(old)+r'(?=")'
-        markup=re.sub(pattern,lambda m:m.group(1)+new,markup,count=1)
+        prefix=r'(<div class="blog-detail__cover"><img src=")'
+        markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
     for linked,(old,new) in SOURCE_REPAIRS.items():
-        pattern=(r'(<article class="blog-related__item"><a href="/blog/'+re.escape(linked)+
-                 r'/"><img src=")'+re.escape(old)+r'(?=")')
-        markup=re.sub(pattern,lambda m:m.group(1)+new,markup)
+        prefix=(r'(<article class="blog-related__item"><a href="/blog/'+re.escape(linked)+r'/"><img src=")')
+        markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(linked))
     return markup
 
 def article_social_image_from_cms_source(markup: str, route: str) -> str:

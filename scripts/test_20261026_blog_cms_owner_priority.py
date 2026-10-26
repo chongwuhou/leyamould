@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Guard the 2026-10-26 append-only CMS article batch and source ownership."""
-import json
+import json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
+sys.path.insert(0,str(ROOT))
+from blog_media_source import blog_cover_from_cms_source
 SLUGS={"coffee-shop-branded-water-bottles-wholesale","museum-gift-shop-custom-water-bottles-wholesale","auto-dealership-branded-water-bottles-bulk"}
 posts=json.loads((ROOT/"data/blog-guides-20261026.json").read_text(encoding="utf8"))
 assert {p["slug"] for p in posts}==SLUGS and len(posts)==3
@@ -14,6 +16,7 @@ editorial=(ROOT/"blog_editorial.py").read_text(encoding="utf8")
 sitemap=(ROOT/"sitemap_modification.py").read_text(encoding="utf8")
 publisher=(ROOT/"scripts/publish_blog_batch_20261026_d1.py").read_text(encoding="utf8")
 corrections=json.loads((ROOT/"data/blog-photo-corrections-20261026.json").read_text(encoding="utf8"))
+context_corrections=json.loads((ROOT/"data/blog-photo-context-corrections-20261026.json").read_text(encoding="utf8"))
 worker=(ROOT/"functions/blog/[[path]].js").read_text(encoding="utf8")
 media_source=(ROOT/"blog_media_source.py").read_text(encoding="utf8")
 assert 'const DAY="2026-10-26"' in endpoint
@@ -28,11 +31,33 @@ assert "_BLOG_20261026" in sitemap and 'data/blog-guides-20261026.json' in sitem
 assert "CLOUDFLARE_API_TOKEN" in publisher
 assert set(corrections)==SLUGS
 assert "PHOTO_20261026" in worker
+assert "PHOTO_CONTEXT_20261026" in worker
 assert "data/blog-photo-corrections-20261026.json" in media_source
 assert "PHOTO_20261026" in media_source
+assert "data/blog-photo-context-corrections-20261026.json" in media_source
+assert "PHOTO_CONTEXT_20261026" in media_source
 assert all(corrections[p["slug"]]["photo"]==p["cover"] for p in posts)
 assert all(p["cover"].startswith("/assets/catalog/excel/") for p in posts)
 assert len({p["cover"] for p in posts})==3
+assert set(context_corrections)==SLUGS
+assert all(context_corrections[p["slug"]]["baseline"]==p["cover"] for p in posts)
+assert all(context_corrections[p["slug"]]["photo"]!=p["cover"] for p in posts)
+for post in posts:
+ entry=context_corrections[post["slug"]]
+ old,new=entry["baseline"],entry["photo"]
+ photo=ROOT/new.lstrip("/")
+ assert photo.is_file() and 30000<photo.stat().st_size<250000,photo
+ with Image.open(photo) as img: assert img.format=="WEBP" and img.width>=960 and img.height>=640,(photo,img.size,img.format)
+ for locale in ("es","pt","ru","tr"):
+  index='<section class="section blog-listing"><div class="shell"><div class="blog-listing__grid"><a class="news-card__image" href="/blog/'+post["slug"]+'/"><img src="'+old+'" alt="Owner choice"></a></div></div></section>'
+  detail='<div class="blog-detail__cover"><img src="'+old+'" alt="Owner article"></div>'
+  for markup,route in ((index,"/blog/"),(detail,"/blog/"+post["slug"]+"/")):
+   updated=blog_cover_from_cms_source(markup,route,locale)
+   assert new in updated and old not in updated,(post["slug"],locale,route)
+   assert entry["alt"] in updated,(post["slug"],locale,"reviewed ALT")
+   assert updated==blog_cover_from_cms_source(updated,route,locale),(post["slug"],locale,"idempotence")
+   edited=markup.replace(old,"/assets/blog/owner-new-choice.webp")
+   assert blog_cover_from_cms_source(edited,route,locale)==edited,(post["slug"],locale,"CMS cover priority")
 for p in posts:
  assert (ROOT/p["cover"].lstrip("/")).is_file()
  assert (ROOT/p["cover"].lstrip("/")).stat().st_size>30000

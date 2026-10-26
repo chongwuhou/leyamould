@@ -4,6 +4,7 @@ import COVER_OVERRIDES from "../../data/blog-cover-overrides.json" with {type:"j
 import PHOTO_CORRECTIONS from "../../data/blog-photo-corrections-20261024.json" with {type:"json"};
 import PHOTO_20261025 from "../../data/blog-photo-corrections-20261025.json" with {type:"json"};
 import PHOTO_20261026 from "../../data/blog-photo-corrections-20261026.json" with {type:"json"};
+import PHOTO_CONTEXT_20261026 from "../../data/blog-photo-context-corrections-20261026.json" with {type:"json"};
 import SHAKER_IMAGES from "../../data/gpt-reviewed-shaker-hd-20261013.json" with {type:"json"};
 import SEARCH_ROLES from "../../data/search-intent-three-landing-roles.json" with {type:"json"};
 
@@ -32,6 +33,8 @@ const ORIGINAL_COVERS=Object.freeze({
 export function withReviewedCover(post){
  // Reviewed photo corrections are presentation-only: a future owner-selected
  // cover wins because each correction applies only to its exact baseline.
+ const contextApproved=PHOTO_CONTEXT_20261026[post.slug];
+ if(contextApproved && post.cover===contextApproved.baseline)return {...post,cover:contextApproved.photo};
  const todayApproved=PHOTO_20261026[post.slug];
  if(todayApproved && post.cover===todayApproved.baseline)return {...post,cover:todayApproved.photo};
  const newApproved=PHOTO_20261025[post.slug];
@@ -47,6 +50,10 @@ export function withReviewedCover(post){
   if(photo && post.cover===photo.old)return {...post,cover:photo.new};
  }
  return post;
+}
+export function reviewedCoverAlt(post){
+ const approved=PHOTO_CONTEXT_20261026[post?.slug];
+ return approved && post?.cover===approved.photo ? approved.alt : "";
 }
 async function assetHtml(context,path){
  const url=new URL(path,context.request.url);
@@ -88,12 +95,12 @@ export async function onRequestGet(context){
    // The route slug, not an editable content_json field, identifies which
    // article is published and which source-reviewed notes belong to it.
    const published=withInformationalIntent(withReviewedCover({...post,slug:tail}));
-   published.coverAlt=await englishAltFor(db,published.cover);
+   published.coverAlt=reviewedCoverAlt(published)||await englishAltFor(db,published.cover);
    return response(composePage(shell,blogHtml(published),published,"/blog/"+tail+"/"));
   }
   const posts=(await listBlogPosts(db,"published")).map(withReviewedCover).map(withInformationalIntent);
   if(!posts.length)return context.next();
-  for(const post of posts)post.coverAlt=await englishAltFor(db,post.cover);
+  for(const post of posts)post.coverAlt=reviewedCoverAlt(post)||await englishAltFor(db,post.cover);
   const template=await assetHtml(context,"/blog/index.html");
   let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / Blog</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>Water Bottle Buying Guides</h1><p>Practical guides to material choice, wholesale sourcing, OEM customization and quality assurance.</p></div></section>';
   // One shared page header, followed directly by the D1-owned article grid.
