@@ -200,9 +200,6 @@ jobs:
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261026.py
           python scripts/publish_blog_batch_20261026_d1.py --dry-run
-      - name: Publish reviewed 2026-10-26 B2B long-tail articles to D1 CMS
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-26 B2B long-tail guides'
-        run: python scripts/publish_blog_batch_20261026_d1.py
       - name: Persist all reviewed product SEO fields in Cloudflare D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
         run: python scripts/promote_product_seo_to_d1_20261020.py
@@ -369,9 +366,13 @@ jobs:
           node scripts/test_media_library.mjs
           node scripts/test_admin_media_auth.mjs
           node scripts/test_media_replacement.mjs
+      - name: Publish reviewed 2026-10-26 B2B long-tail articles to D1 CMS
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-26 B2B long-tail guides'
+        run: python scripts/publish_blog_batch_20261026_d1.py
       - name: Verify second clean source rebuild and CMS-owner priority
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_release.py
           python scripts/test_blog_20261026_source.py
@@ -408,6 +409,24 @@ jobs:
       - name: Verify live Blog single heading and critical routes
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         run: python scripts/verify_live.py
+      - name: Verify all 15 live 2026-10-26 article routes
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-26 B2B long-tail guides'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for slug in coffee-shop-branded-water-bottles-wholesale museum-gift-shop-custom-water-bottles-wholesale auto-dealership-branded-water-bottles-bulk; do
+            for locale in en es pt ru tr; do
+              prefix=""
+              if [ "$locale" != "en" ]; then prefix="/$locale"; fi
+              url="$SITE_ORIGIN${prefix}/blog/${slug}/"
+              body="$(curl --fail --silent --show-error --retry 2 "$url")"
+              printf '%s' "$body" | grep -Fq 'class="blog-editorial__body"'
+              printf '%s' "$body" | grep -Fq 'class="blog-related__item"'
+              index="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN${prefix}/blog/")"
+              printf '%s' "$index" | grep -Fq "$slug"
+            done
+          done
+          echo "XUYI_20261026_LIVE_BLOG_ROUTES_VERIFIED"
       # Owner-approved IndexNow: notify ONLY after Cloudflare deploy and live
       # revision checks. The verified root key is generated from the
       # XUYI_INDEXNOW_KEY secret during the standard build, if configured.
