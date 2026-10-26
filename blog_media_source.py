@@ -25,6 +25,13 @@ SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in
 PHOTO_CONTEXT_20261026=json.loads((ROOT/'data/blog-photo-context-corrections-20261026.json').read_text(encoding='utf8'))
 SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_CONTEXT_20261026.items()})
 SOURCE_ALTS={slug:value['alt'] for slug,value in PHOTO_CONTEXT_20261026.items()}
+# The D1 cover column and translated mainHtml can have different original paths.
+# Upgrade only these exact localized article slots; never replace a shared URL globally.
+PHOTO_CONTEXT_LOCALIZED_REPAIRS={
+    slug:(value['localizedBaseline'],value['photo'])
+    for slug,value in PHOTO_CONTEXT_20261026.items()
+    if value.get('localizedBaseline')
+}
 
 
 def _replace_reviewed_cover(markup: str, prefix: str, old: str, new: str, alt: str | None = None) -> str:
@@ -48,13 +55,23 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
         for slug,(old,new) in SOURCE_REPAIRS.items():
             prefix=(r'(<a class="news-card__image" href="/blog/'+re.escape(slug)+r'/"><img src=")')
             markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
+        for slug,(old,new) in PHOTO_CONTEXT_LOCALIZED_REPAIRS.items():
+            prefix=(r'(<a class="news-card__image" href="/blog/'+re.escape(slug)+r'/"><img src=")')
+            markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
         return markup
     slug=route[len('/blog/'):].strip('/')
     if slug in SOURCE_REPAIRS:
         old,new=SOURCE_REPAIRS[slug]
         prefix=r'(<div class="blog-detail__cover"><img src=")'
         markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
+    if slug in PHOTO_CONTEXT_LOCALIZED_REPAIRS:
+        old,new=PHOTO_CONTEXT_LOCALIZED_REPAIRS[slug]
+        prefix=r'(<div class="blog-detail__cover"><img src=")'
+        markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(slug))
     for linked,(old,new) in SOURCE_REPAIRS.items():
+        prefix=(r'(<article class="blog-related__item"><a href="/blog/'+re.escape(linked)+r'/"><img src=")')
+        markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(linked))
+    for linked,(old,new) in PHOTO_CONTEXT_LOCALIZED_REPAIRS.items():
         prefix=(r'(<article class="blog-related__item"><a href="/blog/'+re.escape(linked)+r'/"><img src=")')
         markup=_replace_reviewed_cover(markup,prefix,old,new,SOURCE_ALTS.get(linked))
     return markup

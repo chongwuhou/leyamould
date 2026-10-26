@@ -3,18 +3,21 @@
     "baseline": "/assets/catalog/excel/row-020.webp",
     "photo": "/assets/blog/auto-dealership-customer-handover-20261026.webp",
     "alt": "Customer and salesperson discussing a vehicle inside a modern car dealership showroom",
-    "scene": "Illustrative automotive customer-handover context; not a documented XUYI customer or endorsement"
+    "scene": "Illustrative automotive customer-handover context; not a documented XUYI customer or endorsement",
+    "localizedBaseline": "/assets/blog/bottle-factory-rfq-template-20261016.webp"
   },
   "museum-gift-shop-custom-water-bottles-wholesale": {
     "baseline": "/assets/catalog/excel/row-017.webp",
     "photo": "/assets/blog/museum-gift-shop-retail-20261026.webp",
     "alt": "Colorful souvenir shop shelves displaying gifts and memorabilia",
-    "scene": "Illustrative souvenir-retail context; not a documented XUYI museum customer or endorsement"
+    "scene": "Illustrative souvenir-retail context; not a documented XUYI museum customer or endorsement",
+    "localizedBaseline": "/assets/blog/bottle-inspection-topics-20261013.webp"
   },
   "coffee-shop-branded-water-bottles-wholesale": {
     "baseline": "/assets/catalog/excel/row-004.webp",
     "photo": "/assets/blog/coffee-shop-drinkware-display-20261026.webp",
     "alt": "Coffee shop counter with stacked cups, bottled drinks and drinkware supplies",
-    "scene": "Illustrative coffee-shop drinkware context; not a documented XUYI customer or endorsement"
+    "scene": "Illustrative coffee-shop drinkware context; not a documented XUYI customer or endorsement",
+    "localizedBaseline": "/assets/blog/branding-logo-options-20261013.webp"
   }
 }
