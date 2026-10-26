@@ -49,7 +49,7 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
 
     D1 article text, user covers and newly published/untranslated posts win.
     """
-    if locale not in ('es','pt','ru','tr') or not route.startswith('/blog/'):
+    if locale not in ('en','es','pt','ru','tr') or not route.startswith('/blog/'):
         return markup
     if route=='/blog/':
         for slug,(old,new) in SOURCE_REPAIRS.items():

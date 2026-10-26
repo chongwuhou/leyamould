@@ -53,7 +53,7 @@ for post in posts:
  with Image.open(photo) as img: assert img.format=="WEBP" and img.width>=960 and img.height>=640,(photo,img.size,img.format)
  assert PHOTO_CONTEXT_LOCALIZED_REPAIRS[post["slug"]]==(entry["localizedBaseline"],new)
  for old in (entry["baseline"],entry["localizedBaseline"]):
-  for locale in ("es","pt","ru","tr"):
+  for locale in ("en","es","pt","ru","tr"):
    index='<section class="section blog-listing"><div class="shell"><div class="blog-listing__grid"><a class="news-card__image" href="/blog/'+post["slug"]+'/"><img src="'+old+'" alt="Owner choice"></a></div></div></section>'
    detail='<div class="blog-detail__cover"><img src="'+old+'" alt="Owner article"></div>'
    for markup,route in ((index,"/blog/"),(detail,"/blog/"+post["slug"]+"/")):

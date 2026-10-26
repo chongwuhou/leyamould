@@ -138,6 +138,11 @@ def build_url(path,title,content):
   if route=="/blog/":
    from blog_listing_layout import single_blog_index_heading
    main=single_blog_index_heading(main,"en")
+  # Upgrade only exact, still-unedited original covers in English CMS-rendered
+  # Blog bodies and cards, matching the same source boundary used by locales.
+  if route.startswith("/blog/"):
+   from blog_media_source import blog_cover_from_cms_source
+   main=blog_cover_from_cms_source(main,route,"en")
   if route=="/about/":
    from about_company_page import apply_body
    main=apply_body(main,'en')
