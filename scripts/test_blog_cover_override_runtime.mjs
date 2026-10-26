@@ -7,6 +7,7 @@ const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
 import guides from "../data/blog-guides.json" with {type:"json"};
 import overrides from "../data/blog-cover-overrides.json" with {type:"json"};
 import photoCorrections from "../data/blog-photo-corrections-20261024.json" with {type:"json"};
+import photoCorrections26 from "../data/blog-photo-corrections-20261026.json" with {type:"json"};
 import photoContextCorrections from "../data/blog-photo-context-corrections-20261026.json" with {type:"json"};
 import reviewedShakers from "../data/gpt-reviewed-shaker-hd-20261013.json" with {type:"json"};
 
@@ -37,6 +38,7 @@ for(const [slug,pair] of Object.entries(photoCorrections)){
               '/assets/blog/owner-uploaded.webp',slug+': CMS manual edit wins');
 }
 assert.equal(Object.keys(photoContextCorrections).length,3,"Exactly the three Oct 26 article covers are reviewed");
+assert.equal(Object.keys(photoCorrections26).length,3,"Exactly three earlier cover corrections should chain into the contextual images");
 for(const [slug,pair] of Object.entries(photoContextCorrections)){
  assert.notEqual(pair.baseline,pair.photo,slug+': cover must change');
  assert.ok(pair.photo.startsWith('/assets/blog/'),slug+': cover must be a local site asset');
@@ -45,6 +47,10 @@ for(const [slug,pair] of Object.entries(photoContextCorrections)){
  const bytes=readFileSync(imagePath);
  assert.equal(bytes.toString('ascii',8,12),'WEBP',slug+': cover must be a valid WebP asset');
  assert.equal(withReviewedCover({slug,cover:pair.baseline}).cover,pair.photo,slug+': exact baseline is upgraded');
+ const previous=photoCorrections26[slug];
+ assert.ok(previous,slug+': earlier generic cover correction exists');
+ assert.equal(previous.photo,pair.baseline,slug+': contextual image chains from the prior correction output');
+ assert.equal(withReviewedCover({slug,cover:previous.baseline}).cover,pair.photo,slug+': prior original baseline chains to contextual cover');
  assert.equal(withReviewedCover({slug,cover:pair.photo}).cover,pair.photo,slug+': idempotent');
  assert.equal(reviewedCoverAlt({slug,cover:pair.photo}),pair.alt,slug+': accurate cover ALT');
  assert.equal(withReviewedCover({slug,cover:'/assets/blog/owner-selected.webp'}).cover,

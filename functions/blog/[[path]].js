@@ -36,7 +36,14 @@ export function withReviewedCover(post){
  const contextApproved=PHOTO_CONTEXT_20261026[post.slug];
  if(contextApproved && post.cover===contextApproved.baseline)return {...post,cover:contextApproved.photo};
  const todayApproved=PHOTO_20261026[post.slug];
- if(todayApproved && post.cover===todayApproved.baseline)return {...post,cover:todayApproved.photo};
+ if(todayApproved && post.cover===todayApproved.baseline){
+  // Chain the earlier generic-photo correction into the newer contextual
+  // cover when its output is exactly the next correction's baseline.
+  const intermediate=todayApproved.photo;
+  if(contextApproved && intermediate===contextApproved.baseline)
+   return {...post,cover:contextApproved.photo};
+  return {...post,cover:intermediate};
+ }
  const newApproved=PHOTO_20261025[post.slug];
  if(newApproved && post.cover===newApproved.baseline)return {...post,cover:newApproved.photo};
  const approved=PHOTO_CORRECTIONS[post.slug];
