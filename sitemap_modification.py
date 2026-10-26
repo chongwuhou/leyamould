@@ -35,6 +35,10 @@ _BLOG_20261025={
     "/blog/"+post["slug"]+"/":post["updated"]
     for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261025.json").read_text(encoding="utf8"))
 }
+_BLOG_20261026={
+    "/blog/"+post["slug"]+"/":post["updated"]
+    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261026.json").read_text(encoding="utf8"))
+}
 _SEO_TITLE_RELEASE=json.loads((Path(__file__).resolve().parent/"data/product-seo-title-refresh-20261020.json").read_text(encoding="utf8"))
 if _SEO_TITLE_RELEASE.get("schemaVersion")!=1 or len(_SEO_TITLE_RELEASE.get("slugs",[]))!=92:
     raise ValueError("Product SEO change-set is not the reviewed 92-model release")
@@ -61,4 +65,4 @@ def source_lastmod(route,locale="en",revision=None):
     # One actual, source-reviewed SEO title update for 92 verified-capacity
     # model pages × five locales. Never change lastmod on every rebuild.
     return valid_date(_SEO_TITLE_20261020.get(canonical) or BASELINE.get(canonical)
-                      or _BLOG_20261020.get(canonical) or _BLOG_20261021.get(canonical) or _BLOG_20261022.get(canonical) or _BLOG_20261023.get(canonical) or _BLOG_20261024.get(canonical) or _BLOG_20261025.get(canonical))
+                      or _BLOG_20261020.get(canonical) or _BLOG_20261021.get(canonical) or _BLOG_20261022.get(canonical) or _BLOG_20261023.get(canonical) or _BLOG_20261024.get(canonical) or _BLOG_20261025.get(canonical) or _BLOG_20261026.get(canonical))
