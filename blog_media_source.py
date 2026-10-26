@@ -19,6 +19,8 @@ SOURCE_REPAIRS={slug:(ORIGINALS[slug],new) for slug,new in COVERS.items() if slu
 SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_CORRECTIONS.items()})
 PHOTO_20261025=json.loads((ROOT/'data/blog-photo-corrections-20261025.json').read_text(encoding='utf8'))
 SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_20261025.items()})
+PHOTO_20261026=json.loads((ROOT/'data/blog-photo-corrections-20261026.json').read_text(encoding='utf8'))
+SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_20261026.items()})
 
 
 def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
