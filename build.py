@@ -404,11 +404,13 @@ def generate():
  # unreviewed multilingual paths.
  sitemap=['<?xml version="1.0" encoding="utf-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">']
- from sitemap_modification import source_lastmod
+ from sitemap_modification import source_lastmod,review_change_dates
  from product_image_sitemap import xml_image_for_product
+ reviewed_date_changes=review_change_dates(SERIES,BUILD_STATE.get("productReviews",[]))
  for file_path in sorted(path for path in URLS if path.endswith('index.html')):
   route='/'+file_path[:-len('index.html')]
-  lastmod=source_lastmod(route,'en',next((x for x in BUILD_STATE.get('pages',[]) if x.get('route')==route),None))
+  lastmod=source_lastmod(route,'en',next((x for x in BUILD_STATE.get('pages',[]) if x.get('route')==route),None),
+                         review_dates=reviewed_date_changes)
   # Published canonical main image is selected from the shared catalog
   # and the active D1 product/page body, not a guessed filename or R2 rename.
   body_owner=BODY_OVERRIDES.get(route) if route in BODY_OVERRIDES else None

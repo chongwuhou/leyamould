@@ -16,7 +16,7 @@ export async function onRequestGet(context){
   const db=context.env.XUYI_DB;
   if(!db)return json({error:"XUYI_DB binding missing"},503);
   try{
-    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo]=await Promise.all([
+    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,reviewPublicationTimes]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
@@ -26,8 +26,13 @@ export async function onRequestGet(context){
       list(db,"SELECT route,main_html FROM xuyi_page_content WHERE publication_status='published' ORDER BY route"),
       list(db,"SELECT path,alt_json FROM xuyi_media_alt ORDER BY path LIMIT 12000"),
       list(db,"SELECT id,model,rating,author,review_date,content,status FROM xuyi_product_reviews WHERE status='published' ORDER BY model,review_date DESC,id"),
-      list(db,"SELECT slug,locale,seo_title,meta_description FROM xuyi_product_seo ORDER BY slug,locale")
+      list(db,"SELECT slug,locale,seo_title,meta_description FROM xuyi_product_seo ORDER BY slug,locale"),
+      // The D1 ledger records actual UTC times. Never redate the 24 older reviews.
+      list(db,"SELECT review_id,recorded_at FROM xuyi_review_publication_ledger WHERE published_date >= '2026-10-28'")
     ]);
+    const actualPostTimes=new Map(reviewPublicationTimes
+      .filter(r=>typeof r.review_id==="string" && /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(r.recorded_at))
+      .map(r=>[r.review_id,r.recorded_at.replace(" ","T")+"Z"]));
     const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
     const security=config.admin_security_config?JSON.parse(config.admin_security_config):{};
     const adminPath=security.adminPath||"admin";
@@ -60,7 +65,8 @@ export async function onRequestGet(context){
           && /^\d{4}-\d{2}-\d{2}$/.test(r.review_date)
           && typeof r.content==="string"&&r.content.length>=12)
         .map(r=>({id:r.id,model:r.model,rating:r.rating,author:r.author,
-          reviewDate:r.review_date,content:r.content,status:"published"})),
+          reviewDate:r.review_date,content:r.content,status:"published",
+          publishedAt:actualPostTimes.get(r.id)})),
       mediaAlts:mediaAlts.filter(r=>/^\/media\/(?:product|page|shared|ppt|excel|group|capability|gallery|blog)\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(r.path))
         .map(r=>({path:r.path,translations:JSON.parse(r.alt_json)})),
       translations:translations.map(r=>({resourceId:r.resource_id,locale:r.locale,content:JSON.parse(r.translated_json)}))

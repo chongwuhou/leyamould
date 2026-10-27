@@ -559,6 +559,9 @@ def main():
     sitemap=DIST/"sitemap.xml"
     if alternates and sitemap.is_file():
         xml=sitemap.read_text(encoding="utf-8")
+        from sitemap_modification import review_change_dates
+        from site_renderer import SERIES,BUILD_STATE
+        reviewed_date_changes=review_change_dates(SERIES,BUILD_STATE.get("productReviews",[]))
         added=[]
         for route,alts in sorted(alternates.items()):
             for _,url in sorted(alts):
@@ -567,7 +570,8 @@ def main():
                     from sitemap_modification import source_lastmod
                     # The D1 translation is the authoritative locale content.
                     # Baseline records change only on significant editorial edits.
-                    modified=source_lastmod(url,_,translated.get((route,_),{}))
+                    modified=source_lastmod(url,_,translated.get((route,_),{}),
+                                            review_dates=reviewed_date_changes)
                     from product_image_sitemap import xml_image_for_product
                     from site_renderer import SERIES
                     # The translated D1 main photo takes precedence; do not

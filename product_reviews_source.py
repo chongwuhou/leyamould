@@ -6,7 +6,8 @@ assigns general company testimonials to specific product models.
 """
 from collections import defaultdict
 from html import escape
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 import json
 import re
 
@@ -44,8 +45,23 @@ def published_reviews(snapshot, model):
         except ValueError:
             continue
         seen.add(uid)
-        result.append({"id": uid, "rating": rating, "author": author,
-                       "reviewDate": review_date, "content": body})
+        entry={"id": uid, "rating": rating, "author": author,
+               "reviewDate": review_date, "content": body}
+        # Only reviews first published after this change carry genuine UTC
+        # D1 ledger times. Historic entries retain their exact date-only UI.
+        posted_at=str(r.get("publishedAt") or "")
+        if posted_at:
+            try:
+                instant=datetime.fromisoformat(posted_at.replace("Z","+00:00"))
+                if instant.tzinfo is not None:
+                    beijing=instant.astimezone(ZoneInfo("Asia/Shanghai"))
+                    if (beijing.date()>=date(2026,10,28)
+                            and beijing.date().isoformat()==review_date):
+                        entry["publishedAt"]=beijing.isoformat(timespec="seconds")
+                        entry["publishedTimeLabel"]=beijing.strftime("%Y-%m-%d %H:%M (UTC+8)")
+            except ValueError:
+                pass
+        result.append(entry)
     return sorted(result, key=lambda r: (r["reviewDate"], r["id"]), reverse=True)
 
 
@@ -55,7 +71,7 @@ def schema_properties(reviews):
     review = [{
         "@type": "Review",
         "author": {"@type": "Person", "name": r["author"]},
-        "datePublished": r["reviewDate"],
+        "datePublished": r.get("publishedAt",r["reviewDate"]),
         "reviewBody": r["content"],
         "reviewRating": {"@type": "Rating", "ratingValue": r["rating"], "bestRating": 5, "worstRating": 1}
     } for r in reviews]
@@ -91,7 +107,8 @@ def render_visible(reviews, model, locale):
                      '</div><p class="product-review__text">' +
                      escape(r["content"]).replace("\n", "<br>") + '</p><p class="product-review__meta"><strong>' +
                      escape(r["author"]) + '</strong> · <time datetime="' +
-                     r["reviewDate"] + '">' + r["reviewDate"] + '</time></p></article>')
+                     escape(r.get("publishedAt",r["reviewDate"]),quote=True) + '">' +
+                     escape(r.get("publishedTimeLabel",r["reviewDate"])) + '</time></p></article>')
     return "".join(parts) + "</div></div></section>"
 
 

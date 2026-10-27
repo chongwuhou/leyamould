@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish up to three unseen, exact-SKU reviews per Beijing date to D1.
+"""Publish at most one authentic unseen SKU per run, up to three per Beijing date.
 
 The append-only D1 ledger is authoritative: retries, review deletion, and
 repeated workflow_dispatch calls never create an extra customer rating.
@@ -66,7 +66,9 @@ def plan(entries,state,today,rng=None):
     count=sum(x.get("published_date")==today for x in ledger)
     if not 0<=count<=3:raise RuntimeError("D1 daily publication count invalid")
     remaining=[x for x in entries if x["model"] not in occupied]
-    size=min(3-count,len(remaining))
+    # One real publication per scheduled slot; never manufacture review dates.
+    # The existing three-per-Beijing-day permanent ledger cap still applies.
+    size=min(1,3-count,len(remaining))
     if not size:return [],count
     return (rng or SystemRandom()).sample(remaining,size),count
 

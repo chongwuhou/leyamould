@@ -1,8 +1,11 @@
 name: XUYI daily three authentic product reviews
 on:
   schedule:
-    # 09:17 Beijing time, daily (01:17 UTC).
+    # Three real publication slots in Beijing (UTC+8):
+    # 09:17, 13:47, 19:13; GitHub Actions may start a few minutes late.
     - cron: "17 1 * * *"
+    - cron: "47 5 * * *"
+    - cron: "13 11 * * *"
   workflow_dispatch:
 concurrency:
   group: xuyi-drinkware-production
@@ -29,5 +32,5 @@ jobs:
           python scripts/test_daily_product_reviews.py
           node scripts/test_daily_product_reviews_api.mjs
           python scripts/publish_daily_product_reviews.py --dry-run
-      - name: Publish up to three never-before-published SKUs to D1
+      - name: Publish one never-before-published SKU in this real-time slot
         run: python scripts/publish_daily_product_reviews.py

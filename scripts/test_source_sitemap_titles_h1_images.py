@@ -6,14 +6,15 @@ from collections import Counter
 import sys,re,xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
-from site_renderer import SERIES
+from site_renderer import SERIES,BUILD_STATE
 from product_source_identity import source_product_identity,main_image_alt,matches_owner_field
-from sitemap_modification import source_lastmod,BASELINE
+from sitemap_modification import source_lastmod,BASELINE,review_change_dates
 from scripts.source_catalog_capacity_oz import new_seo,catalog_volume_numbers,verified_source_material
 DIST=ROOT/"dist"
 ns="{http://www.sitemaps.org/schemas/sitemap/0.9}"
 root=ET.parse(DIST/"sitemap.xml").getroot()
 urls=list(root)
+reviewed_changes=review_change_dates(SERIES,BUILD_STATE.get("productReviews",[]))
 assert len(urls)>=755
 dates=0
 for item in urls:
@@ -21,13 +22,20 @@ for item in urls:
     assert url.startswith("https://xuyibottles.com/")
     path=url.removeprefix("https://xuyibottles.com")
     date=item.find(ns+"lastmod")
-    expected=source_lastmod(path)
+    expected=source_lastmod(path,review_dates=reviewed_changes)
     assert (date.text if date is not None else None)==expected,(path,expected)
     if date is not None:dates+=1
 assert dates>=len(urls)-5,(dates,len(urls))
 assert source_lastmod("/products/brand-new-model/") is None
 assert source_lastmod("/privacy-policy/") is None
 assert source_lastmod("/products/2095/")=="2026-10-20"
+# New genuine review content updates the exact product URL's lastmod only.
+fixture=review_change_dates(SERIES,[
+    {"model":"2411","reviewDate":"2026-10-27","status":"published"},
+    {"model":"not-in-catalog","reviewDate":"2026-10-27","status":"published"}])
+assert fixture=={"/products/2411/":"2026-10-27"}
+assert source_lastmod("/products/2411/",review_dates=fixture)=="2026-10-27"
+assert source_lastmod("/products/2411/")=="2026-10-20"
 
 owners=Counter(row["images"][0] for row in SERIES.values())
 seen_langs={}
