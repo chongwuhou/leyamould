@@ -12,6 +12,12 @@ assert len(POSTS)==3 and len({p["slug"] for p in POSTS})==3
 assert {p['slug'] for p in POSTS}==set(["apartment-resident-welcome-kit-branded-water-bottles-bulk","summer-camp-reusable-water-bottles-group-order","nonprofit-fundraiser-custom-water-bottles-wholesale"])
 assert all(p["updated"]=="2026-10-27" for p in POSTS)
 slug_set={p["slug"] for p in POSTS}
+# A source-first release stages new English articles before the four localized
+# rows are add-only inserted in D1. Once each CMS translation exists, its page
+# becomes mandatory in every subsequent clean build.
+snapshot=ROOT/"_local_ops/build-snapshot.json"
+state=json.loads(snapshot.read_text("utf8")) if snapshot.is_file() else {}
+published_locales={(row.get("resourceId"),row.get("locale")) for row in state.get("translations",[]) if isinstance(row,dict)}
 for post in POSTS:
     assert len(post["sections"])==7 and len(post["faqs"])==4
     assert 12<=len(post["primary_keyword"])<=100
@@ -29,7 +35,12 @@ for post in POSTS:
     for lang in LANGS:
         prefix="" if lang=="en" else lang+"/"
         path=DIST/prefix/"blog"/post["slug"]/"index.html"
-        assert path.is_file(),("Missing locale article",str(path))
+        cms_locale=("page:/blog/"+post["slug"]+"/",lang) in published_locales
+        if lang!="en" and not cms_locale:
+            # The staged push must not fabricate editor-approved translations.
+            assert not path.is_file(),("Unexpected pre-CMS locale article",str(path))
+            continue
+        assert path.is_file(),("Missing published locale article",str(path))
         text=path.read_text("utf8")
         assert text.count("blog-editorial__product-link")==3,(lang,post["slug"],"SKU count")
         assert text.count('class="blog-related__item"')==3,(lang,post["slug"],"related count")
