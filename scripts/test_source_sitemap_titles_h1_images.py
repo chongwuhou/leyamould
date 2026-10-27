@@ -3,7 +3,7 @@
 from pathlib import Path
 from html import unescape
 from collections import Counter
-import sys,re,xml.etree.ElementTree as ET
+import sys,re,json,xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES,BUILD_STATE
@@ -14,7 +14,12 @@ DIST=ROOT/"dist"
 ns="{http://www.sitemaps.org/schemas/sitemap/0.9}"
 root=ET.parse(DIST/"sitemap.xml").getroot()
 urls=list(root)
-reviewed_changes=review_change_dates(SERIES,BUILD_STATE.get("productReviews",[]))
+# The builder receives the authenticated D1 snapshot by environment variable,
+# but tests run in a fresh process. Read the same on-disk snapshot rather than
+# accidentally treating all genuine product review dates as absent.
+snapshot_path=ROOT/"_local_ops/build-snapshot.json"
+published_state=json.loads(snapshot_path.read_text(encoding="utf8")) if snapshot_path.is_file() else BUILD_STATE
+reviewed_changes=review_change_dates(SERIES,published_state.get("productReviews",[]))
 assert len(urls)>=755
 dates=0
 for item in urls:
