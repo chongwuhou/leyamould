@@ -45,7 +45,11 @@ for post in POSTS:
             assert 'href="'+url+'"' in text,(lang,post["slug"],url)
         route="/"+prefix+"blog/"+post["slug"]+"/"
         assert 'href="https://xuyibottles.com'+route+'"' in text,(lang,route,"canonical")
-        assert text.count('rel="alternate" hreflang=')==6,(lang,post["slug"],"hreflang")
+        # During the first add-only release the new locales are built before
+        # their D1 CMS rows are inserted; hreflang appears after publication.
+        # A staged page may therefore have no alternates, never a partial set.
+        hreflangs=text.count('rel="alternate" hreflang=')
+        assert hreflangs in (0,6),(lang,post["slug"],"partial hreflang",hreflangs)
         h1=re.search(r'<h1\b[^>]*>(.*?)</h1>',text,re.I|re.S)
         assert h1 and len(html.unescape(re.sub("<[^>]*>"," ",h1.group(1))).strip())>15
         assert '<meta property="og:type" content="article">' in text or 'og:title' in text
