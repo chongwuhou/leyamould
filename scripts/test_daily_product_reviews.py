@@ -28,19 +28,16 @@ assert batch==Random(1729).sample(entries,1),"Plan must randomly sample, not tak
 assert len({r["model"] for r in batch})==1
 after=[{"model":r["model"],"published_date":today,"source_row":r["sourceRow"]} for r in batch]
 second,count=plan(entries,{"recorded":after,"existingModels":[]},today,rng=Random(8))
-assert count==1 and len(second)==1 and second[0]["model"]!=batch[0]["model"]
-after += [{"model":r["model"],"published_date":today,"source_row":r["sourceRow"]} for r in second]
-third,count=plan(entries,{"recorded":after,"existingModels":[]},today,rng=Random(11))
-assert count==2 and len(third)==1 and third[0]["model"] not in {r["model"] for r in after}
-after += [{"model":r["model"],"published_date":today,"source_row":r["sourceRow"]} for r in third]
-next_batch,count=plan(entries,{"recorded":after,"existingModels":[]},today,rng=Random(12))
-assert not next_batch and count==3,"Cannot publish a fourth today"
-next_batch,count=plan(entries,{"recorded":after,"existingModels":[r["model"] for r in after]},"2026-10-26",rng=Random(19))
-assert count==0 and len(next_batch)==1
-assert next_batch[0]["model"] not in {r["model"] for r in after},"No duplicate SKU across days"
+assert count==1 and second==[],"Only one new publication is permitted per day"
+# On the next real date another random verified SKU can be published.
+following,count=plan(entries,{"recorded":after,"existingModels":[]},"2026-10-26",rng=Random(19))
+assert count==0 and len(following)==1 and following[0]["model"]!=batch[0]["model"]
+two=[*after,{"model":following[0]["model"],"published_date":"2026-10-26","source_row":following[0]["sourceRow"]}]
+next_day,count=plan(entries,{"recorded":two,"existingModels":[]},"2026-10-27",rng=Random(11))
+assert count==0 and len(next_day)==1 and next_day[0]["model"] not in {r["model"] for r in two}
 one=after[:1]
 partial,count=plan(entries,{"recorded":one,"existingModels":[]},today,rng=Random(21))
-assert count==1 and len(partial)==1 and partial[0]["model"]!=one[0]["model"]
+assert count==1 and partial==[],"A second publication on the same date is forbidden"
 # The permanent ledger also prevents reuse if an owner deletes the visible review.
 future,count=plan(entries,{"recorded":one,"existingModels":[]},"2026-10-27",rng=Random(21))
 assert len(future)==1 and one[0]["model"]!=future[0]["model"]
@@ -48,8 +45,8 @@ existing={entries[1]["model"],entries[4]["model"]}
 batch,count=plan(entries,{"recorded":[],"existingModels":list(existing)},today,rng=Random(123))
 assert count==0 and len(batch)==1 and not {r["model"] for r in batch}.intersection(existing)
 cron=(ROOT/".github/workflows/publish-three-real-reviews-daily.yml").read_text(encoding="utf8")
-for slot in ('17 1 * * *','47 5 * * *','13 11 * * *'):
- assert 'cron: "'+slot+'"' in cron,slot
+assert cron.count('cron: "')==1,"Daily scheduler must run at one real slot"
+assert 'cron: "17 1 * * *"' in cron
 # An edited row would invalidate the original XLSX fingerprint before publishing.
 from hashlib import sha256
 s=entries[0].copy()

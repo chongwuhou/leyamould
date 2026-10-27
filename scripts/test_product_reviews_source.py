@@ -33,24 +33,6 @@ assert properties["aggregateRating"]["reviewCount"]==2
 assert properties["aggregateRating"]["ratingValue"]==4.5
 assert "offers" not in properties
 assert "Maria &amp; Sons" in render_visible([one],"2305","en")
-# Previously published records must not gain artificial timestamps.
-assert "UTC+8" not in render_visible(published_reviews(
-    {"productReviews":[one]},"2305"),"2305","en")
-future={**one,"id":"da2d41f5-3a56-40f5-a0a4-fdeac1769481",
-        "reviewDate":"2026-10-28","publishedAt":"2026-10-28T01:17:32Z"}
-future2={**two,"id":"9800a8dc-a5d9-4dad-a0fb-b07e72a91d1e",
-         "reviewDate":"2026-10-28","publishedAt":"2026-10-28T05:47:09Z"}
-new_reviews=published_reviews({"productReviews":[future,future2]},"2305")
-assert {r["publishedTimeLabel"] for r in new_reviews}=={
-    "2026-10-28 09:17 (UTC+8)","2026-10-28 13:47 (UTC+8)"}
-assert "2026-10-28T09:17:32+08:00" in render_visible(new_reviews,"2305","en")
-assert "2026-10-28 13:47 (UTC+8)" in render_visible(new_reviews,"2305","en")
-assert {r["datePublished"] for r in schema_properties(new_reviews)["review"]}=={
-    "2026-10-28T09:17:32+08:00","2026-10-28T13:47:09+08:00"}
-# A backdated legacy row must remain date-only even if stale extra metadata
-# is accidentally supplied by a future snapshot.
-stale={**one,"publishedAt":"2026-10-20T01:17:00Z"}
-assert "publishedAt" not in published_reviews({"productReviews":[stale]},"2305")[0]
 assert "&lt;script&gt;" in render_visible([malicious],"2305","en")
 assert "<script>" not in render_visible([malicious],"2305","en")
 transparent={"productReviews":[{**one,"model":"2306透明款"}]}

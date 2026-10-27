@@ -1,8 +1,8 @@
-# XUYI review publication times and sitemap (effective 2026-10-28 Beijing time)
+# XUYI review date-only publication policy — effective 2026-10-28 Beijing time
 
-- Leave every review already published on or before 2026-10-27 unchanged: no update to its D1 row, source text, author, rating, model, or existing date-only display.
-- Keep selecting genuine Excel reviews by exact SKU with an immutable, append-only D1 publication ledger. The global daily maximum remains three, and any replay is idempotent.
-- Instead of writing all three in one batch, schedule **one real publication per action run** at three different times: 09:17, 13:47 and 19:13 Beijing time (GitHub schedules may start later).
-- For **new publications only** (D1 ledger day 2026-10-28 onward), display the actual ledger `recorded_at` UTC timestamp converted to Beijing time down to the minute and expose the corresponding timezone-aware ISO 8601 `datePublished` on the exact product. Never invent timestamps, retroactively randomize historical review dates, or backdate a review.
-- Rebuilds get the new true timestamp through the authenticated D1 snapshot. Product pages with genuinely newly published reviews receive an updated sitemap `lastmod` derived from the review's true D1 publication date. Unchanged pages are not redated on deployment.
-- An unrun/delayed GitHub schedule means fewer than three reviews on that day, not fabricated catch-up publication times. The original 24 reviews published by 2026-10-27 are unchanged.
+- Google Search's Review structured data recommends `datePublished` in ISO 8601 **date** format; hours and minutes are not mandatory.
+- The website and structured data keep showing only `YYYY-MM-DD` for reviews. Do not display or synthesize hour/minute timestamps.
+- All 24 reviews published through 2026-10-27 are immutable: original customer text, rating, author, date and model remain untouched.
+- The Excel source contains no verified original review dates. To keep future **displayed dates** distinct without fabricating them, automatically publish at most **one** authentic review on each real Beijing calendar date, beginning 2026-10-28. The standing scheduled run is around 09:17 Beijing time. Delayed/missed GitHub runs do not create backdated records.
+- Keep the original D1 ledger and exact-model anti-duplication protections. Repeated CI/manual runs on one Beijing day publish no further rows if that day already contains any reviewed entries.
+- Genuine new product review additions may update the corresponding product sitemap `lastmod` to the latest real change date. Unchanged URLs stay unchanged; no automatic redeclaration just because the site rebuilt.
