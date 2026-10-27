@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "batchDate": "2026-10-27",
+  "intent": "Explicit user-requested production publication of three B2B XUYI drinkware guides",
+  "source": "data/blog-guides-20261027.json",
+  "cmsEndpoint": "/api/admin/blog-batch-20261027",
+  "slugs": [
+    "apartment-resident-welcome-kit-branded-water-bottles-bulk",
+    "summer-camp-reusable-water-bottles-group-order",
+    "nonprofit-fundraiser-custom-water-bottles-wholesale"
+  ],
+  "languageRoutes": [
+    "en",
+    "es",
+    "pt",
+    "ru",
+    "tr"
+  ],
+  "publicationMode": "D1 append-only; CMS owner changes preserved",
+  "notes": "The production function was deployed and verified to return 401 without credentials before initiating the authenticated publish step."
+}
