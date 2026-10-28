@@ -1,0 +1,19 @@
+{
+  "day": "2026-10-28",
+  "releaseAttempt": 2,
+  "reason": "Retry exact authorized D1 insert after separately deploying the scoped allowlist fix",
+  "expectedSlugs": [
+    "cycling-race-branded-sports-water-bottles-bulk-procurement",
+    "pilates-studio-private-label-water-bottles-wholesale",
+    "convenience-store-reusable-water-bottle-wholesale-assortment"
+  ],
+  "expectedLocales": [
+    "en",
+    "es",
+    "pt",
+    "ru",
+    "tr"
+  ],
+  "mode": "append-only",
+  "manualCMSOverridesPreserved": true
+}
