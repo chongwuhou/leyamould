@@ -1,0 +1,157 @@
+{
+  "articles": {
+    "cycling-race-branded-sports-water-bottles-bulk-procurement": {
+      "title": "Race organizer purchasing gates",
+      "intro": "Release a defined order only when each event-specific evidence file is complete.",
+      "head": [
+        "Stage",
+        "Evidence to keep",
+        "Buyer release"
+      ],
+      "rows": [
+        [
+          "Allocation",
+          "Registration and staff distribution forecast",
+          "Quantity approved"
+        ],
+        [
+          "Fit",
+          "Real sample and stationary equipment trial",
+          "Exceptions recorded"
+        ],
+        [
+          "Artwork",
+          "Sponsor permissions and proof version",
+          "Design approved"
+        ],
+        [
+          "Price",
+          "Landed-cost and minimum-quantity sheet",
+          "Budget authorized"
+        ],
+        [
+          "Delivery",
+          "Carton-to-venue map and contacts",
+          "Receiving ready"
+        ],
+        [
+          "Inspection",
+          "Accepted reference and defect record",
+          "Usable goods released"
+        ]
+      ],
+      "links": [
+        [
+          "Event timeline planning",
+          "/blog/trade-show-promotional-water-bottle-deadline-procurement/"
+        ],
+        [
+          "Outdoor group bottle selection",
+          "/blog/outdoor-tour-operator-group-water-bottle-wholesale/"
+        ]
+      ]
+    },
+    "pilates-studio-private-label-water-bottles-wholesale": {
+      "title": "Pilates studio procurement approval gates",
+      "intro": "Link the sample, brand identity and retail stock decision to verifiable buyer records.",
+      "head": [
+        "Gate",
+        "Evidence to retain",
+        "Buyer decision"
+      ],
+      "rows": [
+        [
+          "Demand",
+          "Gift and retail sales forecast",
+          "Pilot quantity released"
+        ],
+        [
+          "Handling",
+          "Studio-specific bottle and lid samples",
+          "Format accepted"
+        ],
+        [
+          "Materials",
+          "Actual component and market records",
+          "Claims reviewed"
+        ],
+        [
+          "Artwork",
+          "Dated printed logo proof",
+          "Brand sign-off"
+        ],
+        [
+          "Costs",
+          "Landed cost and branch split",
+          "Budget approved"
+        ],
+        [
+          "Inventory",
+          "Carton labels and receiving plan",
+          "Sellable stock reconciled"
+        ]
+      ],
+      "links": [
+        [
+          "Logo approval guidance",
+          "/blog/custom-logo-water-bottle-checklist/"
+        ],
+        [
+          "Retail assortment planning",
+          "/blog/wholesale-water-bottle-distributor-assortment-planning/"
+        ]
+      ]
+    },
+    "convenience-store-reusable-water-bottle-wholesale-assortment": {
+      "title": "Convenience store buyer release gates",
+      "intro": "Use actual source and store evidence rather than catalog claims to release each step.",
+      "head": [
+        "Gate",
+        "Evidence to retain",
+        "Approval"
+      ],
+      "rows": [
+        [
+          "Range",
+          "SKU, shelf and target shopper plan",
+          "Trial approved"
+        ],
+        [
+          "Display",
+          "Real model and cap fixture measurements",
+          "Shelf fit accepted"
+        ],
+        [
+          "Claims",
+          "Label, barcode and material records",
+          "POS data signed off"
+        ],
+        [
+          "Cost",
+          "Landed cost and case-pack comparison",
+          "Margin reviewed"
+        ],
+        [
+          "Delivery",
+          "Carton code and store split",
+          "Receiving ready"
+        ],
+        [
+          "Reorder",
+          "Sell-through and usable stock log",
+          "Next order justified"
+        ]
+      ],
+      "links": [
+        [
+          "Distributor SKU planning",
+          "/blog/wholesale-water-bottle-distributor-assortment-planning/"
+        ],
+        [
+          "3PL carton labeling",
+          "/blog/wholesale-water-bottle-carton-label-3pl-retail-checklist/"
+        ]
+      ]
+    }
+  }
+}
