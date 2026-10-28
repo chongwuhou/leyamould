@@ -29,6 +29,13 @@ const records=[make("LO-001"),make("LO-002",3,4),make("LO-003",4),make("LO-004",
 for(const r of records)r.sourceFingerprint=fingerprint(r);
 const payload={date:today,confirmedAuthentic:true,items:records.slice(0,3)};
 assert.deepEqual(await validateDailyInput(payload),payload.items);
+// Owner explicitly approved FOUR on this one Beijing date only. Normal 3-limit remains.
+const ownerFour={date:"2026-10-28",confirmedAuthentic:true,
+  ownerBatch:"xuyi-owner-random-four-20261028",items:records};
+assert.deepEqual(await validateDailyInput(ownerFour,"2026-10-28"),records);
+await assert.rejects(()=>validateDailyInput({...ownerFour,ownerBatch:"wrong"},"2026-10-28"));
+await assert.rejects(()=>validateDailyInput(ownerFour,"2026-10-29"));
+
 for(const changed of [
  {...payload,date:"2020-01-01"},
  {...payload,confirmedAuthentic:false},
