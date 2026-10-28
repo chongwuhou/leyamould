@@ -26,6 +26,10 @@ export function beijingDate(now=new Date()){
   year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now).map(x=>[x.type,x.value]));
  return parts.year+"-"+parts.month+"-"+parts.day;
 }
+// Explicit owner-approved one-time batch; the standing daily limit remains intact.
+const ownerFourApproved=(input,today)=>today==="2026-10-28" &&
+ input?.ownerBatch==="xuyi-owner-random-four-20261028" &&
+ Array.isArray(input?.items) && input.items.length===4;
 const dayOK=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)&&
  new Date(value+"T00:00:00Z").toISOString().slice(0,10)===value;
 async function requireDb(c){
@@ -52,7 +56,7 @@ async function verifySignature(r){
 export async function validateDailyInput(input,today=beijingDate()){
  if(input?.date!==today||!dayOK(today))throw Error("发布日期必须是北京时间今天");
  if(input.confirmedAuthentic!==true)throw Error("只能上传已核实且获公开授权的真实客户评价");
- if(!Array.isArray(input.items)||input.items.length<1||input.items.length>3)
+ if(!Array.isArray(input.items)||input.items.length<1||input.items.length>(ownerFourApproved(input,today)?4:3))
   throw Error("每批只允许 1–3 个产品");
  const seen=new Set(),rows=new Set();
  for(const r of input.items){
@@ -89,7 +93,12 @@ export async function onRequestPost(c){
  const today=beijingDate();
  const todayCount=existing.ledger.filter(r=>r.published_date===today).length;
  const candidates=records.filter(r=>!prior.has(r.model)&&!existing.models.has(r.model));
- if(todayCount+candidates.length>3)
+ // One-time batch may insert exactly four new Excel-verified models today.
+ // It must not override more than one already-published review for this date.
+ const exceptional=ownerFourApproved(input,today);
+ if(exceptional && (todayCount>1 || candidates.length!==4))
+  return json({error:"One-time owner batch requires four new unique reviews and at most one existing review today",todayCount},409);
+ if(!exceptional && todayCount+candidates.length>3)
   return json({error:"今天已经达到每天最多3个不同型号的限制",todayCount},409);
  if(!candidates.length)
   return json({success:true,inserted:0,skipped:records.length,todayCount,recorded:existing.ledger});
