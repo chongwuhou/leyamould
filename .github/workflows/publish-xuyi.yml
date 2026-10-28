@@ -431,6 +431,35 @@ jobs:
           done
           echo "::error::XUYI production build-meta did not update"
           exit 1
+      # Explicit one-time owner instruction; standing scheduled publisher stays one/day.
+      # The first deployment above ensures the date-locked D1 endpoint is live.
+      - name: Publish four randomly chosen, authentic Excel product reviews to D1 once
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time four authentic XUYI Excel product reviews 2026-10-28'
+        run: |
+          python scripts/test_daily_product_reviews.py
+          node scripts/test_daily_product_reviews_api.mjs
+          python scripts/publish_owner_four_reviews_20261028.py --dry-run
+          python scripts/publish_owner_four_reviews_20261028.py
+      - name: Rebuild from updated D1 and redeploy the four live product reviews
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time four authentic XUYI Excel product reviews 2026-10-28'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/fetch_build_snapshot.py
+          python scripts/build_release.py
+          python scripts/test_release.py
+          expected="$(python -c 'import json;print(json.load(open("dist/build-meta.json", encoding="utf8"))["publishRevision"])')"
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for n in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error "$SITE_ORIGIN/build-meta.json?owner_four_verify=$n&sha=$GITHUB_SHA" |
+               node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.sourceRevision===process.env.GITHUB_SHA&&Number(v.publishRevision)>=Number(process.argv[1])?0:1)})" "$expected"; then
+              echo "ONE_TIME_FOUR_D1_REBUILD_LIVE_REVISION_CONFIRMED $expected"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::The review revision was not confirmed live."
+          exit 1
       - name: Verify live Blog single heading and critical routes
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         run: python scripts/verify_live.py
