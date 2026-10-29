@@ -71,7 +71,8 @@ def prepare():
     from hashlib import sha256
     digest=set()
     for p in POSTS:
-        cover=ROOT/p["cover"].lstrip("/")
+        assert p["cover"].startswith("/media/blog/"),p["cover"]
+        cover=ROOT/"assets"/"blog"/p["cover"].rsplit("/",1)[-1]
         assert cover.is_file() and cover.stat().st_size>30000,(p["slug"],cover)
         with Image.open(cover) as image:
             assert image.format=="WEBP" and image.size[0]>=960 and image.size[1]>=640
