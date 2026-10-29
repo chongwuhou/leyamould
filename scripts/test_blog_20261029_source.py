@@ -64,6 +64,17 @@ for post in POSTS:
         owner_content=cms_entry.get("content") if isinstance(cms_entry,dict) else None
         owner_photo=owner_content.get("cover") if isinstance(owner_content,dict) else None
         effective_cover=owner_photo or post["cover"]
+        # During the first source build, independently approved D1 localized
+        # HTML may still contain its original cover. Validate that exact D1
+        # field (not the English/source fallback); final release verifies the
+        # new R2 image on every route after the owner-approved D1 transaction.
+        if lang!="en":
+            resource="page:/blog/"+post["slug"]+"/"
+            override=next((row for row in state.get("translations",[])
+                           if row.get("resourceId")==resource and row.get("locale")==lang),None)
+            localized=override.get("content",{}).get("mainHtml","") if isinstance(override,dict) else ""
+            match=re.search(r'<div class="blog-detail__cover"><img src="([^"]+)"',localized)
+            if match:effective_cover=match.group(1)
         assert 'src="'+effective_cover+'"' in text,(lang,post["slug"],"Wrong article hero image",effective_cover)
         assert text.count("blog-editorial__product-link")==3,(lang,post["slug"],"SKU count")
         assert text.count('class="blog-related__item"')==3,(lang,post["slug"],"related count")
