@@ -16,7 +16,8 @@ BASE = "https://xuyibottles.com"
 
 def verify_one(model):
     from urllib.parse import quote
-    url = BASE + "/products/" + quote(model) + "/"
+    slug = model.lower() if model.startswith("LO-") else model
+    url = BASE + "/products/" + quote(slug) + "/"
     req = Request(url, headers={"User-Agent": "XUYI-Owner-Reviewed-Live-Verify/1.0", "Cache-Control": "no-cache"})
     with urlopen(req, timeout=25) as res:
         if res.status != 200:
