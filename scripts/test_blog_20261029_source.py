@@ -29,6 +29,9 @@ for post in POSTS:
     from sitemap_modification import source_lastmod
     assert source_lastmod("/blog/"+post["slug"]+"/")=="2026-10-29"
     assert source_lastmod("/pt/blog/"+post["slug"]+"/")=="2026-10-29"
+    assert source_lastmod("/es/blog/"+post["slug"]+"/")=="2026-10-29"
+    assert source_lastmod("/ru/blog/"+post["slug"]+"/")=="2026-10-29"
+    assert source_lastmod("/tr/blog/"+post["slug"]+"/")=="2026-10-29"
     from PIL import Image
     from hashlib import sha256
     image_path=ROOT/post["cover"].lstrip("/")
