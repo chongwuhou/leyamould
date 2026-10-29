@@ -47,6 +47,11 @@ _BLOG_20261028={
     "/blog/"+post["slug"]+"/":post["updated"]
     for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261028.json").read_text(encoding="utf8"))
 }
+_BLOG_20261029={
+    "/blog/"+post["slug"]+"/":post["updated"]
+    for i in (1,2,3)
+    for post in [json.loads((Path(__file__).resolve().parent/f"data/blog-guides-20261029-{i}.json").read_text(encoding="utf8"))]
+}
 _SEO_TITLE_RELEASE=json.loads((Path(__file__).resolve().parent/"data/product-seo-title-refresh-20261020.json").read_text(encoding="utf8"))
 if _SEO_TITLE_RELEASE.get("schemaVersion")!=1 or len(_SEO_TITLE_RELEASE.get("slugs",[]))!=92:
     raise ValueError("Product SEO change-set is not the reviewed 92-model release")
