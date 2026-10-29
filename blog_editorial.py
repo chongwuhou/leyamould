@@ -13,7 +13,8 @@ GUIDES = {post["slug"]: post for post in (
     json.loads((ROOT / "data/blog-guides-20261025.json").read_text(encoding="utf-8")) +
     json.loads((ROOT / "data/blog-guides-20261026.json").read_text(encoding="utf-8")) +
     json.loads((ROOT / "data/blog-guides-20261027.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261028.json").read_text(encoding="utf-8"))
+    json.loads((ROOT / "data/blog-guides-20261028.json").read_text(encoding="utf-8")) +
+    [json.loads((ROOT / f"data/blog-guides-20261029-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)]
 )}
 COVER_OVERRIDES = json.loads((ROOT / "data/blog-cover-overrides.json").read_text(encoding="utf-8"))
 assert set(COVER_OVERRIDES).issubset(GUIDES), "Unknown blog cover override"
@@ -76,7 +77,10 @@ BUYER_MATRICES = {
     **json.loads((ROOT / "data/blog-buyer-decision-tables-20261025.json").read_text(encoding="utf-8"))["articles"],
     **json.loads((ROOT / "data/blog-buyer-decision-tables-20261026.json").read_text(encoding="utf-8"))["articles"],
     **json.loads((ROOT / "data/blog-buyer-decision-tables-20261027.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261028.json").read_text(encoding="utf-8"))["articles"]
+    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261028.json").read_text(encoding="utf-8"))["articles"],
+    **{post["slug"]:post["buyerDecisionTable"]
+       for i in (1,2,3)
+       for post in [json.loads((ROOT / f"data/blog-guides-20261029-{i}.json").read_text(encoding="utf-8"))]}
 }
 assert set(BUYER_MATRICES)==set(GUIDES),"Every reviewed buyer guide needs its own decision table"
 
