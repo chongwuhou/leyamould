@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "site": "xuyi-drinkware-site",
+  "policy": "docs/BLOG_COVER_VISUAL_STANDARD.md",
+  "effectiveFrom": "2026-10-29",
+  "records": [
+    {
+      "slug": "warehouse-staff-custom-water-bottles-bulk-procurement",
+      "visualScene": "Three high visibility uniformed workers in an industrial warehouse environment; staff and shift team context.",
+      "buyerContext": "warehouse workforce shift issue and employee procurement",
+      "articleUse": "team worksite and employee onboarding bottle programs",
+      "sceneMatch": "The workers and warehouse worksite visually indicate the buying audience; this is a contextual scene and not a photograph of the exact bottle SKU.",
+      "topicAnchors": [
+        "warehouse",
+        "staff"
+      ],
+      "productVisibility": "owner-approved-contextual",
+      "scores": {
+        "sector": 5,
+        "productUse": 4,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "articleTitle": "How Should Warehouses Buy Branded Water Bottles for Shift Employees in Bulk?",
+      "cover": "/media/blog/warehouse-staff-reviewed-20261029.webp",
+      "source": "assets/blog/warehouse-staff-reviewed-20261029.webp",
+      "sha256": "13ee0485f727eaf37ed989eb8bd726cf03970867fa597d15f69e03a2702fba5d",
+      "reviewDecision": "owner-selected-reference-2026-10-29",
+      "visualReview": "owner-selected-three-covers",
+      "provenance": "owner-selected context image; not factory or exact-SKU evidence",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
+    },
+    {
+      "slug": "airport-rail-station-travel-retail-water-bottles-wholesale",
+      "visualScene": "Multiple colorful reusable water bottles displayed together on a travel retail store shelf.",
+      "buyerContext": "airport and rail station store retail buyers",
+      "articleUse": "shelf assortments and bottle retail merchandising",
+      "sceneMatch": "The bottle shelf and multiple visibly different reusable bottles match the airport and station retail assortment decision.",
+      "topicAnchors": [
+        "airport",
+        "retail"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "articleTitle": "How Can Airport and Rail-Station Shops Source Reusable Water Bottles Wholesale?",
+      "cover": "/media/blog/airport-station-retail-reviewed-20261029.webp",
+      "source": "assets/blog/airport-station-retail-reviewed-20261029.webp",
+      "sha256": "bc714c306cced71473522dacd9ce2afe63f77876e981620a9888e3705fb7988b",
+      "reviewDecision": "owner-selected-reference-2026-10-29",
+      "visualReview": "owner-selected-three-covers",
+      "provenance": "owner-selected context image; not factory or exact-SKU evidence",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
+    },
+    {
+      "slug": "coworking-space-member-welcome-kit-water-bottles-wholesale",
+      "visualScene": "Several coworkers at a shared office meeting table with reusable water bottles in the foreground.",
+      "buyerContext": "coworking operators and member onboarding teams",
+      "articleUse": "new member welcome kits and shared office bottle gifts",
+      "sceneMatch": "Coworking members seated in an office environment with bottles visually express the welcome gift and member use case.",
+      "topicAnchors": [
+        "coworking",
+        "member"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "articleTitle": "How Should Coworking Spaces Source Branded Water Bottles for Member Welcome Kits?",
+      "cover": "/media/blog/coworking-member-reviewed-20261029.webp",
+      "source": "assets/blog/coworking-member-reviewed-20261029.webp",
+      "sha256": "a58c1c6c6cd2b78561ef3bdb45e07ca54679a0376a1313c2476106d532070e6a",
+      "reviewDecision": "owner-selected-reference-2026-10-29",
+      "visualReview": "owner-selected-three-covers",
+      "provenance": "owner-selected context image; not factory or exact-SKU evidence",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
+    }
+  ]
+}

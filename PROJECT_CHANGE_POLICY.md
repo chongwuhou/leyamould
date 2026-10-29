@@ -59,3 +59,8 @@ not regressions merely because a legacy rewrite no longer finds its old input.
 - 未经核实的容量不可臆测。G 系列仍是**工厂型号**，但其容量资料未齐，2506 标有异常 60ml，确认前不应追加对应 oz 参数。
 - 用户提供 Tritan 与 BPA Free 作为可询价的定制业务方向：所有产品允许展示**定制材料询盘关键词**，但不得把旧目录 PC/PP/ABS 材质直接改为 Tritan、不得称已有成品已获得 BPA Free 认证。询盘时须核对树脂、盖体密封件、样品与测试。
 - 唯一入口：`scripts/source_catalog_capacity_oz.py`、`data/volume-oz-cms-baseline-*.json` 和自动化测试。D1/CMS 后台主动改写的 SEO 原文优先；新型号在无后台独立 SEO 文案时自动补充 ml/oz，已有文案则保留。
+
+
+## P0 博客场景图片不可再乱配 / Permanent B2B photo relevance gate（2026-10-29）
+
+每篇新 B 端文章选图须以**标题+买家行业+采购/使用场景**为主，实际看图片并写出具体场景契合理由；不能仅因为含水杯、图片漂亮或自动化检测通过就发稿。同批不复用图片；禁止虚构工厂/客户/真实型号证据。详见 `docs/BLOG_COVER_VISUAL_STANDARD.md`。从 2026-10-29 参考图起，今后审核证据与图片 SHA-256 必须留在 `data/blog-cover-editorial-approvals.json`，通过 `scripts/test_blog_cover_editorial_standard.py` 和 CI；新稿缺完整视觉审核或不匹配时禁止自动发布。真实视觉适配和版权仍需要编辑负责，CI 只验证可机检证据。不得覆盖站长 D1/CMS 图片编辑，不得通过改生成 HTML 兜底。
