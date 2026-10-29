@@ -43,6 +43,11 @@ for post in POSTS:
         prefix="" if lang=="en" else lang+"/"
         path=DIST/prefix/"blog"/post["slug"]/"index.html"
         cms_locale=("page:/blog/"+post["slug"]+"/",lang) in published_locales
+        cms_post=any(x.get("slug")==post["slug"] and x.get("status")=="published" for x in state.get("blogPosts",[]) if isinstance(x,dict))
+        if lang=="en" and not cms_post and not path.is_file():
+            # The gateway authorization is deployed before D1 publication.
+            # Never create fake HTML in place of a CMS article.
+            continue
         if lang!="en" and not cms_locale:
             # The staged push must not fabricate editor-approved translations.
             assert not path.is_file(),("Unexpected pre-CMS locale article",str(path))
