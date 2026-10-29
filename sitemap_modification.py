@@ -103,7 +103,7 @@ def source_lastmod(route,locale="en",revision=None,review_dates=None):
     # Use reviewed content dates and genuine D1 publication dates, not
     # deployment timestamps. A rebuild alone must never change lastmod.
     baseline=valid_date(_SEO_TITLE_20261020.get(canonical) or BASELINE.get(canonical)
-                        or _BLOG_20261020.get(canonical) or _BLOG_20261021.get(canonical) or _BLOG_20261022.get(canonical) or _BLOG_20261023.get(canonical) or _BLOG_20261024.get(canonical) or _BLOG_20261025.get(canonical) or _BLOG_20261026.get(canonical) or _BLOG_20261027.get(canonical) or _BLOG_20261028.get(canonical))
+                        or _BLOG_20261020.get(canonical) or _BLOG_20261021.get(canonical) or _BLOG_20261022.get(canonical) or _BLOG_20261023.get(canonical) or _BLOG_20261024.get(canonical) or _BLOG_20261025.get(canonical) or _BLOG_20261026.get(canonical) or _BLOG_20261027.get(canonical) or _BLOG_20261028.get(canonical) or _BLOG_20261029.get(canonical))
     feedback=valid_date((review_dates or {}).get(canonical))
     dates=[v for v in (edited or baseline, feedback) if v]
     return max(dates) if dates else None
