@@ -85,6 +85,13 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
 // existing GitHub CI Cloudflare token proves access to THIS XUYI project,
 // but may only call the source-validated, append-only, three-per-day endpoint.
 // Ordinary admin CRUD remains password/session protected as before.
+// Exact one-time, owner-reviewed three-image R2/CMS upload. General admin writes remain restricted.
+export async function authorizedReviewedBlogCoverRequest(request, env) {
+ const url=new URL(request.url);
+ if (request.method!=="POST" || url.pathname!=="/api/admin/blog-covers-20261029" ||
+     !new Set(["upload","commit"]).has(url.searchParams.get("mode"))) return false;
+ return verifyCloudflareProjectToken(bearerToken(request),env);
+}
 export async function authorizedDailyProductReviewRequest(request, env) {
   if (new URL(request.url).pathname !== "/api/admin/daily-product-reviews" ||
       !new Set(["GET", "POST"]).has(request.method)) return false;

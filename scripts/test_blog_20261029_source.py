@@ -34,11 +34,12 @@ for post in POSTS:
     assert source_lastmod("/tr/blog/"+post["slug"]+"/")=="2026-10-29"
     from PIL import Image
     from hashlib import sha256
-    image_path=ROOT/post["cover"].lstrip("/")
+    assert post["cover"].startswith("/media/blog/")
+    image_path=ROOT/"assets"/"blog"/post["cover"].rsplit("/",1)[-1]
     assert image_path.is_file() and image_path.stat().st_size>30000,("Missing reviewed image",post["slug"])
     with Image.open(image_path) as img:
         assert img.format=="WEBP" and img.width>=960 and img.height>=640
-    assert len({sha256((ROOT/p["cover"].lstrip("/")).read_bytes()).hexdigest() for p in POSTS})==3
+    assert len({sha256((ROOT/"assets"/"blog"/p["cover"].rsplit("/",1)[-1]).read_bytes()).hexdigest() for p in POSTS})==3
     assert len(post["intro"])>150
     assert all(len(s["paragraph"])>650 for s in post["sections"])
     assert all(p["cover"]!=post["cover"] for p in POSTS if p["slug"]!=post["slug"]) and all(len(section["paragraph"])>450 for section in post["sections"])
