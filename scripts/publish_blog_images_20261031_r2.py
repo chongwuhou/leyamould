@@ -25,10 +25,10 @@ def main():
  for row in rows:
   img=(ROOT/row["source"]).read_bytes()
   assert len(img)>=30000 and hashlib.sha256(img).hexdigest()==row["sha256"]
- if "--dry-run" in sys.argv:print("OCT30_THREE_REVIEWED_IMAGES_SOURCE_SHA_PASS");return
+ if "--dry-run" in sys.argv:print("OCT31_THREE_REVIEWED_IMAGES_SOURCE_SHA_PASS");return
  assert os.getenv("GITHUB_ACTIONS")=="true" and os.getenv("GITHUB_EVENT_NAME")=="push"
  assert os.getenv("GITHUB_REPOSITORY")=="chongwuhou/xuyi-drinkware-site" and os.getenv("GITHUB_REF")=="refs/heads/main"
- assert os.getenv("OWNER_BLOG30_RELEASE")=="1"
+ assert os.getenv("OWNER_BLOG31_RELEASE")=="1"
  token=os.environ["CLOUDFLARE_API_TOKEN"]
  for row in rows:
   obj=upload(row["slug"],(ROOT/row["source"]).read_bytes(),token)
