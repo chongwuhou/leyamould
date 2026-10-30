@@ -521,6 +521,42 @@ jobs:
           done
           echo "::error::R2 cover revision not verified live"
           exit 1
+      # Two additional real, Excel-backed reviews requested by the owner on 2026-10-30.
+      # A one-shot commit gate and exact D1 ledger audit protect the daily 3 maximum.
+      - name: Publish exactly two random unused authentic Excel reviews to D1 once
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time two authentic XUYI Excel reviews 2026-10-30'
+        env:
+          OWNER_TWO_RELEASE: "1"
+        run: |
+          python scripts/test_daily_product_reviews.py
+          node scripts/test_daily_product_reviews_api.mjs
+          python scripts/publish_owner_two_reviews_20261030.py --dry-run
+          python scripts/publish_owner_two_reviews_20261030.py
+      - name: Rebuild D1 snapshot twice and verify the two owner-selected live reviews
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time two authentic XUYI Excel reviews 2026-10-30'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            echo "Owner two reviews: D1 clean rebuild passed $pass"
+          done
+          expected="$(python -c 'import json;print(json.load(open("dist/build-meta.json",encoding="utf8"))["publishRevision"])')"
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error "$SITE_ORIGIN/build-meta.json?owner_two_check=$attempt&sha=$GITHUB_SHA" |
+              node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);process.exit(m.sourceRevision===process.env.GITHUB_SHA&&Number(m.publishRevision)>=Number(process.argv[1])?0:1)})" "$expected"; then
+              if python scripts/verify_owner_two_reviews_20261030.py; then
+                echo "OWNER_20261030_TWO_AUTHENTIC_EXCEL_REVIEWS_LIVE_CONFIRMED $expected"
+                exit 0
+              fi
+            fi
+            sleep 12
+          done
+          echo "::error::Owner two Excel reviews not verified on published site"
+          exit 1
       # Owner-approved extra three Excel reviews for one Beijing date only.
       # Neither the daily 1/day scheduler nor the D1 3/day safety limit changes.
       - name: Publish three additional Excel-verified unused models to XUYI D1 once
