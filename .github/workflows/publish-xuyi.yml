@@ -12,6 +12,7 @@ on:
       - "product_locale_seo.py"
       - "product_material_performance.py"
       - "media_quality_guard.py"
+      - "sitemap_modification.py"
       - "image_alt_quality.py"
       - "media_alt_render.py"
       - "locale_registry.py"
