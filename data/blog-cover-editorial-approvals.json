@@ -84,6 +84,87 @@
       "visualReview": "owner-selected-three-covers",
       "provenance": "owner-selected context image; not factory or exact-SKU evidence",
       "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
+    },
+    {
+      "slug": "soccer-academy-team-water-bottles-bulk-buying",
+      "articleTitle": "How Should Soccer Academies Buy Reusable Team Water Bottles in Bulk?",
+      "cover": "/media/blog/soccer-academy-team-bottles-20261030.webp",
+      "source": "assets/blog/soccer-academy-team-bottles-20261030.webp",
+      "sha256": "240865e2af3e91331456ad1c9b5be113975600bea9ed2112b67b4ed11bff0ffb",
+      "visualScene": "Several yellow sports water bottles in a black carrier beside the grass of a soccer training pitch, with shoes in the background; cropped to avoid the original third-party logo.",
+      "buyerContext": "soccer academy coaches and team equipment purchasing coordinators",
+      "articleUse": "bulk squad bottle allocation, individual player equipment, and sidelines during football training",
+      "sceneMatch": "The photo clearly displays a full carrier with multiple reusable sports water bottles on football grass, directly matching the soccer academy's team hydration inventory, training sideline arrangements and player equipment buying context.",
+      "topicAnchors": [
+        "soccer",
+        "team"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Unsplash License free commercial photograph by Andy Hall; original https://unsplash.com/photos/yellow-and-black-water-tumblers-0zsdIfJB_Kg. Cropped to focus on reusable bottles, not proprietary carrier brand. XUYI not depicted.",
+      "usageDisclosure": "Independent licensed illustrative editorial photo, not a XUYI model, customer, factory, club partnership or product test evidence.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "bookstore-author-signing-reusable-bottles-wholesale",
+      "articleTitle": "How Can Bookstores Source Custom Water Bottles for Author Signing Events?",
+      "cover": "/media/blog/bookstore-author-signing-bottle-20261030.webp",
+      "source": "assets/blog/bookstore-author-signing-bottle-20261030.webp",
+      "sha256": "42e8d5a7ce333d9a6ba8c9d9c5ef4a1d43322ec3a8ff134dcac97040cc4585d7",
+      "visualScene": "Close-up photo of an author-signing tabletop with hands signing a paper book, an upright bottle and a drinking glass visible beside the book on dark wood.",
+      "buyerContext": "bookstore event coordinators and author signing merchandise buyers",
+      "articleUse": "book signing guest giveaways and personalized reusable bottle gift bundles distributed with signed books",
+      "sceneMatch": "The visible signing activity, real book and tabletop beverage bottle together represent the precise bookshop author signing situation addressed in this article, rather than an unrelated generic product photograph or a claim of an actual XUYI author contract.",
+      "topicAnchors": [
+        "bookstore",
+        "signing"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels License free commercial photo by cottonbro studio; source https://www.pexels.com/photo/person-writing-on-white-paper-4865537/. It is contextual stock photography, not an actual XUYI merchandise order.",
+      "usageDisclosure": "Illustrative licensed bookstore event scene; bottle is not verified as XUYI plastic, no author endorsement or manufacturing claim.",
+      "scores": {
+        "sector": 5,
+        "productUse": 4,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "corporate-training-workshop-water-bottles-wholesale",
+      "articleTitle": "How Should Corporate Training Venues Source Reusable Bottles for Workshops?",
+      "cover": "/media/blog/corporate-training-room-bottles-20261030.webp",
+      "source": "assets/blog/corporate-training-room-bottles-20261030.webp",
+      "sha256": "533715bfbe70ecd79dfa7fa1f5f204e18de45bb944735993e463f2c4f659a8b4",
+      "visualScene": "Professional training conference room with a long table, several water bottles set out beside blank writing pads and chairs under a window.",
+      "buyerContext": "corporate training venue and professional workshop procurement and facilities coordinators",
+      "articleUse": "buying a reusable water-bottle alternative for meeting and workshop delegate water service",
+      "sceneMatch": "The visible training room seating, notebooks, conference table and prepared bottles directly show the workshop delegate water-service setup that the training buyer is procuring for, even though the pictured existing bottles are not verified reusable XUYI models.",
+      "topicAnchors": [
+        "training",
+        "workshop"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels License free commercial photograph by RDNE Stock project; source https://www.pexels.com/photo/water-bottles-on-wooden-table-7648016/. Contextual existing event water service, not an exact reusable XUYI product.",
+      "usageDisclosure": "Contextual conference setup photo, not a XUYI customer or sample; depicted water bottles might be single use, article discusses procurement of reusable replacement.",
+      "scores": {
+        "sector": 5,
+        "productUse": 4,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
     }
   ]
 }

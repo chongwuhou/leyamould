@@ -1,0 +1,25 @@
+{
+  "site": "xuyi-drinkware-site",
+  "schemaVersion": 1,
+  "reviewDate": "2026-10-30",
+  "images": [
+    {
+      "slug": "soccer-academy-team-water-bottles-bulk-buying",
+      "source": "assets/blog/soccer-academy-team-bottles-20261030.webp",
+      "cover": "/media/blog/soccer-academy-team-bottles-20261030.webp",
+      "sha256": "240865e2af3e91331456ad1c9b5be113975600bea9ed2112b67b4ed11bff0ffb"
+    },
+    {
+      "slug": "bookstore-author-signing-reusable-bottles-wholesale",
+      "source": "assets/blog/bookstore-author-signing-bottle-20261030.webp",
+      "cover": "/media/blog/bookstore-author-signing-bottle-20261030.webp",
+      "sha256": "42e8d5a7ce333d9a6ba8c9d9c5ef4a1d43322ec3a8ff134dcac97040cc4585d7"
+    },
+    {
+      "slug": "corporate-training-workshop-water-bottles-wholesale",
+      "source": "assets/blog/corporate-training-room-bottles-20261030.webp",
+      "cover": "/media/blog/corporate-training-room-bottles-20261030.webp",
+      "sha256": "533715bfbe70ecd79dfa7fa1f5f204e18de45bb944735993e463f2c4f659a8b4"
+    }
+  ]
+}
