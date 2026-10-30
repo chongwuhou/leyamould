@@ -298,6 +298,7 @@ jobs:
           python scripts/test_blog_20261028_cover_priority.py
           python scripts/test_blog_20261029_source.py
           node scripts/test_blog_covers_20261029.mjs
+          node scripts/test_blog_20261030_english_related.mjs
           python scripts/test_20261025_blog_photos_cms_priority.py
           python scripts/test_five_photo_sources_20261024.py
           node scripts/test_five_blog_photo_cover_owner_guard.mjs
@@ -428,6 +429,7 @@ jobs:
           python scripts/test_blog_20261028_cover_priority.py
           python scripts/test_blog_20261029_source.py
           node scripts/test_blog_covers_20261029.mjs
+          node scripts/test_blog_20261030_english_related.mjs
       - name: Verify 15 localized 2026-10-26 source article routes
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish reviewed 2026-10-26 B2B long-tail guides')
         run: python scripts/test_blog_20261026_source.py
@@ -507,6 +509,7 @@ jobs:
             python scripts/test_release.py
             python scripts/test_blog_20261029_source.py
             node scripts/test_blog_covers_20261029.mjs
+          node scripts/test_blog_20261030_english_related.mjs
           done
           npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
           for attempt in 1 2 3 4 5; do
