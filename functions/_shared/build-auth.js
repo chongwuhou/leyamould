@@ -77,14 +77,15 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
     "/api/admin/blog-batch-20261027",
     "/api/admin/blog-batch-20261028",
     "/api/admin/blog-batch-20261029",
-    "/api/admin/blog-batch-20261030"
+    "/api/admin/blog-batch-20261030",
+    "/api/admin/blog-batch-20261031"
   ]).has(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
 
 // Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
 export async function authorizedReviewedBlogImageUploadRequest(request, env) {
- if (request.method!=="POST" || new URL(request.url).pathname!=="/api/admin/blog-images-20261030") return false;
+ if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031"].includes(new URL(request.url).pathname)) return false;
  return verifyCloudflareProjectToken(bearerToken(request),env);
 }
 // Narrow exception for the reviewed 101-model daily XLSX publisher. The

@@ -1,0 +1,25 @@
+{
+  "site": "xuyi-drinkware-site",
+  "schemaVersion": 1,
+  "reviewDate": "2026-10-31",
+  "images": [
+    {
+      "slug": "construction-site-crew-water-bottles-bulk-procurement",
+      "source": "assets/blog/construction-site-crew-reusable-water-bottles-20261031.webp",
+      "cover": "/media/blog/construction-site-crew-reusable-water-bottles-20261031.webp",
+      "sha256": "ed1ded40bed5e68978acc3ed87fae3dfa871fa295cc8b0a18aed7de7950de3f9"
+    },
+    {
+      "slug": "workplace-refill-station-reusable-bottle-bulk-sourcing",
+      "source": "assets/blog/workplace-employee-bottle-refill-program-20261031.webp",
+      "cover": "/media/blog/workplace-employee-bottle-refill-program-20261031.webp",
+      "sha256": "2e5b08d4cb4598133e36d7b572edc13e85daa73bd65b87296ba8b86a4bb600f2"
+    },
+    {
+      "slug": "bicycle-shop-water-bottle-cage-fit-wholesale-buying",
+      "source": "assets/blog/bicycle-retail-bottle-cage-fit-20261031.webp",
+      "cover": "/media/blog/bicycle-retail-bottle-cage-fit-20261031.webp",
+      "sha256": "472d1382282f975fb71da126e704b2179ea75727360a7c8015060d07fbe5069f"
+    }
+  ]
+}

@@ -57,6 +57,11 @@ _BLOG_20261030={
     for i in (1,2,3)
     for post in [json.loads((Path(__file__).resolve().parent/f"data/blog-guides-20261030-{i}.json").read_text(encoding="utf8"))]
 }
+_BLOG_20261031={
+    "/blog/"+post["slug"]+"/":post["updated"]
+    for i in (1,2,3)
+    for post in [json.loads((Path(__file__).resolve().parent/f"data/blog-guides-20261031-{i}.json").read_text(encoding="utf8"))]
+}
 _SEO_TITLE_RELEASE=json.loads((Path(__file__).resolve().parent/"data/product-seo-title-refresh-20261020.json").read_text(encoding="utf8"))
 if _SEO_TITLE_RELEASE.get("schemaVersion")!=1 or len(_SEO_TITLE_RELEASE.get("slugs",[]))!=92:
     raise ValueError("Product SEO change-set is not the reviewed 92-model release")
@@ -108,7 +113,7 @@ def source_lastmod(route,locale="en",revision=None,review_dates=None):
     # Use reviewed content dates and genuine D1 publication dates, not
     # deployment timestamps. A rebuild alone must never change lastmod.
     baseline=valid_date(_SEO_TITLE_20261020.get(canonical) or BASELINE.get(canonical)
-                        or _BLOG_20261020.get(canonical) or _BLOG_20261021.get(canonical) or _BLOG_20261022.get(canonical) or _BLOG_20261023.get(canonical) or _BLOG_20261024.get(canonical) or _BLOG_20261025.get(canonical) or _BLOG_20261026.get(canonical) or _BLOG_20261027.get(canonical) or _BLOG_20261028.get(canonical) or _BLOG_20261029.get(canonical) or _BLOG_20261030.get(canonical))
+                        or _BLOG_20261020.get(canonical) or _BLOG_20261021.get(canonical) or _BLOG_20261022.get(canonical) or _BLOG_20261023.get(canonical) or _BLOG_20261024.get(canonical) or _BLOG_20261025.get(canonical) or _BLOG_20261026.get(canonical) or _BLOG_20261027.get(canonical) or _BLOG_20261028.get(canonical) or _BLOG_20261029.get(canonical) or _BLOG_20261030.get(canonical) or _BLOG_20261031.get(canonical))
     feedback=valid_date((review_dates or {}).get(canonical))
     dates=[v for v in (edited or baseline, feedback) if v]
     return max(dates) if dates else None

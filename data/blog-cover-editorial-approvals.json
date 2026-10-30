@@ -165,6 +165,87 @@
       },
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "construction-site-crew-water-bottles-bulk-procurement",
+      "articleTitle": "How Should Construction Contractors Buy Reusable Water Bottles for Jobsite Crews?",
+      "cover": "/media/blog/construction-site-crew-reusable-water-bottles-20261031.webp",
+      "source": "assets/blog/construction-site-crew-reusable-water-bottles-20261031.webp",
+      "sha256": "ed1ded40bed5e68978acc3ed87fae3dfa871fa295cc8b0a18aed7de7950de3f9",
+      "visualScene": "Site worker in helmet and harness drinking water from a clear bottle, framed by scaffolding at a construction area",
+      "buyerContext": "Construction Crew Bottle Procurement product buying managers and procurement coordinators",
+      "articleUse": "construction crew water bottles bulk purchasing, allocation and approval",
+      "sceneMatch": "Image directly shows a construction worker drinking a bottle on-site, corresponding to the contractor and crew hydration logistics in the article.",
+      "topicAnchors": [
+        "construction",
+        "crew"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels licensed stock photo by Iman Taufik, source https://www.pexels.com/photo/silhouette-of-a-person-drinking-water-11158906/. Illustrative scenario only, no verified XUYI product or client connection.",
+      "usageDisclosure": "Contextual stock photo, not the exact product SKU, XUYI customer, factory, order or a compliance certification.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "workplace-refill-station-reusable-bottle-bulk-sourcing",
+      "articleTitle": "How Should Employers Source Reusable Bottles for Staff Refill Stations?",
+      "cover": "/media/blog/workplace-employee-bottle-refill-program-20261031.webp",
+      "source": "assets/blog/workplace-employee-bottle-refill-program-20261031.webp",
+      "sha256": "2e5b08d4cb4598133e36d7b572edc13e85daa73bd65b87296ba8b86a4bb600f2",
+      "visualScene": "Hands holding a wide-mouth transparent plastic drinking container under a flowing metal sink tap",
+      "buyerContext": "Employer Staff Refill Program product buying managers and procurement coordinators",
+      "articleUse": "employee refill station reusable bottles wholesale purchasing, allocation and approval",
+      "sceneMatch": "The photo clearly depicts water being refilled into a reusable plastic container at a tap, precisely illustrating workplace employee refill-point buying decisions and the opening clearance being discussed in the article.",
+      "topicAnchors": [
+        "workplace",
+        "refill"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels licensed stock photo by Miriam Alonso, source https://www.pexels.com/photo/close-up-of-a-woman-pouring-water-into-a-bottle-7622925/. Illustrative scenario only, no verified XUYI product or client connection.",
+      "usageDisclosure": "Contextual stock photo, not the exact product SKU, XUYI customer, factory, order or a compliance certification.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "bicycle-shop-water-bottle-cage-fit-wholesale-buying",
+      "articleTitle": "What Should Bicycle Shops Check Before Buying Water Bottles for Retail?",
+      "cover": "/media/blog/bicycle-retail-bottle-cage-fit-20261031.webp",
+      "source": "assets/blog/bicycle-retail-bottle-cage-fit-20261031.webp",
+      "sha256": "472d1382282f975fb71da126e704b2179ea75727360a7c8015060d07fbe5069f",
+      "visualScene": "Orange road bicycle frame with two dark water bottles seated in black bottle cages",
+      "buyerContext": "Bicycle Store Bottle Merchandising product buying managers and procurement coordinators",
+      "articleUse": "bicycle shop water bottles wholesale cage fit purchasing, allocation and approval",
+      "sceneMatch": "The product is shown in the actual bicycle-frame bottle cage, making the specialty shop's physical fit, clearance and retail assortment decisions apparent at a glance.",
+      "topicAnchors": [
+        "bicycle",
+        "shop"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels licensed stock photo by Şahin Doğdu, source https://www.pexels.com/photo/bottle-on-a-bicycle-frame-25907390/. Illustrative scenario only, no verified XUYI product or client connection.",
+      "usageDisclosure": "Contextual stock photo, not the exact product SKU, XUYI customer, factory, order or a compliance certification.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
     }
   ]
 }

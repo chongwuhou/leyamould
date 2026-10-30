@@ -236,6 +236,13 @@ jobs:
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261029.py
           python scripts/publish_blog_batch_20261029_d1.py --dry-run
+      - name: Prepare 2026-10-31 three B2B guides, five languages and photo approval
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_release_20261031.py
+          python scripts/publish_blog_images_20261031_r2.py --dry-run
+          python scripts/publish_blog_batch_20261031_d1.py --dry-run
       - name: Prepare 2026-10-30 three scene-reviewed B2B guides and five languages
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
@@ -461,6 +468,35 @@ jobs:
             sleep 15
           done
           echo "::error::XUYI production build-meta did not update"
+          exit 1
+      - name: Upload three 2026-10-31 reviewed scene photos to R2 and articles to D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three visually reviewed XUYI B2B guides 2026-10-31'
+        env:
+          OWNER_BLOG31_RELEASE: "1"
+        run: |
+          python scripts/publish_blog_images_20261031_r2.py
+          python scripts/publish_blog_batch_20261031_d1.py
+      - name: Rebuild from D1 twice, deploy and verify 15 live 2026-10-31 B2B pages
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three visually reviewed XUYI B2B guides 2026-10-31'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            python scripts/test_blog_cover_editorial_standard.py
+            echo "Owner B2B 20261031 D1 clean build verified pass $pass"
+          done
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if python scripts/verify_live_blog_20261031.py; then
+              echo "XUYI_20261031_THREE_B2B_ARTICLES_FIFTEEN_LOCALES_R2_D1_CONFIRMED"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "::error::New three B2B articles not verified across 15 published pages"
           exit 1
       - name: Upload 2026-10-30 three real editorial photos to R2 and insert CMS articles
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three scene-reviewed XUYI B2B guides 2026-10-30'
