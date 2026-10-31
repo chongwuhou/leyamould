@@ -282,6 +282,7 @@ jobs:
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
           python scripts/test_release.py
+          python scripts/test_20261031_blog_description_cms_priority.py
           python scripts/test_shared_templates.py
           python scripts/test_responsive_images.py
           python scripts/test_faq_access.py
@@ -430,6 +431,7 @@ jobs:
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_release.py
+          python scripts/test_20261031_blog_description_cms_priority.py
           python scripts/test_20261026_blog_cms_owner_priority.py
           python scripts/test_blog_20261027_source.py
           python scripts/test_blog_20261028_source.py
