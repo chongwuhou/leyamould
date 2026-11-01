@@ -74,6 +74,8 @@ jobs:
         run: python scripts/test_blog_cover_editorial_standard.py
       - name: Check narrow 2026-11-01 B2B D1 and R2 CI authorization
         run: node scripts/test_blog_20261101_auth.mjs
+      - name: Verify dynamic Blog source registry and newly approved article routes
+        run: python scripts/test_blog_catalog_growth.py
       - name: Validate site isolation
         run: python scripts/preflight.py
       - name: Check deployment credential
