@@ -68,12 +68,16 @@ jobs:
         run: python -m pip install --disable-pip-version-check "Pillow==11.3.0"
       - name: Restore three exactly reviewed 2026-11-01 real editorial photos
         run: python scripts/prepare_blog_images_20261101.py
+      - name: Restore three exactly reviewed 2026-11-02 real editorial photos
+        run: python scripts/prepare_blog_images_20261102.py
       - name: Build 2026-10-29 three owned-photo editorial covers
         run: python scripts/prepare_blog_covers_20261029.py
       - name: Enforce P0 B2B Blog image-to-article visual review and unique cover evidence
         run: python scripts/test_blog_cover_editorial_standard.py
       - name: Check narrow 2026-11-01 B2B D1 and R2 CI authorization
         run: node scripts/test_blog_20261101_auth.mjs
+      - name: Check narrow 2026-11-02 B2B D1 and R2 CI authorization
+        run: node scripts/test_blog_20261102_auth.mjs
       - name: Verify dynamic Blog source registry and newly approved article routes
         run: python scripts/test_blog_catalog_growth.py
       - name: Validate site isolation
@@ -256,6 +260,13 @@ jobs:
           python scripts/prepare_blog_release_20261101.py
           python scripts/publish_blog_images_20261101_r2.py --dry-run
           python scripts/publish_blog_batch_20261101_d1.py --dry-run
+      - name: Prepare 2026-11-02 three buyer guides and five locale variants
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_release_20261102.py
+          python scripts/publish_blog_images_20261102_r2.py --dry-run
+          python scripts/publish_blog_batch_20261102_d1.py --dry-run
       - name: Prepare 2026-10-30 three scene-reviewed B2B guides and five languages
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
@@ -320,6 +331,7 @@ jobs:
           node scripts/test_blog_covers_20261029.mjs
           node scripts/test_blog_20261030_english_related.mjs
           node scripts/test_blog_20261101_live_d1_related.mjs
+          node scripts/test_blog_20261102_live_d1_related.mjs
           python scripts/test_20261025_blog_photos_cms_priority.py
           python scripts/test_five_photo_sources_20261024.py
           node scripts/test_five_blog_photo_cover_owner_guard.mjs
@@ -541,6 +553,36 @@ jobs:
             sleep 12
           done
           echo "::error::2026-11-01 B2B article batch failed live verification"
+          exit 1
+      # Owner-requested one-shot publication: the exact commit message is the release gate.
+      - name: Upload three 2026-11-02 visually reviewed photos to XUYI R2 and articles to D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three visually reviewed XUYI B2B guides 2026-11-02')
+        env:
+          OWNER_BLOG1102_RELEASE: "1"
+        run: |
+          python scripts/publish_blog_images_20261102_r2.py
+          python scripts/publish_blog_batch_20261102_d1.py
+      - name: Double-clean rebuild and verify fifteen live 2026-11-02 B2B article pages
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three visually reviewed XUYI B2B guides 2026-11-02')
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            python scripts/test_blog_cover_editorial_standard.py
+            echo "XUYI 20261102 two clean builds verified pass $pass"
+          done
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if python scripts/verify_live_blog_20261102.py; then
+              echo "XUYI_20261102_THREE_B2B_ARTICLES_FIFTEEN_LOCALES_R2_D1_CONFIRMED"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "::error::2026-11-02 B2B article batch failed live verification"
           exit 1
       - name: Upload 2026-10-30 three real editorial photos to R2 and insert CMS articles
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three scene-reviewed XUYI B2B guides 2026-10-30'
