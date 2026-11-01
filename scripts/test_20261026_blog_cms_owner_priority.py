@@ -26,7 +26,10 @@ assert "ON CONFLICT(slug) DO NOTHING" in endpoint
 assert "ON CONFLICT(resource_id,locale) DO NOTHING" in endpoint
 assert "instr(json_extract(translated_json,'$.mainHtml'),?)=0" in endpoint
 assert "/api/admin/blog-batch-20261026" in auth
-assert 'data/blog-guides-20261026.json' in renderer and 'data/blog-guides-20261026.json' in editorial
+from blog_catalog_source import load_guides
+assert 'from blog_catalog_source import load_guides' in renderer
+assert 'from blog_catalog_source import load_guides' in editorial
+assert SLUGS.issubset({p["slug"] for p in load_guides(ROOT)}), "Published 2026-10-26 guides missing from authoritative dynamic source registry"
 assert 'data/blog-buyer-decision-tables-20261026.json' in editorial
 assert "_BLOG_20261026" in sitemap and 'data/blog-guides-20261026.json' in sitemap
 assert "CLOUDFLARE_API_TOKEN" in publisher
