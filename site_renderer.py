@@ -143,6 +143,8 @@ def build_url(path,title,content):
   if route.startswith("/blog/"):
    from blog_media_source import blog_cover_from_cms_source
    main=blog_cover_from_cms_source(main,route,"en")
+   from blog_editorial import ensure_related_guides
+   main=ensure_related_guides(route,main)
   if route=="/about/":
    from about_company_page import apply_body
    main=apply_body(main,'en')
