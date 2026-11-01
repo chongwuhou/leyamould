@@ -3,21 +3,8 @@ import json
 import re
 from site_renderer import ROOT, e, photo, intro, SITE_ORIGIN
 
-GUIDES = {post["slug"]: post for post in (
-    json.loads((ROOT / "data/blog-guides.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261020.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261021.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261022.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261023.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261024.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261025.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261026.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261027.json").read_text(encoding="utf-8")) +
-    json.loads((ROOT / "data/blog-guides-20261028.json").read_text(encoding="utf-8")) +
-    [json.loads((ROOT / f"data/blog-guides-20261029-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)] +
-    [json.loads((ROOT / f"data/blog-guides-20261030-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)] +
-    [json.loads((ROOT / f"data/blog-guides-20261031-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)]
-)}
+from blog_catalog_source import load_guides
+GUIDES = {post["slug"]:post for post in load_guides(ROOT)}
 COVER_OVERRIDES = json.loads((ROOT / "data/blog-cover-overrides.json").read_text(encoding="utf-8"))
 assert set(COVER_OVERRIDES).issubset(GUIDES), "Unknown blog cover override"
 EVIDENCE=json.loads((ROOT / "data/editorial-evidence.json").read_text(encoding="utf-8"))
@@ -80,15 +67,7 @@ BUYER_MATRICES = {
     **json.loads((ROOT / "data/blog-buyer-decision-tables-20261026.json").read_text(encoding="utf-8"))["articles"],
     **json.loads((ROOT / "data/blog-buyer-decision-tables-20261027.json").read_text(encoding="utf-8"))["articles"],
     **json.loads((ROOT / "data/blog-buyer-decision-tables-20261028.json").read_text(encoding="utf-8"))["articles"],
-    **{post["slug"]:post["buyerDecisionTable"]
-       for i in (1,2,3)
-       for post in [json.loads((ROOT / f"data/blog-guides-20261029-{i}.json").read_text(encoding="utf-8"))]},
-    **{post["slug"]:post["buyerDecisionTable"]
-       for i in (1,2,3)
-       for post in [json.loads((ROOT / f"data/blog-guides-20261030-{i}.json").read_text(encoding="utf-8"))]},
-    **{post["slug"]:post["buyerDecisionTable"]
-       for i in (1,2,3)
-       for post in [json.loads((ROOT / f"data/blog-guides-20261031-{i}.json").read_text(encoding="utf-8"))]}
+    **{post["slug"]:post["buyerDecisionTable"] for post in GUIDES.values() if "buyerDecisionTable" in post}
 }
 assert set(BUYER_MATRICES)==set(GUIDES),"Every reviewed buyer guide needs its own decision table"
 
@@ -244,4 +223,3 @@ def enrich_article_html(document, slug):
     metadata+='<meta property="og:image" content="'+e(SITE_ORIGIN+cover_path(slug))+'">'
     metadata+='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+'</script>'
     return document.replace("</head>",metadata+"</head>",1)
-
