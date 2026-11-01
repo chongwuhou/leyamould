@@ -72,6 +72,8 @@ jobs:
         run: python scripts/prepare_blog_covers_20261029.py
       - name: Enforce P0 B2B Blog image-to-article visual review and unique cover evidence
         run: python scripts/test_blog_cover_editorial_standard.py
+      - name: Check narrow 2026-11-01 B2B D1 and R2 CI authorization
+        run: node scripts/test_blog_20261101_auth.mjs
       - name: Validate site isolation
         run: python scripts/preflight.py
       - name: Check deployment credential
