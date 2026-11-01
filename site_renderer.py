@@ -554,19 +554,6 @@ FAQS=[
 ("Can you provide test reports for my export market?","Please specify the model, destination country and required standards. Any documents offered must match the actual product, material and valid test scope."),
 ("Are there online prices or a shopping cart?","No. This is a business-to-business quotation website. We quote based on model, quantity, customization and delivery terms.")
 ]
-BLOG_POSTS={post["slug"]:post for post in (
- json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf-8"))+
- json.loads((ROOT/"data/blog-guides-20261020.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261021.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261022.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261023.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261024.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261025.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261026.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261027.json").read_text(encoding="utf-8"))+
-  json.loads((ROOT/"data/blog-guides-20261028.json").read_text(encoding="utf-8"))+
-  [json.loads((ROOT/f"data/blog-guides-20261029-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)]+
-  [json.loads((ROOT/f"data/blog-guides-20261030-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)]+
-  [json.loads((ROOT/f"data/blog-guides-20261031-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)]
-)}
+from blog_catalog_source import load_guides
+BLOG_POSTS={post["slug"]:post for post in load_guides(ROOT)}
 ARTICLES=[(post["slug"],post["title"],post["description"]) for post in reversed(list(BLOG_POSTS.values()))]
