@@ -1,0 +1,37 @@
+{
+  "site": "xuyi-drinkware-site",
+  "schemaVersion": 1,
+  "reviewDate": "2026-11-01",
+  "images": [
+    {
+      "slug": "homeware-store-reusable-water-bottles-wholesale",
+      "source": "assets/blog/homeware-retail-drinkware-assortment-20261101.webp",
+      "cover": "/media/blog/homeware-retail-drinkware-assortment-20261101.webp",
+      "sha256": "0b691e1b1f2ba10e00123fc04210c430c75e88edd15fb03653846800852dd007",
+      "license": "Pexels free photo license, editorial context",
+      "photographerPage": "https://www.pexels.com/photo/women-looking-at-products-in-a-shop-with-water-bottles-6925916/",
+      "sourceBase64": "data/blog-source-images-20261101/homeware-retail-drinkware-assortment-20261101.webp.b64",
+      "fileBytes": 98850
+    },
+    {
+      "slug": "tennis-club-team-water-bottles-bulk-buying",
+      "source": "assets/blog/tennis-club-court-bottle-20261101.webp",
+      "cover": "/media/blog/tennis-club-court-bottle-20261101.webp",
+      "sha256": "f71a4d7b312f4da004d3a504bca6e1f104ca5e28e9cdc016218a096971f9a03b",
+      "license": "Pexels free photo license, editorial context",
+      "photographerPage": "https://www.pexels.com/photo/bottle-of-water-on-sport-ground-5069203/",
+      "sourceBase64": "data/blog-source-images-20261101/tennis-club-court-bottle-20261101.webp.b64",
+      "fileBytes": 148780
+    },
+    {
+      "slug": "functional-training-gym-member-bottles-wholesale",
+      "source": "assets/blog/functional-training-gym-bottle-20261101.webp",
+      "cover": "/media/blog/functional-training-gym-bottle-20261101.webp",
+      "sha256": "c343b985657d38b4dd68889ba1201b72c8cce1c9e8b864fd0b1928b79a1f8a22",
+      "license": "Pexels free photo license, editorial context",
+      "photographerPage": "https://www.pexels.com/photo/man-drinking-from-bottle-4164511/",
+      "sourceBase64": "data/blog-source-images-20261101/functional-training-gym-bottle-20261101.webp.b64",
+      "fileBytes": 41872
+    }
+  ]
+}
