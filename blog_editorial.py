@@ -144,6 +144,39 @@ def article_modified_date(slug,post):
     reviewed="2026-10-14" if slug in BLOG_DEPTH else "2026-10-10" if slug in EVIDENCE else post["updated"]
     return max(post["updated"],reviewed)
 
+def ensure_related_guides(route, body):
+    """Add three selected related cards only when an English CMS article has none."""
+    match = re.fullmatch(r"/blog/([a-z0-9-]+)/", route)
+    if not match:
+        return body
+    slug = match.group(1)
+    post = GUIDES.get(slug)
+    if not post:
+        return body
+    existing = body.count('class="blog-related__item"')
+    if existing == 3:
+        return body
+    if existing:
+        raise ValueError("Incomplete owner Blog related-card module: " + slug)
+    selected = post.get("related", [])
+    if len(selected) != 3 or len(set(selected)) != 3:
+        raise ValueError("Expected three distinct related guides: " + slug)
+    related = []
+    for linked in selected:
+        item = GUIDES.get(linked)
+        if not item:
+            raise ValueError("Unknown related guide " + linked + " for " + slug)
+        related.append(item)
+    pos = body.rfind("</article>")
+    if pos < 0:
+        raise ValueError("Cannot safely place related guides inside article: " + slug)
+    h = '<section class="section section--soft blog-related"><div class="shell"><div class="section__head"><div><span class="eyebrow">CONTINUE READING</span><h2 class="section__title">Related Buying Guides</h2></div></div>'
+    h += '<div class="blog-related__grid">'
+    for item in related:
+        h += '<article class="blog-related__item"><a href="/blog/' + e(item["slug"]) + '/">' + photo(cover_path(item["slug"]), item["title"]) + '<strong>' + e(item["title"]) + '</strong></a><p>' + e(item["description"]) + '</p></article>'
+    h += '</div><p class="blog-related__all"><a href="/blog/">View all XUYI buyer guides →</a></p></div></section>'
+    return body[:pos] + h + body[pos:]
+
 def render_article(slug):
     post=GUIDES[slug]
     related=[GUIDES[s] for s in post["related"]]
