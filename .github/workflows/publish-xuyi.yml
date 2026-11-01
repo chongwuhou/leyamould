@@ -508,14 +508,14 @@ jobs:
           echo "::error::New three B2B articles not verified across 15 published pages"
           exit 1
       - name: Upload three 2026-11-01 visually reviewed photos to XUYI R2 and articles to D1
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three visually reviewed XUYI B2B guides 2026-11-01'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three visually reviewed XUYI B2B guides 2026-11-01')
         env:
           OWNER_BLOG1101_RELEASE: "1"
         run: |
           python scripts/publish_blog_images_20261101_r2.py
           python scripts/publish_blog_batch_20261101_d1.py
       - name: Double-clean rebuild and verify fifteen live 2026-11-01 B2B article pages
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three visually reviewed XUYI B2B guides 2026-11-01'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three visually reviewed XUYI B2B guides 2026-11-01')
         shell: bash
         run: |
           set -euo pipefail
