@@ -319,6 +319,7 @@ jobs:
           python scripts/test_blog_20261029_source.py
           node scripts/test_blog_covers_20261029.mjs
           node scripts/test_blog_20261030_english_related.mjs
+          node scripts/test_blog_20261101_live_d1_related.mjs
           python scripts/test_20261025_blog_photos_cms_priority.py
           python scripts/test_five_photo_sources_20261024.py
           node scripts/test_five_blog_photo_cover_owner_guard.mjs

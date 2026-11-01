@@ -27,10 +27,13 @@ import B2B_20261030_3 from "../../data/blog-guides-20261030-3.json" with {type:"
 import B2B_20261031_1 from "../../data/blog-guides-20261031-1.json" with {type:"json"};
 import B2B_20261031_2 from "../../data/blog-guides-20261031-2.json" with {type:"json"};
 import B2B_20261031_3 from "../../data/blog-guides-20261031-3.json" with {type:"json"};
+import B2B_20261101_1 from "../../data/blog-guides-20261101-1.json" with {type:"json"};
+import B2B_20261101_2 from "../../data/blog-guides-20261101-2.json" with {type:"json"};
+import B2B_20261101_3 from "../../data/blog-guides-20261101-3.json" with {type:"json"};
 import INLINE_PART1 from "../../data/blog-inline-edits-reviewed-part1.json" with {type:"json"};
 import INLINE_PART2 from "../../data/blog-inline-edits-reviewed-part2.json" with {type:"json"};
 const REVIEWED_INLINE={...INLINE_PART1,...INLINE_PART2};
-const SOURCE_GUIDE_BY_SLUG=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES,...B2B_20261023_GUIDES,...B2B_20261024_GUIDES,...B2B_20261025_GUIDES,...B2B_20261026_GUIDES,...B2B_20261027_GUIDES,...B2B_20261028_GUIDES,B2B_20261029_1,B2B_20261029_2,B2B_20261029_3,B2B_20261030_1,B2B_20261030_2,B2B_20261030_3,B2B_20261031_1,B2B_20261031_2,B2B_20261031_3].map(p=>[p.slug,p]));
+const SOURCE_GUIDE_BY_SLUG=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES,...B2B_20261023_GUIDES,...B2B_20261024_GUIDES,...B2B_20261025_GUIDES,...B2B_20261026_GUIDES,...B2B_20261027_GUIDES,...B2B_20261028_GUIDES,B2B_20261029_1,B2B_20261029_2,B2B_20261029_3,B2B_20261030_1,B2B_20261030_2,B2B_20261030_3,B2B_20261031_1,B2B_20261031_2,B2B_20261031_3,B2B_20261101_1,B2B_20261101_2,B2B_20261101_3].map(p=>[p.slug,p]));
 /** Genuine paragraph-level editorial links, conditional on unchanged D1
  * intro, section heading and paragraph. Owner changes take priority.
  */
@@ -75,7 +78,7 @@ export function reviewedBlogRelatedAtEnd(post){
   out+='<article class="blog-related__item"><a href="/blog/'+esc(info.slug)+'/"><strong>'+esc(info.title)+'</strong></a><p>'+esc(info.description)+'</p></article>';
  return out+'</div></div></section>';
 }
-const ORIGINAL_GUIDE_INTROS=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES,...B2B_20261023_GUIDES,...B2B_20261024_GUIDES,...B2B_20261025_GUIDES,...B2B_20261026_GUIDES,...B2B_20261027_GUIDES,...B2B_20261028_GUIDES,B2B_20261029_1,B2B_20261029_2,B2B_20261029_3,B2B_20261030_1,B2B_20261030_2,B2B_20261030_3,B2B_20261031_1,B2B_20261031_2,B2B_20261031_3].map(post=>[post.slug,post.intro]));
+const ORIGINAL_GUIDE_INTROS=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES,...B2B_20261023_GUIDES,...B2B_20261024_GUIDES,...B2B_20261025_GUIDES,...B2B_20261026_GUIDES,...B2B_20261027_GUIDES,...B2B_20261028_GUIDES,B2B_20261029_1,B2B_20261029_2,B2B_20261029_3,B2B_20261030_1,B2B_20261030_2,B2B_20261030_3,B2B_20261031_1,B2B_20261031_2,B2B_20261031_3,B2B_20261101_1,B2B_20261101_2,B2B_20261101_3].map(post=>[post.slug,post.intro]));
 const DEEP_ENTRIES={...BLOG_DEPTH.articles,...DEEP_PART1.articles,...DEEP_PART2.articles,...DEEP_PART3.articles};
 
 export function renderDepthEvidence(post){
