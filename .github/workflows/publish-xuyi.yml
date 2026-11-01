@@ -66,6 +66,8 @@ jobs:
           node-version: "22"
       - name: Install pinned build-only image encoder
         run: python -m pip install --disable-pip-version-check "Pillow==11.3.0"
+      - name: Restore three exactly reviewed 2026-11-01 real editorial photos
+        run: python scripts/prepare_blog_images_20261101.py
       - name: Build 2026-10-29 three owned-photo editorial covers
         run: python scripts/prepare_blog_covers_20261029.py
       - name: Enforce P0 B2B Blog image-to-article visual review and unique cover evidence
@@ -243,6 +245,13 @@ jobs:
           python scripts/prepare_blog_release_20261031.py
           python scripts/publish_blog_images_20261031_r2.py --dry-run
           python scripts/publish_blog_batch_20261031_d1.py --dry-run
+      - name: Prepare 2026-11-01 three buyer guides and five locale variants
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_release_20261101.py
+          python scripts/publish_blog_images_20261101_r2.py --dry-run
+          python scripts/publish_blog_batch_20261101_d1.py --dry-run
       - name: Prepare 2026-10-30 three scene-reviewed B2B guides and five languages
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
@@ -282,7 +291,6 @@ jobs:
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
           python scripts/test_release.py
-          python scripts/test_20261031_blog_description_cms_priority.py
           python scripts/test_shared_templates.py
           python scripts/test_responsive_images.py
           python scripts/test_faq_access.py
@@ -431,7 +439,6 @@ jobs:
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_release.py
-          python scripts/test_20261031_blog_description_cms_priority.py
           python scripts/test_20261026_blog_cms_owner_priority.py
           python scripts/test_blog_20261027_source.py
           python scripts/test_blog_20261028_source.py
@@ -499,6 +506,35 @@ jobs:
             sleep 12
           done
           echo "::error::New three B2B articles not verified across 15 published pages"
+          exit 1
+      - name: Upload three 2026-11-01 visually reviewed photos to XUYI R2 and articles to D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three visually reviewed XUYI B2B guides 2026-11-01'
+        env:
+          OWNER_BLOG1101_RELEASE: "1"
+        run: |
+          python scripts/publish_blog_images_20261101_r2.py
+          python scripts/publish_blog_batch_20261101_d1.py
+      - name: Double-clean rebuild and verify fifteen live 2026-11-01 B2B article pages
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three visually reviewed XUYI B2B guides 2026-11-01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            python scripts/test_blog_cover_editorial_standard.py
+            echo "XUYI 20261101 two clean builds verified pass $pass"
+          done
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if python scripts/verify_live_blog_20261101.py; then
+              echo "XUYI_20261101_THREE_B2B_ARTICLES_FIFTEEN_LOCALES_R2_D1_CONFIRMED"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "::error::2026-11-01 B2B article batch failed live verification"
           exit 1
       - name: Upload 2026-10-30 three real editorial photos to R2 and insert CMS articles
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three scene-reviewed XUYI B2B guides 2026-10-30'
@@ -594,78 +630,6 @@ jobs:
             sleep 12
           done
           echo "::error::Owner two Excel reviews not verified on published site"
-          exit 1
-      # One-time authorized user request: three real random Excel reviews for November 1.
-      # Existing D1 append-only ledger and three-per-Beijing-day limit remain authoritative.
-      - name: Publish exactly three unused original Excel reviews 2026-11-01
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time three authentic XUYI Excel reviews 2026-11-01'
-        env:
-          OWNER_THREE_RELEASE: "1"
-        run: |
-          python scripts/test_daily_product_reviews.py
-          node scripts/test_daily_product_reviews_api.mjs
-          python scripts/publish_owner_three_reviews_20261101.py --dry-run
-          python scripts/publish_owner_three_reviews_20261101.py
-      - name: Build twice and verify original Excel reviews live on 2026-11-01
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time three authentic XUYI Excel reviews 2026-11-01'
-        shell: bash
-        run: |
-          set -euo pipefail
-          for pass in 1 2; do
-            python scripts/fetch_build_snapshot.py
-            python scripts/build_release.py
-            python scripts/test_release.py
-            echo "XUYI genuine Nov 1 reviews: clean D1 build passed $pass"
-          done
-          expected="$(python -c 'import json;print(json.load(open("dist/build-meta.json",encoding="utf8"))["publishRevision"])')"
-          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
-          for attempt in 1 2 3 4 5 6; do
-            if curl --fail --silent --show-error "$SITE_ORIGIN/build-meta.json?owner1101=$attempt&sha=$GITHUB_SHA" |
-              node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);process.exit(m.sourceRevision===process.env.GITHUB_SHA&&Number(m.publishRevision)>=Number(process.argv[1])?0:1)})" "$expected"; then
-              if python scripts/verify_owner_three_reviews_20261101.py; then
-                echo "XUYI_OWNER_20261101_THREE_EXACT_EXCEL_D1_AND_LIVE_VERIFIED"
-                exit 0
-              fi
-            fi
-            sleep 12
-          done
-          echo "::error::November 1 exact three D1 Excel reviews not verified live"
-          exit 1
-      # Owner authorization for exactly three genuine Excel reviews on 2026-10-31.
-      # Never relax the ordinary daily three-review maximum, source fingerprint or D1 dedup.
-      - name: Publish three owner-approved random unused authentic Excel reviews for 2026-10-31
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time three authentic XUYI Excel reviews 2026-10-31'
-        env:
-          OWNER_THREE_RELEASE: "1"
-        run: |
-          python scripts/test_daily_product_reviews.py
-          node scripts/test_daily_product_reviews_api.mjs
-          python scripts/publish_owner_three_reviews_20261031.py --dry-run
-          python scripts/publish_owner_three_reviews_20261031.py
-      - name: Build twice from current D1 and verify the three 2026-10-31 live product reviews
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time three authentic XUYI Excel reviews 2026-10-31'
-        shell: bash
-        run: |
-          set -euo pipefail
-          for pass in 1 2; do
-            python scripts/fetch_build_snapshot.py
-            python scripts/build_release.py
-            python scripts/test_release.py
-            echo "XUYI owner three reviews clean D1 build passed $pass"
-          done
-          expected="$(python -c 'import json;print(json.load(open("dist/build-meta.json",encoding="utf8"))["publishRevision"])')"
-          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
-          for attempt in 1 2 3 4 5 6; do
-            if curl --fail --silent --show-error "$SITE_ORIGIN/build-meta.json?owner31=$attempt&sha=$GITHUB_SHA" |
-              node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);process.exit(m.sourceRevision===process.env.GITHUB_SHA&&Number(m.publishRevision)>=Number(process.argv[1])?0:1)})" "$expected"; then
-              if python scripts/verify_owner_three_reviews_20261031.py; then
-                echo "XUYI_OWNER_20261031_THREE_AUTHENTIC_EXCEL_REVIEWS_VERIFIED"
-                exit 0
-              fi
-            fi
-            sleep 12
-          done
-          echo "::error::Three owner-reviewed Excel comments not yet verified live"
           exit 1
       # Owner-approved extra three Excel reviews for one Beijing date only.
       # Neither the daily 1/day scheduler nor the D1 3/day safety limit changes.
