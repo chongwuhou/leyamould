@@ -595,6 +595,42 @@ jobs:
           done
           echo "::error::Owner two Excel reviews not verified on published site"
           exit 1
+      # One-time authorized user request: three real random Excel reviews for November 1.
+      # Existing D1 append-only ledger and three-per-Beijing-day limit remain authoritative.
+      - name: Publish exactly three unused original Excel reviews 2026-11-01
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time three authentic XUYI Excel reviews 2026-11-01'
+        env:
+          OWNER_THREE_RELEASE: "1"
+        run: |
+          python scripts/test_daily_product_reviews.py
+          node scripts/test_daily_product_reviews_api.mjs
+          python scripts/publish_owner_three_reviews_20261101.py --dry-run
+          python scripts/publish_owner_three_reviews_20261101.py
+      - name: Build twice and verify original Excel reviews live on 2026-11-01
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish one-time three authentic XUYI Excel reviews 2026-11-01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            echo "XUYI genuine Nov 1 reviews: clean D1 build passed $pass"
+          done
+          expected="$(python -c 'import json;print(json.load(open("dist/build-meta.json",encoding="utf8"))["publishRevision"])')"
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error "$SITE_ORIGIN/build-meta.json?owner1101=$attempt&sha=$GITHUB_SHA" |
+              node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);process.exit(m.sourceRevision===process.env.GITHUB_SHA&&Number(m.publishRevision)>=Number(process.argv[1])?0:1)})" "$expected"; then
+              if python scripts/verify_owner_three_reviews_20261101.py; then
+                echo "XUYI_OWNER_20261101_THREE_EXACT_EXCEL_D1_AND_LIVE_VERIFIED"
+                exit 0
+              fi
+            fi
+            sleep 12
+          done
+          echo "::error::November 1 exact three D1 Excel reviews not verified live"
+          exit 1
       # Owner authorization for exactly three genuine Excel reviews on 2026-10-31.
       # Never relax the ordinary daily three-review maximum, source fingerprint or D1 dedup.
       - name: Publish three owner-approved random unused authentic Excel reviews for 2026-10-31
