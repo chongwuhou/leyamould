@@ -145,30 +145,54 @@
       "section": 1,
       "sku": "2209",
       "label": {
-        "en": "XUYI model 2209 · 800 ml"
+        "en": "XUYI model 2209 · 800 ml",
+        "es": "XUYI modelo 2209 · 800 ml",
+        "pt": "XUYI modelo 2209 · 800 ml",
+        "ru": "XUYI модель 2209 · 800 мл",
+        "tr": "XUYI model 2209 · 800 ml"
       },
       "text": {
-        "en": "Use {product} as a catalog reference only. Request the complete assembled sample and test its dimensions, cap handling and fit in the target backpack before approving the outdoor retail range."
+        "en": "Use {product} as a catalog reference only. Request the complete assembled sample and test its dimensions, cap handling and fit in the target backpack before approving the outdoor retail range.",
+        "es": "Utilice {product} únicamente como referencia del catálogo. Solicite la muestra completa ensamblada y pruebe sus dimensiones, manejo de la tapa y ajuste en la mochila objetivo antes de aprobar la gama minorista para exteriores.",
+        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa montada e teste suas dimensões, manuseio da tampa e encaixe na mochila alvo antes de aprovar a linha de varejo outdoor.",
+        "ru": "Используйте {product} только в качестве ссылки в каталоге. Запросите полностью собранный образец и проверьте его размеры, удобство обращения с крышкой и возможность размещения в целевом рюкзаке, прежде чем утверждать ассортимент для розничной торговли на открытом воздухе.",
+        "tr": "ZZPROTOKEN'i yalnızca katalog referansı olarak kullanın. Birleştirilmiş numunenin tamamını talep edin ve dış mekan perakende serisini onaylamadan önce boyutlarını, kapak kullanımını ve hedef sırt çantasına sığdığını test edin."
       }
     },
     {
       "section": 3,
       "sku": "2212",
       "label": {
-        "en": "XUYI model 2212 · 1,000 ml"
+        "en": "XUYI model 2212 · 1,000 ml",
+        "es": "XUYI modelo 2212 · 1000 ml",
+        "pt": "XUYI modelo 2212 · 1.000 ml",
+        "ru": "XUYI, модель 2212 · 1000 мл",
+        "tr": "XUYI model 2212 · 1.000 ml"
       },
       "text": {
-        "en": "Use {product} as a catalog reference only. Request the complete assembled sample and test its dimensions, cap handling and fit in the target backpack before approving the outdoor retail range."
+        "en": "Use {product} as a catalog reference only. Request the complete assembled sample and test its dimensions, cap handling and fit in the target backpack before approving the outdoor retail range.",
+        "es": "Utilice {product} solo como referencia de catálogo. Solicite la muestra completa ensamblada y pruebe sus dimensiones, manejo de la tapa y ajuste en la mochila de destino antes de aprobar la gama minorista para exteriores.",
+        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa montada e teste suas dimensões, manuseio da tampa e encaixe na mochila alvo antes de aprovar a linha de varejo outdoor.",
+        "ru": "Используйте {product} только в качестве ссылки на каталог. Запросите полностью собранный образец и проверьте его размеры, удобство обращения с крышкой и возможность размещения в целевом рюкзаке, прежде чем утверждать ассортимент для розничной торговли на открытом воздухе.",
+        "tr": "ZZPROTOKEN'i yalnızca katalog referansı olarak kullanın. Birleştirilmiş numunenin tamamını talep edin ve dış mekan perakende serisini onaylamadan önce boyutlarını, kapak kullanımını ve hedef sırt çantasına sığdığını test edin."
       }
     },
     {
       "section": 5,
       "sku": "2517",
       "label": {
-        "en": "XUYI model 2517 · 1,200 ml"
+        "en": "XUYI model 2517 · 1,200 ml",
+        "es": "XUYI modelo 2517 · 1200 ml",
+        "pt": "XUYI modelo 2517 · 1.200 ml",
+        "ru": "XUYI, модель 2517 · 1200 мл",
+        "tr": "XUYI model 2517 · 1.200 ml"
       },
       "text": {
-        "en": "Use {product} as a catalog reference only. Request the complete assembled sample and test its dimensions, cap handling and fit in the target backpack before approving the outdoor retail range."
+        "en": "Use {product} as a catalog reference only. Request the complete assembled sample and test its dimensions, cap handling and fit in the target backpack before approving the outdoor retail range.",
+        "es": "Utilice {product} solo como referencia de catálogo. Solicite la muestra completa ensamblada y pruebe sus dimensiones, manejo de la tapa y ajuste en la mochila objetivo antes de aprobar la gama minorista para exteriores.",
+        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa montada e teste suas dimensões, manuseio da tampa e encaixe na mochila alvo antes de aprovar a linha de varejo outdoor.",
+        "ru": "Используйте {product} только в качестве ссылки на каталог. Запросите полностью собранный образец и проверьте его размеры, удобство обращения с кепкой и возможность ее размещения в целевом рюкзаке, прежде чем утверждать ассортимент для розничной торговли на открытом воздухе.",
+        "tr": "ZZproducttoken'i yalnızca katalog referansı olarak kullanın. Birleştirilmiş numunenin tamamını talep edin ve dış mekan perakende serisini onaylamadan önce boyutlarını, kapak kullanımını ve hedef sırt çantasına sığmasını test edin."
       }
     }
   ]
