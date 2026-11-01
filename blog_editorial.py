@@ -169,7 +169,7 @@ def ensure_related_guides(route, body):
         related.append(item)
     pos = body.rfind("</article>")
     if pos < 0:
-        raise ValueError("Cannot safely place related guides inside article: " + slug)
+        return body
     h = '<section class="section section--soft blog-related"><div class="shell"><div class="section__head"><div><span class="eyebrow">CONTINUE READING</span><h2 class="section__title">Related Buying Guides</h2></div></div>'
     h += '<div class="blog-related__grid">'
     for item in related:
