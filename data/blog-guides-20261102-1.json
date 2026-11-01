@@ -153,10 +153,10 @@
       },
       "text": {
         "en": "Use {product} as a catalog reference only. Request the complete assembled sample and verify dimensions, components and intended use before approving the selected club range.",
-        "es": "Utilizar {product} únicamente como referencia del catálogo. Solicite la muestra completa ensamblada y verifique las dimensiones, los componentes y el uso previsto antes de aprobar la gama de palos seleccionada.",
-        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa montada e verifique as dimensões, componentes e uso pretendido antes de aprovar a linha de tacos selecionada.",
-        "ru": "Используйте {product} только в качестве ссылки в каталоге. Запросите полный собранный образец и проверьте размеры, компоненты и предполагаемое использование, прежде чем утвердить выбранную линейку клубов.",
-        "tr": "ZZPROTOKEN'i yalnızca katalog referansı olarak kullanın. Seçilen kulüp serisini onaylamadan önce birleştirilmiş numunenin tamamını talep edin ve boyutları, bileşenleri ve kullanım amacını doğrulayın."
+        "es": "Utilice {product} solo como referencia del catálogo. Solicite la muestra completa y verifique las dimensiones, los componentes y el uso previsto antes de aprobar la gama del club.",
+        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa e confirme dimensões, componentes e uso previsto antes de aprovar a linha do clube.",
+        "ru": "Используйте {product} только как ссылку на модель в каталоге. Запросите полный образец в сборе и проверьте размеры, компоненты и назначение до утверждения ассортимента клуба.",
+        "tr": "{product} modelini yalnızca katalog referansı olarak değerlendirin. Kulüp ürün grubunu onaylamadan önce komple numuneyi isteyin; ölçüleri, bileşenleri ve kullanım amacını doğrulayın."
       }
     },
     {
@@ -171,10 +171,10 @@
       },
       "text": {
         "en": "Use {product} as a catalog reference only. Request the complete assembled sample and verify dimensions, components and intended use before approving the selected club range.",
-        "es": "Utilice {product} solo como referencia de catálogo. Solicite la muestra completa ensamblada y verifique las dimensiones, los componentes y el uso previsto antes de aprobar la gama de palos seleccionada.",
-        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa montada e verifique as dimensões, componentes e uso pretendido antes de aprovar a linha de tacos selecionada.",
-        "ru": "Используйте {product} только в качестве ссылки на каталог. Запросите полный собранный образец и проверьте размеры, компоненты и предполагаемое использование, прежде чем утвердить выбранную линейку клубов.",
-        "tr": "ZZPROTOKEN'i yalnızca katalog referansı olarak kullanın. Seçilen kulüp serisini onaylamadan önce birleştirilmiş numunenin tamamını isteyin ve boyutları, bileşenleri ve kullanım amacını doğrulayın."
+        "es": "Utilice {product} solo como referencia del catálogo. Solicite la muestra completa y verifique las dimensiones, los componentes y el uso previsto antes de aprobar la gama del club.",
+        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa e confirme dimensões, componentes e uso previsto antes de aprovar a linha do clube.",
+        "ru": "Используйте {product} только как ссылку на модель в каталоге. Запросите полный образец в сборе и проверьте размеры, компоненты и назначение до утверждения ассортимента клуба.",
+        "tr": "{product} modelini yalnızca katalog referansı olarak değerlendirin. Kulüp ürün grubunu onaylamadan önce komple numuneyi isteyin; ölçüleri, bileşenleri ve kullanım amacını doğrulayın."
       }
     },
     {
@@ -189,10 +189,10 @@
       },
       "text": {
         "en": "Use {product} as a catalog reference only. Request the complete assembled sample and verify dimensions, components and intended use before approving the selected club range.",
-        "es": "Utilice {product} solo como referencia de catálogo. Solicite la muestra completa ensamblada y verifique las dimensiones, los componentes y el uso previsto antes de aprobar la gama de palos seleccionada.",
-        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa montada e verifique as dimensões, os componentes e o uso pretendido antes de aprovar a linha de tacos selecionada.",
-        "ru": "Используйте {product} только в качестве ссылки на каталог. Запросите полный собранный образец и проверьте размеры, компоненты и предполагаемое использование, прежде чем утвердить выбранную линейку клюшек.",
-        "tr": "ZZPROTOKEN'i yalnızca katalog referansı olarak kullanın. Seçilen kulüp serisini onaylamadan önce montajı yapılmış numunenin tamamını talep edin ve boyutları, bileşenleri ve kullanım amacını doğrulayın."
+        "es": "Utilice {product} solo como referencia del catálogo. Solicite la muestra completa y verifique las dimensiones, los componentes y el uso previsto antes de aprobar la gama del club.",
+        "pt": "Use {product} apenas como referência de catálogo. Solicite a amostra completa e confirme dimensões, componentes e uso previsto antes de aprovar a linha do clube.",
+        "ru": "Используйте {product} только как ссылку на модель в каталоге. Запросите полный образец в сборе и проверьте размеры, компоненты и назначение до утверждения ассортимента клуба.",
+        "tr": "{product} modelini yalnızca katalog referansı olarak değerlendirin. Kulüp ürün grubunu onaylamadan önce komple numuneyi isteyin; ölçüleri, bileşenleri ve kullanım amacını doğrulayın."
       }
     }
   ]
