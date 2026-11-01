@@ -9,6 +9,7 @@ from blog_catalog_source import load_guides
 from site_renderer import ROOT,BLOG_POSTS,ARTICLES
 from blog_editorial import GUIDES,BUYER_MATRICES
 from build import blog_index
+from sitemap_modification import source_lastmod
 
 expected={
  "homeware-store-reusable-water-bottles-wholesale",
@@ -23,6 +24,8 @@ assert len(ARTICLES)==len(BLOG_POSTS)
 body=blog_index()
 for slug in expected:
  assert '/blog/'+slug+'/' in body
+ assert source_lastmod("/blog/"+slug+"/")=="2026-11-01",slug
+ assert source_lastmod("/pt/blog/"+slug+"/")=="2026-11-01",slug
 with TemporaryDirectory() as tmp:
  root=Path(tmp);data=root/"data";data.mkdir()
  base={"slug":"baseline","title":"Baseline title","description":"A validated source"}
