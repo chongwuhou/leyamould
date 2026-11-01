@@ -511,6 +511,7 @@ jobs:
           done
           echo "::error::New three B2B articles not verified across 15 published pages"
           exit 1
+      # Owner-requested one-shot publication: the exact commit message is the release gate.
       - name: Upload three 2026-11-01 visually reviewed photos to XUYI R2 and articles to D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three visually reviewed XUYI B2B guides 2026-11-01')
         env:
