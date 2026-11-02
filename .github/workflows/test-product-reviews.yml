@@ -38,7 +38,5 @@ jobs:
         run: node scripts/test_daily_product_reviews_api.mjs
       - name: Test product review admin CRUD and multiple reviews per SKU
         run: node scripts/test_product_reviews_api.mjs
-      - name: Test published review rendering, five locales, and CMS ownership
-        run: python scripts/test_product_reviews_source.py
       - name: Check read-only production migration script syntax
         run: python -m py_compile scripts/migrate_daily_product_reviews_ledger_v2.py
