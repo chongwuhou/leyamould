@@ -283,7 +283,7 @@ jobs:
       # Owner-requested random three-review publication batch: 2026-11-02.
       # One-time read-only reconciliation; no review writes or mutations.
       - name: Audit XUYI D1 review state without writes
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Audit XUYI D1 review state read-only 2026-11-02'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Add one-time read-only D1 review audit step'
         run: python scripts/audit_d1_review_state_readonly_20261102.py
       # Explicit owner-requested review publication. D1 atomically enforces
       # three per Beijing day, no duplicates, and preserves CMS owner content.
