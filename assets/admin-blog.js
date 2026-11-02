@@ -34,10 +34,10 @@ function setForm(post={},existing=false){
  assign('sections',(post.sections||[]).map(s=>'## '+s.heading+'\n'+s.paragraph).join('\n\n'));
  assign('checklist',(post.checklist||[]).join('\n'));
  assign('faqs',(post.faqs||[]).map(q=>q.question+' | '+q.answer).join('\n'));
- assign('related',(post.related||[]).join('\n'));
- $('#blog-editor-heading').textContent=existing?'编辑：'+post.title:'新建 Blog 文章';
- $('#blog-cover-preview').src=$('#blog-cover').value;
- $('#blog-preview-link').href=existing&&post.status==='published'?'/blog/'+encodeURIComponent(post.slug)+'/':'/blog/';
+  assign('related',(post.related||[]).join('\n'));  assign('scheduled-at',post.scheduled_at?new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(post.scheduled_at)).replace(' ','T'):'');
+  $('#blog-editorial-approved').checked=false;
+  $('#blog-editor-heading').textContent=existing?'编辑：'+post.title:'新建 Blog 文章';
+  $('#blog-cover-preview').src=$('#blog-cover').value; $('#blog-preview-link').href=existing&&post.status==='published'?'/blog/'+encodeURIComponent(post.slug)+'/':'/blog/';
  status(existing?'已打开文章，可修改草稿或发布。':'开始编辑新文章；仅单击正式发布才公开。');
 }
 function fromForm(){
@@ -61,8 +61,7 @@ async function list(){
  const data=await api();
  const root=$('#blog-admin-list');root.hidden=false;
  $('#blog-editor-form').hidden=true;
- root.innerHTML=data.posts.length?data.posts.map(post=>'<div class="blog-admin-row"><div><strong>'+esc(post.title)+'</strong><small>'+esc(post.slug)+' · '+esc(post.group||'')+' · '+esc(post.status)+(post.has_draft?' · 有未发布草稿':'')+' · '+esc(post.updated_at||'')+'</small></div><button type="button" class="btn ghost" data-edit-blog="'+esc(post.slug)+'">编辑</button>'+(post.status==='published'?'<button type="button" class="btn ghost" data-retire-blog="'+esc(post.slug)+'">撤回</button>':'')+'</div>').join(''):'<p class="muted">暂无文章，点击“新建文章”即可创建。</p>';
- root.querySelectorAll('[data-edit-blog]').forEach(button=>button.addEventListener('click',async()=>{
+  root.innerHTML=data.posts.length?data.posts.map(post=>'<div class="blog-admin-row"><div><strong>'+esc(post.title)+'</strong><small>'+esc(post.slug)+' · '+esc(post.group||'')+' · '+esc(post.status)+(post.schedule_status?' · 定时：'+esc(post.schedule_status)+' '+esc(post.scheduled_at||''):'')+(post.has_draft?' · 有未发布草稿':'')+' · '+esc(post.updated_at||'')+'</small></div><button type="button" class="btn ghost" data-edit-blog="'+esc(post.slug)+'">编辑</button>'+(post.status==='published'?'<button type="button" class="btn ghost" data-retire-blog="'+esc(post.slug)+'">撤回</button>':'')+'</div>').join(''):'<p class="muted">暂无文章，点击“新建文章”即可创建。</p>'; root.querySelectorAll('[data-edit-blog]').forEach(button=>button.addEventListener('click',async()=>{
   try{const {post}=await api('GET',null,API+'?slug='+encodeURIComponent(button.dataset.editBlog));setForm(post,true)}catch(err){status(err.message)}
  }));
  root.querySelectorAll('[data-retire-blog]').forEach(button=>button.addEventListener('click',async()=>{
@@ -75,23 +74,30 @@ async function list(){
  }catch(err){status('Blog 数据读取失败：'+err.message)}
 }
 async function submit(action){
- const save=$('#blog-save-btn'),publish=$('#blog-publish-btn');
- save.disabled=publish.disabled=true;
+ const save=$('#blog-save-btn'),publish=$('#blog-publish-btn'),schedule=$('#blog-schedule-btn');
+ save.disabled=publish.disabled=schedule.disabled=true;
  try{
   const post=fromForm();
   if(!post.slug||post.sections.length<2)throw Error('至少需要两段正文内容。');
-  const res=await api('POST',{action,post});
-  status(action==='publish'?'已发布到正式站：'+res.url:'草稿已保存，仅后台可见。');
+  const payload={action,post};
+  if(action==='schedule'){
+   const local=$('#blog-scheduled-at').value;
+   if(!local)throw Error('请先选择计划发布时间（北京时间）。');
+   payload.scheduledAt=new Date(local+':00+08:00').toISOString();
+   payload.editorialApproved=$('#blog-editorial-approved').checked;
+  }
+  const res=await api('POST',payload);
+  status(action==='publish'?'已发布到正式站：'+res.url:action==='schedule'?'已安排定时发布：'+res.scheduledAt:'草稿已保存，仅后台可见。');
   if(action==='publish')window.open(res.url,'_blank','noopener');
   await list();
  }catch(err){status('保存失败：'+err.message)}
- finally{save.disabled=publish.disabled=false}
-}
-$('#blog-new-btn')?.addEventListener('click',()=>setForm({},false));
+ finally{save.disabled=publish.disabled=schedule.disabled=false}
+}$('#blog-new-btn')?.addEventListener('click',()=>setForm({},false));
 $('#blog-refresh-btn')?.addEventListener('click',list);
 $('#blog-close-btn')?.addEventListener('click',list);
 $('#blog-editor-form')?.addEventListener('submit',ev=>{ev.preventDefault();submit('save')});
 $('#blog-publish-btn')?.addEventListener('click',()=>submit('publish'));
+$('#blog-schedule-btn')?.addEventListener('click',()=>submit('schedule'));
 $('#blog-cover')?.addEventListener('change',()=>{$('#blog-cover-preview').src=$('#blog-cover').value});
 $('#blog-upload')?.addEventListener('change',async(ev)=>{
  const file=ev.target.files?.[0];if(!file)return;
