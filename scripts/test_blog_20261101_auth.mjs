@@ -16,8 +16,8 @@ assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath),{
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath),{}),true);
 assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath,"GET"),{}),false);
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath,"GET"),{}),false);
-assert.equal(await authorizedReviewedBlogImageUploadRequest(request("/api/admin/blog-images-20261102"),{}),false);
-assert.equal(await authorizedReviewedBlogBatchRequest(request("/api/admin/blog-batch-20261102"),{}),false);
+assert.equal(await authorizedReviewedBlogImageUploadRequest(request("/api/admin/blog-images-20261103"),{}),false);
+assert.equal(await authorizedReviewedBlogBatchRequest(request("/api/admin/blog-batch-20261103"),{}),false);
 assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath,"POST","wrong-token"),{}),false);
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath,"POST","wrong-token"),{}),false);
 globalThis.fetch=originalFetch;

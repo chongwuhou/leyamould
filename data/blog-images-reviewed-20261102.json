@@ -1,0 +1,40 @@
+{
+  "site": "xuyi-drinkware-site",
+  "schemaVersion": 1,
+  "reviewDate": "2026-11-02",
+  "images": [
+    {
+      "slug": "golf-club-pro-shop-reusable-water-bottles-wholesale",
+      "source": "assets/blog/golf-club-pro-shop-reusable-water-bottles-wholesale-20261102.webp",
+      "cover": "/media/blog/golf-club-pro-shop-reusable-water-bottles-wholesale-20261102.webp",
+      "sha256": "1f49c197a835363e9b2a4acdf0f20f9d00cd03beb7d2307777090f6dc6b81f7f",
+      "license": "Pexels free photo license, editorial context",
+      "photographerPage": "https://www.pexels.com/photo/woman-drinking-at-blue-sports-bottle-outdoors-1325711/",
+      "photographer": "Jopwell",
+      "sourceBase64": "data/blog-source-images-20261102/golf-club-pro-shop-reusable-water-bottles-wholesale-20261102.webp.b64",
+      "fileBytes": 35018
+    },
+    {
+      "slug": "outdoor-gear-retailer-hiking-water-bottles-wholesale",
+      "source": "assets/blog/outdoor-gear-retailer-hiking-water-bottles-wholesale-20261102.webp",
+      "cover": "/media/blog/outdoor-gear-retailer-hiking-water-bottles-wholesale-20261102.webp",
+      "sha256": "29934ede30b898f288b3d12dc5e447e00f6c6e9e30b057e3ed23b147fb2d6b8a",
+      "license": "Pexels free photo license, editorial context",
+      "photographerPage": "https://www.pexels.com/photo/men-doing-hiking-13103812/",
+      "photographer": "Lan Yao",
+      "sourceBase64": "data/blog-source-images-20261102/outdoor-gear-retailer-hiking-water-bottles-wholesale-20261102.webp.b64",
+      "fileBytes": 134066
+    },
+    {
+      "slug": "sustainable-lifestyle-store-reusable-bottles-wholesale",
+      "source": "assets/blog/sustainable-lifestyle-store-reusable-bottles-wholesale-20261102.webp",
+      "cover": "/media/blog/sustainable-lifestyle-store-reusable-bottles-wholesale-20261102.webp",
+      "sha256": "371432f2b8595ace5e7314673ddc4e522d1a3139253314d8a23e257a99391737",
+      "license": "Pexels free photo license; page explicitly marked Free; editorial refill-use context",
+      "photographerPage": "https://www.pexels.com/photo/filling-reusable-bottle-at-kitchen-sink-27176108/",
+      "photographer": "Helena Lopes",
+      "sourceBase64": "data/blog-source-images-20261102/sustainable-lifestyle-store-reusable-bottles-wholesale-20261102.webp.b64",
+      "fileBytes": 54950
+    }
+  ]
+}

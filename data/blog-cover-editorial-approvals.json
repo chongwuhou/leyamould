@@ -327,6 +327,87 @@
       },
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "golf-club-pro-shop-reusable-water-bottles-wholesale",
+      "articleTitle": "How Should Golf Clubs Source Reusable Water Bottles for Pro Shops and Member Events?",
+      "cover": "/media/blog/golf-club-pro-shop-reusable-water-bottles-wholesale-20261102.webp",
+      "source": "assets/blog/golf-club-pro-shop-reusable-water-bottles-wholesale-20261102.webp",
+      "sha256": "1f49c197a835363e9b2a4acdf0f20f9d00cd03beb7d2307777090f6dc6b81f7f",
+      "visualScene": "A woman golfer drinks from a clearly visible blue reusable sports bottle on a green golf course.",
+      "buyerContext": "Golf club pro-shop buyers, membership teams and tournament merchandise coordinators.",
+      "articleUse": "Context for evaluating pro-shop bottle assortments and member or tournament drinkware.",
+      "sceneMatch": "The golfer, course setting and bottle in use directly match the golf-club buyer's question about pro-shop products and member-event procurement. It does not imply the pictured bottle is an XUYI model or the golfer is a customer.",
+      "topicAnchors": [
+        "golf",
+        "club"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels free-license photograph by Jopwell. Source: https://www.pexels.com/photo/woman-drinking-at-blue-sports-bottle-outdoors-1325711/. Free photo license permits website/blog use and modification; credit retained. No endorsement implied.",
+      "usageDisclosure": "Licensed editorial context only; the bottle is not verified as an XUYI SKU and the image does not show an XUYI customer, club partnership, factory, order or product test."
+    },
+    {
+      "slug": "outdoor-gear-retailer-hiking-water-bottles-wholesale",
+      "articleTitle": "How Should Outdoor Retailers Choose Reusable Water Bottles for Hiking and Day-Trip Assortments?",
+      "cover": "/media/blog/outdoor-gear-retailer-hiking-water-bottles-wholesale-20261102.webp",
+      "source": "assets/blog/outdoor-gear-retailer-hiking-water-bottles-wholesale-20261102.webp",
+      "sha256": "29934ede30b898f288b3d12dc5e447e00f6c6e9e30b057e3ed23b147fb2d6b8a",
+      "visualScene": "Two hikers with backpacks pause beside a forest stream; reusable water bottles are clearly visible.",
+      "buyerContext": "Outdoor-gear retailers and specialty shop buyers planning bottle assortments for hikers and day trips.",
+      "articleUse": "Illustrates the customer activity and carrying context for backpack fit and outdoor retail assortment planning.",
+      "sceneMatch": "The hikers, loaded backpacks and visible bottles make the outdoor use unmistakable. This directly supports an article about hiking customers and pack-pocket fit without claiming a particular XUYI product or retailer.",
+      "topicAnchors": [
+        "outdoor",
+        "hiking"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels free-license photograph by Lan Yao. Source: https://www.pexels.com/photo/men-doing-hiking-13103812/. Free photo license permits website/blog use and modification; credit retained. No endorsement implied.",
+      "usageDisclosure": "Licensed editorial context only; visible bottles are not verified as XUYI SKUs and hikers are not represented as XUYI customers, guides, partners or product testers."
+    },
+    {
+      "slug": "sustainable-lifestyle-store-reusable-bottles-wholesale",
+      "articleTitle": "How Should Refill Shops and Sustainable Lifestyle Stores Source Reusable Bottles Without Overstating Green Claims?",
+      "cover": "/media/blog/sustainable-lifestyle-store-reusable-bottles-wholesale-20261102.webp",
+      "source": "assets/blog/sustainable-lifestyle-store-reusable-bottles-wholesale-20261102.webp",
+      "sha256": "371432f2b8595ace5e7314673ddc4e522d1a3139253314d8a23e257a99391737",
+      "visualScene": "Close-up of hands filling a clearly visible reusable water bottle at an indoor kitchen sink; the tap and refill action are visible.",
+      "buyerContext": "Sustainable lifestyle stores, refill shops and eco-focused retail buyers evaluating bottle assortments and supplier claims.",
+      "articleUse": "Illustrates the refill-use context discussed by refill shops and sustainable lifestyle retailers, rather than a retail-store scene.",
+      "sceneMatch": "The reusable water bottle and visible refill action directly match the article section on refill-point use, cleaning routines and responsible product recommendations. The kitchen setting is explicitly a use-context illustration, not a shop, product test or XUYI customer scene.",
+      "topicAnchors": [
+        "sustainable",
+        "lifestyle"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels free-license photograph by Helena Lopes. Source: https://www.pexels.com/photo/filling-reusable-bottle-at-kitchen-sink-27176108/. The Pexels page marks the image Free; website/blog use and modification permitted under the Pexels license. Credit retained; no endorsement implied.",
+      "usageDisclosure": "Independent licensed editorial photograph showing a refill-use context. It is not an XUYI product test, retail customer, refill-station approval, environmental certification or proof of product performance."
     }
   ]
 }
