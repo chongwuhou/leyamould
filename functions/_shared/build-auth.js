@@ -79,18 +79,16 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
     "/api/admin/blog-batch-20261029",
     "/api/admin/blog-batch-20261030",
     "/api/admin/blog-batch-20261031",
-    "/api/admin/blog-batch-20261101",
-    "/api/admin/blog-batch-20261102"
+    "/api/admin/blog-batch-20261102",
+    "/api/admin/blog-schedule-20261103"
   ]).has(new URL(request.url).pathname)) return false;
-  return verifyCloudflareProjectToken(bearerToken(request), env);
-}
+  return verifyCloudflareProjectToken(bearerToken(request), env);}
 
 // Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
 export async function authorizedReviewedBlogImageUploadRequest(request, env) {
- if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261101","/api/admin/blog-images-20261102"].includes(new URL(request.url).pathname)) return false;
- return verifyCloudflareProjectToken(bearerToken(request),env);
-}
-// Narrow exception for the reviewed 101-model daily XLSX publisher. The
+  if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261102","/api/admin/blog-images-20261103"].includes(new URL(request.url).pathname)) return false;
+  return verifyCloudflareProjectToken(bearerToken(request),env);
+}// Narrow exception for the reviewed 101-model daily XLSX publisher. The
 // existing GitHub CI Cloudflare token proves access to THIS XUYI project,
 // but may only call the source-validated, append-only, three-per-day endpoint.
 // Ordinary admin CRUD remains password/session protected as before.

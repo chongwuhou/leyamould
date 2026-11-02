@@ -61,9 +61,9 @@ export function reviewedBlogRelatedAtEnd(post){
  // the published article body remains unchanged. Later owner-picked related
  // slugs take priority. An explicit relatedReading=false suppresses this.
  const source=SOURCE_GUIDE_BY_SLUG[post?.slug];
- if(!source||post?.relatedReading===false)return "";
+ if(post?.relatedReading===false)return "";
  const chosen=Array.isArray(post?.related)?post.related:[];
- const pristine=post.intro===source.intro &&
+ const pristine=Boolean(source)&&post.intro===source.intro &&
    Array.isArray(post.sections)&&post.sections.length===source.sections.length &&
    post.sections.every((s,i)=>s.heading===source.sections[i].heading&&s.paragraph===source.sections[i].paragraph);
  const selected=chosen.length?chosen:(pristine?source.related:[]);
@@ -180,6 +180,7 @@ export function normalizeBlogPost(raw){
  const title=str(raw?.title,125),description=str(raw?.description,250),intro=str(raw?.intro,2000);
  if(title.length<12||description.length<25||intro.length<50)throw Error('Title, description and introduction must be substantive.');
  const cover=str(raw?.cover,220);if(!IMAGE.test(cover))throw Error('Use a local XUYI image path.');
+  const coverAlt=str(raw?.coverAlt,240)||title;
  const items=raw?.sections;
  if(!Array.isArray(items)||items.length<2||items.length>24)throw Error('Please write 2–24 article sections.');
  const sections=items.map(s=>({heading:str(s?.heading,140),paragraph:str(s?.paragraph,4200)}));
@@ -191,7 +192,7 @@ export function normalizeBlogPost(raw){
  const group=str(raw?.group,70)||'Buyer Resources',updated=new Date().toISOString().slice(0,10);
  const primary_keyword=str(raw?.primary_keyword,110),secondary_keywords=(Array.isArray(raw?.secondary_keywords)?raw.secondary_keywords:[]).slice(0,12).map(v=>str(v,110)).filter(Boolean);
  const buyerDecisionTable=normalizeBuyerDecisionTable(raw?.buyerDecisionTable);
- return {slug,title,description,intro,cover,sections,faqs,checklist,related,group,category:'Buyer Resources',primary_keyword,secondary_keywords,updated,
+ return {slug,title,description,intro,cover,coverAlt,sections,faqs,checklist,related,group,category:'Buyer Resources',primary_keyword,secondary_keywords,updated,
   ...(buyerDecisionTable!==undefined?{buyerDecisionTable}:{}),
   ...(raw?.depthEvidence===false?{depthEvidence:false}:{}),
   ...(raw?.relatedReading===false?{relatedReading:false}:{}),
@@ -363,4 +364,3 @@ export function composePage(template,body,post,route){
  }
  return html;
 }
-

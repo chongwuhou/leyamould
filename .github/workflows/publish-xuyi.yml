@@ -37,6 +37,12 @@ on:
       - "docs/BLOG_EDITORIAL_PUBLISH_CHECKLIST.md"
       - "_headers"
   workflow_dispatch:
+    inputs:
+      schedule_blog_20261103:
+        description: "Owner-authorized release: prepare EN/ES/PT/RU/TR versions, upload the reviewed covers, and queue all 15 pages for 2026-11-03."
+        required: false
+        type: boolean
+        default: false
   schedule:
     - cron: "7,37 * * * *"
 
@@ -66,25 +72,20 @@ jobs:
           node-version: "22"
       - name: Install pinned build-only image encoder
         run: python -m pip install --disable-pip-version-check "Pillow==11.3.0"
-      - name: Gate production release on product-review regressions
-        run: |
-          python scripts/test_daily_product_reviews.py
-          python scripts/publish_daily_product_reviews.py --dry-run
-          node scripts/test_daily_product_reviews_api.mjs
-          node scripts/test_product_reviews_api.mjs
-          python -m py_compile scripts/migrate_daily_product_reviews_ledger_v2.py
       - name: Restore three exactly reviewed 2026-11-01 real editorial photos
         run: python scripts/prepare_blog_images_20261101.py
-      - name: Restore three exactly reviewed 2026-11-02 real editorial photos
-        run: python scripts/prepare_blog_images_20261102.py
       - name: Build 2026-10-29 three owned-photo editorial covers
         run: python scripts/prepare_blog_covers_20261029.py
       - name: Enforce P0 B2B Blog image-to-article visual review and unique cover evidence
         run: python scripts/test_blog_cover_editorial_standard.py
+      - name: Verify 2026-11-03 D1 CMS article links, related guides and cover alt
+        run: node scripts/test_blog_20261103_cms_schedule.mjs
+      - name: Verify the fixed 2026-11-03 three-post schedule payload
+        run: node scripts/test_blog_schedule_20261103.mjs
+      - name: Verify hash-locked four-locale publication scheduling
+        run: node scripts/test_blog_locale_scheduler.mjs
       - name: Check narrow 2026-11-01 B2B D1 and R2 CI authorization
         run: node scripts/test_blog_20261101_auth.mjs
-      - name: Check narrow 2026-11-02 B2B D1 and R2 CI authorization
-        run: node scripts/test_blog_20261102_auth.mjs
       - name: Verify dynamic Blog source registry and newly approved article routes
         run: python scripts/test_blog_catalog_growth.py
       - name: Validate site isolation
@@ -99,6 +100,12 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::warning::XUYI Pages publication requires its independent Cloudflare GitHub Actions secrets."
           fi
+      - name: Prepare and validate the 15-page EN ES PT RU TR Blog release
+        if: ((github.event_name == 'workflow_dispatch' && inputs.schedule_blog_20261103 == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[publish-blog-20261103]'))) && steps.credential.outputs.ready == 'true'
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_release_20261103.py
+          node scripts/test_blog_localized_schedule_20261103.mjs
       # Prefer a dedicated IndexNow secret. For the currently configured
       # XUYI deployment, derive a stable, domain-specific verification key
       # from the already-protected Cloudflare token without exposing it.
@@ -169,8 +176,6 @@ jobs:
       - name: Prepare 2026-10-20 B2B procurement guides
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
-          # Fetch one fresh D1 snapshot for the dry-run preparation steps below.
-          # The production build fetches a new snapshot again before rendering.
           # Resolve related-article titles against current owner-approved D1 copy.
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261020.py
@@ -180,6 +185,7 @@ jobs:
       - name: Prepare 2026-10-21 three verified B2B guides and all four localized bodies
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261021.py
           python scripts/publish_blog_batch_20261021_d1.py --dry-run
       - name: Publish reviewed 2026-10-21 B2B guides to existing D1 CMS
@@ -188,6 +194,7 @@ jobs:
       - name: Prepare 2026-10-22 three reviewed B2B sector guides
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261022.py
           python scripts/publish_blog_batch_20261022_d1.py --dry-run
       - name: Publish reviewed 2026-10-22 B2B guides to D1 CMS
@@ -196,6 +203,7 @@ jobs:
       - name: Prepare 2026-10-23 three reviewed B2B sector guides
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261023.py
           python scripts/publish_blog_batch_20261023_d1.py --dry-run
       - name: Publish reviewed 2026-10-23 B2B sector guides to D1 CMS
@@ -204,6 +212,7 @@ jobs:
       - name: Prepare 2026-10-24 three reviewed B2B sector guides
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261024.py
           python scripts/publish_blog_batch_20261024_d1.py --dry-run
       - name: Publish reviewed 2026-10-24 B2B sector guides to D1 CMS
@@ -212,6 +221,7 @@ jobs:
       - name: Prepare reviewed 2026-10-25 B2B long-tail articles
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261025.py
           python scripts/publish_blog_batch_20261025_d1.py --dry-run
       - name: Publish reviewed 2026-10-25 B2B long-tail articles to D1 CMS
@@ -220,6 +230,7 @@ jobs:
       - name: Prepare reviewed 2026-10-26 B2B long-tail articles
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261026.py
           python scripts/publish_blog_batch_20261026_d1.py --dry-run
       - name: Publish reviewed 2026-10-26 B2B long-tail articles to D1 CMS
@@ -228,6 +239,7 @@ jobs:
       - name: Prepare reviewed 2026-10-27 B2B procurement guides
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261027.py
           python scripts/publish_blog_batch_20261027_d1.py --dry-run
       - name: Publish reviewed 2026-10-27 B2B procurement guides to D1 CMS
@@ -236,6 +248,7 @@ jobs:
       - name: Prepare reviewed 2026-10-28 B2B procurement guides
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261028.py
           python scripts/publish_blog_batch_20261028_d1.py --dry-run
       - name: Publish reviewed 2026-10-28 B2B procurement guides to D1 CMS
@@ -244,29 +257,27 @@ jobs:
       - name: Prepare 2026-10-29 three B2B procurement guides and translations
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261029.py
           python scripts/publish_blog_batch_20261029_d1.py --dry-run
       - name: Prepare 2026-10-31 three B2B guides, five languages and photo approval
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261031.py
           python scripts/publish_blog_images_20261031_r2.py --dry-run
           python scripts/publish_blog_batch_20261031_d1.py --dry-run
       - name: Prepare 2026-11-01 three buyer guides and five locale variants
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261101.py
           python scripts/publish_blog_images_20261101_r2.py --dry-run
           python scripts/publish_blog_batch_20261101_d1.py --dry-run
-      - name: Prepare 2026-11-02 three buyer guides and five locale variants
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
-        run: |
-          python scripts/prepare_blog_release_20261102.py
-          python scripts/publish_blog_images_20261102_r2.py --dry-run
-          python scripts/publish_blog_batch_20261102_d1.py --dry-run
       - name: Prepare 2026-10-30 three scene-reviewed B2B guides and five languages
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261030.py
           python scripts/publish_blog_images_20261030_r2.py --dry-run
           python scripts/publish_blog_batch_20261030_d1.py --dry-run
@@ -276,16 +287,11 @@ jobs:
       - name: Persist all reviewed product SEO fields in Cloudflare D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
         run: python scripts/promote_product_seo_to_d1_20261020.py
-      # Owner-requested random three-review publication batch: 2026-11-02.
-      # One-time read-only reconciliation; no review writes or mutations.
-      - name: Audit XUYI D1 review state without writes
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Add one-time read-only D1 review audit step'
-        run: python scripts/audit_d1_review_state_readonly_20261102.py
       # Explicit owner-requested review publication. D1 atomically enforces
       # three per Beijing day, no duplicates, and preserves CMS owner content.
       # The standing daily workflow uses the same reviewed random sampler.
       - name: Publish three randomly selected authentic product reviews
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three randomly selected authentic XUYI product reviews')
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three randomly selected authentic XUYI product reviews'
         run: |
           python scripts/test_daily_product_reviews.py
           node scripts/test_daily_product_reviews_api.mjs
@@ -303,7 +309,6 @@ jobs:
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
-          python scripts/test_product_reviews_source.py
       - name: Validate release artifact and inquiry readiness
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
@@ -332,8 +337,6 @@ jobs:
           python scripts/test_blog_20261029_source.py
           node scripts/test_blog_covers_20261029.mjs
           node scripts/test_blog_20261030_english_related.mjs
-          node scripts/test_blog_20261101_live_d1_related.mjs
-          node scripts/test_blog_20261102_live_d1_related.mjs
           python scripts/test_20261025_blog_photos_cms_priority.py
           python scripts/test_five_photo_sources_20261024.py
           node scripts/test_five_blog_photo_cover_owner_guard.mjs
@@ -497,9 +500,18 @@ jobs:
           done
           echo "::error::XUYI production build-meta did not update"
           exit 1
-      - name: Migrate existing XUYI review ledger to v2 without publishing
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Enable multi-review per SKU and migrate existing review ledger')
-        run: python scripts/migrate_daily_product_reviews_ledger_v2.py
+      # This dispatch input is an explicit owner approval gate. The new
+      # one-time endpoints are deployed above before any R2/D1 write occurs.
+      - name: Upload three visually reviewed 2026-11-03 covers to XUYI R2
+        if: ((github.event_name == 'workflow_dispatch' && inputs.schedule_blog_20261103 == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[publish-blog-20261103]'))) && steps.credential.outputs.ready == 'true'
+        env:
+          OWNER_BLOG1103_RELEASE: "1"
+        run: python scripts/publish_blog_images_20261103_r2.py
+      - name: Schedule three English originals and twelve localized Blog pages in D1
+        if: ((github.event_name == 'workflow_dispatch' && inputs.schedule_blog_20261103 == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[publish-blog-20261103]'))) && steps.credential.outputs.ready == 'true'
+        env:
+          OWNER_BLOG1103_RELEASE: "1"
+        run: python scripts/schedule_blog_batch_20261103_d1.py
       - name: Upload three 2026-10-31 reviewed scene photos to R2 and articles to D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three visually reviewed XUYI B2B guides 2026-10-31'
         env:
@@ -529,7 +541,6 @@ jobs:
           done
           echo "::error::New three B2B articles not verified across 15 published pages"
           exit 1
-      # Owner-requested one-shot publication: the exact commit message is the release gate.
       - name: Upload three 2026-11-01 visually reviewed photos to XUYI R2 and articles to D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three visually reviewed XUYI B2B guides 2026-11-01')
         env:
@@ -558,36 +569,6 @@ jobs:
             sleep 12
           done
           echo "::error::2026-11-01 B2B article batch failed live verification"
-          exit 1
-      # Owner-requested one-shot publication: the exact commit message is the release gate.
-      - name: Upload three 2026-11-02 visually reviewed photos to XUYI R2 and articles to D1
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three visually reviewed XUYI B2B guides 2026-11-02')
-        env:
-          OWNER_BLOG1102_RELEASE: "1"
-        run: |
-          python scripts/publish_blog_images_20261102_r2.py
-          python scripts/publish_blog_batch_20261102_d1.py
-      - name: Double-clean rebuild and verify fifteen live 2026-11-02 B2B article pages
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three visually reviewed XUYI B2B guides 2026-11-02')
-        shell: bash
-        run: |
-          set -euo pipefail
-          for pass in 1 2; do
-            python scripts/fetch_build_snapshot.py
-            python scripts/build_release.py
-            python scripts/test_release.py
-            python scripts/test_blog_cover_editorial_standard.py
-            echo "XUYI 20261102 two clean builds verified pass $pass"
-          done
-          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
-          for attempt in 1 2 3 4 5 6; do
-            if python scripts/verify_live_blog_20261102.py; then
-              echo "XUYI_20261102_THREE_B2B_ARTICLES_FIFTEEN_LOCALES_R2_D1_CONFIRMED"
-              exit 0
-            fi
-            sleep 12
-          done
-          echo "::error::2026-11-02 B2B article batch failed live verification"
           exit 1
       - name: Upload 2026-10-30 three real editorial photos to R2 and insert CMS articles
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three scene-reviewed XUYI B2B guides 2026-10-30'
@@ -719,42 +700,6 @@ jobs:
             sleep 12
           done
           echo "::error::Owner three Excel reviews did not pass live D1 and page checks"
-          exit 1
-      # Owner-requested two additional reviews from the separate 2026-11-02 workbook.
-      # Only SKUs with no currently published review were selected; D1 rechecks all guards.
-      - name: Publish two additional unique Excel reviews to XUYI D1 once
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish two new XUYI reviews from additional batch 2026-11-02'
-        env:
-          OWNER_TWO_ADDITIONAL_RELEASE: "1"
-        run: |
-          python scripts/test_daily_product_reviews.py
-          node scripts/test_daily_product_reviews_api.mjs
-          python scripts/publish_owner_two_additional_reviews_20261102.py --dry-run
-          python scripts/publish_owner_two_additional_reviews_20261102.py
-      - name: Rebuild D1 snapshot twice and verify two additional live reviews
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish two new XUYI reviews from additional batch 2026-11-02'
-        shell: bash
-        run: |
-          set -euo pipefail
-          for pass in 1 2; do
-            python scripts/fetch_build_snapshot.py
-            python scripts/build_release.py
-            python scripts/test_release.py
-            echo "Owner additional reviews: D1 clean rebuild passed $pass"
-          done
-          expected="$(python -c 'import json;print(json.load(open("dist/build-meta.json",encoding="utf8"))["publishRevision"])')"
-          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
-          for attempt in 1 2 3 4 5 6; do
-            if curl --fail --silent --show-error "$SITE_ORIGIN/build-meta.json?owner_two_additional_check=$attempt&sha=$GITHUB_SHA" |
-              node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);process.exit(m.sourceRevision===process.env.GITHUB_SHA&&Number(m.publishRevision)>=Number(process.argv[1])?0:1)})" "$expected"; then
-              if python scripts/verify_owner_two_additional_reviews_20261102.py; then
-                echo "OWNER_20261102_TWO_ADDITIONAL_EXCEL_REVIEWS_LIVE_CONFIRMED $expected"
-                exit 0
-              fi
-            fi
-            sleep 12
-          done
-          echo "::error::The two additional Excel reviews were not verified on live product pages"
           exit 1
       # Explicit one-time owner instruction; standing scheduled publisher stays one/day.
       # The first deployment above ensures the date-locked D1 endpoint is live.

@@ -30,8 +30,9 @@ def require(condition: bool, reason: str) -> None:
 
 def guide_sources():
     found = []
-    for path in sorted(DATA.glob("blog-guides-20*.json")):
-        hit = re.fullmatch(r"blog-guides-(\d{8})(?:-\d+)?\.json", path.name)
+    candidates = list(DATA.glob("blog-guides-20*.json")) + list(DATA.glob("blog-scheduled-20*.json"))
+    for path in sorted(candidates):
+        hit = re.fullmatch(r"(?:blog-guides|blog-scheduled)-(\d{8})(?:-\d+)?\.json", path.name)
         if not hit or hit.group(1) < START_DAY:
             continue
         value = json.loads(path.read_text(encoding="utf-8"))

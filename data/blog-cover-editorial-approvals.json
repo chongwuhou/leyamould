@@ -5,33 +5,6 @@
   "effectiveFrom": "2026-10-29",
   "records": [
     {
-      "slug": "warehouse-staff-custom-water-bottles-bulk-procurement",
-      "visualScene": "Three high visibility uniformed workers in an industrial warehouse environment; staff and shift team context.",
-      "buyerContext": "warehouse workforce shift issue and employee procurement",
-      "articleUse": "team worksite and employee onboarding bottle programs",
-      "sceneMatch": "The workers and warehouse worksite visually indicate the buying audience; this is a contextual scene and not a photograph of the exact bottle SKU.",
-      "topicAnchors": [
-        "warehouse",
-        "staff"
-      ],
-      "productVisibility": "owner-approved-contextual",
-      "scores": {
-        "sector": 5,
-        "productUse": 4,
-        "commercialRealism": 4,
-        "truthfulness": 5,
-        "composition": 5
-      },
-      "articleTitle": "How Should Warehouses Buy Branded Water Bottles for Shift Employees in Bulk?",
-      "cover": "/media/blog/warehouse-staff-reviewed-20261029.webp",
-      "source": "assets/blog/warehouse-staff-reviewed-20261029.webp",
-      "sha256": "13ee0485f727eaf37ed989eb8bd726cf03970867fa597d15f69e03a2702fba5d",
-      "reviewDecision": "owner-selected-reference-2026-10-29",
-      "visualReview": "owner-selected-three-covers",
-      "provenance": "owner-selected context image; not factory or exact-SKU evidence",
-      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
-    },
-    {
       "slug": "airport-rail-station-travel-retail-water-bottles-wholesale",
       "visualScene": "Multiple colorful reusable water bottles displayed together on a travel retail store shelf.",
       "buyerContext": "airport and rail station store retail buyers",
@@ -59,55 +32,28 @@
       "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
     },
     {
-      "slug": "coworking-space-member-welcome-kit-water-bottles-wholesale",
-      "visualScene": "Several coworkers at a shared office meeting table with reusable water bottles in the foreground.",
-      "buyerContext": "coworking operators and member onboarding teams",
-      "articleUse": "new member welcome kits and shared office bottle gifts",
-      "sceneMatch": "Coworking members seated in an office environment with bottles visually express the welcome gift and member use case.",
+      "slug": "bicycle-shop-water-bottle-cage-fit-wholesale-buying",
+      "articleTitle": "What Should Bicycle Shops Check Before Buying Water Bottles for Retail?",
+      "cover": "/media/blog/bicycle-retail-bottle-cage-fit-20261031.webp",
+      "source": "assets/blog/bicycle-retail-bottle-cage-fit-20261031.webp",
+      "sha256": "472d1382282f975fb71da126e704b2179ea75727360a7c8015060d07fbe5069f",
+      "visualScene": "Orange road bicycle frame with two dark water bottles seated in black bottle cages",
+      "buyerContext": "Bicycle Store Bottle Merchandising product buying managers and procurement coordinators",
+      "articleUse": "bicycle shop water bottles wholesale cage fit purchasing, allocation and approval",
+      "sceneMatch": "The product is shown in the actual bicycle-frame bottle cage, making the specialty shop's physical fit, clearance and retail assortment decisions apparent at a glance.",
       "topicAnchors": [
-        "coworking",
-        "member"
+        "bicycle",
+        "shop"
       ],
       "productVisibility": "clearly-visible",
+      "provenance": "Pexels licensed stock photo by Şahin Doğdu, source https://www.pexels.com/photo/bottle-on-a-bicycle-frame-25907390/. Illustrative scenario only, no verified XUYI product or client connection.",
+      "usageDisclosure": "Contextual stock photo, not the exact product SKU, XUYI customer, factory, order or a compliance certification.",
       "scores": {
         "sector": 5,
         "productUse": 5,
         "commercialRealism": 5,
         "truthfulness": 5,
         "composition": 5
-      },
-      "articleTitle": "How Should Coworking Spaces Source Branded Water Bottles for Member Welcome Kits?",
-      "cover": "/media/blog/coworking-member-reviewed-20261029.webp",
-      "source": "assets/blog/coworking-member-reviewed-20261029.webp",
-      "sha256": "a58c1c6c6cd2b78561ef3bdb45e07ca54679a0376a1313c2476106d532070e6a",
-      "reviewDecision": "owner-selected-reference-2026-10-29",
-      "visualReview": "owner-selected-three-covers",
-      "provenance": "owner-selected context image; not factory or exact-SKU evidence",
-      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
-    },
-    {
-      "slug": "soccer-academy-team-water-bottles-bulk-buying",
-      "articleTitle": "How Should Soccer Academies Buy Reusable Team Water Bottles in Bulk?",
-      "cover": "/media/blog/soccer-academy-team-bottles-20261030.webp",
-      "source": "assets/blog/soccer-academy-team-bottles-20261030.webp",
-      "sha256": "240865e2af3e91331456ad1c9b5be113975600bea9ed2112b67b4ed11bff0ffb",
-      "visualScene": "Several yellow sports water bottles in a black carrier beside the grass of a soccer training pitch, with shoes in the background; cropped to avoid the original third-party logo.",
-      "buyerContext": "soccer academy coaches and team equipment purchasing coordinators",
-      "articleUse": "bulk squad bottle allocation, individual player equipment, and sidelines during football training",
-      "sceneMatch": "The photo clearly displays a full carrier with multiple reusable sports water bottles on football grass, directly matching the soccer academy's team hydration inventory, training sideline arrangements and player equipment buying context.",
-      "topicAnchors": [
-        "soccer",
-        "team"
-      ],
-      "productVisibility": "clearly-visible",
-      "provenance": "Unsplash License free commercial photograph by Andy Hall; original https://unsplash.com/photos/yellow-and-black-water-tumblers-0zsdIfJB_Kg. Cropped to focus on reusable bottles, not proprietary carrier brand. XUYI not depicted.",
-      "usageDisclosure": "Independent licensed illustrative editorial photo, not a XUYI model, customer, factory, club partnership or product test evidence.",
-      "scores": {
-        "sector": 5,
-        "productUse": 5,
-        "commercialRealism": 5,
-        "truthfulness": 5,
-        "composition": 4
       },
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared"
@@ -140,31 +86,31 @@
       "visualReview": "actual-image-and-article-compared"
     },
     {
-      "slug": "corporate-training-workshop-water-bottles-wholesale",
-      "articleTitle": "How Should Corporate Training Venues Source Reusable Bottles for Workshops?",
-      "cover": "/media/blog/corporate-training-room-bottles-20261030.webp",
-      "source": "assets/blog/corporate-training-room-bottles-20261030.webp",
-      "sha256": "533715bfbe70ecd79dfa7fa1f5f204e18de45bb944735993e463f2c4f659a8b4",
-      "visualScene": "Professional training conference room with a long table, several water bottles set out beside blank writing pads and chairs under a window.",
-      "buyerContext": "corporate training venue and professional workshop procurement and facilities coordinators",
-      "articleUse": "buying a reusable water-bottle alternative for meeting and workshop delegate water service",
-      "sceneMatch": "The visible training room seating, notebooks, conference table and prepared bottles directly show the workshop delegate water-service setup that the training buyer is procuring for, even though the pictured existing bottles are not verified reusable XUYI models.",
+      "slug": "bulk-water-bottles-for-school-student-programs",
+      "articleTitle": "How Should Schools Source Bulk Reusable Water Bottles for Student Programs and Field Trips?",
+      "cover": "/media/blog/bulk-water-bottles-for-school-student-programs-20261103.webp",
+      "source": "assets/blog/bulk-water-bottles-for-school-student-programs-20261103.webp",
+      "sha256": "aecdc8eff5e057f8714eae84aa68bf795306c68545b4f932bfd280f56e0c0b99",
+      "visualScene": "Two students seated at a classroom table during a break, each handling a visible water bottle beside snacks and school supplies.",
+      "buyerContext": "School administrators and student-program coordinators procuring bottles for pupils, welcome packs and school activities.",
+      "articleUse": "Student bottle programs, classroom distribution, field-trip kits and school-year procurement planning.",
+      "sceneMatch": "The image shows students in a classroom with two clearly visible bottles and school-day items on the table. The school setting and student use directly match the article's school procurement audience; the photo is an independent editorial scene and not an XUYI school customer or exact product model.",
       "topicAnchors": [
-        "training",
-        "workshop"
+        "school",
+        "student"
       ],
       "productVisibility": "clearly-visible",
-      "provenance": "Pexels License free commercial photograph by RDNE Stock project; source https://www.pexels.com/photo/water-bottles-on-wooden-table-7648016/. Contextual existing event water service, not an exact reusable XUYI product.",
-      "usageDisclosure": "Contextual conference setup photo, not a XUYI customer or sample; depicted water bottles might be single use, article discusses procurement of reusable replacement.",
       "scores": {
         "sector": 5,
-        "productUse": 4,
+        "productUse": 5,
         "commercialRealism": 5,
         "truthfulness": 5,
         "composition": 5
       },
       "reviewDecision": "visually-reviewed-approved",
-      "visualReview": "actual-image-and-article-compared"
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels free-to-use editorial photograph by Pavel Danilyuk. Source: https://www.pexels.com/photo/close-up-shot-of-girls-holding-their-water-bottles-8423403/. Downloaded and resized to 1200x800 WebP without adding product claims or logos; no endorsement implied.",
+      "usageDisclosure": "Independent licensed editorial photograph, not an XUYI product model, school customer, school partnership, factory or product test."
     },
     {
       "slug": "construction-site-crew-water-bottles-bulk-procurement",
@@ -194,25 +140,25 @@
       "visualReview": "actual-image-and-article-compared"
     },
     {
-      "slug": "workplace-refill-station-reusable-bottle-bulk-sourcing",
-      "articleTitle": "How Should Employers Source Reusable Bottles for Staff Refill Stations?",
-      "cover": "/media/blog/workplace-employee-bottle-refill-program-20261031.webp",
-      "source": "assets/blog/workplace-employee-bottle-refill-program-20261031.webp",
-      "sha256": "2e5b08d4cb4598133e36d7b572edc13e85daa73bd65b87296ba8b86a4bb600f2",
-      "visualScene": "Hands holding a wide-mouth transparent plastic drinking container under a flowing metal sink tap",
-      "buyerContext": "Employer Staff Refill Program product buying managers and procurement coordinators",
-      "articleUse": "employee refill station reusable bottles wholesale purchasing, allocation and approval",
-      "sceneMatch": "The photo clearly depicts water being refilled into a reusable plastic container at a tap, precisely illustrating workplace employee refill-point buying decisions and the opening clearance being discussed in the article.",
+      "slug": "corporate-training-workshop-water-bottles-wholesale",
+      "articleTitle": "How Should Corporate Training Venues Source Reusable Bottles for Workshops?",
+      "cover": "/media/blog/corporate-training-room-bottles-20261030.webp",
+      "source": "assets/blog/corporate-training-room-bottles-20261030.webp",
+      "sha256": "533715bfbe70ecd79dfa7fa1f5f204e18de45bb944735993e463f2c4f659a8b4",
+      "visualScene": "Professional training conference room with a long table, several water bottles set out beside blank writing pads and chairs under a window.",
+      "buyerContext": "corporate training venue and professional workshop procurement and facilities coordinators",
+      "articleUse": "buying a reusable water-bottle alternative for meeting and workshop delegate water service",
+      "sceneMatch": "The visible training room seating, notebooks, conference table and prepared bottles directly show the workshop delegate water-service setup that the training buyer is procuring for, even though the pictured existing bottles are not verified reusable XUYI models.",
       "topicAnchors": [
-        "workplace",
-        "refill"
+        "training",
+        "workshop"
       ],
       "productVisibility": "clearly-visible",
-      "provenance": "Pexels licensed stock photo by Miriam Alonso, source https://www.pexels.com/photo/close-up-of-a-woman-pouring-water-into-a-bottle-7622925/. Illustrative scenario only, no verified XUYI product or client connection.",
-      "usageDisclosure": "Contextual stock photo, not the exact product SKU, XUYI customer, factory, order or a compliance certification.",
+      "provenance": "Pexels License free commercial photograph by RDNE Stock project; source https://www.pexels.com/photo/water-bottles-on-wooden-table-7648016/. Contextual existing event water service, not an exact reusable XUYI product.",
+      "usageDisclosure": "Contextual conference setup photo, not a XUYI customer or sample; depicted water bottles might be single use, article discusses procurement of reusable replacement.",
       "scores": {
         "sector": 5,
-        "productUse": 5,
+        "productUse": 4,
         "commercialRealism": 5,
         "truthfulness": 5,
         "composition": 5
@@ -221,22 +167,20 @@
       "visualReview": "actual-image-and-article-compared"
     },
     {
-      "slug": "bicycle-shop-water-bottle-cage-fit-wholesale-buying",
-      "articleTitle": "What Should Bicycle Shops Check Before Buying Water Bottles for Retail?",
-      "cover": "/media/blog/bicycle-retail-bottle-cage-fit-20261031.webp",
-      "source": "assets/blog/bicycle-retail-bottle-cage-fit-20261031.webp",
-      "sha256": "472d1382282f975fb71da126e704b2179ea75727360a7c8015060d07fbe5069f",
-      "visualScene": "Orange road bicycle frame with two dark water bottles seated in black bottle cages",
-      "buyerContext": "Bicycle Store Bottle Merchandising product buying managers and procurement coordinators",
-      "articleUse": "bicycle shop water bottles wholesale cage fit purchasing, allocation and approval",
-      "sceneMatch": "The product is shown in the actual bicycle-frame bottle cage, making the specialty shop's physical fit, clearance and retail assortment decisions apparent at a glance.",
+      "slug": "corporate-wellness-water-bottle-bulk-sourcing",
+      "articleTitle": "How Should Employers Source Branded Water Bottles for Corporate Wellness Challenges?",
+      "cover": "/media/blog/corporate-wellness-water-bottle-bulk-sourcing-20261103.webp",
+      "source": "assets/blog/corporate-wellness-water-bottle-bulk-sourcing-20261103.webp",
+      "sha256": "9db496bf226f565b2fc066e47315f2ba85d7b251db816d487fe881989eb729f0",
+      "visualScene": "A woman receiving a clearly visible blue sports water bottle during an outdoor exercise session.",
+      "buyerContext": "Corporate HR, employee-experience and procurement teams arranging branded bottles for wellness challenges and company activity days.",
+      "articleUse": "Employee activity kits, wellness challenges, outdoor company events and branded participant distribution.",
+      "sceneMatch": "The visible handover of a sports bottle during an outdoor exercise session directly illustrates a participant kit and activity-day use case. The image is a licensed editorial scene, not a photograph of an XUYI corporate customer, company event, exact SKU or performance test.",
       "topicAnchors": [
-        "bicycle",
-        "shop"
+        "corporate",
+        "wellness"
       ],
       "productVisibility": "clearly-visible",
-      "provenance": "Pexels licensed stock photo by Şahin Doğdu, source https://www.pexels.com/photo/bottle-on-a-bicycle-frame-25907390/. Illustrative scenario only, no verified XUYI product or client connection.",
-      "usageDisclosure": "Contextual stock photo, not the exact product SKU, XUYI customer, factory, order or a compliance certification.",
       "scores": {
         "sector": 5,
         "productUse": 5,
@@ -245,25 +189,21 @@
         "composition": 5
       },
       "reviewDecision": "visually-reviewed-approved",
-      "visualReview": "actual-image-and-article-compared"
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels free-to-use editorial photograph by Ketut Subiyanto. Source: https://www.pexels.com/photo/happy-woman-holding-water-bottle-at-workout-5038819/. Downloaded and resized to 1200x800 WebP without adding product claims or logos; no endorsement implied.",
+      "usageDisclosure": "Independent licensed editorial photograph, not an XUYI product model, corporate customer, employer program, factory or product test."
     },
     {
-      "slug": "homeware-store-reusable-water-bottles-wholesale",
-      "articleTitle": "How Should Homeware Stores Buy Reusable Water Bottles for Retail Shelves?",
-      "cover": "/media/blog/homeware-retail-drinkware-assortment-20261101.webp",
-      "source": "assets/blog/homeware-retail-drinkware-assortment-20261101.webp",
-      "sha256": "0b691e1b1f2ba10e00123fc04210c430c75e88edd15fb03653846800852dd007",
-      "visualScene": "Two shoppers in a lifestyle retail store use a tablet next to a wooden shelf filled with pink and white reusable bottles and tumblers; bottles, customers and store shelves are clearly visible.",
-      "buyerContext": "homeware stores and retail merchandise buyers choosing reusable bottle assortments",
-      "articleUse": "retail shelf display assessment, packaging and wholesale purchasing",
-      "sceneMatch": "The photographed shoppers and several clearly displayed reusable bottles make a direct visual match to homeware stores selecting retail bottle stock and comparing shelf-facing display options. No pictured product is claimed as XUYI.",
+      "slug": "coworking-space-member-welcome-kit-water-bottles-wholesale",
+      "visualScene": "Several coworkers at a shared office meeting table with reusable water bottles in the foreground.",
+      "buyerContext": "coworking operators and member onboarding teams",
+      "articleUse": "new member welcome kits and shared office bottle gifts",
+      "sceneMatch": "Coworking members seated in an office environment with bottles visually express the welcome gift and member use case.",
       "topicAnchors": [
-        "homeware",
-        "stores"
+        "coworking",
+        "member"
       ],
       "productVisibility": "clearly-visible",
-      "provenance": "Licensed free-to-use Pexels photo by Tom Tillhub, https://www.pexels.com/photo/women-looking-at-products-in-a-shop-with-water-bottles-6925916/",
-      "usageDisclosure": "Independent licensed editorial scene; not a photographed XUYI customer, model, factory, certification or performance test.",
       "scores": {
         "sector": 5,
         "productUse": 5,
@@ -271,35 +211,14 @@
         "truthfulness": 5,
         "composition": 5
       },
-      "reviewDecision": "visually-reviewed-approved",
-      "visualReview": "actual-image-and-article-compared"
-    },
-    {
-      "slug": "tennis-club-team-water-bottles-bulk-buying",
-      "articleTitle": "How Should Tennis Clubs Buy Reusable Bottles for Teams and Lessons in Bulk?",
-      "cover": "/media/blog/tennis-club-court-bottle-20261101.webp",
-      "source": "assets/blog/tennis-club-court-bottle-20261101.webp",
-      "sha256": "f71a4d7b312f4da004d3a504bca6e1f104ca5e28e9cdc016218a096971f9a03b",
-      "visualScene": "Bright orange reusable sports bottle with red flip lid stands next to a teal sports-court net on blue playing surface; bottle and net occupy much of the frame.",
-      "buyerContext": "tennis clubs and training coaches issuing league and lesson water bottles and tennis lessons",
-      "articleUse": "court-side member issue, name labels, training bottle kit buying",
-      "sceneMatch": "A large reusable sports bottle is visibly situated right beside a sports net and court surface. It matches court-side team bottle use, while we do not infer the exact venue, tennis competition or product identity from this image. The editorial context supports a tennis lessons equipment discussion without asserting a pictured club.",
-      "topicAnchors": [
-        "tennis",
-        "lessons"
-      ],
-      "productVisibility": "clearly-visible",
-      "provenance": "Licensed free-to-use Pexels photo by Anna Shvets, https://www.pexels.com/photo/bottle-of-water-on-sport-ground-5069203/",
-      "usageDisclosure": "Independent licensed editorial scene; not a photographed XUYI customer, model, factory, certification or performance test.",
-      "scores": {
-        "sector": 5,
-        "productUse": 5,
-        "commercialRealism": 5,
-        "truthfulness": 5,
-        "composition": 4
-      },
-      "reviewDecision": "visually-reviewed-approved",
-      "visualReview": "actual-image-and-article-compared"
+      "articleTitle": "How Should Coworking Spaces Source Branded Water Bottles for Member Welcome Kits?",
+      "cover": "/media/blog/coworking-member-reviewed-20261029.webp",
+      "source": "assets/blog/coworking-member-reviewed-20261029.webp",
+      "sha256": "a58c1c6c6cd2b78561ef3bdb45e07ca54679a0376a1313c2476106d532070e6a",
+      "reviewDecision": "owner-selected-reference-2026-10-29",
+      "visualReview": "owner-selected-three-covers",
+      "provenance": "owner-selected context image; not factory or exact-SKU evidence",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
     },
     {
       "slug": "functional-training-gym-member-bottles-wholesale",
@@ -356,6 +275,33 @@
       "usageDisclosure": "Licensed editorial context only; the bottle is not verified as an XUYI SKU and the image does not show an XUYI customer, club partnership, factory, order or product test."
     },
     {
+      "slug": "homeware-store-reusable-water-bottles-wholesale",
+      "articleTitle": "How Should Homeware Stores Buy Reusable Water Bottles for Retail Shelves?",
+      "cover": "/media/blog/homeware-retail-drinkware-assortment-20261101.webp",
+      "source": "assets/blog/homeware-retail-drinkware-assortment-20261101.webp",
+      "sha256": "0b691e1b1f2ba10e00123fc04210c430c75e88edd15fb03653846800852dd007",
+      "visualScene": "Two shoppers in a lifestyle retail store use a tablet next to a wooden shelf filled with pink and white reusable bottles and tumblers; bottles, customers and store shelves are clearly visible.",
+      "buyerContext": "homeware stores and retail merchandise buyers choosing reusable bottle assortments",
+      "articleUse": "retail shelf display assessment, packaging and wholesale purchasing",
+      "sceneMatch": "The photographed shoppers and several clearly displayed reusable bottles make a direct visual match to homeware stores selecting retail bottle stock and comparing shelf-facing display options. No pictured product is claimed as XUYI.",
+      "topicAnchors": [
+        "homeware",
+        "stores"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Licensed free-to-use Pexels photo by Tom Tillhub, https://www.pexels.com/photo/women-looking-at-products-in-a-shop-with-water-bottles-6925916/",
+      "usageDisclosure": "Independent licensed editorial scene; not a photographed XUYI customer, model, factory, certification or performance test.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
       "slug": "outdoor-gear-retailer-hiking-water-bottles-wholesale",
       "articleTitle": "How Should Outdoor Retailers Choose Reusable Water Bottles for Hiking and Day-Trip Assortments?",
       "cover": "/media/blog/outdoor-gear-retailer-hiking-water-bottles-wholesale-20261102.webp",
@@ -383,6 +329,60 @@
       "usageDisclosure": "Licensed editorial context only; visible bottles are not verified as XUYI SKUs and hikers are not represented as XUYI customers, guides, partners or product testers."
     },
     {
+      "slug": "parks-recreation-water-bottle-bulk-procurement",
+      "articleTitle": "How Should Parks and Recreation Departments Procure Reusable Water Bottles for Seasonal Programs?",
+      "cover": "/media/blog/parks-recreation-water-bottle-bulk-procurement-20261103.webp",
+      "source": "assets/blog/parks-recreation-water-bottle-bulk-procurement-20261103.webp",
+      "sha256": "ab1e2163d7b71f96c00e43f1300dc0ac456ef88ebee3239087ac27de61b1c9bf",
+      "visualScene": "A woman taking a break on a park bench after outdoor exercise while holding a clearly visible orange water bottle.",
+      "buyerContext": "Municipal parks departments and public recreation teams planning staff, volunteer and participant bottle allocations.",
+      "articleUse": "Outdoor recreation programs, seasonal park activities, participant use and public-program procurement.",
+      "sceneMatch": "The park bench, outdoor setting and clearly visible bottle make the recreation use case apparent at a glance. The scene supports the article's public parks and recreation-program audience without claiming that the person is a municipal employee or that the pictured bottle is an XUYI model.",
+      "topicAnchors": [
+        "parks",
+        "recreation"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels free-to-use editorial photograph by Andres Ayrton. Source: https://www.pexels.com/photo/calm-young-woman-resting-on-bench-after-training-in-park-6551272/. Downloaded and resized to 1200x800 WebP without adding product claims or logos; no endorsement implied.",
+      "usageDisclosure": "Independent licensed editorial photograph, not an XUYI product model, municipal customer, government contract, factory or product test."
+    },
+    {
+      "slug": "soccer-academy-team-water-bottles-bulk-buying",
+      "articleTitle": "How Should Soccer Academies Buy Reusable Team Water Bottles in Bulk?",
+      "cover": "/media/blog/soccer-academy-team-bottles-20261030.webp",
+      "source": "assets/blog/soccer-academy-team-bottles-20261030.webp",
+      "sha256": "240865e2af3e91331456ad1c9b5be113975600bea9ed2112b67b4ed11bff0ffb",
+      "visualScene": "Several yellow sports water bottles in a black carrier beside the grass of a soccer training pitch, with shoes in the background; cropped to avoid the original third-party logo.",
+      "buyerContext": "soccer academy coaches and team equipment purchasing coordinators",
+      "articleUse": "bulk squad bottle allocation, individual player equipment, and sidelines during football training",
+      "sceneMatch": "The photo clearly displays a full carrier with multiple reusable sports water bottles on football grass, directly matching the soccer academy's team hydration inventory, training sideline arrangements and player equipment buying context.",
+      "topicAnchors": [
+        "soccer",
+        "team"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Unsplash License free commercial photograph by Andy Hall; original https://unsplash.com/photos/yellow-and-black-water-tumblers-0zsdIfJB_Kg. Cropped to focus on reusable bottles, not proprietary carrier brand. XUYI not depicted.",
+      "usageDisclosure": "Independent licensed illustrative editorial photo, not a XUYI model, customer, factory, club partnership or product test evidence.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
       "slug": "sustainable-lifestyle-store-reusable-bottles-wholesale",
       "articleTitle": "How Should Refill Shops and Sustainable Lifestyle Stores Source Reusable Bottles Without Overstating Green Claims?",
       "cover": "/media/blog/sustainable-lifestyle-store-reusable-bottles-wholesale-20261102.webp",
@@ -408,6 +408,87 @@
       "visualReview": "actual-image-and-article-compared",
       "provenance": "Pexels free-license photograph by Helena Lopes. Source: https://www.pexels.com/photo/filling-reusable-bottle-at-kitchen-sink-27176108/. The Pexels page marks the image Free; website/blog use and modification permitted under the Pexels license. Credit retained; no endorsement implied.",
       "usageDisclosure": "Independent licensed editorial photograph showing a refill-use context. It is not an XUYI product test, retail customer, refill-station approval, environmental certification or proof of product performance."
+    },
+    {
+      "slug": "tennis-club-team-water-bottles-bulk-buying",
+      "articleTitle": "How Should Tennis Clubs Buy Reusable Bottles for Teams and Lessons in Bulk?",
+      "cover": "/media/blog/tennis-club-court-bottle-20261101.webp",
+      "source": "assets/blog/tennis-club-court-bottle-20261101.webp",
+      "sha256": "f71a4d7b312f4da004d3a504bca6e1f104ca5e28e9cdc016218a096971f9a03b",
+      "visualScene": "Bright orange reusable sports bottle with red flip lid stands next to a teal sports-court net on blue playing surface; bottle and net occupy much of the frame.",
+      "buyerContext": "tennis clubs and training coaches issuing league and lesson water bottles and tennis lessons",
+      "articleUse": "court-side member issue, name labels, training bottle kit buying",
+      "sceneMatch": "A large reusable sports bottle is visibly situated right beside a sports net and court surface. It matches court-side team bottle use, while we do not infer the exact venue, tennis competition or product identity from this image. The editorial context supports a tennis lessons equipment discussion without asserting a pictured club.",
+      "topicAnchors": [
+        "tennis",
+        "lessons"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Licensed free-to-use Pexels photo by Anna Shvets, https://www.pexels.com/photo/bottle-of-water-on-sport-ground-5069203/",
+      "usageDisclosure": "Independent licensed editorial scene; not a photographed XUYI customer, model, factory, certification or performance test.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "warehouse-staff-custom-water-bottles-bulk-procurement",
+      "visualScene": "Three high visibility uniformed workers in an industrial warehouse environment; staff and shift team context.",
+      "buyerContext": "warehouse workforce shift issue and employee procurement",
+      "articleUse": "team worksite and employee onboarding bottle programs",
+      "sceneMatch": "The workers and warehouse worksite visually indicate the buying audience; this is a contextual scene and not a photograph of the exact bottle SKU.",
+      "topicAnchors": [
+        "warehouse",
+        "staff"
+      ],
+      "productVisibility": "owner-approved-contextual",
+      "scores": {
+        "sector": 5,
+        "productUse": 4,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "articleTitle": "How Should Warehouses Buy Branded Water Bottles for Shift Employees in Bulk?",
+      "cover": "/media/blog/warehouse-staff-reviewed-20261029.webp",
+      "source": "assets/blog/warehouse-staff-reviewed-20261029.webp",
+      "sha256": "13ee0485f727eaf37ed989eb8bd726cf03970867fa597d15f69e03a2702fba5d",
+      "reviewDecision": "owner-selected-reference-2026-10-29",
+      "visualReview": "owner-selected-three-covers",
+      "provenance": "owner-selected context image; not factory or exact-SKU evidence",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, XUYI factory, exact SKU or certification"
+    },
+    {
+      "slug": "workplace-refill-station-reusable-bottle-bulk-sourcing",
+      "articleTitle": "How Should Employers Source Reusable Bottles for Staff Refill Stations?",
+      "cover": "/media/blog/workplace-employee-bottle-refill-program-20261031.webp",
+      "source": "assets/blog/workplace-employee-bottle-refill-program-20261031.webp",
+      "sha256": "2e5b08d4cb4598133e36d7b572edc13e85daa73bd65b87296ba8b86a4bb600f2",
+      "visualScene": "Hands holding a wide-mouth transparent plastic drinking container under a flowing metal sink tap",
+      "buyerContext": "Employer Staff Refill Program product buying managers and procurement coordinators",
+      "articleUse": "employee refill station reusable bottles wholesale purchasing, allocation and approval",
+      "sceneMatch": "The photo clearly depicts water being refilled into a reusable plastic container at a tap, precisely illustrating workplace employee refill-point buying decisions and the opening clearance being discussed in the article.",
+      "topicAnchors": [
+        "workplace",
+        "refill"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels licensed stock photo by Miriam Alonso, source https://www.pexels.com/photo/close-up-of-a-woman-pouring-water-into-a-bottle-7622925/. Illustrative scenario only, no verified XUYI product or client connection.",
+      "usageDisclosure": "Contextual stock photo, not the exact product SKU, XUYI customer, factory, order or a compliance certification.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
     }
   ]
 }
