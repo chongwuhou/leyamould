@@ -36,6 +36,8 @@ def check_source():
   for item in rows:
    row=item["sourceRow"];expected=ALIASES.get(item["sourceModel"],item["sourceModel"])
    if item["model"]!=expected or item["model"] in models:raise RuntimeError("SKU mismatch/duplicate: "+source_name+" row "+str(row))
+   if row==59 and (item["model"]!="2319" or item["author"]!="Beatriz Santos"):
+    raise RuntimeError("The reviewed same-customer/SKU exclusion row changed: "+source_name)
    models.add(item["model"])
    if type(item["rating"]) is not int or not 1<=item["rating"]<=5:raise RuntimeError("Invalid rating: "+source_name+" row "+str(row))
    if not 2<=len(item["author"])<=99 or not 12<=len(item["reviewBody"])<=3000:raise RuntimeError("Invalid review: "+source_name+" row "+str(row))
