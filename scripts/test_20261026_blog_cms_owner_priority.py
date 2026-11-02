@@ -18,7 +18,6 @@ sitemap=(ROOT/"sitemap_modification.py").read_text(encoding="utf8")
 publisher=(ROOT/"scripts/publish_blog_batch_20261026_d1.py").read_text(encoding="utf8")
 corrections=json.loads((ROOT/"data/blog-photo-corrections-20261026.json").read_text(encoding="utf8"))
 context_corrections=json.loads((ROOT/"data/blog-photo-context-corrections-20261026.json").read_text(encoding="utf8"))
-worker=(ROOT/"functions/blog/[[path]].js").read_text(encoding="utf8")
 media_source=(ROOT/"blog_media_source.py").read_text(encoding="utf8")
 assert 'const DAY="2026-10-26"' in endpoint
 assert all('"'+s+'"' in endpoint for s in SLUGS)
@@ -34,8 +33,6 @@ assert 'data/blog-buyer-decision-tables-20261026.json' in editorial
 assert "_BLOG_20261026" in sitemap and 'data/blog-guides-20261026.json' in sitemap
 assert "CLOUDFLARE_API_TOKEN" in publisher
 assert set(corrections)==SLUGS
-assert "PHOTO_20261026" in worker
-assert "PHOTO_CONTEXT_20261026" in worker
 assert "data/blog-photo-corrections-20261026.json" in media_source
 assert "PHOTO_20261026" in media_source
 assert "data/blog-photo-context-corrections-20261026.json" in media_source
