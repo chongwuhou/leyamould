@@ -30,14 +30,7 @@ def require(condition: bool, reason: str) -> None:
 
 def guide_sources():
     found = []
-    candidates = list(DATA.glob("blog-guides-20*.json"))
-    # Scheduled drafts are inspected only when that publication day has its
-    # own reviewed image manifest. This excludes unrelated, incomplete future
-    # drafts while still enforcing every scheduled batch with approved covers.
-    for path in DATA.glob("blog-scheduled-20*.json"):
-        hit = re.fullmatch(r"blog-scheduled-(\d{8})(?:-\d+)?\.json", path.name)
-        if hit and hit.group(1) >= "20261103" and (DATA / f"blog-images-reviewed-{hit.group(1)}.json").is_file():
-            candidates.append(path)
+    candidates = list(DATA.glob("blog-guides-20*.json")) + list(DATA.glob("blog-scheduled-20*.json"))
     for path in sorted(candidates):
         hit = re.fullmatch(r"(?:blog-guides|blog-scheduled)-(\d{8})(?:-\d+)?\.json", path.name)
         if not hit or hit.group(1) < START_DAY:
