@@ -72,7 +72,6 @@ jobs:
           python scripts/publish_daily_product_reviews.py --dry-run
           node scripts/test_daily_product_reviews_api.mjs
           node scripts/test_product_reviews_api.mjs
-          python scripts/test_product_reviews_source.py
           python -m py_compile scripts/migrate_daily_product_reviews_ledger_v2.py
       - name: Restore three exactly reviewed 2026-11-01 real editorial photos
         run: python scripts/prepare_blog_images_20261101.py
@@ -315,6 +314,7 @@ jobs:
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
+          python scripts/test_product_reviews_source.py
       - name: Validate release artifact and inquiry readiness
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
