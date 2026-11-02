@@ -2,6 +2,7 @@ import {authorizedDailyProductReviewRequest} from "../../_shared/build-auth.js";
 import {MANAGED_MODELS} from "../../_shared/xuyi-routes.js";
 import {ensureProductReviews} from "../../_shared/product-reviews.js";
 import {bumpPublishRevision} from "../../_shared/site-settings.js";
+import {ensurePublishScheduler} from "../../_shared/publish-scheduler.js";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const LEGACY_SQL=[
@@ -43,9 +44,8 @@ async function requireDb(c){
  if(!(await authorizedDailyProductReviewRequest(c.request,c.env)))return {error:json({error:"Unauthorized"},401)};
  if(!c.env.XUYI_DB)return {error:json({error:"Database unavailable"},503)};
  const db=c.env.XUYI_DB;
- try{await ensureProductReviews(db);await ensureLedger(db);}
- catch{return {error:json({error:"Review ledger migration failed; no publication was attempted"},503)};}
- return {db};
+  try{await ensureProductReviews(db);await ensureLedger(db);await ensurePublishScheduler(db);}
+  catch{return {error:json({error:"Review ledger migration failed; no publication was attempted"},503)};} return {db};
 }
 async function fingerprint(r){
  const raw=r.model+"\n"+r.rating+"\n"+r.author+"\n"+r.content;
@@ -64,8 +64,7 @@ async function getExisting(db){
 export async function validateDailyInput(input,today=beijingDate()){
  if(input?.date!==today||!dayOK(today))throw Error("发布日期必须是北京时间今天");
  if(input.confirmedAuthentic!==true)throw Error("只能上传已核实且获公开授权的真实客户评价");
- if(!Array.isArray(input.items)||input.items.length<1||input.items.length>3)throw Error("每批只允许 1–3 条客户评价");
- const rows=new Set(),fingerprints=new Set();
+ if(!Array.isArray(input.items)||input.items.length<1||input.items.length>20)throw Error("每批只允许 1–20 条客户评价"); const rows=new Set(),fingerprints=new Set();
  for(const r of input.items){
   if(!r||typeof r!=="object")throw Error("Invalid review");
   if(!SOURCE_FILES.has(r.sourceFile))throw Error("评价必须来自已确认的两个 Excel 源文件");
@@ -86,20 +85,22 @@ export async function validateDailyInput(input,today=beijingDate()){
 }
 export async function onRequestGet(c){
  const {db,error}=await requireDb(c);if(error)return error;
- const state=await getExisting(db);
- return json({today:beijingDate(),recorded:state.ledger,existingModels:[...state.models].sort(),
-  publishedFingerprints:state.publishedFingerprints,maxPerDay:3,publicationSchema:2});
-}
+  const state=await getExisting(db);
+  const tasks=(await db.prepare("SELECT daily_limit FROM xuyi_publish_tasks WHERE content_type='reviews' AND enabled=1").all()).results||[];
+  const maxPerDay=tasks.reduce((sum,x)=>sum+Number(x.daily_limit||0),0);
+  return json({today:beijingDate(),recorded:state.ledger,existingModels:[...state.models].sort(),publishedFingerprints:state.publishedFingerprints,maxPerDay,publicationSchema:2});}
 export async function onRequestPost(c){
  const {db,error}=await requireDb(c);if(error)return error;
  let input;try{input=await c.request.json()}catch{return json({error:"Invalid JSON"},400)}
  let records;try{records=await validateDailyInput(input)}catch(e){return json({error:e.message},400)}
- const state=await getExisting(db),today=beijingDate();
- const todayCount=state.ledger.filter(x=>x.published_date===today).length;
- const used=new Set([...state.ledger.map(x=>x.source_fingerprint),...state.publishedFingerprints]);
- const candidates=records.filter(x=>!used.has(x.sourceFingerprint));
- if(todayCount+candidates.length>3)return json({error:"今天已经达到每天最多3条评价的限制",todayCount},409);
- if(!candidates.length)return json({success:true,inserted:0,skipped:records.length,todayCount,recorded:state.ledger});
+  const state=await getExisting(db),today=beijingDate();
+  const tasks=(await db.prepare("SELECT daily_limit FROM xuyi_publish_tasks WHERE content_type='reviews' AND enabled=1").all()).results||[];
+  const maxPerDay=tasks.reduce((sum,x)=>sum+Number(x.daily_limit||0),0);
+  if(maxPerDay<1)return json({error:"产品评价自动发布任务当前已暂停"},409);
+  const todayCount=state.ledger.filter(x=>x.published_date===today).length;
+  const used=new Set([...state.ledger.map(x=>x.source_fingerprint),...state.publishedFingerprints]);
+  const candidates=records.filter(x=>!used.has(x.sourceFingerprint));
+  if(todayCount+candidates.length>maxPerDay)return json({error:"已达到后台设置的每日评价发布上限 "+maxPerDay,todayCount,maxPerDay},409); if(!candidates.length)return json({success:true,inserted:0,skipped:records.length,todayCount,recorded:state.ledger});
  const statements=[];
  for(const r of candidates){
   const id=crypto.randomUUID();
