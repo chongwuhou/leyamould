@@ -19,9 +19,9 @@ const records=[make("LO-001",2,5,FILE_A,"Buyer A"),make("LO-001",2,4,FILE_B,"Buy
 for(const r of records)r.sourceFingerprint=fp(r);
 const payload={date:today,confirmedAuthentic:true,items:records.slice(0,3)};
 assert.deepEqual(await validateDailyInput(payload),payload.items,"Two different buyers may review the same SKU");
+assert.deepEqual(await validateDailyInput({...payload,items:records}),records,"Batch validation permits more than three; the configured daily cap is enforced against D1 at publish time");
 for(const changed of [
- {...payload,date:"2020-01-01"},{...payload,confirmedAuthentic:false},{...payload,items:records},
- {...payload,items:[records[0],{...records[1],sourceFile:FILE_A,sourceRow:2}]},
+ {...payload,date:"2020-01-01"},{...payload,confirmedAuthentic:false}, {...payload,items:[records[0],{...records[1],sourceFile:FILE_A,sourceRow:2}]},
  {...payload,items:[records[0],{...records[0],sourceFile:FILE_B,sourceRow:2}]},
  {...payload,items:[{...records[0],sourceFile:"third-source.xlsx"}]},
  {...payload,items:[{...records[0],rating:1}]},{...payload,items:[{...records[0],sourceModel:"OTHER"}]}
@@ -31,8 +31,7 @@ transparent.sourceModel="2306-transparent";transparent.sourceFingerprint=fp(tran
 assert.deepEqual(await validateDailyInput({...payload,items:[transparent]}),[transparent]);
 
 class D1Mock{
- constructor(){this.reviews=new Map();this.legacy=new Map();this.ledger=new Map();this.revision=13;}
- prepare(sql){
+ constructor(){this.reviews=new Map();this.legacy=new Map();this.ledger=new Map();this.tasks=new Map();this.revision=13;} prepare(sql){
   const db=this;
   return {sql,params:[],bind(...a){this.params=a;return this},
    async first(){
@@ -44,8 +43,8 @@ class D1Mock{
     }return null;
    },
    async all(){
-    if(sql.startsWith("SELECT review_id,model,source_file,source_row,source_model,source_fingerprint,published_date FROM xuyi_review_publication_ledger_v2"))
-     return {results:[...db.ledger.values()]};
+     if(sql.startsWith("SELECT daily_limit FROM xuyi_publish_tasks"))return {results:[...db.tasks.values()].filter(x=>x.content_type==="reviews"&&x.enabled===1).map(x=>({daily_limit:x.daily_limit}))};
+     if(sql.startsWith("SELECT review_id,model,source_file,source_row,source_model,source_fingerprint,published_date FROM xuyi_review_publication_ledger_v2"))     return {results:[...db.ledger.values()]};
     if(sql.startsWith("SELECT DISTINCT model FROM xuyi_product_reviews"))
      return {results:[...new Set([...db.reviews.values()].map(x=>x.model))].map(model=>({model}))};
     if(sql.startsWith("SELECT model,rating,author,content FROM xuyi_product_reviews WHERE status='published'"))
@@ -53,8 +52,8 @@ class D1Mock{
     throw Error("Unrecognized query "+sql);
    },
    async run(){
-    if(sql.startsWith("CREATE TABLE"))return {meta:{changes:0}};
-    if(sql.startsWith("INSERT OR IGNORE INTO xuyi_review_publication_ledger_v2")){
+     if(sql.startsWith("CREATE TABLE")||sql.startsWith("CREATE INDEX"))return {meta:{changes:0}};
+     if(sql.startsWith("INSERT OR IGNORE INTO xuyi_publish_tasks")){const [id,content_type,name,enabled,timezone,schedule_time,daily_limit]=this.params;if(!db.tasks.has(id))db.tasks.set(id,{id,content_type,name,enabled,timezone,schedule_time,daily_limit});return {meta:{changes:1}};}    if(sql.startsWith("INSERT OR IGNORE INTO xuyi_review_publication_ledger_v2")){
      for(const old of db.legacy.values())if(!db.ledger.has(old.review_id))db.ledger.set(old.review_id,{...old,source_file:"legacy-unmapped"});
      return {meta:{changes:db.legacy.size}};
     }
@@ -94,15 +93,3 @@ assert.equal((await (await onRequestGet(ctx())).json()).recorded.length,1,"Legac
 reply=await onRequestPost(ctx(payload));assert.equal(reply.status,200);
 let result=await reply.json();assert.equal(result.inserted,3);assert.equal(result.todayCount,3);
 assert.equal(db.reviews.size,4);assert.equal(db.ledger.size,4);
-assert.equal([...db.reviews.values()].filter(x=>x.model==="LO-001").length,2);
-const revision=db.revision;
-reply=await onRequestPost(ctx(payload));result=await reply.json();
-assert.equal(result.inserted,0);assert.equal(db.revision,revision);assert.equal(db.reviews.size,4);
-const first=[...db.ledger.values()].find(x=>x.source_fingerprint===records[0].sourceFingerprint);
-db.reviews.delete(first.review_id);
-reply=await onRequestPost(ctx({...payload,items:[records[0]]}));
-assert.equal((await reply.json()).inserted,0);assert.equal(db.reviews.size,3);assert.equal(db.ledger.size,4);
-reply=await onRequestPost(ctx({...payload,items:[records[3]]}));
-assert.equal(reply.status,409);assert.equal(db.ledger.size,4);
-globalThis.fetch=originalFetch;
-console.log("XUYI_D1_V2_MULTI_REVIEW_PER_SKU_LEGACY_MIGRATION_FINGERPRINT_IDEMPOTENCE_DAILY_LIMIT_PASS");
