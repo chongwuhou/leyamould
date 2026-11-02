@@ -285,7 +285,7 @@ jobs:
       # three per Beijing day, no duplicates, and preserves CMS owner content.
       # The standing daily workflow uses the same reviewed random sampler.
       - name: Publish three randomly selected authentic product reviews
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three randomly selected authentic XUYI product reviews'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish three randomly selected authentic XUYI product reviews')
         run: |
           python scripts/test_daily_product_reviews.py
           node scripts/test_daily_product_reviews_api.mjs
