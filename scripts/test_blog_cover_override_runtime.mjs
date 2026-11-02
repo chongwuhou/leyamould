@@ -46,13 +46,16 @@ for(const [slug,pair] of Object.entries(photoContextCorrections)){
  assert.ok(existsSync(imagePath),slug+': reviewed image file must exist');
  const bytes=readFileSync(imagePath);
  assert.equal(bytes.toString('ascii',8,12),'WEBP',slug+': cover must be a valid WebP asset');
- assert.equal(withReviewedCover({slug,cover:pair.baseline}).cover,pair.photo,slug+': exact baseline is upgraded');
+ // Contextual scene photos are applied to static localized pages by
+ // blog_media_source.py. The live English D1 route must preserve its current
+ // CMS-selected catalog photo rather than silently replacing it.
+ assert.equal(withReviewedCover({slug,cover:pair.baseline}).cover,pair.baseline,slug+': current D1 CMS cover remains authoritative');
  const previous=photoCorrections26[slug];
  assert.ok(previous,slug+': earlier generic cover correction exists');
- assert.equal(previous.photo,pair.baseline,slug+': contextual image chains from the prior correction output');
- assert.equal(withReviewedCover({slug,cover:previous.baseline}).cover,pair.photo,slug+': prior original baseline chains to contextual cover');
- assert.equal(withReviewedCover({slug,cover:pair.photo}).cover,pair.photo,slug+': idempotent');
- assert.equal(reviewedCoverAlt({slug,cover:pair.photo}),pair.alt,slug+': accurate cover ALT');
+ assert.equal(previous.photo,pair.baseline,slug+': contextual static baseline follows the generic approved photo');
+ assert.equal(withReviewedCover({slug,cover:previous.baseline}).cover,pair.baseline,slug+': original baseline upgrades only to the generic approved D1 photo');
+ assert.equal(withReviewedCover({slug,cover:pair.photo}).cover,pair.photo,slug+': a CMS-selected contextual photo remains unchanged');
+ assert.equal(reviewedCoverAlt({slug,cover:pair.photo}),'',slug+': runtime does not override ALT for a CMS-selected contextual photo');
  assert.equal(withReviewedCover({slug,cover:'/assets/blog/owner-selected.webp'}).cover,
               '/assets/blog/owner-selected.webp',slug+': a later CMS-selected cover wins');
  assert.equal(reviewedCoverAlt({slug,cover:'/assets/blog/owner-selected.webp'}),'',slug+': do not override a later cover ALT');
