@@ -50,3 +50,16 @@ The regular publisher samples up to three unused review fingerprints each day. D
 3. Rebuild from the authenticated D1 snapshot and confirm multiple review cards for a same-SKU fixture in all five locales.
 4. Only after tests and migration read-back succeed should the feature branch be merged/deployed.
 5. Do not publish new reviews as part of schema deployment; the daily publisher remains a separate, explicit workflow action.
+
+## Production rollout completed — 2026-11-02
+
+- PR #18 was merged to main (merge commit `171e9dce44590f043faf773d06303e7b11237952`).
+- Cloudflare Pages deployment and live revision verification succeeded in GitHub Actions run `41409913675` (successful retry/attempt 2; deployed source commit `b0d5eddca3ce15927e04173a08d9887dda27baff`).
+- The production endpoint's authenticated, GET-only v2 migration completed successfully after deployment.
+- All 42 legacy publication-ledger rows were preserved in the v2 ledger; all 42 published review fingerprints still match published review records.
+- D1 `publishRevision` remained `50` before and after migration.
+- The migration did not publish, edit, or delete any customer review. Production still contains 42 published reviews.
+- The independent daily publisher remains capped at three new reviews per Beijing date. The 2026-11-02 daily cap was already reached; next scheduled run is 2026-11-03 at 09:17 Asia/Shanghai.
+- Remaining eligible source reviews: 159 (61 from the first workbook, 98 from the second). The second workbook's row 59 remains excluded.
+
+The first production workflow attempt encountered transient HTTP 503 responses from the build-snapshot endpoint and did not deploy. The redundant dry-run snapshot fetches were reduced; the subsequent workflow completed successfully. A separate read-only snapshot health check confirmed revision 50, 119 pages, 85 products, 42 reviews, and 756 translations.
