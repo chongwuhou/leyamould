@@ -28,7 +28,7 @@ for slug,entry in PHOTO_20261025.items():
             edited=html.replace(old,'/assets/blog/owner-new-choice.webp')
             assert blog_cover_from_cms_source(edited,route,lang)==edited,(slug,lang,'CMS image priority')
             assert blog_cover_from_cms_source(html,'/blog/completely-different-post/',lang)==html
-runtime=(ROOT/'functions/blog/[[path]].js').read_text('utf8')
-assert 'PHOTO_20261025' in runtime
-assert 'post.cover===newApproved.baseline' in runtime
+renderer=(ROOT/'site_renderer.py').read_text('utf8')
+assert 'from blog_media_source import blog_cover_from_cms_source' in renderer
+assert 'main=blog_cover_from_cms_source(main,route,"en")' in renderer
 print('XUYI_20261025_IMAGES_CMS_OWNER_PRIORITY_5_LOCALES_PASSED')
