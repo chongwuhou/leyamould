@@ -280,6 +280,7 @@ jobs:
       - name: Persist all reviewed product SEO fields in Cloudflare D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Promote reviewed product SEO metadata to D1'
         run: python scripts/promote_product_seo_to_d1_20261020.py
+      # Owner-requested random three-review publication batch: 2026-11-02.
       # Explicit owner-requested review publication. D1 atomically enforces
       # three per Beijing day, no duplicates, and preserves CMS owner content.
       # The standing daily workflow uses the same reviewed random sampler.
