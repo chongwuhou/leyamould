@@ -14,6 +14,12 @@ assert Counter(x["sourceFile"] for x in entries)=={"101-zhenshipingjia.xlsx":101
 assert len({x["sourceFingerprint"] for x in entries})==201
 assert len(ALIASES)==5 and EXCLUDED_SOURCE_ROWS=={("101-additional-reviews-only.xlsx",59)}
 assert not any(x["sourceFile"]=="101-additional-reviews-only.xlsx" and x["sourceRow"]==59 for x in entries)
+import json
+second=json.loads((ROOT/"review_import_private"/"101_additional_verified_buyer_reviews.json").read_text(encoding="utf8"))
+second59=next(x for x in second["reviews"] if x["sourceRow"]==59)
+first59=next(x for x in entries if x["sourceFile"]=="101-zhenshipingjia.xlsx" and x["sourceRow"]==59)
+assert (first59["model"],first59["author"])==("2319","Beatriz Santos")
+assert (second59["model"],second59["author"])==("2319","Beatriz Santos")
 from site_renderer import SERIES
 catalog={v["model"]:v for v in SERIES.values()}
 assert {x["model"] for x in entries}==set(catalog)
