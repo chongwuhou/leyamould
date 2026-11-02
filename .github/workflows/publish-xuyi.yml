@@ -716,6 +716,42 @@ jobs:
           done
           echo "::error::Owner three Excel reviews did not pass live D1 and page checks"
           exit 1
+      # Owner-requested two additional reviews from the separate 2026-11-02 workbook.
+      # Only SKUs with no currently published review were selected; D1 rechecks all guards.
+      - name: Publish two additional unique Excel reviews to XUYI D1 once
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish two new XUYI reviews from additional batch 2026-11-02'
+        env:
+          OWNER_TWO_ADDITIONAL_RELEASE: "1"
+        run: |
+          python scripts/test_daily_product_reviews.py
+          node scripts/test_daily_product_reviews_api.mjs
+          python scripts/publish_owner_two_additional_reviews_20261102.py --dry-run
+          python scripts/publish_owner_two_additional_reviews_20261102.py
+      - name: Rebuild D1 snapshot twice and verify two additional live reviews
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish two new XUYI reviews from additional batch 2026-11-02'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            echo "Owner additional reviews: D1 clean rebuild passed $pass"
+          done
+          expected="$(python -c 'import json;print(json.load(open("dist/build-meta.json",encoding="utf8"))["publishRevision"])')"
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error "$SITE_ORIGIN/build-meta.json?owner_two_additional_check=$attempt&sha=$GITHUB_SHA" |
+              node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);process.exit(m.sourceRevision===process.env.GITHUB_SHA&&Number(m.publishRevision)>=Number(process.argv[1])?0:1)})" "$expected"; then
+              if python scripts/verify_owner_two_additional_reviews_20261102.py; then
+                echo "OWNER_20261102_TWO_ADDITIONAL_EXCEL_REVIEWS_LIVE_CONFIRMED $expected"
+                exit 0
+              fi
+            fi
+            sleep 12
+          done
+          echo "::error::The two additional Excel reviews were not verified on live product pages"
+          exit 1
       # Explicit one-time owner instruction; standing scheduled publisher stays one/day.
       # The first deployment above ensures the date-locked D1 endpoint is live.
       - name: Publish four randomly chosen, authentic Excel product reviews to D1 once
