@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Publish up to three distinct authentic Excel reviews per Beijing date.
+"""Publish only the D1-configured number of authentic Excel reviews per Beijing date.
 The v2 D1 ledger is keyed by review ID/fingerprint, not SKU; multiple
-customers may review the same model. Private data never enters dist.
-"""
+customers may review the same model. Private data never enters dist."""
 from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
@@ -61,15 +60,15 @@ def request(token,method="GET",payload=None):
   with urlopen(req,timeout=60) as response:return json.load(response)
  except HTTPError as err:raise RuntimeError("D1 review publisher HTTP "+str(err.code)+" "+err.read(400).decode("utf8","replace")) from None
 
-def plan(entries,state,today,rng=None):
+def plan(entries,state,today,rng=None,limit=0):
  from secrets import SystemRandom
  ledger=state.get("recorded",[])
  used={x.get("source_fingerprint") for x in ledger}
  used.update(state.get("publishedFingerprints",[]))
  count=sum(x.get("published_date")==today for x in ledger)
- if not 0<=count<=3:raise RuntimeError("D1 daily publication count invalid")
+ if not 0<=count<=max(0,int(limit)):raise RuntimeError("D1 daily publication count exceeds the configured limit")
  remaining=[x for x in entries if x["sourceFingerprint"] not in used]
- size=min(3-count,len(remaining))
+ size=min(max(0,int(limit)-count),len(remaining))
  if not size:return [],count
  return (rng or SystemRandom()).sample(remaining,size),count
 
@@ -86,7 +85,7 @@ def main():
  today=datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat()
  state=request(token)
  if state.get("today")!=today:raise RuntimeError("GitHub and D1 Beijing dates disagree")
- chosen,prior=plan(entries,state,today)
+ chosen,prior=plan(entries,state,today,limit=max(0,int(state.get("maxPerDay") or 0)))
  if not chosen:
   print("NOTHING_TO_PUBLISH",today,"TODAY",prior,"LIFETIME",len(state["recorded"]))
   return
