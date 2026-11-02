@@ -1,0 +1,25 @@
+name: XUYI read-only D1 review reconciliation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/review-audit-readonly.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Read D1 review ledger and occupied SKU set (GET only)
+        run: python scripts/audit_d1_review_state_readonly_20261102.py
