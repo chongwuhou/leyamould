@@ -28,19 +28,21 @@ for r in entries:
 same=[x for x in entries if x["model"]=="LO-001"]
 assert len(same)==2 and same[0]["author"]!=same[1]["author"]
 today="2026-11-02"
-batch,count=plan(entries,{"recorded":[],"publishedFingerprints":[]},today,rng=Random(1729))
+batch,count=plan(entries,{"recorded":[],"publishedFingerprints":[]},today,rng=Random(1729),limit=3)
 assert count==0 and batch==Random(1729).sample(entries,3)
+backend_five,count=plan(entries,{"recorded":[],"publishedFingerprints":[]},today,rng=Random(1729),limit=5)
+assert count==0 and len(backend_five)==5,"The review batch size follows the D1-provided backend quota, not a hard-coded three."
 after=[{"source_fingerprint":x["sourceFingerprint"],"source_file":x["sourceFile"],"source_row":x["sourceRow"],"published_date":today} for x in batch]
-assert plan(entries,{"recorded":after,"publishedFingerprints":[]},today,rng=Random(8))==([],3)
-next_batch,count=plan(entries,{"recorded":after,"publishedFingerprints":[]},"2026-11-03",rng=Random(19))
+assert plan(entries,{"recorded":after,"publishedFingerprints":[]},today,rng=Random(8),limit=3)==([],3)
+next_batch,count=plan(entries,{"recorded":after,"publishedFingerprints":[]},"2026-11-03",rng=Random(19),limit=3)
 assert count==0 and len(next_batch)==3
 assert not {x["sourceFingerprint"] for x in next_batch}.intersection(x["source_fingerprint"] for x in after)
 first,second=same
-partial,count=plan([first,second],{"recorded":[{"source_fingerprint":first["sourceFingerprint"],"published_date":today}],"publishedFingerprints":[first["sourceFingerprint"]]},"2026-11-03",rng=Random(21))
+partial,count=plan([first,second],{"recorded":[{"source_fingerprint":first["sourceFingerprint"],"published_date":today}],"publishedFingerprints":[first["sourceFingerprint"]]},"2026-11-03",rng=Random(21),limit=3)
 assert partial==[second],"A second customer review for the same SKU remains eligible"
-manual,count=plan([first,second],{"recorded":[],"existingModels":["LO-001"],"publishedFingerprints":[]},"2026-11-03",rng=Random(7))
+manual,count=plan([first,second],{"recorded":[],"existingModels":["LO-001"],"publishedFingerprints":[]},"2026-11-03",rng=Random(7),limit=3)
 assert count==0 and len(manual)==2,"Existing SKU reviews must not block different source reviews"
-dup,count=plan([first,second],{"recorded":[],"publishedFingerprints":[first["sourceFingerprint"]]},"2026-11-03",rng=Random(3))
+dup,count=plan([first,second],{"recorded":[],"publishedFingerprints":[first["sourceFingerprint"]]},"2026-11-03",rng=Random(3),limit=3)
 assert first not in dup and second in dup
 from hashlib import sha256
 s=entries[0].copy();s["reviewBody"]+=" alteration"
