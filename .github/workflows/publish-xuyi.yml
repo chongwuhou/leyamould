@@ -66,6 +66,13 @@ jobs:
           node-version: "22"
       - name: Install pinned build-only image encoder
         run: python -m pip install --disable-pip-version-check "Pillow==11.3.0"
+      - name: Gate production release on product-review regressions
+        run: |
+          python scripts/test_daily_product_reviews.py
+          python scripts/publish_daily_product_reviews.py --dry-run
+          node scripts/test_daily_product_reviews_api.mjs
+          node scripts/test_product_reviews_api.mjs
+          python -m py_compile scripts/migrate_daily_product_reviews_ledger_v2.py
       - name: Restore three exactly reviewed 2026-11-01 real editorial photos
         run: python scripts/prepare_blog_images_20261101.py
       - name: Restore three exactly reviewed 2026-11-02 real editorial photos
@@ -307,6 +314,7 @@ jobs:
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
+          python scripts/test_product_reviews_source.py
       - name: Validate release artifact and inquiry readiness
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
@@ -500,6 +508,9 @@ jobs:
           done
           echo "::error::XUYI production build-meta did not update"
           exit 1
+      - name: Migrate existing XUYI review ledger to v2 without publishing
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Enable multi-review per SKU and migrate existing review ledger')
+        run: python scripts/migrate_daily_product_reviews_ledger_v2.py
       - name: Upload three 2026-10-31 reviewed scene photos to R2 and articles to D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish three visually reviewed XUYI B2B guides 2026-10-31'
         env:

@@ -1,0 +1,42 @@
+name: XUYI product review regression tests
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "functions/**"
+      - "scripts/**"
+      - "review_import_private/**"
+      - ".github/workflows/test-product-reviews.yml"
+  push:
+    branches: [main]
+    paths:
+      - "functions/**"
+      - "scripts/**"
+      - "review_import_private/**"
+      - ".github/workflows/test-product-reviews.yml"
+permissions:
+  contents: read
+jobs:
+  review-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install pinned build-only image encoder
+        run: python -m pip install --disable-pip-version-check "Pillow==11.3.0"
+      - name: Validate both authentic Excel sources and same-SKU reviews
+        run: |
+          python scripts/test_daily_product_reviews.py
+          python scripts/publish_daily_product_reviews.py --dry-run
+      - name: Test D1 v2 migration, idempotence, and daily publication guard
+        run: node scripts/test_daily_product_reviews_api.mjs
+      - name: Test product review admin CRUD and multiple reviews per SKU
+        run: node scripts/test_product_reviews_api.mjs
+      - name: Check read-only production migration script syntax
+        run: python -m py_compile scripts/migrate_daily_product_reviews_ledger_v2.py
