@@ -19,6 +19,7 @@
 <button type="button" class="admin-module-btn" data-admin-target="reviews">07 客户评价 ★</button>
 <button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品 SEO · 五语言 D1</button>
 <button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
+<button type="button" class="admin-module-btn" data-admin-target="scheduler">10 自动发布与定时任务</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">技术模块采用 Demalong 已有实现，数据与密钥属于旭一网站。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
@@ -144,15 +145,38 @@
 <label class="blog-admin-wide">正文（每段先写 ## 小标题，下一行写正文；重复多节）<textarea id="blog-sections" rows="18" required placeholder="## Sourcing the correct model&#10;Check the exact material and capacity ..."></textarea></label>
 <label class="blog-admin-wide">采购清单（每行一项）<textarea id="blog-checklist" rows="5"></textarea></label>
 <label class="blog-admin-wide">FAQ（每行：问题 | 回答）<textarea id="blog-faqs" rows="5"></textarea></label>
-<label class="blog-admin-wide">相关文章 Slug（每行一项）<textarea id="blog-related" rows="4"></textarea></label>
+<label class="blog-admin-wide">相关文章 Slug（每行一项，定时发布需人工选择 2–3 篇已发布文章）<textarea id="blog-related" rows="4"></textarea></label>
+<label>计划发布时间（北京时间）<input id="blog-scheduled-at" type="datetime-local"></label>
+<label class="blog-admin-wide"><input type="checkbox" id="blog-editorial-approved"> 我已人工审核正文、2–5 个不同产品型号链接、2–3 篇相关阅读及封面与文章场景一致，确认可自动发布。</label>
 </div>
 <div class="row" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
 <button type="submit" class="btn ghost" id="blog-save-btn">保存草稿</button>
 <button type="button" class="btn primary" id="blog-publish-btn">正式发布</button>
+<button type="button" class="btn primary" id="blog-schedule-btn">保存并安排定时发布</button>
 <button type="button" class="btn ghost" id="blog-close-btn">返回列表</button>
 <a id="blog-preview-link" class="btn ghost" href="/blog/" target="_blank" rel="noopener">查看已发布页面 ↗</a></div>
 <p class="muted">Blog 英语原稿优先；其他语言仍沿用德玛隆的审核工作流，不会自动发布未经审核的翻译。</p>
 </form></section>
+<section class="panel" id="scheduler-admin-panel" data-admin-module="scheduler">
+ <div class="panel-head"><div><div class="eyebrow">XUYI · UNIFIED PUBLISH SCHEDULER</div><h2>自动发布与定时任务</h2>
+  <p>统一管理产品评价和 Blog 自动发布。每日数量分别在对应任务的「编辑」中设置并保存到 D1；同类型所有启用任务的数量合计为该类型每日总上限。每 5 分钟检查一次到期任务。</p></div></div>
+ <div class="row-actions"><button type="button" class="btn ghost" id="scheduler-refresh">刷新全部定时任务</button><button type="button" class="btn primary" id="scheduler-new">+ 新建定时任务</button></div>
+ <p id="scheduler-status" role="status" aria-live="polite"></p>
+ <p id="scheduler-quota-summary" class="muted" aria-live="polite"></p>
+ <div id="scheduler-task-list"></div>
+ <form id="scheduler-task-form" class="blog-admin-editor" hidden>
+  <h3 id="scheduler-form-heading">新建定时任务</h3>
+  <label>任务类型<select id="scheduler-type"><option value="reviews">产品评价自动发布</option><option value="blog">Blog 文章自动发布</option></select></label>
+  <label>任务名称<input id="scheduler-name" required maxlength="100"></label>
+  <label>每日计划时间（评价按此时间执行；Blog 从此时间起每 5 分钟检查到期文章）<input id="scheduler-time" type="time" required value="09:17"></label>
+  <label>时区<select id="scheduler-timezone"><option value="Asia/Shanghai">Asia/Shanghai（北京时间）</option><option value="America/Los_Angeles">America/Los_Angeles</option><option value="America/New_York">America/New_York</option><option value="Europe/London">Europe/London</option><option value="UTC">UTC</option></select></label>
+  <label>每日发布数量（本任务额度；同类型启用任务合计为每日总量）<input id="scheduler-limit" type="number" min="1" max="20" value="3" required></label>
+  <label><input type="checkbox" id="scheduler-enabled" checked> 创建后立即启用</label>
+  <div class="row-actions"><button type="submit" class="btn primary">保存任务</button><button type="button" class="btn ghost" id="scheduler-cancel">取消</button></div>
+ </form>
+ <h3>Blog 定时发布队列</h3><div id="scheduler-blog-queue"></div>
+ <h3>最近执行记录</h3><div id="scheduler-run-history"></div>
+</section>
 <section class="panel form-admin-panel" data-admin-module="leads">
         <div class="panel-head">
           <div>
@@ -279,6 +303,7 @@
 <script src="/assets/admin-site-settings.js" defer></script>
 <script src="/assets/admin-content.js" defer></script>
 <script src="/assets/admin-reviews.js" defer></script>
+<script src="/assets/admin-scheduler.js" defer></script>
 <script src="/assets/admin-product-seo.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>
 </body></html>
