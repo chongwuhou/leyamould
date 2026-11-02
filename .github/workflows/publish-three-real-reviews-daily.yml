@@ -1,8 +1,8 @@
-name: XUYI daily one authentic product review
+name: XUYI daily up to three authentic product reviews
 on:
   schedule:
-    # One real publication per Beijing calendar date at approximately 09:17.
-    # No synthetic backdating. GitHub Actions may run a few minutes late.
+    # Up to three distinct authentic reviews per Beijing calendar date at approximately 09:17.
+    # No synthetic backdating. The D1 v2 ledger deduplicates by review fingerprint, not SKU.
     - cron: "17 1 * * *"
   workflow_dispatch:
 concurrency:
@@ -30,5 +30,5 @@ jobs:
           python scripts/test_daily_product_reviews.py
           node scripts/test_daily_product_reviews_api.mjs
           python scripts/publish_daily_product_reviews.py --dry-run
-      - name: Publish one never-before-published SKU for the current Beijing date
+      - name: Publish up to three never-before-published authentic reviews for the current Beijing date
         run: python scripts/publish_daily_product_reviews.py
