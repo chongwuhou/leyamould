@@ -10,15 +10,15 @@ globalThis.fetch=async (url,options)=>{
 const request=(route,method="POST",token="xuyi-reviewed-20261101-ci")=>new Request("https://xuyibottles.com"+route,{
  method,headers:{Authorization:"Bearer "+token}
 });
-const imagePath="/api/admin/blog-images-20261101";
-const blogPath="/api/admin/blog-batch-20261101";
+const imagePath="/api/admin/blog-images-20261103";
+const blogPath="/api/admin/blog-schedule-20261103";
 assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath),{}),true);
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath),{}),true);
 assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath,"GET"),{}),false);
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath,"GET"),{}),false);
-assert.equal(await authorizedReviewedBlogImageUploadRequest(request("/api/admin/blog-images-20261103"),{}),false);
-assert.equal(await authorizedReviewedBlogBatchRequest(request("/api/admin/blog-batch-20261103"),{}),false);
+assert.equal(await authorizedReviewedBlogImageUploadRequest(request("/api/admin/blog-images-20261101"),{}),false);
+assert.equal(await authorizedReviewedBlogBatchRequest(request("/api/admin/blog-batch-20261101"),{}),false);
 assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath,"POST","wrong-token"),{}),false);
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath,"POST","wrong-token"),{}),false);
 globalThis.fetch=originalFetch;
-console.log("XUYI_20261101_EXACT_IMAGES_AND_BLOG_CI_TOKEN_GATES_OK");
+console.log("XUYI_20261103_REVIEWED_IMAGE_AND_SCHEDULE_CI_TOKEN_GATES_OK");
