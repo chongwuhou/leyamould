@@ -36,7 +36,7 @@ def guide_sources():
     # drafts while still enforcing every scheduled batch with approved covers.
     for path in DATA.glob("blog-scheduled-20*.json"):
         hit = re.fullmatch(r"blog-scheduled-(\d{8})(?:-\d+)?\.json", path.name)
-        if hit and (DATA / f"blog-images-reviewed-{hit.group(1)}.json").is_file():
+        if hit and hit.group(1) >= "20261103" and (DATA / f"blog-images-reviewed-{hit.group(1)}.json").is_file():
             candidates.append(path)
     for path in sorted(candidates):
         hit = re.fullmatch(r"(?:blog-guides|blog-scheduled)-(\d{8})(?:-\d+)?\.json", path.name)
