@@ -115,6 +115,10 @@ assert (may_curate("es","/products/2400-transparent/","title",state) or
     any(x.get("slug")=="2400-transparent" and x.get("locale")=="es"
         for x in state.get("productSeo",[]))),"Historic curation or canonical D1 SEO required"
 changed=copy.deepcopy(state)
+# Isolate legacy/direct translation-key behavior from the higher-priority
+# productSeo table; its precedence is covered by test_cms_seo_rebuild_policy.
+changed["productSeo"]=[x for x in changed.get("productSeo",[])
+    if not (x.get("locale")=="es" and x.get("slug") in ("2400---","2400-transparent"))]
 legacy_record=next(x for x in changed["translations"]
     if x.get("locale")=="es" and x.get("resourceId")=="page:/products/2400---/")
 legacy_record["content"]["title"]="Owner chooses a brand-new Spanish title"
