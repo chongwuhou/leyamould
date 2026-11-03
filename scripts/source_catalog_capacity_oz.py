@@ -318,3 +318,153 @@ def seo_head(head,locale,row,numbers,owner_override=None):
     head=social_meta(head,"og:description",current_desc,suggested_desc)
     head=head[:old.start(1)]+escape(suggested_title)+head[old.end(1):]
     desc=re.search(r'<meta name="description" content="([^"]*)"',head)
+    head=head[:desc.start(1)]+escape(suggested_desc,quote=True)+head[desc.end(1):]
+    return head,(current_title!=suggested_title or current_desc!=suggested_desc)
+
+def seo_head_without_capacity(head,locale,row,owner_override=None):
+    """Polish conditional material SEO without claiming an unknown capacity.
+
+    The source description SHA protects later G-series template author edits;
+    the CMS snapshot hash independently guards later D1 SEO changes.
+    """
+    if not current_baseline(locale,row,owner_override):return head,False
+    desc=re.search(r'<meta name="description" content="([^"]*)"',head)
+    if not desc:return head,False
+    current=unescape(desc.group(1))
+    slug=row["slug"]
+    previous=NO_CAPACITY_META_DIGESTS.get(slug,{}).get(locale)
+    if not previous or hashlib.sha256(current.encode("utf8")).hexdigest()!=previous:
+        return head,False
+    updated=NO_CAPACITY_MARKETING[locale].format(model=str(row["model"]))
+    assert len(updated)<=180,(locale,slug,len(updated))
+    head=social_meta(head,"og:description",current,updated)
+    desc=re.search(r'<meta name="description" content="([^"]*)"',head)
+    head=head[:desc.start(1)]+escape(updated,quote=True)+head[desc.end(1):]
+    return head,True
+
+
+def add_to_heading(heading,numbers,locale="en"):
+    if not numbers:return heading
+    body=heading
+    found=set()
+    def add(m):
+        size=float(m.group(1))
+        if size not in numbers or size in found:
+            return m.group(0)
+        if re.match(r"\s*\(\d+\s*(?:US\s*fl\s*oz|fl\s*oz|oz)\)",body[m.end():],re.I):
+            found.add(size)
+            return m.group(0)
+        found.add(size)
+        return format_ml(size)+" ("+format_oz(size,locale)+")"
+    # Russian product headings use the Cyrillic abbreviation «мл».
+    heading_volume=re.compile(r"(?<!\d)(\d+(?:\.\d+)?)\s*(?:ml|мл)\b",re.I)
+    modified=heading_volume.sub(add,body)
+    if found==set(numbers):return modified
+    # Common shaker headings omit capacity. Leave the approved heading intact
+    # and display the correctly sourced available capacities next to it.
+    return modified+' <small class="volume-heading-extra">('+escape(volume_terms(numbers,locale))+')</small>'
+
+def material_panel(locale,row):
+    copy=COPY[locale]
+    return ('<aside class="product-custom-material-options" data-model="'
+       +escape(str(row["model"]),quote=True)+'">'
+       '<h2>'+escape(copy["heading"])+'</h2><p>'+escape(copy["body"])+'</p></aside>')
+
+DISPUTED_CAPACITY_WARNING={
+  "en":"The original catalog lists 60ml for model 2506; this unusual capacity needs factory confirmation before ordering. No overseas oz class is claimed.",
+  "es":"El catálogo indica 60ml para 2506; confirme este dato inusual con fábrica antes del pedido. No se declara una clase oz.",
+  "pt":"O catálogo indica 60ml para 2506; confirme este dado invulgar com a fábrica antes do pedido. Nenhuma classe oz é declarada.",
+  "ru":"В каталоге для модели 2506 указано 60 мл. Просим подтвердить нестандартный объём на заводе; класс oz не заявлен.",
+  "tr":"2506 modeli için katalogda 60ml yazıyor. Siparişten önce bu olağandışı hacmi fabrikayla doğrulayın; oz sınıfı belirtilmez.",
+}
+
+def enrich_detail(path,locale,row,owner_override=None):
+    source=path.read_text(encoding="utf8")
+    old=source
+    numbers=catalog_volume_numbers(row)
+    head,sep,body=source.partition("</head>")
+    if not sep:raise ValueError("Missing product HTML head: "+str(path))
+    if numbers:
+        # Titles and H1 are now owned by pre_render_verified_meta and the
+        # source product identity component before page output. The remaining
+        # legacy summary is not allowed to rewrite either field.
+        if 'class="product-capacity-summary"' not in body:
+            summary=('<p class="product-capacity-summary" data-volume-us="verified"><strong>'
+                     +escape({"en":"Overseas size class","es":"Clase comercial aproximada","pt":"Classe de tamanho comercial","ru":"Примерный торговый размер","tr":"Yaklaşık satış boyutu"}[locale])+':</strong> '
+                     +escape(volume_terms(numbers,locale))+'<small class="product-capacity-disclaimer">'
+                     +escape(SIZE_NOTE[locale])+'</small></p>')
+            # Insert after the specification table (unmodified original SKU data).
+            body,n=re.subn(r'(</table>)',lambda m:m.group(1)+summary,body,count=1)
+            if not n:body=body.replace("</main>",summary+"</main>",1)
+    # SEO metadata is now strictly pre-render or D1-owned; this detail
+    # enrichment may add only source-checked visible body content.
+    # Flag the actual doubtful source field and clear this flag automatically
+    # if the owner later supplies a verified corrected capacity through D1.
+    if str(row.get("model"))=="2506" and not numbers and 'class="product-capacity-warning"' not in body:
+        flag='<p class="product-capacity-warning">'+escape(DISPUTED_CAPACITY_WARNING[locale])+'</p>'
+        body,n=re.subn(r'(</table>)',lambda m:m.group(1)+flag,body,count=1)
+        if not n:body=body.replace('</main>',flag+'</main>',1)
+    # ALL factory-model detail pages, including G-series with unknown volume,
+    # may invite a *custom-material feasibility inquiry*. No factual material
+    # claim or existing D1-edited panel is ever removed.
+    if 'class="product-custom-material-options"' not in body:
+        panel=material_panel(locale,row)
+        if "</main>" not in body:raise ValueError("Missing Product main element: "+str(path))
+        body=body.replace("</main>",panel+"</main>",1)
+    result=head+sep+body
+    if result!=old:path.write_text(result,encoding="utf8")
+    return int(result!=old),int(bool(numbers))
+
+CARD_LINK=re.compile(r'(<a\b(?=[^>]*class="product-card\b)[^>]*\bhref="(?P<href>/[^"]+/products/[^"]+/|/products/[^"]+/)"[^>]*>)(?P<body>.*?)</a>',re.S)
+def enrich_cards(page,rows):
+    source=page.read_text(encoding="utf8")
+    changes=[0]
+    def card(m):
+        slug=m.group("href").strip("/").split("/")[-1]
+        row=rows.get(slug)
+        if row is None:return m.group(0)
+        numbers=catalog_volume_numbers(row)
+        if not numbers:return m.group(0)
+        outer=m.group(1)
+        inner=m.group("body")
+        if 'class="product-card__capacity"' in inner:return m.group(0)
+        locale=next((loc for loc in LOCALES if m.group("href").startswith('/'+loc+'/')),"en")
+        badge='<span class="product-card__capacity">'+escape(volume_terms(numbers,locale))+'</span>'
+        inner,n=re.subn(r'(</h3>)',lambda x:x.group(1)+badge,inner,count=1)
+        if not n:return m.group(0)
+        find=re.search(r'\bdata-search="([^"]*)"',outer)
+        if find:
+            to_add=" "+ " ".join(oz_number(v)+"oz-class" for v in numbers)
+            # Search corpus also includes accurate conditional *custom* inquiry.
+            to_add+=" custom Tritan BPA-free material options"
+            outer=outer[:find.end(1)]+escape(to_add,quote=True)+outer[find.end(1):]
+        changes[0]+=1
+        return outer+inner+"</a>"
+    result=CARD_LINK.sub(card,source)
+    if result!=source:page.write_text(result,encoding="utf8")
+    return changes[0]
+
+def apply(dist,owner_override=None):
+    dist=Path(dist)
+    rows={r["slug"]:r for r in SERIES.values()}
+    modified=with_volume=0
+    for slug,row in rows.items():
+        for locale in LOCALES:
+            prefix="" if locale=="en" else locale+"/"
+            file=dist/prefix/"products"/slug/"index.html"
+            if not file.is_file():
+                # Future overflow products are served separately in R2, not
+                # silently implied to be present in the Pages static build.
+                continue
+            changed,has_volume=enrich_detail(file,locale,row,owner_override)
+            modified+=changed;with_volume+=has_volume
+    cards=0
+    for file in dist.rglob("index.html"):
+        if file.relative_to(dist).parts[0]=="admin":continue
+        cards+=enrich_cards(file,rows)
+    print("XUYI_SOURCE_VOLUME_US_FL_OZ",with_volume,"product locale pages with verified capacity;",
+          len(rows),"factory models;",modified,"details enriched;",
+          cards,"catalog cards updated; all 5 languages; Tritan/BPA-free strictly conditional")
+    return with_volume,modified,cards
+
+if __name__=="__main__":apply(ROOT/"dist")
