@@ -312,6 +312,7 @@ jobs:
       - name: Validate release artifact and inquiry readiness
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
+          python scripts/test_localized_blog_unpublished_links.py
           python scripts/test_release.py
           python scripts/test_shared_templates.py
           python scripts/test_responsive_images.py

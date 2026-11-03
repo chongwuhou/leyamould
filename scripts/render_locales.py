@@ -38,6 +38,8 @@ from media_alt_render import apply_media_alts
 
 from image_alt_quality import polish_image_alt
 
+from localized_blog_links import disable_unpublished_blog_links
+
 from product_material_performance import inject as inject_materials
 
 
@@ -675,6 +677,17 @@ def main():
 
                         for locale in live}
 
+    # Use actual English output routes to keep future scheduled CMS cards visible
+    # but non-clickable until the canonical article is published.
+    english_blog_routes={"/blog/"}
+    english_blog_root=DIST/"blog"
+    if english_blog_root.is_dir():
+        english_blog_routes.update(
+            "/blog/"+page.parent.name+"/"
+            for page in english_blog_root.glob("*/index.html")
+            if page.is_file()
+        )
+
     created=0
 
     for (route,loc),fields in translated.items():
@@ -929,6 +942,9 @@ def main():
         text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+body+'</main>'+translate_chrome(suffix,loc,ui)
 
         text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])
+
+        if route=="/blog/":
+            text=disable_unpublished_blog_links(text,english_blog_routes)
 
         text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)
 
