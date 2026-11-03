@@ -22,6 +22,8 @@ from product_locale_seo import polish_product_head
 from locale_registry import approved_locales
 
 state=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8"))
+factory_manifest=json.loads((ROOT/"data/factory-catalog-manifest-2026-11-03.json").read_text(encoding="utf8"))
+assert factory_manifest["recordCount"]==len(factory_manifest["models"])==58
 locales=approved_locales(state)
 assert len(locales)>=5 and any(x["code"]=="en" for x in locales)
 assert len(SERIES)>=85 and len(ALIASES)==5
@@ -68,7 +70,7 @@ for legacy,clean in ALIASES.items():
         prefix=("/"+l["pathPrefix"] if l["pathPrefix"] else "")
         assert '<loc>https://xuyibottles.com'+prefix+'/products/'+clean+'/</loc>' in sitemap
 
-total=len(SERIES)
+total=len(SERIES)+factory_manifest["recordCount"]
 pages=ceil(total/PAGE_SIZE)
 for l in locales:
     prefix=l["pathPrefix"]
@@ -124,5 +126,5 @@ canonical_record["content"]["title"]="Owner canonical route selected title"
 changed["translations"].append(canonical_record)
 assert current_field("es","/products/2400-transparent/","title",changed)=="Owner canonical route selected title"
 assert not may_curate("es","/products/2400-transparent/","title",changed)
-print("XUYI_CRAWLABLE_QUERY_PAGING_101_DYNAMIC_PRODUCTS_25_CANONICAL_301_CMS_PASSED",
+print("XUYI_CRAWLABLE_QUERY_PAGING_FACTORY_BATCH_25_CANONICAL_301_CMS_PASSED",
       "models",total,"pages",pages,"languages",len(locales),"redirects",len(expected))
