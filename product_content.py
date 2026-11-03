@@ -48,6 +48,11 @@ def capacity_en(v,model=""):
  return " / ".join(dict.fromkeys(c.replace(" ","") for c in cap)) if cap else "Pending confirmation"
 def model_en(value):
  return str(value).replace("透明款"," (Transparent Variant)")
+
+def factory_model_code(obj):
+ value=obj.get("factoryModel")
+ if isinstance(value,str) and value.strip():return value.strip()
+ return str(obj.get("model") or "").strip()
 def join_unique(items,field,fn=lambda x:x):
  result=[]
  for item in items:
@@ -78,7 +83,7 @@ def factory_catalog_seo_title(obj):
  else:
   capacity_label="/".join(re.findall(r"\d+(?:\.\d+)?",capacity))
  kind=_FACTORY_SEO_TYPES.get(str(obj.get("category") or ""),"Drinkware")
- model=str(obj.get("factoryModel") or obj.get("model") or "").strip().upper()
+ model=factory_model_code(obj).upper()
  prefix=" ".join(part for part in (capacity_label,kind) if part)
  title=" | ".join(part for part in (prefix,model,"XUYI") if part)
  if len(title)>60:
@@ -92,7 +97,7 @@ def details(obj):
  category=obj['category'];display=CAT[category][0]
  manual_new=bool(obj.get("manualNew"))
  factory_catalog=manual_new and bool(obj.get("sourceDocument")) and bool(obj.get("sourcePage"))
- model=model_en(obj.get("factoryModel") or obj["model"])
+ model=model_en(factory_model_code(obj))
  name=public_display_name(obj)
  if manual_new:name=name+" — Model "+model
  variants=obj['variants']
@@ -192,7 +197,7 @@ def details(obj):
  return h
 def add_schema(html,obj):
  from product_share_source import real_product_images
- model=model_en(obj.get("factoryModel") or obj["model"])
+ model=model_en(factory_model_code(obj))
  title=public_display_name(obj)
  if obj.get("manualNew"):title=title+" — Model "+model
  site=SITE_ORIGIN+"/products/"+obj['slug']+"/"

@@ -83,6 +83,8 @@ for lang,prefix in LANGS.items():
         assert "offers" not in product,(lang,route,"invented price/offer")
         model=MODELS_BY_SLUG.get(route.parent.name)
         assert model,(lang,route,"review model must exist in canonical product data")
+        canonical_sku=str(product.get("sku","")).replace(" (Transparent Variant)","透明款")
+        assert canonical_sku==str(model),(lang,route,"Product SKU must equal canonical model",product.get("sku"),model)
         approved=published_reviews(STATE,model)
         owner_body=OWNER_BODIES.get(("/products/"+route.parent.name+"/",lang),"")
         owner_review=re.search(r'<section\b[^>]*\bid="xuyi-customer-reviews"[^>]*>.*?</section>',owner_body,re.S)

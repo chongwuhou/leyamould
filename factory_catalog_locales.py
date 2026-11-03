@@ -114,7 +114,9 @@ def _render_card(product: dict, locale: str, category_slug: str, translated_rout
     route = f"/products/{slug}/"
     has_translation = route in translated_routes
     link_label = labels["details"] if has_translation else labels["english"]
-    factory_model = str(product.get("factoryModel") or product.get("model") or slug)
+    factory_model_value = product.get("factoryModel")
+    factory_model = (factory_model_value.strip() if isinstance(factory_model_value, str) and factory_model_value.strip()
+                     else str(product.get("model") or slug))
     capacity = str(product.get("capacity") or "").strip()
     category = str(product.get("category") or "")
     title = CATEGORY_NAMES.get(category, {}).get(locale, category)

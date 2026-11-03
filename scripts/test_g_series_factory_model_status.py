@@ -6,6 +6,8 @@ confirmed. Regression must never restore an incorrect non-factory label.
 """
 from pathlib import Path
 import html
+import json
+import re
 import sys
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -35,6 +37,14 @@ for lang in ("en","es","pt","ru","tr"):
         assert LABELS[lang][0] in page and LABELS[lang][10] in catalog,(lang,slug)
         assert "hreflang=\""+lang+"\"" in page
         assert item["model"] in page
+        assert "Model True" not in page,(lang,slug,"boolean factoryModel leaked into product content")
+        product_nodes=[]
+        for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>',page,re.S):
+            try:graph=json.loads(raw).get("@graph",[])
+            except (TypeError,ValueError):continue
+            product_nodes.extend(node for node in graph if isinstance(node,dict) and node.get("@type")=="Product")
+        assert len(product_nodes)==1,(lang,slug,"expected one Product schema",len(product_nodes))
+        assert product_nodes[0].get("sku")==item["model"],(lang,slug,"Product SKU must be the factory model",product_nodes[0].get("sku"))
         assert 'href="/'+prefix+"products/"+slug+'/"' in catalog
         count+=1
 assert count==40,count
