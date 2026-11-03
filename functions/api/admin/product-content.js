@@ -44,6 +44,7 @@ export async function onRequestPost(context){
     const db=context.env.XUYI_DB;await ensure(db);
     const prior=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
     if(prior){
+      if(p.createOnly===true)return respond({error:"Model already exists; create-only import will not overwrite"},409);
       let previous;
       try{previous=JSON.parse(prior.content_json)}catch{return respond({error:"Existing product JSON invalid"},409)}
       if(previous.newProduct!==true)return respond({error:"Model already owned by legacy catalog"},409);

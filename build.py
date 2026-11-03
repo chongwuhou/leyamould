@@ -87,7 +87,12 @@ def catalog_buying_guide(category=None):
   "Large Capacity Water Jugs":[
    ("Consider Filled Handling","Review the actual jug capacity, handle arrangement, cap fit and balance when filled."),
    ("Confirm Outer Cartons","Ask for carton quantity, packing dimensions and delivery destination before comparing landed costs."),
+   ("Specify the Exact Variant","Check the mouthpiece, straw or lid configuration, which may differ between catalog photographs."),
    ("Review Material and Closure","Confirm the body, cap and seal materials for the exact jug model.")],
+  "Kids Plastic Water Bottles":[
+   ("Check Intended Age & Market","Confirm the target market, intended age range and relevant product requirements for the finished SKU."),
+   ("Review Removable Components","Ask about straw, gasket, cap and carrying-strap components and cleaning instructions."),
+   ("Confirm Materials & Evidence","Request model-specific body/lid material details and any required food-contact or children's product documents.")],
   "Plastic Shaker Bottles":[
    ("Verify Mixing Accessories","Ask if the selected SKU includes a mixing ball, mesh insert or other accessory."),
    ("Compare Capacity & Markings","Check usable fill volume, lid design, measurement scale and cleaning access for the actual model."),
@@ -419,11 +424,13 @@ def generate():
  # unreviewed multilingual paths.
  sitemap=['<?xml version="1.0" encoding="utf-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">']
- from sitemap_modification import source_lastmod
+ from sitemap_modification import source_lastmod,review_change_dates
  from product_image_sitemap import xml_image_for_product
+ reviewed_date_changes=review_change_dates(SERIES,BUILD_STATE.get("productReviews",[]))
  for file_path in sorted(path for path in URLS if path.endswith('index.html')):
   route='/'+file_path[:-len('index.html')]
-  lastmod=source_lastmod(route,'en',next((x for x in BUILD_STATE.get('pages',[]) if x.get('route')==route),None))
+  lastmod=source_lastmod(route,'en',next((x for x in BUILD_STATE.get('pages',[]) if x.get('route')==route),None),
+                         review_dates=reviewed_date_changes)
   # Published canonical main image is selected from the shared catalog
   # and the active D1 product/page body, not a guessed filename or R2 rename.
   body_owner=BODY_OVERRIDES.get(route) if route in BODY_OVERRIDES else None

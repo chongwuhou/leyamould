@@ -382,7 +382,7 @@
        sourceDocument:value("sourceDocument"),sourcePage:value("sourcePage"),sourceNotes:value("sourceNotes"),qcStatus:value("qcStatus"),
        imageReviewStatus:value("imageReviewStatus"),image:value("image"),description:value("description"),
        seoTitle:value("seoTitle"),seoDescription:value("seoDescription")};
-     result=await api("product-content",{action:"create_product",model,status,content});
+     result=await api("product-content",{action:"create_product",createOnly:true,model,status,content});
    }else if(action==="new-product-bulk"){
     const file=document.getElementById("cms-new-bulk-file")?.files?.[0];
     if(!file)throw Error("请先选择工厂目录 JSON 文件");
@@ -396,11 +396,13 @@
     for(const row of manifest.records){
       if(!row||typeof row.model!=="string"||!/^[a-z0-9][a-z0-9-]{1,63}$/.test(row.model)||seen.has(row.model))
         throw Error("目录中存在无效或重复型号");
-      if(!row.content||typeof row.content!=="object"||typeof row.imageBase64!=="string"||row.imageMime!=="image/webp")
-        throw Error("型号 "+row.model+" 缺少商品资料或 WebP 图片");
+      if(!row.content||typeof row.content!=="object"||typeof row.imageBase64!=="string"||row.imageBase64.length<100||row.imageMime!=="image/webp"||!(/^[0-9a-f]{64}$/i.test(row.imageSha256||"")))
+        throw Error("型号 "+row.model+" 缺少商品资料、完整图片或 SHA-256 校验值");
+      if(!row.imageAlt||["en","es","pt","ru","tr"].some(locale=>typeof row.imageAlt[locale]!=="string"||!row.imageAlt[locale].trim()))
+        throw Error("型号 "+row.model+" 缺少五种语言的图片 ALT");
       seen.add(row.model);
     }
-    const existing=new Set((state.products?.items||[]).map(row=>String(row.model)));
+    const existing=new Set((state.products?.items||[]).map(row=>String(row.model).toLowerCase()));
     (state.products?.catalogModels||[]).forEach(model=>existing.add(String(model).toLowerCase()));
     const already=manifest.records.filter(row=>existing.has(row.model)).map(row=>row.model);
     const fresh=manifest.records.filter(row=>!existing.has(row.model));
@@ -412,6 +414,9 @@
       say("正在导入 "+(i+1)+"/"+fresh.length+"："+row.model+"（上传原始图片）");
       try{
         const bytes=Uint8Array.from(atob(row.imageBase64),ch=>ch.charCodeAt(0));
+        const digest=await crypto.subtle.digest("SHA-256",bytes);
+        const hash=Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,"0")).join("");
+        if(hash!==row.imageSha256.toLowerCase())throw Error("产品图片 SHA-256 校验失败");
         const imageFile=new File([bytes],row.model+".webp",{type:"image/webp"});
         const form=new FormData();form.set("kind","product");form.set("image",imageFile);
         form.set("altByLocale",JSON.stringify(row.imageAlt||{en:(row.content.factoryModel||row.model)+" "+(row.content.name||"drinkware")+" factory catalog product image"}));
@@ -420,7 +425,7 @@
         if(!upload.ok||!media.path)throw Error(media.error||"R2 图片上传失败");
         imagePath=media.path;
         const content={...row.content,image:imagePath};
-        const saved=await api("product-content",{action:"create_product",model:row.model,status:row.status||"published",content});
+        const saved=await api("product-content",{action:"create_product",createOnly:true,model:row.model,status:row.status||"published",content});
         if(!saved?.saved)throw Error(saved?.error||"CMS 未确认保存");
         created.push(row.model);
       }catch(error){
