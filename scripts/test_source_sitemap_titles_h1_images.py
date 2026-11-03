@@ -9,10 +9,15 @@ SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
 if SNAPSHOT.is_file():os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES,BUILD_STATE
+from catalog_extensions import is_factory_catalog_source_default
 from product_source_identity import source_product_identity,main_image_alt,matches_owner_field
 from sitemap_modification import source_lastmod,BASELINE,review_change_dates
 from scripts.source_catalog_capacity_oz import new_seo,catalog_volume_numbers,verified_source_material
 DIST=ROOT/"dist"
+D1_PRODUCT_SEO={(str(row.get("slug") or ""),str(row.get("locale") or "")):row
+                for row in BUILD_STATE.get("productSeo",[]) if isinstance(row,dict)}
+D1_PRODUCTS={str(row.get("model") or "").lower():row.get("content",{})
+             for row in BUILD_STATE.get("products",[]) if isinstance(row,dict)}
 REVIEW_DATE_CHANGES=review_change_dates(SERIES,BUILD_STATE.get("productReviews",[]))
 ns="{http://www.sitemaps.org/schemas/sitemap/0.9}"
 root=ET.parse(DIST/"sitemap.xml").getroot()
@@ -50,11 +55,20 @@ for loc in ("en","es","pt","ru","tr"):
         assert route.is_file(),route
         doc=route.read_text(encoding="utf8")
         title=unescape(re.search(r"<title>(.*?)</title>",doc,re.S).group(1))
-        # Newly reviewed verified-volume titles are concise. Existing owner
-        # D1 titles for unknown-size products may be slightly longer; Google's
-        # search title has no hard 60-character cutoff and should not be cut.
-        from scripts.source_catalog_capacity_oz import catalog_volume_numbers
-        assert len(title)<=(60 if catalog_volume_numbers(row) else 90),(loc,slug,len(title),title)
+        # A D1 product-SEO row or a genuinely edited product-content field is
+        # authoritative, even when its title is longer than the 60-char source target.
+        # Otherwise, source defaults for this 58-SKU batch must use concise verified SEO.
+        product_seo=D1_PRODUCT_SEO.get((slug,loc))
+        product_content=D1_PRODUCTS.get(str(row.get("model") or "").lower(),{})
+        owner_title=(product_seo or {}).get("seoTitle")
+        if not owner_title and product_content.get("seoTitle"):
+            if not is_factory_catalog_source_default(row.get("model"),product_content,"seoTitle"):
+                owner_title=product_content["seoTitle"]
+        if owner_title:
+            assert title==owner_title,(loc,slug,"D1/product owner SEO overwritten",title,owner_title)
+            assert len(title)<=90,(loc,slug,"owner SEO exceeds product metadata limit",len(title),title)
+        else:
+            assert len(title)<=(60 if catalog_volume_numbers(row) else 90),(loc,slug,len(title),title)
         h1=re.search(r"<h1[^>]*>(.*?)</h1>",doc,re.S)
         assert h1,(loc,slug,"missing H1")
         heading=unescape(re.sub(r"<[^>]+>"," ",h1.group(1))).strip()

@@ -12,9 +12,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from catalog_extensions import append_new_products  # noqa: E402
+from catalog_extensions import append_new_products, is_factory_catalog_source_default  # noqa: E402
 from factory_catalog_locales import catalog_cards  # noqa: E402
 from product_content import details as product_details, factory_catalog_seo_title  # noqa: E402
+from scripts.cms_seo_curation_guard import current_field  # noqa: E402
 
 BUNDLE = json.loads((ROOT / "scripts/fixtures/factory-catalog-import-2026-11-03.json").read_text(encoding="utf-8"))
 IMAGES_ZIP = ROOT / "scripts/fixtures/factory-catalog-images-2026-11-03.zip"
@@ -50,6 +51,16 @@ def main() -> None:
         content = dict(record["content"])
         assert record["status"] == "published"
         assert content["newProduct"] is True
+        assert is_factory_catalog_source_default(model,content,"seoTitle")
+        assert is_factory_catalog_source_default(model,content,"seoDescription")
+        owner_edited={**content,"seoTitle":content["seoTitle"]+" | Owner edit"}
+        assert not is_factory_catalog_source_default(model,owner_edited,"seoTitle")
+        snapshot_data={"products":[{"model":model,"content":content}]}
+        route="/products/"+model+"/"
+        assert current_field("en",route,"title",snapshot_data) is None
+        assert current_field("en",route,"description",snapshot_data) is None
+        edited_snapshot={"products":[{"model":model,"content":owner_edited}]}
+        assert current_field("en",route,"title",edited_snapshot)==owner_edited["seoTitle"]
         assert content["factoryModel"] == spec["factoryModel"]
         assert content["category"] == spec["category"]
         assert str(content["sourcePage"]) == str(spec["sourcePage"])

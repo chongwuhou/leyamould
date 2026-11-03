@@ -4,6 +4,44 @@ Legacy Excel/PPT products remain unchanged. New products are only accepted
 from the published D1 snapshot, never from draft or fabricated placeholders.
 """
 import re
+import json
+from functools import lru_cache
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parent
+
+@lru_cache(maxsize=1)
+def factory_catalog_seo_defaults():
+ manifest=json.loads((ROOT/"data/factory-catalog-manifest-2026-11-03.json").read_text(encoding="utf-8"))
+ bundle=json.loads((ROOT/"scripts/fixtures/factory-catalog-import-2026-11-03.json").read_text(encoding="utf-8"))
+ if manifest.get("site")!="xuyi-drinkware-site" or manifest.get("recordCount")!=58:
+  raise ValueError("Factory catalog SEO baseline belongs to another site or batch")
+ if bundle.get("sourceDocument")!=manifest.get("sourceDocument") or bundle.get("sourceSha256")!=manifest.get("sourceSha256"):
+  raise ValueError("Factory catalog SEO baseline source fingerprint mismatch")
+ rows={}
+ for record in bundle.get("records",[]):
+  model=str(record.get("model") or "").lower()
+  content=record.get("content")
+  if not model or not isinstance(content,dict) or model in rows:
+   raise ValueError("Invalid or duplicate factory catalog SEO baseline row")
+  rows[model]={field:content.get(field) for field in ("seoTitle","seoDescription")}
+ if len(rows)!=58:
+  raise ValueError("Factory catalog SEO baseline must contain exactly 58 models")
+ return rows,manifest
+
+def is_factory_catalog_source_default(model,content,field):
+ if field not in ("seoTitle","seoDescription") or not isinstance(content,dict):
+  return False
+ if content.get("newProduct") is not True:
+  return False
+ rows,manifest=factory_catalog_seo_defaults()
+ if (content.get("sourceDocument")!=manifest.get("sourceDocument") or
+     content.get("sourceSha256")!=manifest.get("sourceSha256") or
+     not content.get("sourcePage")):
+  return False
+ expected=rows.get(str(model).lower(),{}).get(field)
+ return isinstance(expected,str) and bool(expected.strip()) and content.get(field)==expected
+
 
 CATEGORIES=frozenset((
  "Plastic Sports Water Bottles","Large Capacity Water Jugs",

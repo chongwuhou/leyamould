@@ -62,8 +62,12 @@ def current_field(locale,route,field,snapshot_data=None):
             sku=route.strip("/").split("/")[-1]
             product=next((x.get("content",{}) for x in data.get("products",[])
                           if str(x.get("model"))==sku),{})
-            custom=product.get("seoTitle" if field=="title" else "seoDescription")
+            field_name="seoTitle" if field=="title" else "seoDescription"
+            custom=product.get(field_name)
             if isinstance(custom,str) and custom.strip():
+                from catalog_extensions import is_factory_catalog_source_default
+                if is_factory_catalog_source_default(sku,product,field_name):
+                    return None  # Unchanged import defaults are not owner-authored SEO.
                 return custom
         return (row or {}).get("seo_title" if field=="title" else "meta_description")
     row=next((x.get("content",{}) for x in data.get("translations",[])
