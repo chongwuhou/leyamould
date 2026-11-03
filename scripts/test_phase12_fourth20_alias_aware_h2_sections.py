@@ -60,8 +60,14 @@ for sku,peer in PEERS.items():
         for kind in ("design","faq"):
             actual=section(document,kind)
             assert actual and actual[2]==section(output,kind)[2],(sku,locale,kind,"render differs from source")
+        faq_source=section(raw,"faq")
+        assert faq_source is not None,(sku,locale,"missing source FAQ")
+        faq_digest=sha256(faq_source[2].encode("utf8")).hexdigest()[:16]
         pairs=visible_faq(document)
-        assert len(pairs)==4 and all(f["sku"] in q for q,a in pairs),(sku,locale,"not four model-specific FAQs")
+        if faq_digest==BASE[sku][locale]["faq"]:
+            assert len(pairs)==4 and all(f["sku"] in q for q,a in pairs),(sku,locale,"not four model-specific FAQs")
+        else:
+            assert pairs==visible_faq(faq_source[2]),(sku,locale,"owner FAQ questions were not preserved")
         scripts=re.findall(r'<script type="application/ld\+json">(.*?)</script>',document,re.S)
         schemas=[obj for rawj in scripts if isinstance((obj:=json.loads(rawj)),dict) and obj.get("@type")=="FAQPage"]
         assert len(schemas)==1,(sku,locale,"FAQPage missing or doubled")
