@@ -35,20 +35,37 @@ for slug,peer in FIFTH10.items():
   for kind in ("design","faq"):
    old=section(original,kind);new=section(updated,kind)
    assert old and new,(slug,lang,kind)
-   assert sha256(old[2].encode("utf8")).hexdigest()[:16]==BASE[slug][lang][kind]
-   assert old[2]!=new[2] and data["sku"] in new[2] and data["peer"] in new[2]
+   digest=sha256(old[2].encode("utf8")).hexdigest()[:16]
+   if digest==BASE[slug][lang][kind]:
+    assert old[2]!=new[2] and data["sku"] in new[2] and data["peer"] in new[2]
+   else:
+    assert new[2]==old[2],(slug,lang,kind,"owner module overwritten")
    edit=old[2].replace('<div class="shell">','<div class="shell" data-cms-owner="yes">',1)
    customized=original[:old[0]]+edit+original[old[1]:]
-   assert section(apply(customized,row,lang),kind)[2]==edit,(slug,lang,kind,"owner change lost")
+   applied=apply(customized,row,lang)
+   assert section(applied,kind)[2]==edit,(slug,lang,kind,"owner change lost")
    other="faq" if kind=="design" else "design"
-   assert section(apply(customized,row,lang),other)[2]!=section(customized,other)[2]
+   other_old=section(customized,other)
+   other_new=section(applied,other)
+   assert other_old and other_new,(slug,lang,other)
+   other_digest=sha256(other_old[2].encode("utf8")).hexdigest()[:16]
+   if other_digest==BASE[slug][lang][other]:
+    assert other_new[2]!=other_old[2] and data["sku"] in other_new[2] and data["peer"] in other_new[2]
+   else:
+    assert other_new[2]==other_old[2],(slug,lang,other,"owner module overwritten")
   page=(ROOT/"dist"/("" if lang=="en" else lang)/"products"/slug/"index.html").read_text(encoding="utf8")
   assert page.count('data-sku-material="'+slug+'"')==1
   assert material_annotation(row,lang) in page
   assert 'data-sku-focus="'+slug+'"' in page
   for kind in ("design","faq"):assert section(page,kind)[2]==section(updated,kind)[2]
+  faq_source=section(original,"faq")
+  assert faq_source is not None,(slug,lang,"missing source FAQ")
+  faq_digest=sha256(faq_source[2].encode("utf8")).hexdigest()[:16]
   visible=visible_faq(page)
-  assert len(visible)==4 and all(data["sku"] in q for q,a in visible),(slug,lang,"FAQ")
+  if faq_digest==BASE[slug][lang]["faq"]:
+   assert len(visible)==4 and all(data["sku"] in q for q,a in visible),(slug,lang,"FAQ")
+  else:
+   assert visible==visible_faq(faq_source[2]),(slug,lang,"owner FAQ questions were not preserved")
   schemas=[z for txt in re.findall(r'<script type="application/ld\+json">(.*?)</script>',page,re.S)
     if isinstance((z:=json.loads(txt)),dict) and z.get("@type")=="FAQPage"]
   assert len(schemas)==1
