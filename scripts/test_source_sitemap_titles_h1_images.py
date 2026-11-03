@@ -6,11 +6,12 @@ from collections import Counter
 import sys,re,xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
-from site_renderer import SERIES
+from site_renderer import SERIES,BUILD_STATE
 from product_source_identity import source_product_identity,main_image_alt,matches_owner_field
-from sitemap_modification import source_lastmod,BASELINE
+from sitemap_modification import source_lastmod,BASELINE,review_change_dates
 from scripts.source_catalog_capacity_oz import new_seo,catalog_volume_numbers,verified_source_material
 DIST=ROOT/"dist"
+REVIEW_DATE_CHANGES=review_change_dates(SERIES,BUILD_STATE.get("productReviews",[]))
 ns="{http://www.sitemaps.org/schemas/sitemap/0.9}"
 root=ET.parse(DIST/"sitemap.xml").getroot()
 urls=list(root)
@@ -22,7 +23,8 @@ for item in urls:
     assert url.startswith("https://xuyibottles.com/")
     path=url.removeprefix("https://xuyibottles.com")
     date=item.find(ns+"lastmod")
-    expected=source_lastmod(path)
+    revision=next((x for x in BUILD_STATE.get("pages",[]) if x.get("route")==path),None)
+    expected=source_lastmod(path,"en",revision,review_dates=REVIEW_DATE_CHANGES)
     assert (date.text if date is not None else None)==expected,(path,expected)
     if expected is not None:expected_dates+=1
     if date is not None:dates+=1
@@ -68,7 +70,7 @@ for loc in ("en","es","pt","ru","tr"):
                 assert description,(loc,slug,"empty alt")
                 all_main.setdefault(imgpath,set()).add(description)
                 if owners.get(imgpath,0)>1 and imgpath in (r["images"][0] for r in SERIES.values()):
-                    assert "product photograph" not in description or str(row["model"]) in description,(loc,slug,description)
+                    assert "product photograph" not in description or str(row["model"]) not in description,(loc,slug,description)
         if loc=="en" and slug=="2095":
             # Actual 500ml + reviewed 16.9 oz retail class now take precedence
             # over listing all component resins in the concise search title.
