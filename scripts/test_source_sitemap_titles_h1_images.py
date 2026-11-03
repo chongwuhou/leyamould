@@ -3,8 +3,10 @@
 from pathlib import Path
 from html import unescape
 from collections import Counter
-import sys,re,xml.etree.ElementTree as ET
+import os,sys,re,xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parent.parent
+SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
+if SNAPSHOT.is_file():os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES,BUILD_STATE
 from product_source_identity import source_product_identity,main_image_alt,matches_owner_field
