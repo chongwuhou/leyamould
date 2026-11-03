@@ -50,6 +50,11 @@ for loc in ("en","es","pt","ru","tr"):
     all_h1=[]
     all_main={}
     for row in SERIES.values():
+        # The 58 newly reviewed PDF products intentionally publish one English
+        # source detail page; all four localized catalog cards link to it until
+        # their translations are separately reviewed and approved.
+        if loc!="en" and row.get("manualNew") and row.get("sourceDocument"):
+            continue
         slug=row["slug"]
         route=DIST/path_prefix/"products"/slug/"index.html"
         assert route.is_file(),route
