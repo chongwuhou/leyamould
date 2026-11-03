@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """No Excel screenshot as Product.image, OG or Google image-sitemap photo.
 
-Test the source renderer + 5-language generated result, CMS owner precedence,
-repeat rendering, and a new model without relying on fixed SKU counts.
+Test existing 5-language pages and the English-only source detail for newly
+reviewed factory products, CMS owner precedence, and repeat rendering.
 """
 from pathlib import Path
 import copy
@@ -43,7 +43,14 @@ for entry in SERIES.values():
     selected=social_path(entry)
     if fallback:assert selected==CATEGORY_PREVIEWS[entry["category"]]
     else:assert selected==photos[0]
+    source_only=bool(entry.get("manualNew") and entry.get("sourceDocument"))
+    if source_only:
+        assert (dist/"products"/model/"index.html").is_file(),model
+        for locale in ("es","pt","ru","tr"):
+            assert not (dist/locale/"products"/model/"index.html").exists(),(locale,model)
     for locale in langs:
+        if locale and source_only:
+            continue
         route=("/"+locale if locale else "")+"/products/"+model+"/"
         path=dist/route.lstrip("/")/"index.html"
         assert path.is_file(),route
