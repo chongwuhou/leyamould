@@ -10,7 +10,6 @@ import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
-from cms_seo_curation_guard import current_field
 
 ROOT = Path(__file__).resolve().parents[1]
 ORIGIN = "https://xuyibottles.com"
@@ -37,6 +36,17 @@ def require_page(path: str) -> str:
         raise RuntimeError(f"{path} returned HTTP {status}")
     return body
 
+def built_title(slug: str) -> str:
+    """Use the exact fresh D1-derived artifact as the live title authority."""
+    artifact = ROOT / "dist" / "products" / slug / "index.html"
+    if not artifact.is_file():
+        raise RuntimeError(f"{artifact} is missing from the fresh release build.")
+    markup = artifact.read_text(encoding="utf-8")
+    match = re.search(r"<title>(.*?)</title>", markup, re.I | re.S)
+    if not match:
+        raise RuntimeError(f"{artifact} has no HTML title.")
+    return html.unescape(match.group(1).strip())
+
 
 def verify_product(record: dict) -> str:
     model = record["model"].lower()
@@ -59,14 +69,9 @@ def verify_product(record: dict) -> str:
     if not title:
         raise RuntimeError(f"{path} has no HTML title.")
     live_title = html.unescape(title.group(1).strip())
-    owner_title = current_field("en", path, "title")
-    expected_title = (
-        html.unescape(owner_title.strip())
-        if isinstance(owner_title, str) and owner_title.strip()
-        else html.unescape(str(content.get("seoTitle") or ""))
-    )
-    if expected_title and live_title != expected_title:
-        raise RuntimeError(f"{path} title mismatch: {live_title!r} (expected {expected_title!r})")
+    expected_title = built_title(slug)
+    if live_title != expected_title:
+        raise RuntimeError(f"{path} live title differs from the fresh D1-derived release artifact: {live_title!r} (expected {expected_title!r})")
     if model.upper() not in live_title.upper() or "XUYI" not in live_title.upper():
         raise RuntimeError(f"{path} title must retain its factory model and XUYI brand: {live_title!r}")
     canonical = f'<link rel="canonical" href="{ORIGIN}{path}"'
