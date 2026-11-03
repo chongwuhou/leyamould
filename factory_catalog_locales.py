@@ -162,6 +162,20 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
         raise ValueError(f"Localized catalog grid missing for {route}")
     content_start, content_end = bounds
     grid_content = body[content_start:content_end]
+    priority_cards = []
+    if route == "/products/":
+        # Keep the established eight LO launch models at the top of the main
+        # catalog; append the new factory batch immediately after them.
+        for _ in range(8):
+            match = re.search(r'<a\b[^>]*\bdata-product-card\b[^>]*>.*?</a>', grid_content, re.I | re.S)
+            if not match:
+                raise ValueError("Main product catalog is missing a priority LO launch card")
+            card = match.group(0)
+            href_match = re.search(r'\bhref=["\']([^"\']+)["\']', card, re.I)
+            if not href_match or "/products/lo-" not in href_match.group(1):
+                raise ValueError("The eight LO launch cards must retain first-page priority")
+            priority_cards.append(card)
+            grid_content = grid_content[:match.start()] + grid_content[match.end():]
     cards = []
 
     for product in products:
@@ -192,4 +206,4 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
             category_slug = CAT[product["category"]][1]
             cards.append(_render_card(product, locale, category_slug, translated, photo))
 
-    return body[:content_start] + "".join(cards) + grid_content + body[content_end:]
+    return body[:content_start] + "".join(priority_cards + cards) + grid_content + body[content_end:]

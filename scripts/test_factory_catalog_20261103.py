@@ -5,6 +5,7 @@ from __future__ import annotations
 import collections
 import hashlib
 import json
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -14,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from catalog_extensions import append_new_products, is_factory_catalog_source_default  # noqa: E402
 from factory_catalog_locales import catalog_cards  # noqa: E402
+from lo_catalog import catalog_cards as lo_catalog_cards  # noqa: E402
 from product_content import details as product_details, factory_catalog_seo_title  # noqa: E402
 from scripts.cms_seo_curation_guard import current_field  # noqa: E402
 from scripts.source_catalog_capacity_oz import KIND, catalog_volume_numbers, new_seo  # noqa: E402
@@ -138,3 +140,42 @@ def main() -> None:
 
     # The four published non-English catalogs receive localized cards that
     # link to the English source-backed detail page until translations exist.
+    empty_grid = '<div class="grid grid--4 product-grid"></div>'
+    for locale in ("es", "pt", "ru", "tr"):
+        # The production renderer first inserts the existing LO cards, then
+        # the factory catalog module must preserve those eight at the front.
+        lo_first = lo_catalog_cards(empty_grid, locale, "/products/")
+        localized = catalog_cards(lo_first, locale, "/products/", set(), series)
+        assert localized.count('data-new-product="true"') == 66
+        card_urls = [
+            re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
+            for match in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>', localized, re.I)
+        ]
+        expected_lo = [f'/{locale}/products/lo-{number:03d}/' for number in range(1, 9)]
+        assert card_urls[:8] == expected_lo, (locale, "LO products must remain first after factory cards")
+        assert all(f'href="/products/{model}/"' in localized for model in seen), (locale, "factory cards missing after LO priority pass")
+        render_source = (ROOT / "scripts/render_locales.py").read_text(encoding="utf-8")
+        gallery_at = render_source.index("body=gallery_catalog_cards(body,loc,route)")
+        lo_at = render_source.index("body=catalog_cards(body,loc,route)", gallery_at)
+        factory_at = render_source.index("body=factory_catalog_cards(body,loc,route,routes_by_locale[loc])")
+        assert gallery_at < lo_at < factory_at, "factory catalog must preserve the established LO priority pass"
+        for model in seen:
+            assert f'href="/products/{model}/"' in localized
+            assert f'href="/{locale}/products/{model}/"' not in localized
+        category_slugs = {
+            item["categorySlug"] for item in MANIFEST["models"]
+        }
+        for category_slug in category_slugs:
+            category_count = sum(
+                1 for item in MANIFEST["models"] if item["categorySlug"] == category_slug
+            )
+            category_html = catalog_cards(
+                empty_grid, locale, f"/collections/{category_slug}/", set(), series
+            )
+            assert category_html.count('data-new-product="true"') == category_count
+
+    print(f"PASS: {len(series)} new products, {len(hashes)} unique WebP images, {len(category_counts)} categories.")
+
+
+if __name__ == "__main__":
+    main()
