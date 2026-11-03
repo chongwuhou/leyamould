@@ -164,24 +164,34 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
     grid_content = body[content_start:content_end]
     priority_cards = []
     if route == "/products/" or route.startswith("/collections/"):
-        # Preserve every reviewed LO card at the front of both the main
-        # catalog and its matching category catalog before adding factory cards.
+        # Keep LO first and the eight G-series gallery references second in
+        # the main catalog; preserve the matching priority cards in categories.
         card_pattern = re.compile(r'<a\b[^>]*\bdata-product-card\b[^>]*>.*?</a>', re.I | re.S)
         lo_matches = []
+        gallery_matches = []
         for match in card_pattern.finditer(grid_content):
             card = match.group(0)
             opening = card.split(">", 1)[0]
             href_match = re.search(r'\bhref=["\']([^"\']+)["\']', opening, re.I)
-            if href_match and "/products/lo-" in href_match.group(1):
-                lo_matches.append((match.start(), match.end(), card, href_match.group(1)))
+            href = href_match.group(1) if href_match else ""
+            item = (match.start(), match.end(), card, href)
+            if "/products/lo-" in href:
+                lo_matches.append(item)
+            elif 'data-gallery-reference="true"' in opening:
+                gallery_matches.append(item)
         lo_urls = [item[3] for item in lo_matches]
+        gallery_urls = [item[3] for item in gallery_matches]
         if len(lo_urls) != len(set(lo_urls)):
             raise ValueError("Duplicate LO launch card in " + locale + " " + route)
+        if len(gallery_urls) != len(set(gallery_urls)):
+            raise ValueError("Duplicate gallery reference card in " + locale + " " + route)
         if route == "/products/" and len(lo_matches) != 8:
             raise ValueError("Main product catalog must retain all eight LO launch cards")
-        for start, end, _card, _url in reversed(lo_matches):
+        if route == "/products/" and len(gallery_matches) != 8:
+            raise ValueError("Main product catalog must retain all eight gallery reference cards")
+        for start, end, _card, _url in sorted(lo_matches + gallery_matches, key=lambda item: item[0], reverse=True):
             grid_content = grid_content[:start] + grid_content[end:]
-        priority_cards = [item[2] for item in lo_matches]
+        priority_cards = [item[2] for item in lo_matches] + [item[2] for item in gallery_matches]
     cards = []
 
     for product in products:

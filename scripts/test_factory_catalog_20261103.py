@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from catalog_extensions import append_new_products, is_factory_catalog_source_default  # noqa: E402
 from factory_catalog_locales import catalog_cards  # noqa: E402
+from gallery_catalog import catalog_cards as gallery_catalog_cards  # noqa: E402
 from lo_catalog import catalog_cards as lo_catalog_cards  # noqa: E402
 from product_content import details as product_details, factory_catalog_seo_title  # noqa: E402
 from scripts.cms_seo_curation_guard import current_field  # noqa: E402
@@ -142,18 +143,25 @@ def main() -> None:
     # link to the English source-backed detail page until translations exist.
     empty_grid = '<div class="grid grid--4 product-grid"></div>'
     for locale in ("es", "pt", "ru", "tr"):
-        # The production renderer first inserts the existing LO cards, then
-        # the factory catalog module must preserve those eight at the front.
-        lo_first = lo_catalog_cards(empty_grid, locale, "/products/")
+        # The production renderer inserts gallery cards, hoists LO, then adds
+        # factory cards. Both established groups must remain ahead of the batch.
+        gallery_first = gallery_catalog_cards(empty_grid, locale, "/products/")
+        lo_first = lo_catalog_cards(gallery_first, locale, "/products/")
         localized = catalog_cards(lo_first, locale, "/products/", set(), series)
         assert localized.count('data-new-product="true"') == 66
         card_urls = [
             re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
             for match in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>', localized, re.I)
         ]
+        priority_urls = [
+            re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
+            for match in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>', lo_first, re.I)
+        ]
         expected_lo = [f'/{locale}/products/lo-{number:03d}/' for number in range(1, 9)]
-        assert card_urls[:8] == expected_lo, (locale, "LO products must remain first after factory cards")
-        assert all(f'href="/products/{model}/"' in localized for model in seen), (locale, "factory cards missing after LO priority pass")
+        assert priority_urls[:8] == expected_lo, (locale, "LO products must be first")
+        assert len(priority_urls) == 16, (locale, "expected eight LO and eight gallery priority cards")
+        assert card_urls[:16] == priority_urls, (locale, "LO and gallery priority groups must precede factory cards")
+        assert all(f'href="/products/{model}/"' in localized for model in seen), (locale, "factory cards missing after priority groups")
         render_source = (ROOT / "scripts/render_locales.py").read_text(encoding="utf-8")
         gallery_at = render_source.index("body=gallery_catalog_cards(body,loc,route)")
         lo_at = render_source.index("body=catalog_cards(body,loc,route)", gallery_at)
@@ -170,20 +178,22 @@ def main() -> None:
                 1 for item in MANIFEST["models"] if item["categorySlug"] == category_slug
             )
             category_route = f"/collections/{category_slug}/"
-            lo_category_first = lo_catalog_cards(empty_grid, locale, category_route)
+            gallery_category_first = gallery_catalog_cards(empty_grid, locale, category_route)
+            lo_category_first = lo_catalog_cards(gallery_category_first, locale, category_route)
             category_html = catalog_cards(lo_category_first, locale, category_route, set(), series)
-            expected_lo_category = [
+            expected_priority_category = [
                 re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
                 for match in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>', lo_category_first, re.I)
             ]
+            expected_lo_category_count = sum("/products/lo-" in url for url in expected_priority_category)
             category_urls = [
                 re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
                 for match in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>', category_html, re.I)
             ]
-            assert category_urls[:len(expected_lo_category)] == expected_lo_category, (
-                locale, category_slug, "LO category cards must remain first"
+            assert category_urls[:len(expected_priority_category)] == expected_priority_category, (
+                locale, category_slug, "LO/gallery category cards must remain first"
             )
-            assert category_html.count('data-new-product="true"') == category_count + len(expected_lo_category)
+            assert category_html.count('data-new-product="true"') == category_count + expected_lo_category_count
 
     print(f"PASS: {len(series)} new products, {len(hashes)} unique WebP images, {len(category_counts)} categories.")
 
