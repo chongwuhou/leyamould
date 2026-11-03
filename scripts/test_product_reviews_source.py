@@ -2,6 +2,7 @@
 """No fabricated ratings; verified SKU-specific reviews survive five locales."""
 from pathlib import Path
 import json
+import html
 import re
 import sys
 ROOT=Path(__file__).resolve().parent.parent
