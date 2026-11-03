@@ -64,7 +64,12 @@ def front():
  buyer='<section class="section"><div class="shell">'+sec("Built for Business Buyers","Product sourcing and customization for global trade.","Buyer Applications")+'<div class="grid grid--4">'+''.join(render_template("product-benefit",HEADING=e(t),DESCRIPTION=e(d)) for t,d in [("Importers","Select models and shipping configurations for your market."),("Wholesale Distributors","Browse reusable bottles by capacity, lid and material."),("Brands & Private Label","Explore custom logo, color and branded packaging options."),("Sports & Gift Buyers","Find sports, kids and shaker bottle designs for bulk projects.")])+'</div></div></section>'
  faq='<section class="section section--soft"><div class="shell">'+sec("Frequently Asked Questions","Answers to common questions from international purchasing teams.","FAQ")+faq_html(FAQS[:6])+'<p style="margin-top:25px"><a class="text-link" href="/faq/">Read All FAQs →</a></p></div></section>'
  blog=target_news_and_blogs()
- return hero+factory_intro_module()+bottle_collection_tabs()+buyer_project_paths()+target_why_choose()+interactive_bottle_customization()+materials_responsibility_module()+target_production_capacity()+dark_buyer_faq()+customer_logo_section()+blog
+ return hero+factory_intro_module()+bottle_collection_tabs()+new_drinkware_collections()+buyer_project_paths()+target_why_choose()+interactive_bottle_customization()+materials_responsibility_module()+target_production_capacity()+dark_buyer_faq()+customer_logo_section()+blog
+def new_drinkware_collections():
+ names=["Spray Water Bottles","Two-Way Drinking Cups","Titanium Vacuum Cups"]
+ cards=''.join(category_card(CAT[name]) for name in names if any(item.get("category")==name for item in SERIES.values()))
+ if not cards:return ""
+ return '<section class="section section--soft"><div class="shell">'+sec("Additional Drinkware Collections","The latest factory catalog adds spray water bottles, two-way drinking cups and titanium vacuum cups. Review model-level specifications and confirm materials, variants and packaging before ordering.","NEW PRODUCT SERIES")+'<div class="grid grid--3">'+cards+'</div></div></section>'
 def buyer_project_paths():
  options=[
   ("01","Browse Existing Models","Compare real catalog styles by capacity, shape, closure and intended market before requesting bulk pricing.","/products/","Explore Bottle Models →"),
@@ -82,7 +87,8 @@ def catalog_buying_guide(category=None):
   "Large Capacity Water Jugs":[
    ("Consider Filled Handling","Review the actual jug capacity, handle arrangement, cap fit and balance when filled."),
    ("Confirm Outer Cartons","Ask for carton quantity, packing dimensions and delivery destination before comparing landed costs."),
-   ("Specify the Exact Variant","Check the mouthpiece, straw or lid configuration, which may differ between catalog photographs.")],
+   ("Specify the Exact Variant","Check the mouthpiece, straw or lid configuration, which may differ between catalog photographs."),
+   ("Review Material and Closure","Confirm the body, cap and seal materials for the exact jug model.")],
   "Kids Plastic Water Bottles":[
    ("Check Intended Age & Market","Confirm the target market, intended age range and relevant product requirements for the finished SKU."),
    ("Review Removable Components","Ask about straw, gasket, cap and carrying-strap components and cleaning instructions."),
@@ -90,10 +96,21 @@ def catalog_buying_guide(category=None):
   "Plastic Shaker Bottles":[
    ("Verify Mixing Accessories","Ask if the selected SKU includes a mixing ball, mesh insert or other accessory."),
    ("Compare Capacity & Markings","Check usable fill volume, lid design, measurement scale and cleaning access for the actual model."),
-   ("Prepare an OEM Brief","Share your logo artwork, order volume, colors and carton requirements to confirm custom options.")]
- }
- rows=guides.get(category) if category else [
-  ("Find Your Product Family","Explore sports bottles, large-volume jugs, children's styles and plastic fitness shakers."),
+   ("Prepare an OEM Brief","Share your logo artwork, order volume, colors and carton requirements to confirm custom options.")],
+  "Spray Water Bottles":[
+   ("Check the Spray Assembly","Confirm the nozzle, trigger action, spray pattern and included components for the exact model."),
+   ("Review Seals and Cleaning","Check cap seals, internal tubes and cleaning access; request a sample before making leakage claims."),
+   ("Confirm Branding and Packing","Verify decoration area, spare parts, carton quantity and retail packaging for the selected SKU.")],
+  "Two-Way Drinking Cups":[
+   ("Verify Both Drinking Modes","Confirm the two drinking options and the lid assembly supplied with the exact model."),
+   ("Review Seal and Cleaning","Check removable parts, seals and cleaning access; test a sample before making leak-resistance claims."),
+   ("Confirm Materials and Performance","Request the exact body/lid material details and any relevant thermal-performance evidence.")],
+  "Titanium Vacuum Cups":[
+   ("Verify Titanium Grade","Request grade and composition documents for the exact SKU; do not rely on a series-level purity statement alone."),
+   ("Check Vacuum Construction","Confirm capacity, vacuum structure and the thermal test method for the selected model."),
+   ("Review Finish and Packing","Approve surface finish, lid components, protective packaging and carton details against a sample.")]
+  }
+ rows=guides.get(category) if category else [  ("Find Your Product Family","Explore sports bottles, large-capacity jugs, shaker bottles, spray bottles, two-way cups and titanium vacuum cups."),
   ("Identify the Exact Model","Use the model number to verify capacity, lid design, component materials and matching product images."),
   ("Request a Comparable Quote","Include expected quantity, destination, customization and packaging so different options can be assessed.")]
  cards=''.join(render_template("product-benefit",HEADING=e(title),DESCRIPTION=e(desc)) for title,desc in rows)
@@ -104,7 +121,7 @@ def catalog(cat_name=None):
   arr=[x for x in SERIES.values() if x["category"]==cat_name]
   heading=title;subtitle=desc+' Explore model-specific specifications, colors and wholesale quotation options.'
  else:
-  arr=list(SERIES.values());heading="Explore All Plastic Water Bottles";subtitle="Browse sports water bottles, large capacity water jugs, kids bottles and shaker bottles."
+  arr=list(SERIES.values());heading="Explore All Drinkware Products";subtitle="Browse sports water bottles, large-capacity jugs, shaker bottles, spray bottles, two-way drinking cups and titanium vacuum cups."
  pagehtml=intro("Products" if not cat_name else "Products / "+CAT[cat_name][0],heading,subtitle)
  pagehtml+='<section class="section"><div class="shell"><div class="catalog-layout">'+catnav(CAT[cat_name][1] if cat_name else None)+'<div>'+filters(not cat_name)+product_grid(arr)+pagination(len(arr) if not cat_name else None)+'</div></div></div></section>'
  pagehtml+=catalog_buying_guide(cat_name)
@@ -345,6 +362,9 @@ def generate():
    if len(seo_name)>60:
     seo_name=("Gradient Sports Bottle " if "Gradient" in public_name else "Plastic Sports Bottle ")+model+" | XUYI"
    seo_desc="Explore XUYI G-series factory model "+model+": "+public_name+". Confirm capacity, material, components and packing for the exact model before placing a wholesale order."
+  elif product.get("manualNew"):
+   seo_name=product.get("seoTitle") or (seo_name+' | XUYI Bottles')
+   seo_desc=product.get("seoDescription") or (description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.')
   else:
    seo_name=seo_name+' | XUYI Bottles'
    seo_desc=description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.'

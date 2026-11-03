@@ -57,26 +57,43 @@ def join_unique(items,field,fn=lambda x:x):
    if v not in result:result.append(v)
  return " / ".join(result[:4]) if result else "Confirm with sales"
 def details(obj):
- category=obj['category'];display=CAT[category][0];model=model_en(obj['model'])
+ category=obj['category'];display=CAT[category][0]
+ manual_new=bool(obj.get("manualNew"))
+ model=model_en(obj.get("factoryModel") or obj["model"])
  name=public_display_name(obj)
+ if manual_new:name=name+" — Model "+model
  variants=obj['variants']
  if str(obj['model'])=='2506':name="Plastic Sports Water Bottle — Model 2506"
- capacity=join_unique(variants,'capacity',lambda x:capacity_en(x,obj['model']))
+ capacity=join_unique(variants,'capacity',lambda x:str(x) if manual_new else capacity_en(x,obj['model']))
  materials=join_unique(variants,'material',material_en)
  if obj.get('manualNew') and re.fullmatch(r'G-\d+',str(obj['model']),re.I):
   materials='Customizable plastic materials including PP, PC, PETG, Tritan, PE and ABS; request and approve component-specific specification (not stock material confirmation)'
- dims=join_unique(variants,'dimensions',lambda x: str(x)+" cm (source figure; confirm)") 
+ def dimension_value(value):
+  text=str(value).strip()
+  if manual_new and not re.fullmatch(r'[\d.\s*×xX/+-]+',text):return text
+  return text+" cm (source figure; confirm)"
+ dims=join_unique(variants,'dimensions',dimension_value)
  colors=join_unique(variants,'colors',localize_colors)
- packing=join_unique(variants,'packing',pack_en)
+ packing=join_unique(variants,'packing',lambda x:str(x) if manual_new else pack_en(x))
  qty=join_unique(variants,'carton_quantity',lambda x:str(x)+" pcs/carton")
- carton=join_unique(variants,'carton_size',lambda x:str(x)+" cm (source figure)")
- source_word="Submitted" if obj.get("manualNew") else "Catalog"
+ carton=join_unique(variants,'carton_size',dimension_value)
+ source_word="Factory Catalog" if manual_new else "Catalog"
  data=[
  ("Model",model),("Product Category",display),(source_word+" Capacity",capacity),
- ("Materials (buyer to confirm)" if obj.get("manualNew") else "Materials Listed in Catalog",materials),(source_word+" Dimensions",dims),
+ ("Materials (confirm by exact SKU)" if manual_new else "Materials Listed in Catalog",materials),(source_word+" Dimensions",dims),
  (source_word+" Color Options",colors),("Listed Unit Packing",packing),
  ("Master Carton Quantity",qty),("Master Carton Dimensions",carton)
  ]
+ if manual_new:
+  optional=[("Listed Unit Weight",join_unique(variants,'unit_weight',lambda x:str(x))),
+   ("Listed Temperature Range",join_unique(variants,'temperature_range',lambda x:str(x))),
+   ("Retail Box Dimensions",join_unique(variants,'retail_box_size',dimension_value)),
+   ("Master Carton Gross Weight",join_unique(variants,'carton_gross_weight',lambda x:str(x))),
+   ("Printed Ounce Label (catalog notation)",join_unique(variants,'catalogOunceLabel',lambda x:str(x))),
+   ("Factory Catalog Source",join_unique(variants,'sourceDocument',lambda x:str(x))),
+   ("Factory Catalog Page",join_unique(variants,'sourcePage',lambda x:"Page "+str(x))),
+   ("Catalog Notes",join_unique(variants,'sourceNotes',lambda x:str(x)))]
+  data.extend((label,value) for label,value in optional if value and value!="Confirm with sales")
  photos=obj['images']
  if not photos:return ''
  img=photos[0]
@@ -100,6 +117,12 @@ def details(obj):
    ("Mixing assembly","Check whether the chosen SKU includes a mixing insert, measurement scale or drinking spout; photos alone do not guarantee included accessories."),
    ("Seal and cleaning review","Confirm cap threads, gaskets and accessible cleaning areas for the intended use. Do not assume dishwasher suitability."),
    ("Gym merchandise and OEM","Review artwork size, printing method, carton configuration and samples for the actual model.") ]
+ elif category=="Spray Water Bottles":
+  points=[("Spray head and trigger","Confirm the nozzle, trigger action, spray pattern and included components for the exact model."),("Leakage and cleaning review","Check the cap seal, internal tube and cleaning access. Do not assume leakproof performance without sample testing."),("Branding and packing","Confirm decoration area, spare parts, carton quantity and retail packaging before quotation.")]
+ elif category=="Two-Way Drinking Cups":
+  points=[("Dual drinking modes","Verify both drinking options and the exact lid assembly shown for the selected model."),("Seal and cleaning review","Check seals, removable components and cleaning access; request a sample before making leak-resistance claims."),("Material and performance evidence","Confirm the exact body, lid and insulation materials and any temperature-performance documents for the SKU.")]
+ elif category=="Titanium Vacuum Cups":
+  points=[("Titanium grade and purity","Request material-grade and composition documents for the exact SKU; do not rely on a series-level purity statement alone."),("Vacuum insulation verification","Confirm the vacuum structure, capacity and thermal test method for the selected model."),("Surface finish and packaging","Review finish, lid components, protective packing and carton details against an approved sample.")]
  else:
   points=[
    ("Everyday and sport applications","Check handling, bottle opening, spout type and practical cleaning for the intended use environment."),
@@ -111,7 +134,7 @@ def details(obj):
  h=render_template("product-overview",BREADCRUMB=breadcrumb,
    MAIN_PHOTO=photo(img,name+" model "+model,"eager").replace('<img ','<img id="main-photo" ',1),
    THUMBNAILS=thumbs,MODEL=e(model),NAME=e(name),LEAD=e(lead),SPECS=spec,SLUG=e(obj["slug"]),
-   PHOTO_NOTE=e("Submitted product imagery; please confirm sample appearance and final specifications." if obj.get("manualNew") else "Catalog imagery; final color and specification are confirmed with your order."))
+   PHOTO_NOTE=e("Factory catalog image; confirm the exact variant and sample appearance before ordering." if manual_new else "Catalog imagery; final color and specification are confirmed with your order."))
  h+='<section class="section section--soft product-content"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT DETAILS</span><h2 class="section__title">Design, Materials &amp; Applications</h2><p>Model-specific buying considerations for commercial sourcing.</p></div></div><div class="grid grid--3">'
  for title,desc in points:h+=render_template("product-benefit",HEADING=e(title),DESCRIPTION=e(desc))
  h+='</div></div></section>'
@@ -124,28 +147,29 @@ def details(obj):
  h+='</div><p class="product-content__cta"><a href="/capabilities/oem-odm/">Explore OEM/ODM Services →</a> · <a href="/capabilities/custom-logo/">Custom Logo Options →</a></p></div></section>'
  qs=[
  ("Can I order custom printed model "+model+"?","Logo placement, decoration process and minimum order quantity are confirmed against the actual product, artwork and order quantity."),
- ("What capacity and plastic material does this SKU use?",("The submitted product details list " if obj.get("manualNew") else "The catalog reference lists ")+capacity+" capacity and "+materials+" materials. Request component-level verification and market-specific food-contact documents before confirming your order."),
- ("Is this bottle BPA-free and leakproof?","BPA-free material options or leak testing can be requested. Neither claim is guaranteed for every variant; confirm test evidence, cap design and intended usage conditions."),
+ ("What capacity and material does this SKU use?",("The factory catalog lists " if manual_new else "The catalog reference lists ")+capacity+" capacity and "+materials+" materials. Request component-level verification and market-specific food-contact documents before confirming your order."),
+ ("Is this product BPA-free and leakproof?","BPA-free material options or leak testing can be requested. Neither claim is guaranteed for every variant; confirm test evidence, cap design and intended usage conditions."),
  ("How do I request a sample and shipping quote?","Send the model, target quantity, destination, logo details and pack type. The team will confirm availability, sample costs and appropriate trade terms.")
  ]
  h+='<section class="section section--soft"><div class="shell"><div class="section__head"><div><span class="eyebrow">MODEL FAQ</span><h2 class="section__title">Frequently Asked Questions</h2></div></div><div class="faq-list">'
  for question,answer in qs:h+='<details><summary>'+e(question)+'</summary><p>'+e(answer)+'</p></details>'
  h+='</div></div></section>'
  similar=[x for x in SERIES.values() if x["category"]==category and x["model"]!=obj['model']][:4]
- if similar:h+='<section class="section"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT RANGE</span><h2 class="section__title">Related Bottle Models</h2></div></div>'+product_grid(similar)+'</div></section>'
+ if similar:h+='<section class="section"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT RANGE</span><h2 class="section__title">Related Drinkware Models</h2></div></div>'+product_grid(similar)+'</div></section>'
  return h
 def add_schema(html,obj):
  from product_share_source import real_product_images
- model=model_en(obj["model"])
+ model=model_en(obj.get("factoryModel") or obj["model"])
  title=public_display_name(obj)
+ if obj.get("manualNew"):title=title+" — Model "+model
  site=SITE_ORIGIN+"/products/"+obj['slug']+"/"
  product={
-  "@type":"Product","name":title,"sku":model,"description":"Wholesale "+title+". Confirm model materials, capacity, colors, logo options and packaging with XUYI before ordering.",
+  "@type":"Product","name":title,"sku":model,"description":obj.get("seoDescription") or ("Wholesale "+title+". Confirm model materials, capacity, colors, logo options and packaging with XUYI before ordering."),
   "brand":{"@type":"Brand","name":"XUYI Bottles"},
   "category":CAT[obj['category']][0],
   "url":site,
   "additionalProperty":[{"@type":"PropertyValue","name":"Material (catalog reference)","value":join_unique(obj['variants'],'material',material_en)},
-                        {"@type":"PropertyValue","name":"Capacity (catalog reference)","value":join_unique(obj['variants'],'capacity',lambda x:capacity_en(x,obj['model']))}]
+                        {"@type":"PropertyValue","name":"Capacity (catalog reference)","value":join_unique(obj['variants'],'capacity',lambda x:str(x) if obj.get("manualNew") else capacity_en(x,obj['model']))}]
  }
  authentic=real_product_images(obj)
  if authentic:product["image"]=[SITE_ORIGIN+src for src in authentic]
