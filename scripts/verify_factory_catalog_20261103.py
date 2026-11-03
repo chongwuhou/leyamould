@@ -10,6 +10,7 @@ import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
+from cms_seo_curation_guard import current_field
 
 ROOT = Path(__file__).resolve().parents[1]
 ORIGIN = "https://xuyibottles.com"
@@ -57,9 +58,17 @@ def verify_product(record: dict) -> str:
     title = re.search(r"<title>(.*?)</title>", body, re.I | re.S)
     if not title:
         raise RuntimeError(f"{path} has no HTML title.")
-    expected_title = html.unescape(str(content.get("seoTitle") or ""))
-    if expected_title and html.unescape(title.group(1).strip()) != expected_title:
-        raise RuntimeError(f"{path} title mismatch: {html.unescape(title.group(1).strip())!r}")
+    live_title = html.unescape(title.group(1).strip())
+    owner_title = current_field("en", path, "title")
+    expected_title = (
+        html.unescape(owner_title.strip())
+        if isinstance(owner_title, str) and owner_title.strip()
+        else html.unescape(str(content.get("seoTitle") or ""))
+    )
+    if expected_title and live_title != expected_title:
+        raise RuntimeError(f"{path} title mismatch: {live_title!r} (expected {expected_title!r})")
+    if model.upper() not in live_title.upper() or "XUYI" not in live_title.upper():
+        raise RuntimeError(f"{path} title must retain its factory model and XUYI brand: {live_title!r}")
     canonical = f'<link rel="canonical" href="{ORIGIN}{path}"'
     if canonical not in body:
         raise RuntimeError(f"{path} canonical URL is missing or incorrect.")

@@ -6,7 +6,8 @@ import sys
 
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/"scripts"))
-from cms_seo_curation_guard import snapshot,baseline,may_curate
+from cms_seo_curation_guard import snapshot,baseline,may_curate,current_field
+from catalog_extensions import factory_catalog_seo_defaults
 
 current=snapshot()
 assert current is not None and current.get("site")=="xuyi-drinkware-site"
@@ -38,4 +39,22 @@ for lang,route,field in cases:
 # A new SKU or article is not automatically rewritten based on older models.
 assert not may_curate("es","/products/new-approved-model/","title",edited)
 assert not may_curate("en","/about/","title",edited,baseline_data={})
+
+# A factory import's unchanged SEO default must not hide a separately edited
+# page-level title on that same product route.
+factory_rows,factory_manifest=factory_catalog_seo_defaults()
+factory_model="cp01001"
+factory_snapshot={
+    "site":"xuyi-drinkware-site",
+    "pages":[{"route":"/products/cp01001/","seo_title":"400ml (approx. 14 oz) Protein Shaker CP01001 | XUYI"}],
+    "products":[{"model":factory_model,"content":{
+        "newProduct":True,
+        "sourceDocument":factory_manifest["sourceDocument"],
+        "sourceSha256":factory_manifest["sourceSha256"],
+        "sourcePage":2,
+        "seoTitle":factory_rows[factory_model]["seoTitle"],
+    }}],
+    "translations":[]
+}
+assert current_field("en","/products/cp01001/","title",factory_snapshot)=="400ml (approx. 14 oz) Protein Shaker CP01001 | XUYI"
 print("XUYI_CMS_FUTURE_EDITS_PROTECTED",len(cases),"simulated edits, unknown routes excluded")

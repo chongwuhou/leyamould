@@ -66,9 +66,10 @@ def current_field(locale,route,field,snapshot_data=None):
             custom=product.get(field_name)
             if isinstance(custom,str) and custom.strip():
                 from catalog_extensions import is_factory_catalog_source_default
-                if is_factory_catalog_source_default(sku,product,field_name):
-                    return None  # Unchanged import defaults are not owner-authored SEO.
-                return custom
+                if not is_factory_catalog_source_default(sku,product,field_name):
+                    return custom
+                # An unchanged import default is not owner-authored product SEO.
+                # Fall through so a separately edited page-level title is retained.
         return (row or {}).get("seo_title" if field=="title" else "meta_description")
     row=next((x.get("content",{}) for x in data.get("translations",[])
               if x.get("locale")==locale and x.get("resourceId")=="page:"+route),{})
