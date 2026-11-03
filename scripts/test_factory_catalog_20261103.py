@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from catalog_extensions import append_new_products  # noqa: E402
+from product_content import details as product_details  # noqa: E402
 from factory_catalog_locales import catalog_cards  # noqa: E402
 
 BUNDLE = json.loads((ROOT / "scripts/fixtures/factory-catalog-import-2026-11-03.json").read_text(encoding="utf-8"))
@@ -101,6 +102,13 @@ def main() -> None:
         assert product.get("slug") == model
         assert product.get("images") == [f"/media/product/{expected[model]['imageSha256'][:32]}.webp"]
         assert product.get("category") in MANIFEST["categories"]
+        rendered = product_details(product)
+        assert "Factory Catalog Source" in rendered, model
+        assert MANIFEST["sourceDocument"] in rendered, model
+        assert "Factory Catalog Page" in rendered, model
+        assert f"Page {expected[model]['sourcePage']}" in rendered, model
+        if product.get("qcStatus") == "needs_confirmation":
+            assert "Catalog Notes" in rendered, model
 
     # The four published non-English catalogs receive localized cards that
     # link to the English source-backed detail page until translations exist.
