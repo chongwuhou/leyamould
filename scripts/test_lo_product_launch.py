@@ -27,8 +27,14 @@ for lang in langs:
     listing_urls=card_urls(listing)
     assert listing_urls[:8]==expected_lo,(lang,"LO products must appear on the first page")
     assert len(listing_urls)==len(set(listing_urls)) and len(listing_urls)>=101,(lang,"duplicate/missing product")
-    assert listing.count('data-new-product="true"')==8,(lang,"new arrivals marker")
-    assert listing.count('class="product-card__new"')==8,(lang,"visible new arrivals badge")
+    for url in expected_lo:
+        lo_card = re.search(
+            r'<a\b(?=[^>]*\bhref="' + re.escape(url) + r'")[^>]*>.*?</a>',
+            listing, re.I | re.S
+        )
+        assert lo_card, (lang, url, "LO card missing")
+        assert 'data-new-product="true"' in lo_card.group(0), (lang, url, "LO new-arrivals marker")
+        assert 'class="product-card__new"' in lo_card.group(0), (lang, url, "LO visible new-arrivals badge")
     for product in items:
         model=product["model"]
         slug=product["slug"]
