@@ -372,7 +372,7 @@ jobs:
           python scripts/test_owner_contextual_links_survive_rebuild.py
           python scripts/test_source_modules_survive_owner_rebuild.py
           python scripts/test_verified_capacity_gradient.py
-          python scripts/test_spanish_microcopy_about_source.py
+
           python scripts/test_home_blog_why_us_buyer_quality.py
           python scripts/test_16_blog_editorial_internal_links.py
           python scripts/test_20261017_blog_batch.py
@@ -456,6 +456,10 @@ jobs:
           node scripts/test_media_library.mjs
           node scripts/test_admin_media_auth.mjs
           node scripts/test_media_replacement.mjs
+      - name: Validate 2026-11-03 Spanish microcopy only with its owner-approved release
+        if: github.event_name == 'workflow_dispatch' && inputs.schedule_blog_20261103 == true
+        run: python scripts/test_spanish_microcopy_about_source.py
+
       - name: Verify second clean source rebuild and CMS-owner priority
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
