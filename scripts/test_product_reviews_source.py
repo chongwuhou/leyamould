@@ -56,14 +56,18 @@ assert owner_schema_reviews(owner_schema_page,"2305")==[{
     "reviewDate":"2026-09-21","content":"Actual customer feedback & intact cartons on arrival."
 }]
 
+injection_fixture=('<html><head><script type="application/ld+json">'
+                  '{"@context":"https://schema.org","@graph":[{"@type":"Product",'
+                  '"name":"Review injection fixture","sku":"2305"}]}'
+                  '</script></head><body><main>Fixture product body</main></body></html>')
 for loc in ("en","es","pt","ru","tr"):
     path=ROOT/"dist"/("products/2305/index.html" if loc=="en" else loc+"/products/2305/index.html")
     assert path.is_file(),path
     original=path.read_text("utf8")
-    # A no-feedback product must not gain fake Product.review or a blank star.
-    assert at_product_source(original,"2305",loc,{"productReviews":[]})==original
     source={"productReviews":[one,two,draft,other]}
-    generated=at_product_source(original,"2305",loc,source)
+    # Isolated source page: exercise D1 review injection without a pre-existing owner schema.
+    assert at_product_source(injection_fixture,"2305",loc,{"productReviews":[]})==injection_fixture
+    generated=at_product_source(injection_fixture,"2305",loc,source)
     assert generated.count('id="xuyi-customer-reviews"')==1,(loc,"visible")
     assert generated.count('class="product-review"')==2,(loc,"draft or other model leaked")
     assert "Maria &amp; Sons" in generated and "4.5/5 ★" in generated
@@ -77,6 +81,21 @@ for loc in ("en","es","pt","ru","tr"):
     assert not prod.get("offers"),"Do not invent commercial prices"
     assert all(x["author"]["@type"]=="Person" and x["reviewBody"] for x in prod["review"])
     assert all(x["datePublished"] in ("2026-09-21","2026-10-11") for x in prod["review"])
+
+    # A real page may already own its Product review schema or visible CMS module.
+    owner=owner_schema_reviews(original,"2305")
+    if owner is not None:
+        preserved=at_product_source(original,"2305",loc,source)
+        assert owner_schema_reviews(preserved,"2305")==owner,(loc,"owner schema changed")
+        assert preserved.count('class="product-review"')==len(owner),(loc,"owner review count changed")
+        for item in owner:
+            assert html.escape(item["author"]) in preserved,(loc,"owner author missing")
+            assert html.escape(item["content"]).replace("\n","<br>") in preserved,(loc,"owner words missing")
+    elif 'id="xuyi-customer-reviews"' in original:
+        assert at_product_source(original,"2305",loc,source)==original,(loc,"owner body module overwritten")
+    else:
+        generated_real=at_product_source(original,"2305",loc,source)
+        assert generated_real.count('class="product-review"')==2,(loc,"D1 reviews not injected")
 
     # A real CMS owner-authored module is authoritative; never duplicate it.
     modified=original.replace("</main>",'<section id="xuyi-customer-reviews">Owner-edited feedback</section></main>',1)
