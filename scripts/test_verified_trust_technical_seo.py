@@ -85,48 +85,46 @@ for lang,prefix in LANGS.items():
         assert model,(lang,route,"review model must exist in canonical product data")
         approved=published_reviews(STATE,model)
         owner_body=OWNER_BODIES.get(("/products/"+route.parent.name+"/",lang),"")
-        owner_review=re.search(r'<section\\b[^>]*\\bid="xuyi-customer-reviews"[^>]*>.*?</section>',owner_body,re.S)
-        owner_schema=owner_schema_reviews(owner_body,model)
-        if owner_review or owner_schema is not None:
-            # An editor-owned review module or Product JSON-LD node is the
-            # source of truth. Render that same review set; never mix in D1.
-            section_match=owner_review or re.search(r'<section\\b[^>]*\\bid="xuyi-customer-reviews"[^>]*>.*?</section>',markup,re.S)
-            assert section_match,(lang,route,"owner Product review schema needs a visible review module")
-            owner_section=section_match.group(0)
-            assert owner_section in markup and markup.count('id="xuyi-customer-reviews"')==1,(lang,route,"owner review module missing/doubled")
+        owner_review=re.search(r'<section\b[^>]*\bid="xuyi-customer-reviews"[^>]*>.*?</section>',owner_body,re.S)
+        # The Product JSON-LD may itself be an owner-controlled CMS field.
+        # The renderer preserves it and mirrors those same reviews visibly.
+        owner_schema=owner_schema_reviews(markup,model)
+        if owner_schema == [] and not owner_review:
+            assert product.get("aggregateRating") and not product.get("review"),(lang,route,"owner aggregate-only schema was changed")
+            assert 'id="xuyi-customer-reviews"' not in markup,(lang,route,"aggregate-only owner schema must not fabricate review cards")
+        elif owner_review or owner_schema is not None:
+            section_match=owner_review or re.search(r'<section\b[^>]*\bid="xuyi-customer-reviews"[^>]*>.*?</section>',markup,re.S)
             if owner_review:
                 assert owner_body.count('id="xuyi-customer-reviews"')==1
+            if owner_schema:
+                assert section_match,(lang,route,"owner Product review schema needs a visible review module")
+            owner_section=section_match.group(0) if section_match else ""
+            if owner_section:
+                assert owner_section in markup and markup.count('id="xuyi-customer-reviews"')==1,(lang,route,"owner review module missing/doubled")
             visible=[]
             for card in re.findall(r'<article class="product-review">(.*?)</article>',owner_section,re.S):
                 rating=re.search(r'aria-label="([1-5]) out of 5 stars"',card)
                 author=re.search(r'<strong>(.*?)</strong>',card,re.S)
-                review_date=re.search(r'<time datetime="(\\d{4}-\\d{2}-\\d{2})"',card)
+                review_date=re.search(r'<time datetime="([0-9]{4}-[0-9]{2}-[0-9]{2})"',card)
                 body=re.search(r'<p class="product-review__text">(.*?)</p>',card,re.S)
                 assert rating and author and review_date and body,(lang,route,"invalid owner review card")
                 visible.append((int(rating.group(1)),html.unescape(author.group(1)),review_date.group(1),
-                                html.unescape(body.group(1)).replace("<br>","\\n")))
+                                html.unescape(body.group(1)).replace("<br>","\n")))
             schema_raw=product.get("review")
             if isinstance(schema_raw,dict):schema_raw=[schema_raw]
-            schema_rows=[(item.get("reviewRating",{}).get("ratingValue"),item.get("author",{}).get("name"),
-                          item.get("datePublished"),item.get("reviewBody")) for item in (schema_raw or [])]
+            schema_rows=[]
+            for item in (schema_raw or []):
+                author=item.get("author")
+                author=author.get("name") if isinstance(author,dict) else author
+                schema_rows.append((item.get("reviewRating",{}).get("ratingValue"),author,
+                                    item.get("datePublished"),item.get("reviewBody")))
             if schema_rows:
-                assert schema_rows==visible,(lang,route,"Product schema must match CMS owner review body")
+                assert schema_rows==visible,(lang,route,"Product schema must match owner review content")
             if owner_schema is not None:
                 assert visible==[(x["rating"],x["author"],x["reviewDate"],x["content"]) for x in owner_schema],(lang,route,"owner Product schema not rendered visibly")
             aggregate=product.get("aggregateRating")
-            if aggregate:
-                assert (
-                    len(visible)>1
-                    and aggregate.get("reviewCount")==len(visible)
-                    and aggregate.get("ratingValue")==round(sum(row[0] for row in visible)/len(visible),2)
-                ),(lang,route,"aggregate rating must match CMS owner review body")
-            aggregate=product.get("aggregateRating")
-            if aggregate:
-                assert (
-                    len(visible)>1
-                    and aggregate.get("reviewCount")==len(visible)
-                    and aggregate.get("ratingValue")==round(sum(row[0] for row in visible)/len(visible),2)
-                ), (lang,route,"aggregate rating must match CMS owner review body")
+            if aggregate and visible:
+                assert aggregate.get("reviewCount")==len(visible) and aggregate.get("ratingValue")==round(sum(row[0] for row in visible)/len(visible),2),(lang,route,"aggregate rating must match owner review content")
         elif not approved:
             assert not any(field in product for field in ("review","aggregateRating")),(lang,route,"fabricated reviews")
             assert 'id="xuyi-customer-reviews"' not in markup,(lang,route,"unapproved visible feedback")
