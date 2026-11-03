@@ -71,6 +71,71 @@ def schema_properties(reviews):
     return result
 
 
+def owner_schema_reviews(markup, model):
+    """Return visible-review records from an owner-authored Product JSON-LD node.
+
+    None means no owner review schema exists. An empty list means an owner
+    aggregate-only node exists and must not be mixed with D1 review records.
+    """
+    for match in LD_SCRIPT.finditer(markup or ""):
+        tag = match.group(0)
+        first = tag.index(">") + 1
+        last = tag.lower().rfind("</script>")
+        try:
+            data = json.loads(tag[first:last])
+        except (ValueError, TypeError):
+            continue
+        if not isinstance(data, dict):
+            continue
+        nodes = data.get("@graph") if isinstance(data.get("@graph"), list) else [data]
+        for node in nodes:
+            if not isinstance(node, dict) or node.get("@type") != "Product":
+                continue
+            visible_sku = str(node.get("sku", ""))
+            canonical_sku = visible_sku.replace(" (Transparent Variant)", "透明款")
+            if canonical_sku != str(model):
+                continue
+            if "review" not in node and "aggregateRating" not in node:
+                continue
+            raw_reviews = node.get("review")
+            if raw_reviews is None:
+                return []
+            if isinstance(raw_reviews, dict):
+                raw_reviews = [raw_reviews]
+            if not isinstance(raw_reviews, list):
+                raise ValueError("Owner Product review schema is not a review object/list for " + str(model))
+            records = []
+            for index, item in enumerate(raw_reviews):
+                if not isinstance(item, dict):
+                    raise ValueError("Invalid owner Product review for " + str(model))
+                author = item.get("author")
+                author = author.get("name") if isinstance(author, dict) else author
+                author = str(author or "").strip()
+                body = str(item.get("reviewBody") or "").strip()
+                review_date = str(item.get("datePublished") or "")
+                rating_value = (item.get("reviewRating") or {}).get("ratingValue")
+                try:
+                    numeric_rating = float(rating_value)
+                    rating = int(numeric_rating)
+                    if numeric_rating != rating or not 1 <= rating <= 5:
+                        raise ValueError
+                    if date.fromisoformat(review_date).isoformat() != review_date:
+                        raise ValueError
+                except (TypeError, ValueError):
+                    raise ValueError("Invalid owner Product review rating/date for " + str(model))
+                if not (2 <= len(author) < 100 and 12 <= len(body) <= 3000):
+                    raise ValueError("Invalid owner Product review author/body for " + str(model))
+                records.append({
+                    "id": "owner-schema-" + str(model) + "-" + str(index),
+                    "rating": rating,
+                    "author": author,
+                    "reviewDate": review_date,
+                    "content": body,
+                })
+            return records
+    return None
+
+
 def render_visible(reviews, model, locale):
     if not reviews:
         return ""
@@ -146,5 +211,13 @@ def at_product_source(markup, model, locale, snapshot):
         return markup
     if "</main>" not in markup:
         return markup
+    # A Product node may already carry an owner-authored review even when the
+    # editable body has no review section. Mirror that same source visibly;
+    # never attach a different D1 review batch to the owner's JSON-LD.
+    owner_reviews = owner_schema_reviews(markup, model)
+    if owner_reviews is not None:
+        if not owner_reviews:
+            return markup
+        return markup.replace("</main>", render_visible(owner_reviews, model, locale) + "</main>", 1)
     content = _enrich_jsonld(markup, model, schema_properties(reviews))
     return content.replace("</main>", render_visible(reviews, model, locale) + "</main>", 1)

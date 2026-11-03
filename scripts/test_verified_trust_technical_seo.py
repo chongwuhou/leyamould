@@ -24,7 +24,7 @@ SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
 if SNAPSHOT.is_file():os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
-from product_reviews_source import published_reviews,schema_properties
+from product_reviews_source import published_reviews,schema_properties,owner_schema_reviews
 STATE=json.loads(SNAPSHOT.read_text("utf8")) if SNAPSHOT.is_file() else {}
 MODELS_BY_SLUG={str(p["slug"]):str(p["model"]) for p in SERIES.values()}
 from product_slug_fix import route as canonical_product_route
@@ -85,28 +85,41 @@ for lang,prefix in LANGS.items():
         assert model,(lang,route,"review model must exist in canonical product data")
         approved=published_reviews(STATE,model)
         owner_body=OWNER_BODIES.get(("/products/"+route.parent.name+"/",lang),"")
-        owner_review=re.search(r'<section\b[^>]*\bid="xuyi-customer-reviews"[^>]*>.*?</section>',owner_body,re.S)
-        if owner_review:
-            # An editor-owned review module is the source of truth for this
-            # page. Never force a separate D1 review-table batch over it.
-            owner_section=owner_review.group(0)
-            assert owner_body.count('id="xuyi-customer-reviews"')==1
-            assert owner_section in markup and markup.count('id="xuyi-customer-reviews"')==1
+        owner_review=re.search(r'<section\\b[^>]*\\bid="xuyi-customer-reviews"[^>]*>.*?</section>',owner_body,re.S)
+        owner_schema=owner_schema_reviews(owner_body,model)
+        if owner_review or owner_schema is not None:
+            # An editor-owned review module or Product JSON-LD node is the
+            # source of truth. Render that same review set; never mix in D1.
+            section_match=owner_review or re.search(r'<section\\b[^>]*\\bid="xuyi-customer-reviews"[^>]*>.*?</section>',markup,re.S)
+            assert section_match,(lang,route,"owner Product review schema needs a visible review module")
+            owner_section=section_match.group(0)
+            assert owner_section in markup and markup.count('id="xuyi-customer-reviews"')==1,(lang,route,"owner review module missing/doubled")
+            if owner_review:
+                assert owner_body.count('id="xuyi-customer-reviews"')==1
             visible=[]
             for card in re.findall(r'<article class="product-review">(.*?)</article>',owner_section,re.S):
                 rating=re.search(r'aria-label="([1-5]) out of 5 stars"',card)
                 author=re.search(r'<strong>(.*?)</strong>',card,re.S)
-                review_date=re.search(r'<time datetime="(\d{4}-\d{2}-\d{2})"',card)
+                review_date=re.search(r'<time datetime="(\\d{4}-\\d{2}-\\d{2})"',card)
                 body=re.search(r'<p class="product-review__text">(.*?)</p>',card,re.S)
                 assert rating and author and review_date and body,(lang,route,"invalid owner review card")
                 visible.append((int(rating.group(1)),html.unescape(author.group(1)),review_date.group(1),
-                                html.unescape(body.group(1)).replace("<br>","\n")))
+                                html.unescape(body.group(1)).replace("<br>","\\n")))
             schema_raw=product.get("review")
             if isinstance(schema_raw,dict):schema_raw=[schema_raw]
             schema_rows=[(item.get("reviewRating",{}).get("ratingValue"),item.get("author",{}).get("name"),
                           item.get("datePublished"),item.get("reviewBody")) for item in (schema_raw or [])]
             if schema_rows:
                 assert schema_rows==visible,(lang,route,"Product schema must match CMS owner review body")
+            if owner_schema is not None:
+                assert visible==[(x["rating"],x["author"],x["reviewDate"],x["content"]) for x in owner_schema],(lang,route,"owner Product schema not rendered visibly")
+            aggregate=product.get("aggregateRating")
+            if aggregate:
+                assert (
+                    len(visible)>1
+                    and aggregate.get("reviewCount")==len(visible)
+                    and aggregate.get("ratingValue")==round(sum(row[0] for row in visible)/len(visible),2)
+                ),(lang,route,"aggregate rating must match CMS owner review body")
             aggregate=product.get("aggregateRating")
             if aggregate:
                 assert (

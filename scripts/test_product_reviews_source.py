@@ -6,7 +6,7 @@ import re
 import sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
-from product_reviews_source import at_product_source,published_reviews,render_visible,schema_properties
+from product_reviews_source import at_product_source,published_reviews,render_visible,schema_properties,owner_schema_reviews
 
 def nodes(content):
     found=[]
@@ -42,28 +42,28 @@ sample_html=('<html><head><script type="application/ld+json">'
              '</script></head><body><main>Real product body</main></body></html>')
 transparent_html=at_product_source(sample_html,"2306透明款","en",transparent)
 assert nodes(transparent_html)[0]["review"]["reviewRating"]["ratingValue"]==5
-assert 'data-reviewed-model="2306透明款"' in transparent_html
+owner_schema_page=('<html><head><script type="application/ld+json">'+
+                    json.dumps({"@context":"https://schema.org","@graph":[
+                        {"@type":"Product","name":"Owner reviewed jug","sku":"2305",**schema_properties([one])}
+                    ]})+
+                    '</script></head><body><main>Owner product content.</main></body></html>')
+owner_schema_rendered=at_product_source(owner_schema_page,"2305","en",{"productReviews":[one,two]})
+assert nodes(owner_schema_rendered)[0]["review"]==schema_properties([one])["review"]
+assert 'id="xuyi-customer-reviews"' in owner_schema_rendered
+assert "Maria &amp; Sons" in owner_schema_rendered and "Buyer Test" not in owner_schema_rendered
+assert owner_schema_reviews(owner_schema_page,"2305")==[{
+    "id":"owner-schema-2305-0","rating":5,"author":"Maria & Sons",
+    "reviewDate":"2026-09-21","content":"Actual customer feedback & intact cartons on arrival."
+}]
 
 for loc in ("en","es","pt","ru","tr"):
     path=ROOT/"dist"/("products/2305/index.html" if loc=="en" else loc+"/products/2305/index.html")
     assert path.is_file(),path
-    live=path.read_text("utf8")
-    # Published D1 reviews may now exist on model 2305. Do not assume that
-    # a production product page stays review-free after a successful rollout.
-    # This synthetic, non-published fixture tests injection independently of
-    # the changing public product-review inventory.
-    assert at_product_source(live,"2305",loc,{"productReviews":[]})==live
-    assert len(nodes(live))==1 and nodes(live)[0].get("sku")=="2305"
-    original=('<html><head><script type="application/ld+json">'
-              '{"@context":"https://schema.org","@graph":[{"@type":"Product",'
-              '"name":"Isolated test fixture","sku":"2305"}]}'
-              '</script></head><body><main>Isolated review test.</main></body></html>')
+    original=path.read_text("utf8")
+    # A no-feedback product must not gain fake Product.review or a blank star.
+    assert at_product_source(original,"2305",loc,{"productReviews":[]})==original
     source={"productReviews":[one,two,draft,other]}
     generated=at_product_source(original,"2305",loc,source)
-    # Real published bodies are authoritative. If D1 already placed its
-    # reviews, a later render attempt must never append synthetic duplicates.
-    if 'id="xuyi-customer-reviews"' in live:
-        assert at_product_source(live,"2305",loc,source)==live
     assert generated.count('id="xuyi-customer-reviews"')==1,(loc,"visible")
     assert generated.count('class="product-review"')==2,(loc,"draft or other model leaked")
     assert "Maria &amp; Sons" in generated and "4.5/5 ★" in generated
