@@ -4,7 +4,6 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/test-xuyi-build-snapshot-readonly.yml"
-      - "diagnostics/d1_snapshot_audit.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,14 +13,11 @@ jobs:
     timeout-minutes: 6
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Audit XUYI D1 snapshot tables and JSON validity (read-only)
-        run: python diagnostics/d1_snapshot_audit.py
       - name: Read XUYI public build snapshot from D1 (GET only)
         run: |
           python scripts/fetch_build_snapshot.py
