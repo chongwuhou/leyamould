@@ -151,7 +151,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for section in brand-config site-config pages product-content page-content page-translations; do
+          # Full translations are validated by build-snapshot and the localized-page test suite.
+          for section in brand-config site-config pages product-content page-content; do
             curl --fail --silent --show-error --retry 2 \
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               "$SITE_ORIGIN/api/admin/$section" -o /dev/null
