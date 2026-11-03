@@ -57,4 +57,13 @@ factory_snapshot={
     "translations":[]
 }
 assert current_field("en","/products/cp01001/","title",factory_snapshot)=="400ml (approx. 14 oz) Protein Shaker CP01001 | XUYI"
+# The dedicated productSeo row is applied after the general page/product
+# defaults and must therefore win when resolving the live expected title.
+product_seo_snapshot={**factory_snapshot,"productSeo":[{
+    "slug":"cp01001","locale":"en",
+    "seoTitle":"400ml (approx. 14 oz) Protein Shaker CP01001 | XUYI",
+    "metaDescription":"Owner-maintained CP01001 product SEO description."
+}]}
+assert current_field("en","/products/cp01001/","title",product_seo_snapshot)==product_seo_snapshot["productSeo"][0]["seoTitle"]
+assert current_field("en","/products/cp01001/","description",product_seo_snapshot)==product_seo_snapshot["productSeo"][0]["metaDescription"]
 print("XUYI_CMS_FUTURE_EDITS_PROTECTED",len(cases),"simulated edits, unknown routes excluded")

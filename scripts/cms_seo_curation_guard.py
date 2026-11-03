@@ -56,6 +56,17 @@ def current_field(locale,route,field,snapshot_data=None):
                            for x in data.get("translations",[]))
             if not direct:
                 route="/products/"+legacy+"/"
+    # The dedicated D1 productSeo table is applied after page/product
+    # defaults by product_seo_d1_source.py, so it is the first authority
+    # for product title and description in every locale.
+    if route.startswith("/products/"):
+        sku=route.strip("/").split("/")[-1]
+        seo_row=next((x for x in data.get("productSeo",[])
+                      if x.get("slug")==sku and x.get("locale")==locale),None)
+        seo_key="seoTitle" if field=="title" else "metaDescription"
+        seo_value=(seo_row or {}).get(seo_key)
+        if isinstance(seo_value,str) and seo_value.strip():
+            return seo_value
     if locale=="en":
         row=next((x for x in data.get("pages",[]) if x.get("route")==route),None)
         if route.startswith("/products/"):
