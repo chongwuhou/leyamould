@@ -7,7 +7,8 @@ import re
 
 CATEGORIES=frozenset((
  "Plastic Sports Water Bottles","Large Capacity Water Jugs",
- "Kids Plastic Water Bottles","Plastic Shaker Bottles"
+ "Kids Plastic Water Bottles","Plastic Shaker Bottles",
+ "Spray Water Bottles","Two-Way Drinking Cups","Titanium Vacuum Cups"
 ))
 SLUG=re.compile(r"[a-z0-9][a-z0-9-]{1,63}$")
 IMAGE=re.compile(r"/media/(?:product|page|shared|ppt|excel|group|gallery|capability|blog)/[a-zA-Z0-9._-]{3,140}\.(?:webp|jpg|png)$")
@@ -38,11 +39,16 @@ def append_new_products(series,rows):
   if not isinstance(content,dict) or content.get("newProduct") is not True:continue
   if model in series:raise ValueError("New product conflicts with an existing XUYI model")
   validate_new_product(model,content)
-  info={key:content.get(key,"") for key in ("name","description","capacity","material","colors","packing",
-        "dimensions","carton_quantity","carton_size")}
+  display_model=str(content.get("factoryModel") or model).strip() or model
+  info={key:content.get(key,"") for key in (
+        "factoryModel","name","description","capacity","material","colors","packing",
+        "dimensions","unit_weight","temperature_range","retail_box_size",
+        "carton_quantity","carton_size","carton_gross_weight","catalogOunceLabel",
+        "sourceDocument","sourcePage","sourceNotes","qcStatus","imageReviewStatus",
+        "seoTitle","seoDescription")}
   series[model]={
-    **info,"model":model,"slug":model,"category":content["category"],
-    "images":[content["image"]],"variants":[{**info,"model":model}],
+    **info,"model":display_model,"factoryModel":display_model,"slug":model,"category":content["category"],
+    "images":[content["image"]],"variants":[{**info,"model":display_model,"factoryModel":display_model}],
     "manualNew":True
   }
   count+=1

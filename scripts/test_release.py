@@ -85,8 +85,24 @@ for page in pages:
     if not canon or canon.group(1)!=expected:broken.append((rel,"product canonical mismatch"))
 for route in ["index.html","blog/index.html",ADMIN_PATH+"/index.html",
               "products/2095/index.html","products/5340/index.html",
-              "capabilities/custom-molding/index.html","capabilities/custom-packaging/index.html"]:
+              "capabilities/custom-molding/index.html","capabilities/custom-packaging/index.html",
+              "collections/spray-water-bottles/index.html","collections/two-way-drinking-cups/index.html",
+              "collections/titanium-vacuum-cups/index.html"]:
     if not (OUT/route).is_file():broken.append((route,"missing critical route"))
+factory_catalog_pages=[]
+for page in pages:
+    rel=page.relative_to(OUT).as_posix()
+    if not (rel.startswith("products/") and rel.endswith("/index.html")):
+        continue
+    content=page.read_text(encoding="utf-8")
+    if "puyunsm(1).pdf" in content:
+        factory_catalog_pages.append((rel,content))
+if factory_catalog_pages:
+    if len(factory_catalog_pages)!=58:
+        broken.append(("factory catalog","expected 58 published product pages",len(factory_catalog_pages)))
+    for rel,content in factory_catalog_pages:
+        for marker in ("Factory Catalog Source","Factory Catalog Page","Factory Catalog Capacity"):
+            if marker not in content:broken.append((rel,"missing factory source/spec marker",marker))
 if len(pages)<130:broken.append(("release","unexpected page loss",len(pages)))
 if any("demalong" in x.read_text(encoding="utf-8").lower() for x in (OUT/"templates").rglob("*") if x.is_file()) if (OUT/"templates").exists() else False:
     broken.append(("release","DML brand leaked"))
