@@ -1,6 +1,6 @@
 from site_renderer import *
 from capability_editorial import CAPABILITY_DATA, render_capability, enrich_capability
-from product_content import details as structured_product_details, add_schema as product_schema
+from product_content import details as structured_product_details, add_schema as product_schema, factory_catalog_seo_title
 from blog_editorial import cover_path, render_article, enrich_article_html
 from why_us_layouts import render as render_why
 from why_us_content import schema_enhance
@@ -365,6 +365,10 @@ def generate():
    if len(seo_name)>60:
     seo_name=("Gradient Sports Bottle " if "Gradient" in public_name else "Plastic Sports Bottle ")+model+" | XUYI"
    seo_desc="Explore XUYI G-series factory model "+model+": "+public_name+". Confirm capacity, material, components and packing for the exact model before placing a wholesale order."
+  elif product.get("manualNew") and product.get("sourceDocument") and product.get("sourcePage"):
+   # Keep source-backed factory titles concise; owner D1 SEO rows are applied later.
+   seo_name=factory_catalog_seo_title(product)
+   seo_desc=product.get("seoDescription") or (description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.')
   elif product.get("manualNew"):
    seo_name=product.get("seoTitle") or (seo_name+' | XUYI Bottles')
    seo_desc=product.get("seoDescription") or (description_name+': compare catalog specifications, material, color and packing options; request a product-specific wholesale quotation.')

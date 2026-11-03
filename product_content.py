@@ -56,6 +56,38 @@ def join_unique(items,field,fn=lambda x:x):
    v=fn(val)
    if v not in result:result.append(v)
  return " / ".join(result[:4]) if result else "Confirm with sales"
+_FACTORY_SEO_TYPES = {
+ "Plastic Shaker Bottles":"Sports Shaker Bottle",
+ "Large Capacity Water Jugs":"Large Sports Bottle",
+ "Spray Water Bottles":"Spray Water Bottle",
+ "Two-Way Drinking Cups":"Two-Way Drinking Cup",
+ "Titanium Vacuum Cups":"Titanium Vacuum Cup",
+}
+def factory_catalog_seo_title(obj):
+ if not (obj.get("sourceDocument") and obj.get("sourcePage")):
+  return str(obj.get("seoTitle") or "")
+ capacity=str(obj.get("capacity") or "")
+ tokens=re.findall(r"(\d+(?:\.\d+)?)\s*(ml|l|oz)\b",capacity,re.I)
+ if tokens:
+  units={unit.lower() for _,unit in tokens}
+  if len(units)==1:
+   unit=next(iter(units))
+   capacity_label="/".join(value for value,_ in tokens)+unit
+  else:
+   capacity_label="/".join(value+unit.lower() for value,unit in tokens)
+ else:
+  capacity_label="/".join(re.findall(r"\d+(?:\.\d+)?",capacity))
+ kind=_FACTORY_SEO_TYPES.get(str(obj.get("category") or ""),"Drinkware")
+ model=str(obj.get("factoryModel") or obj.get("model") or "").strip().upper()
+ prefix=" ".join(part for part in (capacity_label,kind) if part)
+ title=" | ".join(part for part in (prefix,model,"XUYI") if part)
+ if len(title)>60:
+  title=" | ".join(part for part in (capacity_label,model,"XUYI") if part)
+ if len(title)>60:
+  title=" | ".join(part for part in (model,"XUYI") if part)
+ if len(title)>60:
+  raise ValueError("Factory catalog SEO title exceeds 60 characters: "+model)
+ return title
 def details(obj):
  category=obj['category'];display=CAT[category][0]
  manual_new=bool(obj.get("manualNew"))
