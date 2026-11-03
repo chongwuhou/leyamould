@@ -1,0 +1,482 @@
+{
+  "site": "xuyi-drinkware-site",
+  "schemaVersion": 1,
+  "sourceDocument": "puyunsm(1).pdf",
+  "sourceSha256": "1ca7baefce3805beff3207a09e85909715a6349bc674b22b9cedb485bd803622",
+  "sourcePageCount": 50,
+  "recordCount": 58,
+  "categories": {
+    "Large Capacity Water Jugs": 8,
+    "Plastic Shaker Bottles": 12,
+    "Plastic Sports Water Bottles": 6,
+    "Spray Water Bottles": 4,
+    "Titanium Vacuum Cups": 8,
+    "Two-Way Drinking Cups": 20
+  },
+  "models": [
+    {
+      "model": "cp01001",
+      "factoryModel": "CP01001",
+      "sourcePage": 2,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "7de57965e861337be9775c8e9e178ba30a84bad3dc8799685417ea9a6b64efee"
+    },
+    {
+      "model": "cp01002ab",
+      "factoryModel": "CP01002AB",
+      "sourcePage": 3,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "92a3f072e80aee19c31e2b1783bca9fe8740a4e3c83442115a23646c059dd46f"
+    },
+    {
+      "model": "cp01003",
+      "factoryModel": "CP01003",
+      "sourcePage": 4,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "119e37324667c98de5bb462e3abb2eea4e635b5e3190a4e5638e3452c326d6c5"
+    },
+    {
+      "model": "cp01004",
+      "factoryModel": "CP01004",
+      "sourcePage": 5,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "4f089507861ec4d938536a1700ed4762bbdca65593d7ffaa9ca8efef794c989b"
+    },
+    {
+      "model": "cp01005",
+      "factoryModel": "CP01005",
+      "sourcePage": 6,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "97aa851fd7b14666622dba125263866ae41debf527826ed5da199b3400bbde81"
+    },
+    {
+      "model": "cp01006",
+      "factoryModel": "CP01006",
+      "sourcePage": 7,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "f0173974f0dd502ca8ae902544a6d4c3206940a13ca5042cf44982571bb58b26"
+    },
+    {
+      "model": "cp01007",
+      "factoryModel": "CP01007",
+      "sourcePage": 8,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "9896eb41ae72b3717e66c44fad7315fb4e48acdfe890738286ff5a9b9b966cf6"
+    },
+    {
+      "model": "cp01008",
+      "factoryModel": "CP01008",
+      "sourcePage": 9,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "98add3613f0c6f751bdbdda067ba6ae3a224b0166cba3c1c0373dd4c0b648bba"
+    },
+    {
+      "model": "cp01009",
+      "factoryModel": "CP01009",
+      "sourcePage": 10,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "be83f251b958c1c6696a45e7040dfdecc334aa409ab1983f429ca3dbbe678cc1"
+    },
+    {
+      "model": "cp01010",
+      "factoryModel": "CP01010",
+      "sourcePage": 11,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "339ff91fe51ad73d8a481527faa0cd35c4006a47fe6d7cebe6bbeb327ffd36d6"
+    },
+    {
+      "model": "cp01011",
+      "factoryModel": "CP01011",
+      "sourcePage": 12,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "2bd78a5ebde749e1c97b0348b8deca7de6691032b110c69bb1183f7de3b9a894"
+    },
+    {
+      "model": "cp01012",
+      "factoryModel": "CP01012",
+      "sourcePage": 13,
+      "category": "Plastic Shaker Bottles",
+      "categorySlug": "plastic-shaker-bottles",
+      "imageSha256": "0ee859bbc4fa7acf3792187bbc0353d64413bb0a9622de82fb3acf94fc969298"
+    },
+    {
+      "model": "x01",
+      "factoryModel": "X01",
+      "sourcePage": 14,
+      "category": "Plastic Sports Water Bottles",
+      "categorySlug": "sports-water-bottles",
+      "imageSha256": "d11f4f929cc9ecd018d0f68968b1f0b7fdb9838bc8f18eb0ea7f161eea5c0a0c"
+    },
+    {
+      "model": "x02",
+      "factoryModel": "X02",
+      "sourcePage": 15,
+      "category": "Plastic Sports Water Bottles",
+      "categorySlug": "sports-water-bottles",
+      "imageSha256": "146f2bd30af3c088cdc1a0c54d579cfb4913291f4adf1e91b8afafc9e9532593"
+    },
+    {
+      "model": "x03",
+      "factoryModel": "X03",
+      "sourcePage": 16,
+      "category": "Plastic Sports Water Bottles",
+      "categorySlug": "sports-water-bottles",
+      "imageSha256": "b68d2cd16285a545b4cf75b3ef5f4822b1884fc5b7daab2ef1b72eeb2acbf4d0"
+    },
+    {
+      "model": "x04",
+      "factoryModel": "X04",
+      "sourcePage": 17,
+      "category": "Plastic Sports Water Bottles",
+      "categorySlug": "sports-water-bottles",
+      "imageSha256": "6ce00aee83ab8526b14eb2c27c75c56ed2cf02a9866965953cb520e6566bd9ed"
+    },
+    {
+      "model": "x05",
+      "factoryModel": "X05",
+      "sourcePage": 17,
+      "category": "Plastic Sports Water Bottles",
+      "categorySlug": "sports-water-bottles",
+      "imageSha256": "c605589b5ca2326cae99b260ffb0ec39caca3562483afe3f91542d090880e1a5"
+    },
+    {
+      "model": "x06",
+      "factoryModel": "X06",
+      "sourcePage": 18,
+      "category": "Plastic Sports Water Bottles",
+      "categorySlug": "sports-water-bottles",
+      "imageSha256": "21689a5b64cb03eeebffde2076346ac577b85cf337294627c60b108760db494a"
+    },
+    {
+      "model": "cp02001",
+      "factoryModel": "CP02001",
+      "sourcePage": 20,
+      "category": "Large Capacity Water Jugs",
+      "categorySlug": "large-capacity-water-jugs",
+      "imageSha256": "d29362f676779434b093d8b12c04d272ae793fe1a1c5d15572d98b48c04d2662"
+    },
+    {
+      "model": "cp02002",
+      "factoryModel": "CP02002",
+      "sourcePage": 21,
+      "category": "Large Capacity Water Jugs",
+      "categorySlug": "large-capacity-water-jugs",
+      "imageSha256": "5e48abeef30e58e075f9bad7d156367f2443740120c64fd9e6be26be9a368b83"
+    },
+    {
+      "model": "cp02003",
+      "factoryModel": "CP02003",
+      "sourcePage": 22,
+      "category": "Large Capacity Water Jugs",
+      "categorySlug": "large-capacity-water-jugs",
+      "imageSha256": "e56df71d986e0b0b33632c3bcd50f5edcfde5c51b32ed081e2e4c4ed7b4b1540"
+    },
+    {
+      "model": "cp02004",
+      "factoryModel": "CP02004",
+      "sourcePage": 23,
+      "category": "Large Capacity Water Jugs",
+      "categorySlug": "large-capacity-water-jugs",
+      "imageSha256": "4edf95c4ce16d47c552258acb09cb2939819d146e2a84d68576b71bbea7618de"
+    },
+    {
+      "model": "cp02005",
+      "factoryModel": "CP02005",
+      "sourcePage": 24,
+      "category": "Large Capacity Water Jugs",
+      "categorySlug": "large-capacity-water-jugs",
+      "imageSha256": "b10f1d5a27aa4e6d0aaa2d5e6f858194b3c0513cdf1bf18493cc343abca3bdf4"
+    },
+    {
+      "model": "cp02006",
+      "factoryModel": "CP02006",
+      "sourcePage": 25,
+      "category": "Large Capacity Water Jugs",
+      "categorySlug": "large-capacity-water-jugs",
+      "imageSha256": "ea69b7b99de26ac2b5e584b66286bc93c48ed853c017e8d81de9de02e70c6f51"
+    },
+    {
+      "model": "cp02007",
+      "factoryModel": "CP02007",
+      "sourcePage": 26,
+      "category": "Large Capacity Water Jugs",
+      "categorySlug": "large-capacity-water-jugs",
+      "imageSha256": "1670da560b9d94ec1de25047c09f84a357476f0fad322be53ace1184a6f23b51"
+    },
+    {
+      "model": "cp02008",
+      "factoryModel": "CP02008",
+      "sourcePage": 27,
+      "category": "Large Capacity Water Jugs",
+      "categorySlug": "large-capacity-water-jugs",
+      "imageSha256": "90d14c3b7f47286685327fbe95835316b97c25b7b0470613f8e1de2e3db3663e"
+    },
+    {
+      "model": "cp03001",
+      "factoryModel": "CP03001",
+      "sourcePage": 29,
+      "category": "Spray Water Bottles",
+      "categorySlug": "spray-water-bottles",
+      "imageSha256": "9a64b9e78c65e3812b310b259a3dc6384f4a431e100dd33c3ff66130b1a60f8f"
+    },
+    {
+      "model": "cp03002",
+      "factoryModel": "CP03002",
+      "sourcePage": 30,
+      "category": "Spray Water Bottles",
+      "categorySlug": "spray-water-bottles",
+      "imageSha256": "4c2c7c5191898bf54ecb28b9d5c5c4e43aad833a838c1f0f55c8e4cb7e930dea"
+    },
+    {
+      "model": "cp03003",
+      "factoryModel": "CP03003",
+      "sourcePage": 31,
+      "category": "Spray Water Bottles",
+      "categorySlug": "spray-water-bottles",
+      "imageSha256": "9f24e126220ac82ac005f3a00200bed254402a2ee1ec968cc8a606368e6d232f"
+    },
+    {
+      "model": "cp03004",
+      "factoryModel": "CP03004",
+      "sourcePage": 32,
+      "category": "Spray Water Bottles",
+      "categorySlug": "spray-water-bottles",
+      "imageSha256": "41a93b54e8b88b40d8fe001c26002fc1ece57f8035b4b49eaf7b579a40b4a2ab"
+    },
+    {
+      "model": "v01001",
+      "factoryModel": "V01001",
+      "sourcePage": 36,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "34adb413c582b2c273fea20ff19bbdd3c6a3e499347b0b0c366bbd088fa7dc38"
+    },
+    {
+      "model": "v01002",
+      "factoryModel": "V01002",
+      "sourcePage": 36,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "9c75e12499a7512827c5c6c81f57b2713409a5dcca4eb4666113881ac2ab0e12"
+    },
+    {
+      "model": "v01003",
+      "factoryModel": "V01003",
+      "sourcePage": 37,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "aee084558603a1fa98992ada4f3867510ed08b02727fe662f5f54d7e5204111d"
+    },
+    {
+      "model": "v01004",
+      "factoryModel": "V01004",
+      "sourcePage": 37,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "c7c2a28469cf2cd20f4e362e9ced28dba74601c2cd5cbd19939ba3c4edb31eec"
+    },
+    {
+      "model": "v01005",
+      "factoryModel": "V01005",
+      "sourcePage": 38,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "e609bd5ba3d1f8ad676a6fe6e16a04b4a14ddd0b740859df6175c8e5223f2915"
+    },
+    {
+      "model": "v01006",
+      "factoryModel": "V01006",
+      "sourcePage": 38,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "e3a9470907db10338eca93a4b40bbfa4ad4c4823b5d4f881f4bff40151ec9aa7"
+    },
+    {
+      "model": "v01007",
+      "factoryModel": "V01007",
+      "sourcePage": 39,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "64c3b63b613dacce180e55679b3305d2016c236759f4d0cc5f9962207d886ce9"
+    },
+    {
+      "model": "v01008",
+      "factoryModel": "V01008",
+      "sourcePage": 39,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "573dbed8114b3fc9d3340013a4f7fcea830b8720e8f4f9b07233eaab9676ec8b"
+    },
+    {
+      "model": "v01009",
+      "factoryModel": "V01009",
+      "sourcePage": 40,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "d33e7f45539f86c99167eb24fd05a5f26cb851373350f3e4dbb81ff22497a966"
+    },
+    {
+      "model": "v01010",
+      "factoryModel": "V01010",
+      "sourcePage": 40,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "df9bd08b4ae74c2326f5a647e5fe1ec7e75c548c8a0c2e7215f711919fef9628"
+    },
+    {
+      "model": "v01011",
+      "factoryModel": "V01011",
+      "sourcePage": 41,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "64285a6ce3b6742db97686adebe5b23b02c23f87a2a533bd325a11d81e3bf006"
+    },
+    {
+      "model": "v01012",
+      "factoryModel": "V01012",
+      "sourcePage": 41,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "1b7cb8380b18d0fe9dd93008c8bddcf31d63ec103cef56feebabf6bd53047186"
+    },
+    {
+      "model": "v01013",
+      "factoryModel": "V01013",
+      "sourcePage": 42,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "a20e1b868a2e62e9cba45afd71f198341f87bdb68badaa35fa685c7f3b93869c"
+    },
+    {
+      "model": "v01014",
+      "factoryModel": "V01014",
+      "sourcePage": 42,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "0d65b9579b9e17dab89858aad04c3930c089228b4daf59664c667c4fc4a34478"
+    },
+    {
+      "model": "v01015",
+      "factoryModel": "V01015",
+      "sourcePage": 43,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "274671f49c71878cd8b9342b80d08776ebff5f3eb8751f8bb83f3afb32114db5"
+    },
+    {
+      "model": "v01016",
+      "factoryModel": "V01016",
+      "sourcePage": 43,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "b2640f33a4ba7a229a008386a5a3e62bfab948f7a61f704457cd7792b34e3128"
+    },
+    {
+      "model": "v01017",
+      "factoryModel": "V01017",
+      "sourcePage": 44,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "ea4e9a4f8707d011310be0adaa99905793eb24c21974d9d2078ba3dd5cdee57c"
+    },
+    {
+      "model": "v01018",
+      "factoryModel": "V01018",
+      "sourcePage": 44,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "f7053d4c7bb3fbb6d603998785d0b5ef9f1bfbc1bc7e841094cfa69ef6f6546f"
+    },
+    {
+      "model": "v01019",
+      "factoryModel": "V01019",
+      "sourcePage": 45,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "6f162318768254238e25f1fd899e80eeac18a5de0b20caa5e07880669ba4bfc6"
+    },
+    {
+      "model": "v01020",
+      "factoryModel": "V01020",
+      "sourcePage": 45,
+      "category": "Two-Way Drinking Cups",
+      "categorySlug": "two-way-drinking-cups",
+      "imageSha256": "0b9ab406437a59585cd0449d391b4ff462900ca20bcb7d669f03f6c90ba6aac1"
+    },
+    {
+      "model": "ti01",
+      "factoryModel": "Ti01",
+      "sourcePage": 47,
+      "category": "Titanium Vacuum Cups",
+      "categorySlug": "titanium-vacuum-cups",
+      "imageSha256": "a6f57fc71380d096c15be061b613666d277cb182c8879a9134d78b53c7fbe29d"
+    },
+    {
+      "model": "ti02",
+      "factoryModel": "Ti02",
+      "sourcePage": 47,
+      "category": "Titanium Vacuum Cups",
+      "categorySlug": "titanium-vacuum-cups",
+      "imageSha256": "9c15938d70e4d18f9bdf6f0b9fc3b961ca18aba8266adff1d0d40267fd1e4292"
+    },
+    {
+      "model": "ti03",
+      "factoryModel": "Ti03",
+      "sourcePage": 48,
+      "category": "Titanium Vacuum Cups",
+      "categorySlug": "titanium-vacuum-cups",
+      "imageSha256": "9852a168de8304a7a8b89b0064d566cfe5a30ae2bd535521bc54c77c6cabc8af"
+    },
+    {
+      "model": "ti04",
+      "factoryModel": "Ti04",
+      "sourcePage": 48,
+      "category": "Titanium Vacuum Cups",
+      "categorySlug": "titanium-vacuum-cups",
+      "imageSha256": "8b71a1e9b9b89f20e15e15dda6f449d8157a4031c4b7e5f604ee7c5644e55ee0"
+    },
+    {
+      "model": "ti05",
+      "factoryModel": "Ti05",
+      "sourcePage": 49,
+      "category": "Titanium Vacuum Cups",
+      "categorySlug": "titanium-vacuum-cups",
+      "imageSha256": "3e8b4aaec76029ebbe637cf6f4e203ff9b3d9da429c7dd15fb9472cd0b5d7de2"
+    },
+    {
+      "model": "ti06",
+      "factoryModel": "Ti06",
+      "sourcePage": 49,
+      "category": "Titanium Vacuum Cups",
+      "categorySlug": "titanium-vacuum-cups",
+      "imageSha256": "71874e7cf5ee77f8c43a2473085be78fb9db045984e9b1704f2a61c80ad1e66f"
+    },
+    {
+      "model": "ti07",
+      "factoryModel": "Ti07",
+      "sourcePage": 50,
+      "category": "Titanium Vacuum Cups",
+      "categorySlug": "titanium-vacuum-cups",
+      "imageSha256": "745539d4f81d49e4e91773a1f3cea7b46e56a927ba32c7ee957eefcb3a4c7fcd"
+    },
+    {
+      "model": "ti08",
+      "factoryModel": "Ti08",
+      "sourcePage": 50,
+      "category": "Titanium Vacuum Cups",
+      "categorySlug": "titanium-vacuum-cups",
+      "imageSha256": "65451695b4cfd91c5ed716e7cb24bcb6528312b82af88b3884498b43a372d0ce"
+    }
+  ]
+}

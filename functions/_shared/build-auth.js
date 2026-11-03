@@ -119,3 +119,14 @@ export async function authorizedSchedulerRunnerRequest(request, env){
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/scheduler-runner")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
+
+// One-time reviewed 58-model factory catalog import. These two exact routes
+// are the only write paths admitted for the existing XUYI CI project token.
+export async function authorizedReviewedFactoryCatalogImageUploadRequest(request, env){
+  if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-images-20261103")return false;
+  return verifyCloudflareProjectToken(bearerToken(request),env);
+}
+export async function authorizedReviewedFactoryCatalogCommitRequest(request, env){
+  if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-20261103")return false;
+  return verifyCloudflareProjectToken(bearerToken(request),env);
+}

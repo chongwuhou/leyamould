@@ -44,6 +44,7 @@ export async function onRequestPost(context){
     const db=context.env.XUYI_DB;await ensure(db);
     const prior=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
     if(prior){
+      if(p.createOnly===true)return respond({error:"Model already exists; create-only import will not overwrite"},409);
       let previous;
       try{previous=JSON.parse(prior.content_json)}catch{return respond({error:"Existing product JSON invalid"},409)}
       if(previous.newProduct!==true)return respond({error:"Model already owned by legacy catalog"},409);
@@ -57,11 +58,18 @@ export async function onRequestPost(context){
       catch{return respond({error:"Could not verify product photo in XUYI R2"},503)}
       if(!object)return respond({error:"Product image not present in XUYI R2"},409);
     }
-    await db.prepare(`INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at)
-      VALUES(?,?,?,CURRENT_TIMESTAMP)
-      ON CONFLICT(model) DO UPDATE SET content_json=excluded.content_json,
-      publication_status=excluded.publication_status,updated_at=CURRENT_TIMESTAMP`)
-      .bind(model,JSON.stringify(content),status).run();
+    const saveSql=p.createOnly===true
+      ? `INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at)
+         VALUES(?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(model) DO NOTHING`
+      : `INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at)
+         VALUES(?,?,?,CURRENT_TIMESTAMP)
+         ON CONFLICT(model) DO UPDATE SET content_json=excluded.content_json,
+         publication_status=excluded.publication_status,updated_at=CURRENT_TIMESTAMP`;
+    const saved=await db.prepare(saveSql).bind(model,JSON.stringify(content),status).run();
+    // The preflight SELECT improves the normal UX; this atomic insert is the real
+    // no-overwrite guard when two admins import the same model concurrently.
+    if(p.createOnly===true&&Number(saved?.meta?.changes??0)!==1)
+      return respond({error:"Model already exists; create-only import will not overwrite"},409);
     const revision=await bumpPublishRevision(db);
     return respond({saved:true,model,status,newProduct:true,route:"/products/"+model+"/",
       locales:"English only until each translation is reviewed",...revision});
