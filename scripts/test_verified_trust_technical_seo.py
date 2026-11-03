@@ -27,8 +27,17 @@ from site_renderer import SERIES
 from product_reviews_source import published_reviews,schema_properties
 STATE=json.loads(SNAPSHOT.read_text("utf8")) if SNAPSHOT.is_file() else {}
 MODELS_BY_SLUG={str(p["slug"]):str(p["model"]) for p in SERIES.values()}
-OWNER_BODIES={str(row.get("route")):str(row.get("mainHtml",""))
-              for row in STATE.get("pageBodies",[]) if isinstance(row,dict)}
+from product_slug_fix import route as canonical_product_route
+OWNER_BODIES={}
+for row in STATE.get("pageBodies",[]):
+    if isinstance(row,dict):OWNER_BODIES[(str(row.get("route")),"en")]=str(row.get("mainHtml",""))
+for row in STATE.get("translations",[]):
+    if not isinstance(row,dict):continue
+    resource_id=str(row.get("resourceId",""));locale=str(row.get("locale",""));fields=row.get("content") or {}
+    if not resource_id.startswith("page:") or locale not in LANGS or not isinstance(fields,dict):continue
+    route=canonical_product_route(resource_id[5:])
+    if route.startswith("/products/"):
+        OWNER_BODIES.setdefault((route,locale),str(fields.get("mainHtml","")))
 faq_count=blog_count=product_count=og_count=0
 for lang,prefix in LANGS.items():
     home=DIST/prefix/"index.html"
@@ -75,7 +84,7 @@ for lang,prefix in LANGS.items():
         model=MODELS_BY_SLUG.get(route.parent.name)
         assert model,(lang,route,"review model must exist in canonical product data")
         approved=published_reviews(STATE,model)
-        owner_body=OWNER_BODIES.get("/products/"+route.parent.name+"/","")
+        owner_body=OWNER_BODIES.get(("/products/"+route.parent.name+"/",lang),"")
         owner_review=re.search(r'<section\b[^>]*\bid="xuyi-customer-reviews"[^>]*>.*?</section>',owner_body,re.S)
         if owner_review:
             # An editor-owned review module is the source of truth for this
