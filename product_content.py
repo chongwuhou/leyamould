@@ -59,6 +59,7 @@ def join_unique(items,field,fn=lambda x:x):
 def details(obj):
  category=obj['category'];display=CAT[category][0]
  manual_new=bool(obj.get("manualNew"))
+ factory_catalog=manual_new and bool(obj.get("sourceDocument")) and bool(obj.get("sourcePage"))
  model=model_en(obj.get("factoryModel") or obj["model"])
  name=public_display_name(obj)
  if manual_new:name=name+" — Model "+model
@@ -77,14 +78,14 @@ def details(obj):
  packing=join_unique(variants,'packing',lambda x:str(x) if manual_new else pack_en(x))
  qty=join_unique(variants,'carton_quantity',lambda x:str(x)+" pcs/carton")
  carton=join_unique(variants,'carton_size',dimension_value)
- source_word="Factory Catalog" if manual_new else "Catalog"
+ source_word="Factory Catalog" if factory_catalog else ("Submitted" if manual_new else "Catalog")
  data=[
  ("Model",model),("Product Category",display),(source_word+" Capacity",capacity),
  ("Materials (confirm by exact SKU)" if manual_new else "Materials Listed in Catalog",materials),(source_word+" Dimensions",dims),
  (source_word+" Color Options",colors),("Listed Unit Packing",packing),
  ("Master Carton Quantity",qty),("Master Carton Dimensions",carton)
  ]
- if manual_new:
+ if factory_catalog:
   optional=[("Listed Unit Weight",join_unique(variants,'unit_weight',lambda x:str(x))),
    ("Listed Temperature Range",join_unique(variants,'temperature_range',lambda x:str(x))),
    ("Retail Box Dimensions",join_unique(variants,'retail_box_size',dimension_value)),
@@ -134,7 +135,7 @@ def details(obj):
  h=render_template("product-overview",BREADCRUMB=breadcrumb,
    MAIN_PHOTO=photo(img,name+" model "+model,"eager").replace('<img ','<img id="main-photo" ',1),
    THUMBNAILS=thumbs,MODEL=e(model),NAME=e(name),LEAD=e(lead),SPECS=spec,SLUG=e(obj["slug"]),
-   PHOTO_NOTE=e("Factory catalog image; confirm the exact variant and sample appearance before ordering." if manual_new else "Catalog imagery; final color and specification are confirmed with your order."))
+   PHOTO_NOTE=e("Factory catalog image; confirm the exact variant and sample appearance before ordering." if factory_catalog else ("Submitted product imagery; please confirm sample appearance and final specifications." if manual_new else "Catalog imagery; final color and specification are confirmed with your order.")))
  h+='<section class="section section--soft product-content"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT DETAILS</span><h2 class="section__title">Design, Materials &amp; Applications</h2><p>Model-specific buying considerations for commercial sourcing.</p></div></div><div class="grid grid--3">'
  for title,desc in points:h+=render_template("product-benefit",HEADING=e(title),DESCRIPTION=e(desc))
  h+='</div></div></section>'
@@ -147,7 +148,7 @@ def details(obj):
  h+='</div><p class="product-content__cta"><a href="/capabilities/oem-odm/">Explore OEM/ODM Services →</a> · <a href="/capabilities/custom-logo/">Custom Logo Options →</a></p></div></section>'
  qs=[
  ("Can I order custom printed model "+model+"?","Logo placement, decoration process and minimum order quantity are confirmed against the actual product, artwork and order quantity."),
- ("What capacity and material does this SKU use?",("The factory catalog lists " if manual_new else "The catalog reference lists ")+capacity+" capacity and "+materials+" materials. Request component-level verification and market-specific food-contact documents before confirming your order."),
+  ("What capacity and material does this SKU use?",("The factory catalog lists " if factory_catalog else ("The submitted product details list " if manual_new else "The catalog reference lists "))+capacity+" capacity and "+materials+" materials. Request component-level verification and market-specific food-contact documents before confirming your order."),
  ("Is this product BPA-free and leakproof?","BPA-free material options or leak testing can be requested. Neither claim is guaranteed for every variant; confirm test evidence, cap design and intended usage conditions."),
  ("How do I request a sample and shipping quote?","Send the model, target quantity, destination, logo details and pack type. The team will confirm availability, sample costs and appropriate trade terms.")
  ]
