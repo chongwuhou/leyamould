@@ -7,7 +7,8 @@ import re
 
 CATEGORIES=frozenset((
  "Plastic Sports Water Bottles","Large Capacity Water Jugs",
- "Kids Plastic Water Bottles","Plastic Shaker Bottles"
+ "Kids Plastic Water Bottles","Plastic Shaker Bottles",
+ "Spray Water Bottles","Two-Way Drinking Cups","Titanium Vacuum Cups"
 ))
 SLUG=re.compile(r"[a-z0-9][a-z0-9-]{1,63}$")
 IMAGE=re.compile(r"/media/(?:product|page|shared|ppt|excel|group|gallery|capability|blog)/[a-zA-Z0-9._-]{3,140}\.(?:webp|jpg|png)$")
@@ -27,6 +28,17 @@ def validate_new_product(model,entry):
   raise ValueError("New products require a valid XUYI R2 image path")
  if len(entry.get("seoTitle",""))>90 or len(entry.get("seoDescription",""))>240:
   raise ValueError("SEO metadata length exceeded")
+ source_document=entry.get("sourceDocument")
+ if source_document:
+  if not isinstance(source_document,str) or not source_document.strip():
+   raise ValueError("Invalid factory catalog source document")
+  if not re.fullmatch(r"\d{1,3}",str(entry.get("sourcePage",""))):
+   raise ValueError("Factory catalog product requires its source page")
+  if not re.fullmatch(r"[0-9a-f]{64}",str(entry.get("sourceSha256","")),re.I):
+   raise ValueError("Factory catalog product requires verified sourceSha256")
+ source_image_sha=entry.get("sourceImageSha256","")
+ if source_image_sha and not re.fullmatch(r"[0-9a-f]{64}",str(source_image_sha),re.I):
+  raise ValueError("Factory catalog product has invalid sourceImageSha256")
  return entry
 
 def append_new_products(series,rows):
@@ -36,13 +48,20 @@ def append_new_products(series,rows):
   model=str(row.get("model",""))
   content=row.get("content")
   if not isinstance(content,dict) or content.get("newProduct") is not True:continue
+  if "pending" in str(content.get("imageReviewStatus","")).lower():
+   raise ValueError("Refusing to build a product with an unreviewed replacement image")
   if model in series:raise ValueError("New product conflicts with an existing XUYI model")
   validate_new_product(model,content)
-  info={key:content.get(key,"") for key in ("name","description","capacity","material","colors","packing",
-        "dimensions","carton_quantity","carton_size")}
+  display_model=str(content.get("factoryModel") or model).strip() or model
+  info={key:content.get(key,"") for key in (
+        "factoryModel","name","description","capacity","material","colors","packing",
+        "dimensions","unit_weight","temperature_range","retail_box_size",
+        "carton_quantity","carton_size","carton_gross_weight","catalogOunceLabel",
+        "sourceDocument","sourcePage","sourceNotes","qcStatus","imageReviewStatus",
+        "seoTitle","seoDescription")}
   series[model]={
-    **info,"model":model,"slug":model,"category":content["category"],
-    "images":[content["image"]],"variants":[{**info,"model":model}],
+    **info,"model":display_model,"factoryModel":display_model,"slug":model,"category":content["category"],
+    "images":[content["image"]],"variants":[{**info,"model":display_model,"factoryModel":display_model}],
     "manualNew":True
   }
   count+=1

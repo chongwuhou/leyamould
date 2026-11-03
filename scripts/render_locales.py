@@ -42,6 +42,8 @@ from localized_blog_links import disable_unpublished_blog_links
 
 from product_material_performance import inject as inject_materials
 
+from factory_catalog_locales import catalog_cards as factory_catalog_cards
+
 
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -834,6 +836,8 @@ def main():
             body=gallery_catalog_cards(body,loc,route)
 
             body=catalog_cards(body,loc,route)
+
+            body=factory_catalog_cards(body,loc,route,routes_by_locale[loc])
 
         if route=="/products/":
 

@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from catalog_extensions import append_new_products  # noqa: E402
+from factory_catalog_locales import catalog_cards  # noqa: E402
 
 BUNDLE = json.loads((ROOT / "scripts/fixtures/factory-catalog-import-2026-11-03.json").read_text(encoding="utf-8"))
 IMAGES_ZIP = ROOT / "scripts/fixtures/factory-catalog-images-2026-11-03.zip"
@@ -100,6 +101,27 @@ def main() -> None:
         assert product.get("slug") == model
         assert product.get("images") == [f"/media/product/{expected[model]['imageSha256'][:32]}.webp"]
         assert product.get("category") in MANIFEST["categories"]
+
+    # The four published non-English catalogs receive localized cards that
+    # link to the English source-backed detail page until translations exist.
+    empty_grid = '<div class="grid grid--4 product-grid"></div>'
+    for locale in ("es", "pt", "ru", "tr"):
+        localized = catalog_cards(empty_grid, locale, "/products/", set(), series)
+        assert localized.count('data-new-product="true"') == 58
+        for model in seen:
+            assert f'href="/products/{model}/"' in localized
+            assert f'href="/{locale}/products/{model}/"' not in localized
+        category_slugs = {
+            item["categorySlug"] for item in MANIFEST["models"]
+        }
+        for category_slug in category_slugs:
+            category_count = sum(
+                1 for item in MANIFEST["models"] if item["categorySlug"] == category_slug
+            )
+            category_html = catalog_cards(
+                empty_grid, locale, f"/collections/{category_slug}/", set(), series
+            )
+            assert category_html.count('data-new-product="true"') == category_count
 
     print(f"PASS: {len(series)} new products, {len(hashes)} unique WebP images, {len(category_counts)} categories.")
 

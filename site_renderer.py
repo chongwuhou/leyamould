@@ -47,7 +47,10 @@ CAT={
 "Plastic Sports Water Bottles":("Sports Water Bottles","sports-water-bottles","/media/ppt/slide-059.webp","Lightweight reusable plastic bottles for daily hydration and active lifestyles."),
 "Large Capacity Water Jugs":("Large Capacity Water Jugs","large-capacity-water-jugs","/media/ppt/slide-055.webp","Carry-friendly larger volume plastic water bottles for fitness, outdoor and everyday use."),
 "Kids Plastic Water Bottles":("Kids Water Bottles","kids-water-bottles","/media/ppt/slide-030.webp","Colorful children's plastic straw and carrying-strap bottle designs."),
-"Plastic Shaker Bottles":("Protein Shaker Bottles","plastic-shaker-bottles","/media/ppt/slide-094.webp","Plastic shaker cups for gym, fitness and sports nutrition buyers.")
+"Plastic Shaker Bottles":("Protein Shaker Bottles","plastic-shaker-bottles","/media/ppt/slide-094.webp","Plastic shaker cups for gym, fitness and sports nutrition buyers."),
+"Spray Water Bottles":("Spray Water Bottles","spray-water-bottles","/media/ppt/slide-059.webp","Spray water bottles for promotional, outdoor and everyday drinkware projects. Confirm nozzle, trigger and materials by model."),
+"Two-Way Drinking Cups":("Two-Way Drinking Cups","two-way-drinking-cups","/media/ppt/slide-055.webp","Dual-mode drinking cups for travel, retail and promotional collections. Confirm lid components and materials by exact model."),
+"Titanium Vacuum Cups":("Titanium Vacuum Cups","titanium-vacuum-cups","/media/ppt/slide-094.webp","Titanium vacuum cups for insulated drinkware sourcing. Verify grade, purity, vacuum construction and test documents for each SKU.")
 }
 SERIES=collections.OrderedDict()
 for i,p in enumerate(RAW):
@@ -511,6 +514,10 @@ def intro(crumb,title,subtitle=""):
  return render_template("page-intro",CRUMB=e(crumb),TITLE=e(title),SUBTITLE=e(subtitle))
 def category_card(cat):
  n,slug,im,desc=cat
+ category=next((key for key,value in CAT.items() if value[1]==slug),None)
+ if category:
+  product=next((item for item in SERIES.values() if item.get("category")==category and item.get("manualNew") and item.get("images")),None)
+  if product:im=product["images"][0]
  return render_template("category-card",URL="/collections/"+e(slug)+"/",IMAGE=photo(im,n),TITLE=e(n))
 def public_display_name(item):
  # The source lists model 2506 as 60ml; this is unverified and likely a catalog data error.
