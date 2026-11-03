@@ -163,19 +163,25 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
     content_start, content_end = bounds
     grid_content = body[content_start:content_end]
     priority_cards = []
-    if route == "/products/":
-        # Keep the established eight LO launch models at the top of the main
-        # catalog; append the new factory batch immediately after them.
-        for _ in range(8):
-            match = re.search(r'<a\b[^>]*\bdata-product-card\b[^>]*>.*?</a>', grid_content, re.I | re.S)
-            if not match:
-                raise ValueError("Main product catalog is missing a priority LO launch card")
+    if route == "/products/" or route.startswith("/collections/"):
+        # Preserve every reviewed LO card at the front of both the main
+        # catalog and its matching category catalog before adding factory cards.
+        card_pattern = re.compile(r'<a\b[^>]*\bdata-product-card\b[^>]*>.*?</a>', re.I | re.S)
+        lo_matches = []
+        for match in card_pattern.finditer(grid_content):
             card = match.group(0)
-            href_match = re.search(r'\bhref=["\']([^"\']+)["\']', card, re.I)
-            if not href_match or "/products/lo-" not in href_match.group(1):
-                raise ValueError("The eight LO launch cards must retain first-page priority")
-            priority_cards.append(card)
-            grid_content = grid_content[:match.start()] + grid_content[match.end():]
+            opening = card.split(">", 1)[0]
+            href_match = re.search(r'\bhref=["\']([^"\']+)["\']', opening, re.I)
+            if href_match and "/products/lo-" in href_match.group(1):
+                lo_matches.append((match.start(), match.end(), card, href_match.group(1)))
+        lo_urls = [item[3] for item in lo_matches]
+        if len(lo_urls) != len(set(lo_urls)):
+            raise ValueError("Duplicate LO launch card in " + locale + " " + route)
+        if route == "/products/" and len(lo_matches) != 8:
+            raise ValueError("Main product catalog must retain all eight LO launch cards")
+        for start, end, _card, _url in reversed(lo_matches):
+            grid_content = grid_content[:start] + grid_content[end:]
+        priority_cards = [item[2] for item in lo_matches]
     cards = []
 
     for product in products:

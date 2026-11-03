@@ -169,10 +169,21 @@ def main() -> None:
             category_count = sum(
                 1 for item in MANIFEST["models"] if item["categorySlug"] == category_slug
             )
-            category_html = catalog_cards(
-                empty_grid, locale, f"/collections/{category_slug}/", set(), series
+            category_route = f"/collections/{category_slug}/"
+            lo_category_first = lo_catalog_cards(empty_grid, locale, category_route)
+            category_html = catalog_cards(lo_category_first, locale, category_route, set(), series)
+            expected_lo_category = [
+                re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
+                for match in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>', lo_category_first, re.I)
+            ]
+            category_urls = [
+                re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
+                for match in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>', category_html, re.I)
+            ]
+            assert category_urls[:len(expected_lo_category)] == expected_lo_category, (
+                locale, category_slug, "LO category cards must remain first"
             )
-            assert category_html.count('data-new-product="true"') == category_count
+            assert category_html.count('data-new-product="true"') == category_count + len(expected_lo_category)
 
     print(f"PASS: {len(series)} new products, {len(hashes)} unique WebP images, {len(category_counts)} categories.")
 
