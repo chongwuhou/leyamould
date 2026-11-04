@@ -8,7 +8,10 @@ import html
 import json
 import re
 from pathlib import Path
-from cms_seo_curation_guard import may_curate
+try:
+    from scripts.cms_seo_curation_guard import may_curate
+except ModuleNotFoundError:
+    from cms_seo_curation_guard import may_curate
 
 # page route -> language -> (title, description). Confirmed services are
 # invitations to discuss specifications, not promises of MOQ/certification.
@@ -72,6 +75,19 @@ def polish(markup,route,locale):
         return '<script type="application/ld+json">'+json.dumps(
             data,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")+'</script>'
     return re.sub(r'<script type="application/ld\+json">([\s\S]*?)</script>',structured,markup)
+
+
+def apply_to_document(markup,route,locale):
+    """Apply reviewed capability-page metadata before the source renderer writes HTML."""
+    base=str(route or "/")
+    prefix="/"+locale
+    if locale!="en" and base.startswith(prefix+"/"):
+        base=base[len(prefix):]
+    if base not in PRIORITY or locale not in PRIORITY[base]:
+        return markup
+    if not (may_curate(locale,base,"title") and may_curate(locale,base,"description")):
+        return markup
+    return polish(markup,base,locale)
 
 
 def apply(dist):
