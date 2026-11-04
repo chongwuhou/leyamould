@@ -562,8 +562,13 @@ def model_label(value):
 def product_card(item):
   img=item["images"][0]
   two_way=item.get("category")=="Two-Way Drinking Cups"
-  from factory_catalog_locales import _card_title
-  title=_card_title(item,"en")
+  if two_way:
+   from factory_catalog_locales import _card_title
+   title=_card_title(item,"en")
+  else:
+   # Manual/D1 product modules retain the owner's display name. The
+   # catalog post-render pass applies B2B source titles only to default cards.
+   title=public_display_name(item)
   model=model_label(item["model"])
   from scripts.source_catalog_capacity_oz import catalog_volume_numbers,volume_terms,verified_source_material
   numbers=catalog_volume_numbers(item)
@@ -572,7 +577,7 @@ def product_card(item):
   procurement="wholesale B2B OEM factory manufacturer custom plastic material options"
   searchable=(title+" "+model+" "+str(item.get("capacity",""))+" "+capacity+" "+material+" "+procurement).lower()
   capacity_html='<span class="product-card__capacity">'+e(capacity)+'</span>' if capacity and not two_way else ""
-  alt=title+(" model "+model if two_way else "")
+  alt=title+" model "+model
   return render_template("product-card",
    CATEGORY=e(CAT[item["category"]][1]),SEARCH=e(searchable),
    URL="/products/"+e(item["slug"])+"/",
