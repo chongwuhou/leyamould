@@ -21,6 +21,7 @@ on:
       - "blog_editorial.py"
       - "blog_*.py"
       - "product_content.py"
+      - "product_source_identity.py"
       - "editorial_support.py"
       - "home_enhancements.py"
       - "resource_pages.py"
@@ -441,6 +442,7 @@ jobs:
           python scripts/test_curated_hq_images.py
           python scripts/test_gpt_reviewed_shaker_hd.py
           python scripts/test_product_photo_cms_override_policy.py
+          python scripts/test_factory_family_photo_disclosure.py
           python scripts/test_reviewed_editorial_images.py
           python scripts/test_reviewed_media_owner_overrides.py
           python scripts/test_reviewed_lowres_editorial_round2.py
