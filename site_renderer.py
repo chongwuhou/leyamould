@@ -558,7 +558,12 @@ def model_label(value):
 
 def product_card(item):
   img=item["images"][0]
-  title=public_display_name(item)
+  two_way=item.get("category")=="Two-Way Drinking Cups"
+  if two_way:
+   from factory_catalog_locales import _card_title
+   title=_card_title(item,"en")
+  else:
+   title=public_display_name(item)
   model=model_label(item["model"])
   from scripts.source_catalog_capacity_oz import catalog_volume_numbers,volume_terms,verified_source_material
   numbers=catalog_volume_numbers(item)
@@ -566,11 +571,12 @@ def product_card(item):
   material=verified_source_material(item)
   procurement="wholesale B2B OEM factory manufacturer custom plastic material options"
   searchable=(title+" "+model+" "+str(item.get("capacity",""))+" "+capacity+" "+material+" "+procurement).lower()
-  capacity_html='<span class="product-card__capacity">'+e(capacity)+'</span>' if capacity else ""
+  capacity_html='<span class="product-card__capacity">'+e(capacity)+'</span>' if capacity and not two_way else ""
   return render_template("product-card",
    CATEGORY=e(CAT[item["category"]][1]),SEARCH=e(searchable),
    URL="/products/"+e(item["slug"])+"/",
    IMAGE=photo(img,title+" model "+model),MODEL=e(model),TITLE=e(title),CAPACITY=capacity_html)
+
 def product_grid(items):return '<div class="grid grid--4 product-grid">'+''.join(product_card(x) for x in items)+'</div>'
 def filters(with_categories=True):
  options='<option value="">All product categories</option>'+''.join('<option value="'+x[1]+'">'+e(x[0])+'</option>' for x in CAT.values())
