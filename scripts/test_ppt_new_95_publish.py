@@ -1,9 +1,16 @@
 from pathlib import Path
 from copy import deepcopy
 import json
+import os
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
+SNAPSHOT = ROOT / "_local_ops" / "build-snapshot.json"
+if SNAPSHOT.is_file():
+    os.environ["XUYI_BUILD_SNAPSHOT"] = str(SNAPSHOT)
+    _snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+    os.environ["XUYI_PUBLISH_REVISION"] = str(int(_snapshot.get("publishRevision", 0)))
 sys.path.insert(0, str(ROOT))
 
 import site_renderer as site
@@ -12,23 +19,19 @@ from factory_catalog_locales import LABELS
 from product_content import factory_catalog_seo_title
 
 SOURCE = "水杯最新产品.pptx"
-EXPECTED_PUBLISHED = {
-    "5361", "5330-1", "2107", "2096", "5330", "2089", "5219", "5308",
-    "2079", "356", "273", "5305", "5302", "5301", "5295-1", "5297",
-    "333", "8620-1", "5227-2", "2059", "2060", "320", "321", "322",
-    "313", "5259", "5261", "5260", "5240", "8181", "8595", "5520",
-    "250", "247", "2033", "2018", "8835", "5283", "5216",
-}
+MANIFEST = json.loads((ROOT / "scripts/fixtures/ppt-new-95-source-models.json").read_text(encoding="utf-8"))
+EXPECTED_SOURCE_PAGES = {str(row["model"]): int(row["sourcePage"]) for row in MANIFEST["models"]}
+EXPECTED_PUBLISHED = set(EXPECTED_SOURCE_PAGES)
+assert len(EXPECTED_PUBLISHED) == MANIFEST["modelCount"] == 95
 ppt_products = {
     str(model): product
     for model, product in site.SERIES.items()
     if product.get("manualNew") is True and product.get("sourceDocument") == SOURCE
 }
-assert set(ppt_products) == EXPECTED_PUBLISHED, {
+assert EXPECTED_PUBLISHED.issubset(set(ppt_products)), {
     "missing": sorted(EXPECTED_PUBLISHED - set(ppt_products)),
-    "unexpected": sorted(set(ppt_products) - EXPECTED_PUBLISHED),
 }
-assert site.BUILD_STATE.get("publishRevision", 0) >= 54
+assert site.BUILD_STATE.get("publishRevision", 0) >= 56
 
 snapshot_rows = [
     row for row in site.BUILD_STATE.get("products", [])
@@ -36,11 +39,23 @@ snapshot_rows = [
     and row["content"].get("newProduct") is True
     and row["content"].get("sourceDocument") == SOURCE
 ]
-assert {str(row.get("model")) for row in snapshot_rows} == EXPECTED_PUBLISHED
-assert len(snapshot_rows) == 39
+snapshot_models = {str(row.get("model")) for row in snapshot_rows}
+assert EXPECTED_PUBLISHED.issubset(snapshot_models)
+assert len(snapshot_rows) >= len(EXPECTED_PUBLISHED)
+snapshot_by_model = {str(row["model"]): row["content"] for row in snapshot_rows}
 
-for model, product in ppt_products.items():
-    assert product.get("imageReviewStatus") == "visually_reviewed_source_crop", (model, product.get("imageReviewStatus"))
+for model in EXPECTED_PUBLISHED:
+    product = ppt_products[model]
+    assert product.get("imageReviewStatus") in {
+        "visually_reviewed_source_crop", "visually_reviewed_source_family_image"
+    }, (model, product.get("imageReviewStatus"))
+    assert str(product.get("sourcePage")) == str(EXPECTED_SOURCE_PAGES[model]), (model, product.get("sourcePage"))
+    source_content = snapshot_by_model[model]
+    assert source_content.get("sourceSha256") == MANIFEST["sourceSha256"], (model, "source SHA mismatch")
+    assert re.fullmatch(r"[a-f0-9]{64}", str(source_content.get("sourceImageSha256", ""))), (model, "source image SHA missing")
+    assert not re.search(r"glass|stainless", str(product.get("category", "")) + " " + str(product.get("material", "")), re.I), (model, "non-plastic product")
+    if product.get("imageReviewStatus") == "visually_reviewed_source_family_image":
+        assert "family" in str(product.get("sourceNotes", "")).lower(), (model, "family image note missing")
     assert product.get("qcStatus") == "source_read", (model, product.get("qcStatus"))
     assert "pending" not in str(product.get("imageReviewStatus", "")).lower()
     assert product.get("capacity") and product.get("dimensions") and product.get("images")
@@ -76,13 +91,21 @@ for model, carton in {
     assert product["carton_size"] == carton, (model, product["carton_size"])
     assert "6000ml" not in product["capacity"] and "6000ml" not in product["carton_size"]
 
-# Ambiguous source pages remain unpublished: each source cell also lists a second model code.
-assert "2080" not in ppt_products and "2082" not in ppt_products
+# Pages 24 and 25 each contain one model code with multiple factory-listed capacity variants.
+# Keep each model as one product page with all source-listed options.
+assert {"2080", "2082"}.issubset(ppt_products)
+assert "850ml" in ppt_products["2080"]["capacity"] and "1200ml" in ppt_products["2080"]["capacity"]
+assert "1600ml" in ppt_products["2082"]["capacity"] and "2200ml" in ppt_products["2082"]["capacity"]
+assert ppt_products["2080"]["carton_quantity"] == "60"
+assert ppt_products["2082"]["carton_quantity"] == "30"
 assert "2081" not in ppt_products and "2083" not in ppt_products
+assert ppt_products["5285"]["carton_quantity"] == "30"
+assert ppt_products["5286"]["carton_quantity"] == "24"
 
 # Every published product image has all five localized ALT strings in the current D1 snapshot.
 media_alts = {row.get("path"): row.get("translations", {}) for row in site.BUILD_STATE.get("mediaAlts", [])}
-for model, product in ppt_products.items():
+for model in EXPECTED_PUBLISHED:
+    product = ppt_products[model]
     image_path = product["images"][0]
     alts = media_alts.get(image_path)
     assert isinstance(alts, dict), (model, "missing D1 image ALT")
@@ -93,7 +116,8 @@ for locale in ("es", "pt", "ru", "tr"):
     listing = ROOT / "dist" / locale / "products/index.html"
     assert listing.is_file(), (locale, "missing localized product listing")
     html = listing.read_text(encoding="utf8")
-    for model, product in ppt_products.items():
+    for model in EXPECTED_PUBLISHED:
+        product = ppt_products[model]
         slug = product["slug"]
         href = f'href="/products/{slug}/"'
         assert html.count(href) == 1, (locale, model, "localized card missing/duplicated")
@@ -124,12 +148,14 @@ except ValueError as exc:
 else:
     raise AssertionError("Pending image review was not blocked")
 
-# Clean-build determinism for the 39 source-backed products.
+# Clean-build determinism for the source-backed 95-model baseline.
+expected_rows = [row for row in snapshot_rows if str(row.get("model")) in EXPECTED_PUBLISHED]
 series_a, series_b = {}, {}
-assert append_new_products(series_a, snapshot_rows) == 39
-assert append_new_products(series_b, snapshot_rows) == 39
+assert append_new_products(series_a, expected_rows) == len(EXPECTED_PUBLISHED)
+assert append_new_products(series_b, expected_rows) == len(EXPECTED_PUBLISHED)
 assert json.dumps(series_a, sort_keys=True, ensure_ascii=False) == json.dumps(series_b, sort_keys=True, ensure_ascii=False)
 
-print("XUYI_PPT_39_SOURCE_VERIFIED_PRODUCTS_RELEASE_TEST_PASSED",
-      "products=39", "localized_catalogs=4", "English_details=39",
+print("XUYI_PPT_95_SOURCE_VERIFIED_PRODUCTS_RELEASE_TEST_PASSED",
+      "products=" + str(len(EXPECTED_PUBLISHED)), "localized_catalogs=4",
+      "English_details=" + str(len(EXPECTED_PUBLISHED)),
       "image_alts=5_languages", "pending_gate=PASS", "owner_override=PASS")

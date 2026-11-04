@@ -1,0 +1,396 @@
+{
+  "site": "xuyi-drinkware-site",
+  "sourceDocument": "水杯最新产品.pptx",
+  "sourceSha256": "4dd8048cff19bc17c58bee6209c5ee80eba556303b5105ecff7fee52f22bd707",
+  "modelCount": 95,
+  "excludedExistingPages": [
+    11,
+    96
+  ],
+  "excludedSourceCodes": [
+    "2081",
+    "2083"
+  ],
+  "models": [
+    {
+      "model": "5361",
+      "sourcePage": 5
+    },
+    {
+      "model": "5330-1",
+      "sourcePage": 6
+    },
+    {
+      "model": "2107",
+      "sourcePage": 8
+    },
+    {
+      "model": "2103",
+      "sourcePage": 9
+    },
+    {
+      "model": "2105",
+      "sourcePage": 9
+    },
+    {
+      "model": "2101",
+      "sourcePage": 10
+    },
+    {
+      "model": "2102",
+      "sourcePage": 10
+    },
+    {
+      "model": "2097",
+      "sourcePage": 12
+    },
+    {
+      "model": "2098",
+      "sourcePage": 12
+    },
+    {
+      "model": "301",
+      "sourcePage": 13
+    },
+    {
+      "model": "302",
+      "sourcePage": 13
+    },
+    {
+      "model": "303",
+      "sourcePage": 13
+    },
+    {
+      "model": "2096",
+      "sourcePage": 14
+    },
+    {
+      "model": "5330",
+      "sourcePage": 17
+    },
+    {
+      "model": "2092",
+      "sourcePage": 18
+    },
+    {
+      "model": "2093",
+      "sourcePage": 18
+    },
+    {
+      "model": "2090",
+      "sourcePage": 19
+    },
+    {
+      "model": "2091",
+      "sourcePage": 19
+    },
+    {
+      "model": "2089",
+      "sourcePage": 20
+    },
+    {
+      "model": "2087",
+      "sourcePage": 21
+    },
+    {
+      "model": "2088",
+      "sourcePage": 21
+    },
+    {
+      "model": "2085",
+      "sourcePage": 22
+    },
+    {
+      "model": "2086",
+      "sourcePage": 22
+    },
+    {
+      "model": "5219",
+      "sourcePage": 23
+    },
+    {
+      "model": "2082",
+      "sourcePage": 24
+    },
+    {
+      "model": "2080",
+      "sourcePage": 25
+    },
+    {
+      "model": "5308",
+      "sourcePage": 28
+    },
+    {
+      "model": "2079",
+      "sourcePage": 29
+    },
+    {
+      "model": "356",
+      "sourcePage": 30
+    },
+    {
+      "model": "273",
+      "sourcePage": 31
+    },
+    {
+      "model": "5305",
+      "sourcePage": 32
+    },
+    {
+      "model": "5302",
+      "sourcePage": 33
+    },
+    {
+      "model": "5301",
+      "sourcePage": 34
+    },
+    {
+      "model": "5295-1",
+      "sourcePage": 35
+    },
+    {
+      "model": "5297",
+      "sourcePage": 36
+    },
+    {
+      "model": "p-380",
+      "sourcePage": 37
+    },
+    {
+      "model": "p-381",
+      "sourcePage": 37
+    },
+    {
+      "model": "352",
+      "sourcePage": 38
+    },
+    {
+      "model": "353",
+      "sourcePage": 38
+    },
+    {
+      "model": "350",
+      "sourcePage": 39
+    },
+    {
+      "model": "351",
+      "sourcePage": 39
+    },
+    {
+      "model": "333",
+      "sourcePage": 40
+    },
+    {
+      "model": "8620",
+      "sourcePage": 41
+    },
+    {
+      "model": "8621",
+      "sourcePage": 41
+    },
+    {
+      "model": "8620-1",
+      "sourcePage": 42
+    },
+    {
+      "model": "2077",
+      "sourcePage": 43
+    },
+    {
+      "model": "2078",
+      "sourcePage": 43
+    },
+    {
+      "model": "2075",
+      "sourcePage": 44
+    },
+    {
+      "model": "2076",
+      "sourcePage": 44
+    },
+    {
+      "model": "2072",
+      "sourcePage": 45
+    },
+    {
+      "model": "2073",
+      "sourcePage": 45
+    },
+    {
+      "model": "2070",
+      "sourcePage": 46
+    },
+    {
+      "model": "2071",
+      "sourcePage": 46
+    },
+    {
+      "model": "2068",
+      "sourcePage": 47
+    },
+    {
+      "model": "2069",
+      "sourcePage": 47
+    },
+    {
+      "model": "2061",
+      "sourcePage": 48
+    },
+    {
+      "model": "2062",
+      "sourcePage": 48
+    },
+    {
+      "model": "2053-2",
+      "sourcePage": 49
+    },
+    {
+      "model": "2055-1",
+      "sourcePage": 49
+    },
+    {
+      "model": "5227-2",
+      "sourcePage": 50
+    },
+    {
+      "model": "5285",
+      "sourcePage": 51
+    },
+    {
+      "model": "5286",
+      "sourcePage": 51
+    },
+    {
+      "model": "2053",
+      "sourcePage": 52
+    },
+    {
+      "model": "2055",
+      "sourcePage": 52
+    },
+    {
+      "model": "2059",
+      "sourcePage": 53
+    },
+    {
+      "model": "2036",
+      "sourcePage": 54
+    },
+    {
+      "model": "2037",
+      "sourcePage": 54
+    },
+    {
+      "model": "2038",
+      "sourcePage": 54
+    },
+    {
+      "model": "2039",
+      "sourcePage": 54
+    },
+    {
+      "model": "2063",
+      "sourcePage": 55
+    },
+    {
+      "model": "2065",
+      "sourcePage": 55
+    },
+    {
+      "model": "2060",
+      "sourcePage": 56
+    },
+    {
+      "model": "2066",
+      "sourcePage": 57
+    },
+    {
+      "model": "2067",
+      "sourcePage": 57
+    },
+    {
+      "model": "2030",
+      "sourcePage": 58
+    },
+    {
+      "model": "2031",
+      "sourcePage": 58
+    },
+    {
+      "model": "2032",
+      "sourcePage": 58
+    },
+    {
+      "model": "320",
+      "sourcePage": 59
+    },
+    {
+      "model": "321",
+      "sourcePage": 60
+    },
+    {
+      "model": "322",
+      "sourcePage": 61
+    },
+    {
+      "model": "313",
+      "sourcePage": 62
+    },
+    {
+      "model": "5259",
+      "sourcePage": 63
+    },
+    {
+      "model": "5261",
+      "sourcePage": 64
+    },
+    {
+      "model": "5260",
+      "sourcePage": 65
+    },
+    {
+      "model": "5240",
+      "sourcePage": 66
+    },
+    {
+      "model": "8181",
+      "sourcePage": 67
+    },
+    {
+      "model": "8595",
+      "sourcePage": 68
+    },
+    {
+      "model": "5520",
+      "sourcePage": 69
+    },
+    {
+      "model": "250",
+      "sourcePage": 70
+    },
+    {
+      "model": "247",
+      "sourcePage": 71
+    },
+    {
+      "model": "2033",
+      "sourcePage": 72
+    },
+    {
+      "model": "2018",
+      "sourcePage": 73
+    },
+    {
+      "model": "8835",
+      "sourcePage": 74
+    },
+    {
+      "model": "5283",
+      "sourcePage": 75
+    },
+    {
+      "model": "5216",
+      "sourcePage": 76
+    }
+  ]
+}

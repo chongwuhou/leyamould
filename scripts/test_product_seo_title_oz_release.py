@@ -7,10 +7,14 @@ and Product SKU consistent without rewriting dist output after build.
 from html import unescape
 from pathlib import Path
 import json
+import os
 import re
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
+SNAPSHOT = ROOT / "_local_ops" / "build-snapshot.json"
+if SNAPSHOT.is_file():
+    os.environ["XUYI_BUILD_SNAPSHOT"] = str(SNAPSHOT)
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 from site_renderer import SERIES
@@ -86,7 +90,9 @@ for loc in LOCALES:
                 assert format_ml(number) in heading,(loc,row["model"],"H1 missing mL",heading)
                 assert oz_number(number) in heading and "oz" in heading,(loc,row["model"],"H1 missing oz")
         # Existing manually curated title/description has absolute priority.
-        if not is_current_baseline:
+        # Newly imported PPT/PDF factory models use their source-catalog title
+        # renderer; do not compare them with the legacy baseline title builder.
+        if not is_current_baseline or is_new_factory:
             continue
         eligible+=1
         suggested_title,suggested_description=new_seo(loc,row,catalog_volume_numbers(row))

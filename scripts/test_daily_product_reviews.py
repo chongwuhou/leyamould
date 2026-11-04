@@ -1,9 +1,13 @@
 """Protect both Excel sources, multi-review-per-SKU behavior and D1 idempotence."""
 import sys
+import os
 from collections import Counter
 from pathlib import Path
 from random import Random
 ROOT=Path(__file__).resolve().parent.parent
+SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
+if SNAPSHOT.is_file():
+ os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT));sys.path.insert(0,str(ROOT/"scripts"))
 from publish_daily_product_reviews import SOURCE_FILES,ALIASES,check_source,plan,EXCLUDED_SOURCE_ROWS
 
@@ -22,7 +26,9 @@ assert (first59["model"],first59["author"])==("2319","Beatriz Santos")
 assert (second59["model"],second59["author"])==("2319","Beatriz Santos")
 from site_renderer import SERIES
 catalog={v["model"]:v for v in SERIES.values()}
-assert {x["model"] for x in entries}==set(catalog)
+# Authentic review rows cover only SKUs present in the source spreadsheets.
+# A larger D1 catalogue must not require fabricated reviews for every product.
+assert {x["model"] for x in entries}.issubset(set(catalog))
 for r in entries:
  assert catalog[r["model"]]["slug"]==r["sourceModel"].lower().replace("透明款","-transparent"),(r["sourceFile"],r["sourceRow"],r["model"])
 same=[x for x in entries if x["model"]=="LO-001"]

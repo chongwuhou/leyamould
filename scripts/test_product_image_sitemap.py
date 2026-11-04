@@ -8,10 +8,12 @@ D1 image overrides; later editor-selected images win.
 from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlsplit
-import sys, xml.etree.ElementTree as ET
+import sys, os, xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parent.parent
+SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
+if SNAPSHOT.is_file():os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT))
-from site_renderer import SERIES,SITE_ORIGIN
+from site_renderer import SERIES,SITE_ORIGIN,PRODUCT_OVERRIDES
 from product_image_sitemap import (IMAGE_NAMESPACE,image_path,source_main_photo,
     image_for_product_route,xml_image_for_product,approved_shaker_image_aliases)
 from sitemap_modification import source_lastmod
@@ -70,7 +72,11 @@ assert english>=20 and localized>=80,(english,localized)
 assert len(approved_shaker_image_aliases())==6
 assert image_for_product_route("/products/2095/",SERIES)=="/media/gallery/2095-01.webp"
 assert image_for_product_route("/products/2100/",SERIES) is None
-assert image_for_product_route("/products/5247/",SERIES)=="/assets/sku-hd/slide-096-gpt-reviewed-20261013.webp"
+# An explicit D1-selected main photo wins over the legacy reviewed source alias.
+# Preserve the alias mapping itself for pages without a newer owner selection.
+assert image_path("/media/ppt/slide-096.webp")=="/assets/sku-hd/slide-096-gpt-reviewed-20261013.webp"
+expected_5247=PRODUCT_OVERRIDES.get("5247",{}).get("image") or "/assets/sku-hd/slide-096-gpt-reviewed-20261013.webp"
+assert image_for_product_route("/products/5247/",SERIES)==expected_5247
 # The source path does not mutate between rebuilds, and repeated calls are
 # deterministic. Shared image URLs stay shared, without unique-SKU fiction.
 for code in ("2095","2099","2100","5247","g-02"):
