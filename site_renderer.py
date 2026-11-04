@@ -201,23 +201,23 @@ def build_url(path,title,content):
    # Never revise an English CMS-managed body after an editor replaces the
    # previously generated product template.
    if not BODY_OVERRIDES.get(route):
-    main=source_product_identity(main,product,"en",collections.Counter(x["images"][0] for x in SERIES.values()))
-    from sku_unique_openings import editor_intro
-    main=editor_intro(main,product,"en")
+    main=source_product_identity(main,product,"en",collections.Counter(x["images"][0] for x in SERIES.values()),allow_unbaselined=bool(product.get("sourceDocument") and product.get("manualNew")))
+   from sku_unique_openings import editor_intro
+   main=editor_intro(main,product,"en")
    from g_series_material_options import render_g_material_options
    main+=render_g_material_options(route,'en',main)
   # D1's English homepage body predates the five-language logo carousel.
   # Restore the same six-logo section already present in the four reviewed
   # translations, regardless of whether D1 overrides the English template.
-  if route=="/" and 'id="customer-brands"' not in main:
-   from home_enhancements import customer_logo_section
-   logos=customer_logo_section()
-   if not logos:
-    raise ValueError("XUYI homepage customer-logo section has no complete assets")
-   news='<section class="news-section"'
-   if news not in main:
-    raise ValueError("XUYI homepage missing the news section insertion point")
-   main=main.replace(news,logos+news,1)
+   if route=="/" and 'id="customer-brands"' not in main:
+    from home_enhancements import customer_logo_section
+    logos=customer_logo_section()
+    if not logos:
+     raise ValueError("XUYI homepage customer-logo section has no complete assets")
+    news='<section class="news-section"'
+    if news not in main:
+     raise ValueError("XUYI homepage missing the news section insertion point")
+    main=main.replace(news,logos+news,1)
   # Some published blog bodies also come from D1 and may predate their
   # source-reviewed reference section. Never erase the approved article.
   if route.startswith("/blog/") and 'id="primary-sources"' not in main:
@@ -228,11 +228,18 @@ def build_url(path,title,content):
     related_start='<section class="section section--soft blog-related">'
     if related_start in main:main=main.replace(related_start,sources_section+related_start,1)
     else:main+=sources_section
+  # Capacity, oz-class, material options and model-specific comparison content
+  # are rendered into product detail bodies before the page is written.
+  from scripts.source_catalog_capacity_oz import enrich_catalog_body,source_body_enrichment
+  main=enrich_catalog_body(main,"en",SERIES)
+  if route.startswith('/products/') and route!='/products/':
+   product=next((obj for obj in SERIES.values() if obj.get('slug')==route.strip('/').split('/')[-1]),None)
+   if product:main=source_body_enrichment(main,'en',product)
   content=start+marker+render_template(family,CONTENT=main)+"</main>"+end
- if 'rel="canonical"' not in content:
-  content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
- # Keep social preview metadata aligned with the final D1-reviewed SEO values.
- # This is separate from the ignored legacy meta-keywords tag.
+  if 'rel="canonical"' not in content:
+   content=content.replace('</head>','<link rel="canonical" href="'+e(canonical)+'"><meta property="og:url" content="'+e(canonical)+'"></head>',1)
+  # Keep social preview metadata aligned with the final D1-reviewed SEO values.
+  # This is separate from the ignored legacy meta-keywords tag.
  for name,value in (
    ("og:title",re.search(r"<title>([^<]*)</title>",content,re.S)),
    ("og:description",re.search(r'<meta name="description" content="([^"]*)"',content))):
@@ -292,10 +299,7 @@ def build_url(path,title,content):
   if row:
    from product_reviews_source import at_product_source
    content=at_product_source(content,row["model"],"en",BUILD_STATE)
- # Source-rendered Product FAQ and collection ItemList schemas are based
- # on the final D1/CMS-selected body, not on post-build HTML mutations.
- from seo_structured_components import add_at_render
- content=add_at_render(content,route,'en')
+ # Structured data and trust metadata are finalized after all D1 overrides.
  if route.startswith('/products/') and route!='/products/':
   from product_share_source import add_social_head
   product=next((x for x in SERIES.values() if x["slug"]==route.split("/")[2]),None)
@@ -314,6 +318,30 @@ def build_url(path,title,content):
  if route.startswith('/products/') and route!='/products/':
   from product_seo_d1_source import apply_d1_product_seo
   content=apply_d1_product_seo(content,route.strip('/').split('/')[-1],'en',BUILD_STATE)
+ from scripts.reviewed_editorial_images import apply_to_document as apply_reviewed_editorial_images
+ content=apply_reviewed_editorial_images(content,route,'en')
+ from scripts.reviewed_lowres_editorial_round2 import apply_to_document as apply_reviewed_lowres_images
+ content=apply_reviewed_lowres_images(content,route,'en')
+ from scripts.repair_mismatched_sports_category import apply_to_document as repair_sports_category_image
+ content=repair_sports_category_image(content,route,'en')
+ from scripts.repair_remaining_category_cards import apply_to_document as repair_remaining_category_images
+ content=repair_remaining_category_images(content,route,'en')
+ from scripts.apply_gpt_reviewed_shaker_hd import apply_to_document as apply_approved_product_images
+ content=apply_approved_product_images(content,route,'en')
+ from scripts.polish_priority_seo import apply_to_document as apply_priority_seo
+ content=apply_priority_seo(content,route,'en')
+ from scripts.curated_buyer_seo_round2 import apply_to_document as apply_curated_buyer_seo
+ content=apply_curated_buyer_seo(content,route,'en')
+ from scripts.buyer_journey_internal_links import apply_to_document as apply_buyer_journey_links
+ content,_=apply_buyer_journey_links(content,route,'en')
+ from seo_structured_components import add_at_render
+ content=add_at_render(content,route,'en')
+ from scripts.contextual_share_metadata import apply_to_document as apply_contextual_share_preview
+ content,_=apply_contextual_share_preview(content,route,'en')
+ from scripts.verified_trust_technical_seo import add_at_render as add_trust_technical_seo
+ content=add_trust_technical_seo(content,route,'en')
+ from scripts.product_hreflang import apply_to_document as apply_product_hreflang
+ content=apply_product_hreflang(content,route,'en')
  URLS[path]=title
  write(path,content)
 ICONS={
@@ -508,8 +536,8 @@ def page(title,description,body,canonical=None,blog_pager=False):
  if INDEXING_APPROVED:
   head=head.replace('<meta name="robots" content="noindex,nofollow">',
                     '<meta name="robots" content="index,follow">',1)
- rail=render_template("sidebar",ICON_FORM=ICONS["form"],ICON_MAIL=ICONS["mail"],ICON_WHATSAPP=ICONS["whatsapp"],ICON_TOP=ICONS["top"])
- return render_template("shell",HEAD=head,HEADER=header(),SIDEBAR=rail,BODY=body,FOOTER=footer())
+  rail=render_template("sidebar",ICON_FORM=ICONS["form"],ICON_MAIL=ICONS["mail"],ICON_WHATSAPP=ICONS["whatsapp"],ICON_TOP=ICONS["top"])
+  return render_template("shell",HEAD=head,HEADER=header(),SIDEBAR=rail,BODY=body,FOOTER=footer())
 def intro(crumb,title,subtitle=""):
  return render_template("page-intro",CRUMB=e(crumb),TITLE=e(title),SUBTITLE=e(subtitle))
 def category_card(cat):
@@ -529,14 +557,20 @@ def model_label(value):
  return str(value).replace("透明款"," (Transparent Variant)")
 
 def product_card(item):
- img=item["images"][0]
- title=public_display_name(item)
- model=model_label(item["model"])
- searchable=(title+" "+model+" "+str(item["capacity"]).split("产品尺寸",1)[0]).lower()
- return render_template("product-card",
-  CATEGORY=e(CAT[item["category"]][1]),SEARCH=e(searchable),
-  URL="/products/"+e(item["slug"])+"/",
-  IMAGE=photo(img,title+" model "+model),MODEL=e(model),TITLE=e(title))
+  img=item["images"][0]
+  title=public_display_name(item)
+  model=model_label(item["model"])
+  from scripts.source_catalog_capacity_oz import catalog_volume_numbers,volume_terms,verified_source_material
+  numbers=catalog_volume_numbers(item)
+  capacity=volume_terms(numbers,"en") if numbers else ""
+  material=verified_source_material(item)
+  procurement="wholesale B2B OEM factory manufacturer custom plastic material options"
+  searchable=(title+" "+model+" "+str(item.get("capacity",""))+" "+capacity+" "+material+" "+procurement).lower()
+  capacity_html='<span class="product-card__capacity">'+e(capacity)+'</span>' if capacity else ""
+  return render_template("product-card",
+   CATEGORY=e(CAT[item["category"]][1]),SEARCH=e(searchable),
+   URL="/products/"+e(item["slug"])+"/",
+   IMAGE=photo(img,title+" model "+model),MODEL=e(model),TITLE=e(title),CAPACITY=capacity_html)
 def product_grid(items):return '<div class="grid grid--4 product-grid">'+''.join(product_card(x) for x in items)+'</div>'
 def filters(with_categories=True):
  options='<option value="">All product categories</option>'+''.join('<option value="'+x[1]+'">'+e(x[0])+'</option>' for x in CAT.values())
