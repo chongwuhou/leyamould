@@ -69,22 +69,29 @@ with TemporaryDirectory(prefix="xuyi-owner-source-rebuild-") as temporary:
     assert 'property="og:image"' in fresh_product.read_text(encoding="utf8")
     assert add_social_head(generated,SERIES["502"])==generated
 
-    # The entire catalog comparison is CMS-owned; neither a repeat pass
-    # nor a later catalog growth may delete or replace it.
+    # Catalog comparisons are now source-rendered, not a dist postprocessor.
+    # An existing CMS-owned comparison block suppresses any generated replacement.
+    from scripts.source_catalog_capacity_oz import source_body_enrichment
+
+    def main_body(markup):
+        return markup.split('<main id="main-content">',1)[1].split("</main>",1)[0]
+
     edited_model = stage / "es/products/501/index.html"
     owner_table = ('<section class="section catalog-compare" id="catalog-comparison">'
                    '<p>CMS editor approved a revised model matrix.</p></section>')
     change_section(edited_model, "catalog-compare", owner_table)
-    assert comparisons.apply(stage) == 0
-    assert comparisons.apply(stage) == 0
+    owner_markup=edited_model.read_text(encoding="utf8")
+    owner_main=main_body(owner_markup)
+    assert source_body_enrichment(owner_main,"es",SERIES["501"])==owner_main
+    assert source_body_enrichment(owner_main,"es",SERIES["501"])==owner_main
     assert owner_table in edited_model.read_text(encoding="utf8")
 
-    # Add a new *source-catalog* model: no stale exact-85 gate, and only
-    # its five newly generated pages receive the comparison block.
-    original_series = comparisons.SERIES
-    basis = next(r for r in original_series.values() if not r.get("manualNew"))
+    # A newly approved source-catalog model receives the same five-locale
+    # comparison through the source renderer, with no stale fixed-count gate.
+    basis = next(r for r in comparisons.SOURCE_MODELS if not r.get("manualNew"))
     additional = {**basis, "model": "9998", "slug": "9998"}
-    for prefix in LOCALES:
+    locale_codes=("en","es","pt","ru","tr")
+    for prefix,locale in zip(LOCALES,locale_codes):
         target = stage / prefix / "products/9998/index.html"
         target.parent.mkdir(parents=True, exist_ok=True)
         source = (stage / prefix / "products" / str(basis["slug"]) / "index.html").read_text(encoding="utf8")
@@ -92,13 +99,13 @@ with TemporaryDirectory(prefix="xuyi-owner-source-rebuild-") as temporary:
             r'<section class="section catalog-compare" id="catalog-comparison">.*?</section>',
             "", source, count=1, flags=re.S)
         assert count == 1
-        target.write_text(source, encoding="utf8")
-    try:
-        comparisons.SERIES = {**original_series, "future-approved-9998": additional}
-        assert comparisons.apply(stage) == 5
-        assert comparisons.apply(stage) == 0
-    finally:
-        comparisons.SERIES = original_series
+        body=main_body(source)
+        generated=source_body_enrichment(body,locale,additional)
+        assert generated.count('id="catalog-comparison"')==1,(locale,"missing source-rendered comparison")
+        assert source_body_enrichment(generated,locale,additional)==generated,(locale,"comparison not idempotent")
+        start_main=source.index('<main id="main-content">')+len('<main id="main-content">')
+        end_main=source.index("</main>",start_main)
+        target.write_text(source[:start_main]+generated+source[end_main:],encoding="utf8")
     assert owner_table in edited_model.read_text(encoding="utf8")
 
     # Buyer decision guidance also belongs to the editor once published.
