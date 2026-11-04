@@ -14,7 +14,7 @@ if SNAPSHOT.is_file():
 sys.path.insert(0, str(ROOT))
 
 import site_renderer as site
-from catalog_extensions import append_new_products
+from catalog_extensions import append_new_products, is_factory_catalog_source_default
 from product_content import factory_catalog_seo_title
 
 SOURCE = "水杯最新产品.pptx"
@@ -62,6 +62,11 @@ for model in EXPECTED_PUBLISHED:
     assert "variant mapping pending" not in str(product.get("dimensions", "")).lower()
     assert "variant mapping pending" not in str(product.get("carton_size", "")).lower()
     assert len(factory_catalog_seo_title(product)) <= 60
+    assert is_factory_catalog_source_default(model,source_content,"seoTitle"),(model,"source title must be recognized as an unchanged import default")
+    assert is_factory_catalog_source_default(model,source_content,"seoDescription"),(model,"source description must be recognized as an unchanged import default")
+    owner_seo=deepcopy(source_content)
+    owner_seo["seoDescription"]+=" Owner-approved edit."
+    assert not is_factory_catalog_source_default(model,owner_seo,"seoDescription"),(model,"owner SEO edit must remain authoritative")
     detail = ROOT / "dist/products" / model / "index.html"
     assert detail.is_file(), (model, "missing English product detail")
     html = detail.read_text(encoding="utf8")
@@ -110,19 +115,34 @@ for model in EXPECTED_PUBLISHED:
     assert isinstance(alts, dict), (model, "missing D1 image ALT")
     assert all(isinstance(alts.get(locale), str) and alts[locale].strip() for locale in ("en", "es", "pt", "ru", "tr")), (model, alts)
 
-# The 95 PPT products have verified English details and five-language image ALT,
-# but no reviewed product translations yet. Do not expose English-only cards as
-# if they were localized; publish them in localized catalogues after translation.
-for locale in ("es", "pt", "ru", "tr"):
+# The 95 PPT products now have native localized detail pages and model-specific metadata.
+for locale in ("es","pt","ru","tr"):
     listing = ROOT / "dist" / locale / "products/index.html"
     assert listing.is_file(), (locale, "missing localized product listing")
     html = listing.read_text(encoding="utf8")
     for model in EXPECTED_PUBLISHED:
         product = ppt_products[model]
-        href = f'href="/products/{product["slug"]}/"'
-        assert href not in html, (locale, model, "untranslated PPT product leaked into localized catalogue")
+        href = f'href="/{locale}/products/{product["slug"]}/"'
+        assert href in html, (locale, model, "localized catalogue card missing its native detail link")
+        assert f'href="/products/{product["slug"]}/"' not in html, (locale, model, "localized card still points to English")
         localized_detail = ROOT / "dist" / locale / "products" / product["slug"] / "index.html"
-        assert not localized_detail.exists(), (locale, model, "unreviewed localized detail page exists")
+        assert localized_detail.is_file(), (locale, model, "native localized detail page missing")
+        markup = localized_detail.read_text(encoding="utf8")
+        assert f'<html lang="{locale}">' in markup, (locale, model, "wrong document language")
+        assert product["factoryModel"] in markup, (locale, model, "factory model missing from localized detail")
+        assert "B2B" in markup, (locale, model, "localized buyer content missing")
+        assert 'rel="alternate" hreflang="' + locale + '"' in markup, (locale, model, "self hreflang missing")
+
+# English and all four translated details must remain independently crawlable.
+for model in EXPECTED_PUBLISHED:
+    product = ppt_products[model]
+    for locale in ("en","es","pt","ru","tr"):
+        prefix="" if locale=="en" else locale+"/"
+        detail=ROOT/"dist"/prefix/"products"/product["slug"]/"index.html"
+        assert detail.is_file(), (locale,model,"detail page missing")
+        markup=detail.read_text(encoding="utf8")
+        assert 'rel="canonical"' in markup
+        assert 'rel="alternate" hreflang="x-default"' in markup
 
 # CMS owner-edit priority: a later owner SEO, copy and image choice must survive catalog expansion.
 sample = deepcopy(next(row for row in snapshot_rows if row["model"] == "5361"))
