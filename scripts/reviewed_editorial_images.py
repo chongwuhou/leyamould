@@ -5,7 +5,12 @@ Does not touch identified SKU photographs, R2 originals or factory evidence.
 The pages retain normal category/product language and existing visible copy.
 """
 from pathlib import Path
-from reviewed_media_slot_guard import replace_if_original
+import html
+import re
+try:
+    from scripts.reviewed_media_slot_guard import replace_if_original
+except ModuleNotFoundError:
+    from reviewed_media_slot_guard import replace_if_original
 
 ROOT=Path(__file__).resolve().parent.parent
 LOCALES=("en","es","pt","ru","tr")
@@ -32,6 +37,29 @@ OEM_ALT={
  "ru":"Образцы пластиковых бутылок разных цветов и с разными крышками",
  "tr":"Farklı renk ve kapak modellerinde plastik şişe örnekleri",
 }
+
+def apply_to_document(markup,route,locale):
+    """Apply only reviewed generic illustration slots in the shared renderer."""
+    base=str(route or "/")
+    prefix="/"+locale
+    if locale!="en" and base.startswith(prefix+"/"):
+        base=base[len(prefix):]
+    if base=="/applications/everyday-hydration/":
+        href_prefix="/" if locale=="en" else "/"+locale+"/"
+        for collection,(old,new) in EDITORIAL_IMAGES.items():
+            prefix_tag=('<a class="category" href="'+href_prefix+'collections/'+collection+'/">'
+                        '<div class="category__photo"><img src="')
+            markup,_=replace_if_original(markup,prefix_tag,old,new,locale+" "+collection)
+    if base=="/capabilities/oem-odm/":
+        prefix_tag='<div class="whyv2-oem-steps__sample"><img src="'
+        markup,changed=replace_if_original(markup,prefix_tag,OEM_OLD,OEM_NEW,locale+" oem-sampling")
+        if changed:
+            pattern=(r'(<div class="whyv2-oem-steps__sample"><img src="'
+                     +re.escape(OEM_NEW)+r'" alt=")[^"]*(")')
+            markup,count=re.subn(pattern,lambda m:m.group(1)+html.escape(OEM_ALT[locale],quote=True)+m.group(2),markup,count=1)
+            if count!=1:raise ValueError("OEM photo ALT context mismatch "+locale)
+    return markup
+
 
 def apply(dist):
     dist=Path(dist)
