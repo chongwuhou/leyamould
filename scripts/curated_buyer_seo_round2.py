@@ -8,7 +8,10 @@ from pathlib import Path
 import html
 import json
 import re
-from cms_seo_curation_guard import may_curate
+try:
+    from scripts.cms_seo_curation_guard import may_curate
+except ModuleNotFoundError:
+    from cms_seo_curation_guard import may_curate
 
 ROOT=Path(__file__).resolve().parent.parent
 LOCALES=("en","es","pt","ru","tr")
@@ -87,6 +90,51 @@ def change_once(source,pattern,new,context):
     result,n=re.subn(pattern,lambda _ :new,source,count=1,flags=re.S)
     if n!=1:raise ValueError("Curated SEO context missing "+context+" "+str(n))
     return result
+
+def apply_to_document(markup,route,locale):
+    """Render curated category descriptions and contextual links before writing."""
+    if locale not in LOCALES:
+        return markup
+    base=str(route or "/")
+    prefix="/"+locale
+    if locale!="en" and base.startswith(prefix+"/"):
+        base=base[len(prefix):]
+    key=base.strip("/")
+    if key in DESCRIPTIONS and may_curate(locale,"/"+key+"/","description"):
+        description=DESCRIPTIONS[key][locale]
+        if not (85<=len(description)<=190) or any(x in description for x in "<>"):
+            raise ValueError("Unsafe or implausible SEO description "+locale+base)
+        escaped=html.escape(description,quote=True)
+        markup=change_once(markup,r'<meta name="description" content="[^"]*">',
+            '<meta name="description" content="'+escaped+'">',locale+base)
+        markup=change_once(markup,r'<meta property="og:description" content="[^"]*">',
+            '<meta property="og:description" content="'+escaped+'">',locale+base)
+        def update_schema(match):
+            data=json.loads(match.group(1))
+            nodes=data.get("@graph") if isinstance(data,dict) and isinstance(data.get("@graph"),list) else [data]
+            for node in nodes:
+                if isinstance(node,dict) and node.get("@type")=="WebPage":
+                    node["description"]=description
+            return '<script type="application/ld+json">'+json.dumps(
+                data,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")+'</script>'
+        markup=re.sub(r'<script type="application/ld\+json">([\s\S]*?)</script>',update_schema,markup)
+
+    article=re.fullmatch(r"/blog/([^/]+)/",base)
+    if article:
+        slug=article.group(1)
+        target=BLOG_LINKS.get(slug)
+        if target:
+            before,separator,after=markup.partition("</main>")
+            if not separator:
+                raise ValueError("Unexpected article layout "+locale+base)
+            main=before.split("<main",1)[-1]
+            href="/"+("" if locale=="en" else locale+"/")+target+"/"
+            if 'href="'+href+'"' not in main and 'class="seo-next-buyer"' not in main:
+                heading,lead=WORDS[locale]
+                new='<section class="seo-next-buyer"><h2>'+html.escape(heading)+'</h2><p>'+html.escape(lead)+': <a href="'+href+'">'+html.escape(TARGET_LABELS[locale][target])+' →</a></p></section>'
+                markup=before+new+separator+after
+    return markup
+
 
 def apply(dist):
     dist=Path(dist); descriptions=0; links=0; existing_links=0
