@@ -6,17 +6,22 @@ from html import unescape
 import re
 import shutil
 import sys
+import os
 
 ROOT=Path(__file__).resolve().parent.parent
+os.environ.setdefault("XUYI_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
 sys.path.insert(0,str(ROOT/"scripts"))
+from cms_seo_curation_guard import snapshot
 from verified_capacity_gradient_en import (
     SOURCE_CAPACITY,GRADIENT_HINTS,actual_model,
-    source_baseline,seo_copy,update_one,apply
+    source_baseline,seo_copy,render_note
 )
 from home_bpa_source import add_home_bpa_note,_SOURCE as HOME_VERIFICATION_SOURCE
-from source_catalog_capacity_oz import catalog_volume_numbers,new_seo
+from source_catalog_capacity_oz import catalog_volume_numbers,new_seo,source_body_enrichment,source_field_allowed
 
 DIST=ROOT/"dist"
+data=snapshot()
+assert data and data.get("site")=="xuyi-drinkware-site"
 assert len(SOURCE_CAPACITY)==23
 assert sum(grad for _,grad in SOURCE_CAPACITY.values())==13
 checked=0
@@ -27,7 +32,14 @@ for slug,(ml,gradient) in SOURCE_CAPACITY.items():
     title=unescape(re.search(r"<title>([^<]+)</title>",html).group(1))
     desc=unescape(re.search(r'<meta name="description" content="([^"]+)"',html).group(1))
     exp_title,exp_desc=new_seo('en',row,catalog_volume_numbers(row))
-    assert (title,desc)==(exp_title,exp_desc),(slug,title,desc)
+    # D1/CMS-authored metadata outranks source-generated recommendations.
+    # Compare exactly only when the source renderer is authorized to curate
+    # that individual field; the visible ml/oz and material checks below apply
+    # regardless of ownership.
+    if source_field_allowed("en",row,"title",data):
+        assert title==exp_title,(slug,title,exp_title)
+    if source_field_allowed("en",row,"description",data):
+        assert desc==exp_desc,(slug,desc,exp_desc)
     expected_oz="28 oz class" if ml==800 else "32 oz class"
     assert f"{ml}ml" in title and len(title)<=60,slug
     assert expected_oz in desc,slug
@@ -55,24 +67,40 @@ for loc,(hero_note,headline,detail) in HOME_VERIFICATION_SOURCE.items():
 
 with TemporaryDirectory(prefix="xuyi-capacity-owner-") as td:
     root=Path(td)
+    def main_body(markup):
+        return markup.split('<main id="main-content">',1)[1].split("</main>",1)[0]
+
     for slug in ("2514","lo-005"):
         src=DIST/"products"/slug/"index.html"
         dst=root/"products"/slug/"index.html"
         dst.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(src,dst)
         model=actual_model(slug)
-        assert update_one(dst,slug,SOURCE_CAPACITY[slug][0],True,model)==(0,0)
-        # Explicit later CMS edit of title: preserve all other fields and
-        # never insert another gradient paragraph.
-        body=dst.read_text(encoding="utf8").replace("<title>","<title>CMS APPROVED ",1)
-        dst.write_text(body,encoding="utf8")
-        assert update_one(dst,slug,SOURCE_CAPACITY[slug][0],True,model)==(0,0)
-        assert dst.read_text(encoding="utf8")==body
-        # Historical gradient processor no longer touches SEO/oz headings;
-        # owner edits survive unchanged on repeated execution.
-        regenerated=dst.read_text(encoding="utf8")
-        assert update_one(dst,slug,SOURCE_CAPACITY[slug][0],True,model)==(0,0)
-        assert dst.read_text(encoding="utf8")==regenerated
+        markup=dst.read_text(encoding="utf8")
+        body=main_body(markup)
+        gradient=SOURCE_CAPACITY[slug][1]
+        assert body.count('class="product-gradient-finish"')==(1 if gradient else 0)
+        # The current implementation is an in-memory source renderer: it
+        # adds only a missing verified note and never rewrites the page head.
+        assert source_body_enrichment(body,"en",model)==body
+
+        owner_markup=markup.replace("<title>","<title>CMS APPROVED ",1)
+        dst.write_text(owner_markup,encoding="utf8")
+        owner_body=main_body(owner_markup)
+        assert source_body_enrichment(owner_body,"en",model)==owner_body
+        assert "<title>CMS APPROVED " in dst.read_text(encoding="utf8")
+        assert source_body_enrichment(owner_body,"en",model)==owner_body
+
+        if gradient:
+            without_note,count=re.subn(
+                r'<p class="product-gradient-finish"[^>]*>.*?</p>',
+                "",owner_body,count=1,flags=re.S)
+            assert count==1
+            generated=source_body_enrichment(without_note,"en",model)
+            assert generated.count('class="product-gradient-finish"')==1
+            assert GRADIENT_HINTS[slug] in generated
+            assert source_body_enrichment(generated,"en",model)==generated
+
     home=(DIST/"index.html").read_text(encoding="utf8")
     assert add_home_bpa_note(home,"en")==home
     owner=home.replace("Taizhou, China · Plastic drinkware · OEM/ODM inquiries","Owner-selected hero text")
