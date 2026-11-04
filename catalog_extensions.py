@@ -29,18 +29,81 @@ def factory_catalog_seo_defaults():
   raise ValueError("Factory catalog SEO baseline must contain exactly 58 models")
  return rows,manifest
 
+@lru_cache(maxsize=1)
+def ppt_factory_catalog_manifest():
+ manifest=json.loads((ROOT/"scripts/fixtures/ppt-new-95-source-models.json").read_text(encoding="utf-8"))
+ if (manifest.get("site")!="xuyi-drinkware-site" or
+     manifest.get("sourceDocument")!="水杯最新产品.pptx" or manifest.get("modelCount")!=95 or
+     not re.fullmatch(r"[0-9a-f]{64}",str(manifest.get("sourceSha256","")))):
+  raise ValueError("PPT factory catalog source manifest is invalid")
+ rows={}
+ for record in manifest.get("models",[]):
+  model=str(record.get("model") or "").lower()
+  page=record.get("sourcePage")
+  if not model or model in rows or not isinstance(page,int):
+   raise ValueError("Invalid or duplicate PPT factory catalog source row")
+  rows[model]=page
+ if len(rows)!=95:
+  raise ValueError("PPT factory catalog source manifest must contain exactly 95 models")
+ return rows,manifest
+
+PPT_DESCRIPTION_KINDS={
+ "Plastic Sports Water Bottles":"sports water bottle",
+ "Large Capacity Water Jugs":"large-capacity water bottle",
+ "Plastic Shaker Bottles":"sports shaker bottle",
+ "Spray Water Bottles":"spray water bottle",
+ "Two-Way Drinking Cups":"two-way drinking cup",
+ "Titanium Vacuum Cups":"titanium vacuum cup",
+}
+
+def _ppt_source_description_default(model,content):
+ capacity=str(content.get("capacity") or "")
+ material=str(content.get("material") or "")
+ if not capacity or not material:return False
+ kind=PPT_DESCRIPTION_KINDS.get(str(content.get("category") or ""))
+ candidates=[]
+ if kind:
+  candidates.append(
+   f"XUYI Model {model} {kind}: {material}, {capacity} options, source-listed dimensions and carton packing. "
+   "Wholesale supply; request a quote."
+  )
+ candidates.append(
+  f"Wholesale {capacity} plastic drinkware, model {model}, with {material}. "
+  f"Factory-listed dimensions {content.get('dimensions')}; {content.get('carton_quantity')} pcs/carton, "
+  f"{content.get('carton_size')}. Contact XUYI for samples and custom branding."
+ )
+ candidates.append(
+  f"Model {model}: {capacity} plastic sports bottle, {material}. "
+  "Source-listed dimensions and carton sizes are included for both variants. "
+  "Contact XUYI for samples and custom branding."
+  )
+ return content.get("seoDescription") in candidates
 def is_factory_catalog_source_default(model,content,field):
  if field not in ("seoTitle","seoDescription") or not isinstance(content,dict):
   return False
  if content.get("newProduct") is not True:
   return False
- rows,manifest=factory_catalog_seo_defaults()
- if (content.get("sourceDocument")!=manifest.get("sourceDocument") or
-     content.get("sourceSha256")!=manifest.get("sourceSha256") or
-     not content.get("sourcePage")):
-  return False
- expected=rows.get(str(model).lower(),{}).get(field)
- return isinstance(expected,str) and bool(expected.strip()) and content.get(field)==expected
+ source=content.get("sourceDocument")
+ if source=="水杯最新产品.pptx":
+  rows,manifest=ppt_factory_catalog_manifest()
+  slug=str(model).lower()
+  if (content.get("sourceSha256")!=manifest.get("sourceSha256") or
+      str(content.get("sourcePage") or "")!=str(rows.get(slug) or "")):
+   return False
+  if field=="seoTitle":
+   from product_content import factory_catalog_seo_title
+   expected=factory_catalog_seo_title({**content,"model":slug})
+   return isinstance(expected,str) and bool(expected.strip()) and content.get(field)==expected
+  return _ppt_source_description_default(slug,content)
+ if source:
+  rows,manifest=factory_catalog_seo_defaults()
+  if (source!=manifest.get("sourceDocument") or
+      content.get("sourceSha256")!=manifest.get("sourceSha256") or
+      not content.get("sourcePage")):
+   return False
+  expected=rows.get(str(model).lower(),{}).get(field)
+  return isinstance(expected,str) and bool(expected.strip()) and content.get(field)==expected
+ return False
 
 
 CATEGORIES=frozenset((

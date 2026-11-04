@@ -43,48 +43,63 @@ IMAGES={
  "/why-us/":"/media/ppt/slide-037.webp"
 }
 
+def apply_to_document(document,route,locale,source_root=ROOT):
+    """Render a reviewed page illustration into HTML before the page is written."""
+    base=str(route or "/")
+    prefix="/"+locale
+    if locale!="en" and base.startswith(prefix+"/"):
+        base=base[len(prefix):]
+    source_image=IMAGES.get(base)
+    if not source_image:
+        return document,"not_applicable"
+    if locale not in LOCALES:
+        raise ValueError("Unreviewed locale "+str(locale))
+    if not source_image.startswith(("/assets/","/media/")) or ".." in source_image:
+        raise ValueError("Bad image source "+source_image)
+    if source_image.startswith("/assets/") and not (Path(source_root)/source_image.lstrip("/")).is_file():
+        raise FileNotFoundError("Reviewed image is absent from source "+source_image)
+    head,separator,body=document.partition("</head>")
+    if separator!="</head>":
+        raise ValueError("Malformed head for "+base)
+    if re.search(r'<meta\s+property="og:image"',head):
+        return document,"owner"
+    main=document.split("<main",1)[-1].split("</main>",1)[0]
+    if source_image not in re.findall(r'<img\b[^>]*\bsrc="([^"]+)"',main,re.S):
+        return document,"changed"
+    if re.search(r'<meta\s+name="twitter:image"',head):
+        return document,"owner"
+    url=ORIGIN+source_image
+    tags='<meta property="og:image" content="'+escape(url,quote=True)+'">'
+    if not re.search(r'<meta\s+name="twitter:card"',head):
+        tags+='<meta name="twitter:card" content="summary_large_image">'
+    tags+='<meta name="twitter:image" content="'+escape(url,quote=True)+'">'
+    return head+tags+separator+body,"generated"
+
 def apply(dist):
     dist=Path(dist)
     if len(IMAGES)!=26:raise ValueError("Only 26 reviewed illustrated page types permitted")
     count=0
     owner_previews=0
     changed_page_illustrations=0
-    for route,source_image in IMAGES.items():
-        if not source_image.startswith(("/assets/","/media/")) or ".." in source_image:
-            raise ValueError("Bad image source "+source_image)
-        if source_image.startswith("/assets/") and not (dist/source_image[1:]).is_file():
-            raise FileNotFoundError("Image is absent from release "+source_image)
-        url=ORIGIN+source_image
+    for route in IMAGES:
         for locale in LOCALES:
             prefix="" if locale=="en" else locale+"/"
+            localized=route if locale=="en" else "/"+locale+route
             path=dist/prefix/route.strip("/")/"index.html"
             if not path.is_file():raise FileNotFoundError(path)
             content=path.read_text(encoding="utf8")
-            head,separator,body=content.partition("</head>")
-            main=content.split("<main",1)[-1].split("</main>",1)[0]
-            if separator!="</head>":
-                raise ValueError("Malformed head in "+str(path))
-            # Subsequent D1 page edits are authoritative; do not force back
-            # previously selected source images or overwrite CMS social tags.
-            if re.search(r'<meta\s+property="og:image"',head):
+            updated,status=apply_to_document(content,localized,locale,dist)
+            if status=="generated":
+                path.write_text(updated,encoding="utf8")
+                count+=1
+            elif status=="owner":
                 owner_previews+=1
-                continue
-            if source_image not in re.findall(r'<img\b[^>]*\bsrc="([^"]+)"',main,re.S):
+            elif status=="changed":
                 changed_page_illustrations+=1
-                continue
-            if re.search(r'<meta\s+name="twitter:image"',head):
-                owner_previews+=1
-                continue
-            tags='<meta property="og:image" content="'+escape(url,quote=True)+'">'
-            tags+='<meta name="twitter:card" content="summary_large_image">'
-            tags+='<meta name="twitter:image" content="'+escape(url,quote=True)+'">'
-            path.write_text(head+tags+separator+body,encoding="utf8")
-            count+=1
     if count+owner_previews+changed_page_illustrations!=130:
         raise ValueError("Unexpected illustrated route coverage")
     print("XUYI_CONTEXTUAL_SOCIAL_PREVIEWS",count,"generated,",
           owner_previews,"owner-managed,",changed_page_illustrations,"changed media; privacy/contact untouched")
     return count
-
 if __name__=="__main__":
     apply(ROOT/"dist")

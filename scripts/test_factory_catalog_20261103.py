@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from catalog_extensions import append_new_products, is_factory_catalog_source_default  # noqa: E402
-from factory_catalog_locales import catalog_cards  # noqa: E402
+from factory_catalog_locales import LABELS, catalog_cards  # noqa: E402
 from gallery_catalog import catalog_cards as gallery_catalog_cards  # noqa: E402
 from lo_catalog import catalog_cards as lo_catalog_cards  # noqa: E402
 from product_content import details as product_details, factory_catalog_seo_title  # noqa: E402
@@ -139,15 +139,17 @@ def main() -> None:
         if product.get("qcStatus") == "needs_confirmation":
             assert "Catalog Notes" in rendered, model
 
-    # The four published non-English catalogs receive localized cards that
-    # link to the English source-backed detail page until translations exist.
+    # The source fragment uses root-relative detail routes. Since native
+    # translations now exist, card labels must point to the localized detail pages;
+    # render_locales applies the locale prefix after this component is composed.
     empty_grid = '<div class="grid grid--4 product-grid"></div>'
     for locale in ("es", "pt", "ru", "tr"):
         # The production renderer inserts gallery cards, hoists LO, then adds
         # factory cards. Both established groups must remain ahead of the batch.
         gallery_first = gallery_catalog_cards(empty_grid, locale, "/products/")
         lo_first = lo_catalog_cards(gallery_first, locale, "/products/")
-        localized = catalog_cards(lo_first, locale, "/products/", set(), series)
+        translated_routes={f"/products/{row['slug']}/" for row in series.values()}
+        localized = catalog_cards(lo_first, locale, "/products/", translated_routes, series)
         assert localized.count('data-new-product="true"') == 66
         card_urls = [
             re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
@@ -170,6 +172,8 @@ def main() -> None:
         for model in seen:
             assert f'href="/products/{model}/"' in localized
             assert f'href="/{locale}/products/{model}/"' not in localized
+            card = re.search(r'<a\b(?=[^>]*data-product-card\b)(?=[^>]*href="/products/'+re.escape(model)+r'/")[^>]*>.*?</a>',localized,re.I|re.S)
+            assert card and LABELS[locale]["details"] in card.group(0),(locale,model,"native detail label")
         category_slugs = {
             item["categorySlug"] for item in MANIFEST["models"]
         }
@@ -180,7 +184,7 @@ def main() -> None:
             category_route = f"/collections/{category_slug}/"
             gallery_category_first = gallery_catalog_cards(empty_grid, locale, category_route)
             lo_category_first = lo_catalog_cards(gallery_category_first, locale, category_route)
-            category_html = catalog_cards(lo_category_first, locale, category_route, set(), series)
+            category_html = catalog_cards(lo_category_first, locale, category_route, translated_routes, series)
             expected_priority_category = [
                 re.search(r'\bhref="([^"]+)"', match.group(0)).group(1)
                 for match in re.finditer(r'<a\b[^>]*\bdata-product-card\b[^>]*>', lo_category_first, re.I)

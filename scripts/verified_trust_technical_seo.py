@@ -93,20 +93,30 @@ def image_dimensions(url):
     except (OSError,ValueError):return None
 
 def improve_og(document):
-    # Do not replace or guess image URLs. Respect existing editor metadata.
+    # Keep the editor-selected image URL, but dimensions are factual metadata:
+    # refresh stale values from the verified local image bytes.
     m=OG_IMAGE.search(document)
     if not m:return document,0
     dims=image_dimensions(m.group(1))
     if not dims:return document,0
     head,sep,body=document.partition("</head>")
     if not sep:return document,0
-    if re.search(r'<meta property="og:image:(?:width|height)"',head):return document,0
     width,height=dims
-    markup=('<meta property="og:image:width" content="'+str(width)+'">'
-            '<meta property="og:image:height" content="'+str(height)+'">')
-    head=head[:m.end()]+markup+head[m.end():]
-    return head+sep+body,1
-
+    changed=0
+    for key,value in (("width",width),("height",height)):
+        pattern=re.compile(r'(<meta property="og:image:'+key+r'" content=")(\d+)(")')
+        match=pattern.search(head)
+        if match:
+            if int(match.group(2))!=value:
+                head=pattern.sub(lambda x:x.group(1)+str(value)+x.group(3),head,count=1)
+                changed+=1
+        else:
+            image=OG_IMAGE.search(head)
+            if image:
+                tag='<meta property="og:image:'+key+'" content="'+str(value)+'">'
+                head=head[:image.end()]+tag+head[image.end():]
+                changed+=1
+    return head+sep+body,changed
 def faq_from_visible(document):
     match=FAQ_GROUP.search(document)
     if not match:return None
@@ -170,7 +180,7 @@ def improve_product(document,locale):
     changed=[0]
     def update(m):
         obj=json.loads(m.group(2))
-        parts=obj.get("@graph",[]) if isinstance(obj,dict) else []
+        parts=obj.get("@graph",[]) if isinstance(obj,dict) and isinstance(obj.get("@graph"),list) else ([obj] if isinstance(obj,dict) else [])
         for item in parts:
             if not isinstance(item,dict) or item.get("@type")!="Product":continue
             url=item.get("url")
@@ -180,10 +190,18 @@ def improve_product(document,locale):
             if "potentialAction" not in item:
                 # User-facing CTA exists on product pages. This is not an
                 # offer, merchant listing price, nor assertion of stock.
+                action_name={
+                  "en":"Request a model-specific wholesale quotation",
+                  "es":"Solicitar cotización mayorista para este modelo",
+                  "pt":"Solicitar cotação de atacado para este modelo",
+                  "ru":"Запросить оптовое предложение для этой модели",
+                  "tr":"Bu model için toptan fiyat teklifi isteyin",
+                }[locale]
+                target=ORIGIN+"/"+LANGS[locale]+"contact/?model="+sku+"#inquiry"
                 item["potentialAction"]={
                   "@type":"CommunicateAction",
-                  "name":"Request a model-specific wholesale quotation",
-                  "target":{"@type":"EntryPoint","urlTemplate":ORIGIN+"/contact/?model="+sku+"#inquiry"}
+                  "name":action_name,
+                  "target":{"@type":"EntryPoint","urlTemplate":target}
                 }
                 changed[0]+=1
         return m.group(1)+safe_json(obj)+m.group(3)
@@ -200,6 +218,9 @@ def build_llms(dist):
        ("Kids plastic water bottles","/collections/kids-water-bottles/"),
        ("Large capacity water jugs","/collections/large-capacity-water-jugs/"),
        ("Shaker bottles","/collections/plastic-shaker-bottles/"),
+       ("Spray water bottles","/collections/spray-water-bottles/"),
+       ("Two-way drinking cups","/collections/two-way-drinking-cups/"),
+       ("Titanium vacuum cups","/collections/titanium-vacuum-cups/"),
        ("OEM/ODM customization","/capabilities/oem-odm/"),
        ("Get a model-specific quotation","/contact/"),
        ("Frequently asked questions","/faq/"),
@@ -211,10 +232,11 @@ def build_llms(dist):
        ("Bottle MOQ and quotation factors","/blog/custom-water-bottle-moq-pricing/"),
     ]
     lines=[
-      "# XUYI Bottles — Plastic Drinkware Manufacturer and OEM/ODM Supplier",
+      "# XUYI Bottles — Drinkware Manufacturer and OEM/ODM Supplier",
       "",
-      "> Official website: "+ORIGIN+"/. Factory-model plastic water bottles,",
-      "> shaker bottles, kids bottles and water jugs for wholesale and custom sourcing.",
+      "> Official website: "+ORIGIN+"/. Factory-model drinkware including plastic",
+      "> sports/kids bottles, shakers, water jugs, spray bottles, two-way cups and",
+      "> titanium vacuum cups for wholesale and custom sourcing.",
       "> Prices, MOQ, materials, testing and production feasibility are confirmed",
       "> individually; do not infer verified Tritan, BPA-free certification or inventory",
       "> from customizable options. Real product capacities use catalog millilitres;",
@@ -266,36 +288,20 @@ def build_llms(dist):
         target.write_text(content,encoding="utf8")
     return len(paths)
 
-def apply(dist):
-    dist=Path(dist)
-    count={"homeFaq":0,"blogByline":0,"blogAuthorUrl":0,"productQuote":0,"ogDimensions":0}
-    for locale,prefix in LANGS.items():
-        home=dist/prefix/"index.html"
-        if not home.is_file():raise ValueError("Missing published homepage "+locale)
-        old=home.read_text(encoding="utf8")
-        new,step=improve_home(old,locale)
-        count["homeFaq"]+=step
-        if new!=old:home.write_text(new,encoding="utf8")
-    for file in dist.rglob("index.html"):
-        parts=file.relative_to(dist).parts
-        if not parts or "admin" in parts[:1]:continue
-        locale=parts[0] if parts[0] in LANGS and parts[0]!="en" else "en"
-        parts=parts[1:] if locale!="en" else parts
-        original=file.read_text(encoding="utf8")
-        html_page=original
-        if len(parts)>=3 and parts[0]=="blog":
-            html_page,n=improve_article(html_page,locale)
-            count["blogAuthorUrl"]+=n
-            count["blogByline"]+=int("class=\"blog-author-byline\"" in html_page)
-        if len(parts)>=3 and parts[0]=="products":
-            html_page,n=improve_product(html_page,locale)
-            count["productQuote"]+=n
-        html_page,n=improve_og(html_page)
-        count["ogDimensions"]+=n
-        if html_page!=original:file.write_text(html_page,encoding="utf8")
-    build_llms(dist)
-    print("XUYI_TECH_SEO_ENRICH",json.dumps(count,sort_keys=True))
-    return count
+def add_at_render(document,route,locale):
+    """Apply trust/technical enhancements in the shared renderer before write."""
+    base=str(route or "/")
+    prefix="/"+locale
+    if locale!="en" and base.startswith(prefix+"/"):
+        base=base[len(prefix):]
+    if base in ("/",""):
+        document,_=improve_home(document,locale)
+    if base.startswith("/blog/") and base!="/blog/":
+        document,_=improve_article(document,locale)
+    if base.startswith("/products/"):
+        document,_=improve_product(document,locale)
+    document,_=improve_og(document)
+    return document
 
 if __name__=="__main__":
-    apply(ROOT/"dist")
+    build_llms(ROOT/"dist")

@@ -86,42 +86,26 @@ def replace_meta(markup,field,old,new):
         return m.group(1)+(escape(new,quote=True) if unescape(m.group(2))==old else m.group(2))+m.group(3)
     return re.sub(pattern,update,markup,count=1)
 
-def update_one(path,slug,ml,gradient,row):
-    """Add source-confirmed gradient description, never older 27/34 oz copy.
-
-    All unit/size-class and SEO changes are centralized in
-    scripts/source_catalog_capacity_oz.py and its reviewed market-size table.
-    """
-    if not gradient:return 0,0
-    source=path.read_text(encoding="utf8")
-    if 'class="product-gradient-finish"' in source:return 0,0
+def render_note(row,locale="en"):
+    """Return a source-rendered, localized gradient note for verified models."""
+    slug=str(row.get("slug") or "")
+    source=SOURCE_CAPACITY.get(slug)
+    if not source:return ""
+    ml,gradient=source
+    if not gradient or slug not in GRADIENT_HINTS:return ""
+    from scripts.source_catalog_capacity_oz import catalog_volume_numbers
+    numbers=catalog_volume_numbers(row)
+    if not any(abs(float(value)-float(ml))<0.5 for value in numbers):return ""
+    if not re.search(r"渐变|gradient",str(row.get("colors",""))+" "+str(row.get("name","")),re.I):
+        return ""
     hint=GRADIENT_HINTS[slug]
-    note=('<p class="product-gradient-finish" data-verified-gradient-model="'+escape(str(row["model"]),quote=True)+'">'
-          'Gradient color sports bottle: factory catalog options include '+escape(hint)+
-          '. Check the actual shade and finish on a physical sample before approving branding or a bulk order.</p>')
-    updated,n=re.subn(r'(<table class="spec">[\s\S]*?</table>)',
-                      lambda m:m.group(1)+note,source,count=1)
-    if n:path.write_text(updated,encoding="utf8")
-    return n,n
-
-def apply(dist):
-    dist=Path(dist)
-    changed=notes=0
-    for slug,(ml,gradient) in SOURCE_CAPACITY.items():
-        row=actual_model(slug)
-        if row is None or str(row.get("capacity","")).strip().lower()!=f"{ml}ml":continue
-        if gradient and slug not in GRADIENT_HINTS:raise ValueError("Unverified gradient description: "+slug)
-        if gradient and not re.search(r"渐变|gradient",str(row.get("colors",""))+" "+str(row.get("name","")),re.I):
-            continue  # A later factory/CMS change removed the gradient option.
-        page=dist/"products"/slug/"index.html"
-        if not page.is_file():raise FileNotFoundError(page)
-        edits,added=update_one(page,slug,ml,gradient,row)
-        changed+=edits;notes+=added
-    # Conditional home material enquiry is now rendered at source stage by
-    # home_bpa_source.add_home_bpa_note. Never mutate generated home HTML.
-    print("XUYI_SOURCE_CAPACITY_GRADIENT_SEO",changed,"models updated;",
-          notes,"verified gradient explanations; home note is source-rendered")
-    return changed,notes,0
-
-if __name__=="__main__":
-    apply(ROOT/"dist")
+    if locale=="en":
+        text="Gradient color sports bottle: factory catalog options include "+hint+". Check the actual shade and finish on a physical sample before approving branding or a bulk order."
+    else:
+        text={
+          "es":"El catálogo de fábrica confirma opciones de acabado degradado para este modelo. Verifique el tono y el acabado reales en una muestra antes de aprobar la marca o el pedido mayorista.",
+          "pt":"O catálogo da fábrica confirma opções de acabamento em degradê para este modelo. Verifique a tonalidade e o acabamento reais em uma amostra antes de aprovar a marca ou o pedido de atacado.",
+          "ru":"Каталог производителя подтверждает варианты градиентной расцветки этой модели. Проверьте фактический оттенок и отделку на образце до согласования брендинга и оптового заказа.",
+          "tr":"Fabrika kataloğu bu model için degrade renk seçeneklerini doğrular. Markalama veya toptan siparişi onaylamadan önce gerçek tonu ve yüzeyi numunede kontrol edin.",
+        }[locale]
+    return '<p class="product-gradient-finish" data-verified-gradient-model="'+escape(str(row.get("model","")),quote=True)+'">'+escape(text)+'</p>'

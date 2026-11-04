@@ -63,6 +63,7 @@ def join_unique(items,field,fn=lambda x:x):
  return " / ".join(result[:4]) if result else "Confirm with sales"
 _FACTORY_SEO_TYPES = {
  "Plastic Shaker Bottles":"Sports Shaker Bottle",
+ "Plastic Sports Water Bottles":"Sports Water Bottle",
  "Large Capacity Water Jugs":"Large Sports Bottle",
  "Spray Water Bottles":"Spray Water Bottle",
  "Two-Way Drinking Cups":"Two-Way Drinking Cup",
@@ -172,7 +173,7 @@ def details(obj):
  h=render_template("product-overview",BREADCRUMB=breadcrumb,
    MAIN_PHOTO=photo(img,name+" model "+model,"eager").replace('<img ','<img id="main-photo" ',1),
    THUMBNAILS=thumbs,MODEL=e(model),NAME=e(name),LEAD=e(lead),SPECS=spec,SLUG=e(obj["slug"]),
-   PHOTO_NOTE=e(
+    PHOTO_NOTE=e(
       "Factory catalog family image shared by related variants; it does not confirm the exact SKU appearance. Confirm the selected model, capacity and sample before ordering."
       if factory_catalog and obj.get("imageReviewStatus") == "visually_reviewed_source_family_image"
       else ("Factory catalog image; confirm the exact variant and sample appearance before ordering."
@@ -201,7 +202,9 @@ def details(obj):
  h+='</div></div></section>'
  similar=[x for x in SERIES.values() if x["category"]==category and x["model"]!=obj['model']][:4]
  if similar:h+='<section class="section"><div class="shell"><div class="section__head"><div><span class="eyebrow">PRODUCT RANGE</span><h2 class="section__title">Related Drinkware Models</h2></div></div>'+product_grid(similar)+'</div></section>'
- return h
+ from scripts.source_catalog_capacity_oz import source_body_enrichment
+ return source_body_enrichment(h,"en",obj)
+
 def add_schema(html,obj):
  from product_share_source import real_product_images
  model=model_en(factory_model_code(obj))

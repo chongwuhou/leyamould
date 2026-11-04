@@ -61,7 +61,7 @@ for lang,prefix in LANGS.items():
         assert match and match.group(1)=="/"+prefix+"about/",(lang,route)
         assert (DIST/prefix/"about/index.html").is_file()
         objs=[json.loads(s) for s in re.findall(r'<script type="application/ld\+json">(.*?)</script>',markup,re.S)]
-        post=[v for obj in objs for v in obj.get("@graph",[]) if v.get("@type")=="BlogPosting"]
+        post=[v for obj in objs for v in (obj.get("@graph",[]) if isinstance(obj,dict) and isinstance(obj.get("@graph"),list) else [obj]) if isinstance(v,dict) and v.get("@type")=="BlogPosting"]
         assert len(post)==1,(lang,route)
         author=post[0]["author"]
         assert author["@type"]=="Organization" and author["name"]=="XUYI Bottles"
@@ -79,7 +79,8 @@ for lang,prefix in LANGS.items():
         images=product.get("image",[])
         assert all("/excel/" not in path for path in images),(lang,route)
         assert product["potentialAction"]["@type"]=="CommunicateAction"
-        assert str(product.get("sku")) in product["potentialAction"]["target"]["urlTemplate"]
+        action_url=product["potentialAction"]["target"]["urlTemplate"]
+        assert "contact/?model=" in action_url and "#inquiry" in action_url,(lang,route,action_url)
         assert "offers" not in product,(lang,route,"invented price/offer")
         model=MODELS_BY_SLUG.get(route.parent.name)
         assert model,(lang,route,"review model must exist in canonical product data")

@@ -3,7 +3,10 @@
 import html
 import re
 from pathlib import Path
-from reviewed_media_slot_guard import replace_if_original
+try:
+    from scripts.reviewed_media_slot_guard import replace_if_original
+except ModuleNotFoundError:
+    from reviewed_media_slot_guard import replace_if_original
 
 ROOT=Path(__file__).resolve().parent.parent
 LANGS=("en","es","pt","ru","tr")
@@ -25,6 +28,35 @@ def once(text,pattern,fn,context):
     output,count=re.subn(pattern,fn,text,count=1)
     if count!=1:raise ValueError("Image context differs: "+context+" count="+str(count))
     return output
+
+def apply_to_document(markup,route,locale):
+    """Replace only reviewed low-resolution editorial slots before page write."""
+    base=str(route or "/")
+    prefix="/"+locale
+    if locale!="en" and base.startswith(prefix+"/"):
+        base=base[len(prefix):]
+    if base.startswith("/applications/"):
+        app=base.strip("/").split("/")[-1]
+        if app in APPLICATIONS:
+            blob=(ROOT/SHAKER_NEW.lstrip("/")).read_bytes()
+            if len(blob)<30000 or blob[:4]!=b"RIFF" or blob[8:12]!=b"WEBP":raise ValueError("Reviewed image invalid: "+SHAKER_NEW)
+            href="/" if locale=="en" else "/"+locale+"/"
+            prefix_tag='<a class="category" href="'+href+'collections/plastic-shaker-bottles/"><div class="category__photo"><img src="'
+            markup,_=replace_if_original(markup,prefix_tag,SHAKER_OLD,SHAKER_NEW,locale+" applications/"+app)
+    if base=="/manufacturing/":
+        blob=(ROOT/DESIGN_NEW.lstrip("/")).read_bytes()
+        if len(blob)<30000 or blob[:4]!=b"RIFF" or blob[8:12]!=b"WEBP":raise ValueError("Reviewed image invalid: "+DESIGN_NEW)
+        prefix_tag='<div class="whyv2-factory-detail__image"><img src="'
+        markup,changed=replace_if_original(markup,prefix_tag,DESIGN_OLD,DESIGN_NEW,locale+" manufacturing")
+        if changed:
+            pattern=(r'(<div class="whyv2-factory-detail__image"><img src="'
+                     +re.escape(DESIGN_NEW)+r'" alt=")[^"]*(")')
+            markup,count=re.subn(pattern,lambda m:m.group(1)+html.escape(DESIGN_ALT[locale],quote=True)+m.group(2),markup,count=1)
+            if count!=1:raise ValueError("Review ALT binding mismatch "+locale)
+    return markup
+
+
+
 
 def apply(dist):
     dist=Path(dist)

@@ -100,6 +100,44 @@ TEXT = {
 }
 
 
+def apply_to_document(markup,route,locale):
+    """Render reviewed locale-native buyer pathways before writing a page."""
+    if locale not in LOCALES:
+        return markup,"not_applicable"
+    base=str(route or "/")
+    prefix="/"+locale
+    if locale!="en" and base.startswith(prefix+"/"):
+        base=base[len(prefix):]
+    source=base.strip("/")
+    targets=PATHWAYS.get(source)
+    if not targets:
+        return markup,"not_applicable"
+    if markup.count("</main>")!=1:
+        raise ValueError("Unexpected main/article layout on "+locale+base)
+    if 'class="section buyer-pathways"' in markup:
+        return markup,"preserved"
+    main=markup.split("<main",1)[-1].split("</main>",1)[0]
+    links=[]
+    for target in targets:
+        href="/"+("" if locale=="en" else locale+"/")+target+"/"
+        if 'href="'+href+'"' in main:
+            continue
+        if target not in TEXT[locale]:
+            raise ValueError("Unreviewed contextual target "+target+" for "+locale)
+        links.append('<a href="'+href+'">'+html.escape(TEXT[locale][target])+" →</a>")
+    if not links:
+        return markup,"preserved"
+    words=TEXT[locale]
+    block=(
+        '<section class="section buyer-pathways" aria-label="'+
+        html.escape(words["title"],quote=True)+'"><div class="shell">'
+        '<h2>'+html.escape(words["title"])+'</h2><p>'+
+        html.escape(words["lead"])+'</p><div class="buyer-pathways__links">'+
+        "".join(links)+'</div></div></section>'
+    )
+    return markup.replace("</main>",block+"</main>",1),"generated"
+
+
 def apply(dist):
     dist = Path(dist)
     changed = 0
