@@ -55,7 +55,17 @@ for route, file in pages.items():
         if "main" in tags and not any(x in tags for x in ("nav", "header", "footer")):
             body_sources[destination].add(route)
 
-missing = sorted(route for route in pages if not body_sources[route])
+snapshot=json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf-8"))
+dynamic_blog_routes={
+    "/blog/"+str(post.get("slug"))+"/"
+    for post in snapshot.get("blogPosts",[])
+    if post.get("status")=="published" and post.get("slug")
+}
+runtime=(ROOT/"functions/blog/[[path]].js").read_text(encoding="utf-8")
+assert 'listBlogPosts(db,"published")' in runtime and "posts.map(blogCard)" in runtime
+# D1-only articles are linked by the live CMS-owned /blog/ listing, not the
+# immutable static index. Do not misclassify their static shells as orphans.
+missing=sorted(route for route in pages if not body_sources[route] and route not in dynamic_blog_routes)
 assert not missing, ("Pages without contextual internal links", missing[:20])
 
 count = 0
@@ -68,7 +78,14 @@ for lang in LOCALES:
             assert markup.count('class="section buyer-pathways"') == 1, (lang,source)
         main=markup.split("<main",1)[-1].split("</main>",1)[0]
         for target in targets:
-            destination = "/" + prefix + target + "/"
+            # The three new D1 buyer-guide targets currently exist in English
+            # only. They receive inbound links from English sources; never
+            # create broken locale-prefixed URLs for untranslated posts.
+            if target.startswith("blog/") and lang!="en":
+                assert 'href="/'+target+'/"' not in main,(lang,source,target,"unexpected cross-language link")
+                continue
+            target_prefix = "" if lang=="en" or target.startswith("blog/") else prefix
+            destination = "/" + target_prefix + target + "/"
             assert main.count('href="' + destination + '"') == 1,(lang,source,target,"duplicate or missing link")
             assert "/" + prefix + source + "/" in body_sources[destination], (lang, target)
             count += 1

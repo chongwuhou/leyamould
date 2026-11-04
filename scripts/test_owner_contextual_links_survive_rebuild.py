@@ -31,7 +31,7 @@ with TemporaryDirectory(prefix="xuyi-buyer-owner-") as tmp:
         original=owner.read_text(encoding="utf8")
         href="/"+("" if lang=="en" else lang+"/")+"features/straw-lid/"
         owner.write_text(original.replace("</main>",'<a href="'+href+'">Editor-approved straw options</a></main>'),encoding="utf8")
-    assert add_buyer_links(dist)==70
+    assert add_buyer_links(dist)==73
     for lang in LOCALES:
         owner=path_for(dist,lang,"collections/kids-water-bottles")
         content=owner.read_text(encoding="utf8")

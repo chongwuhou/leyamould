@@ -307,14 +307,17 @@ export function blogHtml(post){
    "features/large-capacity":"Large-capacity bottle designs",
    "features/carry-handle":"Carry-handle bottle options",
    "features/gradient-colors":"Gradient-color bottle options",
-   "features/straw-lid":"Straw-lid bottle options"
+   "features/straw-lid":"Straw-lid bottle options",
+   "blog/bulk-water-bottles-for-school-student-programs":"School and student-program bottle buying guide",
+   "blog/corporate-wellness-water-bottle-bulk-sourcing":"Corporate wellness bottle sourcing guide",
+   "blog/parks-recreation-water-bottle-bulk-procurement":"Parks and recreation bottle procurement guide"
   };
   let links="";
   for(const target of features){
    if(!Object.hasOwn(labels,target))throw Error("Unexpected curated feature pathway");
    links+='<a href="/'+esc(target)+'/">'+esc(labels[target])+' →</a>';
   }
-  body+='<section class="section buyer-pathways" aria-label="Explore related bottle choices"><div class="shell"><h2>Explore related bottle choices</h2><p>Compare bottle use cases and design features before selecting a specific model.</p><div class="buyer-pathways__links">'+links+'</div></div></section>';
+  body+='<section class="section buyer-pathways" aria-label="Explore related buyer resources"><div class="shell"><h2>Explore related buyer resources</h2><p>Compare relevant use cases, procurement guidance and bottle features before selecting a model.</p><div class="buyer-pathways__links">'+links+'</div></div></section>';
  }
  return body;
 }

@@ -19,6 +19,7 @@ const unrelated=blogHtml({slug:"new-approved-article",title:"New article",descri
 assert(!unrelated.includes('seo-next-buyer'),"Do not insert arbitrary backlinks into later D1 posts");
 assert(!unrelated.includes('buyer-pathways'),"Unreviewed D1 posts should not get curated feature links");
 assert.equal(Object.keys(featurePaths).length,6);
+assert.equal(Object.values(featurePaths).flat().filter(target=>target.startsWith("blog/")).length,3);
 for(const [route,targets] of Object.entries(featurePaths)){
  const slug=route.replace(/^blog\//,"");
  const post={slug,title:"XUYI plastic bottle buyer guidance",description:"Plastic bottle buying guide",intro:"Review the required bottle details.",sections:[section],faqs:[],checklist:[],related:[],cover:"/media/ppt/slide-030.webp"};
@@ -30,4 +31,4 @@ for(const [route,targets] of Object.entries(featurePaths)){
   assert(staticArticle.includes('href="/'+target+'/"'),"Static reader link absent: "+route+" -> "+target);
  }
 }
-console.log("XUYI_RUNTIME_BLOG_CURATED_PATHWAYS_PASSED 9 buyer guide targets + 6 feature routes, static/D1 consistent");
+console.log("XUYI_RUNTIME_BLOG_CURATED_PATHWAYS_PASSED 9 buyer guide targets + 6 source routes + 3 inbound buyer-guide links, static/D1 consistent");

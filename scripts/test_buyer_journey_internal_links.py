@@ -20,9 +20,14 @@ for locale in LOCALES:
         assert markup.count('class="section buyer-pathways"')==1,(locale,source,"duplicate/missing buyer-pathways section")
         main=markup.split("<main",1)[-1].split("</main>",1)[0]
         for target in targets:
-            href="/"+prefix+target+"/"
-            assert main.count('href="'+href+'"')==1,(locale,source,target,"missing or duplicate localized link")
-            assert (DIST/prefix/target/"index.html").is_file(),(locale,target,"target page missing")
+            # English-only D1 buyer-guide destinations must not get broken locale URLs.
+            if target.startswith("blog/") and locale!="en":
+                assert ('/'+target+'/') not in main,(locale,source,target,'unexpected cross-language link')
+                continue
+            target_prefix="" if locale=="en" or target.startswith("blog/") else prefix
+            href="/"+target_prefix+target+"/"
+            assert main.count('href="'+href+'"')==1,(locale,source,target,'missing or duplicate contextual link')
+            assert (DIST/target_prefix/target/"index.html").is_file(),(locale,target,"target page missing")
             checked+=1
         assert apply_to_document(markup,localized,locale)==(markup,"preserved") or apply_to_document(markup,localized,locale)[0]==markup
 print("XUYI_SOURCE_BUYER_JOURNEY_LINKS_PASSED",checked,"locale-native links across",len(PATHWAYS),"source routes")

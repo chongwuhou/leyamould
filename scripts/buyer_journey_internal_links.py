@@ -38,8 +38,8 @@ PATHWAYS = {
 
 TEXT = {
     "en": {
-        "title": "Explore related bottle choices",
-        "lead": "Compare bottle use cases and design features before selecting a specific model.",
+        "title": "Explore related buyer resources",
+        "lead": "Compare relevant use cases, procurement guidance and bottle features before selecting a model.",
         "applications/everyday-hydration": "Everyday hydration applications",
         "applications/kids-school": "Kids and school bottle applications",
         "applications/outdoor-travel": "Outdoor and travel applications",
@@ -48,10 +48,13 @@ TEXT = {
         "features/carry-handle": "Carry-handle bottle options",
         "features/gradient-colors": "Gradient-color bottle options",
         "features/straw-lid": "Straw-lid bottle options",
+        "blog/bulk-water-bottles-for-school-student-programs": "School and student-program bottle buying guide",
+        "blog/corporate-wellness-water-bottle-bulk-sourcing": "Corporate wellness bottle sourcing guide",
+        "blog/parks-recreation-water-bottle-bulk-procurement": "Parks and recreation bottle procurement guide",
     },
     "es": {
-        "title": "Explore opciones de botellas relacionadas",
-        "lead": "Compare usos y características de diseño antes de elegir un modelo concreto.",
+        "title": "Consulta recursos de compra relacionados",
+        "lead": "Compara los usos, las recomendaciones de compra y las características de las botellas antes de elegir un modelo.",
         "applications/everyday-hydration": "Botellas para hidratación diaria",
         "applications/kids-school": "Botellas para niños y escuela",
         "applications/outdoor-travel": "Botellas para exteriores y viajes",
@@ -60,10 +63,13 @@ TEXT = {
         "features/carry-handle": "Opciones con asa de transporte",
         "features/gradient-colors": "Opciones con colores degradados",
         "features/straw-lid": "Opciones con tapa y pajita",
+        "blog/bulk-water-bottles-for-school-student-programs": "Guía de compra de botellas para escuelas y programas estudiantiles",
+        "blog/corporate-wellness-water-bottle-bulk-sourcing": "Guía de abastecimiento de botellas para bienestar corporativo",
+        "blog/parks-recreation-water-bottle-bulk-procurement": "Guía de compra de botellas para parques y recreación",
     },
     "pt": {
-        "title": "Explore opções de garrafas relacionadas",
-        "lead": "Compare aplicações e características antes de escolher um modelo específico.",
+        "title": "Explore recursos de compra relacionados",
+        "lead": "Compare aplicações, orientações de compra e características das garrafas antes de escolher um modelo.",
         "applications/everyday-hydration": "Garrafas para hidratação diária",
         "applications/kids-school": "Garrafas para crianças e escola",
         "applications/outdoor-travel": "Garrafas para atividades ao ar livre e viagens",
@@ -72,10 +78,13 @@ TEXT = {
         "features/carry-handle": "Modelos com alça de transporte",
         "features/gradient-colors": "Modelos com cores degradê",
         "features/straw-lid": "Modelos com tampa e palhinha",
+        "blog/bulk-water-bottles-for-school-student-programs": "Guia de compra de garrafas para escolas e programas estudantis",
+        "blog/corporate-wellness-water-bottle-bulk-sourcing": "Guia de fornecimento de garrafas para programas de bem-estar corporativo",
+        "blog/parks-recreation-water-bottle-bulk-procurement": "Guia de compra de garrafas para parques e recreação",
     },
     "ru": {
-        "title": "Связанные варианты пластиковых бутылок",
-        "lead": "Сравните назначение и особенности конструкции перед выбором модели.",
+        "title": "Полезные материалы по закупке бутылок",
+        "lead": "Сравните сценарии использования, рекомендации по закупке и особенности бутылок перед выбором модели.",
         "applications/everyday-hydration": "Бутылки для ежедневного использования",
         "applications/kids-school": "Детские и школьные бутылки",
         "applications/outdoor-travel": "Бутылки для путешествий и отдыха",
@@ -84,10 +93,13 @@ TEXT = {
         "features/carry-handle": "Модели с ручками для переноски",
         "features/gradient-colors": "Модели с градиентной окраской",
         "features/straw-lid": "Модели с крышкой и трубочкой",
+        "blog/bulk-water-bottles-for-school-student-programs": "Руководство по закупке бутылок для школ и ученических программ",
+        "blog/corporate-wellness-water-bottle-bulk-sourcing": "Руководство по закупке бутылок для корпоративных программ здоровья",
+        "blog/parks-recreation-water-bottle-bulk-procurement": "Руководство по закупке бутылок для парков и досуга",
     },
     "tr": {
-        "title": "İlgili plastik şişe seçenekleri",
-        "lead": "Belirli bir model seçmeden önce kullanım alanlarını ve tasarım özelliklerini karşılaştırın.",
+        "title": "İlgili satın alma kaynaklarını inceleyin",
+        "lead": "Bir model seçmeden önce kullanım alanlarını, tedarik önerilerini ve şişe özelliklerini karşılaştırın.",
         "applications/everyday-hydration": "Günlük su tüketimi için şişeler",
         "applications/kids-school": "Çocuk ve okul su şişeleri",
         "applications/outdoor-travel": "Açık hava ve seyahat şişeleri",
@@ -96,6 +108,9 @@ TEXT = {
         "features/carry-handle": "Taşıma saplı şişe seçenekleri",
         "features/gradient-colors": "Degrade renkli şişe seçenekleri",
         "features/straw-lid": "Pipet kapaklı şişe seçenekleri",
+        "blog/bulk-water-bottles-for-school-student-programs": "Okullar ve öğrenci programları için şişe satın alma rehberi",
+        "blog/corporate-wellness-water-bottle-bulk-sourcing": "Kurumsal sağlık programları için şişe tedarik rehberi",
+        "blog/parks-recreation-water-bottle-bulk-procurement": "Parklar ve rekreasyon programları için şişe satın alma rehberi",
     },
 }
 
@@ -119,7 +134,10 @@ def apply_to_document(markup,route,locale):
     main=markup.split("<main",1)[-1].split("</main>",1)[0]
     links=[]
     for target in targets:
-        href="/"+("" if locale=="en" else locale+"/")+target+"/"
+        # English-only D1 buyer guides must not create unpublished locale URLs.
+        if target.startswith("blog/") and locale!="en":
+            continue
+        href="/" + ("" if locale=="en" or target.startswith("blog/") else locale+"/") + target + "/"
         if 'href="'+href+'"' in main:
             continue
         if target not in TEXT[locale]:
@@ -160,10 +178,14 @@ def apply(dist):
             main = markup.split("<main", 1)[-1].split("</main>", 1)[0]
             links = []
             for target in targets:
-                linked = dist / prefix / target / "index.html"
+                # English-only D1 buyer guides are linked only from English source pages.
+                if target.startswith("blog/") and lang!="en":
+                    continue
+                target_prefix = "" if lang=="en" or target.startswith("blog/") else prefix
+                linked = dist / target_prefix / target / "index.html"
                 if not linked.is_file():
                     raise FileNotFoundError("Contextual target not published: " + str(linked))
-                href = "/" + prefix + target + "/"
+                href = "/" + target_prefix + target + "/"
                 # The target previously had no incoming contextual link. Do
                 # not create a second identical anchor inside the same source.
                 if 'href="' + href + '"' in main:
