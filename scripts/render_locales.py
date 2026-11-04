@@ -406,7 +406,7 @@ def sync_selected_product_main_photo(markup,route,series,product_overrides,origi
     selected=image_path(selected,origin)
     if not selected:
         return markup
-    pattern=r'(<img\\b(?=[^>]*\\bid="main-photo")[^>]*\\bsrc=")[^"]+(")'
+    pattern=r'(<img\b(?=[^>]*\bid="main-photo")[^>]*\bsrc=")[^"]+(")'
     updated,count=re.subn(pattern,lambda match:match.group(1)+selected+match.group(2),
                           markup,count=1,flags=re.I)
     if count!=1:
@@ -1191,7 +1191,7 @@ def main():
                     modified=source_lastmod(url,_,translated.get((route,_),{}),
                                             review_dates=reviewed_date_changes)
 
-                                        from product_image_sitemap import xml_image_for_product
+                    from product_image_sitemap import xml_image_for_product
 
                     from site_renderer import SERIES,PRODUCT_OVERRIDES
 
