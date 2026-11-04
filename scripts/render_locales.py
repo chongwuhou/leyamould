@@ -844,7 +844,7 @@ def main():
 
                 body=verified_sku_sections(body,current_product,loc)
 
-                                body=sync_selected_product_main_photo(body,route,SERIES,PRODUCT_OVERRIDES)
+                body=sync_selected_product_main_photo(body,route,SERIES,PRODUCT_OVERRIDES)
 
         # Translated D1 body takes precedence; add common scenario-specific
 
