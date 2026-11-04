@@ -386,6 +386,33 @@ def valid_route(route):
 
 
 
+def sync_selected_product_main_photo(markup,route,series,product_overrides,origin=ORIGIN):
+    """Keep localized HTML and image-sitemap entries on the same selected hero photo.
+
+    D1-selected main photos are global across locales. Localized source HTML may
+    retain an older image; sync only main-photo, never gallery images or copy.
+    """
+    if not route.startswith("/products/") or route=="/products/":
+        return markup
+    slug=route.strip("/").split("/")[-1]
+    product=next((row for row in series.values() if row.get("slug")==slug),None)
+    if product is None:
+        return markup
+    override=product_overrides.get(str(product.get("model")),{})
+    selected=override.get("image") if isinstance(override,dict) else None
+    if not isinstance(selected,str):
+        return markup
+    from product_image_sitemap import image_path
+    selected=image_path(selected,origin)
+    if not selected:
+        return markup
+    pattern=r'(<img\\b(?=[^>]*\\bid="main-photo")[^>]*\\bsrc=")[^"]+(")'
+    updated,count=re.subn(pattern,lambda match:match.group(1)+selected+match.group(2),
+                          markup,count=1,flags=re.I)
+    if count!=1:
+        raise RuntimeError("D1-selected main photo missing from localized product body: "+route)
+    return updated
+
 def swap_meta(page,name,value):
 
     tag='<meta name="'+name+'" content="'
@@ -817,19 +844,7 @@ def main():
 
                 body=verified_sku_sections(body,current_product,loc)
 
-                # A D1 owner-selected SKU main photo is global across locales.
-                # Older translated HTML may retain a previous catalog photo;
-                # sync only the hero to the same reviewed source as Product.image.
-                override=PRODUCT_OVERRIDES.get(str(current_product.get("model")),{})
-                selected=override.get("image") if isinstance(override,dict) else None
-                if isinstance(selected,str):
-                    from product_image_sitemap import image_path
-                    selected=image_path(selected,ORIGIN)
-                    if selected:
-                        pattern=r'(<img\b(?=[^>]*\bid="main-photo")[^>]*\bsrc=")[^"]+(")'
-                        body,count=re.subn(pattern,lambda match:match.group(1)+selected+match.group(2),body,count=1,flags=re.I)
-                        if count!=1:
-                            raise RuntimeError("D1-selected main photo missing from localized product body: "+loc+" "+route)
+                                body=sync_selected_product_main_photo(body,route,SERIES,PRODUCT_OVERRIDES)
 
         # Translated D1 body takes precedence; add common scenario-specific
 
@@ -1176,18 +1191,17 @@ def main():
                     modified=source_lastmod(url,_,translated.get((route,_),{}),
                                             review_dates=reviewed_date_changes)
 
-                    from product_image_sitemap import xml_image_for_product
+                                        from product_image_sitemap import xml_image_for_product
 
-                    from site_renderer import SERIES
+                    from site_renderer import SERIES,PRODUCT_OVERRIDES
 
-                    # The translated D1 main photo takes precedence; do not
-
-                    # manufacture different URLs for repeated source imagery.
+                    # Use the same selected hero source as rendered localized HTML.
 
                     owner_body=translated.get((route,_),{}).get("mainHtml")
 
-                    image_xml=xml_image_for_product(route,SERIES,owner_body,ORIGIN)
+                    owner_body=sync_selected_product_main_photo(owner_body,route,SERIES,PRODUCT_OVERRIDES,ORIGIN)
 
+                    image_xml=xml_image_for_product(route,SERIES,owner_body,ORIGIN)
                     added.append(" <url><loc>"+html.escape(absolute)+"</loc>"
 
                       +("<lastmod>"+modified+"</lastmod>" if modified else "")
