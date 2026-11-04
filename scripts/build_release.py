@@ -13,10 +13,12 @@ import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
-# Load the authenticated D1 snapshot before any imported build helpers can
-# import site_renderer. The same snapshot is passed to child build processes.
-_EARLY_ROOT=Path(__file__).resolve().parent.parent
-_EARLY_SNAPSHOT=_EARLY_ROOT/"_local_ops"/"build-snapshot.json"
+
+# The release process imports post-build enrichers that themselves import
+# site_renderer. Load the authenticated D1 snapshot before any project module
+# can import site_renderer, not only in child build.py processes.
+ROOT=Path(__file__).resolve().parent.parent
+_EARLY_SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
 if _EARLY_SNAPSHOT.is_file():
     _EARLY_STATE=json.loads(_EARLY_SNAPSHOT.read_text(encoding="utf-8"))
     if _EARLY_STATE.get("site")=="xuyi-drinkware-site":
@@ -59,6 +61,10 @@ def main():
             fail("Refusing non-XUYI build snapshot")
         env["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
         env["XUYI_PUBLISH_REVISION"]=str(int(state.get("publishRevision",0)))
+        # Post-build enrichers import site_renderer in this same process.
+        # Keep them on the exact D1 snapshot used by build.py and render_locales.py.
+        os.environ["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
+        os.environ["XUYI_PUBLISH_REVISION"]=env["XUYI_PUBLISH_REVISION"]
     # Generate display-only, content-addressed images from authoritative
     # sources. Originals in R2, asset files, and owner CMS selections remain.
     from prepare_responsive_images import prepare as prepare_responsive
@@ -72,64 +78,22 @@ def main():
     shutil.copytree(ROOT/"admin",DIST/admin_slug)
     subprocess.run([sys.executable,"scripts/render_locales.py"],cwd=ROOT,env=env,check=True)
     shutil.copytree(image_stage,DIST/"assets"/"responsive",dirs_exist_ok=True)
-    # Final, explicit buyer-landing SEO curation follows D1 reviewed HTML.
-    # It does not rewrite CMS data or any translated product specifications.
-    from polish_priority_seo import apply as polish_priority_seo
-    polish_priority_seo(DIST)
-    # Replace only reviewed generic-category and OEM editorial images.
-    # Original catalog product photos and R2 objects remain untouched.
-    from reviewed_editorial_images import apply as replace_reviewed_editorial_images
-    replace_reviewed_editorial_images(DIST)
-    from reviewed_lowres_editorial_round2 import apply as replace_lowres_round2
-    replace_lowres_round2(DIST)
-    # slide-059 contains machinery, not sports bottles. Repair only the
-    # explicitly named Sports Water Bottles category cards.
-    from repair_mismatched_sports_category import apply as repair_sports_cards
-    repair_sports_cards(DIST)
-    from repair_remaining_category_cards import apply as repair_remaining_categories
-    repair_remaining_categories(DIST)
-    # Original wide homepage marketing slot is now source-rendered by
-    # home_intro_source_photo; do not overwrite its verified geometry in dist.
-    # Exact, editorially mapped inbound links for previously isolated
-    # application/feature pages, across all five reviewed languages.
-    from buyer_journey_internal_links import apply as curate_buyer_journey_links
-    curate_buyer_journey_links(DIST)
-    # Six visually audited plastic-shaker scenes only; R2 originals immutable.
-    from apply_gpt_reviewed_shaker_hd import apply as apply_gpt_reviewed_shaker_hd
-    apply_gpt_reviewed_shaker_hd(DIST)
-    # OG/Product image selection now occurs in the shared source renderers.
-    # Do not run the obsolete product_share_images dist mutator.
-    # Exact page illustrations only; no new photos and no unrelated generic
-    # preview images on privacy and contact pages.
-    from contextual_share_metadata import apply as add_contextual_share_metadata
-    add_contextual_share_metadata(DIST)
-    from curated_buyer_seo_round2 import apply as apply_curated_buyer_seo_round2
-    apply_curated_buyer_seo_round2(DIST)
-    # Replace excessively generic long localized snippets using model-specific
-    # catalog facts, without inventing price, stock, tests or certifications.
-    from curated_catalog_meta_clarity import apply as clarify_localized_catalog_meta
-    clarify_localized_catalog_meta(DIST)
-    # Source-reviewed ml/fl oz search wording and real gradient color details.
-    # Conditional home BPA inquiry now belongs to the shared source renderer,
-    # never to the old generated-HTML postprocessor.
-    from verified_capacity_gradient_en import apply as add_verified_capacity_gradient
-    add_verified_capacity_gradient(DIST)
-    # Every real capacity in every current/future source-backed model receives
-    # its US-fluid-ounce counterpart, all 5 locales, search snippets/cards
-    # and a conditional Tritan/BPA-free CUSTOMIZATION inquiry (not certification).
-    # User-authored CMS SEO fields are protected by checked-in D1 fingerprints.
-    from source_catalog_capacity_oz import apply as apply_all_volume_and_custom_materials
-    apply_all_volume_and_custom_materials(DIST)
-    # Comparisons only from the 85 catalog entries with verified numeric data.
-    # G-series ARE factory models, but their detailed source specs are pending.
-    from model_catalog_buyer_comparison import apply as add_model_catalog_comparisons
-    add_model_catalog_comparisons(DIST)
-    # Application/feature buyer guidance is rendered by site_renderer.py and
-    # render_locales.py using their shared pre-output component (not dist edits).
-    # Verified technical SEO and trust metadata on SOURCE/CMS merged pages.
-    # Never infer stock, product prices, reviews, staff names or R2 image sizes.
-    from verified_trust_technical_seo import apply as enrich_trust_and_technical_seo
-    enrich_trust_and_technical_seo(DIST)
+    # Product SEO metadata, hreflang, structured data, editorial imagery,
+    # contextual links and social previews are source-rendered before each page write.
+    # The locale registry adds reciprocal alternates only for non-product routes.    # Do not run the obsolete product_share_images dist mutator.
+    # Contextual social previews and image dimensions are source-rendered
+    # before each page write; never mutate the finished dist tree.
+    # Curated category snippets and related Blog links are source-rendered.
+    # Product SEO titles and descriptions are written by the shared source
+    # renderers with per-field D1 ownership checks; do not mutate dist metadata.
+    # Product capacities, approximate US fl-oz size classes, custom-material inquiry panels,
+    # gradient notes and product-card search terms are source-rendered in the
+    # shared English and localized renderers before files enter dist.
+    # Model comparisons, product actions, homepage FAQ schema, blog bylines and
+    # social-image dimensions are injected in shared renderers before each write.
+    # llms.txt remains a separate optional navigation artifact, not a ranking claim.
+    from verified_trust_technical_seo import build_llms
+    build_llms(DIST)
     # Compile redirects from authority-controlled sources BEFORE deployment:
     # approved D1 redirects first, plus only the five proven slug-format fixes
     # across published locales. Never overwrite a CMS owner-authored redirect.
