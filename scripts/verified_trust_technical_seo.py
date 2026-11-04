@@ -150,11 +150,22 @@ def improve_article(document,locale):
     """Visible organizational author linked to About, never a fake Person."""
     if 'class="blog-author-byline"' not in document:
         m=BLOG_META.search(document)
-        if not m:raise ValueError("Blog author insertion point not found: "+locale)
+        if m:
+            insertion=m.end()
+        else:
+            # CMS editors may replace the original blog-meta block. Preserve
+            # their body and place the organizational byline at the end of main.
+            closing_main=re.search(r"</main\s*>",document,re.I)
+            if closing_main:
+                insertion=closing_main.start()
+            else:
+                heading=re.search(r"</h1\s*>",document,re.I)
+                if not heading:raise ValueError("Blog author insertion point not found: "+locale)
+                insertion=heading.end()
         target="/"+LANGS[locale]+"about/"
         byline=('<p class="blog-author-byline"><a rel="author" href="'+target+'">'
                 +html.escape(AUTHOR_WORDING[locale])+'</a></p>')
-        document=document[:m.end()]+byline+document[m.end():]
+        document=document[:insertion]+byline+document[insertion:]
     prefix=LANGS[locale]
     author_url=ORIGIN+"/"+prefix+"about/"
     changed=[0]
