@@ -151,8 +151,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # Full translations are validated by build-snapshot and the localized-page test suite.
-          for section in brand-config site-config pages product-content page-content; do
+          for section in brand-config site-config pages product-content page-content page-translations; do
             curl --fail --silent --show-error --retry 2 \
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               "$SITE_ORIGIN/api/admin/$section" -o /dev/null
@@ -169,13 +168,13 @@ jobs:
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/preindex_security_gate.py
       - name: Prepare reviewed Blog batch payload
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: python scripts/prepare_blog_release_20261019.py
       - name: Publish reviewed Blog batch through existing XUYI CMS
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-19 blog batch through existing CMS'
         run: python scripts/publish_blog_batch_20261019_d1.py
       - name: Prepare 2026-10-20 B2B procurement guides
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           # Resolve related-article titles against current owner-approved D1 copy.
           python scripts/fetch_build_snapshot.py
@@ -184,7 +183,7 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-20 B2B procurement guides'
         run: python scripts/publish_blog_batch_20261020_d1.py
       - name: Prepare 2026-10-21 three verified B2B guides and all four localized bodies
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261021.py
@@ -193,7 +192,7 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-21 B2B procurement guides'
         run: python scripts/publish_blog_batch_20261021_d1.py
       - name: Prepare 2026-10-22 three reviewed B2B sector guides
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261022.py
@@ -202,7 +201,7 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-22 B2B sector procurement guides'
         run: python scripts/publish_blog_batch_20261022_d1.py
       - name: Prepare 2026-10-23 three reviewed B2B sector guides
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261023.py
@@ -211,7 +210,7 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-23 B2B sector procurement guides'
         run: python scripts/publish_blog_batch_20261023_d1.py
       - name: Prepare 2026-10-24 three reviewed B2B sector guides
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261024.py
@@ -220,7 +219,7 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-24 B2B sector procurement guides'
         run: python scripts/publish_blog_batch_20261024_d1.py
       - name: Prepare reviewed 2026-10-25 B2B long-tail articles
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261025.py
@@ -229,7 +228,7 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-25 B2B long-tail guides'
         run: python scripts/publish_blog_batch_20261025_d1.py
       - name: Prepare reviewed 2026-10-26 B2B long-tail articles
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261026.py
@@ -238,7 +237,7 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && startsWith(github.event.head_commit.message, 'Publish reviewed 2026-10-26 B2B long-tail guides')
         run: python scripts/publish_blog_batch_20261026_d1.py
       - name: Prepare reviewed 2026-10-27 B2B procurement guides
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261027.py
@@ -247,7 +246,7 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-27 B2B procurement guides'
         run: python scripts/publish_blog_batch_20261027_d1.py
       - name: Prepare reviewed 2026-10-28 B2B procurement guides
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261028.py
@@ -256,27 +255,27 @@ jobs:
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-28 B2B procurement guides'
         run: python scripts/publish_blog_batch_20261028_d1.py
       - name: Prepare 2026-10-29 three B2B procurement guides and translations
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261029.py
           python scripts/publish_blog_batch_20261029_d1.py --dry-run
       - name: Prepare 2026-10-31 three B2B guides, five languages and photo approval
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261031.py
           python scripts/publish_blog_images_20261031_r2.py --dry-run
           python scripts/publish_blog_batch_20261031_d1.py --dry-run
       - name: Prepare 2026-11-01 three buyer guides and five locale variants
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261101.py
           python scripts/publish_blog_images_20261101_r2.py --dry-run
           python scripts/publish_blog_batch_20261101_d1.py --dry-run
       - name: Prepare 2026-10-30 three scene-reviewed B2B guides and five languages
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message != 'Publish 58 new XUYI products from factory catalog 2026-11-03'
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261030.py
@@ -434,6 +433,8 @@ jobs:
           python scripts/test_localized_templates.py
           python scripts/test_localized_release.py
           python scripts/test_factory_catalog_20261103.py
+          python scripts/test_product_components.py
+          python scripts/test_ppt_new_95_publish.py
           node scripts/test_factory_catalog_20261103.mjs
           python scripts/test_shared_chrome_i18n.py
           python scripts/test_curated_hq_images.py
@@ -504,9 +505,7 @@ jobs:
           echo "::error::XUYI production build-meta did not update"
           exit 1
       # One exact commit message and this owner-only CI flag authorize the
-      # one-time 58-model PDF catalog import. The push must carry this exact
-      # release message so the guarded import cannot be silently skipped.
-      # Endpoints are deployed above first.
+      # one-time 58-model PDF catalog import. Endpoints are deployed above first.
       - name: Publish the 58 reviewed factory models to R2 and D1
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish 58 new XUYI products from factory catalog 2026-11-03'
         env:

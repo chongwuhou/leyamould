@@ -13,6 +13,18 @@ import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
+
+# The release process imports post-build enrichers that themselves import
+# site_renderer. Load the authenticated D1 snapshot before any project module
+# can import site_renderer, not only in child build.py processes.
+ROOT=Path(__file__).resolve().parent.parent
+_EARLY_SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
+if _EARLY_SNAPSHOT.is_file():
+    _EARLY_STATE=json.loads(_EARLY_SNAPSHOT.read_text(encoding="utf-8"))
+    if _EARLY_STATE.get("site")=="xuyi-drinkware-site":
+        os.environ["XUYI_BUILD_SNAPSHOT"]=str(_EARLY_SNAPSHOT)
+        os.environ["XUYI_PUBLISH_REVISION"]=str(int(_EARLY_STATE.get("publishRevision",0)))
+
 from admin_route import admin_path as resolve_admin_path
 from plan_model_overflow import plan as plan_model_overflow
 from site_redirects import redirect_lines
@@ -49,6 +61,10 @@ def main():
             fail("Refusing non-XUYI build snapshot")
         env["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
         env["XUYI_PUBLISH_REVISION"]=str(int(state.get("publishRevision",0)))
+        # Post-build enrichers import site_renderer in this same process.
+        # Keep them on the exact D1 snapshot used by build.py and render_locales.py.
+        os.environ["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
+        os.environ["XUYI_PUBLISH_REVISION"]=env["XUYI_PUBLISH_REVISION"]
     # Generate display-only, content-addressed images from authoritative
     # sources. Originals in R2, asset files, and owner CMS selections remain.
     from prepare_responsive_images import prepare as prepare_responsive
@@ -200,6 +216,7 @@ def main():
         "pageSeo":"cloudflare-d1:site_pages" if state.get("pages") else "source-fallback:page-metadata",
         "products":"cloudflare-d1:xuyi_product_content+source-catalog" if state.get("products") else "source-fallback:data/products.json",
         "pageBodies":"cloudflare-d1:xuyi_page_content" if state.get("pageBodies") else "source-fallback:python-page-modules",
+        "blogPosts":"cloudflare-d1:xuyi_blog_posts" if state.get("blogPosts") else "source-fallback:static-editorial-guides",
         "locales":"cloudflare-d1:reviewed-translations" if state.get("translations") else "not-published:no-reviewed-translations"
     }
     metadata={

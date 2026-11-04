@@ -16,7 +16,7 @@ export async function onRequestGet(context){
   const db=context.env.XUYI_DB;
   if(!db)return json({error:"XUYI_DB binding missing"},503);
   try{
-    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo]=await Promise.all([
+    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
@@ -26,7 +26,8 @@ export async function onRequestGet(context){
       list(db,"SELECT route,main_html FROM xuyi_page_content WHERE publication_status='published' ORDER BY route"),
       list(db,"SELECT path,alt_json FROM xuyi_media_alt ORDER BY path LIMIT 12000"),
       list(db,"SELECT id,model,rating,author,review_date,content,status FROM xuyi_product_reviews WHERE status='published' ORDER BY model,review_date DESC,id"),
-      list(db,"SELECT slug,locale,seo_title,meta_description FROM xuyi_product_seo ORDER BY slug,locale")
+      list(db,"SELECT slug,locale,seo_title,meta_description FROM xuyi_product_seo ORDER BY slug,locale"),
+      list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY slug")
     ]);
     const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
     const security=config.admin_security_config?JSON.parse(config.admin_security_config):{};
@@ -35,6 +36,15 @@ export async function onRequestGet(context){
       throw new Error("Invalid XUYI admin route");
     const onlyRoutes=pages.filter(r=>(r.route==="/"||/^\/(?:[a-z0-9_-]+\/)+$/.test(r.route))&&r.route.length<=300);
     const onlyProducts=products.filter(r=>/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(r.model));
+    const onlyBlogPosts=blogPosts.flatMap(r=>{
+      if(typeof r.slug!=="string"||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.slug)
+         ||r.status!=="published"||typeof r.content_json!=="string"||r.content_json.length>100000)return [];
+      try{
+        const post=JSON.parse(r.content_json);
+        if(!post||typeof post!=="object"||Array.isArray(post))return [];
+        return [{...post,slug:r.slug,status:"published",updated_at:r.updated_at||"",published_at:r.published_at||""}];
+      }catch{return [];}
+    });
     return json({
       site:"xuyi-drinkware-site",schemaVersion:1,
       adminPath,
@@ -47,6 +57,7 @@ export async function onRequestGet(context){
       pageBodies:pageBodies.filter(r=>typeof r.route==="string"&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
       products:onlyProducts.map(r=>({model:r.model,content:JSON.parse(r.content_json)})),
+      blogPosts:onlyBlogPosts,
       productSeo:productSeo.filter(r=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.slug)
         && ["en","es","pt","ru","tr"].includes(r.locale)
         && typeof r.seo_title==="string"&&r.seo_title.length<=90

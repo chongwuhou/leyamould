@@ -416,6 +416,21 @@ def generate():
  for slug,title,desc in ARTICLES:
   article_html=page(title,desc,blog_article(slug,title,desc))
   build_url('blog/'+slug+'/index.html',title,enrich_article_html(article_html,slug))
+ # Published D1-only CMS articles need a static shell even when the Pages
+ # Function serves their live English body. The shell is also the source
+ # route required to render any reviewed translated D1 article pages.
+ from blog_cms_static import render as render_cms_blog, enrich as enrich_cms_blog
+ static_blog_slugs={row[0] for row in ARTICLES}
+ d1_blog_posts=[post for post in BUILD_STATE.get("blogPosts",[])
+                if isinstance(post,dict) and post.get("status")=="published"
+                and isinstance(post.get("slug"),str) and post["slug"] not in static_blog_slugs]
+ known_blog_slugs=static_blog_slugs|{post["slug"] for post in d1_blog_posts}
+ for post in d1_blog_posts:
+  slug=post["slug"]
+  body=render_cms_blog(post,known_blog_slugs)
+  article_html=page(post["title"],post["description"],body)
+  article_html=enrich_cms_blog(article_html,post,SITE_ORIGIN)
+  build_url('blog/'+slug+'/index.html',post["title"],article_html)
  notfound=page('Page Not Found | XUYI Bottles','Page not found.',intro('404','Page Not Found','The requested page could not be found.')+'<section class="section"><div class="shell"><a class="button" href="/">Back to Homepage →</a></div></section>')
  notfound=notfound.replace('<meta name="robots" content="index,follow">','<meta name="robots" content="noindex,follow">',1)
  build_url('404.html','404',notfound)
