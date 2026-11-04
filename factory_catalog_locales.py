@@ -5,6 +5,7 @@ import re
 
 
 SOURCE_DOCUMENT = "puyunsm(1).pdf"
+SOURCE_DOCUMENTS = {SOURCE_DOCUMENT, "水杯最新产品.pptx"}
 GRID_OPEN = '<div class="grid grid--4 product-grid">'
 
 CATEGORY_NAMES = {
@@ -85,7 +86,7 @@ def _page_grid_bounds(body: str) -> tuple[int, int] | None:
 def _source_products(series: dict) -> list[dict]:
     rows = []
     for key, product in series.items():
-        if not isinstance(product, dict) or product.get("sourceDocument") != SOURCE_DOCUMENT:
+        if not isinstance(product, dict) or product.get("sourceDocument") not in SOURCE_DOCUMENTS:
             continue
         if product.get("manualNew") is not True:
             continue
@@ -139,7 +140,7 @@ def _render_card(product: dict, locale: str, category_slug: str, translated_rout
 
 
 def catalog_cards(body: str, locale: str, route: str, translated_routes=None, series=None) -> str:
-    """Add localized catalog cards for the 58 factory products without fabricating translated detail pages."""
+    """Add localized catalog cards for source-backed factory products without fabricating translated detail pages."""
     if locale not in LABELS or (route != "/products/" and not route.startswith("/collections/")):
         return body
 
