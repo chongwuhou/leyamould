@@ -15,12 +15,12 @@ sys.path.insert(0,str(ROOT/"scripts"))
 os.environ.setdefault("XUYI_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
 
 from cms_seo_curation_guard import snapshot
-from factory_catalog_locales import LABELS, _source_products, _card_title
+from factory_catalog_locales import LABELS, _source_products, _card_title, catalog_cards as factory_catalog_cards
 from factory_product_locales import SOURCE_DOCUMENTS, translation_for, localized_name
 from seo_structured_components import visible_faq
 from product_source_identity import matches_owner_field
 from product_seo_d1_source import apply_d1_product_seo
-from site_renderer import SERIES
+from site_renderer import SERIES, CAT
 from scripts.source_catalog_capacity_oz import (
     MILLILITERS_PER_US_FL_OZ, LOCALES, catalog_volume_numbers, volume_terms,
     format_oz, current_baseline, new_seo, new_seo_without_capacity,
@@ -155,7 +155,14 @@ for lang in LOCALES:
             heading=unescape(re.sub(r"<[^>]+>"," ",heading_match.group(1))).strip()
             expected_title=_card_title(row,lang)
             if lang=="en":
-                assert heading==expected_title,(lang,slug,"English card title",heading,expected_title)
+                default_titles={localized_name(row,lang),str(row.get("name") or "").strip(),str(row.get("model") or slug).strip()}
+                capacity_text=str(row.get("capacity") or "").strip()
+                if capacity_text:
+                    default_titles.update(capacity_text+" "+value for value in tuple(default_titles) if value)
+                if heading in default_titles:
+                    assert heading==expected_title,(lang,slug,"English default card title was not refreshed",heading,expected_title)
+                else:
+                    assert heading,(lang,slug,"owner-authored English card title must remain nonempty")
             else:
                 assert heading!=localized_name(row,lang),(lang,slug,"generic factory card title",heading)
                 if heading==expected_title and numbers:
@@ -175,6 +182,50 @@ enriched=enrich_catalog_body(card,"en",SERIES)
 assert enriched==enrich_catalog_body(enriched,"en",SERIES)
 assert 'class="product-card__capacity"' in enriched
 assert "wholesale B2B OEM" in enriched
+# The English CMS may provide a D1-owned catalog body. Refresh only an untouched
+# default SKU card title, while retaining an owner-authored replacement.
+card_product=SERIES["2501"]
+card_slug=card_product["slug"]
+card_category=CAT[card_product["category"]][1]
+legacy_card_title=str(card_product.get("capacity") or "")+" "+localized_name(card_product,"en")
+owner_card_title="Owner-approved catalog title for model 2501"
+def catalog_fixture(title):
+    return (
+        '<div class="grid grid--4 product-grid">'
+        '<a class="product-card" data-product-card data-search="legacy catalog" href="/products/'+card_slug+'/">'
+        '<div class="product-card__body"><span class="product-card__small">MODEL 2501</span><h3>'+title+'</h3></div>'
+        '</a></div>'
+    )
+catalog_route="/collections/"+card_category+"/"
+source_card=factory_catalog_cards(catalog_fixture(legacy_card_title),"en",catalog_route,series={"2501":card_product})
+assert _card_title(card_product,"en") in source_card,("English D1 default catalog card title not refreshed",source_card)
+assert source_card==factory_catalog_cards(source_card,"en",catalog_route,series={"2501":card_product})
+owner_card=factory_catalog_cards(catalog_fixture(owner_card_title),"en",catalog_route,series={"2501":card_product})
+assert owner_card_title in owner_card,("English D1 owner-authored catalog title overwritten",owner_card)
+# LO priority cards stay first, but their default title, capacity badge and
+# search terms receive the same source refresh; an owner title remains intact.
+lo_product=SERIES["LO-001"]
+lo_slug=lo_product["slug"]
+lo_category=CAT[lo_product["category"]][1]
+lo_default_title=str(lo_product.get("name") or localized_name(lo_product,"en"))
+lo_owner_title="Owner-approved LO catalog title"
+def lo_catalog_fixture(title):
+    return (
+        '<div class="grid grid--4 product-grid">'
+        '<a class="product-card" data-product-card data-search="legacy LO catalog" href="/products/'+lo_slug+'/">'
+        '<div class="product-card__body"><span class="product-card__small">MODEL LO-001</span><h3>'+title+'</h3></div>'
+        '</a></div>'
+    )
+lo_route="/collections/"+lo_category+"/"
+lo_source_card=factory_catalog_cards(lo_catalog_fixture(lo_default_title),"en",lo_route,series={"LO-001":lo_product})
+assert _card_title(lo_product,"en") in lo_source_card,("LO priority default title not refreshed",lo_source_card)
+assert 'class="product-card__capacity"' in lo_source_card,("LO priority capacity badge missing",lo_source_card)
+assert volume_terms(catalog_volume_numbers(lo_product),"en") in lo_source_card,("LO priority mL/oz missing",lo_source_card)
+assert lo_source_card==factory_catalog_cards(lo_source_card,"en",lo_route,series={"LO-001":lo_product})
+lo_owner_card=factory_catalog_cards(lo_catalog_fixture(lo_owner_title),"en",lo_route,series={"LO-001":lo_product})
+assert lo_owner_title in lo_owner_card,("LO owner-authored catalog title overwritten",lo_owner_card)
+
+
 from scripts.model_catalog_buyer_comparison import SOURCE_MODELS,render_for_product
 comparison_row=SOURCE_MODELS[0]
 comparison_body=source_body_enrichment(body,"en",comparison_row)

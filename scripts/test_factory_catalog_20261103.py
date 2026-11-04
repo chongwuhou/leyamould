@@ -16,12 +16,13 @@ sys.path.insert(0, str(ROOT))
 
 from catalog_extensions import append_new_products, is_factory_catalog_source_default  # noqa: E402
 from factory_catalog_locales import LABELS, catalog_cards, _card_title  # noqa: E402
-from site_renderer import product_card as english_product_card  # noqa: E402
+from factory_product_locales import localized_name  # noqa: E402
+from site_renderer import product_card as english_product_card, CAT  # noqa: E402
 from gallery_catalog import catalog_cards as gallery_catalog_cards  # noqa: E402
 from lo_catalog import catalog_cards as lo_catalog_cards  # noqa: E402
 from product_content import details as product_details, factory_catalog_seo_title  # noqa: E402
 from scripts.cms_seo_curation_guard import current_field  # noqa: E402
-from scripts.source_catalog_capacity_oz import KIND, catalog_volume_numbers, new_seo, volume_terms  # noqa: E402
+from scripts.source_catalog_capacity_oz import KIND, catalog_volume_numbers, new_seo, volume_terms, product_h1_text, verified_source_color_term  # noqa: E402
 
 BUNDLE = json.loads((ROOT / "scripts/fixtures/factory-catalog-import-2026-11-03.json").read_text(encoding="utf-8"))
 IMAGES_ZIP = ROOT / "scripts/fixtures/factory-catalog-images-2026-11-03.zip"
@@ -125,6 +126,7 @@ def main() -> None:
                 assert len(title) <= 60, (locale, model, title)
                 assert len(description) <= 180, (locale, model, description)
     for model, product in series.items():
+        numbers = catalog_volume_numbers(product)
         assert product.get("manualNew") is True
         assert product.get("slug") == model
         assert product.get("images") == [f"/media/product/{expected[model]['imageSha256'][:32]}.webp"]
@@ -133,6 +135,15 @@ def main() -> None:
         assert len(seo_title) <= 60, (model, len(seo_title), seo_title)
         assert str(product.get("factoryModel") or model).upper() in seo_title.upper(), (model, seo_title)
         assert "XUYI" in seo_title, (model, seo_title)
+        if product.get("category") != "Two-Way Drinking Cups":
+            expected_card_title=product_h1_text("en",product)
+            assert _card_title(product,"en")==expected_card_title,(model,"English B2B card title",_card_title(product,"en"),expected_card_title)
+            assert "B2B" in expected_card_title and "Manufacturer" in expected_card_title,(model,expected_card_title)
+            if numbers:
+                assert volume_terms(numbers,"en") in expected_card_title,(model,"card title missing mL/oz",expected_card_title)
+            color=verified_source_color_term("en",product)
+            if color:
+                assert color.casefold() in expected_card_title.casefold(),(model,"card title missing verified color",color,expected_card_title)
         rendered = product_details(product)
         assert "Factory Catalog Source" in rendered, model
         assert MANIFEST["sourceDocument"] in rendered, model
@@ -176,6 +187,15 @@ def main() -> None:
             assert f'href="/{locale}/products/{model}/"' not in localized
             card = re.search(r'<a\b(?=[^>]*data-product-card\b)(?=[^>]*href="/products/'+re.escape(model)+r'/")[^>]*>.*?</a>',localized,re.I|re.S)
             assert card and LABELS[locale]["details"] in card.group(0),(locale,model,"native detail label")
+            row=series[model]
+            if row.get("category") != "Two-Way Drinking Cups":
+                heading=re.search(r"<h3>(.*?)</h3>",card.group(0),re.I|re.S)
+                assert heading,(locale,model,"factory card missing title")
+                title=html.unescape(heading.group(1)).strip()
+                assert title==product_h1_text(locale,row),(locale,model,"localized B2B card title",title)
+                color=verified_source_color_term(locale,row)
+                if color:
+                    assert color.casefold() in title.casefold(),(locale,model,"localized card title missing color",color,title)
         two_way_rows = [row for row in series.values() if row.get("category") == "Two-Way Drinking Cups"]
         assert len(two_way_rows) == 20, ("expected all 20 two-way models", len(two_way_rows))
         two_way_route = "/collections/two-way-drinking-cups/"
@@ -280,6 +300,28 @@ def main() -> None:
             assert 'class="product-card__capacity"' not in card.group(0)
             updated_titles.append(title)
         assert len(set(updated_titles)) == 20, (locale, "existing D1 card titles are not unique")
+    # Non-two-way source cards are upgraded only while their heading is still
+    # the generated default; an owner-authored heading remains untouched.
+    non_two_way=next(row for row in series.values() if row.get("category")!="Two-Way Drinking Cups")
+    collection_route="/collections/"+CAT[non_two_way["category"]][1]+"/"
+    for locale in sorted(LANGUAGES):
+        model=str(non_two_way["model"]).lower()
+        slug=str(non_two_way["slug"])
+        generic=localized_name(non_two_way,locale)
+        existing=f'<a class="product-card" data-product-card data-search="{html.escape(generic)}" href="/products/{slug}/"><div class="product-card__body"><h3>{html.escape(generic)}</h3><span class="product-card__link">View Product ↗</span></div></a>'
+        grid='<div class="grid grid--4 product-grid">'+existing+'</div>'
+        updated=catalog_cards(grid,locale,collection_route,translated_routes,series)
+        card=re.search(r'<a\b(?=[^>]*href="/products/'+re.escape(slug)+r'/")[^>]*>.*?</a>',updated,re.I|re.S)
+        heading=re.search(r"<h3>(.*?)</h3>",card.group(0),re.I|re.S)
+        assert heading and html.unescape(heading.group(1)).strip()==product_h1_text(locale,non_two_way),(locale,model,"generic source card not upgraded")
+        owner_title="Owner selected card headline"
+        owner_card=existing.replace("<h3>"+html.escape(generic)+"</h3>","<h3>"+owner_title+"</h3>")
+        owner_grid='<div class="grid grid--4 product-grid">'+owner_card+'</div>'
+        owner_updated=catalog_cards(owner_grid,locale,collection_route,translated_routes,series)
+        owner_match=re.search(r'<a\b(?=[^>]*href="/products/'+re.escape(slug)+r'/")[^>]*>.*?</a>',owner_updated,re.I|re.S)
+        owner_heading=re.search(r"<h3>(.*?)</h3>",owner_match.group(0),re.I|re.S)
+        assert owner_heading and html.unescape(owner_heading.group(1)).strip()==owner_title,(locale,model,"owner card title overwritten")
+
 
     print(f"PASS: {len(series)} new products, {len(hashes)} unique WebP images, {len(category_counts)} categories.")
 

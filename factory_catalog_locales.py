@@ -306,6 +306,85 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
             grid_content = grid_content[:start] + grid_content[end:]
         priority_cards = [item[2] for item in lo_matches] + [item[2] for item in gallery_matches]
         priority_urls = set(lo_urls + gallery_urls)
+        from product_slug_fix import REVERSE as LEGACY_PRODUCT_SLUGS
+        priority_products = {}
+        for product in products:
+            slug = str(product.get("slug") or product.get("model") or "").strip("/")
+            candidates = [f"/products/{slug}/"]
+            if locale != "en":
+                candidates.append(f"/{locale}/products/{slug}/")
+            legacy_slug = LEGACY_PRODUCT_SLUGS.get(slug)
+            if legacy_slug:
+                candidates.append(f"/products/{legacy_slug}/")
+                if locale != "en":
+                    candidates.append(f"/{locale}/products/{legacy_slug}/")
+            for candidate in candidates:
+                priority_products[candidate] = product
+
+        from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms, verified_source_material
+        from factory_product_locales import localized_name
+
+        def refresh_priority_card(card):
+            opening = card.split(">", 1)[0]
+            href_match = re.search(r'\bhref=["\']([^"\']+)["\']', opening, re.I)
+            product = priority_products.get(href_match.group(1)) if href_match else None
+            if product is None:
+                return card
+
+            slug = str(product.get("slug") or product.get("model") or "").strip("/")
+            title = _card_title(product, locale)
+            heading = re.search(r"<h3\b[^>]*>(.*?)</h3>", card, re.I | re.S)
+            if not heading:
+                raise ValueError("Priority factory product card is missing its title heading: " + slug)
+            current_title = html.unescape(re.sub(r"<[^>]+>", " ", heading.group(1))).strip()
+            default_titles = {
+                localized_name(product, locale),
+                str(product.get("name") or "").strip(),
+                str(product.get("model") or slug).strip(),
+            }
+            capacity_text = str(product.get("capacity") or "").strip()
+            if capacity_text:
+                default_titles.update(capacity_text + " " + value for value in tuple(default_titles) if value)
+            if current_title in default_titles:
+                card, heading_count = re.subn(
+                    r"(<h3\b[^>]*>).*?(</h3>)",
+                    lambda match: match.group(1) + _escape(title) + match.group(2),
+                    card, count=1, flags=re.I | re.S
+                )
+                if heading_count != 1:
+                    raise ValueError("Priority factory product card title update failed: " + slug)
+
+            numbers = catalog_volume_numbers(product)
+            volume = volume_terms(numbers, locale) if numbers else ""
+            if product.get("category") == "Two-Way Drinking Cups":
+                card = re.sub(r'<span class="product-card__capacity">.*?</span>', "", card, count=1, flags=re.I | re.S)
+            elif volume:
+                badge = f'<span class="product-card__capacity">{_escape(volume)}</span>'
+                if re.search(r'<span class="product-card__capacity">.*?</span>', card, re.I | re.S):
+                    card = re.sub(r'<span class="product-card__capacity">.*?</span>', lambda _: badge, card, count=1, flags=re.I | re.S)
+                else:
+                    card, badge_count = re.subn(r"</h3>", "</h3>" + badge, card, count=1, flags=re.I)
+                    if badge_count != 1:
+                        raise ValueError("Priority factory product card capacity badge insertion failed: " + slug)
+
+            factory_model_value = product.get("factoryModel")
+            factory_model = (factory_model_value.strip() if isinstance(factory_model_value, str) and factory_model_value.strip()
+                             else str(product.get("model") or slug))
+            material = verified_source_material(product)
+            search_parts = (
+                title, factory_model, slug, capacity_text, volume, material,
+                "wholesale B2B OEM factory manufacturer custom plastic material options colors bulk"
+            )
+            search_match = re.search(r'\bdata-search="([^"]*)"', card, re.I)
+            existing_search = html.unescape(search_match.group(1)) if search_match else ""
+            search = " ".join(dict.fromkeys((existing_search + " " + " ".join(part for part in search_parts if part)).split()))
+            if search_match:
+                card = re.sub(r'\bdata-search="[^"]*"', lambda _: 'data-search="' + _escape(search) + '"', card, count=1, flags=re.I)
+            else:
+                card = re.sub(r"<a\b", '<a data-search="' + _escape(search) + '"', card, count=1, flags=re.I)
+            return card
+
+        priority_cards = [refresh_priority_card(card) for card in priority_cards]
         # A template may contain both a gallery-priority card and an older
         # ordinary card for the same SKU. Keep the priority copy only.
         for priority_url in priority_urls:
