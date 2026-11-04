@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import collections
 import hashlib
+import html
 import json
 import re
 import sys
@@ -19,7 +20,7 @@ from gallery_catalog import catalog_cards as gallery_catalog_cards  # noqa: E402
 from lo_catalog import catalog_cards as lo_catalog_cards  # noqa: E402
 from product_content import details as product_details, factory_catalog_seo_title  # noqa: E402
 from scripts.cms_seo_curation_guard import current_field  # noqa: E402
-from scripts.source_catalog_capacity_oz import KIND, catalog_volume_numbers, new_seo  # noqa: E402
+from scripts.source_catalog_capacity_oz import KIND, catalog_volume_numbers, new_seo, volume_terms  # noqa: E402
 
 BUNDLE = json.loads((ROOT / "scripts/fixtures/factory-catalog-import-2026-11-03.json").read_text(encoding="utf-8"))
 IMAGES_ZIP = ROOT / "scripts/fixtures/factory-catalog-images-2026-11-03.zip"
@@ -174,6 +175,33 @@ def main() -> None:
             assert f'href="/{locale}/products/{model}/"' not in localized
             card = re.search(r'<a\b(?=[^>]*data-product-card\b)(?=[^>]*href="/products/'+re.escape(model)+r'/")[^>]*>.*?</a>',localized,re.I|re.S)
             assert card and LABELS[locale]["details"] in card.group(0),(locale,model,"native detail label")
+        two_way_rows = [row for row in series.values() if row.get("category") == "Two-Way Drinking Cups"]
+        assert len(two_way_rows) == 20, ("expected all 20 two-way models", len(two_way_rows))
+        two_way_route = "/collections/two-way-drinking-cups/"
+        two_way_gallery = gallery_catalog_cards(empty_grid, locale, two_way_route)
+        two_way_lo = lo_catalog_cards(two_way_gallery, locale, two_way_route)
+        two_way_html = catalog_cards(two_way_lo, locale, two_way_route, translated_routes, series)
+        two_way_titles = []
+        for row in two_way_rows:
+            model = str(row["model"]).lower()
+            card = re.search(
+                r'<a\b(?=[^>]*href="/products/' + re.escape(model) + r'/")[^>]*>.*?</a>',
+                two_way_html, re.I | re.S
+            )
+            assert card, (locale, model, "missing two-way card")
+            heading = re.search(r"<h3>(.*?)</h3>", card.group(0), re.I | re.S)
+            assert heading, (locale, model, "missing product-card title")
+            title = html.unescape(heading.group(1)).strip()
+            assert str(row.get("factoryModel") or model).upper() in title.upper(), (locale, model, title)
+            assert volume_terms(catalog_volume_numbers(row), locale) in title, (locale, model, title)
+            assert title.lower() != "two-way drinking cup", (locale, model, title)
+            two_way_titles.append(title)
+        assert len(set(two_way_titles)) == 20, (locale, "two-way card titles are not unique")
+        if locale == "en":
+            assert any("Manufacturer" in title for title in two_way_titles)
+            assert any("Custom Colors" in title for title in two_way_titles)
+            assert any("Custom Material Options" in title for title in two_way_titles)
+
         category_slugs = {
             item["categorySlug"] for item in MANIFEST["models"]
         }
