@@ -8,6 +8,19 @@ REPAIRS={
  "kids-water-bottles":("/media/ppt/slide-030.webp","/assets/editorial/kids-plastic-bottle.webp")
 }
 
+def apply_to_document(markup,route=None,locale=None):
+    """Repair only reviewed jug/kids category-card image slots."""
+    for category,(old,new) in REPAIRS.items():
+        if not (ROOT/new.lstrip("/")).is_file():raise FileNotFoundError(new)
+        pattern=re.compile(
+            r'(<a class="category" href="/(?:es/|pt/|ru/|tr/)?collections/'
+            +re.escape(category)+r'/"><div class="category__photo"><img src=")'
+            +re.escape(old)+r'(")'
+        )
+        markup=pattern.sub(lambda m:m.group(1)+new+m.group(2),markup)
+    return markup
+
+
 def apply(dist):
     dist=Path(dist)
     results={}
