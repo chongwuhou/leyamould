@@ -187,8 +187,9 @@ def build_url(path,title,content):
    main=gallery_cards(main,"en",route)
    from lo_catalog import catalog_cards
    main=catalog_cards(main,"en",route)
-   from factory_catalog_locales import catalog_cards as factory_catalog_cards
-   main=factory_catalog_cards(main,"en",route)
+   from factory_catalog_locales import catalog_cards as factory_catalog_cards, _page_grid_bounds
+   if _page_grid_bounds(main) is not None:
+    main=factory_catalog_cards(main,"en",route)
   if route.startswith("/products/") and route!="/products/":
    from product_material_performance import inject
    product=next((obj for obj in SERIES.values() if "/products/"+obj["slug"]+"/"==route),None)
