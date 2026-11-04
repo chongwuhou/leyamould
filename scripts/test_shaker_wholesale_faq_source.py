@@ -91,7 +91,7 @@ try:
               "any future complete source rebuild without old editorial copying."
               )+'</p></section>'
         site.BODY_OVERRIDES[route]=owner
-        shell='<html><head><title>CMS page</title></head><body><main id="main-content">'+(
+        shell='<html><head><title>CMS page</title><meta name="description" content="CMS page"><meta property="og:description" content="CMS page"></head><body><main id="main-content">'+(
             actual if route.startswith("/collections/") else faq_source
         )+'</main></body></html>'
         path=route.lstrip("/")+"index.html"
