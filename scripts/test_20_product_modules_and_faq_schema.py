@@ -66,7 +66,11 @@ for sku,peer in PEERS.items():
         else:
             assert pairs==visible_faq(faq_source[2]),(sku,locale,"owner FAQ questions were not preserved")
         scripts=re.findall(r'<script type="application/ld\+json">(.*?)</script>',document,re.S)
-        schemas=[obj for rawj in scripts if isinstance((obj:=json.loads(rawj)),dict) and obj.get("@type")=="FAQPage"]
+        schemas=[]
+        for rawj in scripts:
+            obj=json.loads(rawj)
+            nodes=obj.get("@graph",[]) if isinstance(obj,dict) and isinstance(obj.get("@graph"),list) else [obj]
+            schemas.extend(node for node in nodes if isinstance(node,dict) and node.get("@type")=="FAQPage")
         assert len(schemas)==1,(sku,locale,"FAQPage missing or doubled")
         visible_schema=[(x["name"],x["acceptedAnswer"]["text"]) for x in schemas[0]["mainEntity"]]
         assert visible_schema==pairs,(sku,locale,"FAQ JSON-LD out of sync with visible questions")
