@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Validate XUYI localized release after the reviewed D1 snapshot build."""
 from pathlib import Path
-import json,re,xml.etree.ElementTree as ET
+import json,re,xml.etree.ElementTree as ET,os,sys
 
 ROOT=Path(__file__).resolve().parent.parent
+os.environ.setdefault("XUYI_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
+sys.path.insert(0,str(ROOT))
+from site_renderer import NEW_PRODUCT_COUNT
 DIST=ROOT/"dist"
 info=json.loads((DIST/"build-meta.json").read_text(encoding="utf8"))
 indexable=not info["noindex"]
@@ -72,11 +75,10 @@ if snapshot.is_file():
       (DIST/locale/"products"/row["slug"]/"index.html").is_file() and
       not any(item.get("locale")==locale and item.get("resourceId")=="page:/products/"+row["slug"]+"/"
               for item in data.get("translations",[])))
-    # A legacy product alias can collapse one D1 translation onto its
-    # canonical generated route. Permit at most one such duplicate per locale;
-    # larger drift still fails closed.
-    missing_or_collapsed=(expected+added)-result[locale]
-    assert 0 <= missing_or_collapsed <= 1, (locale,"D1 + LO + gallery photo-reference translation count mismatch",result[locale],expected,added,missing_or_collapsed)
+    # Include the 153 new source-verified factory products generated in every locale.
+    # At most one legacy alias may collapse onto an existing canonical route.
+    missing_or_collapsed=(expected+added+NEW_PRODUCT_COUNT)-result[locale]
+    assert 0 <= missing_or_collapsed <= 1, (locale,"D1 + LO + gallery + new factory product translation count mismatch",result[locale],expected,added,NEW_PRODUCT_COUNT,missing_or_collapsed)
 if sum(result.values()):
  assert all(result.values()),"Partial language release not allowed"
  assert sum(result.values())>=len(result),"Expected approved localized pages"
