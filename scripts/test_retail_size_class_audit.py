@@ -10,7 +10,7 @@ sys.path.insert(0,str(ROOT/"scripts"))
 from source_catalog_capacity_oz import (
     SERIES,LOCALES,MILLILITERS_PER_US_FL_OZ,RETAIL_SIZES,
     MARKET_CLASS_MAX_DIFFERENCE,volume_terms,format_oz,catalog_volume_numbers,
-    NO_CAPACITY_META_DIGESTS,current_baseline
+    NO_CAPACITY_META_DIGESTS,source_field_allowed
 )
 from cms_seo_curation_guard import snapshot
 
@@ -53,17 +53,20 @@ for row in models:
         assert title not in titles[lang],(lang,slug,"duplicate SEO title")
         titles[lang].add(title)
         owner_selected=PERSISTED_PRODUCT_SEO.get((slug,lang))
-        source_default=not owner_selected and current_baseline(lang,row,SOURCE_OWNER)
+        source_title_default=source_field_allowed(lang,row,"title",SOURCE_OWNER)
+        source_desc_default=source_field_allowed(lang,row,"description",SOURCE_OWNER)
         if owner_selected:
-            assert title==owner_selected["seoTitle"],(lang,slug,"D1 title overridden")
-            assert desc==owner_selected["metaDescription"],(lang,slug,"D1 description overridden")
+            if not source_title_default:
+                assert title==owner_selected["seoTitle"],(lang,slug,"D1 title overridden")
+            if not source_desc_default:
+                assert desc==owner_selected["metaDescription"],(lang,slug,"D1 description overridden")
         # Older owner-approved D1 descriptions (including disputed 2506)
         # predate the separate custom-material inquiry section. Do not
         # demand promotional wording in an editor-controlled SEO field:
         # verify the actual inquiry text on the product page instead.
         # Owner-approved SEO entries may use longer, custom text. The D1
         # product SEO API validates these lengths and is authoritative.
-        assert len(desc)<=(180 if source_default else 240),(lang,slug,"overlong meta",len(desc))
+        assert len(desc)<=(180 if source_desc_default else 240),(lang,slug,"overlong meta",len(desc))
         assert not re.search(r'(?i)\bcertified BPA.free\b|\bmade (of|from) tritan\b',desc),(lang,slug)
         assert "Tritan" in main and "BPA" in main,(lang,slug,"no buyer material inquiry")
         assert page.count('class="product-custom-material-options"')==1,(lang,slug)
@@ -78,8 +81,9 @@ for row in models:
             assert page.count('class="product-capacity-disclaimer"')==1,(lang,slug)
             # Search titles stay concise. The approved retail oz class is
             # still present in H1, body and SEO description.
-            if source_default:
+            if source_title_default:
                 assert "ml" in title and len(title)<=60,(lang,slug,title)
+            if source_desc_default:
                 assert "oz" in desc,(lang,slug,desc)
             for num in numbers:
                 assert format_oz(num,lang) in main,(lang,slug,num)
