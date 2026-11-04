@@ -178,36 +178,14 @@ def html_for(row, selection, lang):
         +disclaimer+'</div></section>'
     )
 
-def apply(dist):
-    dist=Path(dist)
-    models=[r for r in SERIES.values() if not r.get("manualNew")]
-    if len(models)<85:
-        raise ValueError(f"Source-catalog baseline models missing: {len(models)}")
-    edits=0
-    for row in models:
-        nearby=peers(row,models)
-        if len(nearby)!=3:
-            raise ValueError("Fewer than 3 approved model alternatives: "+str(row["model"]))
-        for lang in LOCALES:
-            prefix="" if lang=="en" else lang+"/"
-            file=dist/prefix/"products"/str(row["slug"])/"index.html"
-            source=file.read_text(encoding="utf8")
-            # Existing comparison blocks may be a CMS owner revision or a
-            # previous pass of this builder; never replace or duplicate them.
-            existing=source.count('id="catalog-comparison"')
-            if existing>1 or source.count("</main>")!=1:
-                raise ValueError("Unexpected product body: "+str(file))
-            if existing==1:
-                continue
-            content=html_for(row,nearby,lang)
-            for other in nearby:
-                path=dist/prefix/"products"/str(other["slug"])/"index.html"
-                if not path.is_file():
-                    raise FileNotFoundError(str(path))
-            file.write_text(source.replace("</main>",content+"</main>",1),encoding="utf8")
-            edits+=1
-    print("XUYI_MODEL_FACT_BACKED_COMPARISONS",edits,"new;",len(models),"source-catalog models in five locales; existing editor blocks preserved")
-    return edits
+# Only source-catalog rows with a numeric, reviewed capacity can be compared.
+SOURCE_MODELS=[r for r in SERIES.values() if not r.get("manualNew") and capacity_number(r) is not None]
 
-if __name__=="__main__":
-    apply(ROOT/"dist")
+def render_for_product(row,lang):
+    """Return a comparison section for one eligible source-owned product page."""
+    if row.get("manualNew") or capacity_number(row) is None:
+        return ""
+    nearby=peers(row,SOURCE_MODELS)
+    if len(nearby)!=3:
+        return ""
+    return html_for(row,nearby,lang)
