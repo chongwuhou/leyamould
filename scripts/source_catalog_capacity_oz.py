@@ -214,6 +214,52 @@ def verified_source_material(row):
         return ""
     return "/".join(dict.fromkeys(parts))
 
+_COLOR_TERMS = {
+    "en": {"multi":"Multi-Color","gradient":"Gradient","light_blue":"Light Blue","blue":"Blue","black":"Black","white":"White","brown":"Brown","green":"Green","purple":"Purple","pink":"Pink","yellow":"Yellow","red":"Red","transparent":"Transparent","gray":"Gray"},
+    "es": {"multi":"Multicolor","gradient":"Degradado","light_blue":"Azul claro","blue":"Azul","black":"Negro","white":"Blanco","brown":"Marrón","green":"Verde","purple":"Morado","pink":"Rosa","yellow":"Amarillo","red":"Rojo","transparent":"Transparente","gray":"Gris"},
+    "pt": {"multi":"Multicolor","gradient":"Degradê","light_blue":"Azul-claro","blue":"Azul","black":"Preto","white":"Branco","brown":"Marrom","green":"Verde","purple":"Roxo","pink":"Rosa","yellow":"Amarelo","red":"Vermelho","transparent":"Transparente","gray":"Cinza"},
+    "ru": {"multi":"Разноцветный","gradient":"Градиентный","light_blue":"Светло-синий","blue":"Синий","black":"Чёрный","white":"Белый","brown":"Коричневый","green":"Зелёный","purple":"Фиолетовый","pink":"Розовый","yellow":"Жёлтый","red":"Красный","transparent":"Прозрачный","gray":"Серый"},
+    "tr": {"multi":"Çok Renkli","gradient":"Degrade","light_blue":"Açık Mavi","blue":"Mavi","black":"Siyah","white":"Beyaz","brown":"Kahverengi","green":"Yeşil","purple":"Mor","pink":"Pembe","yellow":"Sarı","red":"Kırmızı","transparent":"Şeffaf","gray":"Gri"},
+}
+_COLOR_TOKENS = (
+    ("light blue","light_blue"),("浅蓝","light_blue"),
+    ("gradient","gradient"),("渐变","gradient"),
+    ("transparent","transparent"),("clear","transparent"),("透明","transparent"),
+    ("blue","blue"),("蓝","blue"),("black","black"),("黑","black"),
+    ("white","white"),("白","white"),("brown","brown"),("棕","brown"),
+    ("green","green"),("绿","green"),("purple","purple"),("紫","purple"),
+    ("pink","pink"),("粉","pink"),("yellow","yellow"),("黄","yellow"),
+    ("red","red"),("红","red"),("gray","gray"),("grey","gray"),("灰","gray"),
+)
+
+
+def verified_source_color_term(locale,row):
+    """Return one concise, source-confirmed color modifier; never infer missing colors."""
+    raw=row.get("colors")
+    if isinstance(raw,(list,tuple,set)):
+        raw=" / ".join(str(value) for value in raw)
+    text=str(raw or "").strip()
+    if not text or re.search(r"not specified|not provided|unknown|tbd|to be confirmed|confirm|unspecified|待确认|待核对|未注明|未指定",text,re.I):
+        return ""
+    lowered=text.casefold()
+    found=[]
+    for token,key in _COLOR_TOKENS:
+        matched=(token in text) if any(ord(char)>127 for char in token) else bool(re.search(r"\b"+re.escape(token)+r"\b",lowered))
+        if matched and key not in found:
+            found.append(key)
+    if "light_blue" in found and "blue" in found:
+        found.remove("blue")
+    if not found:
+        return ""
+    if "gradient" in found:
+        key="gradient"
+    elif len(found)>1:
+        key="multi"
+    else:
+        key=found[0]
+    return _COLOR_TERMS.get(locale,_COLOR_TERMS["en"]).get(key,"")
+
+
 def pre_render_verified_meta(page,locale,row,owner_override=None):
     """Run BEFORE writing a CMS-reviewed template page; no dist HTML edit."""
     volumes=catalog_volume_numbers(row)
@@ -266,6 +312,21 @@ TITLE_KIND={
  "ru":{"Plastic Sports Water Bottles":"Спортбутылка","Kids Plastic Water Bottles":"Детская бутылка","Large Capacity Water Jugs":"Большая бутылка","Plastic Shaker Bottles":"Шейкер","Spray Water Bottles":"Бутылка-распылитель","Two-Way Drinking Cups":"Кружка 2-в-1","Titanium Vacuum Cups":"Титановая кружка"},
  "tr":{"Plastic Sports Water Bottles":"Spor matara","Kids Plastic Water Bottles":"Çocuk matara","Large Capacity Water Jugs":"Büyük matara","Plastic Shaker Bottles":"Shaker","Spray Water Bottles":"Spreyli matara","Two-Way Drinking Cups":"Çift içimli bardak","Titanium Vacuum Cups":"Titanyum bardak"},
 }
+TWO_WAY_SEO_KIND={
+ "en":("Dual-Mode Cup","Travel Cup","Seal-Design Cup","Daily-Use Cup","Dual-Drink Cup"),
+ "es":("Vaso doble","Vaso de viaje","Vaso con sello","Vaso diario","Vaso de doble uso"),
+ "pt":("Copo duplo","Copo de viagem","Copo com vedação","Copo diário","Copo de dupla função"),
+ "ru":("Кружка 2-в-1","Дорожная кружка","Кружка с уплотнением","Повседневная кружка","Кружка с двумя режимами"),
+ "tr":("Çift içimli bardak","Seyahat bardağı","Contalı bardak","Günlük bardak","İki içimli bardak"),
+}
+
+def _two_way_seo_kind(locale,row):
+    model=str(row.get("factoryModel") or row.get("model") or row.get("slug") or "")
+    match=re.search(r"(\d+)$",model)
+    ordinal=int(match.group(1)) if match else 1
+    options=TWO_WAY_SEO_KIND[locale]
+    return options[(ordinal-1)%len(options)]
+
 PLASTIC_CATEGORIES={"Plastic Sports Water Bottles","Kids Plastic Water Bottles","Large Capacity Water Jugs","Plastic Shaker Bottles","Spray Water Bottles"}
 PLASTIC_LABEL={"en":"Plastic","es":"Plástico","pt":"Plástico","ru":"Пластик","tr":"Plastik"}
 CUSTOM_PLASTIC_H1={"en":"Custom Plastic","es":"Plástico personalizable","pt":"Plástico personalizável","ru":"Пластик с индивидуальным подбором","tr":"Özelleştirilebilir plastik"}
@@ -314,12 +375,13 @@ def _description(locale,row,numbers):
           "tr":f"B2B toptan titanyum bardak üreticisi. {volume}; model {model}. Titanyum kalitesini, kapağı ve testleri doğrulayın; OEM markalamayı sorun.",
         }
     elif category=="Two-Way Drinking Cups":
+        angle=_two_way_seo_kind(locale,row)
         templates={
-          "en":f"Wholesale two-way cup manufacturer for B2B buyers. {volume}; model {model}. Confirm body, lid and seal materials; ask about OEM logo and bulk packing.",
-          "es":f"Fabricante B2B mayorista de vasos de doble uso. {volume}; modelo {model}. Confirme cuerpo, tapa y junta; consulte logotipo OEM y embalaje.",
-          "pt":f"Fabricante B2B de copos de dupla função para atacado. {volume}; modelo {model}. Confirme corpo, tampa e vedação; consulte logotipo OEM e embalagem.",
-          "ru":f"Производитель кружек 2-в-1 для оптовых B2B-поставок. {volume}; модель {model}. Уточните материалы корпуса и крышки, уплотнение и OEM-логотип.",
-          "tr":f"B2B çift içimli bardak toptan üreticisi. {volume}; model {model}. Gövde, kapak ve conta malzemelerini doğrulayın; OEM logo ve koli seçeneklerini sorun.",
+          "en":f"Wholesale {angle.lower()} manufacturer for B2B buyers. {volume}; model {model}. Confirm body, lid and seal materials; ask about OEM logo and bulk packing.",
+          "es":f"Fabricante B2B mayorista de {angle.lower()}. {volume}; modelo {model}. Confirme cuerpo, tapa y junta; consulte logotipo OEM y embalaje.",
+          "pt":f"Fabricante B2B de {angle.lower()} para atacado. {volume}; modelo {model}. Confirme corpo, tampa e vedação; consulte logotipo OEM e embalagem.",
+          "ru":f"Оптовый B2B-производитель: {angle.lower()}. {volume}; модель {model}. Уточните материалы корпуса и крышки, уплотнение и OEM-логотип.",
+          "tr":f"B2B toptan {angle.lower()} üreticisi. {volume}; model {model}. Gövde, kapak ve conta malzemelerini doğrulayın; OEM logo ve koli seçeneklerini sorun.",
         }
     else:
         templates={
@@ -336,12 +398,13 @@ def _description(locale,row,numbers):
         result=result.replace("Ask about OEM logo",f"Listed {material}; ask about OEM logo") if locale=="en" else result
     if len(result)>180:
         # Shorten only the buyer-language lead; preserve model and mL/oz facts.
+        buyer_kind=_two_way_seo_kind(locale,row) if category=="Two-Way Drinking Cups" else kind
         result={
-          "en":f"B2B wholesale {kind.lower()} OEM factory. {volume}; model {model}. Ask about custom materials, logo and bulk packing; confirm components by SKU.",
-          "es":f"Fabricante B2B OEM de {kind.lower()}. {volume}; modelo {model}. Consulte material, logo y embalaje; confirme piezas por SKU.",
-          "pt":f"Fabricante B2B OEM de {kind.lower()} para atacado. {volume}; modelo {model}. Consulte materiais, logo e embalagem; confirme componentes por SKU.",
-          "ru":f"Оптовый B2B OEM-производитель: {kind.lower()}. {volume}; модель {model}. Уточните материалы, логотип и упаковку по SKU.",
-          "tr":f"B2B {kind} için OEM toptan üretici. {volume}; model {model}. Malzeme, logo ve koli seçeneklerini SKU bazında doğrulayın.",
+          "en":f"B2B wholesale {buyer_kind.lower()} OEM factory. {volume}; model {model}. Ask about custom materials, logo and bulk packing; confirm components by SKU.",
+          "es":f"Fabricante B2B OEM de {buyer_kind.lower()}. {volume}; modelo {model}. Consulte material, logo y embalaje; confirme piezas por SKU.",
+          "pt":f"Fabricante B2B OEM de {buyer_kind.lower()} para atacado. {volume}; modelo {model}. Consulte materiais, logo e embalagem; confirme componentes por SKU.",
+          "ru":f"Оптовый B2B OEM-производитель: {buyer_kind.lower()}. {volume}; модель {model}. Уточните материалы, логотип и упаковку по SKU.",
+          "tr":f"B2B {buyer_kind.lower()} için OEM toptan üretici. {volume}; model {model}. Malzeme, logo ve koli seçeneklerini SKU bazında doğrulayın.",
         }[locale]
     assert len(result)<=180,(locale,row.get("slug"),len(result),result)
     return result
@@ -349,15 +412,20 @@ def _description(locale,row,numbers):
 def new_seo(locale,row,numbers):
     kind=_seo_kind(locale,row)
     model=_short_model(row,locale)
-    volume=_title_volume(numbers,locale)
+    volume=_title_volume(numbers[:1],locale)
     material=title_material(locale,row)
-    short_kind=TITLE_KIND[locale].get(row.get("category",""),kind)
-    # OEM is a concise B2B/manufacturer qualifier. Full wholesale and
-    # manufacturer wording appears in the description and visible H1.
+    base_kind=_two_way_seo_kind(locale,row) if row.get("category")=="Two-Way Drinking Cups" else TITLE_KIND[locale].get(row.get("category",""),kind)
+    color=verified_source_color_term(locale,row)
+    color_kind=base_kind
+    if color and color.casefold() not in base_kind.casefold():
+        color_kind=color+" "+base_kind
+    # Keep OEM in every candidate; use the source-confirmed color only when
+    # the 60-character title limit permits it. The H1 retains the full facts.
     options=[
-        f"{volume} {material+' ' if material else ''}{short_kind} OEM {model} | XUYI",
-        f"{volume} {short_kind} OEM {model} | XUYI",
-        f"{volume} {material+' ' if material else ''}{short_kind} {model} | XUYI",
+        f"{volume} {material+' ' if material else ''}{color_kind} OEM {model} | XUYI",
+        f"{volume} {color_kind} OEM {model} | XUYI",
+        f"{volume} {material+' ' if material else ''}{base_kind} OEM {model} | XUYI",
+        f"{volume} {base_kind} OEM {model} | XUYI",
         f"{volume} {model} OEM | XUYI",
     ]
     title=next((candidate for candidate in options if len(candidate)<=60),None)
@@ -371,10 +439,16 @@ def new_seo_without_capacity(locale,row):
     kind=_seo_kind(locale,row)
     model=_short_model(row,locale)
     material=title_material(locale,row)
-    short_kind=TITLE_KIND[locale].get(row.get("category",""),kind)
+    base_kind=_two_way_seo_kind(locale,row) if row.get("category")=="Two-Way Drinking Cups" else TITLE_KIND[locale].get(row.get("category",""),kind)
+    color=verified_source_color_term(locale,row)
+    color_kind=base_kind
+    if color and color.casefold() not in base_kind.casefold():
+        color_kind=color+" "+base_kind
     options=[
-        f"{material+' ' if material else ''}{short_kind} OEM {model} | XUYI",
-        f"{short_kind} OEM {model} | XUYI",
+        f"{material+' ' if material else ''}{color_kind} OEM {model} | XUYI",
+        f"{color_kind} OEM {model} | XUYI",
+        f"{material+' ' if material else ''}{base_kind} OEM {model} | XUYI",
+        f"{base_kind} OEM {model} | XUYI",
         f"{model} OEM drinkware | XUYI",
     ]
     title=next((candidate for candidate in options if len(candidate)<=60),options[-1])
@@ -434,15 +508,39 @@ def seo_head_without_capacity(head,locale,row,owner_override=None):
 def product_h1_text(locale,row):
     category=row.get("category","")
     kind=_seo_kind(locale,row)
+    color=verified_source_color_term(locale,row)
+    if color and color.casefold() not in kind.casefold():
+        kind=color+" "+kind
     model=slug_label(row,locale)
     material=verified_source_material(row)
     if not material and category in PLASTIC_CATEGORIES:material=CUSTOM_PLASTIC_H1[locale]
     if category=="Titanium Vacuum Cups":material=""
     numbers=catalog_volume_numbers(row)
     volume=volume_terms(numbers,locale) if numbers else ""
-    if category=="Two-Way Drinking Cups" and not material:
-        material_suffix={"en":" · custom material options","es":" · materiales a medida","pt":" · materiais sob medida","ru":" · материалы на заказ","tr":" · özel malzeme seçenekleri"}[locale]
-    else:material_suffix=""
+    if category=="Two-Way Drinking Cups":
+        # Reuse the exact per-SKU feature/size angle shown on the category card.
+        # This keeps the H1 distinct without inventing colors or materials.
+        from factory_catalog_locales import _card_title
+        card_title=_card_title(row,locale)
+        variant,buyer=card_title.split(" | ",1)
+        if volume and variant.startswith(volume+" "):
+            variant=variant[len(volume)+1:]
+        if color and color.casefold() not in variant.casefold():
+            variant=color+" "+variant
+        if locale=="en":
+            lead="Wholesale B2B "+(material+" " if material else "")+variant+" Manufacturer — Model "+model
+        elif locale=="es":
+            lead="Fabricante B2B mayorista de "+(material+" " if material else "")+variant+" — Modelo "+model
+        elif locale=="pt":
+            lead="Fabricante B2B de "+(material+" " if material else "")+variant+" para atacado — Modelo "+model
+        elif locale=="ru":
+            lead="Оптовый B2B-производитель "+(material+" " if material else "")+variant+" — модель "+model
+        else:
+            lead="Toptan B2B "+(material+" " if material else "")+variant+" üreticisi — Model "+model
+        suffix={"en":" · custom material options","es":" · materiales a medida",
+                "pt":" · materiais sob medida","ru":" · материалы на заказ",
+                "tr":" · özel malzeme seçenekleri"}[locale]
+        return lead+(" | "+volume if volume else "")+suffix+" | "+buyer
     if locale=="en":
         lead="Wholesale B2B "+(material+" " if material else "")+kind+" Manufacturer — Model "+model
     elif locale=="es":
@@ -453,8 +551,7 @@ def product_h1_text(locale,row):
         lead="Оптовый B2B-производитель "+(material+" " if material else "")+kind+" — модель "+model
     else:
         lead="Toptan B2B "+(material+" " if material else "")+kind+" üreticisi — Model "+model
-    return lead+(" | "+volume if volume else "")+material_suffix
-
+    return lead+(" | "+volume if volume else "")
 def material_panel(locale,row):
     category=row.get("category","")
     if category in PLASTIC_CATEGORIES:
@@ -541,7 +638,7 @@ def enrich_catalog_body(body,locale,rows):
         if row is None:return match.group(0)
         outer=match.group(1);inner=match.group("body")
         numbers=catalog_volume_numbers(row)
-        if numbers and 'class="product-card__capacity"' not in inner:
+        if numbers and row.get("category")!="Two-Way Drinking Cups" and 'class="product-card__capacity"' not in inner:
             badge='<span class="product-card__capacity">'+escape(volume_terms(numbers,locale))+'</span>'
             inner,n=re.subn(r'(</h3>)',lambda m:m.group(1)+badge,inner,count=1)
         find=re.search(r'\bdata-search="([^"]*)"',outer)

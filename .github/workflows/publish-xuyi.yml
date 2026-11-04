@@ -367,6 +367,7 @@ jobs:
           python scripts/test_seo_multilingual_launch.py
           python scripts/test_priority_seo.py
           python scripts/test_cms_seo_rebuild_policy.py
+          node scripts/test_product_seo_refresh_20261104.mjs
           python scripts/test_source_of_truth_policy.py
           python scripts/test_contextual_share_metadata.py
           python scripts/test_curated_catalog_meta_clarity.py
@@ -515,6 +516,37 @@ jobs:
             sleep 15
           done
           echo "::error::XUYI production build-meta did not update"
+          exit 1
+      - name: Refresh reviewed product SEO rows in XUYI D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Refresh reviewed product SEO metadata to B2B manufacturer copy 2026-11-04'
+        id: product_seo_refresh
+        run: python scripts/promote_product_seo_refresh_20261104.py
+      - name: Rebuild from refreshed D1 and publish the product SEO update
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Refresh reviewed product SEO metadata to B2B manufacturer copy 2026-11-04'
+        env:
+          XUYI_PUBLISH_REVISION: ${{ steps.product_seo_refresh.outputs.revision }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/fetch_build_snapshot.py
+          python scripts/build_release.py
+          python scripts/test_release.py
+          python scripts/test_product_seo_d1_authority.py
+          python scripts/test_source_catalog_capacity_oz.py
+          python scripts/test_factory_catalog_20261103.py
+          python scripts/test_localized_release.py
+          python scripts/test_source_sitemap_titles_h1_images.py
+          python scripts/test_product_seo_title_oz_release.py
+          node scripts/test_product_seo_refresh_20261104.mjs
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?seo_refresh=$attempt&sha=$GITHUB_SHA" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.pagesProject==='xuyi-drinkware-site'&&v.sourceRevision===process.env.GITHUB_SHA&&Number(v.publishRevision)>=Number(process.env.XUYI_PUBLISH_REVISION)?0:1)})"; then
+              echo "XUYI refreshed D1 product SEO revision verified"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::XUYI refreshed product SEO build-meta did not update"
           exit 1
       # One exact commit message and this owner-only CI flag authorize the
       # one-time 58-model PDF catalog import. Endpoints are deployed above first.

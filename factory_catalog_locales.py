@@ -132,10 +132,10 @@ TWO_WAY_BUYER = {
 
 
 def _card_title(product: dict, locale: str) -> str:
-    """Create distinct, source-grounded two-way cup titles for factory buyers."""
+    """Create distinct, source-grounded B2B product titles for factory buyers."""
     if product.get("category") != "Two-Way Drinking Cups":
-        from factory_product_locales import localized_name
-        return localized_name(product, locale)
+        from scripts.source_catalog_capacity_oz import product_h1_text
+        return product_h1_text(locale, product)
 
     from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms
 
@@ -326,19 +326,23 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
             default_link = "View Product ↗"
             label = LABELS[locale]["details"] if href in translated else LABELS[locale]["english"]
             card = card.replace(default_link, _escape(label) + " ↗", 1)
+            from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms, verified_source_material
+            factory_model_value = product.get("factoryModel")
+            factory_model = (factory_model_value.strip() if isinstance(factory_model_value, str) and factory_model_value.strip()
+                             else str(product.get("model") or slug))
+            numbers = catalog_volume_numbers(product)
+            volume = volume_terms(numbers, locale) if numbers else ""
+            material = verified_source_material(product)
+            title = _card_title(product, locale)
+            search_parts = (
+                title, factory_model, slug, str(product.get("capacity") or ""), volume, material,
+                "wholesale B2B OEM factory manufacturer custom plastic material options colors bulk"
+            )
+            search_match = re.search(r'\bdata-search="([^"]*)"', card, re.I)
+            existing_search = html.unescape(search_match.group(1)) if search_match else ""
+            generated_search = " ".join(part for part in search_parts if part)
+            search = " ".join(dict.fromkeys((existing_search + " " + generated_search).split()))
             if product.get("category") == "Two-Way Drinking Cups":
-                from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms, verified_source_material
-                factory_model_value = product.get("factoryModel")
-                factory_model = (factory_model_value.strip() if isinstance(factory_model_value, str) and factory_model_value.strip()
-                                 else str(product.get("model") or slug))
-                numbers = catalog_volume_numbers(product)
-                volume = volume_terms(numbers, locale) if numbers else ""
-                material = verified_source_material(product)
-                title = _card_title(product, locale)
-                search = " ".join(part for part in (
-                    title, factory_model, slug, str(product.get("capacity") or ""), volume, material,
-                    "wholesale B2B OEM factory manufacturer custom plastic material options"
-                ) if part)
                 card, heading_count = re.subn(
                     r"(<h3\b[^>]*>).*?(</h3>)",
                     lambda match: match.group(1) + _escape(title) + match.group(2),
@@ -355,13 +359,28 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
                 if model_count != 1:
                     raise ValueError("Two-way product card is missing its model label: " + slug)
                 card = re.sub(r'<span class="product-card__capacity">.*?</span>', "", card, count=1, flags=re.I | re.S)
-                card, search_count = re.subn(
-                    r'\bdata-search="[^"]*"', 
-                    lambda _: 'data-search="' + _escape(search) + '"',
-                    card, count=1, flags=re.I | re.S
-                )
-                if search_count != 1:
-                    card = re.sub(r"<a\b", '<a data-search="' + _escape(search) + '"', card, count=1, flags=re.I)
+            else:
+                heading = re.search(r"<h3\b[^>]*>(.*?)</h3>", card, re.I | re.S)
+                if not heading:
+                    raise ValueError("Factory product card is missing its title heading: " + slug)
+                current_title = html.unescape(re.sub(r"<[^>]+>", " ", heading.group(1))).strip()
+                from factory_product_locales import localized_name
+                default_titles = {localized_name(product, locale), str(product.get("name") or "").strip(), str(product.get("model") or slug).strip()}
+                if current_title in default_titles:
+                    card, heading_count = re.subn(
+                        r"(<h3\b[^>]*>).*?(</h3>)",
+                        lambda match: match.group(1) + _escape(title) + match.group(2),
+                        card, count=1, flags=re.I | re.S
+                    )
+                    if heading_count != 1:
+                        raise ValueError("Factory product card title update failed: " + slug)
+            card, search_count = re.subn(
+                r'\bdata-search="[^"]*"',
+                lambda _: 'data-search="' + _escape(search) + '"',
+                card, count=1, flags=re.I | re.S
+            )
+            if search_count != 1:
+                card = re.sub(r"<a\b", '<a data-search="' + _escape(search) + '"', card, count=1, flags=re.I)
             cards.append(card)
         else:
             category_slug = CAT[product["category"]][1]

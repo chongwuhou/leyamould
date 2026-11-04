@@ -15,8 +15,8 @@ sys.path.insert(0,str(ROOT/"scripts"))
 os.environ.setdefault("XUYI_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
 
 from cms_seo_curation_guard import snapshot
-from factory_catalog_locales import LABELS, _source_products
-from factory_product_locales import SOURCE_DOCUMENTS, translation_for
+from factory_catalog_locales import LABELS, _source_products, _card_title
+from factory_product_locales import SOURCE_DOCUMENTS, translation_for, localized_name
 from seo_structured_components import visible_faq
 from product_source_identity import matches_owner_field
 from product_seo_d1_source import apply_d1_product_seo
@@ -25,6 +25,7 @@ from scripts.source_catalog_capacity_oz import (
     MILLILITERS_PER_US_FL_OZ, LOCALES, catalog_volume_numbers, volume_terms,
     format_oz, current_baseline, new_seo, new_seo_without_capacity,
     product_h1_text, source_body_enrichment, enrich_catalog_body, source_field_allowed,
+    verified_source_color_term,
 )
 
 DIST=ROOT/"dist"
@@ -140,13 +141,30 @@ for lang in LOCALES:
         assert "B2B" in card and "OEM" in card,(lang,slug,"procurement search terms")
         numbers=catalog_volume_numbers(row)
         if numbers:
-            assert card.count('class="product-card__capacity"')==1,(lang,slug,"capacity badge")
-            assert volume_terms(numbers,lang) in card,(lang,slug,"capacity label")
+            if row.get("category")=="Two-Way Drinking Cups":
+                assert 'class="product-card__capacity"' not in card,(lang,slug,"two-way capacity should be in title")
+                assert volume_terms(numbers,lang) in card,(lang,slug,"two-way title capacity")
+            else:
+                assert card.count('class="product-card__capacity"')==1,(lang,slug,"capacity badge")
+                assert volume_terms(numbers,lang) in card,(lang,slug,"capacity label")
         else:
             assert 'class="product-card__capacity"' not in card,(lang,slug,"unexpected capacity badge")
+        if lang=="en" or row.get("sourceDocument") in SOURCE_DOCUMENTS:
+            heading_match=re.search(r"<h3\b[^>]*>(.*?)</h3>",card,re.S)
+            assert heading_match,(lang,slug,"missing visible product title")
+            heading=unescape(re.sub(r"<[^>]+>"," ",heading_match.group(1))).strip()
+            expected_title=_card_title(row,lang)
+            if lang=="en":
+                assert heading==expected_title,(lang,slug,"English card title",heading,expected_title)
+            else:
+                assert heading!=localized_name(row,lang),(lang,slug,"generic factory card title",heading)
+                if heading==expected_title and numbers:
+                    assert volume_terms(numbers,lang) in heading,(lang,slug,"localized card title missing mL/oz")
+            color=verified_source_color_term(lang,row)
+            if color and heading==expected_title:
+                assert color.casefold() in heading.casefold(),(lang,slug,"verified color missing from card title",color,heading)
         if lang!="en" and row.get("sourceDocument") in SOURCE_DOCUMENTS:
             assert LABELS[lang]["details"] in card,(lang,slug,"native detail link label")
-
 # Source renderers are idempotent and never append duplicate panels or badges.
 sample=next(row for row in new_rows if catalog_volume_numbers(row))
 body='<section class="product-overview"><table class="spec"></table></section>'
@@ -184,6 +202,20 @@ assert "1500ml" in new_seo("en",future,(1500.0,))[0]
 assert "50 oz class" in new_seo("en",future,(1500.0,))[1]
 assert "capacity to be confirmed" in new_seo_without_capacity("en",{**future,"capacity":""})[1].lower()
 assert "B2B" in product_h1_text("en",sample) and "Manufacturer" in product_h1_text("en",sample)
+two_way_products=[row for row in SERIES.values() if row.get("category")=="Two-Way Drinking Cups"]
+from factory_catalog_locales import _card_title
+for locale in LOCALES:
+    two_way_h1=[product_h1_text(locale,row) for row in two_way_products]
+    assert len(two_way_h1)==20 and len(set(two_way_h1))==20,(locale,"two-way H1 uniqueness")
+    for row,heading in zip(two_way_products,two_way_h1):
+        card_title=_card_title(row,locale)
+        variant,buyer=card_title.split(" | ",1)
+        volume=volume_terms(catalog_volume_numbers(row),locale)
+        if volume and variant.startswith(volume+" "):
+            variant=variant[len(volume)+1:]
+        assert variant in heading,(locale,row["slug"],"two-way H1 missing source feature modifier",heading,variant)
+        assert buyer in heading,(locale,row["slug"],"two-way H1 missing B2B buyer modifier",heading,buyer)
+        assert volume in heading,(locale,row["slug"],"two-way H1 missing mL/oz capacity",heading,volume)
 assert not matches_owner_field("Owner-authored gallery H1","g-02","en",0,False)
 # A single D1 title edit must not block source refresh of the still-baseline description.
 owner_test=deepcopy(original)

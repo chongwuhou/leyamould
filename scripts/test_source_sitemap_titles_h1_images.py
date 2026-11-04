@@ -9,10 +9,11 @@ SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
 if SNAPSHOT.is_file():os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES,BUILD_STATE
+from factory_product_locales import SOURCE_DOCUMENTS
 from catalog_extensions import is_factory_catalog_source_default
 from product_source_identity import source_product_identity,main_image_alt,matches_owner_field
 from sitemap_modification import source_lastmod,BASELINE,review_change_dates
-from scripts.source_catalog_capacity_oz import new_seo,catalog_volume_numbers,verified_source_material,source_field_allowed
+from scripts.source_catalog_capacity_oz import new_seo,catalog_volume_numbers,verified_source_material,source_field_allowed,product_h1_text,verified_source_color_term
 DIST=ROOT/"dist"
 D1_PRODUCT_SEO={(str(row.get("slug") or ""),str(row.get("locale") or "")):row
                 for row in BUILD_STATE.get("productSeo",[]) if isinstance(row,dict)}
@@ -50,10 +51,10 @@ for loc in ("en","es","pt","ru","tr"):
     all_h1=[]
     all_main={}
     for row in SERIES.values():
-        # The 58 newly reviewed PDF products intentionally publish one English
-        # source detail page; all four localized catalog cards link to it until
-        # their translations are separately reviewed and approved.
-        if loc!="en" and row.get("manualNew") and row.get("sourceDocument"):
+        # Approved PDF/PPT source models now have native, source-generated
+        # detail pages in all five languages. Unknown future source documents
+        # remain English-only until added to the reviewed locale renderer.
+        if loc!="en" and row.get("manualNew") and row.get("sourceDocument") and row.get("sourceDocument") not in SOURCE_DOCUMENTS:
             continue
         slug=row["slug"]
         route=DIST/path_prefix/"products"/slug/"index.html"
@@ -79,6 +80,9 @@ for loc in ("en","es","pt","ru","tr"):
         assert h1,(loc,slug,"missing H1")
         heading=unescape(re.sub(r"<[^>]+>"," ",h1.group(1))).strip()
         assert heading,(loc,slug,"empty H1")
+        color=verified_source_color_term(loc,row)
+        if color and (row.get("sourceDocument") in SOURCE_DOCUMENTS or heading==product_h1_text(loc,row)):
+            assert color.casefold() in heading.casefold(),(loc,slug,"verified source color missing from H1",color,heading)
         all_h1.append(heading)
         if loc=="en" and row["images"][0]=="/media/gallery/2095-01.webp":
             assert "2095" in heading
@@ -100,7 +104,12 @@ for loc in ("en","es","pt","ru","tr"):
             assert "PP/PC" in doc
     assert len(all_h1)==len(set(all_h1)),(loc,len(set(all_h1)),len(all_h1))
     seen_langs[loc]={"products":len(all_h1),"distinctH1":len(set(all_h1))}
-assert seen_langs["en"]["products"]>=101
+expected_products=sum(
+    1 for row in SERIES.values()
+    if not (row.get("manualNew") and row.get("sourceDocument") and row.get("sourceDocument") not in SOURCE_DOCUMENTS)
+)
+for loc in ("en","es","pt","ru","tr"):
+    assert seen_langs[loc]["products"]==expected_products,(loc,seen_langs[loc],expected_products)
 # A later CMS editor can replace both image alt and heading on a known D1
 # product without a source fallback changing either of those fields.
 row=SERIES["2095"]
