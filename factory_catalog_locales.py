@@ -78,16 +78,61 @@ TWO_WAY_ANGLE = {
 }
 
 TWO_WAY_BUYER = {
-    "en": ("OEM Wholesale Manufacturer", "Factory OEM Supplier", "B2B Custom Branding", "Ask About Custom Colors", "Ask About Custom Material Options"),
-    "es": ("Fabricante OEM para mayoristas", "Proveedor OEM de fábrica", "Personalización B2B de marca", "Consulte colores personalizados", "Consulte materiales a medida"),
-    "pt": ("Fabricante OEM para atacado", "Fornecedor OEM de fábrica", "Personalização B2B de marca", "Consulte cores personalizadas", "Consulte materiais sob medida"),
-    "ru": ("Оптовый OEM-производитель", "Заводской OEM-поставщик", "B2B-брендинг под заказ", "Уточните индивидуальные цвета", "Уточните материалы на заказ"),
-    "tr": ("Toptan OEM üreticisi", "Fabrika OEM tedarikçisi", "B2B özel markalama", "Özel renk seçeneklerini sorun", "Özel malzeme seçeneklerini sorun"),
+    "en": (
+        "OEM Wholesale Manufacturer", "Factory OEM Supplier", "B2B Custom Branding",
+        "Ask About Custom Colors", "Ask About Custom Materials",
+        "Wholesale Drinkware Supplier", "Bulk Two-Way Cup Orders", "Private Label OEM Factory",
+        "Custom Logo Cup Manufacturer", "Promotional Drinkware Wholesale",
+        "OEM Cup Production Partner", "Factory-Direct Bulk Supply", "B2B Travel Cup Sourcing",
+        "Custom Color OEM Options", "Material Options for OEM Orders", "Wholesale Retail Cup Supply",
+        "Private Label Drinkware Supplier", "Bulk Promotional Cup Sourcing",
+        "Custom Branding Cup Factory", "OEM Two-Way Cup Wholesale",
+    ),
+    "es": (
+        "Fabricante OEM para mayoristas", "Proveedor OEM de fábrica", "Marca personalizada B2B",
+        "Consulte colores personalizados", "Consulte materiales personalizados",
+        "Proveedor mayorista de vasos", "Pedidos al por mayor de vasos 2 vías", "Fábrica OEM de marca privada",
+        "Fabricante de vasos con logotipo", "Vasos promocionales al por mayor",
+        "Socio de producción OEM", "Suministro directo de fábrica", "Abastecimiento B2B de vasos de viaje",
+        "Opciones OEM de color personalizado", "Materiales para pedidos OEM", "Suministro mayorista para tiendas",
+        "Proveedor de vasos de marca privada", "Compra al por mayor de vasos promocionales",
+        "Fábrica de vasos con marca personalizada", "Vasos 2 vías OEM al por mayor",
+    ),
+    "pt": (
+        "Fabricante OEM para atacado", "Fornecedor OEM de fábrica", "Marca personalizada B2B",
+        "Consulte cores personalizadas", "Consulte materiais personalizados",
+        "Fornecedor atacadista de copos", "Pedidos em volume de copos dupla função", "Fábrica OEM de marca própria",
+        "Fabricante de copos com logotipo", "Copos promocionais no atacado",
+        "Parceiro de produção OEM", "Fornecimento direto da fábrica", "Compra B2B de copos para viagem",
+        "Opções OEM de cores personalizadas", "Materiais para pedidos OEM", "Fornecimento atacadista para varejo",
+        "Fornecedor de copos de marca própria", "Compra em volume de copos promocionais",
+        "Fábrica de copos com marca personalizada", "Copos dupla função OEM no atacado",
+    ),
+    "ru": (
+        "Оптовый OEM-производитель", "Заводской OEM-поставщик", "B2B-брендинг под заказ",
+        "Уточните варианты цветов", "Уточните варианты материалов",
+        "Оптовый поставщик посуды", "Оптовые заказы кружек 2-в-1", "OEM-завод для частных марок",
+        "Производитель кружек с логотипом", "Промокружки оптом",
+        "Партнёр OEM-производства", "Прямые поставки с завода", "B2B-закупка дорожных кружек",
+        "OEM-варианты индивидуальных цветов", "Материалы для OEM-заказов", "Оптовые поставки для розницы",
+        "Поставщик кружек под своей маркой", "Оптовая закупка промокружек",
+        "Заводская брендированная продукция", "Кружки 2-в-1 OEM оптом",
+    ),
+    "tr": (
+        "Toptan OEM üreticisi", "Fabrika OEM tedarikçisi", "B2B özel markalama",
+        "Özel renkleri sorun", "Özel malzemeleri sorun",
+        "Toptan içecek gereçleri tedarikçisi", "Çift içimli bardak toplu siparişi", "Özel markalı OEM fabrikası",
+        "Logolu bardak üreticisi", "Promosyon bardak toptan satışı",
+        "OEM üretim ortağı", "Fabrikadan doğrudan toplu tedarik", "B2B seyahat bardağı tedariki",
+        "Özel renk OEM seçenekleri", "OEM siparişleri için malzemeler", "Perakende için toptan tedarik",
+        "Özel markalı bardak tedarikçisi", "Toplu promosyon bardağı tedariki",
+        "Özel markalı bardak fabrikası", "OEM çift içimli bardak toptan",
+    ),
 }
 
 
 def _card_title(product: dict, locale: str) -> str:
-    """Give factory catalog cards model-specific buyer titles without inventing SKU facts."""
+    """Create distinct, source-grounded two-way cup titles for factory buyers."""
     if product.get("category") != "Two-Way Drinking Cups":
         from factory_product_locales import localized_name
         return localized_name(product, locale)
@@ -98,14 +143,19 @@ def _card_title(product: dict, locale: str) -> str:
     if not numbers:
         raise ValueError("Two-way factory product needs a source-verified capacity: " + str(product.get("model")))
     model = str(product.get("factoryModel") or product.get("model") or product.get("slug") or "").strip().upper()
-    if not model:
-        raise ValueError("Two-way factory product needs a model identifier")
     match = re.search(r"(\d+)$", model)
-    index = (int(match.group(1)) - 1) % 5 if match else 0
+    if not match:
+        raise ValueError("Two-way factory product needs a numeric factory model: " + model)
+    ordinal = int(match.group(1))
     size_value = max(numbers)
     size = next(label for upper, label in TWO_WAY_SIZE[locale] if size_value <= upper)
     volume = volume_terms(numbers, locale)
-    return f"{volume} {size} {TWO_WAY_ANGLE[locale][index]} | {TWO_WAY_BUYER[locale][index]} · {model}"
+    angle = TWO_WAY_ANGLE[locale][(ordinal - 1) % len(TWO_WAY_ANGLE[locale])]
+    buyer = TWO_WAY_BUYER[locale][(ordinal - 1) % len(TWO_WAY_BUYER[locale])]
+    return f"{volume} {size} {angle} | {buyer}"
+
+
+
 
 
 def _escape(value: object) -> str:
@@ -276,6 +326,42 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
             default_link = "View Product ↗"
             label = LABELS[locale]["details"] if href in translated else LABELS[locale]["english"]
             card = card.replace(default_link, _escape(label) + " ↗", 1)
+            if product.get("category") == "Two-Way Drinking Cups":
+                from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms, verified_source_material
+                factory_model_value = product.get("factoryModel")
+                factory_model = (factory_model_value.strip() if isinstance(factory_model_value, str) and factory_model_value.strip()
+                                 else str(product.get("model") or slug))
+                numbers = catalog_volume_numbers(product)
+                volume = volume_terms(numbers, locale) if numbers else ""
+                material = verified_source_material(product)
+                title = _card_title(product, locale)
+                search = " ".join(part for part in (
+                    title, factory_model, slug, str(product.get("capacity") or ""), volume, material,
+                    "wholesale B2B OEM factory manufacturer custom plastic material options"
+                ) if part)
+                card, heading_count = re.subn(
+                    r"(<h3\b[^>]*>).*?(</h3>)",
+                    lambda match: match.group(1) + _escape(title) + match.group(2),
+                    card, count=1, flags=re.I | re.S
+                )
+                if heading_count != 1:
+                    raise ValueError("Two-way product card is missing its title heading: " + slug)
+                small = f'{LABELS[locale]["model"]} {_escape(factory_model)}'
+                card, model_count = re.subn(
+                    r'(<span class="product-card__small">).*?(</span>)',
+                    lambda match: match.group(1) + small + match.group(2),
+                    card, count=1, flags=re.I | re.S
+                )
+                if model_count != 1:
+                    raise ValueError("Two-way product card is missing its model label: " + slug)
+                card = re.sub(r'<span class="product-card__capacity">.*?</span>', "", card, count=1, flags=re.I | re.S)
+                card, search_count = re.subn(
+                    r'\bdata-search="[^"]*"', 
+                    lambda _: 'data-search="' + _escape(search) + '"',
+                    card, count=1, flags=re.I | re.S
+                )
+                if search_count != 1:
+                    card = re.sub(r"<a\b", '<a data-search="' + _escape(search) + '"', card, count=1, flags=re.I)
             cards.append(card)
         else:
             category_slug = CAT[product["category"]][1]
