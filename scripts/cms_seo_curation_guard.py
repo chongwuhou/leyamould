@@ -39,10 +39,28 @@ def current_field(locale,route,field,snapshot_data=None):
     data=snapshot() if snapshot_data is None else snapshot_data
     if data is None:
         return None
+    seo_key="seoTitle" if field=="title" else "metaDescription"
+
+    def product_seo_value(product_route):
+        if not product_route.startswith("/products/"):
+            return None
+        sku=product_route.strip("/").split("/")[-1]
+        seo_row=next((x for x in data.get("productSeo",[])
+                      if x.get("slug")==sku and x.get("locale")==locale),None)
+        value=(seo_row or {}).get(seo_key)
+        return value if isinstance(value,str) and value.strip() else None
+
+    # The exact canonical productSeo key is authoritative before any legacy
+    # slug fallback. A canonical D1 row can exist before its old page alias is
+    # removed; resolving the alias first would compare a different SKU's SEO.
+    if route.startswith("/products/"):
+        exact=product_seo_value(route)
+        if exact is not None:
+            return exact
+
     # Five catalog variants were published with malformed legacy slugs.
-    # Keep the D1 owner's existing SEO under the old key while the public
-    # canonical URL changes. If an editor later creates the new-route record,
-    # that direct edit takes precedence over the historical alias.
+    # Keep their D1 SEO under the old key only when no exact canonical product
+    # SEO row or direct CMS page/translation exists.
     from product_slug_fix import REVERSE
     if route.startswith("/products/"):
         clean_slug=route.removeprefix("/products/").strip("/")
@@ -55,18 +73,12 @@ def current_field(locale,route,field,snapshot_data=None):
                            x.get("resourceId")=="page:"+route
                            for x in data.get("translations",[]))
             if not direct:
-                route="/products/"+legacy+"/"
-    # The dedicated D1 productSeo table is applied after page/product
-    # defaults by product_seo_d1_source.py, so it is the first authority
-    # for product title and description in every locale.
-    if route.startswith("/products/"):
-        sku=route.strip("/").split("/")[-1]
-        seo_row=next((x for x in data.get("productSeo",[])
-                      if x.get("slug")==sku and x.get("locale")==locale),None)
-        seo_key="seoTitle" if field=="title" else "metaDescription"
-        seo_value=(seo_row or {}).get(seo_key)
-        if isinstance(seo_value,str) and seo_value.strip():
-            return seo_value
+                legacy_route="/products/"+legacy+"/"
+                legacy_value=product_seo_value(legacy_route)
+                if legacy_value is not None:
+                    return legacy_value
+                route=legacy_route
+
     if locale=="en":
         row=next((x for x in data.get("pages",[]) if x.get("route")==route),None)
         if route.startswith("/products/"):
@@ -85,7 +97,6 @@ def current_field(locale,route,field,snapshot_data=None):
     row=next((x.get("content",{}) for x in data.get("translations",[])
               if x.get("locale")==locale and x.get("resourceId")=="page:"+route),{})
     return row.get(field)
-
 def may_curate(locale,route,field,snapshot_data=None,baseline_data=None):
     """True only for unchanged original CMS copy; unknown edits are preserved."""
     data=snapshot() if snapshot_data is None else snapshot_data
