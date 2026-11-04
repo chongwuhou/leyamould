@@ -669,6 +669,9 @@ def main():
 
             fields={**fields,"mainHtml":reviewed_localized_article(fields["mainHtml"],route,loc,source_original=original_owner_body)}
 
+        from blog_meta_description_overrides import apply as apply_blog_meta_description_override
+        fields=apply_blog_meta_description_override(fields,route,loc,translated)
+
         original=(DIST/route.lstrip("/")/"index.html" if route!="/" else DIST/"index.html").read_text(encoding="utf-8")
 
         if '<main id="main-content">' not in original:continue
