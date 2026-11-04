@@ -15,7 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from catalog_extensions import append_new_products, is_factory_catalog_source_default  # noqa: E402
-from factory_catalog_locales import LABELS, catalog_cards  # noqa: E402
+from factory_catalog_locales import LABELS, catalog_cards, _card_title  # noqa: E402
+from site_renderer import product_card as english_product_card  # noqa: E402
 from gallery_catalog import catalog_cards as gallery_catalog_cards  # noqa: E402
 from lo_catalog import catalog_cards as lo_catalog_cards  # noqa: E402
 from product_content import details as product_details, factory_catalog_seo_title  # noqa: E402
@@ -192,15 +193,13 @@ def main() -> None:
             heading = re.search(r"<h3>(.*?)</h3>", card.group(0), re.I | re.S)
             assert heading, (locale, model, "missing product-card title")
             title = html.unescape(heading.group(1)).strip()
-            assert str(row.get("factoryModel") or model).upper() in title.upper(), (locale, model, title)
+            small = re.search(r'<span class="product-card__small">(.*?)</span>', card.group(0), re.I | re.S)
+            assert small and str(row.get("factoryModel") or model).upper() in html.unescape(small.group(1)).upper(), (locale, model, small.group(1) if small else None)
             assert volume_terms(catalog_volume_numbers(row), locale) in title, (locale, model, title)
             assert title.lower() != "two-way drinking cup", (locale, model, title)
+            assert 'class="product-card__capacity"' not in card.group(0), (locale, model, "duplicate capacity badge")
             two_way_titles.append(title)
         assert len(set(two_way_titles)) == 20, (locale, "two-way card titles are not unique")
-        if locale == "en":
-            assert any("Manufacturer" in title for title in two_way_titles)
-            assert any("Custom Colors" in title for title in two_way_titles)
-            assert any("Custom Material Options" in title for title in two_way_titles)
 
         category_slugs = {
             item["categorySlug"] for item in MANIFEST["models"]
@@ -226,6 +225,61 @@ def main() -> None:
                 locale, category_slug, "LO/gallery category cards must remain first"
             )
             assert category_html.count('data-new-product="true"') == category_count + expected_lo_category_count
+
+    two_way_rows = [row for row in series.values() if row.get("category") == "Two-Way Drinking Cups"]
+    assert len(two_way_rows) == 20, ("expected all 20 two-way models", len(two_way_rows))
+    english_titles = []
+    for row in two_way_rows:
+        model = str(row["model"]).lower()
+        card = english_product_card(row)
+        heading = re.search(r"<h3>(.*?)</h3>", card, re.I | re.S)
+        small = re.search(r'<span class="product-card__small">(.*?)</span>', card, re.I | re.S)
+        assert heading and small, ("English source card missing title/model", model)
+        title = html.unescape(heading.group(1)).strip()
+        factory_model = str(row.get("factoryModel") or model).upper()
+        assert factory_model in html.unescape(small.group(1)).upper(), ("English model label", model, small.group(1))
+        assert volume_terms(catalog_volume_numbers(row), "en") in title, ("English card capacity", model, title)
+        assert title == _card_title(row, "en"), ("English card title mismatch", model, title)
+        assert title.lower() != "two-way drinking cup", ("generic English card title", model)
+        assert 'class="product-card__capacity"' not in card, ("duplicate English capacity badge", model)
+        english_titles.append(title)
+    assert len(set(english_titles)) == 20, ("English source card titles are not unique", english_titles)
+    assert any("Manufacturer" in title for title in english_titles)
+    assert any("Custom Colors" in title for title in english_titles)
+    assert any("Custom Materials" in title for title in english_titles)
+
+    # Existing D1 cards must be upgraded too, not merely newly inserted cards.
+    for locale in sorted(LANGUAGES):
+        existing_cards = []
+        for row in two_way_rows:
+            model = str(row["model"]).lower()
+            factory_model = str(row.get("factoryModel") or model)
+            existing_cards.append(
+                f'<a class="product-card" data-product-card data-search="Two-Way Drinking Cup" '
+                f'href="/products/{model}/"><div class="product-card__body">'
+                f'<span class="product-card__small">MODEL {html.escape(factory_model)}</span>'
+                f'<h3>Two-Way Drinking Cup</h3><span class="product-card__capacity">old capacity</span>'
+                f'<span class="product-card__link">View Product ↗</span></div></a>'
+            )
+        existing_grid = '<div class="grid grid--4 product-grid">' + "".join(existing_cards) + "</div>"
+        updated_grid = catalog_cards(existing_grid, locale, "/collections/two-way-drinking-cups/", translated_routes, series)
+        updated_titles = []
+        for row in two_way_rows:
+            model = str(row["model"]).lower()
+            card = re.search(
+                r'<a\b(?=[^>]*href="/products/' + re.escape(model) + r'/")[^>]*>.*?</a>', 
+                updated_grid, re.I | re.S
+            )
+            assert card, (locale, model, "existing card was lost")
+            heading = re.search(r"<h3>(.*?)</h3>", card.group(0), re.I | re.S)
+            small = re.search(r'<span class="product-card__small">(.*?)</span>', card.group(0), re.I | re.S)
+            assert heading and small, (locale, model, "existing card title/model missing")
+            title = html.unescape(heading.group(1)).strip()
+            assert title == _card_title(row, locale), (locale, model, title)
+            assert str(row.get("factoryModel") or model).upper() in html.unescape(small.group(1)).upper()
+            assert 'class="product-card__capacity"' not in card.group(0)
+            updated_titles.append(title)
+        assert len(set(updated_titles)) == 20, (locale, "existing D1 card titles are not unique")
 
     print(f"PASS: {len(series)} new products, {len(hashes)} unique WebP images, {len(category_counts)} categories.")
 
