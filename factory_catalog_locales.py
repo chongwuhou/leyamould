@@ -61,6 +61,53 @@ LABELS = {
 }
 
 
+TWO_WAY_SIZE = {
+    "en": ((400, "Compact"), (550, "Everyday"), (650, "Mid-Size"), (850, "Large-Capacity"), (10000, "Extra-Large")),
+    "es": ((400, "Compacto"), (550, "De uso diario"), (650, "Tamaño medio"), (850, "Gran capacidad"), (10000, "Extra grande")),
+    "pt": ((400, "Compacto"), (550, "Para uso diário"), (650, "Tamanho médio"), (850, "Grande capacidade"), (10000, "Extra grande")),
+    "ru": ((400, "Компактная"), (550, "Повседневная"), (650, "Среднего размера"), (850, "Большой ёмкости"), (10000, "Сверхбольшая")),
+    "tr": ((400, "Kompakt"), (550, "Günlük"), (650, "Orta boy"), (850, "Büyük kapasiteli"), (10000, "Ekstra büyük")),
+}
+
+TWO_WAY_ANGLE = {
+    "en": ("Dual-Mode Drinking Cup", "Two-Way Travel Cup", "Two-Way Cup with Seal Design", "Daily-Use Two-Way Cup", "OEM Dual-Drink Cup"),
+    "es": ("Vaso de doble modo", "Vaso de dos formas para viaje", "Vaso de doble uso con diseño de sellado", "Vaso de doble uso para el día a día", "Vaso de doble uso para OEM"),
+    "pt": ("Copo de dupla função", "Copo de dupla função para viagem", "Copo de dupla função com vedação", "Copo de dupla função para uso diário", "Copo de dupla função para OEM"),
+    "ru": ("Кружка с двумя режимами питья", "Дорожная кружка 2-в-1", "Кружка 2-в-1 с конструкцией уплотнения", "Кружка 2-в-1 для повседневного использования", "Кружка 2-в-1 для OEM-заказов"),
+    "tr": ("Çift içimli bardak", "İki içimli seyahat bardağı", "Sızdırmazlık tasarımlı çift içimli bardak", "Günlük kullanım için çift içimli bardak", "OEM çift içimli bardak"),
+}
+
+TWO_WAY_BUYER = {
+    "en": ("OEM Wholesale Manufacturer", "Factory OEM Supplier", "B2B Custom Branding", "Ask About Custom Colors", "Ask About Custom Material Options"),
+    "es": ("Fabricante OEM para mayoristas", "Proveedor OEM de fábrica", "Personalización B2B de marca", "Consulte colores personalizados", "Consulte materiales a medida"),
+    "pt": ("Fabricante OEM para atacado", "Fornecedor OEM de fábrica", "Personalização B2B de marca", "Consulte cores personalizadas", "Consulte materiais sob medida"),
+    "ru": ("Оптовый OEM-производитель", "Заводской OEM-поставщик", "B2B-брендинг под заказ", "Уточните индивидуальные цвета", "Уточните материалы на заказ"),
+    "tr": ("Toptan OEM üreticisi", "Fabrika OEM tedarikçisi", "B2B özel markalama", "Özel renk seçeneklerini sorun", "Özel malzeme seçeneklerini sorun"),
+}
+
+
+def _card_title(product: dict, locale: str) -> str:
+    """Give factory catalog cards model-specific buyer titles without inventing SKU facts."""
+    if product.get("category") != "Two-Way Drinking Cups":
+        from factory_product_locales import localized_name
+        return localized_name(product, locale)
+
+    from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms
+
+    numbers = catalog_volume_numbers(product)
+    if not numbers:
+        raise ValueError("Two-way factory product needs a source-verified capacity: " + str(product.get("model")))
+    model = str(product.get("factoryModel") or product.get("model") or product.get("slug") or "").strip().upper()
+    if not model:
+        raise ValueError("Two-way factory product needs a model identifier")
+    match = re.search(r"(\d+)$", model)
+    index = (int(match.group(1)) - 1) % 5 if match else 0
+    size_value = max(numbers)
+    size = next(label for upper, label in TWO_WAY_SIZE[locale] if size_value <= upper)
+    volume = volume_terms(numbers, locale)
+    return f"{volume} {size} {TWO_WAY_ANGLE[locale][index]} | {TWO_WAY_BUYER[locale][index]} · {model}"
+
+
 def _escape(value: object) -> str:
     return html.escape(str(value or ""), quote=True)
 
@@ -123,7 +170,7 @@ def _render_card(product: dict, locale: str, category_slug: str, translated_rout
     numbers = catalog_volume_numbers(product)
     volume = volume_terms(numbers, locale) if numbers else ""
     category = str(product.get("category") or "")
-    title = localized_name(product, locale)
+    title = _card_title(product, locale)
     material = verified_source_material(product)
     image = str((product.get("images") or [""])[0])
     search = " ".join(part for part in (title, factory_model, slug, capacity, volume, material,
@@ -136,10 +183,10 @@ def _render_card(product: dict, locale: str, category_slug: str, translated_rout
             "tr":"Ortak ürün ailesi görseli; kesin varyantı doğrulayın"}[locale]
            if family else " ".join(part for part in (title, labels["model"], factory_model, volume, material) if part))
     small = f'{labels["model"]} {_escape(factory_model)}'
-    if capacity:
+    if capacity and category != "Two-Way Drinking Cups":
         small += f' · {_escape(labels["capacity"])}: {_escape(capacity)}'
     image_html = photo(image, alt)
-    capacity_badge = f'<span class="product-card__capacity">{_escape(volume)}</span>' if volume else ""
+    capacity_badge = f'<span class="product-card__capacity">{_escape(volume)}</span>' if volume and category != "Two-Way Drinking Cups" else ""
     return (
         f'<a class="product-card" data-product-card data-new-product="true" '
         f'data-category="{_escape(category_slug)}" data-search="{_escape(search)}" href="{_escape(route)}">'
