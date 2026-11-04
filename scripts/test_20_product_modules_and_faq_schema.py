@@ -91,7 +91,11 @@ envelope='<html><head></head><body><main id="main-content">'+apply(owner_body,ow
 with_schema=add_at_render(envelope,"/products/2095/","en")
 assert len(visible_faq(with_schema))==1
 assert visible_faq(with_schema)[0][0]=="Owner selected lid for 2095?"
-graphs=[json.loads(raw) for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>',with_schema,re.S)]
+graphs=[]
+for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>',with_schema,re.S):
+    obj=json.loads(raw)
+    nodes=obj.get("@graph",[]) if isinstance(obj,dict) and isinstance(obj.get("@graph"),list) else [obj]
+    graphs.extend(node for node in nodes if isinstance(node,dict))
 assert len([x for x in graphs if x.get("@type")=="FAQPage"])==1
 editor_material=owner_source.replace('</section><section class="section section--soft product-content">',
  '</section><section class="section material-brief" id="material-performance"><div>Owner-selected exact 2095 materials</div></section><section class="section section--soft product-content">',1)
