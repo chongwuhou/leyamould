@@ -194,6 +194,17 @@ def current_baseline(locale,row,data=None):
     actual=hashlib.sha256((title+"\x1f"+desc).encode("utf8")).hexdigest()
     return actual==expected
 
+def source_field_allowed(locale,row,field,data=None):
+    """Allow source SEO when a D1 field is absent or still matches its owner baseline."""
+    route="/products/"+str(row.get("slug") or "")+"/"
+    value=current_field(locale,route,field,data)
+    if not isinstance(value,str) or not value.strip():return True
+    try:
+        from scripts.cms_seo_curation_guard import may_curate
+        return may_curate(locale,route,field,data)
+    except (ImportError,KeyError,TypeError):
+        return current_baseline(locale,row,data)
+
 def verified_source_material(row):
     """Catalog/CMS component list, not an inferred single body resin."""
     raw=str(row.get("material") or "").strip()
@@ -241,61 +252,135 @@ def seo_title_volume(numbers,locale):
         }[locale]
     return f"{ml} ({qualifier})"
 
-def new_seo(locale,row,numbers):
-    kind=KIND[locale][row["category"]]
+def _seo_kind(locale,row):
+    category=row.get("category","")
+    if (re.search(r"gradient|渐变",str(row.get("colors",""))+" "+str(row.get("name","")),re.I)
+            and category=="Plastic Sports Water Bottles"):
+        return {"en":"Gradient Sports Bottle","es":"Botella degradada","pt":"Garrafa degradê","ru":"Градиентная бутылка","tr":"Degrade spor şişesi"}[locale]
+    return KIND[locale].get(category,{"en":"Drinkware","es":"Botella","pt":"Garrafa","ru":"Посуда","tr":"Matara"}[locale])
+
+TITLE_KIND={
+ "en":{"Plastic Sports Water Bottles":"Sports Bottle","Kids Plastic Water Bottles":"Kids Bottle","Large Capacity Water Jugs":"Water Jug","Plastic Shaker Bottles":"Shaker","Spray Water Bottles":"Spray Bottle","Two-Way Drinking Cups":"Two-Way Cup","Titanium Vacuum Cups":"Titanium Cup"},
+ "es":{"Plastic Sports Water Bottles":"Botella","Kids Plastic Water Bottles":"Botella infantil","Large Capacity Water Jugs":"Garrafa","Plastic Shaker Bottles":"Shaker","Spray Water Bottles":"Botella spray","Two-Way Drinking Cups":"Vaso doble","Titanium Vacuum Cups":"Vaso titanio"},
+ "pt":{"Plastic Sports Water Bottles":"Garrafa","Kids Plastic Water Bottles":"Garrafa infantil","Large Capacity Water Jugs":"Garrafão","Plastic Shaker Bottles":"Coqueteleira","Spray Water Bottles":"Garrafa spray","Two-Way Drinking Cups":"Copo duplo","Titanium Vacuum Cups":"Copo titânio"},
+ "ru":{"Plastic Sports Water Bottles":"Спортбутылка","Kids Plastic Water Bottles":"Детская бутылка","Large Capacity Water Jugs":"Большая бутылка","Plastic Shaker Bottles":"Шейкер","Spray Water Bottles":"Бутылка-распылитель","Two-Way Drinking Cups":"Кружка 2-в-1","Titanium Vacuum Cups":"Титановая кружка"},
+ "tr":{"Plastic Sports Water Bottles":"Spor matara","Kids Plastic Water Bottles":"Çocuk matara","Large Capacity Water Jugs":"Büyük matara","Plastic Shaker Bottles":"Shaker","Spray Water Bottles":"Spreyli matara","Two-Way Drinking Cups":"Çift içimli bardak","Titanium Vacuum Cups":"Titanyum bardak"},
+}
+PLASTIC_CATEGORIES={"Plastic Sports Water Bottles","Kids Plastic Water Bottles","Large Capacity Water Jugs","Plastic Shaker Bottles","Spray Water Bottles"}
+PLASTIC_LABEL={"en":"Plastic","es":"Plástico","pt":"Plástico","ru":"Пластик","tr":"Plastik"}
+CUSTOM_PLASTIC_H1={"en":"Custom Plastic","es":"Plástico personalizable","pt":"Plástico personalizável","ru":"Пластик с индивидуальным подбором","tr":"Özelleştirilebilir plastik"}
+TITANIUM_LABEL={"en":"Titanium","es":"Titanio","pt":"Titânio","ru":"Титан","tr":"Titanyum"}
+CUSTOM_LABEL={"en":"Custom Material","es":"Material a medida","pt":"Material sob medida","ru":"Материалы на заказ","tr":"Özel malzeme"}
+
+def title_material(locale,row):
+    actual=verified_source_material(row)
+    if actual:return actual
+    category=row.get("category","")
+    if category in PLASTIC_CATEGORIES:return PLASTIC_LABEL[locale]
+    if category=="Titanium Vacuum Cups":return ""
+    if category=="Two-Way Drinking Cups":return CUSTOM_LABEL[locale]
+    return ""
+
+def _title_volume(numbers,locale):
+    if not numbers:return ""
+    # Keep every exact mL value in H1/specs. The title uses the lead capacity
+    # plus a variant count when multiple sizes would exceed search-title width.
+    if len(numbers)==1:return seo_title_volume(numbers,locale)
+    return seo_title_volume((numbers[0],),locale)+f" +{len(numbers)-1}"
+
+def _short_model(row,locale):
     model=slug_label(row,locale)
-    # Keep the retail search-size term consistent with the visible product
-    # title, without calling the factory's exact milliliters an oz equivalence.
-    vol=seo_title_volume(numbers,locale)
-    if (re.search(r"渐变|gradient",str(row.get("colors",""))+" "+str(row.get("name","")),re.I)
-            and row["category"]=="Plastic Sports Water Bottles"):
-        kind=({"en":"Gradient Sports Bottle","es":"Botella degradada",
-               "pt":"Garrafa degradê","ru":"Градиентная бутылка","tr":"Degrade spor şişesi"}[locale])
-    material=verified_source_material(row)
-    small={"en":"Bottle","es":"Botella","pt":"Garrafa","ru":"Бутылка","tr":"Şişe"}[locale]
-    # Preserve the factory variant distinction, even where translated terms
-    # would otherwise push the 60-character suggested SEO width limit.
-    short_model=model
-    if "透明款" in str(row["model"]):
-        numeric=re.match(r"^\d+",str(row["model"]))
+    if "透明款" in str(row.get("model","")):
+        numeric=re.match(r"^\d+",str(row.get("model","")))
         if numeric:
-            suffix={
-                "en":"Clear","es":"transparente","pt":"transparente",
-                "ru":"прозрачн.","tr":"şeffaf"
-            }[locale]
-            short_model=numeric.group(0)+" "+suffix
-    # Prefer the actual category and evidence-backed materials; only shorten
-    # them if necessary. Never omit model, real mL, retail oz qualification.
+            suffix={"en":"Clear","es":"transp.","pt":"transp.","ru":"прозр.","tr":"Şeffaf"}[locale]
+            return numeric.group(0)+" "+suffix
+    return model
+
+def _description(locale,row,numbers):
+    kind=_seo_kind(locale,row)
+    model=slug_label(row,locale)
+    volume=(_title_volume(numbers,locale) if len(numbers)>1 else volume_terms(numbers,locale)) if numbers else {
+        "en":"capacity to be confirmed","es":"capacidad por confirmar","pt":"capacidade a confirmar",
+        "ru":"объём уточняется","tr":"kapasite doğrulanacak"}[locale]
+    category=row.get("category","")
+    material=verified_source_material(row)
+    if category=="Titanium Vacuum Cups":
+        templates={
+          "en":f"Wholesale titanium cup manufacturer for B2B buyers. {volume}; model {model}. Confirm titanium grade, lid, finish and thermal tests; ask about OEM branding.",
+          "es":f"Fabricante B2B mayorista de vasos de titanio. {volume}; modelo {model}. Confirme grado, tapa y pruebas térmicas; consulte marca OEM.",
+          "pt":f"Fabricante B2B de copos de titânio para atacado. {volume}; modelo {model}. Confirme grau, tampa e testes térmicos; consulte marca OEM.",
+          "ru":f"Производитель титановых термокружек для оптовых B2B-поставок. {volume}; модель {model}. Уточните марку, крышку и испытания; запросите OEM.",
+          "tr":f"B2B toptan titanyum bardak üreticisi. {volume}; model {model}. Titanyum kalitesini, kapağı ve testleri doğrulayın; OEM markalamayı sorun.",
+        }
+    elif category=="Two-Way Drinking Cups":
+        templates={
+          "en":f"Wholesale two-way cup manufacturer for B2B buyers. {volume}; model {model}. Confirm body, lid and seal materials; ask about OEM logo and bulk packing.",
+          "es":f"Fabricante B2B mayorista de vasos de doble uso. {volume}; modelo {model}. Confirme cuerpo, tapa y junta; consulte logotipo OEM y embalaje.",
+          "pt":f"Fabricante B2B de copos de dupla função para atacado. {volume}; modelo {model}. Confirme corpo, tampa e vedação; consulte logotipo OEM e embalagem.",
+          "ru":f"Производитель кружек 2-в-1 для оптовых B2B-поставок. {volume}; модель {model}. Уточните материалы корпуса и крышки, уплотнение и OEM-логотип.",
+          "tr":f"B2B çift içimli bardak toptan üreticisi. {volume}; model {model}. Gövde, kapak ve conta malzemelerini doğrulayın; OEM logo ve koli seçeneklerini sorun.",
+        }
+    else:
+        templates={
+          "en":f"Wholesale {kind.lower()} manufacturer for B2B buyers. {volume}; model {model}. Ask about OEM logo, custom plastic materials, colors and bulk packing; confirm resin by SKU.",
+          "es":f"Fabricante de {kind.lower()} para mayoristas B2B. {volume}; modelo {model}. Consulte plástico a medida, logo OEM, colores y embalaje; confirme resina por SKU.",
+          "pt":f"Fabricante de {kind.lower()} para atacado B2B. {volume}; modelo {model}. Consulte plástico sob medida, logo OEM, cores e embalagem; confirme resina por SKU.",
+          "ru":f"Производитель {kind.lower()} для оптовых B2B-поставок. {volume}; модель {model}. Уточните полимеры, OEM-логотип, цвета и упаковку по SKU.",
+          "tr":f"B2B toptan {kind.lower()} üreticisi. {volume}; model {model}. Özel plastik, OEM logo, renk ve koli seçeneklerini sorun; reçineyi SKU bazında doğrulayın.",
+        }
+    result=templates[locale]
+    if material and category not in {"Titanium Vacuum Cups","Two-Way Drinking Cups"}:
+        # The exact component list remains visible on-page; metadata only adds
+        # the verified short resin codes when they fit naturally.
+        result=result.replace("Ask about OEM logo",f"Listed {material}; ask about OEM logo") if locale=="en" else result
+    if len(result)>180:
+        # Shorten only the buyer-language lead; preserve model and mL/oz facts.
+        result={
+          "en":f"B2B wholesale {kind.lower()} OEM factory. {volume}; model {model}. Ask about custom materials, logo and bulk packing; confirm components by SKU.",
+          "es":f"Fabricante B2B OEM de {kind.lower()}. {volume}; modelo {model}. Consulte material, logo y embalaje; confirme piezas por SKU.",
+          "pt":f"Fabricante B2B OEM de {kind.lower()} para atacado. {volume}; modelo {model}. Consulte materiais, logo e embalagem; confirme componentes por SKU.",
+          "ru":f"Оптовый B2B OEM-производитель: {kind.lower()}. {volume}; модель {model}. Уточните материалы, логотип и упаковку по SKU.",
+          "tr":f"B2B {kind} için OEM toptan üretici. {volume}; model {model}. Malzeme, logo ve koli seçeneklerini SKU bazında doğrulayın.",
+        }[locale]
+    assert len(result)<=180,(locale,row.get("slug"),len(result),result)
+    return result
+
+def new_seo(locale,row,numbers):
+    kind=_seo_kind(locale,row)
+    model=_short_model(row,locale)
+    volume=_title_volume(numbers,locale)
+    material=title_material(locale,row)
+    short_kind=TITLE_KIND[locale].get(row.get("category",""),kind)
+    # OEM is a concise B2B/manufacturer qualifier. Full wholesale and
+    # manufacturer wording appears in the description and visible H1.
     options=[
-        f"{vol} {material+' ' if material else ''}{kind} {model} | XUYI",
-        f"{vol} {kind} {model} | XUYI",
-        f"{vol} {small} {model} | XUYI",
-        f"{vol} {kind} {short_model} | XUYI",
-        f"{vol} {small} {short_model} | XUYI",
-        f"{vol} {short_model} | XUYI",
+        f"{volume} {material+' ' if material else ''}{short_kind} OEM {model} | XUYI",
+        f"{volume} {short_kind} OEM {model} | XUYI",
+        f"{volume} {material+' ' if material else ''}{short_kind} {model} | XUYI",
+        f"{volume} {model} OEM | XUYI",
     ]
     title=next((candidate for candidate in options if len(candidate)<=60),None)
     if title is None:
-        # Future approved multi-size models may need a shorter snippet;
-        # leave all exact sizes visible in the H1/spec table and never guess.
-        first=format_ml(numbers[0])+" ("+format_oz(numbers[0],locale)+")"
-        more=f" +{len(numbers)-1}" if len(numbers)>1 else ""
-        title=f"{first}{more} {short_model} | XUYI"
-    assert len(title)<=60,(locale,row["slug"],title)
-    description=COPY[locale]["description"].format(
-       volume=volume_terms(numbers,locale),kind=kind,model=model)
-    if len(description)>180:
-        # Only shorten the explanatory lead, never truncate the model,
-        # accurate capacities or the custom-material qualification.
-        description={
-         "en":f"{volume_terms(numbers,locale)} model {model}. Ask about custom Tritan or BPA-free material options; confirm parts and testing.",
-         "es":f"{volume_terms(numbers,locale)} modelo {model}. Consulte Tritan o materiales sin BPA (BPA-free) a medida; confirme pruebas.",
-         "pt":f"{volume_terms(numbers,locale)} modelo {model}. Consulte Tritan ou opções sem BPA (BPA-free) sob medida; confirme testes.",
-         "ru":f"{volume_terms(numbers,locale)} модель {model}. Tritan и варианты без BPA (BPA-free) на заказ: уточните испытания.",
-         "tr":f"{volume_terms(numbers,locale)} model {model}. Özel Tritan veya BPA içermeyen (BPA-free) seçenekler için testleri doğrulayın.",
-        }[locale]
-    assert len(description)<=180,(locale,row["slug"],len(description))
-    return title,description
+        first=seo_title_volume((numbers[0],),locale)
+        title=f"{first} {model} OEM | XUYI"
+    assert len(title)<=60,(locale,row.get("slug"),title)
+    return title,_description(locale,row,numbers)
+
+def new_seo_without_capacity(locale,row):
+    kind=_seo_kind(locale,row)
+    model=_short_model(row,locale)
+    material=title_material(locale,row)
+    short_kind=TITLE_KIND[locale].get(row.get("category",""),kind)
+    options=[
+        f"{material+' ' if material else ''}{short_kind} OEM {model} | XUYI",
+        f"{short_kind} OEM {model} | XUYI",
+        f"{model} OEM drinkware | XUYI",
+    ]
+    title=next((candidate for candidate in options if len(candidate)<=60),options[-1])
+    desc=_description(locale,row,())
+    assert len(title)<=60 and len(desc)<=180,(locale,row.get("slug"),title,desc)
+    return title,desc
 
 def social_meta(head,key,previous,replacement,kind="property"):
     pattern=r'(<meta '+kind+'="'+re.escape(key)+r'" content=")([^"]*)(")'
@@ -305,166 +390,188 @@ def social_meta(head,key,previous,replacement,kind="property"):
     return re.sub(pattern,change,head,count=1)
 
 def seo_head(head,locale,row,numbers,owner_override=None):
-    if not current_baseline(locale,row,owner_override):return head,False
+    allow_title=source_field_allowed(locale,row,"title",owner_override)
+    allow_desc=source_field_allowed(locale,row,"description",owner_override)
+    if not (allow_title or allow_desc):return head,False
     old=re.search(r"<title>([^<]*)</title>",head,re.S)
     desc=re.search(r'<meta name="description" content="([^"]*)"',head)
     if not old or not desc:return head,False
-    current_title=unescape(old.group(1))
-    current_desc=unescape(desc.group(1))
+    current_title=unescape(old.group(1));current_desc=unescape(desc.group(1))
     suggested_title,suggested_desc=new_seo(locale,row,numbers)
-    # Product WebPage/OG metadata remains consistent unless an owner set an
-    # independent custom social title/description.
-    head=social_meta(head,"og:title",current_title,suggested_title)
-    head=social_meta(head,"og:description",current_desc,suggested_desc)
-    head=head[:old.start(1)]+escape(suggested_title)+head[old.end(1):]
-    desc=re.search(r'<meta name="description" content="([^"]*)"',head)
-    head=head[:desc.start(1)]+escape(suggested_desc,quote=True)+head[desc.end(1):]
-    return head,(current_title!=suggested_title or current_desc!=suggested_desc)
+    changed=False
+    if allow_title:
+        head=social_meta(head,"og:title",current_title,suggested_title)
+        head=head[:old.start(1)]+escape(suggested_title)+head[old.end(1):]
+        changed=changed or current_title!=suggested_title
+    if allow_desc:
+        head=social_meta(head,"og:description",current_desc,suggested_desc)
+        desc=re.search(r'<meta name="description" content="([^"]*)"',head)
+        head=head[:desc.start(1)]+escape(suggested_desc,quote=True)+head[desc.end(1):]
+        changed=changed or current_desc!=suggested_desc
+    return head,changed
 
 def seo_head_without_capacity(head,locale,row,owner_override=None):
-    """Polish conditional material SEO without claiming an unknown capacity.
-
-    The source description SHA protects later G-series template author edits;
-    the CMS snapshot hash independently guards later D1 SEO changes.
-    """
-    if not current_baseline(locale,row,owner_override):return head,False
+    allow_title=source_field_allowed(locale,row,"title",owner_override)
+    allow_desc=source_field_allowed(locale,row,"description",owner_override)
+    if not (allow_title or allow_desc):return head,False
+    old=re.search(r"<title>([^<]*)</title>",head,re.S)
     desc=re.search(r'<meta name="description" content="([^"]*)"',head)
-    if not desc:return head,False
-    current=unescape(desc.group(1))
-    slug=row["slug"]
-    previous=NO_CAPACITY_META_DIGESTS.get(slug,{}).get(locale)
-    if not previous or hashlib.sha256(current.encode("utf8")).hexdigest()!=previous:
-        return head,False
-    updated=NO_CAPACITY_MARKETING[locale].format(model=str(row["model"]))
-    assert len(updated)<=180,(locale,slug,len(updated))
-    head=social_meta(head,"og:description",current,updated)
-    desc=re.search(r'<meta name="description" content="([^"]*)"',head)
-    head=head[:desc.start(1)]+escape(updated,quote=True)+head[desc.end(1):]
-    return head,True
+    if not old or not desc:return head,False
+    current_title=unescape(old.group(1));current_desc=unescape(desc.group(1))
+    suggested_title,suggested_desc=new_seo_without_capacity(locale,row)
+    changed=False
+    if allow_title:
+        head=social_meta(head,"og:title",current_title,suggested_title)
+        head=head[:old.start(1)]+escape(suggested_title)+head[old.end(1):]
+        changed=changed or current_title!=suggested_title
+    if allow_desc:
+        head=social_meta(head,"og:description",current_desc,suggested_desc)
+        desc=re.search(r'<meta name="description" content="([^"]*)"',head)
+        head=head[:desc.start(1)]+escape(suggested_desc,quote=True)+head[desc.end(1):]
+        changed=changed or current_desc!=suggested_desc
+    return head,changed
 
+def product_h1_text(locale,row):
+    category=row.get("category","")
+    kind=_seo_kind(locale,row)
+    model=slug_label(row,locale)
+    material=verified_source_material(row)
+    if not material and category in PLASTIC_CATEGORIES:material=CUSTOM_PLASTIC_H1[locale]
+    if category=="Titanium Vacuum Cups":material=""
+    numbers=catalog_volume_numbers(row)
+    volume=volume_terms(numbers,locale) if numbers else ""
+    if category=="Two-Way Drinking Cups" and not material:
+        material_suffix={"en":" · custom material options","es":" · materiales a medida","pt":" · materiais sob medida","ru":" · материалы на заказ","tr":" · özel malzeme seçenekleri"}[locale]
+    else:material_suffix=""
+    if locale=="en":
+        lead="Wholesale B2B "+(material+" " if material else "")+kind+" Manufacturer — Model "+model
+    elif locale=="es":
+        lead="Fabricante B2B mayorista de "+(material+" " if material else "")+kind+" — Modelo "+model
+    elif locale=="pt":
+        lead="Fabricante B2B de "+(material+" " if material else "")+kind+" para atacado — Modelo "+model
+    elif locale=="ru":
+        lead="Оптовый B2B-производитель "+(material+" " if material else "")+kind+" — модель "+model
+    else:
+        lead="Toptan B2B "+(material+" " if material else "")+kind+" üreticisi — Model "+model
+    return lead+(" | "+volume if volume else "")+material_suffix
+
+def material_panel(locale,row):
+    category=row.get("category","")
+    if category in PLASTIC_CATEGORIES:
+        heading={"en":"Custom Plastic Materials for OEM Orders","es":"Materiales plásticos a medida para pedidos OEM","pt":"Materiais plásticos sob medida para pedidos OEM","ru":"Индивидуальные полимерные материалы для OEM-заказов","tr":"OEM siparişleri için özel plastik malzemeler"}[locale]
+        body={
+          "en":"For plastic models, ask about custom PP, PC, PETG, Tritan, PE or ABS options. Confirm the resin grade and the body, lid and seal components for the exact SKU. BPA-free status and food-contact suitability require model-specific evidence; this is a customization inquiry, not a certification claim.",
+          "es":"Para modelos de plástico, consulte opciones PP, PC, PETG, Tritan, PE o ABS a medida. Confirme la resina y los componentes del cuerpo, la tapa y la junta del SKU exacto. El estado sin BPA y la aptitud alimentaria requieren pruebas del modelo; es una consulta de personalización, no una certificación.",
+          "pt":"Para modelos de plástico, consulte opções PP, PC, PETG, Tritan, PE ou ABS sob medida. Confirme a resina e os componentes do corpo, da tampa e da vedação do SKU exato. A condição sem BPA e a adequação alimentar exigem evidências do modelo; trata-se de consulta de personalização, não de certificação.",
+          "ru":"Для пластиковых моделей можно запросить варианты PP, PC, PETG, Tritan, PE или ABS. Уточните марку полимера и материалы корпуса, крышки и уплотнителя конкретного SKU. Статус BPA-free и пригодность для пищевого контакта требуют документов модели; это запрос на индивидуализацию, а не заявление о сертификации.",
+          "tr":"Plastik modeller için özel PP, PC, PETG, Tritan, PE veya ABS seçeneklerini sorun. Kesin SKU için reçine sınıfını ve gövde, kapak, conta bileşenlerini doğrulayın. BPA içermeme ve gıda temas uygunluğu modele özel belge gerektirir; bu bir özelleştirme talebidir, sertifika iddiası değildir.",
+        }[locale]
+    elif category=="Titanium Vacuum Cups":
+        heading={"en":"Titanium Grade and Component Options","es":"Grado de titanio y opciones de componentes","pt":"Grau de titânio e opções de componentes","ru":"Марка титана и варианты компонентов","tr":"Titanyum kalitesi ve bileşen seçenekleri"}[locale]
+        body={
+          "en":"For titanium models, request the exact grade and composition, lid and seal materials, vacuum construction details, finish options and test documents for the selected SKU. Do not infer purity or thermal performance from a family image.",
+          "es":"Para modelos de titanio, solicite el grado y la composición exactos, los materiales de la tapa y la junta, la estructura de vacío, los acabados y los ensayos del SKU elegido. No deduzca pureza ni rendimiento térmico de una imagen de familia.",
+          "pt":"Para modelos de titânio, solicite o grau e a composição exatos, os materiais da tampa e da vedação, a estrutura a vácuo, os acabamentos e os testes do SKU escolhido. Não presuma pureza ou desempenho térmico por uma imagem de família.",
+          "ru":"Для титановых моделей запросите точную марку и состав титана, материалы крышки и уплотнителя, вакуумную конструкцию, отделку и протоколы испытаний выбранного SKU. Не делайте выводы о чистоте или теплоизоляции по общему фото серии.",
+          "tr":"Titanyum modellerde seçilen SKU için kesin kaliteyi ve bileşimi, kapak ve conta malzemelerini, vakum yapısını, yüzey seçeneklerini ve test belgelerini isteyin. Seri görselinden saflık veya ısıl performans çıkarmayın.",
+        }[locale]
+    else:
+        heading={"en":"Custom Body, Lid and Component Options","es":"Opciones de cuerpo, tapa y componentes a medida","pt":"Opções de corpo, tampa e componentes sob medida","ru":"Индивидуальные варианты корпуса, крышки и компонентов","tr":"Özel gövde, kapak ve bileşen seçenekleri"}[locale]
+        body={
+          "en":"Confirm body, lid, drinking valve and seal materials for the exact model. Custom component or material options can be reviewed against the project, sample and destination-market requirements.",
+          "es":"Confirme los materiales del cuerpo, la tapa, la válvula y la junta del modelo exacto. Las opciones personalizadas se revisan según el proyecto, la muestra y los requisitos del mercado de destino.",
+          "pt":"Confirme os materiais do corpo, da tampa, da válvula e da vedação do modelo exato. As opções personalizadas são avaliadas conforme o projeto, a amostra e os requisitos do mercado de destino.",
+          "ru":"Уточните материалы корпуса, крышки, питьевого клапана и уплотнителя конкретной модели. Индивидуальные варианты рассматриваются с учётом проекта, образца и требований рынка.",
+          "tr":"Kesin modelin gövde, kapak, içme valfi ve conta malzemelerini doğrulayın. Özel bileşen veya malzeme seçenekleri proje, numune ve hedef pazar gereksinimlerine göre değerlendirilir.",
+        }[locale]
+    return '<aside class="product-custom-material-options" data-model="'+escape(str(row.get("model","")),quote=True)+'"><h2>'+escape(heading)+'</h2><p>'+escape(body)+'</p></aside>'
+
+DISPUTED_CAPACITY_WARNING={
+ "en":"The original catalog lists 60ml for model 2506; this unusual capacity needs factory confirmation before ordering. No overseas oz class is claimed.",
+ "es":"El catálogo indica 60ml para 2506; confirme este dato inusual con fábrica antes del pedido. No se declara una clase oz.",
+ "pt":"O catálogo indica 60ml para 2506; confirme este dado invulgar com a fábrica antes do pedido. Nenhuma classe oz é declarada.",
+ "ru":"В каталоге для модели 2506 указано 60 мл. Просим подтвердить нестандартный объём на заводе; класс oz не заявлен.",
+ "tr":"2506 modeli için katalogda 60ml yazıyor. Siparişten önce bu olağandışı hacmi fabrikayla doğrulayın; oz sınıfı belirtilmez.",
+}
+
+def capacity_summary(locale,row):
+    numbers=catalog_volume_numbers(row)
+    if numbers:
+        label={"en":"Overseas retail size class","es":"Clase comercial aproximada","pt":"Classe comercial aproximada","ru":"Примерный торговый размер","tr":"Yaklaşık satış boyutu"}[locale]
+        return ('<p class="product-capacity-summary" data-volume-us="verified"><strong>'+escape(label)+':</strong> '
+            +escape(volume_terms(numbers,locale))+'<small class="product-capacity-disclaimer">'+escape(SIZE_NOTE[locale])+'</small></p>')
+    if str(row.get("model"))=="2506":
+        return '<p class="product-capacity-warning">'+escape(DISPUTED_CAPACITY_WARNING[locale])+'</p>'
+    return ""
+
+def source_body_enrichment(body,locale,row):
+    """In-memory source renderer for visible capacity, material and gradient facts."""
+    summary=capacity_summary(locale,row)
+    if summary and ('class="product-capacity-summary"' not in body and 'class="product-capacity-warning"' not in body):
+        if "</table>" in body:body=body.replace("</table>","</table>"+summary,1)
+        else:body+=summary
+    try:
+        from scripts.verified_capacity_gradient_en import render_note
+        note=render_note(row,locale)
+    except (ImportError,AttributeError):
+        note=""
+    if note and 'class="product-gradient-finish"' not in body:
+        if "</table>" in body:body=body.replace("</table>","</table>"+note,1)
+        else:body+=note
+    if 'class="product-custom-material-options"' not in body:
+        body+=material_panel(locale,row)
+    try:
+        from scripts.model_catalog_buyer_comparison import render_for_product
+        comparison=render_for_product(row,locale)
+    except (ImportError,AttributeError):
+        comparison=""
+    if comparison and 'id="catalog-comparison"' not in body:
+        body+=comparison
+    return body
+
+CARD_LINK=re.compile(r'(<a\b(?=[^>]*class="product-card\b)[^>]*\bhref="(?P<href>/(?:en/|es/|pt/|ru/|tr/)?products/[^"]+/)"[^>]*>)(?P<body>.*?)</a>',re.S)
+def enrich_catalog_body(body,locale,rows):
+    """Add capacity and procurement search terms before the source page is written."""
+    iterable=rows.values() if isinstance(rows,dict) else rows
+    by_slug={str(r.get("slug") or "").strip("/"):r for r in iterable if r.get("slug")}
+    def card(match):
+        href=match.group("href")
+        slug=href.strip("/").split("/")[-1]
+        row=by_slug.get(slug)
+        if row is None:return match.group(0)
+        outer=match.group(1);inner=match.group("body")
+        numbers=catalog_volume_numbers(row)
+        if numbers and 'class="product-card__capacity"' not in inner:
+            badge='<span class="product-card__capacity">'+escape(volume_terms(numbers,locale))+'</span>'
+            inner,n=re.subn(r'(</h3>)',lambda m:m.group(1)+badge,inner,count=1)
+        find=re.search(r'\bdata-search="([^"]*)"',outer)
+        material=verified_source_material(row)
+        terms=volume_terms(numbers,locale) if numbers else str(row.get("capacity") or "")
+        procurement={
+          "en":"wholesale B2B OEM factory manufacturer custom plastic material options",
+          "es":"mayorista B2B fabricante OEM fábrica materiales plásticos a medida",
+          "pt":"atacado B2B fabricante OEM fábrica materiais plásticos sob medida",
+          "ru":"оптом B2B OEM производитель завод индивидуальные полимерные материалы",
+          "tr":"toptan B2B OEM üretici fabrika özel plastik malzeme seçenekleri",
+        }[locale]
+        add=" "+terms+" "+material+" "+procurement
+        if find:
+            existing=unescape(find.group(1))
+            if procurement not in existing:
+                outer=outer[:find.start(1)]+escape((existing+add).strip(),quote=True)+outer[find.end(1):]
+        else:
+            outer=outer[:-1]+' data-search="' + escape((terms+" "+material+" "+procurement).strip(),quote=True) + '">' 
+        return outer+inner+"</a>"
+    return CARD_LINK.sub(card,body)
 
 def add_to_heading(heading,numbers,locale="en"):
     if not numbers:return heading
-    body=heading
-    found=set()
-    def add(m):
-        size=float(m.group(1))
-        if size not in numbers or size in found:
-            return m.group(0)
-        if re.match(r"\s*\(\d+\s*(?:US\s*fl\s*oz|fl\s*oz|oz)\)",body[m.end():],re.I):
-            found.add(size)
-            return m.group(0)
+    body=heading;found=set()
+    def add(match):
+        size=float(match.group(1))
+        if size not in numbers or size in found:return match.group(0)
         found.add(size)
         return format_ml(size)+" ("+format_oz(size,locale)+")"
-    # Russian product headings use the Cyrillic abbreviation «мл».
-    heading_volume=re.compile(r"(?<!\d)(\d+(?:\.\d+)?)\s*(?:ml|мл)\b",re.I)
-    modified=heading_volume.sub(add,body)
+    modified=re.sub(r"(?<!\d)(\d+(?:\.\d+)?)\s*(?:ml|мл)\b",add,body,flags=re.I)
     if found==set(numbers):return modified
-    # Common shaker headings omit capacity. Leave the approved heading intact
-    # and display the correctly sourced available capacities next to it.
     return modified+' <small class="volume-heading-extra">('+escape(volume_terms(numbers,locale))+')</small>'
-
-def material_panel(locale,row):
-    copy=COPY[locale]
-    return ('<aside class="product-custom-material-options" data-model="'
-       +escape(str(row["model"]),quote=True)+'">'
-       '<h2>'+escape(copy["heading"])+'</h2><p>'+escape(copy["body"])+'</p></aside>')
-
-DISPUTED_CAPACITY_WARNING={
-  "en":"The original catalog lists 60ml for model 2506; this unusual capacity needs factory confirmation before ordering. No overseas oz class is claimed.",
-  "es":"El catálogo indica 60ml para 2506; confirme este dato inusual con fábrica antes del pedido. No se declara una clase oz.",
-  "pt":"O catálogo indica 60ml para 2506; confirme este dado invulgar com a fábrica antes do pedido. Nenhuma classe oz é declarada.",
-  "ru":"В каталоге для модели 2506 указано 60 мл. Просим подтвердить нестандартный объём на заводе; класс oz не заявлен.",
-  "tr":"2506 modeli için katalogda 60ml yazıyor. Siparişten önce bu olağandışı hacmi fabrikayla doğrulayın; oz sınıfı belirtilmez.",
-}
-
-def enrich_detail(path,locale,row,owner_override=None):
-    source=path.read_text(encoding="utf8")
-    old=source
-    numbers=catalog_volume_numbers(row)
-    head,sep,body=source.partition("</head>")
-    if not sep:raise ValueError("Missing product HTML head: "+str(path))
-    if numbers:
-        # Titles and H1 are now owned by pre_render_verified_meta and the
-        # source product identity component before page output. The remaining
-        # legacy summary is not allowed to rewrite either field.
-        if 'class="product-capacity-summary"' not in body:
-            summary=('<p class="product-capacity-summary" data-volume-us="verified"><strong>'
-                     +escape({"en":"Overseas size class","es":"Clase comercial aproximada","pt":"Classe de tamanho comercial","ru":"Примерный торговый размер","tr":"Yaklaşık satış boyutu"}[locale])+':</strong> '
-                     +escape(volume_terms(numbers,locale))+'<small class="product-capacity-disclaimer">'
-                     +escape(SIZE_NOTE[locale])+'</small></p>')
-            # Insert after the specification table (unmodified original SKU data).
-            body,n=re.subn(r'(</table>)',lambda m:m.group(1)+summary,body,count=1)
-            if not n:body=body.replace("</main>",summary+"</main>",1)
-    # SEO metadata is now strictly pre-render or D1-owned; this detail
-    # enrichment may add only source-checked visible body content.
-    # Flag the actual doubtful source field and clear this flag automatically
-    # if the owner later supplies a verified corrected capacity through D1.
-    if str(row.get("model"))=="2506" and not numbers and 'class="product-capacity-warning"' not in body:
-        flag='<p class="product-capacity-warning">'+escape(DISPUTED_CAPACITY_WARNING[locale])+'</p>'
-        body,n=re.subn(r'(</table>)',lambda m:m.group(1)+flag,body,count=1)
-        if not n:body=body.replace('</main>',flag+'</main>',1)
-    # ALL factory-model detail pages, including G-series with unknown volume,
-    # may invite a *custom-material feasibility inquiry*. No factual material
-    # claim or existing D1-edited panel is ever removed.
-    if 'class="product-custom-material-options"' not in body:
-        panel=material_panel(locale,row)
-        if "</main>" not in body:raise ValueError("Missing Product main element: "+str(path))
-        body=body.replace("</main>",panel+"</main>",1)
-    result=head+sep+body
-    if result!=old:path.write_text(result,encoding="utf8")
-    return int(result!=old),int(bool(numbers))
-
-CARD_LINK=re.compile(r'(<a\b(?=[^>]*class="product-card\b)[^>]*\bhref="(?P<href>/[^"]+/products/[^"]+/|/products/[^"]+/)"[^>]*>)(?P<body>.*?)</a>',re.S)
-def enrich_cards(page,rows):
-    source=page.read_text(encoding="utf8")
-    changes=[0]
-    def card(m):
-        slug=m.group("href").strip("/").split("/")[-1]
-        row=rows.get(slug)
-        if row is None:return m.group(0)
-        numbers=catalog_volume_numbers(row)
-        if not numbers:return m.group(0)
-        outer=m.group(1)
-        inner=m.group("body")
-        if 'class="product-card__capacity"' in inner:return m.group(0)
-        locale=next((loc for loc in LOCALES if m.group("href").startswith('/'+loc+'/')),"en")
-        badge='<span class="product-card__capacity">'+escape(volume_terms(numbers,locale))+'</span>'
-        inner,n=re.subn(r'(</h3>)',lambda x:x.group(1)+badge,inner,count=1)
-        if not n:return m.group(0)
-        find=re.search(r'\bdata-search="([^"]*)"',outer)
-        if find:
-            to_add=" "+ " ".join(oz_number(v)+"oz-class" for v in numbers)
-            # Search corpus also includes accurate conditional *custom* inquiry.
-            to_add+=" custom Tritan BPA-free material options"
-            outer=outer[:find.end(1)]+escape(to_add,quote=True)+outer[find.end(1):]
-        changes[0]+=1
-        return outer+inner+"</a>"
-    result=CARD_LINK.sub(card,source)
-    if result!=source:page.write_text(result,encoding="utf8")
-    return changes[0]
-
-def apply(dist,owner_override=None):
-    dist=Path(dist)
-    rows={r["slug"]:r for r in SERIES.values()}
-    modified=with_volume=0
-    for slug,row in rows.items():
-        for locale in LOCALES:
-            prefix="" if locale=="en" else locale+"/"
-            file=dist/prefix/"products"/slug/"index.html"
-            if not file.is_file():
-                # Future overflow products are served separately in R2, not
-                # silently implied to be present in the Pages static build.
-                continue
-            changed,has_volume=enrich_detail(file,locale,row,owner_override)
-            modified+=changed;with_volume+=has_volume
-    cards=0
-    for file in dist.rglob("index.html"):
-        if file.relative_to(dist).parts[0]=="admin":continue
-        cards+=enrich_cards(file,rows)
-    print("XUYI_SOURCE_VOLUME_US_FL_OZ",with_volume,"product locale pages with verified capacity;",
-          len(rows),"factory models;",modified,"details enriched;",
-          cards,"catalog cards updated; all 5 languages; Tritan/BPA-free strictly conditional")
-    return with_volume,modified,cards
-
-if __name__=="__main__":apply(ROOT/"dist")
