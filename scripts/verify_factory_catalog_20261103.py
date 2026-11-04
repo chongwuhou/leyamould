@@ -78,8 +78,29 @@ def verify_product(record: dict) -> str:
     if canonical not in body:
         raise RuntimeError(f"{path} canonical URL is missing or incorrect.")
     for locale in LOCALES:
-        if f'hreflang="{locale}"' in body:
-            raise RuntimeError(f"{path} unexpectedly advertises an unreviewed {locale} detail page.")
+        if f'hreflang="{locale}"' not in body:
+            raise RuntimeError(f"{path} is missing its reviewed {locale} alternate.")
+    return model
+
+
+def verify_localized_product(record: dict, locale: str) -> str:
+    model=record["model"].lower()
+    content=record["content"]
+    path=f"/{locale}/products/{model}/"
+    body=require_page(path)
+    if f'<html lang="{locale}">' not in body:
+        raise RuntimeError(f"{path} has the wrong document language.")
+    if str(content.get("factoryModel") or model) not in body:
+        raise RuntimeError(f"{path} does not show its factory model.")
+    if f'<link rel="canonical" href="{ORIGIN}{path}">' not in body:
+        raise RuntimeError(f"{path} has a missing or incorrect canonical.")
+    if f'hreflang="{locale}"' not in body or 'hreflang="x-default"' not in body:
+        raise RuntimeError(f"{path} is missing its localized hreflang set.")
+    if "Product" not in body or "Frequently asked questions" not in body and locale=="en":
+        raise RuntimeError(f"{path} is missing product or visible FAQ content.")
+    title=re.search(r"<title>(.*?)</title>",body,re.I|re.S)
+    if not title or model.upper() not in html.unescape(title.group(1)).upper():
+        raise RuntimeError(f"{path} has no model-specific localized title.")
     return model
 
 
@@ -113,15 +134,19 @@ def main() -> None:
             if f'href="/products/{model}/"' not in body:
                 raise RuntimeError(f"/collections/{slug}/ is missing model {model}.")
 
-    # New product detail pages remain English-only until reviewed translations
-    # exist. Localized catalog listings may link to the English detail pages.
+    # Every localized catalog and detail route now resolves natively.
     for locale in LOCALES:
         body = require_page(f"/{locale}/products/")
         for model in models:
-            if f'href="/products/{model}/"' not in body:
-                raise RuntimeError(f"/{locale}/products/ is missing the English-linked card for {model}.")
-            if f'href="/{locale}/products/{model}/"' in body:
-                raise RuntimeError(f"/{locale}/products/ links to an unreviewed localized detail page for {model}.")
+            href=f'href="/{locale}/products/{model}/"'
+            if href not in body:
+                raise RuntimeError(f"/{locale}/products/ is missing its native detail card for {model}.")
+            if f'href="/products/{model}/"' in body:
+                raise RuntimeError(f"/{locale}/products/ still points to the English detail for {model}.")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+            localized_results=list(pool.map(lambda record:verify_localized_product(record,locale),records))
+        if set(localized_results)!=models:
+            raise RuntimeError(f"Not all localized {locale} product pages were verified.")
 
     sitemap = require_page("/sitemap.xml")
     for model in models:
@@ -129,16 +154,17 @@ def main() -> None:
         if route not in sitemap:
             raise RuntimeError(f"Sitemap is missing {route}.")
         for locale in LOCALES:
-            if f"{ORIGIN}/{locale}/products/{model}/" in sitemap:
-                raise RuntimeError(f"Sitemap contains an unreviewed localized product route for {model} ({locale}).")
+            localized_route=f"{ORIGIN}/{locale}/products/{model}/"
+            if localized_route not in sitemap:
+                raise RuntimeError(f"Sitemap is missing localized route {localized_route}.")
 
     print(json.dumps({
         "result": "PASS",
         "englishProductPages": len(models),
         "englishCatalogCards": len(models),
         "categoryPages": len(by_category),
-        "localizedCatalogsWithEnglishProductLinks": list(LOCALES),
-        "localizedProductDetailPages": 0,
+        "localizedCatalogsWithNativeProductLinks": list(LOCALES),
+        "localizedProductDetailPages": len(models)*len(LOCALES),
         "sitemapProductRoutes": len(models),
         "sourceSha256": MANIFEST["sourceSha256"],
     }, ensure_ascii=False, indent=2))
