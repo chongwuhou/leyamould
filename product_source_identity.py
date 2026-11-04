@@ -9,6 +9,7 @@ from html import escape,unescape
 import re
 import json,hashlib
 from pathlib import Path
+from media_alt_render import FAMILY_ALT
 OWNER_BASELINES=json.loads((Path(__file__).parent/'data/product-identity-d1-baselines.json').read_text(encoding='utf8'))['locales']
 def matches_owner_field(text,slug,locale,index):
     record=OWNER_BASELINES.get(locale,{}).get(slug)
@@ -26,6 +27,8 @@ def main_image_alt(row,image,owners,locale,materials,numbers):
     model=str(row["model"])
     categories={"en":{"Plastic Sports Water Bottles":"sports water bottle","Kids Plastic Water Bottles":"kids water bottle","Large Capacity Water Jugs":"large water jug","Plastic Shaker Bottles":"protein shaker"},"es":{"Plastic Sports Water Bottles":"botella deportiva","Kids Plastic Water Bottles":"botella infantil","Large Capacity Water Jugs":"garrafa grande","Plastic Shaker Bottles":"vaso mezclador"},"pt":{"Plastic Sports Water Bottles":"garrafa esportiva","Kids Plastic Water Bottles":"garrafa infantil","Large Capacity Water Jugs":"garrafão de água","Plastic Shaker Bottles":"coqueteleira"},"ru":{"Plastic Sports Water Bottles":"спортивная бутылка","Kids Plastic Water Bottles":"детская бутылка","Large Capacity Water Jugs":"большая бутылка для воды","Plastic Shaker Bottles":"шейкер"},"tr":{"Plastic Sports Water Bottles":"spor matarası","Kids Plastic Water Bottles":"çocuk matarası","Large Capacity Water Jugs":"büyük su bidonu","Plastic Shaker Bottles":"shaker şişesi"}}
     category=categories[locale].get(row["category"],"plastic bottle")
+    if row.get("imageReviewStatus") == "visually_reviewed_source_family_image":
+        return FAMILY_ALT[locale]
     if owners.get(image,0)!=1:
         return {"en":"Reusable plastic drinkware catalog photograph","es":"Foto de catálogo de botellas plásticas","pt":"Fotografia do catálogo de garrafas plásticas","ru":"Фото пластиковой бутылки из каталога","tr":"Plastik matara katalog fotoğrafı"}[locale]
     facts=[]
