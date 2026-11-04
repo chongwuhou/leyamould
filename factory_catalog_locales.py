@@ -206,13 +206,11 @@ def _source_products(series: dict) -> list[dict]:
 
 
 def _render_card(product: dict, locale: str, category_slug: str, translated_routes: set[str], photo) -> str:
-    from factory_product_locales import localized_name
     from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms, verified_source_material
     labels = LABELS[locale]
     slug = str(product.get("slug") or product.get("model") or "").strip("/")
     route = f"/products/{slug}/"
     has_translation = route in translated_routes
-    link_label = labels["details"] if has_translation else labels["english"]
     factory_model_value = product.get("factoryModel")
     factory_model = (factory_model_value.strip() if isinstance(factory_model_value, str) and factory_model_value.strip()
                      else str(product.get("model") or slug))
@@ -225,6 +223,9 @@ def _render_card(product: dict, locale: str, category_slug: str, translated_rout
     image = str((product.get("images") or [""])[0])
     search = " ".join(part for part in (title, factory_model, slug, capacity, volume, material,
         "wholesale B2B OEM factory manufacturer custom plastic material options") if part)
+    is_new_product = product.get("manualNew") is True and product.get("sourceDocument") in SOURCE_DOCUMENTS
+    new_flag = ' data-new-product="true"' if is_new_product else ""
+    badge = f'<span class="product-card__new">{_escape(labels["new"])}</span>' if is_new_product else ""
     family = product.get("imageReviewStatus") == "visually_reviewed_source_family_image"
     alt = ({"en":"Shared factory-family image; confirm exact model variant",
             "es":"Imagen compartida de familia; confirme la variante exacta",
@@ -238,24 +239,26 @@ def _render_card(product: dict, locale: str, category_slug: str, translated_rout
     image_html = photo(image, alt)
     capacity_badge = f'<span class="product-card__capacity">{_escape(volume)}</span>' if volume and category != "Two-Way Drinking Cups" else ""
     return (
-        f'<a class="product-card" data-product-card data-new-product="true" '
+        f'<a class="product-card" data-product-card{new_flag} '
         f'data-category="{_escape(category_slug)}" data-search="{_escape(search)}" href="{_escape(route)}">'
         f'<div class="product-card__image">{image_html}</div>'
-        f'<div class="product-card__body"><span class="product-card__new">{_escape(labels["new"])}</span>'
+        f'<div class="product-card__body">{badge}'
         f'<span class="product-card__small">{small}</span><h3>{_escape(title)}</h3>{capacity_badge}'
-        f'<span class="product-card__link">{_escape(link_label)} ↗</span></div></a>'
+        f'<span class="product-card__link">{_escape(labels["details"] if has_translation else labels["english"])} ↗</span></div></a>'
     )
 
-
 def catalog_cards(body: str, locale: str, route: str, translated_routes=None, series=None) -> str:
-    """Add localized catalog cards for all source-reviewed factory products and link to generated/native detail pages."""
+    """Apply source-grounded B2B titles and search terms to every catalog product card."""
     if locale not in LABELS or (route != "/products/" and not route.startswith("/collections/")):
         return body
 
     from site_renderer import CAT, SERIES, photo
 
     source = SERIES if series is None else series
-    products = _source_products(source)
+    products = [
+        product for product in source.values()
+        if isinstance(product, dict) and str(product.get("slug") or "").strip("/") and product.get("category") in CAT
+    ]
     if route.startswith("/collections/"):
         category_slug = route.strip("/").split("/")[-1]
         products = [
@@ -272,6 +275,7 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
     content_start, content_end = bounds
     grid_content = body[content_start:content_end]
     priority_cards = []
+    priority_urls = set()
     if route == "/products/" or route.startswith("/collections/"):
         # Keep LO first and the eight G-series gallery references second in
         # the main catalog; preserve the matching priority cards in categories.
@@ -301,13 +305,33 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
         for start, end, _card, _url in sorted(lo_matches + gallery_matches, key=lambda item: item[0], reverse=True):
             grid_content = grid_content[:start] + grid_content[end:]
         priority_cards = [item[2] for item in lo_matches] + [item[2] for item in gallery_matches]
+        priority_urls = set(lo_urls + gallery_urls)
+        # A template may contain both a gallery-priority card and an older
+        # ordinary card for the same SKU. Keep the priority copy only.
+        for priority_url in priority_urls:
+            duplicate_pattern = re.compile(
+                r'<a\b(?=[^>]*\bhref=["\']' + re.escape(priority_url) + r'["\'])[^>]*>.*?</a>',
+                re.I | re.S,
+            )
+            grid_content = duplicate_pattern.sub("", grid_content)
     cards = []
 
     for product in products:
         slug = str(product.get("slug") or product.get("model") or "").strip("/")
         href = f'/products/{slug}/'
+        localized_href = f'/{locale}/products/{slug}/' if locale != "en" else href
+        from product_slug_fix import REVERSE as LEGACY_PRODUCT_SLUGS
+        legacy_slug = LEGACY_PRODUCT_SLUGS.get(slug)
+        candidate_hrefs = [href, localized_href]
+        if legacy_slug:
+            legacy_href = f'/products/{legacy_slug}/'
+            legacy_localized_href = f'/{locale}/products/{legacy_slug}/' if locale != "en" else legacy_href
+            candidate_hrefs.extend((legacy_href, legacy_localized_href))
+        if any(candidate in priority_urls for candidate in candidate_hrefs):
+            continue
+        href_pattern = "(?:" + "|".join(re.escape(value) for value in dict.fromkeys(candidate_hrefs)) + r")(?:[?#][^\"']*)?"
         pattern = re.compile(
-            r'<a\b(?=[^>]*\bhref=["\']' + re.escape(href) + r'["\'])[^>]*>.*?</a>',
+            r'<a\b(?=[^>]*\bhref=["\']' + href_pattern + r'["\'])[^>]*>.*?</a>',
             re.I | re.S,
         )
         matches = list(pattern.finditer(grid_content))
@@ -318,13 +342,14 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
             grid_content = grid_content[:matches[0].start()] + grid_content[matches[0].end():]
             if "data-product-card" not in card:
                 card = re.sub(r"<a\b", '<a data-product-card', card, count=1, flags=re.I)
-            if "data-new-product" not in card:
+            is_new_product = product.get("manualNew") is True and product.get("sourceDocument") in SOURCE_DOCUMENTS
+            if is_new_product and "data-new-product" not in card:
                 card = re.sub(r"<a\b", '<a data-new-product="true"', card, count=1, flags=re.I)
-            if "product-card__new" not in card:
+            if is_new_product and "product-card__new" not in card:
                 badge = f'<span class="product-card__new">{_escape(LABELS[locale]["new"])}</span>'
                 card = card.replace('<div class="product-card__body">', '<div class="product-card__body">' + badge, 1)
             default_link = "View Product ↗"
-            label = LABELS[locale]["details"] if href in translated else LABELS[locale]["english"]
+            label = LABELS[locale]["details"] if any(candidate in translated for candidate in candidate_hrefs) else LABELS[locale]["english"]
             card = card.replace(default_link, _escape(label) + " ↗", 1)
             from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms, verified_source_material
             factory_model_value = product.get("factoryModel")
@@ -366,6 +391,9 @@ def catalog_cards(body: str, locale: str, route: str, translated_routes=None, se
                 current_title = html.unescape(re.sub(r"<[^>]+>", " ", heading.group(1))).strip()
                 from factory_product_locales import localized_name
                 default_titles = {localized_name(product, locale), str(product.get("name") or "").strip(), str(product.get("model") or slug).strip()}
+                capacity_text = str(product.get("capacity") or "").strip()
+                if capacity_text:
+                    default_titles.update(capacity_text + " " + value for value in tuple(default_titles) if value)
                 if current_title in default_titles:
                     card, heading_count = re.subn(
                         r"(<h3\b[^>]*>).*?(</h3>)",
