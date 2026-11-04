@@ -3,7 +3,7 @@
   "description": "Default XUYI category and submenu structure; D1 site_navigation manages published labels/order/extra links",
   "productColumns": [
     {
-      "heading": "Plastic Water Bottles",
+      "heading": "Drinkware Collections",
       "image": "/assets/curated-hd/gradient-sports.webp",
       "links": [
         {
@@ -23,7 +23,19 @@
           "url": "/collections/plastic-shaker-bottles/"
         },
         {
-          "label": "All Plastic Bottle Models",
+          "label": "Spray Water Bottles",
+          "url": "/collections/spray-water-bottles/"
+        },
+        {
+          "label": "Two-Way Drinking Cups",
+          "url": "/collections/two-way-drinking-cups/"
+        },
+        {
+          "label": "Titanium Vacuum Cups",
+          "url": "/collections/titanium-vacuum-cups/"
+        },
+        {
+          "label": "All Drinkware Models",
           "url": "/products/"
         }
       ]

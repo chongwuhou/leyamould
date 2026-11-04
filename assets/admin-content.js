@@ -124,24 +124,41 @@
   }
   if(tab==="new-product"){
    const cats=state.products?.categories||[];
-   const existing=(state.products?.items||[]).filter(row=>row.content?.newProduct);
-   html='<h3>创建或修改单个商品</h3><p>不做批量导入。先保存 D1 草稿，确认真实型号、材质、容量、图片和说明后再发布。正式发布生成英文商品页；其他语言只有经过对应译文审核才会生成。不会自动复制英文充当翻译。</p>'+
-    '<label class="block-label">已保存的新增商品（可选） <select id="cms-new-existing"><option value="">+ 新建单个商品</option>'+
-      existing.map(item=>'<option value="'+esc(item.model)+'">'+esc(item.model)+' · '+esc(item.status)+'</option>').join("")+'</select></label>'+
-    field("model","","新商品型号 / URL 标识（小写英文字母、数字和短横线；例如 bottle-9001）")+
+   html='<h3>工厂目录安全批量导入</h3><p>选择由工厂画册整理的 JSON 清单。系统通过现有后台媒体 API 上传图片到 R2，再通过现有产品 CMS API 创建 D1 商品；已有型号自动跳过，不覆盖原有商品或人工编辑。发布后生成英文商品页，其他语言需完成对应译文后再生成。</p>'+
+    '<label class="block-label">产品目录 JSON <input id="cms-new-bulk-file" type="file" accept=".json,application/json"></label>'+
+    button("安全导入产品目录（创建式，不覆盖已有商品）","new-product-bulk")+
+    '<label class="block-label">编辑已导入的新商品 <select id="cms-new-existing"><option value="">新建商品</option>'+
+      (state.products?.items||[]).filter(row=>row.content?.newProduct===true).map(row=>'<option value="'+esc(row.model)+'">'+esc((row.content?.factoryModel||row.model)+" · "+(row.content?.name||"")+" · "+(row.status||"draft"))+'</option>').join("")+'</select></label>'+
+     '<p>选择已导入的新商品可更新其 D1 资料；旧目录型号不会在此修改。</p>'+
+     '<hr><h3>单个商品创建</h3>'+
+    field("model","","新商品型号 / URL 标识（小写英文字母、数字和短横线）")+
+    field("factoryModel","","工厂画册印刷型号（保留原大小写）")+
     '<label class="block-label">产品类别 <select data-cms-field="category">'+
       cats.map(label=>'<option value="'+esc(label)+'">'+esc(label)+'</option>').join("")+'</select></label>'+
-    field("name","","英文产品名称（真实名称，不能编造）")+
-    field("capacity","","容量（如 750ml；必须实测或确认）")+
-    field("material","","材质（如 PP；必须核实）")+
+    field("name","","英文产品名称")+
+    field("capacity","","容量（保留画册原始规格与多容量关系）")+
+    field("material","","材质（未确认时明确标注待核实）")+
+    field("dimensions","","产品尺寸（按画册原文）")+
+    field("unit_weight","","单个产品重量")+
+    field("temperature_range","","温度范围")+
     field("colors","","颜色选项（可选）")+
-    field("packing","","包装信息（可选）")+
-    field("image","","R2 产品主图路径（先在 R2 图片管理上传，必须存在）")+
-    field("description","","英文产品说明（按实际产品填写）",5)+
+    field("packing","","单品包装信息（可选）")+
+    field("retail_box_size","","彩盒尺寸")+
+    field("carton_quantity","","外箱装量")+
+    field("carton_size","","外箱尺寸")+
+    field("carton_gross_weight","","外箱毛重")+
+    field("catalogOunceLabel","","画册印刷的 oz 标识")+
+    field("sourceDocument","","来源文件名")+
+    field("sourcePage","","来源页码")+
+    field("sourceNotes","","画册备注及需要确认的规格",4)+
+    field("qcStatus","","资料核验状态")+
+    field("imageReviewStatus","","图片审核状态")+
+    field("image","","R2 产品主图路径")+
+    field("description","","英文产品说明（保留全部已知信息及待确认事项）",5)+
     field("seoTitle","","SEO Title（最多 90 字符）")+
     field("seoDescription","","Meta Description（最多 240 字符）",3)+
     '<label class="block-label">保存状态 <select data-cms-field="status"><option value="draft">只存草稿，不生成页面</option><option value="published">资料核实完成，进入自动发布队列</option></select></label>'+
-    '<p>页面路径：/products/型号/。新产品复用现有列表、详情、图片、SEO 与 R2 溢出模板，无须单独编辑 HTML。</p>'+
+    '<p>页面路径：/products/型号/。新产品复用现有列表、详情、图片、SEO 与 R2 模板。</p>'+
     button("保存单个新商品","new-product");
   }
   if(tab==="page-body"){
@@ -274,19 +291,20 @@
    matches.addEventListener("click",()=>selectProduct(matches.value));
    filterProducts();
   } 
-  if(tab==="new-product"){
-   const select=$("cms-new-existing");
-   select.addEventListener("change",()=>{
-    const entry=(state.products?.items||[]).find(row=>row.model===select.value&&row.content?.newProduct);
-    const keys=["model","name","capacity","material","colors","packing","image","description","seoTitle","seoDescription"];
-    for(const key of keys){
-     const element=container.querySelector('[data-cms-field="'+key+'"]');
-     if(element)element.value=entry?(key==="model"?entry.model:entry.content[key]||""):"";
-    }
-    container.querySelector('[data-cms-field="status"]').value=entry?.status||"draft";
-    if(entry)container.querySelector('[data-cms-field="category"]').value=entry.content.category;
-   });
-  }
+   if(tab==="new-product"){
+    const select=$("cms-new-existing");
+    if(select)select.addEventListener("change",()=>{
+     const entry=(state.products?.items||[]).find(row=>row.model===select.value&&row.content?.newProduct===true);
+     const keys=["model","factoryModel","name","capacity","material","dimensions","unit_weight","temperature_range","colors","packing","retail_box_size","carton_quantity","carton_size","carton_gross_weight","catalogOunceLabel","sourceDocument","sourcePage","sourceNotes","qcStatus","imageReviewStatus","image","description","seoTitle","seoDescription"];
+     for(const key of keys){
+      const element=container.querySelector('[data-cms-field="'+key+'"]');
+      if(element)element.value=entry?(key==="model"?entry.model:entry.content[key]||""):"";
+     }
+     const modelField=container.querySelector('[data-cms-field="model"]');if(modelField)modelField.readOnly=!!entry;
+     const statusField=container.querySelector('[data-cms-field="status"]');if(statusField)statusField.value=entry?.status||"draft";
+     const categoryField=container.querySelector('[data-cms-field="category"]');if(categoryField)categoryField.value=entry?.content?.category||categoryField.options[0]?.value||"";
+    });
+   }
   if(tab==="page-body"){
    const routes=$("cms-page-body-route");
    routes.innerHTML=(state.pageBodies?.editableRoutes||[]).map(route=>'<option value="'+esc(route)+'">'+esc(route)+'</option>').join("");
@@ -355,14 +373,88 @@
     const target=rows.find(x=>x.route===selected);if(!target)throw Error("请先选择页面");
     target.seoTitle=value("seoTitle");target.metaDescription=value("seoDescription");
     result=await api("pages",{action:"save_pages",pages:rows});
-   }else if(action==="new-product"){
-    const status=value("status");
-    if(status==="published"&&!window.confirm("请确认容量、材质、产品图片属于真实型号；确认后保存 D1 并排队生成英文产品页。四语译文需要另外审核。"))return;
-    const content={category:value("category"),name:value("name"),material:value("material"),
-      capacity:value("capacity"),colors:value("colors"),packing:value("packing"),
-      image:value("image"),description:value("description"),
-      seoTitle:value("seoTitle"),seoDescription:value("seoDescription")};
-    result=await api("product-content",{action:"create_product",model:value("model"),status,content});
+    }else if(action==="new-product"){
+     const selectedExisting=$("cms-new-existing")?.value||"";
+     const enteredModel=value("model").trim().toLowerCase();
+     const model=selectedExisting||enteredModel;
+     if(!model)throw Error("请输入新商品型号");
+     if(selectedExisting&&enteredModel!==selectedExisting)throw Error("已选商品的型号标识不可修改");
+     const exists=(state.products?.items||[]).some(row=>String(row.model).toLowerCase()===model)||(state.products?.catalogModels||[]).some(row=>String(row).toLowerCase()===model);
+     if(!selectedExisting&&exists)throw Error("该型号已存在；请在编辑列表中选择后更新，创建操作不会覆盖已有商品。");
+     const existingEntry=selectedExisting?(state.products?.items||[]).find(row=>row.model===selectedExisting&&row.content?.newProduct===true):null;
+     const status=value("status");
+     if(status==="published"&&!window.confirm(selectedExisting?"确认更新这款已导入的新商品？将使用当前 D1 资料和 R2 主图生成英文商品页；其他语言仍需审核译文。":"请确认容量、材质、产品图片属于真实型号；确认后保存 D1 并排队生成英文产品页。四语译文需要另外审核。"))return;
+     const content={category:value("category"),factoryModel:value("factoryModel"),name:value("name"),material:value("material"),
+      capacity:value("capacity"),dimensions:value("dimensions"),unit_weight:value("unit_weight"),temperature_range:value("temperature_range"),
+      colors:value("colors"),packing:value("packing"),retail_box_size:value("retail_box_size"),carton_quantity:value("carton_quantity"),
+      carton_size:value("carton_size"),carton_gross_weight:value("carton_gross_weight"),catalogOunceLabel:value("catalogOunceLabel"),
+      sourceDocument:value("sourceDocument"),sourcePage:value("sourcePage"),sourceNotes:value("sourceNotes"),qcStatus:value("qcStatus"),
+      imageReviewStatus:existingEntry&&existingEntry.content.image!==value("image")?"pending_manual_review":value("imageReviewStatus"),image:value("image"),description:value("description"),
+      seoTitle:value("seoTitle"),seoDescription:value("seoDescription"),
+      sourceSha256:existingEntry?.content?.sourceSha256||"",
+      sourceImageSha256:existingEntry?.content?.image===value("image")?(existingEntry.content.sourceImageSha256||""):""};
+     result=await api("product-content",{action:"create_product",createOnly:!selectedExisting,model,status,content});
+   }else if(action==="new-product-bulk"){
+    const file=document.getElementById("cms-new-bulk-file")?.files?.[0];
+    if(!file)throw Error("请先选择工厂目录 JSON 文件");
+    if(file.size>25*1024*1024)throw Error("目录文件超过 25MB，请压缩图片后重新生成");
+    let manifest;try{manifest=JSON.parse(await file.text())}catch{throw Error("JSON 文件无法解析")}
+    if(manifest.schemaVersion!==1||!Array.isArray(manifest.records)||manifest.records.length<1||manifest.records.length>100)
+      throw Error("目录清单格式不正确：只支持 1–100 个产品");
+    if(manifest.recordCount!==undefined&&manifest.recordCount!==manifest.records.length)
+      throw Error("目录记录数与清单声明不一致");
+    if(manifest.sourceDocument&&!/^[0-9a-f]{64}$/i.test(manifest.sourceSha256||""))
+      throw Error("来源文件缺少有效 SHA-256 校验值");
+    const seen=new Set();
+    for(const row of manifest.records){
+      if(!row||typeof row.model!=="string"||!/^[a-z0-9][a-z0-9-]{1,63}$/.test(row.model)||seen.has(row.model))
+        throw Error("目录中存在无效或重复型号");
+      if(!row.content||typeof row.content!=="object"||typeof row.imageBase64!=="string"||row.imageBase64.length<100||row.imageMime!=="image/webp"||!(/^[0-9a-f]{64}$/i.test(row.imageSha256||"")))
+        throw Error("型号 "+row.model+" 缺少商品资料、完整图片或 SHA-256 校验值");
+      if(!row.imageAlt||["en","es","pt","ru","tr"].some(locale=>typeof row.imageAlt[locale]!=="string"||!row.imageAlt[locale].trim()))
+        throw Error("型号 "+row.model+" 缺少五种语言的图片 ALT");
+      seen.add(row.model);
+    }
+    const existing=new Set((state.products?.items||[]).map(row=>String(row.model).toLowerCase()));
+    (state.products?.catalogModels||[]).forEach(model=>existing.add(String(model).toLowerCase()));
+    const already=manifest.records.filter(row=>existing.has(row.model)).map(row=>row.model);
+    const fresh=manifest.records.filter(row=>!existing.has(row.model));
+    if(!fresh.length){say("导入结束：清单中的型号已全部存在，未修改任何商品。");return}
+    if(!window.confirm("来源："+String(manifest.sourceDocument||"工厂目录")+"\n清单："+manifest.records.length+" 款\n本次新建："+fresh.length+" 款\n已存在跳过："+already.length+" 款\n\n将逐款上传原始产品图片到 R2，并通过后台 CMS API 创建已发布英文商品页。已有型号不会覆盖。是否继续？"))return;
+    const created=[],skipped=[...already],failed=[];
+    for(let i=0;i<fresh.length;i++){
+      const row=fresh[i];let imagePath="";
+      say("正在导入 "+(i+1)+"/"+fresh.length+"："+row.model+"（上传原始图片）");
+      try{
+        const bytes=Uint8Array.from(atob(row.imageBase64),ch=>ch.charCodeAt(0));
+        const digest=await crypto.subtle.digest("SHA-256",bytes);
+        const hash=Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,"0")).join("");
+        if(hash!==row.imageSha256.toLowerCase())throw Error("产品图片 SHA-256 校验失败");
+        const imageFile=new File([bytes],row.model+".webp",{type:"image/webp"});
+        const form=new FormData();form.set("kind","product");form.set("image",imageFile);
+        form.set("altByLocale",JSON.stringify(row.imageAlt||{en:(row.content.factoryModel||row.model)+" "+(row.content.name||"drinkware")+" factory catalog product image"}));
+        const upload=await fetch("/api/admin/media",{method:"POST",headers:{authorization:"Bearer "+token()},body:form,cache:"no-store"});
+        const media=await upload.json().catch(()=>({}));
+        if(!upload.ok||!media.path)throw Error(media.error||"R2 图片上传失败");
+        imagePath=media.path;
+        const content={...row.content,sourceDocument:manifest.sourceDocument||row.content.sourceDocument||"",sourceSha256:manifest.sourceSha256||row.content.sourceSha256||"",sourceImageSha256:row.imageSha256,image:imagePath};
+        const saved=await api("product-content",{action:"create_product",createOnly:true,model:row.model,status:row.status||"published",content});
+        if(!saved?.saved)throw Error(saved?.error||"CMS 未确认保存");
+        created.push(row.model);
+      }catch(error){
+        if(imagePath){
+          const filename=imagePath.split("/").pop();
+          await fetch("/api/admin/media?kind=product&filename="+encodeURIComponent(filename),{method:"DELETE",headers:{authorization:"Bearer "+token()},cache:"no-store"}).catch(()=>{});
+        }
+        const message=String(error?.message||error);
+        if(/already exists|already published|409/i.test(message))skipped.push(row.model);
+        else failed.push({model:row.model,error:message});
+      }
+    }
+    await load();
+    const details=failed.slice(0,12).map(item=>item.model+": "+item.error).join("；");
+    say("目录导入完成：新建 "+created.length+" 款；跳过 "+skipped.length+" 款；失败 "+failed.length+" 款。"+(details?"失败明细："+details:"")+" 已有商品未覆盖。");
+    return;
    }else if(action==="product"){
     if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
       throw Error("请先从已有商品型号列表中选择产品");
