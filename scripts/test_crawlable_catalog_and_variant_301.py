@@ -80,17 +80,25 @@ series_models={str(row.get("model","")).lower() for row in SERIES.values()}
 factory_models={str(row.get("model","")).lower() for row in factory_manifest["models"]}
 ppt_models_lower={model.lower() for model in ppt_models}
 assert not (ppt_models_lower & (series_models | factory_models)), "PPT models overlap with existing catalogue models"
-total=len(SERIES)+factory_manifest["recordCount"]+len(ppt_models)
-pages=ceil(total/PAGE_SIZE)
+base_total=len(SERIES)+factory_manifest["recordCount"]
+total=base_total+len(ppt_models)
+ppt_links={"/products/"+model+"/" for model in ppt_models}
 for l in locales:
     prefix=l["pathPrefix"]
+    # The 95 PPT imports are English-only until their product translations are approved.
+    expected_total=total if l["code"]=="en" else base_total
+    pages=ceil(expected_total/PAGE_SIZE)
     file=DIST/prefix/"products/index.html"
     doc=file.read_text(encoding="utf8")
     main=doc.split('<main id="main-content">',1)[1].split("</main>",1)[0]
     # All full HTML source model <a href> links remain usable with JS disabled.
     cards=re.findall(r'<a\b[^>]*data-product-card[^>]*\bhref="([^"]+)"',main)
-    assert len(cards)==total,(prefix,len(cards),total)
-    assert len(set(cards))==total
+    assert len(cards)==expected_total,(prefix,len(cards),expected_total)
+    assert len(set(cards))==expected_total
+    if l["code"]=="en":
+        assert ppt_links.issubset(set(cards))
+    else:
+        assert not (ppt_links & set(cards)), "Untranslated PPT products must not enter localized catalogues"
     for page in range(1,pages+1):
         assert 'data-page-link="'+str(page)+'" href="?page='+str(page)+'"' in main
     assert 'href="?page=2"' in main
