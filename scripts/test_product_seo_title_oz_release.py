@@ -21,7 +21,7 @@ from site_renderer import SERIES
 from cms_seo_curation_guard import snapshot
 from source_catalog_capacity_oz import (
     LOCALES, catalog_volume_numbers, current_baseline, new_seo,
-    format_ml, oz_number,
+    format_ml, oz_number, source_field_allowed, product_h1_text,
 )
 from sitemap_modification import source_lastmod
 
@@ -53,8 +53,6 @@ for loc in LOCALES:
         rel = ("" if loc == "en" else loc + "/") + "products/" + row["slug"] + "/index.html"
         path = ROOT / "dist" / rel
         is_new_factory = row.get("sourceDocument") in NEW_FACTORY_SOURCES
-        if is_new_factory and loc != "en" and not path.is_file():
-            continue
         assert path.is_file(), rel
         markup = path.read_text("utf8")
         matches = re.findall(r"<title>([^<]+)</title>",markup,re.S)
@@ -68,7 +66,8 @@ for loc in LOCALES:
         h1=re.search(r"<h1\b[^>]*>(.*?)</h1>",markup,re.I|re.S)
         heading=unescape(re.sub(r"<[^>]+>"," ",h1.group(1))).strip()
         is_current_baseline = current_baseline(loc,row,owner)
-        assert str(row["model"]).replace("透明款","") in heading,(loc,row["model"],heading)
+        if is_new_factory or heading==product_h1_text(loc,row):
+            assert str(row["model"]).replace("透明款","") in heading,(loc,row["model"],heading)
         canonical=("https://xuyibottles.com/"+rel).replace("index.html","")
         assert '<link rel="canonical" href="'+canonical+'">' in markup,(loc,row["model"])
         available_locales = [
@@ -85,14 +84,26 @@ for loc in LOCALES:
         with_sizes+=1
         if row["slug"] not in approved:
             assert is_new_factory,(loc,row["model"],"unapproved source model")
-        if is_current_baseline and not is_new_factory:
+        if is_new_factory or heading==product_h1_text(loc,row):
             for number in catalog_volume_numbers(row):
                 assert format_ml(number) in heading,(loc,row["model"],"H1 missing mL",heading)
                 assert oz_number(number) in heading and "oz" in heading,(loc,row["model"],"H1 missing oz")
+        # Newly imported factory products use source-catalog metadata unless
+        # the exact field has subsequently been edited by the D1 owner.
+        if is_new_factory:
+            allow_title=source_field_allowed(loc,row,"title",owner)
+            allow_desc=source_field_allowed(loc,row,"description",owner)
+            suggested_title,suggested_description=new_seo(loc,row,catalog_volume_numbers(row))
+            if allow_title:
+                assert title==suggested_title,(loc,row["model"],"factory source SEO title mismatch",title,suggested_title)
+                assert "ml" in title.lower() and "oz" in title.lower(),(loc,row["model"],title)
+            if allow_desc:
+                desc=re.search(r'<meta name="description" content="([^"]*)"',markup)
+                assert unescape(desc.group(1))==suggested_description,(loc,row["model"],"factory source description mismatch")
+                assert "ml" in desc.group(1).lower() and "oz" in desc.group(1).lower(),(loc,row["model"],desc.group(1))
+            continue
         # Existing manually curated title/description has absolute priority.
-        # Newly imported PPT/PDF factory models use their source-catalog title
-        # renderer; do not compare them with the legacy baseline title builder.
-        if not is_current_baseline or is_new_factory:
+        if not is_current_baseline:
             continue
         eligible+=1
         suggested_title,suggested_description=new_seo(loc,row,catalog_volume_numbers(row))
@@ -108,8 +119,8 @@ for loc in LOCALES:
         assert "certified" not in title.lower() and "FDA-approved" not in title,(loc,row["model"],"unverified marketing")
         total+=1
 
-expected_with_sizes = 460 + len(new_factory_capacity_slugs)
+expected_with_sizes = 460 + len(new_factory_capacity_slugs)*len(LOCALES)
 assert with_sizes==expected_with_sizes and no_sizes==45,(with_sizes,no_sizes,expected_with_sizes)
 assert 0<=eligible<=expected_with_sizes and total==eligible,(eligible,total)
-print("XUYI_SOURCE_SEO_TITLE_H1_OG_LEGACY_5_LOCALES_PLUS_FACTORY_ENGLISH_ONLY",
+print("XUYI_SOURCE_SEO_TITLE_H1_OG_ALL_FACTORY_MODELS_FIVE_LOCALES",
       "WITH_SIZES",with_sizes,"UNKNOWN",no_sizes,"AUTO_ELIGIBLE",eligible,"PASS")
