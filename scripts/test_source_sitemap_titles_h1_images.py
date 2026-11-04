@@ -12,7 +12,7 @@ from site_renderer import SERIES,BUILD_STATE
 from catalog_extensions import is_factory_catalog_source_default
 from product_source_identity import source_product_identity,main_image_alt,matches_owner_field
 from sitemap_modification import source_lastmod,BASELINE,review_change_dates
-from scripts.source_catalog_capacity_oz import new_seo,catalog_volume_numbers,verified_source_material
+from scripts.source_catalog_capacity_oz import new_seo,catalog_volume_numbers,verified_source_material,source_field_allowed
 DIST=ROOT/"dist"
 D1_PRODUCT_SEO={(str(row.get("slug") or ""),str(row.get("locale") or "")):row
                 for row in BUILD_STATE.get("productSeo",[]) if isinstance(row,dict)}
@@ -65,11 +65,12 @@ for loc in ("en","es","pt","ru","tr"):
         # Otherwise, source defaults for this 58-SKU batch must use concise verified SEO.
         product_seo=D1_PRODUCT_SEO.get((slug,loc))
         product_content=D1_PRODUCTS.get(str(row.get("model") or "").lower(),{})
+        source_seo_allowed=source_field_allowed(loc,row,"title",BUILD_STATE)
         owner_title=(product_seo or {}).get("seoTitle")
         if not owner_title and product_content.get("seoTitle"):
             if not is_factory_catalog_source_default(row.get("model"),product_content,"seoTitle"):
                 owner_title=product_content["seoTitle"]
-        if owner_title:
+        if owner_title and not source_seo_allowed:
             assert title==owner_title,(loc,slug,"D1/product owner SEO overwritten",title,owner_title)
             assert len(title)<=90,(loc,slug,"owner SEO exceeds product metadata limit",len(title),title)
         else:
