@@ -72,7 +72,7 @@ for row in models:
         assert page.count('class="product-custom-material-options"')==1,(lang,slug)
         canonical=re.search(r'<link rel="canonical" href="([^"]+)"',head)
         assert canonical and canonical.group(1)=="https://xuyibottles.com/"+pfx+"products/"+slug+"/",(lang,slug)
-        if source_default:assert title.count("XUYI")>=1,(lang,slug)
+        if source_title_default:assert title.count("XUYI")>=1,(lang,slug)
         if numbers:
             with_sizes+=1
             expected=volume_terms(numbers,lang)
