@@ -19,6 +19,13 @@ PATTERN=re.compile(
 )
 
 
+def apply_to_document(markup,route=None,locale=None):
+    """Repair only the reviewed sports-category card image slot."""
+    asset=ROOT/NEW.lstrip("/")
+    if not asset.is_file():raise FileNotFoundError("Missing reviewed sports image "+NEW)
+    return PATTERN.sub(lambda m:m.group(1)+NEW+m.group(2),markup)
+
+
 def apply(dist):
     dist=Path(dist)
     if not (dist/NEW.lstrip("/")).is_file():
