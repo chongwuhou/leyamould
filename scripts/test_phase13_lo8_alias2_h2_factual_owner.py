@@ -66,8 +66,11 @@ for slug,peer in FIFTH10.items():
    assert len(visible)==4 and all(data["sku"] in q for q,a in visible),(slug,lang,"FAQ")
   else:
    assert visible==visible_faq(faq_source[2]),(slug,lang,"owner FAQ questions were not preserved")
-  schemas=[z for txt in re.findall(r'<script type="application/ld\+json">(.*?)</script>',page,re.S)
-    if isinstance((z:=json.loads(txt)),dict) and z.get("@type")=="FAQPage"]
+  schemas=[]
+  for txt in re.findall(r'<script type="application/ld\+json">(.*?)</script>',page,re.S):
+   obj=json.loads(txt)
+   nodes=obj.get("@graph",[]) if isinstance(obj,dict) and isinstance(obj.get("@graph"),list) else [obj]
+   schemas.extend(node for node in nodes if isinstance(node,dict) and node.get("@type")=="FAQPage")
   assert len(schemas)==1
   assert [(x["name"],x["acceptedAnswer"]["text"]) for x in schemas[0]["mainEntity"]]==visible
   seen+=1
