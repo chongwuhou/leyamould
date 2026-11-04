@@ -803,7 +803,7 @@ def main():
 
         if route.startswith("/products/") and route!="/products/":
 
-            from site_renderer import SERIES
+            from site_renderer import SERIES, PRODUCT_OVERRIDES
 
             from sku_unique_openings import editor_intro
 
@@ -816,6 +816,20 @@ def main():
                 from sku_factual_sections import apply as verified_sku_sections
 
                 body=verified_sku_sections(body,current_product,loc)
+
+                # A D1 owner-selected SKU main photo is global across locales.
+                # Older translated HTML may retain a previous catalog photo;
+                # sync only the hero to the same reviewed source as Product.image.
+                override=PRODUCT_OVERRIDES.get(str(current_product.get("model")),{})
+                selected=override.get("image") if isinstance(override,dict) else None
+                if isinstance(selected,str):
+                    from product_image_sitemap import image_path
+                    selected=image_path(selected,ORIGIN)
+                    if selected:
+                        pattern=r'(<img\b(?=[^>]*\bid="main-photo")[^>]*\bsrc=")[^"]+(")'
+                        body,count=re.subn(pattern,lambda match:match.group(1)+selected+match.group(2),body,count=1,flags=re.I)
+                        if count!=1:
+                            raise RuntimeError("D1-selected main photo missing from localized product body: "+loc+" "+route)
 
         # Translated D1 body takes precedence; add common scenario-specific
 
