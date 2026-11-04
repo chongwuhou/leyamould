@@ -15,7 +15,6 @@ sys.path.insert(0, str(ROOT))
 
 import site_renderer as site
 from catalog_extensions import append_new_products
-from factory_catalog_locales import LABELS
 from product_content import factory_catalog_seo_title
 
 SOURCE = "水杯最新产品.pptx"
@@ -111,21 +110,19 @@ for model in EXPECTED_PUBLISHED:
     assert isinstance(alts, dict), (model, "missing D1 image ALT")
     assert all(isinstance(alts.get(locale), str) and alts[locale].strip() for locale in ("en", "es", "pt", "ru", "tr")), (model, alts)
 
-# New products appear in each language's catalog with honest English-detail links.
+# The 95 PPT products have verified English details and five-language image ALT,
+# but no reviewed product translations yet. Do not expose English-only cards as
+# if they were localized; publish them in localized catalogues after translation.
 for locale in ("es", "pt", "ru", "tr"):
     listing = ROOT / "dist" / locale / "products/index.html"
     assert listing.is_file(), (locale, "missing localized product listing")
     html = listing.read_text(encoding="utf8")
     for model in EXPECTED_PUBLISHED:
         product = ppt_products[model]
-        slug = product["slug"]
-        href = f'href="/products/{slug}/"'
-        assert html.count(href) == 1, (locale, model, "localized card missing/duplicated")
-        start = html.index(href)
-        card = html[start:html.find("</a>", start) + 4]
-        assert LABELS[locale]["english"] in card, (locale, model, "English-detail disclosure missing")
-        assert product["images"][0] in card, (locale, model, "localized card image missing")
-        assert 'alt="' in card and 'alt=""' not in card, (locale, model, "localized image ALT missing")
+        href = f'href="/products/{product["slug"]}/"'
+        assert href not in html, (locale, model, "untranslated PPT product leaked into localized catalogue")
+        localized_detail = ROOT / "dist" / locale / "products" / product["slug"] / "index.html"
+        assert not localized_detail.exists(), (locale, model, "unreviewed localized detail page exists")
 
 # CMS owner-edit priority: a later owner SEO, copy and image choice must survive catalog expansion.
 sample = deepcopy(next(row for row in snapshot_rows if row["model"] == "5361"))
@@ -156,6 +153,6 @@ assert append_new_products(series_b, expected_rows) == len(EXPECTED_PUBLISHED)
 assert json.dumps(series_a, sort_keys=True, ensure_ascii=False) == json.dumps(series_b, sort_keys=True, ensure_ascii=False)
 
 print("XUYI_PPT_95_SOURCE_VERIFIED_PRODUCTS_RELEASE_TEST_PASSED",
-      "products=" + str(len(EXPECTED_PUBLISHED)), "localized_catalogs=4",
+      "products=" + str(len(EXPECTED_PUBLISHED)), "localized_catalogs=English-only-until-translated",
       "English_details=" + str(len(EXPECTED_PUBLISHED)),
       "image_alts=5_languages", "pending_gate=PASS", "owner_override=PASS")
