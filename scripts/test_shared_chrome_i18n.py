@@ -11,7 +11,7 @@ LANGS=tuple(x["code"] for x in MANIFEST["locales"] if x["code"]!="en")
 PREFIX={x["code"]:x["pathPrefix"] for x in MANIFEST["locales"]}
 MAPPING=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf8"))
 RUNTIME=json.loads((ROOT/"data/runtime-ui-translations.json").read_text(encoding="utf8"))
-CRITICAL=("Plastic Water Bottles","Plastic Sports Water Bottles","Large Capacity Water Jugs",
+CRITICAL=("Plastic Sports Water Bottles","Large Capacity Water Jugs",
  "Kids Plastic Water Bottles","Plastic Shaker Bottles","Bottle By Feature",
  "Straw Lid Bottles","Flip Top Bottles","Carry Handle Bottles","Large Capacity",
  "Gradient Colors","Bottle By Use","Gym & Sports","Outdoor & Travel",
