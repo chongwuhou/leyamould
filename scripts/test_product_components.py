@@ -25,9 +25,14 @@ for model,product in site.SERIES.items():
     inquiry_model=product["model"] if product.get("loNew") or product.get("galleryReference") else product["slug"]
     assert 'href="/contact/?model='+inquiry_model+'&amp;type=Samples#inquiry"' in main,model
     assert 'href="/contact/?model='+inquiry_model+'#inquiry"' in main,model
-    # Intro must follow H1 in every published locale, not below the detail grid.
+    # New PPT factory products have English detail pages until each translation is
+    # separately reviewed and published. Localized catalog cards link to the
+    # English specification rather than fabricating untranslated detail pages.
+    is_new_factory = product.get("manualNew") is True and product.get("sourceDocument") in {"puyunsm(1).pdf", "水杯最新产品.pptx"}
     for locale in ("en","es","pt","ru","tr"):
         localized=ROOT/"dist"/("" if locale=="en" else locale)/"products"/product["slug"]/"index.html"
+        if is_new_factory and locale != "en" and not localized.is_file():
+            continue
         assert localized.is_file(),(model,locale,"missing locale")
         html=localized.read_text(encoding="utf8")
         main_html=html.split('<main id="main-content">',1)[1].split("</main>",1)[0]

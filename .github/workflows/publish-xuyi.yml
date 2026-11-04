@@ -434,6 +434,8 @@ jobs:
           python scripts/test_localized_templates.py
           python scripts/test_localized_release.py
           python scripts/test_factory_catalog_20261103.py
+          python scripts/test_product_components.py
+          python scripts/test_ppt_new_95_publish.py
           node scripts/test_factory_catalog_20261103.mjs
           python scripts/test_shared_chrome_i18n.py
           python scripts/test_curated_hq_images.py
