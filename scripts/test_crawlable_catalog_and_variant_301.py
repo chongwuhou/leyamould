@@ -70,7 +70,17 @@ for legacy,clean in ALIASES.items():
         prefix=("/"+l["pathPrefix"] if l["pathPrefix"] else "")
         assert '<loc>https://xuyibottles.com'+prefix+'/products/'+clean+'/</loc>' in sitemap
 
-total=len(SERIES)+factory_manifest["recordCount"]
+ppt_rows=[row for row in state.get("products",[])
+           if isinstance(row,dict) and isinstance(row.get("content"),dict)
+           and row["content"].get("newProduct") is True
+           and row["content"].get("sourceDocument")=="水杯最新产品.pptx"]
+ppt_models={str(row.get("model","")) for row in ppt_rows}
+assert all(ppt_models) and len(ppt_models)==len(ppt_rows), "PPT product models must be unique"
+series_models={str(row.get("model","")).lower() for row in SERIES.values()}
+factory_models={str(row.get("model","")).lower() for row in factory_manifest["models"]}
+ppt_models_lower={model.lower() for model in ppt_models}
+assert not (ppt_models_lower & (series_models | factory_models)), "PPT models overlap with existing catalogue models"
+total=len(SERIES)+factory_manifest["recordCount"]+len(ppt_models)
 pages=ceil(total/PAGE_SIZE)
 for l in locales:
     prefix=l["pathPrefix"]
