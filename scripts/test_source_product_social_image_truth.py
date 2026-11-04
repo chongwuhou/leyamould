@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """No Excel screenshot as Product.image, OG or Google image-sitemap photo.
 
-Test existing 5-language pages and the English-only source detail for newly
-reviewed factory products, CMS owner precedence, and repeat rendering.
+Test source-generated 5-language details for reviewed factory products,
+English-only fallback for unsupported sources, CMS owner precedence, and repeat rendering.
 """
 from pathlib import Path
 import copy
@@ -23,6 +23,7 @@ from site_renderer import SERIES,SITE_ORIGIN
 from product_share_source import CATEGORY_PREVIEWS,real_product_images,social_path,add_social_head
 from product_image_sitemap import image_path,xml_image_for_product
 from product_content import add_schema
+from factory_product_locales import SOURCE_DOCUMENTS as FACTORY_SOURCE_DOCUMENTS
 
 assert len(CATEGORY_PREVIEWS)==4
 for category,src in CATEGORY_PREVIEWS.items():
@@ -43,11 +44,15 @@ for entry in SERIES.values():
     selected=social_path(entry)
     if fallback:assert selected==CATEGORY_PREVIEWS[entry["category"]]
     else:assert selected==photos[0]
-    source_only=bool(entry.get("manualNew") and entry.get("sourceDocument"))
+    source_generated=bool(entry.get("manualNew") and entry.get("sourceDocument") in FACTORY_SOURCE_DOCUMENTS)
+    source_only=bool(entry.get("manualNew") and entry.get("sourceDocument") and not source_generated)
     if source_only:
         assert (dist/"products"/model/"index.html").is_file(),model
         for locale in ("es","pt","ru","tr"):
             assert not (dist/locale/"products"/model/"index.html").exists(),(locale,model)
+    if source_generated:
+        for locale in ("es","pt","ru","tr"):
+            assert (dist/locale/"products"/model/"index.html").is_file(),(locale,model,"reviewed factory translation missing")
     for locale in langs:
         if locale and source_only:
             continue
