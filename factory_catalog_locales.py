@@ -4,7 +4,7 @@ import html
 import re
 
 
-SOURCE_DOCUMENT = "puyunsm(1).pdf"
+SOURCE_DOCUMENTS = {"puyunsm(1).pdf", "水杯最新产品.pptx"}
 GRID_OPEN = '<div class="grid grid--4 product-grid">'
 
 CATEGORY_NAMES = {
@@ -85,7 +85,7 @@ def _page_grid_bounds(body: str) -> tuple[int, int] | None:
 def _source_products(series: dict) -> list[dict]:
     rows = []
     for key, product in series.items():
-        if not isinstance(product, dict) or product.get("sourceDocument") != SOURCE_DOCUMENT:
+        if not isinstance(product, dict) or product.get("sourceDocument") not in SOURCE_DOCUMENTS:
             continue
         if product.get("manualNew") is not True:
             continue
@@ -109,6 +109,8 @@ def _source_products(series: dict) -> list[dict]:
 
 
 def _render_card(product: dict, locale: str, category_slug: str, translated_routes: set[str], photo) -> str:
+    from factory_product_locales import localized_name
+    from scripts.source_catalog_capacity_oz import catalog_volume_numbers, volume_terms, verified_source_material
     labels = LABELS[locale]
     slug = str(product.get("slug") or product.get("model") or "").strip("/")
     route = f"/products/{slug}/"
@@ -118,28 +120,38 @@ def _render_card(product: dict, locale: str, category_slug: str, translated_rout
     factory_model = (factory_model_value.strip() if isinstance(factory_model_value, str) and factory_model_value.strip()
                      else str(product.get("model") or slug))
     capacity = str(product.get("capacity") or "").strip()
+    numbers = catalog_volume_numbers(product)
+    volume = volume_terms(numbers, locale) if numbers else ""
     category = str(product.get("category") or "")
-    title = CATEGORY_NAMES.get(category, {}).get(locale, category)
+    title = localized_name(product, locale)
+    material = verified_source_material(product)
     image = str((product.get("images") or [""])[0])
-    english_name = str(product.get("name") or "")
-    search = " ".join(part for part in (title, factory_model, slug, capacity, english_name) if part)
-    alt = " ".join(part for part in (title, labels["model"], factory_model, capacity) if part)
+    search = " ".join(part for part in (title, factory_model, slug, capacity, volume, material,
+        "wholesale B2B OEM factory manufacturer custom plastic material options") if part)
+    family = product.get("imageReviewStatus") == "visually_reviewed_source_family_image"
+    alt = ({"en":"Shared factory-family image; confirm exact model variant",
+            "es":"Imagen compartida de familia; confirme la variante exacta",
+            "pt":"Imagem compartilhada da família; confirme a variante exata",
+            "ru":"Общее фото семейства; уточните конкретный вариант",
+            "tr":"Ortak ürün ailesi görseli; kesin varyantı doğrulayın"}[locale]
+           if family else " ".join(part for part in (title, labels["model"], factory_model, volume, material) if part))
     small = f'{labels["model"]} {_escape(factory_model)}'
     if capacity:
         small += f' · {_escape(labels["capacity"])}: {_escape(capacity)}'
     image_html = photo(image, alt)
+    capacity_badge = f'<span class="product-card__capacity">{_escape(volume)}</span>' if volume else ""
     return (
         f'<a class="product-card" data-product-card data-new-product="true" '
         f'data-category="{_escape(category_slug)}" data-search="{_escape(search)}" href="{_escape(route)}">'
         f'<div class="product-card__image">{image_html}</div>'
         f'<div class="product-card__body"><span class="product-card__new">{_escape(labels["new"])}</span>'
-        f'<span class="product-card__small">{small}</span><h3>{_escape(title)}</h3>'
+        f'<span class="product-card__small">{small}</span><h3>{_escape(title)}</h3>{capacity_badge}'
         f'<span class="product-card__link">{_escape(link_label)} ↗</span></div></a>'
     )
 
 
 def catalog_cards(body: str, locale: str, route: str, translated_routes=None, series=None) -> str:
-    """Add localized catalog cards for the 58 factory products without fabricating translated detail pages."""
+    """Add localized catalog cards for all source-reviewed factory products and link to generated/native detail pages."""
     if locale not in LABELS or (route != "/products/" and not route.startswith("/collections/")):
         return body
 
