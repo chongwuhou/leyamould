@@ -75,6 +75,7 @@ def main():
  print("XUYI_20261103_PREPUBLISH_LINKS_VERIFIED",len(urls))
  request_body=json.dumps({
   "editorialApproved":True,
+  "mode":"repair-published-translations",
   "translations":translations,
   "indexCards":cards
  },ensure_ascii=True,separators=(",",":")).encode("utf-8")
@@ -92,3 +93,4 @@ def main():
  print("XUYI_20261103_LOCALIZED_QUEUES_VERIFIED",len(result.get("localeSchedules",[])))
  print("XUYI_20261103_EN_ES_PT_RU_TR_D1_SCHEDULE_VERIFIED")
 if __name__=="__main__":main()
+
