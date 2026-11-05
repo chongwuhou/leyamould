@@ -53,7 +53,7 @@ def apply_to_document(document,route,locale,source_root=ROOT):
     if not source_image:
         return document,"not_applicable"
     if locale not in LOCALES:
-        raise ValueError("Unreviewed locale "+str(locale))
+        return document,"not_applicable"
     if not source_image.startswith(("/assets/","/media/")) or ".." in source_image:
         raise ValueError("Bad image source "+source_image)
     if source_image.startswith("/assets/") and not (Path(source_root)/source_image.lstrip("/")).is_file():
