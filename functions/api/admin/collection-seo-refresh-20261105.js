@@ -149,6 +149,28 @@ const COLLECTIONS={
   }
 };
 
+
+const LEGACY_TRANSLATIONS={
+  "/collections/kids-water-bottles/":{
+    es:{title:"Botellas de agua para niños al por mayor | Botellas XUYI",h1:"Botellas de agua para niños"},
+    pt:{title:"Garrafas de água infantis no atacado | Garrafas XUYI",h1:"Garrafas de água infantis"},
+    ru:{title:"Детские бутылки для воды оптом | Бутылки XUYI",h1:"Детские бутылки для воды"},
+    tr:{title:"Çocuk Su Şişeleri Toptan Satış | XUYI Şişeler",h1:"Çocuk Su Şişeleri"}
+  },
+  "/collections/large-capacity-water-jugs/":{
+    es:{title:"Jarras de agua de gran capacidad al por mayor | Botellas XUYI",h1:"Jarras de agua de gran capacidad"},
+    pt:{title:"Jarros de água de grande capacidade atacado | Garrafas XUYI",h1:"Jarros de água de grande capacidade"},
+    ru:{title:"Кувшины для воды большой емкости оптом | Бутылки XUYI",h1:"Большая емкость для воды Кувшины"},
+    tr:{title:"Büyük Kapasiteli Su Sürahileri Toptan Satış | XUYI Şişeler",h1:"Büyük Kapasiteli Su Sürahileri"}
+  },
+  "/collections/plastic-shaker-bottles/":{
+    es:{title:"Botellas mezcladoras de proteínas al por mayor | Botellas XUYI",h1:"Botellas mezcladoras de proteínas"},
+    pt:{title:"Garrafas para shaker de proteína no atacado | Garrafas XUYI",h1:"Garrafas Shaker de Proteína"},
+    ru:{title:"Бутылки для протеиновых шейкеров оптом | Бутылки XUYI",h1:"Бутылочки для протеинового шейкера"},
+    tr:{title:"Protein Çalkalayıcı Şişeleri Toptan Satış | XUYI Şişeler",h1:"Protein Çalkalayıcı Şişeleri"}
+  }
+};
+
 function escapeHtml(value){
   return String(value).replace(/[&<>"']/g,character=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -220,7 +242,7 @@ export async function onRequestPost(c){
     "SELECT route FROM xuyi_page_content WHERE route=?"
   ).bind(route).first();
   const currentLocales=(await db.prepare(
-    "SELECT locale FROM xuyi_translation_overrides WHERE resource_id=?"
+    "SELECT locale,translated_json FROM xuyi_translation_overrides WHERE resource_id=?"
   ).bind("page:"+route).all()).results||[];
   const localeSet=new Set(currentLocales.map(row=>row.locale));
   const queries=[];
@@ -251,8 +273,8 @@ export async function onRequestPost(c){
     ).bind(route,localizedBody(sourceHtml,entry,"en"),"published"));
   }
   let insertedLocales=0;
+  let updatedLocales=0;
   for(const locale of LOCALES){
-    if(localeSet.has(locale))continue;
     const title={
       es:entry.h1.es+" | XUYI",
       pt:entry.h1.pt+" | XUYI",
@@ -260,6 +282,24 @@ export async function onRequestPost(c){
       tr:entry.h1.tr+" | XUYI"
     }[locale];
     const description=entry.intro[locale];
+    const existing=currentLocales.find(row=>row.locale===locale);
+    if(existing){
+      const legacy=LEGACY_TRANSLATIONS[route]?.[locale];
+      let payload=null;
+      try{payload=JSON.parse(existing.translated_json||"{}");}catch{}
+      const isLegacy=Boolean(legacy&&(
+        payload?.title===legacy.title||
+        (typeof payload?.mainHtml==="string"&&payload.mainHtml.includes(legacy.h1))
+      ));
+      if(isLegacy){
+        const nextPayload={...(payload||{}),title,description,mainHtml:localizedBody(sourceHtml,entry,locale)};
+        queries.push(db.prepare(
+          "UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=CURRENT_TIMESTAMP WHERE resource_id=? AND locale=? AND translated_json=?"
+        ).bind(JSON.stringify(nextPayload),"page:"+route,locale,existing.translated_json));
+        updatedLocales++;
+      }
+      continue;
+    }
     queries.push(db.prepare(
       "INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at) VALUES(?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(resource_id,locale) DO NOTHING"
     ).bind("page:"+route,locale,JSON.stringify({
@@ -274,7 +314,7 @@ export async function onRequestPost(c){
       return reply({error:"D1 collection migration failed",detail:String(error).slice(0,500)},500);
     }
     const revision=await bumpPublishRevision(db);
-    return reply({route,updatedPageFields,insertedEnglishBody:currentBody?0:1,insertedLocales,...revision});
+    return reply({route,updatedPageFields,insertedEnglishBody:currentBody?0:1,insertedLocales,updatedLocales,...revision});
   }
-  return reply({route,updatedPageFields,insertedEnglishBody:0,insertedLocales:0,unchanged:true});
+  return reply({route,updatedPageFields,insertedEnglishBody:0,insertedLocales:0,updatedLocales:0,unchanged:true});
 }
