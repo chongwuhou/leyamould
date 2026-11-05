@@ -61,6 +61,21 @@ dynamic_blog_routes={
     for post in snapshot.get("blogPosts",[])
     if post.get("status")=="published" and post.get("slug")
 }
+# Published D1 article details may also have reviewed locale overrides. Their
+# inbound contextual route is the CMS-owned locale Blog index, so treat those
+# locale details exactly like their English D1 source route instead of
+# requiring a second hard-coded body link from another static page.
+published_blog_slugs={
+    str(post.get("slug"))
+    for post in snapshot.get("blogPosts",[])
+    if post.get("status")=="published" and post.get("slug")
+}
+for row in snapshot.get("translations",[]):
+    resource=str(row.get("resourceId") or "")
+    locale=str(row.get("locale") or "")
+    match=re.fullmatch(r"page:/blog/([^/]+)/",resource)
+    if match and locale in {"es","pt","ru","tr"} and match.group(1) in published_blog_slugs:
+        dynamic_blog_routes.add("/"+locale+"/blog/"+match.group(1)+"/")
 runtime=(ROOT/"functions/blog/[[path]].js").read_text(encoding="utf-8")
 assert 'listBlogPosts(db,"published")' in runtime and "posts.map(blogCard)" in runtime
 # D1-only articles are linked by the live CMS-owned /blog/ listing, not the
@@ -123,3 +138,4 @@ for route, file in pages.items():
     product_count += 1
 assert product_count >= 505, ("Published product baseline shrank",product_count)
 print("XUYI_BUYER_CONTEXT_LINKS_75_ZERO_ORPHANS_AND_PRODUCT_OG",product_count,"PASSED")
+
