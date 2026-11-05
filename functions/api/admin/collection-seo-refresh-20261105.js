@@ -179,8 +179,8 @@ function normalizeLocalizedLinks(value,locale){
 }
 function dedupeProductCards(value){
   const seen=new Set();
-  return String(value).replace(/<a\\b[^>]*\\bdata-product-card\\b[^>]*>[\\s\\S]*?<\\/a>/gi,card=>{
-    const match=card.match(/\\bhref="([^"]+)"/i);
+  return String(value).replace(/<a\b[^>]*\bdata-product-card\b[^>]*>[\s\S]*?<\/a>/gi,card=>{
+    const match=card.match(/\bhref="([^"]+)"/i);
     if(!match)return card;
     const href=match[1];
     if(seen.has(href))return "";
