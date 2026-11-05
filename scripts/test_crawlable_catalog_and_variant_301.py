@@ -82,7 +82,7 @@ ppt_models_lower={model.lower() for model in ppt_models}
 assert not (ppt_models_lower & (series_models | factory_models)), "PPT models overlap with existing catalogue models"
 base_total=len(SERIES)+factory_manifest["recordCount"]
 total=base_total+len(ppt_models)
-ppt_links={"/products/"+model+"/" for model in ppt_models}
+ppt_links={"/products/"+model.lower()+"/" for model in ppt_models}
 for l in locales:
     prefix=l["pathPrefix"]
     # All approved catalogue products, including the latest PPT imports, are
