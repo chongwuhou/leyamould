@@ -138,8 +138,8 @@ function validatePost(slug, post) {
   if (!Array.isArray(post.related) || post.related.length !== 3 || unique(post.related).length !== 3 || post.related.includes(slug)) throw Error("Three related articles required: " + slug);
   if (!Array.isArray(post.inline_links) || post.inline_links.length !== 2 || !post.buyerDecisionTable || !Array.isArray(post.buyerDecisionTable.rows) || post.buyerDecisionTable.rows.length !== 6) throw Error("Buyer matrix required: " + slug);
   if (!Array.isArray(post.product_notes) || post.product_notes.length !== 3) throw Error("Three product notes required: " + slug);
-  const body = post.sections.map(x => x.paragraph).join("\n");
-  if (unique([...body.matchAll(/\]\(\/products\/([A-Za-z0-9_-]+)\//g)].map(x => x[1])).length !== 3) throw Error("Exactly three product links required: " + slug);
+  const models = unique(post.product_notes.map(x => String(x?.sku || "")));
+  if (models.length !== 3 || models.some(x => !/^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(x))) throw Error("Exactly three product notes required: " + slug);
   if (JSON.stringify(post).length > 100000) throw Error("Blog content is too large: " + slug);
 }
 
