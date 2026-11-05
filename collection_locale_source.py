@@ -384,18 +384,15 @@ def translation_for(route: str, locale: str, source_body: str) -> dict[str, str]
         }[locale],
         "/" + " Products / " + category["en_title"]: "/ " + COMMON[locale]["Products"] + " / " + COMMON[locale].get(category["en_title"], category["en_title"]),
     })
-    for english, translated in zip(
-        (
-            "Check the Spray Assembly",
-            "Confirm the nozzle, trigger action, spray pattern and included components for the exact model.",
-            "Review Seals and Cleaning",
-            "Check cap seals, internal tubes and cleaning access; request a sample before making leakage claims.",
-            "Confirm Branding and Packing",
-            "Verify decoration area, spare parts, carton quantity and retail packaging for the selected SKU.",
-        ),
-        copy["steps"] if slug == "spray-water-bottles" else (),
-    ):
-        replacements[english] = translated
+    if slug == "spray-water-bottles":
+        replacements.update({
+            "Check the Spray Assembly": copy["steps"][0][0],
+            "Confirm the nozzle, trigger action, spray pattern and included components for the exact model.": copy["steps"][0][1],
+            "Review Seals and Cleaning": copy["steps"][1][0],
+            "Check cap seals, internal tubes and cleaning access; request a sample before making leakage claims.": copy["steps"][1][1],
+            "Confirm Branding and Packing": copy["steps"][2][0],
+            "Verify decoration area, spare parts, carton quantity and retail packaging for the selected SKU.": copy["steps"][2][1],
+        })
     if slug == "two-way-drinking-cups":
         replacements.update({
             "Verify Both Drinking Modes": copy["steps"][0][0],
