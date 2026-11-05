@@ -623,6 +623,7 @@ def main():
                 if copy:
                     translated[(route, loc)] = copy
 
+    # The collection fallback above is source-owned and reviewed per locale.
     # D1-published catalogs are fixed HTML snapshots; add only the eight
 
     # source-verified LO cards to their native-language grids, without
