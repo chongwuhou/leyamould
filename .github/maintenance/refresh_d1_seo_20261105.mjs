@@ -14,7 +14,7 @@ async function callSite(path, method = 'GET', body) {
       accept: 'application/json',
       'content-type': 'application/json',
       'cache-control': 'no-store',
-      'user-agent': 'XUYI-D1-SEO-Maintenance/1.3'
+      'user-agent': 'XUYI-D1-SEO-Maintenance/1.4'
     },
     body: body === undefined ? undefined : JSON.stringify(body)
   });
@@ -94,11 +94,11 @@ const productSeo = Array.isArray(snapshot.productSeo) ? snapshot.productSeo : []
 if (productSeo.length < 505) {
   throw new Error('Live D1 snapshot still exposes fewer than 505 product SEO rows: ' + productSeo.length);
 }
-const failingMaterialRows = productSeo.filter(row =>
-  ['2505', '2506', '2507'].includes(String(row.slug)) &&
-  (!String(row.meta_description || '').includes('Tritan') ||
-   !String(row.meta_description || '').includes('BPA-free'))
-);
+const failingMaterialRows = productSeo.filter(row => {
+  const description = String(row.meta_description ?? row.metaDescription ?? '');
+  return ['2505', '2506', '2507'].includes(String(row.slug)) &&
+    (!description.includes('Tritan') || !description.includes('BPA-free'));
+});
 if (failingMaterialRows.length) {
   throw new Error('Material-language verification failed after D1 refresh: ' + JSON.stringify(failingMaterialRows));
 }
