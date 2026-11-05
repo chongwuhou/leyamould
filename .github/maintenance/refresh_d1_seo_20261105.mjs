@@ -14,7 +14,7 @@ async function callSite(path, method = 'GET', body) {
       accept: 'application/json',
       'content-type': 'application/json',
       'cache-control': 'no-store',
-      'user-agent': 'XUYI-D1-SEO-Maintenance/1.2'
+      'user-agent': 'XUYI-D1-SEO-Maintenance/1.3'
     },
     body: body === undefined ? undefined : JSON.stringify(body)
   });
@@ -41,7 +41,10 @@ async function runFixedMigration(path, label, expectedCount) {
     ? initial.missing.length > 0
     : Array.isArray(initial.missingRows) && initial.missingRows.length > 0;
 
-  if (hasMissing) {
+  const needsBatches = hasMissing ||
+    Number(initial.titleEligible || 0) > 0 ||
+    Number(initial.descriptionEligible || 0) > 0;
+  if (needsBatches) {
     for (let index = 0; index < initial.batchCount; index += 1) {
       const result = await callSite(path, 'POST', {action: 'batch', batchIndex: index});
       if (result.missingRows && result.missingRows.length) {
