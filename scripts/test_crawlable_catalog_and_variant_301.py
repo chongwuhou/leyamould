@@ -85,8 +85,10 @@ total=base_total+len(ppt_models)
 ppt_links={"/products/"+model+"/" for model in ppt_models}
 for l in locales:
     prefix=l["pathPrefix"]
-    # The 95 PPT imports are English-only until their product translations are approved.
-    expected_total=total if l["code"]=="en" else base_total
+    # All approved catalogue products, including the latest PPT imports, are
+    # localized before publication. Keep every locale's crawlable catalog in
+    # parity with the canonical release count.
+    expected_total=total
     pages=ceil(expected_total/PAGE_SIZE)
     file=DIST/prefix/"products/index.html"
     doc=file.read_text(encoding="utf8")
@@ -95,10 +97,7 @@ for l in locales:
     cards=re.findall(r'<a\b[^>]*data-product-card[^>]*\bhref="([^"]+)"',main)
     assert len(cards)==expected_total,(prefix,len(cards),expected_total)
     assert len(set(cards))==expected_total
-    if l["code"]=="en":
-        assert ppt_links.issubset(set(cards))
-    else:
-        assert not (ppt_links & set(cards)), "Untranslated PPT products must not enter localized catalogues"
+    assert ppt_links.issubset(set(cards)), "Published PPT products must enter every localized catalogue"
     for page in range(1,pages+1):
         assert 'data-page-link="'+str(page)+'" href="?page='+str(page)+'"' in main
     assert 'href="?page=2"' in main
