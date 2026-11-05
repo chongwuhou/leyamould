@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "include": [
+    "/api",
+    "/api/*",
+    "/media",
+    "/media/*",
+    "/blog",
+    "/blog/*",
+    "/products",
+    "/products/*",
+    "/*/products/*",
+    "/build.py",
+    "/site_renderer.py",
+    "/data/products.json"
+  ],
+  "exclude": []
+}
