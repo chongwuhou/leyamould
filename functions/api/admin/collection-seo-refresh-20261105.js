@@ -171,6 +171,23 @@ const LEGACY_TRANSLATIONS={
   }
 };
 
+function normalizeLocalizedLinks(value,locale){
+  if(locale==="en")return String(value);
+  return String(value)
+    .replace(/href="\/products\//g,'href="/'+locale+'/products/')
+    .replace(/href="\/collections\//g,'href="/'+locale+'/collections/');
+}
+function dedupeProductCards(value){
+  const seen=new Set();
+  return String(value).replace(/<a\\b[^>]*\\bdata-product-card\\b[^>]*>[\\s\\S]*?<\\/a>/gi,card=>{
+    const match=card.match(/\\bhref="([^"]+)"/i);
+    if(!match)return card;
+    const href=match[1];
+    if(seen.has(href))return "";
+    seen.add(href);
+    return card;
+  });
+}
 function escapeHtml(value){
   return String(value).replace(/[&<>"']/g,character=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -287,12 +304,16 @@ export async function onRequestPost(c){
       const legacy=LEGACY_TRANSLATIONS[route]?.[locale];
       let payload=null;
       try{payload=JSON.parse(existing.translated_json||"{}");}catch{}
+      const existingBody=typeof payload?.mainHtml==="string"?payload.mainHtml:"";
+      const repairedBody=dedupeProductCards(normalizeLocalizedLinks(existingBody,locale));
+      const bodyNeedsRepair=repairedBody!==existingBody;
       const isLegacy=Boolean(legacy&&(
         payload?.title===legacy.title||
-        (typeof payload?.mainHtml==="string"&&payload.mainHtml.includes(legacy.h1))
+        (typeof payload?.mainHtml==="string"&&payload.mainHtml.includes(legacy.h1))||
+        bodyNeedsRepair
       ));
       if(isLegacy){
-        const nextPayload={...(payload||{}),title,description,mainHtml:localizedBody(sourceHtml,entry,locale)};
+        const nextPayload={...(payload||{}),title,description,mainHtml:localizedBody(repairedBody||sourceHtml,entry,locale)};
         queries.push(db.prepare(
           "UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=CURRENT_TIMESTAMP WHERE resource_id=? AND locale=? AND translated_json=?"
         ).bind(JSON.stringify(nextPayload),"page:"+route,locale,existing.translated_json));
@@ -308,11 +329,7 @@ export async function onRequestPost(c){
     insertedLocales++;
   }
   if(queries.length){
-    try{
-      await db.batch(queries);
-    }catch(error){
-      return reply({error:"D1 collection migration failed",detail:String(error).slice(0,500)},500);
-    }
+    await db.batch(queries);
     const revision=await bumpPublishRevision(db);
     return reply({route,updatedPageFields,insertedEnglishBody:currentBody?0:1,insertedLocales,updatedLocales,...revision});
   }
