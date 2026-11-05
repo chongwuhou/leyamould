@@ -21,7 +21,7 @@ for loc in ("en","es","pt","ru","tr"):
     assert unescape(re.search(r"<title>(.*?)</title>",head).group(1))==d["title"],loc
     assert unescape(re.search(r'<meta name="description" content="([^"]+)"',head).group(1))==d["description"],loc
     assert d["h1"] in unescape(body),loc
-    crumb=body.split('<nav class="rs-crumb">',1)[1].split('</nav>',1)[0]
+    crumb=re.search(r'<nav class="rs-crumb"[^>]*>(.*?)</nav>',body,re.S).group(1)
     assert BREADCRUMB_LABELS[loc][0] in unescape(crumb),loc
     assert BREADCRUMB_LABELS[loc][1] in unescape(crumb),loc
     if loc!="en":
