@@ -7,6 +7,7 @@ source identifiers, not machine-translated sentences.
 """
 import json,re,html,sys
 from pathlib import Path
+from html import unescape
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
