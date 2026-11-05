@@ -1,11 +1,12 @@
 {
   "purpose": "D1 CMS refresh build marker",
-  "date": "2026-11-05",
-  "publishRevision": 105,
+  "date": "2026-11-06",
+  "publishRevision": 106,
   "slugs": [
     "golf-club-pro-shop-reusable-water-bottles-wholesale",
     "outdoor-gear-retailer-hiking-water-bottles-wholesale",
     "sustainable-lifestyle-store-reusable-bottles-wholesale"
   ],
-  "rule": "Build from D1/CMS and preserve product_notes, translations, index cards and R2 references."
+  "rule": "Build from D1/CMS and preserve product_notes, translations, index cards and R2 references.",
+  "change": "Removed duplicate section__head from ES/PT/RU/TR Blog index overrides; English structure is canonical."
 }
