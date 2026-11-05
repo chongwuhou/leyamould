@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """XUYI shared, repeatable volume and customization enrichment.
 
+Explicit D1 product SEO rows are applied after these source recommendations.
+
 All published Product routes share the same rules:
 * verified mL paired with reviewed retail size classes, never exact equivalences;
 * genuine multi-capacity variants retain every catalog volume;
