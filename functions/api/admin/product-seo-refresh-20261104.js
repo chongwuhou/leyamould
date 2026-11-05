@@ -22,8 +22,13 @@ const MATERIAL_SUFFIX={
   tr:". B2B OEM üreticisi. Özel Tritan/BPA-free plastik, logo, renk ve koli seçeneklerini sorun; SKU ile doğrulayın."
 };
 
+export function targetTitle(row){
+  if(row.locale==="es"||row.locale==="pt")return row.newTitle.replace("transp.","transparente");
+  if(row.locale==="ru")return row.newTitle.replace("прозр.","прозрачный");
+  return row.newTitle;
+}
 export function targetDescription(row){
-  return row.newTitle.replace(/\s+\|\s+XUYI\s*$/,"")+MATERIAL_SUFFIX[row.locale];
+  return targetTitle(row).replace(/\s+\|\s+XUYI\s*$/,"")+MATERIAL_SUFFIX[row.locale];
 }
 function expectedValues(value){
   return Array.isArray(value)?value.filter(Boolean):[value].filter(Boolean);
@@ -39,7 +44,7 @@ export function expectedReviewedRows(){
   for(const row of REVIEWED_SEO_REFRESH_SOURCE){
     const next=normalizeProductSeo({
       slug:row.slug,locale:row.locale,
-      seoTitle:row.newTitle,metaDescription:targetDescription(row)
+      seoTitle:targetTitle(row),metaDescription:targetDescription(row)
     });
     const key=next.slug+"/"+next.locale;
     if(seen.has(key))throw Error("Duplicate reviewed product SEO refresh key");
@@ -64,7 +69,7 @@ export function classifyReviewedRow(source,current){
   const prior=PRIOR_SEO_SOURCE.get(source.slug+"/"+source.locale);
   if(!current||!prior)return {title:"missing",description:"missing"};
   return {
-    title:fieldState(current.seo_title,[prior.newTitle,source.newTitle],source.newTitle),
+    title:fieldState(current.seo_title,[prior.newTitle,source.newTitle],targetTitle(source)),
     description:fieldState(
       current.meta_description,
       [prior.newDescription,source.newDescription],
@@ -151,7 +156,7 @@ export async function onRequestPost(c){
       queries.push(db.prepare(
         "UPDATE xuyi_product_seo SET seo_title=?,updated_at=CURRENT_TIMESTAMP "+
         "WHERE slug=? AND locale=? AND seo_title IN (?,?)"
-      ).bind(source.newTitle,source.slug,source.locale,prior.newTitle,source.newTitle));
+      ).bind(targetTitle(source),source.slug,source.locale,prior.newTitle,source.newTitle));
     }
     if(status.description==="eligible"){
       queries.push(db.prepare(

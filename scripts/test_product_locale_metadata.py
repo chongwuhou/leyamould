@@ -42,9 +42,8 @@ for language in manifest["locales"]:
         if slug in variants:
             # The concise, verified-oz SEO title may shorten the variant
             # label without changing the real model, H1 or description.
-            short={"en":"Clear","es":"transparente","pt":"transparente",
-                   "ru":"прозрачн","tr":"şeffaf"}
-            phrase_in_title=(phrases[lang] in title or short[lang] in title)
+            short={"en":["Clear"],"es":["transparente","transp."],"pt":["transparente","transp."],"ru":["прозрачн","прозр."],"tr":["şeffaf"]}
+            phrase_in_title=phrases[lang] in title or any(value in title for value in short[lang])
             assert phrase_in_title,(lang,slug,"missing variant in concise title")
             # Before the one-time D1 promotion, historic editor-selected meta
             # descriptions can omit an explicit long-form variant adjective;
@@ -52,10 +51,10 @@ for language in manifest["locales"]:
             # After migration, the authoritative D1 description is checked
             # against the same-language product variant wording.
             if (slug,lang) in canonical_seo:
-                assert phrases[lang] in desc or short[lang] in desc,(
+                assert phrases[lang] in desc or any(value in desc for value in short[lang]),(
                     lang,slug,"D1 variant SEO description missing")
             else:
-                assert phrases[lang] in main or short[lang] in main,(
+                assert phrases[lang] in main or any(value in main for value in short[lang]),(
                     lang,slug,"visible product variant missing")
         total+=1
 print("XUYI_PRODUCT_LOCALE_METADATA_PASSED",total,"actual published product detail pages; five legacy variant names localized")

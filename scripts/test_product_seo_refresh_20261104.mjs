@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 import {REVIEWED_SEO_SOURCE as previous} from "../functions/_shared/reviewed-product-seo-20261020.js";
 import {REVIEWED_SEO_REFRESH_SOURCE as reviewed} from "../functions/_shared/reviewed-product-seo-refresh-20261104.js";
 import {
-  REVIEWED_COUNT, expectedReviewedRows, targetDescription, classifyReviewedRow, onRequestGet, onRequestPost
+  REVIEWED_COUNT, expectedReviewedRows, targetTitle, targetDescription, classifyReviewedRow, onRequestGet, onRequestPost
 } from "../functions/api/admin/product-seo-refresh-20261104.js";
 import {normalizeProductSeo} from "../functions/_shared/product-seo.js";
 
@@ -30,11 +30,11 @@ for(const row of reviewed){
   assert.notEqual(row.newDescription,old.newDescription,"refresh description must differ from prior approved source");
   const normalized=normalizeProductSeo({
     slug:row.slug,locale:row.locale,
-    seoTitle:row.newTitle,metaDescription:targetDescription(row)
+    seoTitle:targetTitle(row),metaDescription:targetDescription(row)
   });
-  assert.equal(normalized.title,row.newTitle);
+  assert.equal(normalized.title,targetTitle(row));
   assert.equal(normalized.description,targetDescription(row));
-  assert(row.newTitle.length<=60,key+" title length");
+  assert(targetTitle(row).length<=60,key+" title length");
   assert(targetDescription(row).length<=180,key+" description length");
   assert(row.newTitle.includes("OEM")&&row.newTitle.includes("XUYI"),key+" B2B/OEM title");
   assert(targetDescription(row).toLowerCase().includes("b2b"),key+" B2B description");
@@ -47,8 +47,8 @@ for(const row of reviewed){
     key+" must have a reviewed source refresh"
   );
   const titleSet=titleSets.get(row.locale)||new Set();
-  assert(!titleSet.has(row.newTitle),key+" duplicate title");
-  titleSet.add(row.newTitle);
+  assert(!titleSet.has(targetTitle(row)),key+" duplicate title");
+  titleSet.add(targetTitle(row));
   titleSets.set(row.locale,titleSet);
   const descriptionSet=descriptionSets.get(row.locale)||new Set();
   assert(!descriptionSet.has(targetDescription(row)),key+" duplicate meta description");
@@ -70,7 +70,7 @@ for(const row of reviewed){
     {title:"eligible",description:"eligible"}
   );
   assert.deepEqual(
-    classifyReviewedRow(row,{seo_title:row.newTitle,meta_description:targetDescription(row)}),
+    classifyReviewedRow(row,{seo_title:targetTitle(row),meta_description:targetDescription(row)}),
     {title:"updated",description:"updated"}
   );
   assert.deepEqual(
