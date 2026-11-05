@@ -35,7 +35,7 @@ def main_image_alt(row,image,owners,locale,materials,numbers):
         "en":"drinkware product","es":"producto para bebidas","pt":"produto para bebidas","ru":"посуда для напитков","tr":"içecek ürünü"}[locale])
     family={
       "en":f"Shared factory-family image of {category}; confirm the exact model variant and sample.",
-      "es":f"Imagen compartida de la familia de {category}; confirme el modelo exacto y la muestra.",
+      "es":f"Imagen compartida de variantes familiares de {category}; confirme el modelo exacto y la muestra.",
       "pt":f"Imagem compartilhada da família de {category}; confirme o modelo exato e a amostra.",
       "ru":f"Общее фото семейства моделей: {category}; уточните конкретную модель и образец.",
       "tr":f"{category} ürün ailesine ait ortak görsel; kesin modeli ve numuneyi doğrulayın.",
