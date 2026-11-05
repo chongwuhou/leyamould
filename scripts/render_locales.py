@@ -807,6 +807,8 @@ def main():
 
             body=factory_catalog_cards(body,loc,route,routes_by_locale[loc])
 
+            body=dedupe_catalog_cards(body)
+
         if route=="/products/":
 
             from catalog_crawlable_pagination import upgrade_localized_cms
