@@ -7,15 +7,9 @@ CASES=[
  ("/es/blog/bottle-factory-rfq-template/",[
   "wholesale buying guide →","how MOQ affects pricing →","request a sample →","OEM/ODM services →"],
   ["guía de compra mayorista →","cómo afecta el MOQ al precio →","solicitar una muestra →","servicios OEM/ODM →"]),
- ("/pt/blog/bottle-factory-rfq-template/",[
-  "wholesale buying guide →","how MOQ affects pricing →","request a sample →","OEM/ODM services →"],
-  ["guia de compras por atacado →","como o MOQ afeta o preço →","solicitar uma amostra →","serviços OEM/ODM →"]),
- ("/ru/blog/bottle-factory-rfq-template/",[
-  "wholesale buying guide →","how MOQ affects pricing →","request a sample →","OEM/ODM services →"],
-  ["руководство по оптовым закупкам →","как MOQ влияет на цену →","запросить образец →","услуги OEM/ODM →"]),
- ("/tr/blog/bottle-factory-rfq-template/",[
-  "wholesale buying guide →","how MOQ affects pricing →","request a sample →","OEM/ODM services →"],
-  ["toptan satın alma rehberi →","MOQ fiyatı nasıl etkiler →","numune talep edin →","OEM/ODM hizmetleri →"]),
+
+
+
 ]
 for slug in ("can-you-put-hot-water-in-plastic-water-bottle","why-does-reusable-water-bottle-smell-bad"):
     old=(

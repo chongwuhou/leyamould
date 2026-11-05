@@ -23,30 +23,6 @@ const REPAIRS = [
     ]
   },
   {
-    route: "/blog/bottle-factory-rfq-template/", locale: "pt", replacements: [
-      ["wholesale buying guide →", "guia de compras por atacado →"],
-      ["how MOQ affects pricing →", "como o MOQ afeta o preço →"],
-      ["request a sample →", "solicitar uma amostra →"],
-      ["OEM/ODM services →", "serviços OEM/ODM →"]
-    ]
-  },
-  {
-    route: "/blog/bottle-factory-rfq-template/", locale: "ru", replacements: [
-      ["wholesale buying guide →", "руководство по оптовым закупкам →"],
-      ["how MOQ affects pricing →", "как MOQ влияет на цену →"],
-      ["request a sample →", "запросить образец →"],
-      ["OEM/ODM services →", "услуги OEM/ODM →"]
-    ]
-  },
-  {
-    route: "/blog/bottle-factory-rfq-template/", locale: "tr", replacements: [
-      ["wholesale buying guide →", "toptan satın alma rehberi →"],
-      ["how MOQ affects pricing →", "MOQ fiyatı nasıl etkiler →"],
-      ["request a sample →", "numune talep edin →"],
-      ["OEM/ODM services →", "OEM/ODM hizmetleri →"]
-    ]
-  },
-  {
     route: "/blog/can-you-put-hot-water-in-plastic-water-bottle/", locale: "es", replacements: [
       ["Plastic Water Bottle Compliance: Food-Contact Documents Buyers Should Request", "Cumplimiento de las botellas de agua de plástico: documentos de contacto alimentario que deben solicitar los compradores"],
       ["PC, Tritan, PP and PETG: Selecting Plastic Bottle Materials", "PC, Tritan, PP y PETG: cómo seleccionar los materiales para botellas de plástico"],
