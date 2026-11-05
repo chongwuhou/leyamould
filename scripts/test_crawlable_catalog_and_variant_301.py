@@ -97,7 +97,7 @@ for l in locales:
     cards=re.findall(r'<a\b[^>]*data-product-card[^>]*\bhref="([^"]+)"',main)
     assert len(cards)==expected_total,(prefix,len(cards),expected_total)
     assert len(set(cards))==expected_total
-    assert ppt_links.issubset(set(cards)), "Published PPT products must enter every localized catalogue"
+    localized_ppt_links={(("/"+prefix) if prefix else "")+link for link in ppt_links}\n    assert localized_ppt_links.issubset(set(cards)), "Published PPT products must enter every localized catalogue"
     for page in range(1,pages+1):
         assert 'data-page-link="'+str(page)+'" href="?page='+str(page)+'"' in main
     assert 'href="?page=2"' in main
