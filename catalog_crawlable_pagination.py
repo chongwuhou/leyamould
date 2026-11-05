@@ -4,7 +4,7 @@ The source HTML already contains every approved model anchor; JS only
 progressively enhances visible items. Query-based page links remain crawable
 without a server, cookies, client-side buttons or additional Pages functions.
 """
-from html import escape
+from html import escape,unescape
 import math
 import re
 
@@ -25,6 +25,24 @@ CATALOG_CATEGORIES=(
     ("two-way-drinking-cups","Two-Way Drinking Cups"),
     ("titanium-vacuum-cups","Titanium Vacuum Cups"),
 )
+
+ENGLISH_NAV_LABELS=frozenset((
+    "Products","All products","Sports Water Bottles","Large Capacity Water Jugs",
+    "Kids Water Bottles","Protein Shaker Bottles",
+    "Plastic Sports Water Bottles","Kids Plastic Water Bottles",
+    "Plastic Shaker Bottles","Spray Water Bottles","Two-Way Drinking Cups",
+    "Titanium Vacuum Cups",
+))
+
+def plain_nav_text(markup):
+    return unescape(re.sub(r"<[^>]+>"," ",markup)).strip()
+
+def contains_english_nav(markup):
+    text=plain_nav_text(markup)
+    return any(
+        re.search(r"(?<![A-Za-z])"+re.escape(label)+r"(?![A-Za-z])",text,re.I)
+        for label in ENGLISH_NAV_LABELS
+    )
 
 def navigation(count,prev_label="← Prev",next_label="Next →",
                prev_aria="Previous page",next_aria="Next page"):
@@ -62,7 +80,6 @@ def upgrade_localized_catalog_navigation(body,locale,path_prefix,labels=None,cur
     original four category links and still lack at least one current category.
     Owner-edited navigation that is already current is left untouched.
     """
-    del locale
     labels=labels or {}
     prefix="/"+str(path_prefix).strip("/") if str(path_prefix).strip("/") else ""
 
@@ -83,13 +100,19 @@ def upgrade_localized_catalog_navigation(body,locale,path_prefix,labels=None,cur
                       if has_route(inner,"/collections/"+slug+"/"))
         current_count=sum(1 for slug,_ in CATALOG_CATEGORIES
                           if has_route(inner,"/collections/"+slug+"/"))
-        if old_count<4 or current_count==len(CATALOG_CATEGORIES):
+        english_fallback=str(locale)!="en" and contains_english_nav(inner)
+        if old_count<4 or (
+            current_count==len(CATALOG_CATEGORIES) and not english_fallback
+        ):
             return match.group(0)
 
         heading=re.search(r'<strong\b[^>]*>[\s\S]*?</strong>',inner,re.I)
         heading_html=heading.group(0) if heading else (
             "<strong>"+escape(labels.get("Products","Products"))+"</strong>"
         )
+        if str(locale)!="en" and contains_english_nav(heading_html):
+            heading_html="<strong>"+escape(labels.get("Products","Products"))+"</strong>"
+
         product=re.search(
             r'<a\b[^>]*href=["\'][^"\']*/products/["\'][^>]*>([\s\S]*?)</a>',
             inner,re.I
@@ -97,6 +120,8 @@ def upgrade_localized_catalog_navigation(body,locale,path_prefix,labels=None,cur
         product_label=product.group(1).strip() if product else escape(
             labels.get("All products",labels.get("Products","Products"))
         )
+        if str(locale)!="en" and contains_english_nav(product_label):
+            product_label=escape(labels.get("All products",labels.get("Products","Products")))
         links=[
             '<a href="'+escape(localized("/products/"),quote=True)+'"'
             +(' class="active"' if current_route=="/products/" else "")

@@ -1,5 +1,7 @@
 # XUYI Drinkware — B2B Static Frontend
 
+> **统一内容/翻译/AI/工具发布标准：** [项目圣经/2026-11-05_统一内容发布与翻译审计标准.md](项目圣经/2026-11-05_统一内容发布与翻译审计标准.md)。业务数据走 D1/CMS，媒体走 R2，禁止直接改 dist 或线上 HTML。
+
 > **中文快速上手（换电脑 / 新同事用 AI 更新网站）：** [docs/AI_COLLABORATION_QUICKSTART_ZH.md](docs/AI_COLLABORATION_QUICKSTART_ZH.md)。说明 GitHub + localGPT + GitHub Actions + Cloudflare D1 的实际权限和操作方法。
 
 > **P0 OWNER DIRECTIVE — READ BEFORE EVERY TASK:** `AGENTS.md` and `PROJECT_CHANGE_POLICY.md`. All batch content or UI changes must originate in **shared templates / authoritative source datasets / D1-CMS**, not manually patched pages, dist files, or post-render HTML rewrites. Testing generated pages is temporary only; finalize at the source and verify CMS owner edits survive subsequent rebuilds.

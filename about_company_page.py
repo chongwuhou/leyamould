@@ -13,6 +13,13 @@ ASSETS=(
 )
 LINKS=("/products/","/request-sample/","/contact/#inquiry")
 PROCESS_LINKS=("/manufacturing/","/quality-control/")
+BREADCRUMB_LABELS={
+    "en":("Home","About XUYI"),
+    "es":("Inicio","Sobre XUYI"),
+    "pt":("Início","Sobre a XUYI"),
+    "ru":("Главная","О компании XUYI"),
+    "tr":("Ana Sayfa","XUYI Hakkında"),
+}
 BASELINES=json.loads((ROOT/"data/about-company-d1-baselines.json").read_text(encoding="utf8"))["locales"]
 
 @lru_cache(maxsize=5)
@@ -38,7 +45,7 @@ def paras(items):
 def render(locale):
     data=source(locale)
     h='<div id="xuyi-about-company" class="xuyi-about-company" lang="'+locale+'">'
-    h+='<section class="rs-hero xac-hero"><div class="shell"><nav class="rs-crumb" aria-label="Breadcrumb"><a href="'+("/" if locale=="en" else "/"+locale+"/")+'">Home</a><span>/</span><span>About XUYI</span></nav>'
+    h+='<section class="rs-hero xac-hero"><div class="shell"><nav class="rs-crumb" aria-label="Breadcrumb"><a href="'+("/" if locale=="en" else "/"+locale+"/")+'">'+safe_text(BREADCRUMB_LABELS[locale][0])+'</a><span>/</span><span>'+safe_text(BREADCRUMB_LABELS[locale][1])+'</span></nav>'
     h+='<span class="eyebrow">'+safe_text(data["eyebrow"])+'</span>'
     h+='<h1>'+safe_text(data["h1"])+'</h1>'
     h+='<div class="xac-intro">'+paras(data["lead"])+'</div>'

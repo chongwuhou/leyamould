@@ -16,11 +16,30 @@ from scripts.render_locales import BLOG_DATE_LABELS
 DIST=ROOT/"dist"
 ORIGIN="https://xuyibottles.com"
 LOCALES=["en","es","pt","ru","tr"]
+CATALOG_SLUGS=(
+    "sports-water-bottles","large-capacity-water-jugs","kids-water-bottles",
+    "plastic-shaker-bottles","spray-water-bottles","two-way-drinking-cups",
+    "titanium-vacuum-cups"
+)
+ENGLISH_NAV_LABELS=(
+    "Products","All products","Sports Water Bottles","Large Capacity Water Jugs",
+    "Kids Water Bottles","Protein Shaker Bottles","Spray Water Bottles",
+    "Two-Way Drinking Cups","Titanium Vacuum Cups"
+)
 assert len(SERIES)>=101 and len(GALLERY)==8 and len(LO_PRODUCTS)==8
 INDEXABLE=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf8"))["site"]["indexingApproved"]
 dates_checked=0;products_checked=0;g_checked=0;lo_checked=0
 for loc in LOCALES:
  prefix="" if loc=="en" else loc+"/"
+ # Catalog sidebars are shared translated navigation, not English fallback HTML.
+ for category in CATALOG_SLUGS:
+  collection=(DIST/prefix/"collections"/category/"index.html").read_text(encoding="utf8")
+  side=re.search(r'<aside class="catalog-side">([\s\S]*?)</aside>',collection,re.I)
+  assert side,(loc,category,"catalog sidebar missing")
+  if loc!="en":
+   side_text=unescape(re.sub(r"<[^>]+>"," ",side.group(1)))
+   for forbidden in ENGLISH_NAV_LABELS:
+    assert not re.search(r"(?<![A-Za-z])"+re.escape(forbidden)+r"(?![A-Za-z])",side_text,re.I),(loc,category,forbidden)
  all_files=list((DIST/prefix).rglob("index.html"))
  assert len(all_files)>=(756 if loc=="en" else 151),(loc,"previously published pages missing",len(all_files))
  catalog=(DIST/prefix/"products/index.html").read_text(encoding="utf8")

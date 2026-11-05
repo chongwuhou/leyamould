@@ -5,7 +5,7 @@ from html import unescape
 import json,re,sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
-from about_company_page import source,render,apply_body,baseline_body,metadata_unchanged,replace_head_if_original,ASSETS
+from about_company_page import source,render,apply_body,baseline_body,metadata_unchanged,replace_head_if_original,ASSETS,BREADCRUMB_LABELS
 DIST=ROOT/"dist"
 logo_source=(ROOT/"data/customer-logos.json").read_bytes()
 body_signatures=[]
@@ -21,6 +21,12 @@ for loc in ("en","es","pt","ru","tr"):
     assert unescape(re.search(r"<title>(.*?)</title>",head).group(1))==d["title"],loc
     assert unescape(re.search(r'<meta name="description" content="([^"]+)"',head).group(1))==d["description"],loc
     assert d["h1"] in unescape(body),loc
+    crumb=body.split('<nav class="rs-crumb">',1)[1].split('</nav>',1)[0]
+    assert BREADCRUMB_LABELS[loc][0] in unescape(crumb),loc
+    assert BREADCRUMB_LABELS[loc][1] in unescape(crumb),loc
+    if loc!="en":
+        assert ">Home<" not in crumb,(loc,"English breadcrumb home")
+        assert ">About XUYI<" not in crumb,(loc,"English breadcrumb label")
     assert "台州市旭一家居用品有限公司" in body,loc
     assert "Taizhou Xuyi Household Goods Co., Ltd." in body,loc
     assert len(re.findall(r'class="xac-workflow"',body))==1,loc

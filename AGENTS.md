@@ -55,6 +55,11 @@ test reproducing a realistic owner/CMS update before publishing.
 
 核心原则：先读本文件、PROJECT_CHANGE_POLICY.md 和项目圣经；Cloudflare D1/CMS 是运行时唯一事实源。能在正式数据源完成就不另造接口，能复用现有构建入口就不增加新层。所有批量处理必须幂等、条件更新、保留人工修改、可验证、可回滚。
 
+### AI/工具发布与 D1/R2 唯一写入门禁（2026-11-05）
+
+产品、博客、评价、翻译和图片等业务数据必须写入 Cloudflare D1/CMS；图片必须先进入 R2，再由 D1 保存路径、ALT、语言和引用关系。AI 只能生成待审核草稿、翻译初稿和审计结果，不能直接发布或编造事实；工具只能使用已鉴权的正式 D1/CMS、R2 入口，默认 dry-run，条件写入，保留人工值，记录 publish revision。严禁直接改 dist、线上 HTML、Pages 成品或 R2 缓存。完整门禁见 [项目圣经/2026-11-05_统一内容发布与翻译审计标准.md](项目圣经/2026-11-05_统一内容发布与翻译审计标准.md)。
+
+
 ### 产品 SEO
 
 - 每个型号 × 语言独立维护 title、H1、description、OG 和正文；标题与 H1 必须差异化，按真实产品特征组合 B2B、wholesale、OEM、manufacturer/factory、颜色、真实材质、场景和长尾词，禁止整站复用同一句。

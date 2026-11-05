@@ -2,6 +2,7 @@
   "es": {
     "Home": "Inicio",
     "Products": "Productos",
+    "All products": "Todos los productos",
     "Capabilities": "Servicios",
     "About": "Nosotros",
     "About Us": "Sobre nosotros",
@@ -87,6 +88,7 @@
   "pt": {
     "Home": "Início",
     "Products": "Produtos",
+    "All products": "Todos os produtos",
     "Capabilities": "Serviços",
     "About": "Sobre nós",
     "About Us": "Sobre nós",
@@ -172,6 +174,7 @@
   "ru": {
     "Home": "Главная",
     "Products": "Продукция",
+    "All products": "Вся продукция",
     "Capabilities": "Услуги",
     "About": "О нас",
     "About Us": "О нас",
@@ -257,6 +260,7 @@
   "tr": {
     "Home": "Ana Sayfa",
     "Products": "Ürünler",
+    "All products": "Tüm ürünler",
     "Capabilities": "Hizmetler",
     "About": "Hakkımızda",
     "About Us": "Hakkımızda",

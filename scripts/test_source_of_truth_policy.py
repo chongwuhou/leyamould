@@ -13,6 +13,7 @@ agents=(ROOT/"AGENTS.md").read_text(encoding="utf8")
 policy=(ROOT/"PROJECT_CHANGE_POLICY.md").read_text(encoding="utf8")
 readme=(ROOT/"README.md").read_text(encoding="utf8")
 workflow=(ROOT/".github/workflows/publish-xuyi.yml").read_text(encoding="utf8")
+standard=(ROOT/"项目圣经/2026-11-05_统一内容发布与翻译审计标准.md").read_text(encoding="utf8")
 ignore=(ROOT/".gitignore").read_text(encoding="utf8").splitlines()
 
 assert agents.startswith("# XUYI website mandatory change policy")
@@ -27,6 +28,11 @@ assert "Temporary testing is allowed" in policy
 assert "No regression on future admin updates" in policy
 assert "READ BEFORE EVERY TASK" in readme and "AGENTS.md" in readme
 assert "PROJECT_CHANGE_POLICY.md" in readme
+assert "D1/CMS" in standard and "R2" in standard
+assert "AI 只能做草稿" in standard
+assert "禁止脚本、插件、自动化或 AI 直接写" in standard
+assert "两次干净构建" in standard
+assert "翻译审计门禁" in standard
 assert "dist/" in ignore or "/dist/" in ignore
 for expected in (
     "python scripts/test_source_of_truth_policy.py",
