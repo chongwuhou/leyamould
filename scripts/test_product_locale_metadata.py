@@ -42,7 +42,7 @@ for language in manifest["locales"]:
         if slug in variants:
             # The concise, verified-oz SEO title may shorten the variant
             # label without changing the real model, H1 or description.
-            short={"en":["Clear"],"es":["transparente","transp."],"pt":["transparente","transp."],"ru":["прозрачн","прозр."],"tr":["şeffaf"]}
+            short={"en":["Clear"],"es":["transparente","transp."],"pt":["transparente","transp."],"ru":["прозрачн","прозр."],"tr":["şeffaf","Şeffaf"]}
             phrase_in_title=phrases[lang] in title or any(value in title for value in short[lang])
             assert phrase_in_title,(lang,slug,"missing variant in concise title")
             # Before the one-time D1 promotion, historic editor-selected meta
