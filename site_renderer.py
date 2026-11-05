@@ -41,6 +41,24 @@ def render_template(name,**parts):
  for key,value in parts.items():template=template.replace("{{"+key+"}}",value)
  if "{{" in template or "}}" in template:raise ValueError("Unfilled template placeholder: "+name)
  return template
+def dedupe_catalog_cards(body):
+    """Keep one card per href before locale/catalog enrichers append reviewed cards."""
+    seen=set()
+    pattern=re.compile(r'<a\b[^>]*\bdata-product-card\b[^>]*>[\s\S]*?</a>',re.I|re.S)
+    def replace(match):
+        card=match.group(0)
+        opening=card.split(">",1)[0]
+        href=re.search(r'\bhref=["\']([^"\']+)["\']',opening,re.I)
+        if not href:
+            return card
+        url=href.group(1)
+        if url in seen:
+            return ""
+        seen.add(url)
+        return card
+    return pattern.sub(replace,body)
+
+
 RAW=json.loads((ROOT/"data/products.json").read_text(encoding="utf-8"))
 IMAGES=json.loads((ROOT/"data/excel-images.json").read_text(encoding="utf-8"))
 CAT={
@@ -183,6 +201,7 @@ def build_url(path,title,content):
    from home_source_image_geometry import source_image_geometry
    main=source_image_geometry(main,route,"en")
   if route=="/products/" or route.startswith("/collections/"):
+   main=dedupe_catalog_cards(main)
    from gallery_catalog import catalog_cards as gallery_cards
    main=gallery_cards(main,"en",route)
    from lo_catalog import catalog_cards
