@@ -64,3 +64,25 @@ not regressions merely because a legacy rewrite no longer finds its old input.
 ## P0 博客场景图片不可再乱配 / Permanent B2B photo relevance gate（2026-10-29）
 
 每篇新 B 端文章选图须以**标题+买家行业+采购/使用场景**为主，实际看图片并写出具体场景契合理由；不能仅因为含水杯、图片漂亮或自动化检测通过就发稿。同批不复用图片；禁止虚构工厂/客户/真实型号证据。详见 `docs/BLOG_COVER_VISUAL_STANDARD.md`。从 2026-10-29 参考图起，今后审核证据与图片 SHA-256 必须留在 `data/blog-cover-editorial-approvals.json`，通过 `scripts/test_blog_cover_editorial_standard.py` 和 CI；新稿缺完整视觉审核或不匹配时禁止自动发布。真实视觉适配和版权仍需要编辑负责，CI 只验证可机检证据。不得覆盖站长 D1/CMS 图片编辑，不得通过改生成 HTML 兜底。
+
+## 永久执行标准（2026-11-05 定稿：简单、统一、可重复）
+
+核心原则：先读本文件、PROJECT_CHANGE_POLICY.md 和项目圣经；Cloudflare D1/CMS 是运行时唯一事实源。能在正式数据源完成就不另造接口，能复用现有构建入口就不增加新层。所有批量处理必须幂等、条件更新、保留人工修改、可验证、可回滚。
+
+### 产品 SEO
+
+- 每个型号 × 语言独立维护 title、H1、description、OG 和正文；标题与 H1 必须差异化，按真实产品特征组合 B2B、wholesale、OEM、manufacturer/factory、颜色、真实材质、场景和长尾词，禁止整站复用同一句。
+- 容量保留工厂真实 ml；海外表达同时给出经审核的 approximate/size class oz，不写成精确等式。没有来源的材质、认证、尺寸、颜色、MOQ、工厂证据不补造。
+- 塑料可作为定制方向；Tritan、BPA-free 等只能写成可询价定制，不得冒充现有 SKU 材质或认证。
+- D1/CMS 已有人工值优先；只写缺失、旧模板值或明确允许改写的字段。重复执行不得回退、重复插入或覆盖用户修改。
+
+### 博客与评价
+
+- 博客正文在 D1/CMS 编辑并审核；自然放入 2–5 个真实相关产品链接，结尾人工选择 2–3 篇相关阅读，五语路径同步检查。图片必须先看正文与画面，记录来源、SHA 和审核结论，不用通用图、旧 SKU 图或虚构工厂/客户证据。
+- 评价只接受来源可核验、能精确映射 SKU、未重复的真实内容，并保存 fingerprint、source 和审核状态。AI 只能做草稿、翻译、去重、格式整理与风险筛查；禁止生成虚假体验、补造型号参数或把未经人工/来源审核的内容写入 D1。
+- AI 的作用是提效，不是替代事实核验；涉及发布的最终内容须按来源和后台人工修改复核。所有追加或修改采用条件写入，绝不删除、覆盖用户已有数据。
+
+### 固定发布流程
+
+D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数据源 → bump publish revision → 两次干净构建/回归 → 检查五语、canonical/hreflang、sitemap、重复卡片与链接 → 核验代表线上路由。失败停在 CI，不发布临时产物；不要用 dist、线上 HTML 或一次性后处理替代正式修复。
+

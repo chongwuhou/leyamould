@@ -45,7 +45,7 @@ for slug,(ml,gradient) in SOURCE_CAPACITY.items():
     assert expected_oz in desc,slug
     assert expected_oz in re.search(r"<h1>(.*?)</h1>",html).group(1),slug
     assert title.count(str(row["model"]))==1,slug
-    assert (("Tritan" in desc and "BPA-free" in desc) or any(term in desc.lower() for term in ("custom materials","custom plastic","plástico","polímer","özel plastik","polymer"))),slug
+    assert "Tritan" in desc and "BPA-free" in desc,slug
     assert not re.search(r"\bcertified BPA.free\b|\bmade from Tritan\b",title+" "+desc,re.I),slug
     if gradient:
         assert html.count('class="product-gradient-finish"')==1,slug
