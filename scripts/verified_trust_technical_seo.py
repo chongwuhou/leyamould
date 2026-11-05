@@ -301,6 +301,8 @@ def build_llms(dist):
 
 def add_at_render(document,route,locale):
     """Apply trust/technical enhancements in the shared renderer before write."""
+    if locale not in ("en","es","pt","ru","tr"):
+        return document
     base=str(route or "/")
     prefix="/"+locale
     if locale!="en" and base.startswith(prefix+"/"):
