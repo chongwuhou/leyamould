@@ -1,6 +1,6 @@
-// Narrow, one-time refresh of the previously reviewed 505 product/locale SEO rows.
-// Each field updates only while it still equals the prior source-approved value.
-// An owner edit made before or during the migration is retained independently.
+// Narrow, one-time refresh of the reviewed 505 product/locale SEO rows.
+// The target copy is fixed in code, and each field updates only while it
+// still equals a previously reviewed source value. Owner edits are retained.
 import {authorizedProductSeoPromotionRequest} from "../../_shared/build-auth.js";
 import {ensureProductSeo,normalizeProductSeo} from "../../_shared/product-seo.js";
 import {bumpPublishRevision} from "../../_shared/site-settings.js";
@@ -11,17 +11,35 @@ const reply=(value,status=200)=>Response.json(value,{status,headers:{
   "cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"
 }});
 const LIMIT=15;
-const COMPLETE_KEY="product_seo_refresh_20261104_complete";
+const COMPLETE_KEY="product_seo_material_refresh_20261105_complete";
 export const REVIEWED_COUNT=REVIEWED_SEO_REFRESH_SOURCE.length;
 const PRIOR_SEO_SOURCE=new Map(REVIEWED_SEO_SOURCE.map(row=>[row.slug+"/"+row.locale,row]));
+const MATERIAL_SUFFIX={
+  en:". B2B OEM factory. Ask about custom Tritan/BPA-free materials, logo, colors and bulk packing; confirm by SKU.",
+  es:". Fabricante OEM B2B. Consulte Tritan/BPA-free, plástico, logo, colores y embalaje; confirme el SKU.",
+  pt:". Fabricante OEM B2B. Consulte Tritan/BPA-free, plástico, cores e embalagem; confirme o SKU.",
+  ru:". OEM-производитель B2B. Уточните Tritan/BPA-free, полимеры, логотип, цвет и упаковку по SKU.",
+  tr:". B2B OEM üreticisi. Özel Tritan/BPA-free plastik, logo, renk ve koli seçeneklerini sorun; SKU ile doğrulayın."
+};
 
+function targetDescription(row){
+  return row.newTitle.replace(/\s+\|\s+XUYI\s*$/,"")+MATERIAL_SUFFIX[row.locale];
+}
+function expectedValues(value){
+  return Array.isArray(value)?value.filter(Boolean):[value].filter(Boolean);
+}
+function fieldState(current,expected,next){
+  if(current===next)return "updated";
+  if(expectedValues(expected).includes(current))return "eligible";
+  return "preserved";
+}
 export function expectedReviewedRows(){
   const seen=new Set();
   const locales=new Map();
   for(const row of REVIEWED_SEO_REFRESH_SOURCE){
     const next=normalizeProductSeo({
       slug:row.slug,locale:row.locale,
-      seoTitle:row.newTitle,metaDescription:row.newDescription
+      seoTitle:row.newTitle,metaDescription:targetDescription(row)
     });
     const key=next.slug+"/"+next.locale;
     if(seen.has(key))throw Error("Duplicate reviewed product SEO refresh key");
@@ -42,17 +60,16 @@ export function expectedReviewedRows(){
 }
 expectedReviewedRows();
 
-function fieldState(current,expected,next){
-  if(current===next)return "updated";
-  if(current===expected)return "eligible";
-  return "preserved";
-}
 export function classifyReviewedRow(source,current){
   const prior=PRIOR_SEO_SOURCE.get(source.slug+"/"+source.locale);
   if(!current||!prior)return {title:"missing",description:"missing"};
   return {
-    title:fieldState(current.seo_title,prior.newTitle,source.newTitle),
-    description:fieldState(current.meta_description,prior.newDescription,source.newDescription)
+    title:fieldState(current.seo_title,[prior.newTitle,source.newTitle],source.newTitle),
+    description:fieldState(
+      current.meta_description,
+      [prior.newDescription,source.newDescription],
+      targetDescription(source)
+    )
   };
 }
 
@@ -126,19 +143,21 @@ export async function onRequestPost(c){
   const rows=await currentRows(db);
   const queries=[];
   for(const source of segment){
-    const current=rows.get(source.slug+"/"+source.locale);
+    const key=source.slug+"/"+source.locale;
+    const current=rows.get(key);
+    const prior=PRIOR_SEO_SOURCE.get(key);
     const status=classifyReviewedRow(source,current);
     if(status.title==="eligible"){
       queries.push(db.prepare(
         "UPDATE xuyi_product_seo SET seo_title=?,updated_at=CURRENT_TIMESTAMP "+
-        "WHERE slug=? AND locale=? AND seo_title=?"
-      ).bind(source.newTitle,source.slug,source.locale,PRIOR_SEO_SOURCE.get(source.slug+"/"+source.locale).newTitle));
+        "WHERE slug=? AND locale=? AND seo_title IN (?,?)"
+      ).bind(source.newTitle,source.slug,source.locale,prior.newTitle,source.newTitle));
     }
     if(status.description==="eligible"){
       queries.push(db.prepare(
         "UPDATE xuyi_product_seo SET meta_description=?,updated_at=CURRENT_TIMESTAMP "+
-        "WHERE slug=? AND locale=? AND meta_description=?"
-      ).bind(source.newDescription,source.slug,source.locale,PRIOR_SEO_SOURCE.get(source.slug+"/"+source.locale).newDescription));
+        "WHERE slug=? AND locale=? AND meta_description IN (?,?)"
+      ).bind(targetDescription(source),source.slug,source.locale,prior.newDescription,source.newDescription));
     }
   }
   if(queries.length)await db.batch(queries);
