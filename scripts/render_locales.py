@@ -102,6 +102,23 @@ def correct_reviewed_drinkware_terms(markup,locale):
 
     return markup
 
+def dedupe_catalog_cards(body):
+    """Keep one localized product card per href before catalog enrichers run."""
+    seen=set()
+    pattern=re.compile(r'<a\b[^>]*\bdata-product-card\b[^>]*>[\s\S]*?</a>',re.I|re.S)
+    def replace(match):
+        card=match.group(0)
+        opening=card.split(">",1)[0]
+        href=re.search(r'\bhref=["\']([^"\']+)["\']',opening,re.I)
+        if not href:
+            return card
+        url=href.group(1)
+        if url in seen:
+            return ""
+        seen.add(url)
+        return card
+    return pattern.sub(replace,body)
+
 def relocate_product_intro(body):
     """Move the existing product intro below the full two-column product block.
 
@@ -781,6 +798,8 @@ def main():
             body=localize_blog_timeline(body,original,loc,route)
 
         if route=="/products/" or route.startswith("/collections/"):
+
+            body=dedupe_catalog_cards(body)
 
             body=gallery_catalog_cards(body,loc,route)
 
