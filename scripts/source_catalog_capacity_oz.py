@@ -408,6 +408,10 @@ def _description(locale,row,numbers):
           "ru":f"Оптовый B2B OEM-производитель: {buyer_kind.lower()}. {volume}; модель {model}. Уточните материалы, логотип и упаковку по SKU.",
           "tr":f"B2B {buyer_kind.lower()} için OEM toptan üretici. {volume}; model {model}. Malzeme, logo ve koli seçeneklerini SKU bazında doğrulayın.",
         }[locale]
+    if locale=="en" and category in PLASTIC_CATEGORIES:
+        # Keep the source fallback buyer-facing and compact; explicit D1 rows
+        # are applied later and remain authoritative.
+        result=f"B2B wholesale {kind.lower()} OEM factory. {volume}; model {model}. Ask about custom Tritan/BPA-free materials, logo and packing."
     assert len(result)<=180,(locale,row.get("slug"),len(result),result)
     return result
 
