@@ -227,9 +227,9 @@ export async function onRequestPost(c){
   let updatedPageFields=0;
   if(!currentPage){
     queries.push(db.prepare(
-      "INSERT INTO site_pages(route,seo_title,meta_description,updated_at) "+
-      "SELECT ?,?,?,CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT 1 FROM site_pages WHERE route IN (?,?))"
-    ).bind(route,entry.seoTitle,entry.seoDescription,route,routeWithoutSlash));
+      "INSERT INTO site_pages(route,label,seo_title,meta_description,updated_at) "+
+      "SELECT ?,?,?,?,CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT 1 FROM site_pages WHERE route IN (?,?))"
+    ).bind(route,entry.h1.en,entry.seoTitle,entry.seoDescription,route,routeWithoutSlash));
     updatedPageFields+=2;
   }else{
     if(currentPage.seo_title===entry.oldTitle){
