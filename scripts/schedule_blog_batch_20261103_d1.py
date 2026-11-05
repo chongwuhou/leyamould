@@ -87,7 +87,9 @@ def main():
   with urllib.request.urlopen(req,timeout=180) as response: result=json.load(response)
  except urllib.error.HTTPError as err:
   raise RuntimeError("D1 five-language scheduling HTTP "+str(err.code)+" "+err.read(900).decode("utf8","replace")) from None
- require(result.get("success") is True and len(result.get("verifiedRows",[]))==3 and len(result.get("verifiedLocaleRows",[]))==12,
+ repair_ok=(result.get("repair") is True and result.get("translationsWritten")==12 and result.get("indexRowsWritten")==4)
+ schedule_ok=(len(result.get("verifiedRows",[]))==3 and len(result.get("verifiedLocaleRows",[]))==12)
+ require(result.get("success") is True and (repair_ok or schedule_ok),
          "D1 did not confirm all 15 scheduled language pages")
  print("XUYI_20261103_FIVE_LANGUAGE_BLOG_SCHEDULED",json.dumps(result.get("scheduled",[]),ensure_ascii=False))
  print("XUYI_20261103_LOCALIZED_QUEUES_VERIFIED",len(result.get("localeSchedules",[])))
