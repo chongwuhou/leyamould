@@ -1,0 +1,27 @@
+name: XUYI D1 SEO data maintenance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/xuyi-d1-seo-maintenance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  refresh-d1-seo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Update XUYI D1 SEO and locale records
+        run: node .github/maintenance/refresh_d1_seo_20261105.mjs
