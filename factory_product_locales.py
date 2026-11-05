@@ -320,14 +320,15 @@ def detail(row: dict, locale: str, series: dict | None = None) -> str:
         '<tr><th scope="row">' + escape(label) + '</th><td>' + escape(value) + '</td></tr>'
         for label, value in _spec_rows(row, locale)
     ) + '</table>'
-    thumbs = ""
+    thumbs = '<div class="product-detail__thumbs">'
     if len(images) > 1:
         aria = {"en":"Show product image ","es":"Mostrar imagen del producto ","pt":"Mostrar imagem do produto ","ru":"Показать фото товара ","tr":"Ürün görselini göster "}[locale]
-        thumbs = '<div class="product-detail__thumbs">' + "".join(
+        thumbs += "".join(
             '<button type="button" class="product-detail__thumb" data-main-photo="' + escape(str(image),quote=True) +
             '" aria-label="' + escape(aria + model + " " + str(index+1),quote=True) + '">' +
             photo(str(image),"") + '</button>' for index,image in enumerate(images[1:4])
-        ) + '</div>'
+        )
+    thumbs += '</div>'
     eyebrow = {
         "en":"B2B WHOLESALE DRINKWARE MANUFACTURER","es":"FABRICANTE DE BOTELLAS PARA MAYORISTAS B2B",
         "pt":"FABRICANTE DE GARRAFAS PARA ATACADO B2B","ru":"ПРОИЗВОДИТЕЛЬ ДЛЯ ОПТОВЫХ B2B-ПОСТАВОК",
