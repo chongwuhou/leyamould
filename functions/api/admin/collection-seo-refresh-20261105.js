@@ -268,7 +268,11 @@ export async function onRequestPost(c){
     insertedLocales++;
   }
   if(queries.length){
-    await db.batch(queries);
+    try{
+      await db.batch(queries);
+    }catch(error){
+      return reply({error:"D1 collection migration failed",detail:String(error).slice(0,500)},500);
+    }
     const revision=await bumpPublishRevision(db);
     return reply({route,updatedPageFields,insertedEnglishBody:currentBody?0:1,insertedLocales,...revision});
   }
