@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """XUYI shared, repeatable volume and customization enrichment.
 
-Explicit D1 product SEO rows are applied after these source recommendations.
-
 All published Product routes share the same rules:
 * verified mL paired with reviewed retail size classes, never exact equivalences;
 * genuine multi-capacity variants retain every catalog volume;
@@ -387,11 +385,11 @@ def _description(locale,row,numbers):
         }
     else:
         templates={
-          "en":f"Wholesale {kind.lower()} manufacturer for B2B buyers. {volume}; model {model}. Ask about OEM logo, custom Tritan/BPA-free materials and colors; confirm resin by SKU.",
-          "es":f"Fabricante de {kind.lower()} para mayoristas B2B. {volume}; modelo {model}. Consulte material Tritan/sin BPA a medida, logo OEM y colores; confirme resina por SKU.",
-          "pt":f"Fabricante de {kind.lower()} para atacado B2B. {volume}; modelo {model}. Consulte materiais Tritan/sem BPA sob medida, logo OEM e cores; confirme a resina por SKU.",
-          "ru":f"Производитель {kind.lower()} для оптовых B2B-поставок. {volume}; модель {model}. Уточните варианты Tritan/BPA-free, OEM-логотип и цвета; проверьте полимер по SKU.",
-          "tr":f"B2B toptan {kind.lower()} üreticisi. {volume}; model {model}. Özel Tritan/BPA-free malzeme, OEM logo ve renk seçeneklerini sorun; reçineyi SKU bazında doğrulayın.",
+          "en":f"Wholesale {kind.lower()} manufacturer for B2B buyers. {volume}; model {model}. Ask about OEM logo, custom plastic materials, colors and bulk packing; confirm resin by SKU.",
+          "es":f"Fabricante de {kind.lower()} para mayoristas B2B. {volume}; modelo {model}. Consulte plástico a medida, logo OEM, colores y embalaje; confirme resina por SKU.",
+          "pt":f"Fabricante de {kind.lower()} para atacado B2B. {volume}; modelo {model}. Consulte plástico sob medida, logo OEM, cores e embalagem; confirme resina por SKU.",
+          "ru":f"Производитель {kind.lower()} для оптовых B2B-поставок. {volume}; модель {model}. Уточните полимеры, OEM-логотип, цвета и упаковку по SKU.",
+          "tr":f"B2B toptan {kind.lower()} üreticisi. {volume}; model {model}. Özel plastik, OEM logo, renk ve koli seçeneklerini sorun; reçineyi SKU bazında doğrulayın.",
         }
     result=templates[locale]
     if material and category not in {"Titanium Vacuum Cups","Two-Way Drinking Cups"}:
@@ -402,16 +400,12 @@ def _description(locale,row,numbers):
         # Shorten only the buyer-language lead; preserve model and mL/oz facts.
         buyer_kind=_two_way_seo_kind(locale,row) if category=="Two-Way Drinking Cups" else kind
         result={
-          "en":f"B2B wholesale {buyer_kind.lower()} OEM factory. {volume}; model {model}. Ask about custom Tritan/BPA-free materials, logo and packing; confirm components by SKU.",
+          "en":f"B2B wholesale {buyer_kind.lower()} OEM factory. {volume}; model {model}. Ask about custom materials, logo and bulk packing; confirm components by SKU.",
           "es":f"Fabricante B2B OEM de {buyer_kind.lower()}. {volume}; modelo {model}. Consulte material, logo y embalaje; confirme piezas por SKU.",
           "pt":f"Fabricante B2B OEM de {buyer_kind.lower()} para atacado. {volume}; modelo {model}. Consulte materiais, logo e embalagem; confirme componentes por SKU.",
           "ru":f"Оптовый B2B OEM-производитель: {buyer_kind.lower()}. {volume}; модель {model}. Уточните материалы, логотип и упаковку по SKU.",
           "tr":f"B2B {buyer_kind.lower()} için OEM toptan üretici. {volume}; model {model}. Malzeme, logo ve koli seçeneklerini SKU bazında doğrulayın.",
         }[locale]
-    if locale=="en" and category in PLASTIC_CATEGORIES:
-        # Keep the source fallback buyer-facing and compact; explicit D1 rows
-        # are applied later and remain authoritative.
-        result=f"B2B wholesale {kind.lower()} OEM factory. {volume}; model {model}. Ask about custom Tritan/BPA-free materials, logo and packing."
     assert len(result)<=180,(locale,row.get("slug"),len(result),result)
     return result
 
