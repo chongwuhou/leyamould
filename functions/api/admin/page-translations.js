@@ -40,17 +40,30 @@ export async function onRequestPost(c){
   if(/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i.test(html))
     return respond({error:"Unsafe HTML in translated content"},400);
   if(!MANAGED_ROUTES.has(route)){
-    // Manual single-product pages enter D1 after the initial 135-page route
-    // baseline. Only reviewed/published XUYI products are eligible for locales.
-    const match=/^\/products\/([a-z0-9][a-z0-9-]{1,63})\/$/.exec(route);
-    if(!match)return respond({error:"Unknown XUYI route"},400);
-    let record;
-    try{record=await db.prepare("SELECT content_json,publication_status FROM xuyi_product_content WHERE model=?")
-      .bind(match[1]).first()}
-    catch{return respond({error:"Unable to validate new-product route"},503)}
-    let entry;try{entry=record&&JSON.parse(record.content_json)}catch{}
-    if(record?.publication_status!=="published"||entry?.newProduct!==true)
-      return respond({error:"New product must be published in English before translating"},409);
+    // Blog detail routes are D1-owned and grow over time. Validate them from
+    // the published Blog CMS rows instead of freezing the translation API to
+    // the original checked-in route manifest.
+    const blogMatch=/^\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(route);
+    if(blogMatch){
+      let blogRow;
+      try{blogRow=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?")
+        .bind(blogMatch[1]).first()}
+      catch{return respond({error:"Unable to validate D1 Blog route"},503)}
+      if(blogRow?.status!=="published")
+        return respond({error:"Blog article must be published in English before translating"},409);
+    }else{
+      // Manual single-product pages enter D1 after the initial 135-page route
+      // baseline. Only reviewed/published XUYI products are eligible for locales.
+      const match=/^\/products\/([a-z0-9][a-z0-9-]{1,63})\/$/.exec(route);
+      if(!match)return respond({error:"Unknown XUYI route"},400);
+      let record;
+      try{record=await db.prepare("SELECT content_json,publication_status FROM xuyi_product_content WHERE model=?")
+        .bind(match[1]).first()}
+      catch{return respond({error:"Unable to validate new-product route"},503)}
+      let entry;try{entry=record&&JSON.parse(record.content_json)}catch{}
+      if(record?.publication_status!=="published"||entry?.newProduct!==true)
+        return respond({error:"New product must be published in English before translating"},409);
+    }
   }
   const statements=[db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
      VALUES(?,?,?,CURRENT_TIMESTAMP)
