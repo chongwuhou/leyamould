@@ -212,9 +212,10 @@ export async function onRequestPost(c){
   const route=input.route;
   const entry=COLLECTIONS[route];
   const sourceHtml=input.sourceHtml;
+  const routeWithoutSlash=route.endsWith("/")?route.slice(0,-1):route;
   const currentPage=await db.prepare(
-    "SELECT seo_title,meta_description FROM site_pages WHERE route=?"
-  ).bind(route).first();
+    "SELECT route,seo_title,meta_description FROM site_pages WHERE route IN (?,?) ORDER BY CASE WHEN route=? THEN 0 ELSE 1 END LIMIT 1"
+  ).bind(route,routeWithoutSlash,route).first();
   const currentBody=await db.prepare(
     "SELECT route FROM xuyi_page_content WHERE route=?"
   ).bind(route).first();
@@ -224,17 +225,24 @@ export async function onRequestPost(c){
   const localeSet=new Set(currentLocales.map(row=>row.locale));
   const queries=[];
   let updatedPageFields=0;
-  if(currentPage?.seo_title===entry.oldTitle){
+  if(!currentPage){
     queries.push(db.prepare(
-      "UPDATE site_pages SET seo_title=?,updated_at=CURRENT_TIMESTAMP WHERE route=? AND seo_title=?"
-    ).bind(entry.seoTitle,route,entry.oldTitle));
-    updatedPageFields++;
-  }
-  if(currentPage?.meta_description===entry.oldMeta){
-    queries.push(db.prepare(
-      "UPDATE site_pages SET meta_description=?,updated_at=CURRENT_TIMESTAMP WHERE route=? AND meta_description=?"
-    ).bind(entry.seoDescription,route,entry.oldMeta));
-    updatedPageFields++;
+      "INSERT INTO site_pages(route,seo_title,meta_description,updated_at) VALUES(?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(route) DO NOTHING"
+    ).bind(route,entry.seoTitle,entry.seoDescription));
+    updatedPageFields+=2;
+  }else{
+    if(currentPage.seo_title===entry.oldTitle){
+      queries.push(db.prepare(
+        "UPDATE site_pages SET seo_title=?,updated_at=CURRENT_TIMESTAMP WHERE route=? AND seo_title=?"
+      ).bind(entry.seoTitle,currentPage.route,entry.oldTitle));
+      updatedPageFields++;
+    }
+    if(currentPage.meta_description===entry.oldMeta){
+      queries.push(db.prepare(
+        "UPDATE site_pages SET meta_description=?,updated_at=CURRENT_TIMESTAMP WHERE route=? AND meta_description=?"
+      ).bind(entry.seoDescription,currentPage.route,entry.oldMeta));
+      updatedPageFields++;
+    }
   }
   if(!currentBody){
     queries.push(db.prepare(
