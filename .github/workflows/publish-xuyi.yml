@@ -863,3 +863,4 @@ jobs:
             exit 0
           fi
           python scripts/search_submission.py --submit
+# Owner-authorized SEO release trigger: 2026-11-05
