@@ -400,7 +400,7 @@ def _description(locale,row,numbers):
         # Shorten only the buyer-language lead; preserve model and mL/oz facts.
         buyer_kind=_two_way_seo_kind(locale,row) if category=="Two-Way Drinking Cups" else kind
         result={
-          "en":f"B2B wholesale {buyer_kind.lower()} OEM factory. {volume}; model {model}. Ask about custom materials, logo and bulk packing; confirm components by SKU.",
+          "en":f"B2B wholesale {buyer_kind.lower()} OEM factory. {volume}; model {model}. Ask about custom Tritan, BPA-free materials, logo and bulk packing; confirm components by SKU.",
           "es":f"Fabricante B2B OEM de {buyer_kind.lower()}. {volume}; modelo {model}. Consulte material, logo y embalaje; confirme piezas por SKU.",
           "pt":f"Fabricante B2B OEM de {buyer_kind.lower()} para atacado. {volume}; modelo {model}. Consulte materiais, logo e embalagem; confirme componentes por SKU.",
           "ru":f"Оптовый B2B OEM-производитель: {buyer_kind.lower()}. {volume}; модель {model}. Уточните материалы, логотип и упаковку по SKU.",
