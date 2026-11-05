@@ -111,7 +111,8 @@ export async function authorizedDailyProductReviewRequest(request, env) {
 export async function authorizedProductSeoPromotionRequest(request, env){
   if(!new Set([
     "/api/admin/product-seo-promotion-20261020",
-    "/api/admin/product-seo-refresh-20261104"
+    "/api/admin/product-seo-refresh-20261104",
+    "/api/admin/collection-seo-refresh-20261105"
   ]).has(new URL(request.url).pathname)||
      !new Set(["GET","POST"]).has(request.method))return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
