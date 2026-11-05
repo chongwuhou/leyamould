@@ -809,11 +809,21 @@ def main():
 
             body=dedupe_catalog_cards(body)
 
-        if route=="/products/":
+        if route=="/products/" or route.startswith("/collections/"):
 
-            from catalog_crawlable_pagination import upgrade_localized_cms
+            from catalog_crawlable_pagination import upgrade_localized_cms,upgrade_localized_catalog_navigation
 
-            body=upgrade_localized_cms(body)
+            if route=="/products/":
+
+                body=upgrade_localized_cms(body)
+
+            body=upgrade_localized_catalog_navigation(
+
+                body,loc,live[loc].get("pathPrefix",loc),
+
+                UI_TRANSLATIONS.get(loc,{}),route
+
+            )
 
         # Canonicalize only known broken transparent-variant hyperlinks.
 
