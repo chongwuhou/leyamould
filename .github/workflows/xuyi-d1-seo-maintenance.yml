@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/xuyi-d1-seo-maintenance.yml"
+      - ".github/maintenance/refresh_d1_seo_20261105.mjs"
   workflow_dispatch:
 
 permissions:
