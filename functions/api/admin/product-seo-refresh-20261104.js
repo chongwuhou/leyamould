@@ -22,7 +22,7 @@ const MATERIAL_SUFFIX={
   tr:". B2B OEM üreticisi. Özel Tritan/BPA-free plastik, logo, renk ve koli seçeneklerini sorun; SKU ile doğrulayın."
 };
 
-function targetDescription(row){
+export function targetDescription(row){
   return row.newTitle.replace(/\s+\|\s+XUYI\s*$/,"")+MATERIAL_SUFFIX[row.locale];
 }
 function expectedValues(value){

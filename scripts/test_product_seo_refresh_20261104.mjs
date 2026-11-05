@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 import {REVIEWED_SEO_SOURCE as previous} from "../functions/_shared/reviewed-product-seo-20261020.js";
 import {REVIEWED_SEO_REFRESH_SOURCE as reviewed} from "../functions/_shared/reviewed-product-seo-refresh-20261104.js";
 import {
-  REVIEWED_COUNT, expectedReviewedRows, classifyReviewedRow, onRequestGet, onRequestPost
+  REVIEWED_COUNT, expectedReviewedRows, targetDescription, classifyReviewedRow, onRequestGet, onRequestPost
 } from "../functions/api/admin/product-seo-refresh-20261104.js";
 import {normalizeProductSeo} from "../functions/_shared/product-seo.js";
 
@@ -30,14 +30,14 @@ for(const row of reviewed){
   assert.notEqual(row.newDescription,old.newDescription,"refresh description must differ from prior approved source");
   const normalized=normalizeProductSeo({
     slug:row.slug,locale:row.locale,
-    seoTitle:row.newTitle,metaDescription:row.newDescription
+    seoTitle:row.newTitle,metaDescription:targetDescription(row)
   });
   assert.equal(normalized.title,row.newTitle);
-  assert.equal(normalized.description,row.newDescription);
+  assert.equal(normalized.description,targetDescription(row));
   assert(row.newTitle.length<=60,key+" title length");
-  assert(row.newDescription.length<=180,key+" description length");
+  assert(targetDescription(row).length<=180,key+" description length");
   assert(row.newTitle.includes("OEM")&&row.newTitle.includes("XUYI"),key+" B2B/OEM title");
-  assert(row.newDescription.toLowerCase().includes("b2b"),key+" B2B description");
+  assert(targetDescription(row).toLowerCase().includes("b2b"),key+" B2B description");
   if(row.hasCapacity){
     assert(row.newTitle.toLowerCase().includes("ml"),key+" mL title");
     assert(row.newTitle.toLowerCase().includes("oz"),key+" oz title");
@@ -51,8 +51,8 @@ for(const row of reviewed){
   titleSet.add(row.newTitle);
   titleSets.set(row.locale,titleSet);
   const descriptionSet=descriptionSets.get(row.locale)||new Set();
-  assert(!descriptionSet.has(row.newDescription),key+" duplicate meta description");
-  descriptionSet.add(row.newDescription);
+  assert(!descriptionSet.has(targetDescription(row)),key+" duplicate meta description");
+  descriptionSet.add(targetDescription(row));
   descriptionSets.set(row.locale,descriptionSet);
   if(row.twoWay){
     const variants={
@@ -70,7 +70,7 @@ for(const row of reviewed){
     {title:"eligible",description:"eligible"}
   );
   assert.deepEqual(
-    classifyReviewedRow(row,{seo_title:row.newTitle,meta_description:row.newDescription}),
+    classifyReviewedRow(row,{seo_title:row.newTitle,meta_description:targetDescription(row)}),
     {title:"updated",description:"updated"}
   );
   assert.deepEqual(
@@ -122,15 +122,15 @@ const fakeDb={
       async run(){
         if(sql.startsWith("CREATE TABLE"))return {success:true};
         if(sql.startsWith("UPDATE xuyi_product_seo SET seo_title")){
-          const [value,slug,locale,expected]=params;
+          const [value,slug,locale,expected1,expected2]=params;
           const row=dbRows.get(slug+"/"+locale);
-          if(row&&row.seo_title===expected)row.seo_title=value;
+          if(row&&[expected1,expected2].includes(row.seo_title))row.seo_title=value;
           return {success:true};
         }
         if(sql.startsWith("UPDATE xuyi_product_seo SET meta_description")){
-          const [value,slug,locale,expected]=params;
+          const [value,slug,locale,expected1,expected2]=params;
           const row=dbRows.get(slug+"/"+locale);
-          if(row&&row.meta_description===expected)row.meta_description=value;
+          if(row&&[expected1,expected2].includes(row.meta_description))row.meta_description=value;
           return {success:true};
         }
         if(sql.startsWith("INSERT INTO site_state")){
