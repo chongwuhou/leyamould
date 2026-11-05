@@ -22,10 +22,28 @@ const MATERIAL_SUFFIX={
   tr:". B2B OEM üreticisi. Özel Tritan/BPA-free plastik, logo, renk ve koli seçeneklerini sorun; SKU ile doğrulayın."
 };
 
+const TRANSPARENT_MODELS=new Set(["2306-transparent","2307-transparent","2308-transparent","2400-transparent","2401-transparent"]);
 export function targetTitle(row){
-  if(row.locale==="es"||row.locale==="pt")return row.newTitle.replace("transp.","transparente");
-  if(row.locale==="ru")return row.newTitle.replace("прозр.","прозрачный");
-  return row.newTitle;
+  if(!TRANSPARENT_MODELS.has(row.slug))return row.newTitle;
+  const ml=(row.newTitle.match(/^\d+ml/)||[""])[0];
+  const oz=(row.newTitle.match(/(\d+(?:\.\d+)?) oz/)||[])[1];
+  const model=row.slug.replace(/-transparent$/,"");
+  const large=row.slug.startsWith("23");
+  const kind={
+    en:large?"Water Jug":"Sports Bottle",
+    es:"Botella",
+    pt:"Garrafa",
+    ru:"Бутылка",
+    tr:"Matara"
+  }[row.locale];
+  const color={
+    en:"Clear",
+    es:"transparente",
+    pt:"transparente",
+    ru:"прозрачный",
+    tr:"Şeffaf"
+  }[row.locale];
+  return ml+" "+oz+" oz PC/PP/ABS "+kind+" OEM "+model+" "+color+" | XUYI";
 }
 export function targetDescription(row){
   return targetTitle(row).replace(/\s+\|\s+XUYI\s*$/,"")+MATERIAL_SUFFIX[row.locale];
