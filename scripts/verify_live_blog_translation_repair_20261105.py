@@ -11,7 +11,7 @@ HOT_TRANSLATIONS={
  "es":["Cumplimiento de las botellas de agua de plástico: documentos de contacto alimentario que deben solicitar los compradores","PC, Tritan, PP y PETG: cómo seleccionar los materiales para botellas de plástico","Botellas de agua de plástico sin BPA: qué deben verificar los compradores mayoristas"],
  "pt":["Conformidade de garrafas de água de plástico: documentos de contato com alimentos que os compradores devem solicitar","PC, Tritan, PP e PETG: como selecionar materiais para garrafas de plástico","Garrafas de água de plástico sem BPA: o que os compradores por atacado devem verificar"],
  "ru":["Соответствие пластиковых бутылок для воды требованиям: документы для контакта с пищевыми продуктами, которые следует запросить покупателям","PC, Tritan, PP и PETG: выбор материалов для пластиковых бутылок","Пластиковые бутылки для воды без BPA: что должны проверить оптовые покупатели"],
- "tr":["Plastik su şişelerinde uygunluk: alıcıların talep etmesi gereken gıda temas belgeleri","PC, Tritan, PP ve PETG: plastik şişе malzemelerini seçme rehberi","BPA içermeyen plastik su şişeleri: toptan alıcıların doğrulaması gerekenler"],
+ "tr":["Plastik su şişelerinde uygunluk: alıcıların talep etmesi gereken gıda temas belgeleri","PC, Tritan, PP ve PETG: plastik şişe malzemelerini seçme rehberi","BPA içermeyen plastik su şişeleri: toptan alıcıların doğrulaması gerekenler"],
 }
 SMELL_TRANSLATIONS={
  "es":["Tapas herméticas para botellas de agua: lista de pruebas para compradores","Tapas de repuesto para botellas de agua: guía de piezas de recambio al por mayor","Lista de control de calidad de botellas de agua de plástico para pedidos al por mayor"],
