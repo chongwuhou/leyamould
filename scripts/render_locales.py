@@ -916,6 +916,7 @@ def main():
         text=translate_chrome(prefix,loc,ui)+'<main id="main-content">'+body+'</main>'+translate_chrome(suffix,loc,ui)
 
         text=localize_verified_links(text,loc,live[loc].get("pathPrefix",loc),routes_by_locale[loc])
+        text=dedupe_catalog_cards(text)
         from site_renderer import SERIES
         from scripts.source_catalog_capacity_oz import enrich_catalog_body
         text=enrich_catalog_body(text,loc,SERIES)
