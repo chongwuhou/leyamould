@@ -307,7 +307,7 @@ def add_at_render(document,route,locale):
     prefix="/"+locale
     if locale!="en" and base.startswith(prefix+"/"):
         base=base[len(prefix):]
-    if base in ("/",""):
+    if base in ("/","") and FAQ_GROUP.search(document):
         document,_=improve_home(document,locale)
     if base.startswith("/blog/") and base!="/blog/":
         document,_=improve_article(document,locale)
