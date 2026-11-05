@@ -603,6 +603,26 @@ def main():
                 translated[(route,loc)]=factory_translation_for(product,loc,SERIES)
                 source_generated_routes.add((route,loc))
 
+    # Reviewed source-owned collection copy fills a missing locale route only
+    # when D1 has no translation record. D1 translations remain authoritative.
+    from collection_locale_source import translation_for as collection_translation_for
+    from site_renderer import CAT
+
+    for _, (_, slug, _, _) in CAT.items():
+        route = "/collections/" + slug + "/"
+        src = DIST / route.lstrip("/") / "index.html"
+        if not src.is_file():
+            continue
+        original_source = src.read_text(encoding="utf-8")
+        if '<main id="main-content">' not in original_source:
+            continue
+        source_body = original_source.split('<main id="main-content">', 1)[1].split('</main>', 1)[0]
+        for loc in live:
+            if (route, loc) not in translated:
+                copy = collection_translation_for(route, loc, source_body)
+                if copy:
+                    translated[(route, loc)] = copy
+
     # D1-published catalogs are fixed HTML snapshots; add only the eight
 
     # source-verified LO cards to their native-language grids, without
