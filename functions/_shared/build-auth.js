@@ -85,6 +85,12 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
   return verifyCloudflareProjectToken(bearerToken(request), env);}
 
 // Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
+// Narrow, source-reviewed repair for the nine multilingual Blog D1 records identified
+// by the 2026-11-05 live translation audit. It accepts no arbitrary copy.
+export async function authorizedReviewedBlogTranslationRepairRequest(request, env) {
+  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-translation-repair-20261105") return false;
+  return verifyCloudflareProjectToken(bearerToken(request), env);
+}
 export async function authorizedReviewedBlogImageUploadRequest(request, env) {
   if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261102","/api/admin/blog-images-20261103"].includes(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
