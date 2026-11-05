@@ -1,6 +1,8 @@
 import {authorizedReviewedBlogBatchRequest} from "../../_shared/build-auth.js";
 import {ensureBlogSchema,normalizeBlogPost} from "../../_shared/blog-cms.js";
 import {ensurePublishScheduler,scheduleBlogPost,scheduleBlogLocalePost} from "../../_shared/publish-scheduler.js";
+import {bumpPublishRevision} from "../../_shared/site-settings.js";
+import {ensureTranslationSchema} from "../../_shared/translation.js";
 import IMAGE_MANIFEST from "../../../data/blog-images-reviewed-20261103.json" with {type:"json"};
 import SCHOOL from "../../../data/blog-scheduled-20261103-1.json" with {type:"json"};
 import PARKS from "../../../data/blog-scheduled-20261103-2.json" with {type:"json"};
@@ -109,6 +111,70 @@ export function validateLocalizedPayload(input,prepared=prepareScheduledPosts())
   return {translations:translationMap,cards:cardMap};
 }
 
+function repairPublishedBlogIndex(currentHtml,cardMap,sourceOrder){
+  const blocks=String(currentHtml).match(/<article class="news-card">[\s\S]*?<\/article>/g)||[];
+  if(!blocks.length)throw Error("Localized Blog index has no card blocks");
+  const bySlug=new Map(),originalOrder=[];
+  for(const block of blocks){
+    const slug=/href="\/blog\/([^/]+)\//.exec(block)?.[1];
+    if(slug&&!bySlug.has(slug)){bySlug.set(slug,block);originalOrder.push(slug);}
+  }
+  for(const [slug,card] of cardMap)bySlug.set(slug,card);
+  const ordered=[];
+  for(const slug of sourceOrder)if(bySlug.has(slug))ordered.push(slug);
+  for(const slug of originalOrder)if(!ordered.includes(slug))ordered.push(slug);
+  if(ordered.length!==bySlug.size)throw Error("Localized Blog index card identity is ambiguous");
+  const first=currentHtml.indexOf(blocks[0]),last=currentHtml.lastIndexOf(blocks[blocks.length-1]);
+  if(first<0||last<first)throw Error("Localized Blog index card range is invalid");
+  const end=last+blocks[blocks.length-1].length;
+  return currentHtml.slice(0,first)+ordered.map(slug=>bySlug.get(slug)).join("\n")+currentHtml.slice(end);
+}
+
+async function repairPublishedTranslations(db,prepared,localized){
+  await ensureBlogSchema(db);await ensureTranslationSchema(db);
+  for(const item of prepared){
+    const row=await db.prepare("SELECT status,content_json FROM xuyi_blog_posts WHERE slug=?").bind(item.slug).first();
+    if(row?.status!=="published"||row.content_json!==item.contentJson)
+      throw Error("Published English D1 source does not match the reviewed 2026-11-03 article: "+item.slug);
+  }
+  const sourceOrder=prepared.slice().sort((a,b)=>Date.parse(b.scheduledAt)-Date.parse(a.scheduledAt)).map(x=>x.slug);
+  const statements=[],locales=["es","pt","ru","tr"];
+  for(const locale of locales){
+    const indexRow=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(locale).first();
+    if(!indexRow)throw Error("Localized Blog index override missing: "+locale);
+    let index;try{index=JSON.parse(indexRow.translated_json||"{}")}catch{throw Error("Localized Blog index JSON invalid: "+locale)}
+    const cards=new Map();
+    for(const item of prepared){
+      const card=localized.cards.get(item.slug+"|"+locale);
+      if(!card)throw Error("Localized Blog card missing: "+item.slug+" "+locale);
+      cards.set(item.slug,card.html);
+      const translation=localized.translations.get(item.slug+"|"+locale);
+      statements.push(db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
+        VALUES(?,?,?,CURRENT_TIMESTAMP)
+        ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=CURRENT_TIMESTAMP`)
+        .bind("page:/blog/"+item.slug+"/",locale,JSON.stringify({title:translation.title,description:translation.description,mainHtml:translation.mainHtml})));
+    }
+    const mainHtml=repairPublishedBlogIndex(String(index.mainHtml||""),cards,sourceOrder);
+    if((mainHtml.match(/<article class="news-card">/g)||[]).length!==73)
+      throw Error("Localized Blog index repair did not produce 73 cards: "+locale);
+    index.mainHtml=mainHtml;
+    statements.push(db.prepare(`UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=CURRENT_TIMESTAMP
+      WHERE resource_id='page:/blog/' AND locale=?`)
+      .bind(JSON.stringify(index),locale));
+  }
+  await db.batch(statements);
+  const revision=await bumpPublishRevision(db);
+  return {success:true,repair:true,translationsWritten:12,indexRowsWritten:4,...revision};
+}
+
+async function publishedReviewReady(db,prepared){
+  for(const item of prepared){
+    const row=await db.prepare("SELECT status,content_json FROM xuyi_blog_posts WHERE slug=?").bind(item.slug).first();
+    if(row?.status!=="published"||row.content_json!==item.contentJson)return false;
+  }
+  return true;
+}
+
 export async function onRequestPost(context){
   if(!(await authorizedReviewedBlogBatchRequest(context.request,context.env)))return reply({error:"Unauthorized"},401);
   const db=context.env.XUYI_DB,bucket=context.env.XUYI_ASSETS;
@@ -119,6 +185,8 @@ export async function onRequestPost(context){
   try{prepared=prepareScheduledPosts();localized=validateLocalizedPayload(input,prepared);}
   catch(e){return reply({error:String(e.message||e).slice(0,260)},400);}
   try{
+    if(input?.mode==="repair-published-translations"||await publishedReviewReady(db,prepared))
+      return reply(await repairPublishedTranslations(db,prepared,localized));
     await ensureBlogSchema(db);
     await ensurePublishScheduler(db);
     const tasks=(await db.prepare("SELECT daily_limit FROM xuyi_publish_tasks WHERE content_type='blog' AND enabled=1").all()).results||[];
@@ -195,3 +263,4 @@ export async function onRequestPost(context){
     return reply({success:true,day:DAY,timezone:"Asia/Shanghai",languages:["en",...LOCALES],scheduled,localeSchedules,verifiedRows:saved,verifiedLocaleRows:savedLocales});
   }catch(e){return reply({error:"D1 five-language schedule failed: "+String(e.message||e).slice(0,220)},500);}
 }
+
