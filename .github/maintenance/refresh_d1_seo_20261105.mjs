@@ -14,7 +14,7 @@ async function callSite(path, method = 'GET', body) {
       accept: 'application/json',
       'content-type': 'application/json',
       'cache-control': 'no-store',
-      'user-agent': 'XUYI-D1-SEO-Maintenance/1.5'
+      'user-agent': 'XUYI-D1-SEO-Maintenance/1.6'
     },
     body: body === undefined ? undefined : JSON.stringify(body)
   });
