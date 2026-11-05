@@ -385,11 +385,11 @@ def _description(locale,row,numbers):
         }
     else:
         templates={
-          "en":f"Wholesale {kind.lower()} manufacturer for B2B buyers. {volume}; model {model}. Ask about OEM logo, custom plastic materials, colors and bulk packing; confirm resin by SKU.",
-          "es":f"Fabricante de {kind.lower()} para mayoristas B2B. {volume}; modelo {model}. Consulte plástico a medida, logo OEM, colores y embalaje; confirme resina por SKU.",
-          "pt":f"Fabricante de {kind.lower()} para atacado B2B. {volume}; modelo {model}. Consulte plástico sob medida, logo OEM, cores e embalagem; confirme resina por SKU.",
-          "ru":f"Производитель {kind.lower()} для оптовых B2B-поставок. {volume}; модель {model}. Уточните полимеры, OEM-логотип, цвета и упаковку по SKU.",
-          "tr":f"B2B toptan {kind.lower()} üreticisi. {volume}; model {model}. Özel plastik, OEM logo, renk ve koli seçeneklerini sorun; reçineyi SKU bazında doğrulayın.",
+          "en":f"Wholesale {kind.lower()} manufacturer for B2B buyers. {volume}; model {model}. Ask about OEM logo, custom Tritan/BPA-free materials and colors; confirm resin by SKU.",
+          "es":f"Fabricante de {kind.lower()} para mayoristas B2B. {volume}; modelo {model}. Consulte material Tritan/sin BPA a medida, logo OEM y colores; confirme resina por SKU.",
+          "pt":f"Fabricante de {kind.lower()} para atacado B2B. {volume}; modelo {model}. Consulte materiais Tritan/sem BPA sob medida, logo OEM e cores; confirme a resina por SKU.",
+          "ru":f"Производитель {kind.lower()} для оптовых B2B-поставок. {volume}; модель {model}. Уточните варианты Tritan/BPA-free, OEM-логотип и цвета; проверьте полимер по SKU.",
+          "tr":f"B2B toptan {kind.lower()} üreticisi. {volume}; model {model}. Özel Tritan/BPA-free malzeme, OEM logo ve renk seçeneklerini sorun; reçineyi SKU bazında doğrulayın.",
         }
     result=templates[locale]
     if material and category not in {"Titanium Vacuum Cups","Two-Way Drinking Cups"}:
