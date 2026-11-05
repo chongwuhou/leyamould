@@ -14,7 +14,7 @@ async function callSite(path, method = 'GET', body) {
       accept: 'application/json',
       'content-type': 'application/json',
       'cache-control': 'no-store',
-      'user-agent': 'XUYI-D1-SEO-Maintenance/1.4'
+      'user-agent': 'XUYI-D1-SEO-Maintenance/1.5'
     },
     body: body === undefined ? undefined : JSON.stringify(body)
   });
@@ -102,6 +102,49 @@ const failingMaterialRows = productSeo.filter(row => {
 if (failingMaterialRows.length) {
   throw new Error('Material-language verification failed after D1 refresh: ' + JSON.stringify(failingMaterialRows));
 }
+
+
+async function migrateCollections() {
+  const routes = [
+    '/collections/kids-water-bottles/',
+    '/collections/large-capacity-water-jugs/',
+    '/collections/plastic-shaker-bottles/',
+    '/collections/sports-water-bottles/',
+    '/collections/spray-water-bottles/',
+    '/collections/two-way-drinking-cups/',
+    '/collections/titanium-vacuum-cups/'
+  ];
+  for (const route of routes) {
+    const response = await fetch(ORIGIN + route, {
+      headers: {
+        accept: 'text/html',
+        'cache-control': 'no-store',
+        'user-agent': 'XUYI-D1-SEO-Maintenance/1.5'
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Cannot read published collection ' + route + ': HTTP ' + response.status);
+    }
+    const html = await response.text();
+    const match = html.match(/<main id="main-content">([\s\S]*?)<\/main>/i);
+    if (!match || match[1].length < 500) {
+      throw new Error('Published collection has no usable main body: ' + route);
+    }
+    const result = await callSite(
+      '/api/admin/collection-seo-refresh-20261105',
+      'POST',
+      {action: 'seed', route, sourceHtml: match[1]}
+    );
+    console.log('COLLECTION_D1_SEED', route, JSON.stringify(result));
+  }
+  const state = await callSite('/api/admin/collection-seo-refresh-20261105');
+  if (state.englishBodies < routes.length || state.expectedMissingLocalized > 0) {
+    throw new Error('Collection D1 migration incomplete: ' + JSON.stringify(state));
+  }
+  console.log('COLLECTION_D1_LOCALES_VERIFIED', JSON.stringify(state));
+}
+
+await migrateCollections();
 
 const dispatch = await fetch(
   'https://api.github.com/repos/' + REPOSITORY + '/actions/workflows/publish-xuyi.yml/dispatches',
