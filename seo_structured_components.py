@@ -135,7 +135,18 @@ def _update_existing(page,canonical,locale,title,description,product_id,breadcru
                 elif "image" in node:
                     node.pop("image",None);changed=True
             elif kind=="BreadcrumbList":
-                if not node.get("@id"):node["@id"]=breadcrumb_id;changed=True
+                prefix="" if locale=="en" else "/"+locale
+                expected_items=[
+                    {"@type":"ListItem","position":1,"name":HOME[locale],"item":ORIGIN+prefix+"/"},
+                    {"@type":"ListItem","position":2,"name":PRODUCTS[locale],"item":ORIGIN+prefix+"/products/"},
+                    {"@type":"ListItem","position":3,"name":sku,"item":canonical},
+                ]
+                if node.get("@id")!=breadcrumb_id:
+                    node["@id"]=breadcrumb_id
+                    changed=True
+                if node.get("itemListElement")!=expected_items:
+                    node["itemListElement"]=expected_items
+                    changed=True
             elif kind=="WebPage":
                 for key,value in (("@id",webpage_id),("url",canonical),("name",title),("description",description),("inLanguage",locale)):
                     if value and node.get(key)!=value:node[key]=value;changed=True
