@@ -282,15 +282,14 @@ export async function applyTranslationOverride(db, job, translatedPayload) {
   await db.batch(statements);
   return bumpPublishRevision(db);
 }
-export async function autoTranslateQueuedModelJobs(db, modelId, env, limit = 12) {
+async function processQueuedTranslationJobs(db, resourceType, resourceId, env, limit = 12) {
   await ensureTranslationSchema(db);
   const { translation } = await languageAndTranslationSettings(db);
   if (!translation.autoTranslate || translation.provider === "manual") {
     return { attempted: 0, completed: 0, review: 0, errors: 0, skipped: true };
   }
-  const rows = await db.prepare(`SELECT * FROM translation_jobs
-    WHERE resource_type='product' AND resource_id=? AND status='queued'
-    ORDER BY target_locale LIMIT ?`).bind(modelId, Math.max(1, Math.min(30, Number(limit) || 12))).all();
+  const rows = await db.prepare("SELECT * FROM translation_jobs WHERE resource_type=? AND resource_id=? AND status='queued' ORDER BY target_locale LIMIT ?")
+    .bind(resourceType, resourceId, Math.max(1, Math.min(30, Number(limit) || 12))).all();
   let completed = 0, review = 0, errors = 0;
   for (const job of rows.results || []) {
     await db.prepare("UPDATE translation_jobs SET status='translating',provider=?,error_message='',updated_at=CURRENT_TIMESTAMP WHERE id=?")
@@ -313,6 +312,16 @@ export async function autoTranslateQueuedModelJobs(db, modelId, env, limit = 12)
     }
   }
   return { attempted: (rows.results || []).length, completed, review, errors, skipped: false };
+}
+
+export async function autoTranslateQueuedModelJobs(db, modelId, env, limit = 12) {
+  return processQueuedTranslationJobs(db, "product", modelId, env, limit);
+}
+
+export async function autoTranslateQueuedBlogJobs(db, slug, env, limit = 12) {
+  const blogSlug = clean(slug, 140).toLowerCase();
+  if (!/^[a-z0-9](?:[a-z0-9-]{1,118}[a-z0-9])?$/.test(blogSlug)) throw new Error("Invalid Blog slug");
+  return processQueuedTranslationJobs(db, "blog", "page:/blog/" + blogSlug + "/", env, limit);
 }
 
 export { languageAndTranslationSettings, json };
