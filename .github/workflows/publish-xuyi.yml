@@ -173,7 +173,7 @@ jobs:
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/preindex_security_gate.py
       - name: Prepare 2026-11-07 three B2B guides, five-language sources, and approved media
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == "Publish reviewed 2026-11-07 B2B procurement guides"
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-07 B2B procurement guides'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/prepare_blog_release_20261107.py
@@ -624,15 +624,15 @@ jobs:
       # This dispatch input is an explicit owner approval gate. The new
       # one-time endpoints are deployed above before any R2/D1 write occurs.
       - name: Upload 2026-11-07 three visually reviewed distinct covers to XUYI R2
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == "Publish reviewed 2026-11-07 B2B procurement guides"
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-07 B2B procurement guides'
         env:
           OWNER_BLOG1107_RELEASE: "1"
         run: python scripts/publish_blog_images_20261107_r2.py
       - name: Publish three 2026-11-07 B2B English originals and twelve translations to D1
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == "Publish reviewed 2026-11-07 B2B procurement guides"
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-07 B2B procurement guides'
         run: python scripts/publish_blog_batch_20261107_d1.py
       - name: Double clean build and verify fifteen live 2026-11-07 article pages
-        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == "Publish reviewed 2026-11-07 B2B procurement guides"
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-07 B2B procurement guides'
         shell: bash
         run: |
           set -euo pipefail
