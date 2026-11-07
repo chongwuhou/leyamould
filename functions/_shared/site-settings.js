@@ -203,7 +203,7 @@ export function normalizeTranslationConfig(input, languageConfig = defaultLangua
     provider,
     sourceLocale,
     autoQueue: raw.autoQueue !== false,
-    autoTranslate: mode !== "off" && provider !== "manual",
+    autoTranslate: mode !== "off" && provider === "google-cloud-translation",
     model: clean(raw.model, 160),
     endpoint,
     requireHumanReview: mode !== "publish"
