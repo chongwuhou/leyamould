@@ -489,6 +489,87 @@
       },
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "marathon-race-participant-water-bottles-bulk-procurement",
+      "articleTitle": "How Should Marathon Organizers Buy Reusable Water Bottles for Race Participant Kits?",
+      "cover": "/media/blog/marathon-race-participant-water-bottles-bulk-procurement-20261107.webp",
+      "source": "assets/blog/marathon-race-participant-water-bottles-bulk-procurement-20261107.webp",
+      "sha256": "620b0d652d8b0848268f815e3aaa0d7804216c9575075309ad3cc21c03c3118c",
+      "visualScene": "A participant running through a city road race with a small bottle visibly raised to his mouth and other race-day activity in the background.",
+      "buyerContext": "marathon and road-race event organizers procuring participant kit merchandise",
+      "articleUse": "B2B wholesale reusable bottle sourcing for marathon and road-race event organizers procuring participant kit merchandise",
+      "sceneMatch": "A road race, runner and visible bottle all appear in the same frame, illustrating the race organizer's participant drinkware purchasing audience without suggesting an exact kit or a proven client.",
+      "topicAnchors": [
+        "marathon",
+        "race"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels licensed editorial source: https://www.pexels.com/photo/a-man-drinking-water-while-running-10226372/; image is illustrative and does not show verified XUYI factory, customer, order or SKU.",
+      "usageDisclosure": "Licensed stock context photo; no assertion of exact XUYI product, commercial relationship, factory, certification or actual shipment.",
+      "scores": {
+        "sector": 5,
+        "productUse": 4,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "spa-wellness-retreat-guest-water-bottles-wholesale",
+      "articleTitle": "How Should Spas and Wellness Retreats Source Branded Guest Water Bottles in Bulk?",
+      "cover": "/media/blog/spa-wellness-retreat-guest-water-bottles-wholesale-20261107.webp",
+      "source": "assets/blog/spa-wellness-retreat-guest-water-bottles-wholesale-20261107.webp",
+      "sha256": "82ca35fbd2eeada97d6161800ed3c0ec72c51d0b23fe3cb5f6e4e4579af70834",
+      "visualScene": "A woman seated outdoors on a yoga mat beside a visible bright orange sports bottle in a wellness activity context.",
+      "buyerContext": "spa and retreat operators procuring branded guest welcome kits",
+      "articleUse": "B2B wholesale reusable bottle sourcing for spa and retreat operators procuring branded guest welcome kits",
+      "sceneMatch": "An outdoor yoga/wellness activity includes a clearly visible bottle and accurately illustrates guest activity-kit planning rather than an unrelated generic product photograph.",
+      "topicAnchors": [
+        "wellness",
+        "retreat"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels licensed editorial source: https://www.pexels.com/photo/a-woman-holding-a-yellow-water-bottle-sitting-on-a-yoga-mat-8455586/; image is illustrative and does not show verified XUYI factory, customer, order or SKU.",
+      "usageDisclosure": "Licensed stock context photo; no assertion of exact XUYI product, commercial relationship, factory, certification or actual shipment.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "city-sightseeing-tour-guest-water-bottle-kits-wholesale",
+      "articleTitle": "How Should City Tour Operators Source Reusable Water Bottles for Guest Welcome Kits?",
+      "cover": "/media/blog/city-sightseeing-tour-guest-water-bottle-kits-wholesale-20261107.webp",
+      "source": "assets/blog/city-sightseeing-tour-guest-water-bottle-kits-wholesale-20261107.webp",
+      "sha256": "7da7d0d88debc2502cc4dbb4afbcb3f1d4315e2dcb94e1eca3c02c1e5c894b1a",
+      "visualScene": "A black travel backpack on a city pavement with a white bottle clearly visible in its side pocket.",
+      "buyerContext": "city sightseeing and coach tour operators procuring guest travel kit bottles",
+      "articleUse": "B2B wholesale reusable bottle sourcing for city sightseeing and coach tour operators procuring guest travel kit bottles",
+      "sceneMatch": "The city walking context, backpack, and clearly visible bottle in its pocket correspond to the guide's travel bag compatibility and welcome-kit purchase decisions.",
+      "topicAnchors": [
+        "city",
+        "tour"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Pexels licensed editorial source: https://www.pexels.com/photo/black-backpack-on-the-sidewalk-18999339/; image is illustrative and does not show verified XUYI factory, customer, order or SKU.",
+      "usageDisclosure": "Licensed stock context photo; no assertion of exact XUYI product, commercial relationship, factory, certification or actual shipment.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
     }
   ]
 }

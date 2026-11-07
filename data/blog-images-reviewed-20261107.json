@@ -1,0 +1,35 @@
+{
+  "site": "xuyi-drinkware-site",
+  "images": [
+    {
+      "slug": "marathon-race-participant-water-bottles-bulk-procurement",
+      "source": "assets/blog/marathon-race-participant-water-bottles-bulk-procurement-20261107.webp",
+      "cover": "/media/blog/marathon-race-participant-water-bottles-bulk-procurement-20261107.webp",
+      "sha256": "620b0d652d8b0848268f815e3aaa0d7804216c9575075309ad3cc21c03c3118c",
+      "license": "Pexels License; photo page marks Free to use",
+      "photographerPage": "https://www.pexels.com/photo/a-man-drinking-water-while-running-10226372/",
+      "photographer": "RUN 4 FFWPU",
+      "fileBytes": 80488
+    },
+    {
+      "slug": "spa-wellness-retreat-guest-water-bottles-wholesale",
+      "source": "assets/blog/spa-wellness-retreat-guest-water-bottles-wholesale-20261107.webp",
+      "cover": "/media/blog/spa-wellness-retreat-guest-water-bottles-wholesale-20261107.webp",
+      "sha256": "82ca35fbd2eeada97d6161800ed3c0ec72c51d0b23fe3cb5f6e4e4579af70834",
+      "license": "Pexels License; photo page marks Free to use",
+      "photographerPage": "https://www.pexels.com/photo/a-woman-holding-a-yellow-water-bottle-sitting-on-a-yoga-mat-8455586/",
+      "photographer": "Ketut Subiyanto",
+      "fileBytes": 57086
+    },
+    {
+      "slug": "city-sightseeing-tour-guest-water-bottle-kits-wholesale",
+      "source": "assets/blog/city-sightseeing-tour-guest-water-bottle-kits-wholesale-20261107.webp",
+      "cover": "/media/blog/city-sightseeing-tour-guest-water-bottle-kits-wholesale-20261107.webp",
+      "sha256": "7da7d0d88debc2502cc4dbb4afbcb3f1d4315e2dcb94e1eca3c02c1e5c894b1a",
+      "license": "Pexels License; photo page marks Free to use",
+      "photographerPage": "https://www.pexels.com/photo/black-backpack-on-the-sidewalk-18999339/",
+      "photographer": "Pexels licensed photographer",
+      "fileBytes": 37350
+    }
+  ]
+}

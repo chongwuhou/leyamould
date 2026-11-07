@@ -172,6 +172,15 @@ jobs:
       - name: Block indexing launch if old raw source cache is still public
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: python scripts/preindex_security_gate.py
+      - name: Prepare 2026-11-07 three B2B guides, five-language sources, and approved media
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == "Publish reviewed 2026-11-07 B2B procurement guides"
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_release_20261107.py
+          python scripts/publish_blog_batch_20261107_d1.py --dry-run
+          python scripts/publish_blog_images_20261107_r2.py --dry-run
+          python scripts/test_blog_20261107_source.py
+          node scripts/test_blog_20261107_runtime.mjs
       - name: Prepare reviewed Blog batch payload
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-19 blog batch through existing CMS'
         run: python scripts/prepare_blog_release_20261019.py
@@ -614,6 +623,38 @@ jobs:
           exit 1
       # This dispatch input is an explicit owner approval gate. The new
       # one-time endpoints are deployed above before any R2/D1 write occurs.
+      - name: Upload 2026-11-07 three visually reviewed distinct covers to XUYI R2
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == "Publish reviewed 2026-11-07 B2B procurement guides"
+        env:
+          OWNER_BLOG1107_RELEASE: "1"
+        run: python scripts/publish_blog_images_20261107_r2.py
+      - name: Publish three 2026-11-07 B2B English originals and twelve translations to D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == "Publish reviewed 2026-11-07 B2B procurement guides"
+        run: python scripts/publish_blog_batch_20261107_d1.py
+      - name: Double clean build and verify fifteen live 2026-11-07 article pages
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == "Publish reviewed 2026-11-07 B2B procurement guides"
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            python scripts/test_blog_cover_editorial_standard.py
+            python scripts/test_blog_20261107_source.py
+            node scripts/test_blog_20261107_runtime.mjs
+            echo "2026-11-07 double clean CMS-backed build passed $pass"
+          done
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if python scripts/verify_live_blog_20261107.py; then
+              echo "XUYI_20261107_THREE_B2B_ARTICLES_FIFTEEN_LOCALES_D1_R2_PAGES_LIVE_CONFIRMED"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "::error::Three 2026-11-07 guides failed 15-page verification"
+          exit 1
       - name: Upload three visually reviewed 2026-11-03 covers to XUYI R2
         if: ((github.event_name == 'workflow_dispatch' && inputs.schedule_blog_20261103 == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[publish-blog-20261103]'))) && steps.credential.outputs.ready == 'true'
         env:
