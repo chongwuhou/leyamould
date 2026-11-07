@@ -204,6 +204,7 @@ async function openAiCompatibleTranslate(payload, source, target, apiKey, endpoi
 
 export async function machineTranslatePayload(payload, source, target, config, env) {
   if (config.provider === "manual") throw new Error("Translation provider is manual");
+  if (config.provider !== "google-cloud-translation") throw new Error("Automatic translation is limited to the authorized Google Cloud Translation provider");
   if (config.provider === "openai-compatible") {
     const key = clean(env.TRANSLATION_API_KEY, 4000);
     if (!key) throw new Error("TRANSLATION_API_KEY Pages Secret is not configured");
