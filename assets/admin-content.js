@@ -21,7 +21,7 @@
   say("正在读取旭一 D1 …");
   try{
    const endpoints=[["brand-config","brand"],["site-config","site"],["site-settings","settings"],["pages","pages"],
-    ["product-content","products"],["page-translations","locales"],["page-content","pageBodies"],
+    ["product-content","products"],["page-translations","locales"],["blog","blog"],["page-content","pageBodies"],
     ["home-banners","banners"]];
    // A failed unrelated CMS endpoint must not disable Banner/new-product editing.
    const results=await Promise.allSettled(endpoints.map(([route])=>api(route)));
@@ -169,7 +169,7 @@
     button("读取当前英文页正文","page-body-source")+' '+button("保存页面正文","page-body-save");
   }
   if(tab==="locales"){
-   html='<h3>多语言正式页面 · 翻译审核</h3><p>先复制英文原文，再逐段翻译。只有完整审核并设置发布就绪才会生成对应语言 URL；不会把英文假装成其他语言。</p>'+
+   html='<h3>多语言正式页面 · 翻译审核</h3><p>先复制英文原文，再逐段翻译。产品详情、普通页面和已发布 Blog 文章共用同一条 D1 正式页面翻译记录；只有完整审核并保存才会更新对应语言 URL，不会把英文假装成其他语言。</p>'+
     '<label class="block-label">目标语言 <select id="cms-locale">'+
        (state.settings?.languages?.languages||[])
           .filter(x=>x.code!==state.settings?.languages?.sourceLocale)
@@ -321,6 +321,12 @@
     if(entry.content?.newProduct&&entry.status==="published"){
      const route="/products/"+entry.model+"/";
      if(!pages.some(p=>p.route===route))pages.push({route,label:entry.content.name||entry.model});
+    }
+   }
+   for(const post of state.blog?.posts||[]){
+    if(post.status==="published"){
+     const route="/blog/"+post.slug+"/";
+     if(!pages.some(p=>p.route===route))pages.push({route,label:"Blog · "+(post.title||post.slug)});
     }
    }
    selector.innerHTML=pages.map(x=>'<option value="'+esc(x.route)+'">'+esc(x.route+" · "+x.label)+'</option>').join("");
