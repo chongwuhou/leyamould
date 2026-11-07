@@ -367,6 +367,7 @@ jobs:
           python scripts/test_editorial_evidence.py
           python scripts/test_editorial_d1_overrides.py
           node scripts/test_blog_dynamic_evidence.mjs
+          node scripts/test_blog_index_order_20261107.mjs
           node scripts/test_blog16_live_d1_render.mjs
           node scripts/test_blog_d1_paragraph_links.mjs
           node scripts/test_blog_buyer_decisions_runtime.mjs
@@ -527,6 +528,35 @@ jobs:
             sleep 15
           done
           echo "::error::XUYI production build-meta did not update"
+          exit 1
+      - name: Re-run 2026-11-07 D1 Blog batch to synchronize localized indexes
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Repair 2026-11-07 multilingual Blog index order'
+        id: blog_index_order_repair
+        run: |
+          python scripts/prepare_blog_release_20261107.py
+          python scripts/publish_blog_batch_20261107_d1.py
+      - name: Rebuild twice from D1 and verify all five Blog index orders
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Repair 2026-11-07 multilingual Blog index order'
+        env:
+          XUYI_PUBLISH_REVISION: ${{ steps.blog_index_order_repair.outputs.revision }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            python scripts/test_localized_release.py
+            node scripts/test_blog_index_order_20261107.mjs
+          done
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if python scripts/verify_live_blog_index_order_20261107.py && python scripts/verify_live_blog_20261107.py; then
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::Five-language Blog index order verification failed"
           exit 1
       - name: Repair nine multilingual XUYI Blog D1 translation records
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Repair nine multilingual XUYI Blog D1 translations 2026-11-05'

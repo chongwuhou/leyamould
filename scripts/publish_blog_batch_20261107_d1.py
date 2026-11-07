@@ -36,9 +36,19 @@ def main():
         raise RuntimeError("CMS refused publication: HTTP "+str(err.code)+" "+str(message)[:250]) from None
     if not response.get("success") or set(response.get("publishedSlugs",[]))!=EXPECTED:
         raise RuntimeError("D1 publication not fully confirmed")
-    print("XUYI_20261107_D1_BATCH_CONFIRMED",
+    if response.get("indexOrderVerified")!=["es","pt","ru","tr"]:
+        raise RuntimeError("All four localized Blog indexes were not verified against D1 order")
+    if int(response.get("d1PublishedCount",0))<len(EXPECTED):
+        raise RuntimeError("D1 published Blog order did not include the full published set")
+    output=os.environ.get("GITHUB_OUTPUT")
+    if output:
+        with open(output,"a",encoding="utf8") as stream:
+            stream.write("revision="+str(response["publishRevision"])+"\n")
+    print("XUYI_20261107_D1_BATCH_AND_FOUR_LOCALIZED_INDEX_ORDERS_CONFIRMED",
         "POSTS_INSERTED",response["postsInserted"],
         "TRANSLATIONS_INSERTED",response["translationsInserted"],
         "INDEX_CARDS_ADDED",response["indexCardsAdded"],
+        "LOCALIZED_INDEXES_REORDERED",response["localizedIndexesReordered"],
+        "D1_PUBLISHED_COUNT",response["d1PublishedCount"],
         "PUBLISH_REVISION",response["publishRevision"])
 if __name__=="__main__":main()

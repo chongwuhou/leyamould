@@ -1,5 +1,5 @@
 import { authorizedReviewedBlogBatchRequest } from "../../_shared/build-auth.js";
-import { ensureBlogSchema } from "../../_shared/blog-cms.js";
+import { ensureBlogSchema,listBlogPosts,sortLocalizedBlogIndexByD1Order } from "../../_shared/blog-cms.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
 
 const SLUGS=[
@@ -54,6 +54,38 @@ export async function onRequestPost(context){
   const postsInserted=changes(0,3),translationsInserted=changes(3,15),indexCardsAdded=changes(15,27);
   const saved=(await db.prepare("SELECT slug,status FROM xuyi_blog_posts WHERE slug IN (?,?,?)").bind(...SLUGS).all()).results||[];
   if(saved.filter(x=>x.status==="published"&&SLUGS.includes(x.slug)).length!==3)return response({error:"Article verification failed"},409);
+  // The English live route uses listBlogPosts() (updated_at DESC). Use that
+  // complete D1 result as the sole ordering source for every localized index.
+  // Do not append today's cards as a final order or hardcode any batch slugs.
+  const d1Posts=await listBlogPosts(db,"published");
+  const d1Order=d1Posts.map(post=>post.slug);
+  if(!d1Order.length||new Set(d1Order).size!==d1Order.length
+     ||SLUGS.some(slug=>!d1Order.includes(slug)))
+   return response({error:"D1 published Blog order is incomplete or duplicated"},409);
+  const orderWrites=[];
+  for(const lang of LANGS){
+   const row=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(lang).first();
+   if(!row?.translated_json)return response({error:"Localized Blog index override missing: "+lang},409);
+   let index;try{index=JSON.parse(row.translated_json);}catch{return response({error:"Localized Blog index JSON invalid: "+lang},409);}
+   const current=String(index.mainHtml||"");
+   const ordered=sortLocalizedBlogIndexByD1Order(current,d1Order);
+   if(ordered!==current){
+    const updated={...index,mainHtml:ordered};
+    orderWrites.push({locale:lang,statement:db.prepare("UPDATE xuyi_translation_overrides SET translated_json=? WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(JSON.stringify(updated),lang,row.translated_json)});
+   }
+  }
+  const orderResults=orderWrites.length?await db.batch(orderWrites.map(item=>item.statement)):[];
+  const localizedIndexesReordered=orderResults.reduce((total,item)=>total+Number(item?.meta?.changes||0),0);
+  if(localizedIndexesReordered!==orderWrites.length)
+   return response({error:"Localized Blog index changed during the conditional D1-order update"},409);
+  const indexRows=(await db.prepare("SELECT locale,translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale IN (?,?,?,?)").bind(...LANGS).all()).results||[];
+  const indexByLocale=new Map(indexRows.map(row=>[row.locale,JSON.parse(row.translated_json).mainHtml||""]));
+  for(const lang of LANGS){
+   const html=indexByLocale.get(lang)||"";
+   if(!html||sortLocalizedBlogIndexByD1Order(html,d1Order)!==html)
+    return response({error:"Localized Blog index does not match the D1 published order: "+lang},409);
+  }
+
   const refs=["page:/blog/",...SLUGS.map(s=>"page:/blog/"+s+"/")];
   const rows=(await db.prepare("SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN (?,?,?,?) AND locale IN (?,?,?,?)").bind(...refs,...LANGS).all()).results||[];
   const lookup=new Map(rows.map(x=>[x.resource_id+"|"+x.locale,JSON.parse(x.translated_json).mainHtml||""]));
@@ -67,6 +99,6 @@ export async function onRequestPost(context){
    }
   }
   const revision=await bumpPublishRevision(db);
-  return response({success:true,postsInserted,translationsInserted,indexCardsAdded,publishRevision:revision.revision,publishedSlugs:SLUGS});
+  return response({success:true,postsInserted,translationsInserted,indexCardsAdded,localizedIndexesReordered,d1PublishedCount:d1Order.length,indexOrderVerified:LANGS,publishRevision:revision.revision,publishedSlugs:SLUGS});
  }catch(e){return response({error:"D1 batch failed: "+String(e.message||"unknown").slice(0,160)},500);}
 }

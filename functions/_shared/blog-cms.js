@@ -324,6 +324,43 @@ export function blogHtml(post){
  }
  return body;
 }
+/**
+ * Rebuild the order of localized CMS Blog cards from the exact D1 list order.
+ * Card HTML is owner/localizer content: keep each complete article block
+ * byte-for-byte and change only its position. No batch slug or date is hardcoded.
+ */
+export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs){
+ const source=String(currentHtml??"");
+ if(!Array.isArray(d1OrderedSlugs)||!d1OrderedSlugs.length)
+  throw Error("D1 published Blog order is required");
+ const expected=d1OrderedSlugs.map(value=>String(value??""));
+ if(expected.some(slug=>!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))
+    ||new Set(expected).size!==expected.length)
+  throw Error("D1 published Blog order contains an invalid or duplicate slug");
+ const matches=[...source.matchAll(/<article class="news-card">[\s\S]*?<\/article>/g)];
+ if(matches.length!==expected.length)
+  throw Error("Localized Blog card count differs from D1 published count");
+ const bySlug=new Map(),actual=[];
+ let previousEnd=matches[0]?.index??0;
+ for(let i=0;i<matches.length;i++){
+  const match=matches[i],block=match[0],start=match.index;
+  if(i>0&&source.slice(previousEnd,start).trim())
+   throw Error("Localized Blog cards are not one contiguous grid");
+  const hrefs=[...block.matchAll(/href="\/(?:(?:en|es|pt|ru|tr)\/)?blog\/([a-z0-9]+(?:-[a-z0-9]+)*)\/"/g)].map(x=>x[1]);
+  if(hrefs.length!==3||new Set(hrefs).size!==1)
+   throw Error("Localized Blog card identity or link count is invalid");
+  const slug=hrefs[0];
+  if(bySlug.has(slug))throw Error("Duplicate localized Blog card: "+slug);
+  bySlug.set(slug,block);
+  actual.push(slug);
+  previousEnd=start+block.length;
+ }
+ for(const slug of expected)if(!bySlug.has(slug))
+  throw Error("D1 published Blog article has no localized card: "+slug);
+ if(actual.every((slug,index)=>slug===expected[index]))return source;
+ const cards=expected.map(slug=>bySlug.get(slug));
+ return source.slice(0,matches[0].index)+cards.join("\n")+source.slice(previousEnd);
+}
 export function blogCard(post){
  const url='/blog/'+post.slug+'/';
  return '<article class="news-card"><a href="'+url+'" class="news-card__image"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+esc((post.group||'Buyer Resources').toUpperCase())+'</span><h3><a href="'+url+'">'+esc(post.title)+'</a></h3><p>'+esc(post.description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>';
