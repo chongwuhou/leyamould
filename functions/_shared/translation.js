@@ -239,7 +239,7 @@ export async function applyTranslationOverride(db, job, translatedPayload) {
     const title = String(payload.title || "").trim();
     const description = String(payload.description || "").trim();
     const mainHtml = String(payload.mainHtml || "");
-    const blocked = /<\\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\\b|\\bon[a-z-]+\\s*=|\\bsrcdoc\\s*=|(?:javascript|vbscript|data)\\s*:/i;
+    const blocked = /<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;
     if (title.length < 12 || description.length < 25 || mainHtml.length < 1000 || mainHtml.length > 250000 || blocked.test(mainHtml)) {
       throw new Error("Approved Blog translation is incomplete or contains unsafe HTML");
     }
