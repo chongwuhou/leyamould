@@ -1,4 +1,4 @@
-import { blogHtml } from "./blog-cms.js";
+import { blogCard, blogHtml, listBlogPosts, sortLocalizedBlogIndexByD1Order } from "./blog-cms.js";
 import {
   bumpPublishRevision,
   defaultLanguageConfig,
@@ -108,7 +108,7 @@ export async function queueBlogTranslationJobs(db, slug, { force = false } = {})
   if (row.status !== "published") throw new Error("Only a published Blog article can enter the translation workflow");
   let post; try { post = JSON.parse(row.content_json || "{}"); } catch { throw new Error("Blog source JSON is invalid"); }
   const resourceId = "page:/blog/" + blogSlug + "/";
-  const sourcePayload = { title: String(post.title || ""), description: String(post.description || ""), mainHtml: blogHtml({ ...post, slug: blogSlug }) };
+  const sourcePayload = { title: String(post.title || ""), description: String(post.description || ""), mainHtml: blogHtml({ ...post, slug: blogSlug }), indexCardHtml: blogCard({ ...post, slug: blogSlug }) };
   if (sourcePayload.title.length < 12 || sourcePayload.description.length < 25 || sourcePayload.mainHtml.length < 1000) {
     throw new Error("Published Blog source is incomplete");
   }
@@ -234,7 +234,9 @@ export async function machineTranslatePayload(payload, source, target, config, e
 export async function applyTranslationOverride(db, job, translatedPayload) {
   await ensureTranslationSchema(db);
   const payload = translatedPayload && typeof translatedPayload === "object" ? translatedPayload : {};
-  const isBlog = job?.resource_type === "blog" || /^page:\/blog\/[a-z0-9][a-z0-9-]{1,119}\/$/.test(String(job?.resource_id || ""));
+  const resourceId = String(job?.resource_id || "");
+  const isBlog = job?.resource_type === "blog" || /^page:\/blog\/[a-z0-9][a-z0-9-]{1,119}\/$/.test(resourceId);
+  let blogIndexJson = "";
   if (isBlog) {
     const title = String(payload.title || "").trim();
     const description = String(payload.description || "").trim();
@@ -243,17 +245,41 @@ export async function applyTranslationOverride(db, job, translatedPayload) {
     if (title.length < 12 || description.length < 25 || mainHtml.length < 1000 || mainHtml.length > 250000 || blocked.test(mainHtml)) {
       throw new Error("Approved Blog translation is incomplete or contains unsafe HTML");
     }
+    const match=/^page:\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(resourceId);
+    if (!match) throw new Error("Invalid Blog translation resource");
+    const sourceRow=await db.prepare("SELECT content_json FROM xuyi_blog_posts WHERE slug=? AND status='published'").bind(match[1]).first();
+    let sourcePost;try{sourcePost=JSON.parse(sourceRow?.content_json||"")}catch{throw new Error("Published D1 Blog source JSON is invalid");}
+    const indexRow=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(job.target_locale).first();
+    if(!indexRow?.translated_json)throw new Error("Target language Blog index is not initialized");
+    let index;try{index=JSON.parse(indexRow.translated_json)}catch{throw new Error("Target language Blog index JSON is invalid");}
+    const slug=match[1],translatedCard=String(payload.indexCardHtml||"").trim(),fallbackCard=blogCard({...sourcePost,slug,title,description}),card=translatedCard||fallbackCard;
+    const count=(value,needle)=>String(value).split(needle).length-1;
+    if(!card.startsWith('<article class="news-card">')||!card.endsWith("</article>")||blocked.test(card)||count(card,'href="/blog/'+slug+'/"')!==3)throw new Error("Approved Blog translation card is invalid");
+    const cardRe=/<article class="news-card">[\s\S]*?<\/article>/g,linkRe=new RegExp('href="/(?:[a-z]{2}/)?blog/'+slug+'/"');
+    const current=String(index.mainHtml||""),cards=[...current.matchAll(cardRe)],matched=cards.filter(item=>linkRe.test(item[0]));
+    if(matched.length>1)throw new Error("Target language Blog index contains duplicate cards");
+    let nextIndex=current;
+    if(matched.length===1){
+      const oldCard=matched[0][0];
+      const updatedCard=translatedCard?card:oldCard.replace(/(<h3><a[^>]*>)[\s\S]*?(<\/a><\/h3>)/i,"$1"+title.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))+"$2").replace(/(<p>)[\s\S]*?(<\/p>)/i,"$1"+description.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))+"$2");
+      nextIndex=current.replace(oldCard,updatedCard);
+    }else{
+      const tail="</div></div></section>";
+      if(!current.endsWith(tail))throw new Error("Target language Blog index has an unexpected structure");
+      nextIndex=current.slice(0,-tail.length)+card+tail;
+    }
+    const d1Order=(await listBlogPosts(db,"published")).map(post=>post.slug);
+    if(!d1Order.includes(slug))throw new Error("Published D1 Blog order does not contain this article");
+    let ordered;try{ordered=sortLocalizedBlogIndexByD1Order(nextIndex,d1Order)}catch(error){throw new Error("Target language Blog index failed D1 order validation: "+String(error.message||error));}
+    blogIndexJson=JSON.stringify({...index,mainHtml:ordered});
   } else if (!payload.localization || !String(payload.localization.name||"").trim()) {
     throw new Error("Approved XUYI translation requires localization.name");
   }
   const reviewedAt = new Date().toISOString();
-  await db.prepare(`INSERT INTO xuyi_translation_overrides
-    (resource_id,locale,translated_json,reviewed_at) VALUES (?,?,?,?)
-    ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,
-    reviewed_at=excluded.reviewed_at`)
-    .bind(job.resource_id,job.target_locale,JSON.stringify(payload),reviewedAt).run();
-  await db.prepare("UPDATE translation_jobs SET translated_json=?,status='approved',reviewed_at=?,updated_at=CURRENT_TIMESTAMP,error_message='' WHERE id=?")
-    .bind(JSON.stringify(payload),reviewedAt,job.id).run();
+  const statements=[db.prepare("INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at) VALUES (?,?,?,?) ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=excluded.reviewed_at").bind(job.resource_id,job.target_locale,JSON.stringify(payload),reviewedAt)];
+  if(blogIndexJson)statements.push(db.prepare("INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at) VALUES ('page:/blog/',?,?,?) ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=excluded.reviewed_at").bind(job.target_locale,blogIndexJson,reviewedAt));
+  statements.push(db.prepare("UPDATE translation_jobs SET translated_json=?,status='approved',reviewed_at=?,updated_at=CURRENT_TIMESTAMP,error_message='' WHERE id=?").bind(JSON.stringify(payload),reviewedAt,job.id));
+  await db.batch(statements);
   return bumpPublishRevision(db);
 }
 export async function autoTranslateQueuedModelJobs(db, modelId, env, limit = 12) {
