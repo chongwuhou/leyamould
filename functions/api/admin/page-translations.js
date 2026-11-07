@@ -68,6 +68,7 @@ export async function onRequestPost(c){
     }
   }
   const translatedJson=JSON.stringify({title,description,mainHtml:html});
+  let indexStatement=null;
   const statements=[db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
      VALUES(?,?,?,CURRENT_TIMESTAMP)
      ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=CURRENT_TIMESTAMP`)
@@ -94,9 +95,8 @@ export async function onRequestPost(c){
     if(!d1Order.includes(slug))return respond({error:"Published D1 Blog order does not contain this article"},409);
     let ordered;try{ordered=sortLocalizedBlogIndexByD1Order(nextIndex,d1Order)}catch(error){return respond({error:"Target language Blog index failed D1 order validation: "+String(error.message||error)},409)}
     const nextIndexJson=JSON.stringify({...index,mainHtml:ordered});
-    statements.push(db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
-      VALUES('page:/blog/',?,?,CURRENT_TIMESTAMP)
-      ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=CURRENT_TIMESTAMP`).bind(locale,nextIndexJson));
+    indexStatement=db.prepare("UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=CURRENT_TIMESTAMP WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(nextIndexJson,locale,indexRow.translated_json);
+    statements.push(indexStatement);
   }
   if(route.startsWith("/products/")){
     await ensureProductSeo(db);
@@ -105,7 +105,9 @@ export async function onRequestPost(c){
       "ON CONFLICT(slug,locale) DO UPDATE SET seo_title=excluded.seo_title,meta_description=excluded.meta_description,updated_at=CURRENT_TIMESTAMP")
       .bind(slug,locale,title,description));
   }
-  await db.batch(statements);
+  const results=await db.batch(statements);
+  if(indexStatement&&Number(results[results.length-1]?.meta?.changes||0)!==1)
+    return respond({error:"Target language Blog index changed during save; no overwrite was applied"},409);
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,reviewed:true,route,locale,...revision});
 }
