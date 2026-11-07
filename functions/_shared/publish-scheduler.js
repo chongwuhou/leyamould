@@ -1,5 +1,5 @@
 import {bumpPublishRevision} from "./site-settings.js";
-import {ensureBlogSchema} from "./blog-cms.js";const TASKS_SQL=`CREATE TABLE IF NOT EXISTS xuyi_publish_tasks (id TEXT PRIMARY KEY,content_type TEXT NOT NULL CHECK(content_type IN ('reviews','blog')),name TEXT NOT NULL,enabled INTEGER NOT NULL DEFAULT 1 CHECK(enabled IN (0,1)),timezone TEXT NOT NULL DEFAULT 'Asia/Shanghai',schedule_time TEXT NOT NULL,daily_limit INTEGER NOT NULL DEFAULT 1,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`;
+import {ensureBlogSchema,listBlogPosts,sortLocalizedBlogIndexByD1Order} from "./blog-cms.js";const TASKS_SQL=`CREATE TABLE IF NOT EXISTS xuyi_publish_tasks (id TEXT PRIMARY KEY,content_type TEXT NOT NULL CHECK(content_type IN ('reviews','blog')),name TEXT NOT NULL,enabled INTEGER NOT NULL DEFAULT 1 CHECK(enabled IN (0,1)),timezone TEXT NOT NULL DEFAULT 'Asia/Shanghai',schedule_time TEXT NOT NULL,daily_limit INTEGER NOT NULL DEFAULT 1,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`;
 const RUNS_SQL=`CREATE TABLE IF NOT EXISTS xuyi_publish_runs (id TEXT PRIMARY KEY,task_id TEXT NOT NULL,scheduled_for TEXT NOT NULL,started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,finished_at TEXT,status TEXT NOT NULL CHECK(status IN ('running','success','partial','failed')),published_count INTEGER NOT NULL DEFAULT 0,skipped_count INTEGER NOT NULL DEFAULT 0,error TEXT NOT NULL DEFAULT '',UNIQUE(task_id,scheduled_for))`;
 const BLOG_QUEUE_SQL=`CREATE TABLE IF NOT EXISTS xuyi_blog_schedule (slug TEXT PRIMARY KEY,scheduled_at TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','published','cancelled','needs_review')),approved INTEGER NOT NULL DEFAULT 0 CHECK(approved IN (0,1)),content_sha256 TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_at TEXT)`;
 const BLOG_LOCALE_QUEUE_SQL=`CREATE TABLE IF NOT EXISTS xuyi_blog_locale_schedule (slug TEXT NOT NULL,locale TEXT NOT NULL CHECK(locale IN ('es','pt','ru','tr')),scheduled_at TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','published','cancelled','needs_review')),approved INTEGER NOT NULL DEFAULT 0 CHECK(approved IN (0,1)),payload_json TEXT NOT NULL,content_sha256 TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_at TEXT,PRIMARY KEY(slug,locale))`;
@@ -125,6 +125,29 @@ export async function scheduleBlogLocalePost(db,{slug,locale,scheduledAt,approve
  return {slug:key,locale:loc,scheduledAt:iso,approved:true,reused:false};
 }
 
+async function reorderPublishedBlogIndexes(db){
+ const d1Order=(await listBlogPosts(db,"published")).map(post=>post.slug);
+ if(!d1Order.length||new Set(d1Order).size!==d1Order.length)throw Error("D1 published Blog order is empty or duplicated");
+ const locales=["es","pt","ru","tr"],writes=[];
+ for(const locale of locales){
+  const row=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(locale).first();
+  if(!row?.translated_json)throw Error("Localized Blog index override missing: "+locale);
+  let index;try{index=JSON.parse(row.translated_json)}catch{throw Error("Localized Blog index JSON invalid: "+locale)}
+  const current=String(index.mainHtml||"");
+  const ordered=sortLocalizedBlogIndexByD1Order(current,d1Order);
+  if(ordered!==current)writes.push(db.prepare("UPDATE xuyi_translation_overrides SET translated_json=? WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(JSON.stringify({...index,mainHtml:ordered}),locale,row.translated_json));
+ }
+ const results=writes.length?await db.batch(writes):[];
+ const localizedIndexesReordered=results.reduce((total,item)=>total+Number(item?.meta?.changes||0),0);
+ if(localizedIndexesReordered!==writes.length)throw Error("Localized Blog index changed during the conditional D1-order update");
+ for(const locale of locales){
+  const row=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(locale).first();
+  let index;try{index=JSON.parse(row?.translated_json||"{}")}catch{throw Error("Localized Blog index JSON invalid after update: "+locale)}
+  if(sortLocalizedBlogIndexByD1Order(String(index.mainHtml||""),d1Order)!==String(index.mainHtml||""))throw Error("Localized Blog index does not match D1 order: "+locale);
+ }
+ return {d1PublishedCount:d1Order.length,localizedIndexesReordered};
+}
+
 export async function publishDueBlogPosts(db,task,now=new Date()){
  await ensurePublishScheduler(db);await ensureBlogSchema(db);
  const active=(await db.prepare("SELECT daily_limit FROM xuyi_publish_tasks WHERE content_type='blog' AND enabled=1").all()).results||[];
@@ -222,9 +245,14 @@ export async function publishDueBlogPosts(db,task,now=new Date()){
    }
   }
  }
- if(published)await bumpPublishRevision(db);
+ let d1PublishedCount=0,localizedIndexesReordered=0;
+ if(published){
+  const order=await reorderPublishedBlogIndexes(db);
+  d1PublishedCount=order.d1PublishedCount;localizedIndexesReordered=order.localizedIndexesReordered;
+  await bumpPublishRevision(db);
+ }
  const left=Number((await db.prepare("SELECT COUNT(*) AS n FROM xuyi_blog_schedule WHERE status='scheduled' AND approved=1 AND scheduled_at<=?").bind(now.toISOString()).first())?.n||0);
- return {published,skipped:left,needsReview};
+ return {published,skipped:left,needsReview,d1PublishedCount,localizedIndexesReordered};
 }
 
 export async function finishPublishRun(db,runId,result){
