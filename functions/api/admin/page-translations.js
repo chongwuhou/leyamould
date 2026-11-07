@@ -4,6 +4,7 @@ import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision,loadSiteSetting,defaultLanguageConfig,normalizeLanguageConfig } from "../../_shared/site-settings.js";
 import { MANAGED_ROUTES } from "../../_shared/xuyi-routes.js";
 import {ensureProductSeo,canonicalProductSlug} from "../../_shared/product-seo.js";
+import {blogCard,esc,listBlogPosts,sortLocalizedBlogIndexByD1Order} from "../../_shared/blog-cms.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(v,n)=>String(v??"").trim().slice(0,n);
 async function requireAdmin(c){
@@ -39,11 +40,12 @@ export async function onRequestPost(c){
     return respond({error:"Full translated title, description and main HTML required"},400);
   if(/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i.test(html))
     return respond({error:"Unsafe HTML in translated content"},400);
+  let blogMatch=null;
   if(!MANAGED_ROUTES.has(route)){
     // Blog detail routes are D1-owned and grow over time. Validate them from
     // the published Blog CMS rows instead of freezing the translation API to
     // the original checked-in route manifest.
-    const blogMatch=/^\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(route);
+    blogMatch=/^\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(route);
     if(blogMatch){
       let blogRow;
       try{blogRow=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?")
@@ -65,10 +67,38 @@ export async function onRequestPost(c){
         return respond({error:"New product must be published in English before translating"},409);
     }
   }
+  const translatedJson=JSON.stringify({title,description,mainHtml:html});
   const statements=[db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
      VALUES(?,?,?,CURRENT_TIMESTAMP)
      ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=CURRENT_TIMESTAMP`)
-    .bind("page:"+route,locale,JSON.stringify({title,description,mainHtml:html}))];
+    .bind("page:"+route,locale,translatedJson)];
+  if(blogMatch){
+    let sourceRow;try{sourceRow=await db.prepare("SELECT content_json FROM xuyi_blog_posts WHERE slug=? AND status='published'").bind(blogMatch[1]).first()}catch{return respond({error:"Unable to read published D1 Blog source"},503)}
+    let sourcePost;try{sourcePost=JSON.parse(sourceRow?.content_json||"")}catch{return respond({error:"Published D1 Blog source JSON is invalid"},409)}
+    const indexRow=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(locale).first();
+    if(!indexRow?.translated_json)return respond({error:"The target language Blog index is not initialized"},409);
+    let index;try{index=JSON.parse(indexRow.translated_json)}catch{return respond({error:"Target language Blog index JSON is invalid"},409)}
+    const slug=blogMatch[1],hrefRe=new RegExp('href="/(?:[a-z]{2}/)?blog/'+slug+'/"','g'),cardRe=/<article class="news-card">[\\s\\S]*?<\\/article>/g;
+    const current=String(index.mainHtml||""),cards=[...current.matchAll(cardRe)],matched=cards.filter(item=>hrefRe.test(item[0]));
+    hrefRe.lastIndex=0;
+    if(matched.length>1)return respond({error:"Target language Blog index contains duplicate cards"},409);
+    let nextIndex=current;
+    if(matched.length===1){
+      const oldCard=matched[0][0],updatedCard=oldCard.replace(/(<h3><a[^>]*>)[\\s\\S]*?(<\\/a><\\/h3>)/i,"$1"+esc(title)+"$2").replace(/(<p>)[\\s\\S]*?(<\\/p>)/i,"$1"+esc(description)+"$2");
+      nextIndex=current.replace(oldCard,updatedCard);
+    }else{
+      const card=blogCard({...sourcePost,slug,title,description}),tail="</div></div></section>";
+      if(!current.endsWith(tail))return respond({error:"Target language Blog index has an unexpected structure"},409);
+      nextIndex=current.slice(0,-tail.length)+card+tail;
+    }
+    const d1Order=(await listBlogPosts(db,"published")).map(post=>post.slug);
+    if(!d1Order.includes(slug))return respond({error:"Published D1 Blog order does not contain this article"},409);
+    let ordered;try{ordered=sortLocalizedBlogIndexByD1Order(nextIndex,d1Order)}catch(error){return respond({error:"Target language Blog index failed D1 order validation: "+String(error.message||error)},409)}
+    const nextIndexJson=JSON.stringify({...index,mainHtml:ordered});
+    statements.push(db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
+      VALUES('page:/blog/',?,?,CURRENT_TIMESTAMP)
+      ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=CURRENT_TIMESTAMP`).bind(locale,nextIndexJson));
+  }
   if(route.startsWith("/products/")){
     await ensureProductSeo(db);
     const slug=canonicalProductSlug(route.split("/")[2].replace(/---$/,"透明款"));
