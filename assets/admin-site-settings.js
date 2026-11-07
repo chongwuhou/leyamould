@@ -65,7 +65,7 @@
     $("#translation-source-locale").innerHTML=langs.map(x=>`<option value="${esc(x.code)}" ${x.code===s.sourceLocale?"selected":""}>${esc(x.nativeName||x.displayName||x.code)} (${esc(x.code)})</option>`).join("");
     $("#translation-model").value=s.model||""; $("#translation-endpoint").value=s.endpoint||""; $("#translation-auto-queue").checked=s.autoQueue!==false;
     const mode=s.mode||(s.autoTranslate?(s.requireHumanReview===false?"publish":"review"):"off"); $("#translation-mode").value=mode;
-    const x=translations.secretStatus||{}; $("#translation-secret-status").textContent=`Secret 状态：Google ${x.googleCloudTranslation?"✓":"未配置"} · DeepL ${x.deepl?"✓":"未配置"} · OpenAI-Compatible ${x.openaiCompatible?"✓":"未配置"}。API Key 不显示、不写入 D1。`;
+    const x=translations.secretStatus||{}; $("#translation-secret-status").textContent=`Secret 状态：Google ${x.googleCloudTranslation?"✓":"未配置"}。自动翻译只允许已授权的官方 Google Provider；API Key 不显示、不写入 D1。`;
   }
   function payload(id){const t=$(`.translation-json[data-id="${CSS.escape(id)}"]`);try{return JSON.parse(t.value)}catch{throw new Error("译文 JSON 格式错误")}}
   function renderJobs(){
