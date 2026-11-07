@@ -1,5 +1,7 @@
 import {
   applyTranslationOverride,
+  autoTranslateQueuedBlogJobs,
+  autoTranslateQueuedModelJobs,
   ensureTranslationSchema,
   languageAndTranslationSettings,
   machineTranslatePayload,
@@ -58,10 +60,18 @@ export async function onRequestPost(context) {
   try {
     const action = clean(payload.action, 40);
     if (action === "enqueue_model") {
-      return response(await queueModelTranslationJobs(db, clean(payload.modelId, 200), { force: Boolean(payload.force) }));
+      const modelId = clean(payload.modelId, 200);
+      const queued = await queueModelTranslationJobs(db, modelId, { force: Boolean(payload.force) });
+      const settings = await languageAndTranslationSettings(db);
+      const run = settings.translation.autoTranslate ? await autoTranslateQueuedModelJobs(db, modelId, context.env) : { skipped: true };
+      return response({ ...queued, run });
     }
     if (action === "enqueue_blog") {
-      return response(await queueBlogTranslationJobs(db, clean(payload.slug, 140), { force: Boolean(payload.force) }));
+      const slug = clean(payload.slug, 140);
+      const queued = await queueBlogTranslationJobs(db, slug, { force: Boolean(payload.force) });
+      const settings = await languageAndTranslationSettings(db);
+      const run = settings.translation.autoTranslate ? await autoTranslateQueuedBlogJobs(db, slug, context.env) : { skipped: true };
+      return response({ ...queued, run });
     }
     if (action === "save_job") {
       const job = await loadJob(db, clean(payload.id, 100));
