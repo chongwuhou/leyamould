@@ -78,9 +78,8 @@ export async function onRequestPost(c){
     const indexRow=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(locale).first();
     if(!indexRow?.translated_json)return respond({error:"The target language Blog index is not initialized"},409);
     let index;try{index=JSON.parse(indexRow.translated_json)}catch{return respond({error:"Target language Blog index JSON is invalid"},409)}
-    const slug=blogMatch[1],hrefRe=new RegExp('href="/(?:[a-z]{2}/)?blog/'+slug+'/"','g'),cardRe=/<article class="news-card">[\\s\\S]*?<\\/article>/g;
+    const slug=blogMatch[1],hrefRe=new RegExp('href="/(?:[a-z]{2}/)?blog/'+slug+'/"'),cardRe=/<article class="news-card">[\\s\\S]*?<\\/article>/g;
     const current=String(index.mainHtml||""),cards=[...current.matchAll(cardRe)],matched=cards.filter(item=>hrefRe.test(item[0]));
-    hrefRe.lastIndex=0;
     if(matched.length>1)return respond({error:"Target language Blog index contains duplicate cards"},409);
     let nextIndex=current;
     if(matched.length===1){
