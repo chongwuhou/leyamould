@@ -170,6 +170,7 @@ export function selectExternalContact(config, { locale = "", region = "" } = {})
 export function defaultTranslationConfig() {
   return {
     schemaVersion: 1,
+    mode: "off",
     provider: "manual",
     sourceLocale: "en",
     autoQueue: true,
@@ -191,15 +192,21 @@ export function normalizeTranslationConfig(input, languageConfig = defaultLangua
   if (!languages.languages.some((item) => item.code === sourceLocale)) throw new Error("Translation source locale is not configured");
   const endpoint = clean(raw.endpoint, 1000);
   if (endpoint && !/^https:\/\//i.test(endpoint)) throw new Error("Translation endpoint must use HTTPS");
+  const legacyAutoTranslate = Boolean(raw.autoTranslate);
+  const requestedMode = clean(raw.mode, 20).toLowerCase();
+  const mode = ["off", "review", "publish"].includes(requestedMode)
+    ? requestedMode
+    : (legacyAutoTranslate ? (raw.requireHumanReview === false ? "publish" : "review") : "off");
   return {
     schemaVersion: 1,
+    mode,
     provider,
     sourceLocale,
     autoQueue: raw.autoQueue !== false,
-    autoTranslate: Boolean(raw.autoTranslate) && provider !== "manual",
+    autoTranslate: mode !== "off" && provider !== "manual",
     model: clean(raw.model, 160),
     endpoint,
-    requireHumanReview: raw.requireHumanReview !== false
+    requireHumanReview: mode !== "publish"
   };
 }
 
