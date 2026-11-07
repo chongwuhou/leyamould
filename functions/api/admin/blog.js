@@ -53,7 +53,7 @@ export async function onRequestPost(context){
    await db.prepare("DELETE FROM xuyi_blog_drafts WHERE slug=?").bind(post.slug).run();await cancelBlogSchedule(db,post.slug);
    revision=await bumpPublishRevision(db);
    try{
-    const queued=await queueBlogTranslationJobs(db,post.slug,{force:true});
+    const queued=await queueBlogTranslationJobs(db,post.slug);
     const settings=await languageAndTranslationSettings(db);
     const run=settings.translation.autoTranslate?await autoTranslateQueuedBlogJobs(db,post.slug,context.env):{skipped:true};
     translation={...queued,run};
