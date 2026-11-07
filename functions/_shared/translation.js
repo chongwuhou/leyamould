@@ -1,3 +1,4 @@
+import { blogHtml } from "./blog-cms.js";
 import {
   bumpPublishRevision,
   defaultLanguageConfig,
@@ -97,6 +98,36 @@ export async function queueModelTranslationJobs(db, modelId, { force = false } =
   }
   return { queued,sourceLocale,model:sourcePayload?.localization?.name||modelId };
 }
+
+export async function queueBlogTranslationJobs(db, slug, { force = false } = {}) {
+  await ensureTranslationSchema(db);
+  const blogSlug = clean(slug, 140).toLowerCase();
+  if (!/^[a-z0-9](?:[a-z0-9-]{1,118}[a-z0-9])?$/.test(blogSlug)) throw new Error("Invalid Blog slug");
+  const row = await db.prepare("SELECT status,content_json FROM xuyi_blog_posts WHERE slug=?").bind(blogSlug).first();
+  if (!row) throw new Error("Blog article not found in D1");
+  if (row.status !== "published") throw new Error("Only a published Blog article can enter the translation workflow");
+  let post; try { post = JSON.parse(row.content_json || "{}"); } catch { throw new Error("Blog source JSON is invalid"); }
+  const resourceId = "page:/blog/" + blogSlug + "/";
+  const sourcePayload = { title: String(post.title || ""), description: String(post.description || ""), mainHtml: blogHtml({ ...post, slug: blogSlug }) };
+  if (sourcePayload.title.length < 12 || sourcePayload.description.length < 25 || sourcePayload.mainHtml.length < 1000) {
+    throw new Error("Published Blog source is incomplete");
+  }
+  const { languages, translation } = await languageAndTranslationSettings(db);
+  if (!translation.autoQueue && !force) return { queued: 0, skipped: true };
+  const sourceLocale = translation.sourceLocale;
+  const sourceJson = JSON.stringify(sourcePayload);
+  const sourceHash = await sha256(sourceJson);
+  let queued = 0;
+  for (const target of languages.languages.filter(item => item.enabled && item.code !== sourceLocale)) {
+    const id = "tr_" + (await sha256("blog|" + resourceId + "|" + sourceLocale + "|" + target.code)).slice(0, 24);
+    const existing = await db.prepare("SELECT source_hash FROM translation_jobs WHERE id=?").bind(id).first();
+    if (existing?.source_hash === sourceHash && !force) continue;
+    await db.prepare("INSERT INTO translation_jobs (id,resource_type,resource_id,source_locale,target_locale,source_hash,source_json,translated_json,provider,status,error_message,updated_at) VALUES (?,'blog',?,?,?,?,?,'{}',?,'queued','',CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SET source_hash=excluded.source_hash,source_json=excluded.source_json,translated_json='{}',provider=excluded.provider,status='queued',error_message='',updated_at=CURRENT_TIMESTAMP,reviewed_at=NULL")
+      .bind(id,resourceId,sourceLocale,target.code,sourceHash,sourceJson,translation.provider).run();
+    queued++;
+  }
+  return { queued, sourceLocale, slug: blogSlug };
+}
 function walkStrings(value, path = [], out = []) {
   if (typeof value === "string") {
     const text = value.trim();
@@ -122,11 +153,11 @@ function setPath(root, path, value) {
   cursor[path[path.length - 1]] = value;
 }
 
-async function googleTranslate(texts, source, target, apiKey) {
+async function googleTranslate(texts, source, target, apiKey, format = "text") {
   const response = await fetch("https://translation.googleapis.com/language/translate/v2?key=" + encodeURIComponent(apiKey), {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ q: texts, source, target, format: "text" })
+    body: JSON.stringify({ q: texts, source, target, format: format === "html" ? "html" : "text" })
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data?.error?.message || "Google Translation HTTP " + response.status);
@@ -186,7 +217,8 @@ export async function machineTranslatePayload(payload, source, target, config, e
   if (config.provider === "google-cloud-translation") {
     const key = clean(env.GOOGLE_TRANSLATE_API_KEY, 4000);
     if (!key) throw new Error("GOOGLE_TRANSLATE_API_KEY Pages Secret is not configured");
-    translated = await googleTranslate(texts, source, target, key);
+    const format = parts.some((item) => item.path[item.path.length - 1] === "mainHtml") ? "html" : "text";
+    translated = await googleTranslate(texts, source, target, key, format);
   } else if (config.provider === "deepl") {
     const key = clean(env.DEEPL_API_KEY, 4000);
     if (!key) throw new Error("DEEPL_API_KEY Pages Secret is not configured");
@@ -202,7 +234,16 @@ export async function machineTranslatePayload(payload, source, target, config, e
 export async function applyTranslationOverride(db, job, translatedPayload) {
   await ensureTranslationSchema(db);
   const payload = translatedPayload && typeof translatedPayload === "object" ? translatedPayload : {};
-  if (!payload.localization || !String(payload.localization.name||"").trim()) {
+  const isBlog = job?.resource_type === "blog" || /^page:\/blog\/[a-z0-9][a-z0-9-]{1,119}\/$/.test(String(job?.resource_id || ""));
+  if (isBlog) {
+    const title = String(payload.title || "").trim();
+    const description = String(payload.description || "").trim();
+    const mainHtml = String(payload.mainHtml || "");
+    const blocked = /<\\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\\b|\\bon[a-z-]+\\s*=|\\bsrcdoc\\s*=|(?:javascript|vbscript|data)\\s*:/i;
+    if (title.length < 12 || description.length < 25 || mainHtml.length < 1000 || mainHtml.length > 250000 || blocked.test(mainHtml)) {
+      throw new Error("Approved Blog translation is incomplete or contains unsafe HTML");
+    }
+  } else if (!payload.localization || !String(payload.localization.name||"").trim()) {
     throw new Error("Approved XUYI translation requires localization.name");
   }
   const reviewedAt = new Date().toISOString();
