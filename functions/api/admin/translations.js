@@ -3,6 +3,7 @@ import {
   ensureTranslationSchema,
   languageAndTranslationSettings,
   machineTranslatePayload,
+  queueBlogTranslationJobs,
   queueModelTranslationJobs
 } from "../../_shared/translation.js";
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
@@ -58,6 +59,9 @@ export async function onRequestPost(context) {
     const action = clean(payload.action, 40);
     if (action === "enqueue_model") {
       return response(await queueModelTranslationJobs(db, clean(payload.modelId, 200), { force: Boolean(payload.force) }));
+    }
+    if (action === "enqueue_blog") {
+      return response(await queueBlogTranslationJobs(db, clean(payload.slug, 140), { force: Boolean(payload.force) }));
     }
     if (action === "save_job") {
       const job = await loadJob(db, clean(payload.id, 100));
