@@ -1,6 +1,8 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema, normalizeBlogPost, listBlogPosts, findEditableBlogPost } from "../../_shared/blog-cms.js";
 import {scheduleBlogPost,cancelBlogSchedule,ensurePublishScheduler} from "../../_shared/publish-scheduler.js";
+import {autoTranslateQueuedBlogJobs,languageAndTranslationSettings,queueBlogTranslationJobs} from "../../_shared/translation.js";
+import {bumpPublishRevision} from "../../_shared/site-settings.js";
 const clean=x=>String(x??'').trim();
 const reply=(x,status=200)=>Response.json(x,{status,headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex,nofollow"}});
 async function authorized(context){
@@ -46,7 +48,18 @@ export async function onRequestPost(context){
   }
   await db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,?,?,?) ON CONFLICT(slug) DO UPDATE SET status=excluded.status,content_json=excluded.content_json,updated_at=CURRENT_TIMESTAMP,published_at=CASE WHEN excluded.status='published' THEN COALESCE(xuyi_blog_posts.published_at,excluded.published_at) ELSE xuyi_blog_posts.published_at END")
     .bind(post.slug,status,content,status==="published"?new Date().toISOString():null).run();
-  if(action==="publish"){await db.prepare("DELETE FROM xuyi_blog_drafts WHERE slug=?").bind(post.slug).run();await cancelBlogSchedule(db,post.slug);}  return reply({saved:true,status,slug:post.slug,url:status==="published"?"/blog/"+post.slug+"/":null});
+  let revision=null,translation=null;
+  if(action==="publish"){
+   await db.prepare("DELETE FROM xuyi_blog_drafts WHERE slug=?").bind(post.slug).run();await cancelBlogSchedule(db,post.slug);
+   revision=await bumpPublishRevision(db);
+   try{
+    const queued=await queueBlogTranslationJobs(db,post.slug,{force:true});
+    const settings=await languageAndTranslationSettings(db);
+    const run=settings.translation.autoTranslate?await autoTranslateQueuedBlogJobs(db,post.slug,context.env):{skipped:true};
+    translation={...queued,run};
+   }catch(error){translation={error:String(error?.message||error).slice(0,500)};}
+  }
+  return reply({saved:true,status,slug:post.slug,url:status==="published"?"/blog/"+post.slug+"/":null,...(revision||{}),...(translation?{translation}:{})});
  }
   if(action==="schedule"){
    let post;try{post=normalizeBlogPost(payload.post)}catch(error){return reply({error:String(error.message||error)},400)}
