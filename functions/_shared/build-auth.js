@@ -80,6 +80,7 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
     "/api/admin/blog-batch-20261030",
     "/api/admin/blog-batch-20261031",
     "/api/admin/blog-batch-20261102",
+    "/api/admin/blog-batch-20261107",
     "/api/admin/blog-schedule-20261103"
   ]).has(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);}
@@ -92,7 +93,7 @@ export async function authorizedReviewedBlogTranslationRepairRequest(request, en
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
 export async function authorizedReviewedBlogImageUploadRequest(request, env) {
-  if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261102","/api/admin/blog-images-20261103"].includes(new URL(request.url).pathname)) return false;
+  if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261102","/api/admin/blog-images-20261103","/api/admin/blog-images-20261107"].includes(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }// Narrow exception for the reviewed 101-model daily XLSX publisher. The
 // existing GitHub CI Cloudflare token proves access to THIS XUYI project,

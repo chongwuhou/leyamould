@@ -181,6 +181,7 @@ jobs:
           python scripts/publish_blog_images_20261107_r2.py --dry-run
           python scripts/test_blog_20261107_source.py
           node scripts/test_blog_20261107_runtime.mjs
+          node scripts/test_blog_20261107_auth.mjs
       - name: Prepare reviewed Blog batch payload
         if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-10-19 blog batch through existing CMS'
         run: python scripts/prepare_blog_release_20261019.py
@@ -643,6 +644,7 @@ jobs:
             python scripts/test_blog_cover_editorial_standard.py
             python scripts/test_blog_20261107_source.py
             node scripts/test_blog_20261107_runtime.mjs
+          node scripts/test_blog_20261107_auth.mjs
             echo "2026-11-07 double clean CMS-backed build passed $pass"
           done
           npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
