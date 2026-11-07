@@ -236,7 +236,7 @@ export async function applyTranslationOverride(db, job, translatedPayload) {
   const payload = translatedPayload && typeof translatedPayload === "object" ? translatedPayload : {};
   const resourceId = String(job?.resource_id || "");
   const isBlog = job?.resource_type === "blog" || /^page:\/blog\/[a-z0-9][a-z0-9-]{1,119}\/$/.test(resourceId);
-  let blogIndexJson = "";
+  let blogIndexJson = "", blogIndexOriginalJson = "";
   if (isBlog) {
     const title = String(payload.title || "").trim();
     const description = String(payload.description || "").trim();
@@ -251,6 +251,7 @@ export async function applyTranslationOverride(db, job, translatedPayload) {
     let sourcePost;try{sourcePost=JSON.parse(sourceRow?.content_json||"")}catch{throw new Error("Published D1 Blog source JSON is invalid");}
     const indexRow=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(job.target_locale).first();
     if(!indexRow?.translated_json)throw new Error("Target language Blog index is not initialized");
+    blogIndexOriginalJson=indexRow.translated_json;
     let index;try{index=JSON.parse(indexRow.translated_json)}catch{throw new Error("Target language Blog index JSON is invalid");}
     const slug=match[1],translatedCard=String(payload.indexCardHtml||"").trim(),fallbackCard=blogCard({...sourcePost,slug,title,description}),card=translatedCard||fallbackCard;
     const count=(value,needle)=>String(value).split(needle).length-1;
@@ -276,10 +277,16 @@ export async function applyTranslationOverride(db, job, translatedPayload) {
     throw new Error("Approved XUYI translation requires localization.name");
   }
   const reviewedAt = new Date().toISOString();
+  let blogIndexStatementIndex=-1;
   const statements=[db.prepare("INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at) VALUES (?,?,?,?) ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=excluded.reviewed_at").bind(job.resource_id,job.target_locale,JSON.stringify(payload),reviewedAt)];
-  if(blogIndexJson)statements.push(db.prepare("INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at) VALUES ('page:/blog/',?,?,?) ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=excluded.reviewed_at").bind(job.target_locale,blogIndexJson,reviewedAt));
+  if(blogIndexJson){
+    statements.push(db.prepare("UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=? WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(blogIndexJson,reviewedAt,job.target_locale,blogIndexOriginalJson));
+    blogIndexStatementIndex=statements.length-1;
+  }
   statements.push(db.prepare("UPDATE translation_jobs SET translated_json=?,status='approved',reviewed_at=?,updated_at=CURRENT_TIMESTAMP,error_message='' WHERE id=?").bind(JSON.stringify(payload),reviewedAt,job.id));
-  await db.batch(statements);
+  const results=await db.batch(statements);
+  if(blogIndexStatementIndex>=0&&Number(results[blogIndexStatementIndex]?.meta?.changes||0)!==1)
+    throw new Error("Target language Blog index changed during translation approval; no overwrite was applied");
   return bumpPublishRevision(db);
 }
 async function processQueuedTranslationJobs(db, resourceType, resourceId, env, limit = 12) {
