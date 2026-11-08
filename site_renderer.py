@@ -14,6 +14,7 @@ if _build_state_path:
  BUILD_STATE=json.loads(_state_path.read_text(encoding="utf-8"))
  if BUILD_STATE.get("site")!="xuyi-drinkware-site" or BUILD_STATE.get("schemaVersion")!=1:
   raise RuntimeError("Refusing build snapshot from another project")
+BUILD_LANGUAGES=approved_locales(BUILD_STATE,require_resources=False) if BUILD_STATE else []
 PAGE_OVERRIDES={str(v.get("route")):v for v in BUILD_STATE.get("pages",[]) if isinstance(v,dict)}
 PRODUCT_OVERRIDES={str(v.get("model")):v.get("content",{}) for v in BUILD_STATE.get("products",[]) if isinstance(v,dict)}
 BRAND_CONFIG=BUILD_STATE.get("brand") or {}
@@ -363,7 +364,7 @@ def build_url(path,title,content):
  from scripts.verified_trust_technical_seo import add_at_render as add_trust_technical_seo
  content=add_trust_technical_seo(content,route,'en')
  from scripts.product_hreflang import apply_to_document as apply_product_hreflang
- content=apply_product_hreflang(content,route,'en')
+ content=apply_product_hreflang(content,route,'en',BUILD_LANGUAGES)
  URLS[path]=title
  write(path,content)
 ICONS={
