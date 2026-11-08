@@ -10,11 +10,13 @@ from pathlib import Path
 from html import escape
 import hashlib,json,re
 ROOT=Path(__file__).resolve().parent
+SITE_CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf8"))
+SOURCE_LOCALE=SITE_CONFIG["site"]["defaultLocale"]
 POSTS={}
 for part in ("part1","part2"):
     POSTS.update(json.loads((ROOT/f"data/blog-inline-edits-reviewed-{part}.json").read_text(encoding="utf8")))
 BASE=json.loads((ROOT/"data/blog-product-proof-source.json").read_text(encoding="utf8"))["cmsLocaleSourceHashes"]
-LANGS=("en","es","pt","ru","tr")
+LANGS=tuple(sorted({locale for values in BASE.values() for locale in values}))
 LOCALE_MODEL={"en":"model","es":"modelo","pt":"modelo","ru":"модель","tr":"model"}
 SECTION=re.compile(r'(<section class="blog-section"[^>]*><h2>.*?</h2><p>)(.*?)(</p></section>)',re.S)
 RELATED='<section class="section section--soft blog-related">'
@@ -28,17 +30,17 @@ def _source_note(slug,section_index,locale):
     pattern=note["text"][locale]
     assert pattern.count("{model}")==1,(slug,section_index,locale)
     sku=note["sku"]
-    prefix="" if locale=="en" else "/"+locale
+    prefix="" if locale==SOURCE_LOCALE else "/"+locale
     model='<a class="blog-editorial__product-link" href="'+prefix+'/products/'+escape(sku)+'/">'+escape(LOCALE_MODEL[locale]+" "+sku)+'</a>'
     front,back=pattern.split("{model}")
     return ' <span class="blog-editorial__product-note" data-editorial-model="'+escape(sku)+'">'+escape(front)+model+escape(back)+'</span>'
 
 def english_note(slug,section_index):
     """Called by source blog_editorial.render_article before HTML is emitted."""
-    return _source_note(slug,section_index,"en")
+    return _source_note(slug,section_index,SOURCE_LOCALE)
 
 def reviewed_localized_article(body,route,locale,source_original):
-    if locale not in LANGS or locale=="en" or not route.startswith("/blog/"):return body
+    if locale not in LANGS or not route.startswith("/blog/"):return body
     slug=route.removeprefix("/blog/").strip("/")
     if slug not in POSTS:return body
     # An administrator's source body has the last word, even if only one
