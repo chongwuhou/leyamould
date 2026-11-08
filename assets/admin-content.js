@@ -411,14 +411,18 @@
       throw Error("目录记录数与清单声明不一致");
     if(manifest.sourceDocument&&!/^[0-9a-f]{64}$/i.test(manifest.sourceSha256||""))
       throw Error("来源文件缺少有效 SHA-256 校验值");
+    const requiredImageLocales=(state.settings?.languages?.languages||[])
+      .filter(item=>item?.enabled!==false&&item?.publishReady!==false)
+      .map(item=>String(item.code||"").trim().toLowerCase()).filter(Boolean);
+    if(!requiredImageLocales.length)throw Error("D1 语言配置为空，不能导入产品目录");
     const seen=new Set();
     for(const row of manifest.records){
       if(!row||typeof row.model!=="string"||!/^[a-z0-9][a-z0-9-]{1,63}$/.test(row.model)||seen.has(row.model))
         throw Error("目录中存在无效或重复型号");
       if(!row.content||typeof row.content!=="object"||typeof row.imageBase64!=="string"||row.imageBase64.length<100||row.imageMime!=="image/webp"||!(/^[0-9a-f]{64}$/i.test(row.imageSha256||"")))
         throw Error("型号 "+row.model+" 缺少商品资料、完整图片或 SHA-256 校验值");
-      if(!row.imageAlt||["en","es","pt","ru","tr"].some(locale=>typeof row.imageAlt[locale]!=="string"||!row.imageAlt[locale].trim()))
-        throw Error("型号 "+row.model+" 缺少五种语言的图片 ALT");
+      if(!row.imageAlt||requiredImageLocales.some(locale=>typeof row.imageAlt[locale]!=="string"||!row.imageAlt[locale].trim()))
+        throw Error("型号 "+row.model+" 缺少已发布语言的图片 ALT");
       seen.add(row.model);
     }
     const existing=new Set((state.products?.items||[]).map(row=>String(row.model).toLowerCase()));
