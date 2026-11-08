@@ -3,7 +3,7 @@
 import {authorizeAdminRequest} from "../../_shared/admin-security.js";
 import {MANAGED_MODELS} from "../../_shared/xuyi-routes.js";
 import {bumpPublishRevision} from "../../_shared/site-settings.js";
-import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo} from "../../_shared/product-seo.js";
+import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo,configuredProductSeoLocales} from "../../_shared/product-seo.js";
 
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 async function ready(c){
@@ -30,7 +30,8 @@ export async function onRequestPost(c){
  const {db,error}=await ready(c);if(error)return error;
  let input;try{input=await c.request.json()}catch{return respond({error:"Invalid JSON"},400)}
  if(input?.action!=="save")return respond({error:"Unknown action"},400);
- let value;try{value=normalizeProductSeo(input)}catch(e){return respond({error:e.message},400)}
+ const localeConfig=await configuredProductSeoLocales(db);
+ let value;try{value=normalizeProductSeo(input,localeConfig.locales)}catch(e){return respond({error:e.message},400)}
  if(!await hasProduct(db,value.slug))return respond({error:"产品型号不属于已发布的 XUYI 目录"},400);
  await upsertProductSeo(db,{slug:value.slug,locale:value.locale,seoTitle:value.title,metaDescription:value.description});
  const revision=await bumpPublishRevision(db);
