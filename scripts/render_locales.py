@@ -57,6 +57,8 @@ BLOG_DATE_LABELS=json.loads((ROOT/"data/blog-date-labels.json").read_text(encodi
 
 EDITORIAL_CORRECTIONS=json.loads((ROOT/"data/locale-editorial-corrections.json").read_text(encoding="utf-8"))
 
+GALLERY_SHORT_TITLES=json.loads((ROOT/"data/gallery-short-titles.json").read_text(encoding="utf-8"))
+
 def correct_reviewed_drinkware_terms(markup,locale):
 
     """Repair identified false-friend translations without altering SKU/specs.
@@ -586,7 +588,7 @@ def main():
 
                 translated[(route,loc)]={
 
-                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else ({"es":"Botella deportiva","pt":"Garrafa esportiva","ru":"Спортивная бутылка","tr":"Spor şişesi"}[loc]+" "+row["model"]+" | XUYI"),
+                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else ((GALLERY_SHORT_TITLES.get(loc) or name[:40])+" "+row["model"]+" | XUYI"),
 
                     "description":name+". "+gallery_labels[loc][2],
 
