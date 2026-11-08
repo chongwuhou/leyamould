@@ -1,13 +1,12 @@
 import { authorizedReviewedBlogBatchRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema } from "../../_shared/blog-cms.js";
-import { bumpPublishRevision } from "../../_shared/site-settings.js";
+import { bumpPublishRevision,defaultLanguageConfig,loadSiteSetting,normalizeLanguageConfig } from "../../_shared/site-settings.js";
 
 const SLUGS = [
   "can-you-put-hot-water-in-plastic-water-bottle",
   "are-plastic-water-bottles-dishwasher-safe",
   "why-does-reusable-water-bottle-smell-bad"
 ];
-const LOCALES = ["es", "pt", "ru", "tr"];
 const REVIEWED_AT = "2026-10-19";
 const TAIL = "</div></div></section>";
 const reply = (body, status = 200) => Response.json(body, {
@@ -17,11 +16,12 @@ const reply = (body, status = 200) => Response.json(body, {
 const count = (value, part) => String(value).split(part).length - 1;
 const unsafeHtml = /<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;
 
-function validatePayload(payload) {
+function validatePayload(payload, locales) {
+  if (!Array.isArray(locales) || !locales.length) throw new Error("No publish-ready D1 locales configured.");
   if (!payload || !Array.isArray(payload.posts) || payload.posts.length !== SLUGS.length
-      || !Array.isArray(payload.translations) || payload.translations.length !== SLUGS.length * LOCALES.length
-      || !Array.isArray(payload.indexCards) || payload.indexCards.length !== SLUGS.length * LOCALES.length) {
-    throw new Error("The reviewed batch must contain 3 posts, 12 translations and 12 index cards.");
+      || !Array.isArray(payload.translations) || payload.translations.length !== SLUGS.length * locales.length
+      || !Array.isArray(payload.indexCards) || payload.indexCards.length !== SLUGS.length * locales.length) {
+    throw new Error("The reviewed batch must contain "+SLUGS.length+" posts, "+(SLUGS.length*locales.length)+" translations and "+(SLUGS.length*locales.length)+" index cards.");
   }
   const expected = new Set(SLUGS);
   const seenPosts = new Set();
@@ -52,7 +52,7 @@ function validatePayload(payload) {
     const locale = String(item?.locale || "");
     const key = route + "|" + locale;
     const html = String(item?.mainHtml || "");
-    if (!match || !expected.has(match[1]) || !LOCALES.includes(locale) || seenTranslations.has(key)
+    if (!match || !expected.has(match[1]) || !locales.includes(locale) || seenTranslations.has(key)
         || String(item?.title || "").length < 12 || String(item?.description || "").length < 25
         || html.length < 5000 || html.length > 250000 || unsafeHtml.test(html)
         || count(html, 'id="primary-sources"') !== 1
@@ -64,7 +64,7 @@ function validatePayload(payload) {
     }
     seenTranslations.add(key);
   }
-  for (const slug of SLUGS) for (const locale of LOCALES) {
+  for (const slug of SLUGS) for (const locale of locales) {
     if (!seenTranslations.has("/blog/" + slug + "/|" + locale)) throw new Error("Missing reviewed translation.");
   }
 
@@ -75,7 +75,7 @@ function validatePayload(payload) {
     const key = slug + "|" + locale;
     const html = String(item?.html || "");
     const href = 'href="/blog/' + slug + '/"';
-    if (!expected.has(slug) || !LOCALES.includes(locale) || seenCards.has(key)
+    if (!expected.has(slug) || !locales.includes(locale) || seenCards.has(key)
         || html.length < 100 || html.length > 10000 || unsafeHtml.test(html)
         || !html.startsWith('<article class="news-card">') || !html.endsWith("</article>")
         || count(html, href) !== 3) {
@@ -83,7 +83,7 @@ function validatePayload(payload) {
     }
     seenCards.add(key);
   }
-  for (const slug of SLUGS) for (const locale of LOCALES) {
+  for (const slug of SLUGS) for (const locale of locales) {
     if (!seenCards.has(slug + "|" + locale)) throw new Error("Missing reviewed index card.");
   }
 }
@@ -94,11 +94,15 @@ export async function onRequestPost(context) {
   }
   const db = context.env.XUYI_DB;
   if (!db) return reply({ error: "XUYI_DB binding missing" }, 503);
+  const languageSaved = await loadSiteSetting(db, "language_config", defaultLanguageConfig());
+  const languageConfig = normalizeLanguageConfig(languageSaved.value);
+  const locales = languageConfig.languages.filter(item => item.enabled && item.publishReady && item.code !== languageConfig.sourceLocale).map(item => item.code);
+  const localePlaceholders = locales.map(() => "?").join(",");
 
   let payload;
   try { payload = await context.request.json(); }
   catch { return reply({ error: "Invalid JSON" }, 400); }
-  try { validatePayload(payload); }
+  try { validatePayload(payload, locales); }
   catch (error) { return reply({ error: String(error?.message || "Invalid reviewed batch").slice(0, 240) }, 400); }
 
   try {
@@ -136,10 +140,10 @@ export async function onRequestPost(context) {
 
     const resources = ["page:/blog/", ...SLUGS.map(slug => "page:/blog/" + slug + "/")];
     const rows = (await db.prepare(
-      "SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN (?,?,?,?) AND locale IN (?,?,?,?)"
-    ).bind(...resources, ...LOCALES).all()).results || [];
+      "SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN (?,?,?,?) AND locale IN ("+localePlaceholders+")"
+    ).bind(...resources, ...locales).all()).results || [];
     const lookup = new Map(rows.map(row => [row.resource_id + "|" + row.locale, row]));
-    for (const slug of SLUGS) for (const locale of LOCALES) {
+    for (const slug of SLUGS) for (const locale of locales) {
       const row = lookup.get("page:/blog/" + slug + "/|" + locale);
       if (!row) return reply({ error: "Final D1 check failed: missing article translation." }, 409);
       let body = "";
@@ -151,7 +155,7 @@ export async function onRequestPost(context) {
         return reply({ error: "Final D1 check failed: reviewed article translation is incomplete." }, 409);
       }
     }
-    for (const locale of LOCALES) {
+    for (const locale of locales) {
       const row = lookup.get("page:/blog/|" + locale);
       if (!row) return reply({ error: "Final D1 check failed: missing localized Blog index." }, 409);
       let body = "";
