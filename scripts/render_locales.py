@@ -46,23 +46,16 @@ DIST=ROOT/"dist"
 
 SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
 
-ORIGIN="https://xuyibottles.com"
+SITE_CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+ORIGIN=SITE_CONFIG["site"]["origin"]
 
 UI_TRANSLATIONS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
 
 RUNTIME_UI_TRANSLATIONS=json.loads((ROOT/"data/runtime-ui-translations.json").read_text(encoding="utf-8"))
 
-BLOG_DATE_LABELS={
+BLOG_DATE_LABELS=json.loads((ROOT/"data/blog-date-labels.json").read_text(encoding="utf-8"))
 
-    "es":("Publicado el","Revisado el"),
-
-    "pt":("Publicado em","Revisto em"),
-
-    "ru":("Опубликовано","Проверено"),
-
-    "tr":("Yayımlandı","Gözden geçirildi")
-
-}
+EDITORIAL_CORRECTIONS=json.loads((ROOT/"data/locale-editorial-corrections.json").read_text(encoding="utf-8"))
 
 def correct_reviewed_drinkware_terms(markup,locale):
 
@@ -74,15 +67,7 @@ def correct_reviewed_drinkware_terms(markup,locale):
 
     """
 
-    changes={
-
-        "es":[("variadores de plástico","botellas de plástico"),
-
-              ("bebidas de plástico","botellas de plástico")],
-
-        "pt":[("bebidas de plástico","garrafas de plástico")],
-
-    }
+    changes=EDITORIAL_CORRECTIONS.get(locale,[])
 
     for incorrect,correct in changes.get(locale,[]):
 
@@ -175,7 +160,10 @@ def localize_blog_timeline(body,original,locale,route):
 
     if not published:return body  # No verified source date: preserve approved D1 copy.
 
-    first,reviewed=BLOG_DATE_LABELS[locale]
+    labels=BLOG_DATE_LABELS.get(locale)
+    if not isinstance(labels,dict) or not labels.get("published") or not labels.get("reviewed"):
+        raise RuntimeError("Missing reviewed Blog date labels: "+locale)
+    first,reviewed=labels["published"],labels["reviewed"]
 
     timeline='<time datetime="'+published+'">'+html.escape(first)+" "+published+"</time>"
 
