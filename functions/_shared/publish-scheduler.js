@@ -12,7 +12,7 @@ async function configuredBlogLocales(db){
 async function ensureBlogLocaleQueueSchema(db){
  await db.prepare(BLOG_LOCALE_QUEUE_SQL).run();
  const row=await db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='xuyi_blog_locale_schedule'").first();
- if(!/locale\\s+IN\\s*\\(/i.test(String(row?.sql||"")))return;
+ if(!/locale\s+IN\s*\(/i.test(String(row?.sql||"")))return;
  const oldCount=Number((await db.prepare("SELECT COUNT(*) AS n FROM xuyi_blog_locale_schedule").first())?.n||0);
  await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_blog_locale_schedule_v2 (slug TEXT NOT NULL,locale TEXT NOT NULL,scheduled_at TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','published','cancelled','needs_review')),approved INTEGER NOT NULL DEFAULT 0 CHECK(approved IN (0,1)),payload_json TEXT NOT NULL,content_sha256 TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_at TEXT,PRIMARY KEY(slug,locale))").run();
  let copied=Number((await db.prepare("SELECT COUNT(*) AS n FROM xuyi_blog_locale_schedule_v2").first())?.n||0);
