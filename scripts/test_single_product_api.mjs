@@ -36,8 +36,8 @@ const apiText=source("functions/api/admin/product-content.js")
  .replace('import { authorizeAdminRequest } from "../../_shared/admin-security.js";','const authorizeAdminRequest=async()=>globalThis.__allowed.value;')
  .replace('import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";','import {normalizeNewProduct,CATEGORY_OPTIONS} from "'+url(productSource)+'";')
  .replace('import { imageKey } from "../../_shared/r2-usage.js";','import {imageKey} from "'+url(usage)+'";')
- .replace('import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo} from "../../_shared/product-seo.js";',
-  'const ensureProductSeo=async()=>{};const canonicalProductSlug=s=>s.toLowerCase();const normalizeProductSeo=s=>s;const upsertProductSeo=async()=>{};');
+ .replace('import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo,configuredProductSeoLocales} from "../../_shared/product-seo.js";',
+  'const ensureProductSeo=async()=>{};const canonicalProductSlug=s=>s.toLowerCase();const normalizeProductSeo=s=>s;const upsertProductSeo=async()=>{};const configuredProductSeoLocales=async()=>({sourceLocale:"en",locales:new Set(["en"])});');
 const api=await import(url(apiText));
 const db={
  prepare(sql){
