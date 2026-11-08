@@ -15,9 +15,9 @@
 <button type="button" class="admin-module-btn" data-admin-target="settings">03 联系人与邮箱</button>
 <button type="button" class="admin-module-btn" data-admin-target="languages">04 多语言</button>
 <button type="button" class="admin-module-btn" data-admin-target="advanced">05 翻译工作流</button>
-<button type="button" class="admin-module-btn" data-admin-target="content">06 页面 / 品牌 / 产品 / SEO</button>
+<button type="button" class="admin-module-btn" data-admin-target="content">06 内容基础 · 来源与页面</button>
 <button type="button" class="admin-module-btn" data-admin-target="reviews">07 客户评价 ★</button>
-<button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品 SEO · 多语言 D1</button>
+<button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品多语言 SEO + 正文</button>
 <button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
 <button type="button" class="admin-module-btn" data-admin-target="scheduler">10 自动发布与定时任务</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
@@ -25,18 +25,18 @@
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
 <div id="publish-site-status" role="status" class="muted" aria-live="polite"></div>
 <section class="panel" id="content-admin-panel" data-admin-module="content">
- <div class="panel-head"><div><div class="eyebrow">XUYI · D1 CONTENT CONTROL</div><h2>网站内容、导航、SEO 管理</h2>
- <p>使用 XUYI 的 D1 CMS 保存机制；草稿和未审核翻译不会发布，英文原有页面保留。编辑后由 GitHub Actions 生成静态页面。</p></div></div>
+ <div class="panel-head"><div><div class="eyebrow">XUYI · D1 CONTENT CONTROL</div><h2>来源内容与页面管理</h2>
+ <p>06 只管理来源语言、品牌、导航、普通页面、产品来源资料，以及普通页面和 Blog 的多语言翻译。产品 SEO 和产品多语言正文统一在 08，避免重复入口。</p></div></div>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
   <button type="button" class="btn ghost" id="content-load">读取线上 D1 内容</button>
   <button type="button" class="btn ghost" id="content-tab-brand">品牌</button>
   <button type="button" class="btn ghost" id="content-tab-banners">首页 Banner</button>
   <button type="button" class="btn ghost" id="content-tab-navigation">导航</button>
   <button type="button" class="btn ghost" id="content-tab-pages">页面 SEO</button>
-  <button type="button" class="btn ghost" id="content-tab-page-body">页面正文</button>
-  <button type="button" class="btn ghost" id="content-tab-products">产品商详</button>
-  <button type="button" class="btn ghost" id="content-tab-new-product">+ 单个新商品</button>
-  <button type="button" class="btn ghost" id="content-tab-locales">多语言正式页面</button>
+  <button type="button" class="btn ghost" id="content-tab-page-body">普通页面正文</button>
+  <button type="button" class="btn ghost" id="content-tab-products">产品来源内容</button>
+  <button type="button" class="btn ghost" id="content-tab-new-product">+ 新建产品</button>
+  <button type="button" class="btn ghost" id="content-tab-locales">页面 / Blog 多语言</button>
  </div>
  <p id="content-status" role="status" aria-live="polite"></p>
 <div id="content-form"></div>
@@ -82,8 +82,9 @@
 </section>
 <section class="panel" id="product-seo-admin-panel" data-admin-module="productseo">
  <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO + CONTENT · CLOUDFLARE D1</div>
- <h2>产品 SEO 与多语言正文（正式数据库）</h2>
- <p><span id="product-seo-count">产品数量读取中</span>及以后新增型号均可按后台已配置语言独立修改。SEO Title、Meta Description、对应语种产品正文和默认 OG 标题均从 D1 正式记录生成；来源语言正文仍由产品商详编辑器维护。修改后点击顶部「一键全站重建」。<span id="product-seo-language-summary">语言配置读取中</span></p>
+ <h2>产品多语言 SEO 与正文（正式数据库）</h2>
+ <p>08 只管理产品型号：SEO Title、Meta Description 和目标语种完整正文。产品来源字段请到 06，Blog / 普通页面多语言请到 06；这里不再承担其他页面。</p>
+ <p><span id="product-seo-count">产品数量读取中</span> · <span id="product-seo-language-summary">语言配置读取中</span> · 修改后点击顶部「一键全站重建」。</p>
  </div></div>
  <div class="row-actions"><button type="button" class="btn ghost" id="product-seo-reload">读取数据库</button></div>
  <p id="product-seo-status" role="status" aria-live="polite"></p>
@@ -101,7 +102,7 @@
    <textarea id="product-seo-content" rows="18" placeholder="目标语种：先读取来源语言正文，再完整翻译、检查图片与链接后保存。"></textarea></label>
   <div class="row-actions"><button type="button" class="btn ghost" id="product-content-source">读取来源语言正文</button>
    <span id="product-content-status" class="muted"></span></div>
-  <p class="muted">来源语言正文由「06 页面 / 品牌 / 产品 / SEO → 产品商详」维护；目标语种正文写入现有 D1 多语言正式页面记录。正文留空时只保存 SEO，不会删除已有正文。</p>
+  <p class="muted">来源语言正文由「06 → 产品来源内容」维护；目标语种正文写入现有 D1 多语言正式页面记录。正文留空时只保存 SEO，不会删除已有正文。</p>
   <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 与正文到 D1</button>
    <button type="button" class="btn ghost" id="product-seo-reset">重新载入当前记录</button></div>
  </form>

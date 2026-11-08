@@ -146,7 +146,7 @@
     button("读取当前来源语言页正文","page-body-source")+' '+button("保存页面正文","page-body-save");
   }
   if(tab==="locales"){
-   html='<h3>多语言正式页面 · 翻译审核</h3><p>先复制来源语言原文，再逐段翻译。产品详情、普通页面和已发布 Blog 文章共用同一条 D1 正式页面翻译记录；只有完整审核并保存才会更新对应语言 URL，不会把来源语言内容假装成其他语言。</p>'+
+   html='<h3>多语言正式页面 · 翻译审核</h3><p>这里仅维护普通页面和已发布 Blog 的多语言正式页面；产品 SEO 与产品正文统一到后台 08。先复制来源语言原文，再逐段翻译，完整审核并保存后才会更新对应语言 URL。</p>'+
     '<label class="block-label">目标语言 <select id="cms-locale">'+
        (state.settings?.languages?.languages||[])
           .filter(x=>x.code!==state.settings?.languages?.sourceLocale)
@@ -294,13 +294,7 @@
   }
   if(tab==="locales"){
    const selector=$("cms-locale-route");
-   const pages=[...(state.pages.pages||[])];
-   for(const entry of state.products?.items||[]){
-    if(entry.content?.newProduct&&entry.status==="published"){
-     const route="/products/"+entry.model+"/";
-     if(!pages.some(p=>p.route===route))pages.push({route,label:entry.content.name||entry.model});
-    }
-   }
+   const pages=[...(state.pages.pages||[])].filter(item=>!/^\/products\//i.test(String(item.route||"")));
    for(const post of state.blog?.posts||[]){
     if(post.status==="published"){
      const route="/blog/"+post.slug+"/";
