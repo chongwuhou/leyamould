@@ -10,6 +10,8 @@ import re
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent
+SITE_CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+ORIGIN=SITE_CONFIG["site"]["origin"]
 COVERS=json.loads((ROOT/'data/blog-cover-overrides.json').read_text(encoding='utf8'))
 PHOTO_CORRECTIONS=json.loads((ROOT/'data/blog-photo-corrections-20261024.json').read_text(encoding='utf8'))
 GUIDES=json.loads((ROOT/'data/blog-guides.json').read_text(encoding='utf8'))
@@ -49,7 +51,7 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
 
     D1 article text, user covers and newly published/untranslated posts win.
     """
-    if locale not in ('en','es','pt','ru','tr') or not route.startswith('/blog/'):
+    if not isinstance(locale,str) or not re.fullmatch(r"[a-z]{2,3}(?:-[a-z0-9]{2,8})*",locale) or not route.startswith('/blog/'):
         return markup
     # English CMS pages need only the three current contextual replacements.
     # Older general corrections remain limited to the four localized renders.
@@ -97,7 +99,7 @@ def article_social_image_from_cms_source(markup: str, route: str) -> str:
     source = html.unescape(match.group(1))
     if not source.startswith(("/assets/", "/media/")) or ".." in source or any(c in source for c in "<>\\\"'"):
         return markup
-    absolute = "https://xuyibottles.com" + source
+    absolute = ORIGIN + source
     for attr in ('property="og:image"', 'name="twitter:image"'):
         pattern = r'(<meta ' + re.escape(attr) + r' content=")[^"]*(")'
         markup = re.sub(pattern, lambda m: m.group(1) + html.escape(absolute, quote=True) + m.group(2),
