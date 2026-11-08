@@ -6,7 +6,7 @@ const endpoint=readFileSync('functions/api/admin/blog-batch-20261107.js','utf8')
 const scheduler=readFileSync('functions/_shared/publish-scheduler.js','utf8');
 assert.ok(endpoint.includes('listBlogPosts(db,"published")'),'batch must use the shared D1 live-list query');
 assert.ok(endpoint.includes('sortLocalizedBlogIndexByD1Order(current,d1Order)'),'all localized indexes must follow the full D1 order');
-assert.ok(endpoint.includes('indexOrderVerified:LANGS'),'the endpoint must verify all four locales');
+assert.ok(endpoint.includes('indexOrderVerified:locales'),'the endpoint must verify all D1-configured locales');\nassert.ok(endpoint.includes('configuredLocales(db)'),'the batch endpoint must read publish-ready locales from D1');\nassert.ok(!endpoint.includes('const LANGS='),'the batch endpoint must not freeze a locale list');
 assert.ok(!endpoint.includes('moveLocalizedBlogCardsToFront'),'no hardcoded batch-first repair is allowed');
 assert.ok(endpoint.indexOf('const done=await db.batch(stmts)') < endpoint.indexOf('const d1Posts=await listBlogPosts(db,"published")'));
 assert.ok(endpoint.indexOf('sortLocalizedBlogIndexByD1Order(current,d1Order)') < endpoint.indexOf('bumpPublishRevision(db)'));
