@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 SITE_CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
 ORIGIN=SITE_CONFIG["site"]["origin"]
+SOURCE_LOCALE=SITE_CONFIG["site"]["defaultLocale"]
 COVERS=json.loads((ROOT/'data/blog-cover-overrides.json').read_text(encoding='utf8'))
 PHOTO_CORRECTIONS=json.loads((ROOT/'data/blog-photo-corrections-20261024.json').read_text(encoding='utf8'))
 GUIDES=json.loads((ROOT/'data/blog-guides.json').read_text(encoding='utf8'))
@@ -56,7 +57,7 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
     # English CMS pages need only the three current contextual replacements.
     # Older general corrections remain limited to the four localized renders.
     repairs=SOURCE_REPAIRS
-    if locale=='en':
+    if locale==SOURCE_LOCALE:
         repairs={slug:SOURCE_REPAIRS[slug] for slug in PHOTO_CONTEXT_20261026 if slug in SOURCE_REPAIRS}
     if route=='/blog/':
         for slug,(old,new) in repairs.items():
