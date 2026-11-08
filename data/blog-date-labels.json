@@ -1,0 +1,18 @@
+{
+  "es": {
+    "published": "Publicado el",
+    "reviewed": "Revisado el"
+  },
+  "pt": {
+    "published": "Publicado em",
+    "reviewed": "Revisto em"
+  },
+  "ru": {
+    "published": "Опубликовано",
+    "reviewed": "Проверено"
+  },
+  "tr": {
+    "published": "Yayımlandı",
+    "reviewed": "Gözden geçirildi"
+  }
+}
