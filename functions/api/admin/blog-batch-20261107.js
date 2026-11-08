@@ -62,7 +62,7 @@ export async function onRequestPost(context){
   const postsInserted=changes(0,postCount),translationsInserted=changes(postCount,postCount+translationCount),indexCardsAdded=changes(postCount+translationCount,stmts.length);
   const postPlaceholders=SLUGS.map(()=>"?").join(","),localePlaceholders=locales.map(()=>"?").join(","),refPlaceholders=["page:/blog/",...SLUGS.map(s=>"page:/blog/"+s+"/")].map(()=>"?").join(",");
   const saved=(await db.prepare("SELECT slug,status FROM xuyi_blog_posts WHERE slug IN ("+postPlaceholders+")").bind(...SLUGS).all()).results||[];
-  if(saved.filter(x=>x.status==="published"&&SLUGS.includes(x.slug)).length!==3)return response({error:"Article verification failed"},409);
+  if(saved.filter(x=>x.status==="published"&&SLUGS.includes(x.slug)).length!==postCount)return response({error:"Article verification failed"},409);
   // The English live route uses listBlogPosts() (updated_at DESC). Use that
   // complete D1 result as the sole ordering source for every localized index.
   // Do not append today's cards as a final order or hardcode any batch slugs.
