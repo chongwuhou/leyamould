@@ -7,7 +7,12 @@ export const PHOTO_COVERS = Object.freeze({
   "trade-show-promotional-water-bottle-deadline-procurement": ["/assets/blog/water-bottle-sample-approval-20261017.webp","/assets/lo/detail/lo-005-lifestyle.webp"]
 });
 export const PHOTO_SLUGS=Object.freeze(Object.keys(PHOTO_COVERS));
-export const PHOTO_LANGS=Object.freeze(["es","pt","ru","tr"]);
+export function photoLocales(languageConfig){
+  const rows=Array.isArray(languageConfig?.languages)?languageConfig.languages:[];
+  const source=String(languageConfig?.sourceLocale||"").toLowerCase();
+  return Object.freeze(rows.filter(item=>item?.enabled!==false&&item?.publishReady!==false&&String(item.code||"").toLowerCase()!==source)
+    .map(item=>String(item.code||"").trim().toLowerCase()).filter(Boolean));
+}
 const CARD='<article class="news-card">';
 export function changeBlogPostCover(post,slug){
   const choice=PHOTO_COVERS[slug];if(!choice)return post;
