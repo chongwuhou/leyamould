@@ -70,12 +70,15 @@ def approved_locales(state,require_resources=True):
                 if not isinstance(entry,dict) or not entry:
                     raise ValueError(f"XUYI locale {lang['code']} lacks reviewed {name} resource: {path}")
         baseline=json.loads((ROOT/_RESOURCES["header/footer"]).read_text(encoding="utf-8"))
-        required=set(baseline.get("es",{}))
-        for lang in locales:
-            if lang["code"]==DEFAULT:continue
-            missing=required-set(baseline[lang["code"]])
-            if missing:
-                raise ValueError("XUYI locale "+lang["code"]+" is missing UI keys: "+", ".join(sorted(missing)[:7]))
+        baseline_locale=next((lang["code"] for lang in locales
+                              if lang["code"]!=DEFAULT and isinstance(baseline.get(lang["code"]),dict)),None)
+        if baseline_locale:
+            required=set(baseline[baseline_locale])
+            for lang in locales:
+                if lang["code"]==DEFAULT:continue
+                missing=required-set(baseline[lang["code"]])
+                if missing:
+                    raise ValueError("XUYI locale "+lang["code"]+" is missing UI keys: "+", ".join(sorted(missing)[:7]))
     return locales
 
 def public_routes(state):
