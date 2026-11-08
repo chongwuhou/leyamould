@@ -14,8 +14,8 @@ const raw=readFileSync(base("functions/api/admin/media.js"),"utf8")
    'import { checkedImage } from "'+uri(imageHelper)+'";')
  .replace('import {normalizeAltMap,ensureMediaAlt,upsertMediaAlt} from "../../_shared/media-alt.js";',
    'import {normalizeAltMap,ensureMediaAlt,upsertMediaAlt} from "'+uri(altHelper)+'";')
- .replace('import {bumpPublishRevision} from "../../_shared/site-settings.js";',
-   'const bumpPublishRevision=async()=>({revision:++globalThis.__testMediaRevision.value});');
+ .replace('import {bumpPublishRevision,defaultLanguageConfig,loadSiteSetting,normalizeLanguageConfig} from "../../_shared/site-settings.js";',
+   'const bumpPublishRevision=async()=>({revision:++globalThis.__testMediaRevision.value});const defaultLanguageConfig=()=>({sourceLocale:"en",languages:[{code:"en",nativeName:"English",displayName:"English",enabled:true,publishReady:true,pathPrefix:""}]});const loadSiteSetting=async(db,key,fallback)=>({value:fallback,updatedAt:""});const normalizeLanguageConfig=value=>value;');
 const {onRequestGet,onRequestPost,onRequestDelete}=await import(uri(raw));
 const objects=new Map();
 const storage={
