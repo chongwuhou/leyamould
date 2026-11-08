@@ -105,3 +105,5 @@ D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数�
 整篇文章更新采用 API-only 流程：读取 D1/CMS → 审核图片并上传 R2 → D1 保存媒体引用 → 通过 `/api/admin/blog`、`/api/admin/blog-media`、`/api/admin/page-translations` 等受控入口写入 → bump publish revision → GitHub Actions 标准构建/CI → Cloudflare Pages 部署 → API 与线上 URL 回读。发布过程不打开浏览器后台、不抓取 Google Translate 网页、不直接改 dist、线上 HTML、Pages 成品或 R2 缓存。AI 生成内容只能先形成审核稿；通过事实、语言、SEO/GEO、内链、图片场景和安全门禁后，才可写入正式 D1/CMS。
 
 每篇 B2B Blog 必须有独立标题/H1/搜索意图，正文有 2–5 个真实产品链接、2–3 篇相关阅读、FAQ 或采购清单、清楚的事实边界；各语言必须独立写入正文、列表卡片、ALT、CTA 和元数据，不得英文回退。封面图必须唯一、契合采购场景、清晰压缩为 WebP，记录 R2 路径、尺寸、SHA-256 和编辑插图边界。完成验收要核对 D1/R2、publish revision、构建/部署、全部语言 URL 状态 200、html lang、title/H1、canonical/hreflang、sitemap、列表数量及 D1 顺序；任何一项失败都不能报告为完成。
+
+- **构建失败必须修复源数据或共享模板**：若标准构建因 D1/CMS 字段形状、语言内容或模板门禁失败，必须修正对应正式数据/共享模板并重新走 CI；禁止以临时静态文件、浏览器改页面或跳过验证来“补发布”。
