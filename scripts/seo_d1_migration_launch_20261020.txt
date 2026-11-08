@@ -1,3 +1,0 @@
-XUYI D1 product SEO migration activation: 2026-10-20.
-Source-approved existing models and five locales; never overwrite editor changes.
-This file contains no customer data; Cloudflare D1 remains the content owner.

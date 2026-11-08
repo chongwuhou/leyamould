@@ -19,26 +19,14 @@
 
 Production branch: main; Cloudflare Pages: xuyi-drinkware-site; GitHub: chongwuhou/xuyi-drinkware-site.
 
-## Production status update (2026-10-19)
-- The published site has EN, ES, PT, RU and TR, with indexing enabled. The 2026-10-18 three-article Blog batch is live in all five locales; changes must be published through the XUYI GitHub Actions source build and checked against production build-meta SHA.
-- D1's public /api/site-settings read reported inquiry.acceptsForm=true on 2026-10-19. This indicates the form readiness gate is on, not that a new end-to-end delivery test has been completed.
-- The product introduction is positioned in the source template/locale-owned HTML directly after the H1; the Kids category social preview is selected by the source renderer without overwriting editor-defined social tags.
-- Unconfirmed catalog photos are not to be substituted without same-model proof: 2309/2310 have identical source image bytes; 2099/2100 share one gallery asset; 2409 has a 924x540 original. A higher pixel count alone does not verify product identity.
-- Older 2026-10-13 preview, form-disabled and noindex remarks below are historical. Do not treat them as current production settings.
+## Current operating status (2026-11-08)
 
-## Current release and remaining source-photo work (2026-10-13)
-- Canonical domain https://xuyibottles.com; five published languages EN, ES, PT, RU, TR.
-- 101 product/model-reference pages per language; 755 canonical sitemap URLs.
-- Indexing gate is now explicitly ON in deployment/site.config.json. The published dist/robots.txt allows crawlers. Old dated preview/noindex notes below are historical, not current deployment instructions.
-- Live security smoke test: 23 routes passed; former leaked build.py, site_renderer.py and data/products.json endpoints (including query variants) return HTTP 410, and unauthenticated admin APIs return HTTP 401. Both apex and www legacy source URLs have been separately checked.
-- Five-language homepage: the first low-resolution slide-037.webp marketing photo is upgraded to a source-documented 1500px XUYI gallery image. SKU images are deliberately not remapped.
-- Original catalog purchasing facts (documented capacity, master-carton count/dimensions when available) added in five languages. The anomalous 2506 capacity is excluded; G-series IDs are confirmed factory models, while their exact capacity/material/packing still require source verification.
-- Curated Title/Description/OG text for About, Capabilities, OEM/ODM and Custom Water Bottles in five languages (20 pages) is finalized after D1 content rendering. Unrelated approved D1 body text, product IDs, hreflang and canonical URLs remain untouched.
-- **Not finished:** roughly 33 originally low-resolution P0/P1 real product photos still require validated same-model higher-resolution originals; LO-002 category card remains the original 800x800 source photo and must not be substituted with a different product. See the offline image audit under _local_ops/image-reuse-2026-10-13/ (six of the previously listed photos were subsequently replaced). No AI-generated image is represented as a photographed SKU.
-- Always build dist/ with python scripts/build_release.py and run release / image / five-language SEO tests before publishing. Verify the GitHub Actions run and public build-meta SHA separately; local success is not proof of deployment.
-
+- XUYI uses a D1/CMS-owned content model with Cloudflare Pages static builds as the default public delivery path. Pages Functions remain for Admin/API, inquiries, media access and explicitly configured dynamic fallback routes.
+- Languages, products, categories, routes, pagination and editable fields are read from D1/config at runtime or build time. Do not treat a historical count or a README statement as the current total.
+- Product, Blog, review, translation and media updates must use the formal D1/CMS and R2 paths, then bump publish revision and pass the standard GitHub Actions build and live verification.
+- The current production status is established by `deployment/site.config.json`, D1 publish revision, GitHub Actions, `build-meta.json` and read-only live checks. Historical release notes below are not current status.
 ## Scope
-Kreat-inspired original navigation and UI system: homepage; 4 product categories; 79 model pages; 7 capabilities subpages; About; Manufacturing; Quality Control; Shipping; FAQ; Blog; 6 buying guides; Contact; Privacy Policy and 404. Product photos are from XUYI catalogs. Relevant group-owned unwatermarked factory, QA, packing and logistics images are reused under owner-confirmed permission (docs/GROUP_MEDIA_USAGE.md).
+Kreat-inspired original navigation and UI system: homepage; D1/config-driven product categories and model routes; capabilities; About; Manufacturing; Quality Control; Shipping; FAQ; Blog; buying guides; Contact; Privacy Policy and 404. Product photos are from XUYI catalogs. Relevant group-owned unwatermarked factory, QA, packing and logistics images are reused under owner-confirmed permission (docs/GROUP_MEDIA_USAGE.md).
 
 ## Technology
 - GitHub -> Cloudflare Pages: static HTML/CSS/JS.
@@ -46,11 +34,10 @@ Kreat-inspired original navigation and UI system: homepage; 4 product categories
 - D1 xuyi-drinkware-d1, binding XUYI_DB, published-only products API.
 - KV xuyi-drinkware-kv reserved for site settings.
 - Regenerate static HTML with: python build.py.
-- Noindex/robots blocked until verification. Sitemap for preview only, not submitted to Google.
+- Indexing, robots and sitemap inclusion are controlled by deployment configuration and approval; verify the current state from build-meta and the live response.
 
 ## Source
-76 Excel catalog row-specific images served from R2 site-preview/excel/.
-79 non-glass PPT catalog photos served from R2 catalog-staging/ppt/.
+Versioned catalog records and R2 media are inputs for legacy/source rendering and audit only; exact current product and media status comes from D1/CMS and R2.
 Never commit local source catalogs, _local_ops secrets or Wrangler credentials. Unrelated project resources remain untouched.
 
 ## Launch blockers
@@ -58,6 +45,10 @@ Verify SKU variants, 2506 anomalous capacity, official English legal name, compa
 
 ## Responsive
 Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model search/filter and fixed mobile inquiry link. QA on 320–1440 px.
+
+## Historical implementation notes (do not use as current counts or status)
+
+The dated sections below record past implementation decisions and evidence. Current business values, languages, products and publication status come from D1/config and the active release pipeline.
 
 ## Target-style UI revision (October 8 2026)
 - Main navigation: Home, Products (4-column photo mega menu), Capabilities (compact list), About, Why Us (compact list), Blog, Contact Us, Instant Quote.
@@ -106,7 +97,7 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - JSON-LD: Organization (registered Chinese company name), WebPage, BreadcrumbList, FAQPage matching visible Q&A. Added preview Open Graph metadata.
 - Source images are real XUYI Excel/PPT catalog imagery, labeled as product illustrations (not factory photos).
 - Do not publish unsupported: factory equipment and numbers, food-contact certifications, BPA-free claims, 24h quotes, sample/production lead times, fixed MOQ, DDP guarantee, client logos.
-- Noindex remains across the preview until verified company details, product substantiation, enquiry delivery and target domain approval.
+- Indexing remains controlled by deployment/site configuration and owner approval; do not use this historical note as the current indexing status.
 
 
 ## Four Why Us Pages - Distinct Group Photo Revision
@@ -150,7 +141,7 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 
 
 ## Production domain, original group-brand carousel and XUYI favicon
-- Confirmed xuyibottles.com and www.xuyibottles.com already resolve and respond with the XUYI Pages website (HTTP 200). Chosen canonical origin is https://xuyibottles.com/ (non-www). Keep existing noindex and disabled inquiry pending formal approval.
+- The canonical origin and indexing state are controlled by deployment configuration. Confirm current status from the live response and build metadata before changing SEO settings.
 - Six ORIGINAL Kreat homepage brand carousel image assets: Amazon, Walmart, Costco, eBay, Coca-Cola and Carrefour. Saved unchanged under assets/customer-logos with source URL/provenance in data/customer-logos.json. Displayed as group-site brand references; not represented as independently verified direct XUYI clients or endorsements.
 - Carousel loops horizontally with color logos, pauses on pointer/focus, is static and horizontally scrollable for reduced-motion visitors; adapts from desktop to mobile.
 - Favicon designed to match the existing red XUYI wordmark: red rounded-square background + bold white X. SVG, ICO (16/32/48), 16/32 PNG, 180 apple touch and 192/512 PWA icons.

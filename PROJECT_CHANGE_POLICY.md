@@ -29,7 +29,7 @@
    a specific product image without exact source/model visual review.
 4. **Guard growth, not a frozen count.** A new approved product, article or
    language page should not fail a release simply because previous totals were
-   85, 101, 505 or 755. Detect missing baseline routes and actual broken links.
+   historical page/product/locale totals. Detect missing baseline routes and actual broken links.
 5. **Rebuild verification is mandatory.** Rebuild from source (the builder
    deletes and regenerates dist), run SEO/locale/Blog/media regressions and
    verify a second clean rebuild produces the same intended outputs. Test

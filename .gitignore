@@ -1,9 +1,15 @@
-.env
-.env.*
-node_modules/
+# Generated build and local runtime output
+dist/
+_local_ops/
 .wrangler/
 __pycache__/
-/_local_ops/
-dist/
-/.sync/
-/sync-manifest.jsonl
+*.py[cod]
+*.log
+
+# Local credentials and environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.secret
