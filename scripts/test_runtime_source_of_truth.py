@@ -23,6 +23,9 @@ CHECKS = {
         ("[a-z]{2}", "translation route locale regex"),
         ("entry?.newProduct!==true", "legacy new-product-only translation gate"),
     ],
+    "functions/_shared/translation.js": [
+        ("[a-z]{2}", "translation approval locale regex"),
+    ],
     "scripts/render_locales.py": [
         ("BLOG_DATE_LABELS={", "Blog date labels in code"),
         ("https://xuyibottles.com", "renderer origin"),
