@@ -257,7 +257,7 @@ export async function applyTranslationOverride(db, job, translatedPayload) {
     const slug=match[1],translatedCard=String(payload.indexCardHtml||"").trim(),fallbackCard=blogCard({...sourcePost,slug,title,description}),card=translatedCard||fallbackCard;
     const count=(value,needle)=>String(value).split(needle).length-1;
     if(!card.startsWith('<article class="news-card">')||!card.endsWith("</article>")||blocked.test(card)||count(card,'href="/blog/'+slug+'/"')!==3)throw new Error("Approved Blog translation card is invalid");
-    const cardRe=/<article class="news-card">[\\s\\S]*?<\\/article>/g;
+    const cardRe=/<article class="news-card">[\s\S]*?<\/article>/g;
     const current=String(index.mainHtml||""),cards=[...current.matchAll(cardRe)],matched=cards.filter(item=>[...item[0].matchAll(/href="([^"]+)"/g)].some(match=>{
       const parts=String(match[1]||"").split("?")[0].split("/").filter(Boolean);
       return ((parts.length===2&&parts[0]==="blog")||(parts.length===3&&parts[1]==="blog"))&&parts[parts.length-1]===slug;
