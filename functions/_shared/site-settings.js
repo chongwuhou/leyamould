@@ -4,29 +4,26 @@ const bcp47Re = /^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/;
 const slugRe = /^[a-z0-9](?:[a-z0-9-]{0,30}[a-z0-9])?$/;
 const e164Re = /^\+[1-9]\d{6,15}$/;
 
-const BUILTIN_LANGUAGES = [
-  ["en", "English", "English", "", 10],
-  ["es", "Spanish", "Español", "es", 20],
-  ["pt", "Portuguese", "Português", "pt", 30],
-  ["ru", "Russian", "Русский", "ru", 40],
-  ["tr", "Turkish", "Türkçe", "tr", 50]
-];
-
+// This is only a fail-safe bootstrap when D1 has no language_config row yet.
+// It deliberately contains the source locale only. Once D1 has a language
+// registry, every caller must use that registry; this fallback must never
+// silently invent or verify a multilingual release.
 export function defaultLanguageConfig() {
+  const sourceLocale = "en";
   return {
     schemaVersion: 1,
-    sourceLocale: "en",
-    defaultLocale: "en",
-    languages: BUILTIN_LANGUAGES.map(([code, displayName, nativeName, pathPrefix, sortOrder]) => ({
-      code,
-      displayName,
-      nativeName,
-      pathPrefix,
+    sourceLocale,
+    defaultLocale: sourceLocale,
+    languages: [{
+      code: sourceLocale,
+      displayName: "English",
+      nativeName: "English",
+      pathPrefix: "",
       enabled: true,
-      publishReady: code === "en",
-      sortOrder,
+      publishReady: true,
+      sortOrder: 10,
       uiText: {}
-    }))
+    }]
   };
 }
 
