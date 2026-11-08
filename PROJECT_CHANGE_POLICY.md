@@ -102,11 +102,11 @@ D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数�
 
 凡用户直接提出“发布、上线、更新 Blog”而未另行限定，默认是英文源文加 D1 `site_state.language_config` 中全部 `enabled=true` 且 `publishReady=true` 语种的完整发布；只发布英文或只写翻译队列不算完成。
 
-整篇文章更新采用 API-only 流程：读取 D1/CMS → 审核图片并上传 R2 → D1 保存媒体引用 → 通过 `/api/admin/blog`、`/api/admin/blog-media`、`/api/admin/page-translations` 等受控入口写入 → bump publish revision → GitHub Actions 标准构建/CI → Cloudflare Pages 部署 → API 与线上 URL 回读。发布过程不打开浏览器后台、不抓取 Google Translate 网页、不直接改 dist、线上 HTML、Pages 成品或 R2 缓存。AI 生成内容只能先形成审核稿；通过事实、语言、SEO/GEO、内链、图片场景和安全门禁后，才可写入正式 D1/CMS。
+针对 AI、localGPT、脚本和自动化工具，整篇文章更新采用 API-only 流程：读取 D1/CMS → 审核图片并上传 R2 → D1 保存媒体引用 → 通过 `/api/admin/blog`、`/api/admin/blog-media`、`/api/admin/page-translations` 等受控入口写入 → bump publish revision → GitHub Actions 标准构建/CI → Cloudflare Pages 部署 → API 与线上 URL 回读。人工操作者可以在正式后台浏览器中编辑和审核，但 AI/脚本/自动化不得打开浏览器后台代替 API，不得直接改 dist、线上 HTML、Pages 成品或 R2 缓存。AI 生成内容只能先形成审核稿；通过事实、语言、SEO/GEO、内链、图片场景和安全门禁后，才可写入正式 D1/CMS。
 
 每篇 B2B Blog 必须有独立标题/H1/搜索意图，正文有 2–5 个真实产品链接、2–3 篇相关阅读、FAQ 或采购清单、清楚的事实边界；各语言必须独立写入正文、列表卡片、ALT、CTA 和元数据，不得英文回退。封面图必须唯一、契合采购场景、清晰压缩为 WebP，记录 R2 路径、尺寸、SHA-256 和编辑插图边界。完成验收要核对 D1/R2、publish revision、构建/部署、全部语言 URL 状态 200、html lang、title/H1、canonical/hreflang、sitemap、列表数量及 D1 顺序；任何一项失败都不能报告为完成。
 
-- **构建失败必须修复源数据或共享模板**：若标准构建因 D1/CMS 字段形状、语言内容或模板门禁失败，必须修正对应正式数据/共享模板并重新走 CI；禁止以临时静态文件、浏览器改页面或跳过验证来“补发布”。
+- **构建失败必须修复源数据或共享模板**：若标准构建因 D1/CMS 字段形状、语言内容或模板门禁失败，必须修正对应正式数据/共享模板并重新走 CI；禁止 AI/脚本/自动化以临时静态文件、浏览器改页面或跳过验证来“补发布”。人工应使用正式后台编辑器修正 D1/CMS。
 - **多语 Blog 详情源 HTML必须保留标准品牌眉标**：多语文章正文要保留与共享渲染器兼容的 `blog-meta` 时间线和 `XUYI · ...` 品牌眉标，D1/CMS 更新必须先通过这些源字段门禁再进入静态构建。
 - **多语译文任务标记 approved 后仍必须重新构建**：`approve_job` 只是 D1 审核状态变更，不替代发布；完成批量审核后必须 bump revision、重新构建/部署并回读最终线上 URL，避免静态产物落后于 D1。
 
@@ -140,7 +140,7 @@ D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数�
 
 ### 明确禁止的捷径
 
-- 不打开浏览器后台完成文章发布，不抓取 Google Translate 网页，不用非官方或费用/额度不明翻译 API。
+- 人工可以使用正式后台浏览器完成编辑、审核和发布；AI、localGPT、脚本和自动化发布不得使用浏览器自动化或网页抓取代替受控 API。Google Translate 网页不是后端发布接口，不能作为自动回写链路；仍不得使用非官方或费用/额度不明翻译 API。
 - 不在构建后用一次性正则或脚本修改 `dist/**/*.html` 来掩盖 D1/模板问题。
 - 不以固定文章总数、固定语种数、固定产品数或固定分页数作为成功条件；只验证 D1 当前资源的完整性、增长和一致性。
 - 不为了通过 CI 临时删除图片、翻译、卡片、评价或 D1 数据；必须修复真正的 D1 记录、共享模板、渲染器或迁移逻辑。
