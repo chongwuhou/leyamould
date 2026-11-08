@@ -1,6 +1,14 @@
 {
-  "es": "Botella deportiva",
-  "pt": "Garrafa esportiva",
-  "ru": "Спортивная бутылка",
-  "tr": "Spor şişesi"
+  "es": {
+    "title": "Botella deportiva"
+  },
+  "pt": {
+    "title": "Garrafa esportiva"
+  },
+  "ru": {
+    "title": "Спортивная бутылка"
+  },
+  "tr": {
+    "title": "Spor şişesi"
+  }
 }
