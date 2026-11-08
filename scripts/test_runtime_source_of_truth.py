@@ -26,6 +26,25 @@ CHECKS = {
     "functions/_shared/translation.js": [
         ("[a-z]{2}", "translation approval locale regex"),
     ],
+    "functions/_shared/product-seo.js": [
+        ('new Set(["en","es","pt","ru","tr"])', "product SEO locale set"),
+        ("SEO_LOCALES", "legacy product SEO locale constant"),
+    ],
+    "functions/_shared/blog-photo-cover-guard.js": [
+        ('PHOTO_LANGS=Object.freeze(["es","pt","ru","tr"])', "photo locale constant"),
+    ],
+    "functions/api/admin/blog-batch.js": [
+        ('const LOCALES = [', "legacy Blog batch locale array"),
+        ("LOCALES.includes", "legacy Blog batch locale check"),
+        ("LOCALES.length", "legacy Blog batch locale count"),
+    ],
+    "blog_media_source.py": [
+        ("locale not in ('en','es','pt','ru','tr')", "Blog media locale tuple"),
+        ("https://xuyibottles.com", "Blog media origin"),
+    ],
+    "scripts/admin_route.py": [
+        ('"es","pt","ru","tr"', "admin route locale list"),
+    ],
     "scripts/render_locales.py": [
         ("BLOG_DATE_LABELS={", "Blog date labels in code"),
         ("https://xuyibottles.com", "renderer origin"),
