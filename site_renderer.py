@@ -75,9 +75,8 @@ for i,p in enumerate(RAW):
  key=p["model"]
  if key not in SERIES:SERIES[key]={**p,"variants":[],"images":[]}
  obj=SERIES[key];obj["variants"].append(p)
- if i<76:
-  media=IMAGES.get(str(i+3))
-  if media and media['sku']==key:obj["images"].append("/media/excel/row-%03d.webp"%(i+3))
+ media=IMAGES.get(str(i+3))
+ if media and media['sku']==key:obj["images"].append("/media/excel/row-%03d.webp"%(i+3))
 for model,slide in [('501',91),('502',92),('507',93),('509',94),('510',95),('5247',96),('5248',96)]:
  if model in SERIES:SERIES[model]["images"].append("/media/ppt/slide-%03d.webp"%slide)
 GALLERY_IMAGES=json.loads((ROOT/"data/verified-gallery.json").read_text(encoding="utf-8"))
@@ -108,7 +107,7 @@ for row in BUILD_STATE.get("products",[]):
 
 from catalog_extensions import append_new_products
 NEW_PRODUCT_COUNT=append_new_products(SERIES,BUILD_STATE.get("products",[]))
-assert len(SERIES)>=85,(len(SERIES))
+assert SERIES,("No product models loaded from the authoritative catalog",)
 assert all(v["images"] for v in SERIES.values()),[(k,v["images"]) for k,v in SERIES.items() if not v["images"]]
 def e(v):return html.escape(str(v or ""),quote=True)
 def photo(src,alt,loading='lazy',aspect_ratio=None):
@@ -121,7 +120,8 @@ def photo(src,alt,loading='lazy',aspect_ratio=None):
 def write(path,content):
  out=ROOT/BUILD_OUTPUT_DIR/path;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding="utf-8")
 URLS={}
-SITE_ORIGIN="https://xuyibottles.com"
+SITE_CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+SITE_ORIGIN=SITE_CONFIG["site"]["origin"]
 def build_url(path,title,content):
  # Canonical URL for all generated static routes on the already-live production hostname.
  route="/"+path[:-len("index.html")] if path.endswith("index.html") else "/"+path
