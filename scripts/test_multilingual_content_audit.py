@@ -99,8 +99,8 @@ for loc in LOCALES:
   body=document.split('<main id="main-content">',1)[1].split('</main>',1)[0]
   timeline=re.search(r'<div class="blog-meta">.*?</div>',body,re.S)
   assert timeline,(loc,slug,"missing blog timeline")
-  assert '<time datetime="'+published+'">'+labels[0]+" "+published+"</time>" in timeline.group(),(loc,slug,"published date")
-  assert ("<time datetime="+chr(34)+str(modified)+chr(34)+">"+labels[1]+" "+str(modified)+"</time>" in timeline.group()) == bool(modified and modified>published),(loc,slug,"reviewed date")
+  assert '<time datetime="'+published+'">'+labels["published"]+" "+published+"</time>" in timeline.group(),(loc,slug,"published date")
+  assert ("<time datetime="+chr(34)+str(modified)+chr(34)+">"+labels["reviewed"]+" "+str(modified)+"</time>" in timeline.group()) == bool(modified and modified>published),(loc,slug,"reviewed date")
   assert "Updated 2026" not in timeline.group(),(loc,slug,"English updated label")
   assert '"datePublished":"'+published+'"' in document,(loc,slug,"schema published date")
   assert 'property="article:published_time" content="'+published+'"' in document,(loc,slug,"head publish date")
