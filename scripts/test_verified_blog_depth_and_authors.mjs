@@ -19,7 +19,7 @@ const raw={
 };
 const saved=normalizeBlogPost(raw);
 assert(saved.authorPerson?.name===person.name&&saved.depthEvidence===false);
-const template='<html><head><title>Page</title></head><body><main id="main-content">Body</main></body></html>';
+const template='<html><head><title>Page</title><link rel="canonical" href="https://xuyibottles.com/blog/"></head><body><main id="main-content">Body</main></body></html>';
 const full=composePage(template,blogHtml(saved),saved,"/blog/tritan-vs-pp-petg-pc/");
 assert(full.includes("Mock Editorial Person"));
 const parts=Array.from(full.matchAll(/application\/ld\+json">([\s\S]*?)<\/script>/g));
