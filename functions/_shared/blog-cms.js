@@ -346,7 +346,12 @@ export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs){
   const match=matches[i],block=match[0],start=match.index;
   if(i>0&&source.slice(previousEnd,start).trim())
    throw Error("Localized Blog cards are not one contiguous grid");
-  const hrefs=[...block.matchAll(/href="\/(?:(?:en|es|pt|ru|tr)\/)?blog\/([a-z0-9]+(?:-[a-z0-9]+)*)\/"/g)].map(x=>x[1]);
+  const hrefs=[...block.matchAll(/href="([^"]+)"/g)].map(match=>{
+   const parts=String(match[1]||"").split("?")[0].split("/").filter(Boolean);
+   if(parts.length===2&&parts[0]==="blog")return parts[1];
+   if(parts.length===3&&parts[1]==="blog")return parts[2];
+   return "";
+  }).filter(Boolean);
   if(hrefs.length!==3||new Set(hrefs).size!==1)
    throw Error("Localized Blog card identity or link count is invalid");
   const slug=hrefs[0];
@@ -367,9 +372,12 @@ export function blogCard(post){
 }
 export function composePage(template,body,post,route){
  if(!template.includes('<main id="main-content">'))throw Error('Blog page template missing');
+ const originMatch=template.match(/(?:href|content)="(https?:\/\/[^/]+)\//);
+ const origin=originMatch?.[1];
+ if(!origin)throw Error('Blog page template origin missing');
  let html=template.replace(/<main id="main-content">[\s\S]*?<\/main>/,'<main id="main-content">'+body+'</main>');
  if(post){
-  const url='https://xuyibottles.com'+route;
+  const url=origin+route;
   html=html.replace(/<title>[\s\S]*?<\/title>/,'<title>'+esc(post.title)+'</title>');
   html=html.replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+esc(post.description)+'">');
   html=html.replace(/<link rel="canonical" href="[^"]*">/,'<link rel="canonical" href="'+esc(url)+'">');
@@ -383,12 +391,12 @@ export function composePage(template,body,post,route){
   // If the owner changes a D1 article cover, do not reuse dimensions of
   // the old immutable static shell's image (they may be incorrect).
   const oldOg=html.match(/<meta property="og:image" content="([^"]*)">/);
-  const newOgUrl='https://xuyibottles.com'+post.cover;
+  const newOgUrl=origin+post.cover;
   if(!oldOg || oldOg[1]!==newOgUrl)
    html=html.replace(/<meta property="og:image:(?:width|height)" content="\d+">/g,'');
   html=html.replace(/<meta property="og:image" content="[^"]*">/,'');
   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g,'');
-  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'XUYI Bottles',url:'https://xuyibottles.com/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
+  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'XUYI Bottles',url:origin+'/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:[origin+post.cover]};
   if(actualPublishedDate(post))graph.datePublished=actualPublishedDate(post);
   if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
     .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com|www\.uspto\.gov|www\.pantone\.com|health\.clevelandclinic\.org)\//.test(s.url))
@@ -403,7 +411,7 @@ export function composePage(template,body,post,route){
        mainEntity:validFaqs.map(q=>({'@type':'Question',name:q.question,
          acceptedAnswer:{'@type':'Answer',text:q.answer}}))
      }).replace(/</g,'\\u003c')+'</script>':'';
-  html=html.replace('</head>','<meta property="og:image" content="'+esc('https://xuyibottles.com'+post.cover)+'"><script type="application/ld+json">'+safe+'</script>'+faqMarkup+'</head>');
+  html=html.replace('</head>','<meta property="og:image" content="'+esc(origin+post.cover)+'"><script type="application/ld+json">'+safe+'</script>'+faqMarkup+'</head>');
  }
  return html;
 }
