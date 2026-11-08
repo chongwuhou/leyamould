@@ -7,7 +7,7 @@ import {esc,blogHtml,renderDepthEvidence,composePage,normalizeBlogPost} from "..
 const parts=[PART1,PART2,PART3];
 const all={...PART1.articles,...PART2.articles,...PART3.articles};
 assert.equal(Object.keys(all).length,15);
-const template='<html><head><title>Buyer guide</title></head><body><main id="main-content">Original</main></body></html>';
+const template='<html><head><title>Buyer guide</title><link rel="canonical" href="https://xuyibottles.com/blog/"></head><body><main id="main-content">Original</main></body></html>';
 let count=0;
 for(const post of BLOGS){
  if(!all[post.slug] && !post.slug.includes("shaker-bottle-wholesale"))continue;
