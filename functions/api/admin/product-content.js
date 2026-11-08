@@ -3,7 +3,8 @@ import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
 import { MANAGED_MODELS } from "../../_shared/xuyi-routes.js";
 import { authorizeAdminRequest } from "../../_shared/admin-security.js";
-import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";
+import { normalizeNewProduct } from "../../_shared/new-product.js";
+import {loadProductAdminConfig} from "../../_shared/product-admin-config.js";
 import { imageKey } from "../../_shared/r2-usage.js";
 import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo,configuredProductSeoLocales} from "../../_shared/product-seo.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -24,11 +25,12 @@ export async function onRequestGet(context){
   const denied=await auth(context);if(denied)return denied;
   const db=context.env.XUYI_DB;await ensure(db);
   const rows=(await db.prepare("SELECT model,content_json,publication_status,updated_at FROM xuyi_product_content ORDER BY model LIMIT 1000").all()).results||[];
-  // D1 stores content overrides, not the original 93 product records.
-  // Expose the allowlisted source models to the authenticated CMS picker,
-  // including all eight LO models without writing synthetic D1 rows.
-  return respond({categories:CATEGORY_OPTIONS,catalogModels:[...MANAGED_MODELS].sort(),
-    items:rows.map(r=>({model:r.model,content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
+  const adminConfig=await loadProductAdminConfig(db);
+  const items=rows.map(r=>({model:r.model,content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}));
+  const productModels=[...new Set([...MANAGED_MODELS,...items.map(row=>row.model)])].sort();
+  return respond({categories:adminConfig.config.categories,fields:adminConfig.config.fields,
+    configUpdatedAt:adminConfig.updatedAt,productCount:productModels.length,
+    catalogModels:[...MANAGED_MODELS].sort(),productModels,items});
 }
 export async function onRequestPost(context){
   const denied=await auth(context);if(denied)return denied;
@@ -38,10 +40,11 @@ export async function onRequestPost(context){
     if(!(await authorizeAdminRequest(context.request,context.env)))return respond({error:"Admin authorization required"},401);
     const model=clean(p.model,80);
     const status=p.status==="published"?"published":"draft";
-    let content;
-    try{content=normalizeNewProduct(model,p.content,status)}
-    catch(error){return respond({error:String(error.message||error)},400)}
     const db=context.env.XUYI_DB;await ensure(db);
+    const adminConfig=await loadProductAdminConfig(db);
+    let content;
+    try{content=normalizeNewProduct(model,p.content,status,{categories:adminConfig.config.categories})}
+    catch(error){return respond({error:String(error.message||error)},400)}
     const localeConfig=await configuredProductSeoLocales(db);
     const prior=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
     if(prior){

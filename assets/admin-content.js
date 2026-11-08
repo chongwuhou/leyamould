@@ -3,7 +3,13 @@
  const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
  const $=id=>document.getElementById(id);
  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- let state={},tab="brand",dirty=false,bannerLocale="en";
+ let state={},tab="brand",dirty=false,bannerLocale="";
+ const sourceLocale=()=>state.settings?.languages?.sourceLocale||state.settings?.languages?.defaultLocale||state.settings?.languages?.languages?.[0]?.code||"";
+ const sourceLanguageName=()=>{const code=sourceLocale();const item=(state.settings?.languages?.languages||[]).find(x=>x.code===code);return item?.nativeName||item?.displayName||code||"来源语言"};
+ const publishableLanguageHint=()=>{const names=(state.settings?.languages?.languages||[]).filter(x=>x.enabled!==false&&x.publishReady!==false).map(x=>x.nativeName||x.displayName||x.code);return names.length?names.join("、"):"已配置语言"};
+ const productFieldDefinitions=kind=>state.products?.config?.fields?.[kind]||[];
+ const productFieldKeys=kind=>productFieldDefinitions(kind).map(item=>item.key);
+ const renderProductFields=kind=>productFieldDefinitions(kind).map(item=>field(item.key,"",item.label,item.rows)).join("");
  const requiredData={brand:"brand",banners:"bannerDraft",navigation:"site",pages:"pages",
   "page-body":"pageBodies",products:"products","new-product":"products",locales:"locales"};
  const say=v=>{$("content-status").textContent=v};
@@ -31,6 +37,7 @@
     if(result.status==="fulfilled")state[key]=result.value;
     else{state[key]=null;errors.push(route+": "+result.reason.message)}
    });
+   bannerLocale=sourceLocale();
    state.bannerDraft=null;
    if(state.banners){
     if(state.banners.config)state.bannerDraft=structuredClone(state.banners.config);
@@ -71,9 +78,9 @@
      '<label class="block-label">当前编辑语言 <select id="cms-banner-language">'+
        options.map(([code,label])=>'<option value="'+code+'"'+(code===bannerLocale?' selected':'')+'>'+label+'</option>').join("")+'</select></label>';
    for(let i=0;i<items.length;i++){
-    const item=items[i],copy=bannerLocale==="en"?item:item.translations?.[bannerLocale]||{};
+    const item=items[i],copy=bannerLocale===sourceLocale()?item:item.translations?.[bannerLocale]||{};
     html+='<section style="padding:14px 0;border-bottom:1px solid #ddd"><h4>Banner '+(i+1)+'</h4>';
-    if(bannerLocale==="en"){
+    if(bannerLocale===sourceLocale()){
      html+=field("b"+i+"-img",item.img,"高清图片路径（R2 /media/... 或现有 /assets/...）")+
        '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0">'+
        '<img data-banner-preview="'+i+'" src="'+esc(item.img)+'" alt="Banner '+(i+1)+' 当前图片" style="width:180px;height:110px;object-fit:contain;border:1px solid #ddd;border-radius:8px">'+
@@ -112,19 +119,13 @@
    '<select id="cms-product-matches" size="6" aria-label="已有商品型号匹配结果" style="width:100%;margin:8px 0 12px"></select>'+
    '<p id="cms-product-current" role="status" aria-live="polite"></p>'+
    field("model","","当前选中型号（从上方选择）")+
-   field("name","","英文产品名称")+
-   field("material","","材质/部件材料（必须真实核实）")+
-   field("capacity","","容量")+
-   field("image","","产品主图路径（媒体库上传后复制 /media/product/...）")+
-   field("description","","英文产品描述",4)+
-   field("seoTitle","","SEO Title")+
-   field("seoDescription","","Meta Description",3)+
+   renderProductFields("legacy")+
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
    button("保存产品到 D1","product");
   }
   if(tab==="new-product"){
    const cats=state.products?.categories||[];
-   html='<h3>工厂目录安全批量导入</h3><p>选择由工厂画册整理的 JSON 清单。系统通过现有后台媒体 API 上传图片到 R2，再通过现有产品 CMS API 创建 D1 商品；已有型号自动跳过，不覆盖原有商品或人工编辑。发布后生成英文商品页，其他语言需完成对应译文后再生成。</p>'+
+   html='<h3>工厂目录安全批量导入</h3><p>选择由工厂画册整理的 JSON 清单。系统通过现有后台媒体 API 上传图片到 R2，再通过现有产品 CMS API 创建 D1 商品；已有型号自动跳过，不覆盖原有商品或人工编辑。发布后按来源语言生成商品页，其他已配置语言需完成对应译文后再生成。</p>'+
     '<label class="block-label">产品目录 JSON <input id="cms-new-bulk-file" type="file" accept=".json,application/json"></label>'+
     button("安全导入产品目录（创建式，不覆盖已有商品）","new-product-bulk")+
     '<label class="block-label">编辑已导入的新商品 <select id="cms-new-existing"><option value="">新建商品</option>'+
@@ -132,54 +133,30 @@
      '<p>选择已导入的新商品可更新其 D1 资料；旧目录型号不会在此修改。</p>'+
      '<hr><h3>单个商品创建</h3>'+
     field("model","","新商品型号 / URL 标识（小写英文字母、数字和短横线）")+
-    field("factoryModel","","工厂画册印刷型号（保留原大小写）")+
-    '<label class="block-label">产品类别 <select data-cms-field="category">'+
-      cats.map(label=>'<option value="'+esc(label)+'">'+esc(label)+'</option>').join("")+'</select></label>'+
-    field("name","","英文产品名称")+
-    field("capacity","","容量（保留画册原始规格与多容量关系）")+
-    field("material","","材质（未确认时明确标注待核实）")+
-    field("dimensions","","产品尺寸（按画册原文）")+
-    field("unit_weight","","单个产品重量")+
-    field("temperature_range","","温度范围")+
-    field("colors","","颜色选项（可选）")+
-    field("packing","","单品包装信息（可选）")+
-    field("retail_box_size","","彩盒尺寸")+
-    field("carton_quantity","","外箱装量")+
-    field("carton_size","","外箱尺寸")+
-    field("carton_gross_weight","","外箱毛重")+
-    field("catalogOunceLabel","","画册印刷的 oz 标识")+
-    field("sourceDocument","","来源文件名")+
-    field("sourcePage","","来源页码")+
-    field("sourceNotes","","画册备注及需要确认的规格",4)+
-    field("qcStatus","","资料核验状态")+
-    field("imageReviewStatus","","图片审核状态")+
-    field("image","","R2 产品主图路径")+
-    field("description","","英文产品说明（保留全部已知信息及待确认事项）",5)+
-    field("seoTitle","","SEO Title（最多 90 字符）")+
-    field("seoDescription","","Meta Description（最多 240 字符）",3)+
+    renderProductFields("newProduct")+
     '<label class="block-label">保存状态 <select data-cms-field="status"><option value="draft">只存草稿，不生成页面</option><option value="published">资料核实完成，进入自动发布队列</option></select></label>'+
     '<p>页面路径：/products/型号/。新产品复用现有列表、详情、图片、SEO 与 R2 模板。</p>'+
     button("保存单个新商品","new-product");
   }
   if(tab==="page-body"){
    html='<h3>普通页面正文管理</h3><p>管理 About、Why Us、Capabilities 等页面；Blog 与产品详情各用其自身编辑器。草稿不影响前台，审核后发布才会覆盖现有页面主内容。</p>'+
-    '<label class="block-label">英文原始页面 <select id="cms-page-body-route"></select></label>'+
+    '<label class="block-label">来源语言原始页面 <select id="cms-page-body-route"></select></label>'+
     field("pageBodyHtml","","主内容完整 HTML（保留类名、图片、链接及页面结构）",20)+
     '<label class="block-label">状态 <select data-cms-field="pageBodyStatus"><option value="draft">草稿</option><option value="published">审核发布</option></select></label>'+
-    button("读取当前英文页正文","page-body-source")+' '+button("保存页面正文","page-body-save");
+    button("读取当前来源语言页正文","page-body-source")+' '+button("保存页面正文","page-body-save");
   }
   if(tab==="locales"){
-   html='<h3>多语言正式页面 · 翻译审核</h3><p>先复制英文原文，再逐段翻译。产品详情、普通页面和已发布 Blog 文章共用同一条 D1 正式页面翻译记录；只有完整审核并保存才会更新对应语言 URL，不会把英文假装成其他语言。</p>'+
+   html='<h3>多语言正式页面 · 翻译审核</h3><p>先复制来源语言原文，再逐段翻译。产品详情、普通页面和已发布 Blog 文章共用同一条 D1 正式页面翻译记录；只有完整审核并保存才会更新对应语言 URL，不会把来源语言内容假装成其他语言。</p>'+
     '<label class="block-label">目标语言 <select id="cms-locale">'+
        (state.settings?.languages?.languages||[])
           .filter(x=>x.code!==state.settings?.languages?.sourceLocale)
           .map(x=>'<option value="'+esc(x.code)+'">'+esc(x.nativeName||x.displayName||x.code)+'</option>').join("")+
      '</select></label>'+
-    '<label class="block-label">英文原始路径 <select id="cms-locale-route"></select></label>'+
+    '<label class="block-label">来源语言原始路径 <select id="cms-locale-route"></select></label>'+
     field("localeTitle","","翻译后的 Title")+
     field("localeDescription","","翻译后的 Meta Description")+
     field("localeHtml","","已完整翻译的 Main HTML",16)+
-    button("读取英文页面供翻译","locale-source")+' '+
+    button("读取来源语言页面供翻译","locale-source")+' '+
     button("审核完成并保存","locale-save");
   }
   container.innerHTML=html;
@@ -193,8 +170,9 @@
      try{
       const body=new FormData();body.set("kind","shared");body.set("image",file);
       const sourceAlt=String(state.bannerDraft.slides[i].alt||"").trim();
-      if(!sourceAlt)throw Error("请先填写这张 Banner 的英文 ALT，再上传图片");
-      body.set("altByLocale",JSON.stringify({en:sourceAlt}));
+      if(!sourceAlt)throw Error("请先填写这张 Banner 的来源语言 ALT，再上传图片");
+      const locale=sourceLocale();if(!locale)throw Error("D1 来源语言未配置");
+      body.set("altByLocale",JSON.stringify({[locale]:sourceAlt}));
       const response=await fetch("/api/admin/media",{method:"POST",
        headers:{"authorization":"Bearer "+token()},body,cache:"no-store"});
       const saved=await response.json().catch(()=>({}));
@@ -237,7 +215,7 @@
    const known=[...new Set([...(state.products.catalogModels||[]),
      ...(state.products.items||[]).filter(x=>!x.content?.newProduct).map(x=>x.model)])].sort();
    let requestNumber=0;
-   const sourceFields=["name","material","capacity","image","description","seoTitle","seoDescription"];
+   const sourceFields=productFieldKeys("legacy");
    const resetFields=()=>{for(const key of sourceFields){
      const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value="";
    }container.querySelector('[data-cms-field="status"]').value="draft";};
@@ -295,7 +273,7 @@
     const select=$("cms-new-existing");
     if(select)select.addEventListener("change",()=>{
      const entry=(state.products?.items||[]).find(row=>row.model===select.value&&row.content?.newProduct===true);
-     const keys=["model","factoryModel","name","capacity","material","dimensions","unit_weight","temperature_range","colors","packing","retail_box_size","carton_quantity","carton_size","carton_gross_weight","catalogOunceLabel","sourceDocument","sourcePage","sourceNotes","qcStatus","imageReviewStatus","image","description","seoTitle","seoDescription"];
+     const keys=["model",...productFieldKeys("newProduct")];
      for(const key of keys){
       const element=container.querySelector('[data-cms-field="'+key+'"]');
       if(element)element.value=entry?(key==="model"?entry.model:entry.content[key]||""):"";
@@ -345,14 +323,14 @@
   if(tab!=="banners")return;
   for(let i=0;i<3;i++){
    const row=state.bannerDraft?.slides?.[i];if(!row)continue;
-   if(bannerLocale==="en"){
+   if(bannerLocale===sourceLocale()){
     row.img=value("b"+i+"-img");
     row.link=value("b"+i+"-link");
    }
-   const target=bannerLocale==="en"?row:(row.translations?.[bannerLocale]||{});
+   const target=bannerLocale===sourceLocale()?row:(row.translations?.[bannerLocale]||{});
    for(const k of ["title","highlight","description","alt","cta"])
     target[k]=value("b"+i+"-"+k);
-   if(bannerLocale!=="en")row.translations[bannerLocale]=target;
+   if(bannerLocale!==sourceLocale())row.translations[bannerLocale]=target;
   }
  }
  const value=(name)=>document.querySelector('#content-form [data-cms-field="'+name+'"]')?.value?.trim()||"";
@@ -362,7 +340,7 @@
    let result;
    if(action==="banners"){
     collectBannerFields();
-    if(!window.confirm("确认 3 张 Banner 的图片、按钮链接和五语文案均已检查？保存后进入 D1 定时发布队列。"))return;
+    if(!window.confirm("确认 3 张 Banner 的图片、按钮链接和已配置语言文案均已检查？保存后进入 D1 定时发布队列。"))return;
     result=await api("home-banners",{config:state.bannerDraft});
    }else if(action==="brand"){
     const b=structuredClone(state.brand.config);
@@ -389,16 +367,12 @@
      if(!selectedExisting&&exists)throw Error("该型号已存在；请在编辑列表中选择后更新，创建操作不会覆盖已有商品。");
      const existingEntry=selectedExisting?(state.products?.items||[]).find(row=>row.model===selectedExisting&&row.content?.newProduct===true):null;
      const status=value("status");
-     if(status==="published"&&!window.confirm(selectedExisting?"确认更新这款已导入的新商品？将使用当前 D1 资料和 R2 主图生成英文商品页；其他语言仍需审核译文。":"请确认容量、材质、产品图片属于真实型号；确认后保存 D1 并排队生成英文产品页。四语译文需要另外审核。"))return;
-     const content={category:value("category"),factoryModel:value("factoryModel"),name:value("name"),material:value("material"),
-      capacity:value("capacity"),dimensions:value("dimensions"),unit_weight:value("unit_weight"),temperature_range:value("temperature_range"),
-      colors:value("colors"),packing:value("packing"),retail_box_size:value("retail_box_size"),carton_quantity:value("carton_quantity"),
-      carton_size:value("carton_size"),carton_gross_weight:value("carton_gross_weight"),catalogOunceLabel:value("catalogOunceLabel"),
-      sourceDocument:value("sourceDocument"),sourcePage:value("sourcePage"),sourceNotes:value("sourceNotes"),qcStatus:value("qcStatus"),
-      imageReviewStatus:existingEntry&&existingEntry.content.image!==value("image")?"pending_manual_review":value("imageReviewStatus"),image:value("image"),description:value("description"),
-      seoTitle:value("seoTitle"),seoDescription:value("seoDescription"),
-      sourceSha256:existingEntry?.content?.sourceSha256||"",
-      sourceImageSha256:existingEntry?.content?.image===value("image")?(existingEntry.content.sourceImageSha256||""):""};
+     if(status==="published"&&!window.confirm(selectedExisting?"确认更新这款已导入的新商品？将使用当前 D1 资料和 R2 主图按来源语言生成商品页；其他已配置语言仍需审核译文。":"请确认容量、材质、产品图片属于真实型号；确认后保存 D1 并排队按来源语言生成产品页。其他已配置语言译文需要另外审核。"))return;
+     const content={category:value("category")};
+     for(const key of productFieldKeys("newProduct"))content[key]=value(key);
+     content.imageReviewStatus=existingEntry&&existingEntry.content.image!==value("image")?"pending_manual_review":value("imageReviewStatus");
+     content.sourceSha256=existingEntry?.content?.sourceSha256||"";
+     content.sourceImageSha256=existingEntry?.content?.image===value("image")?(existingEntry.content.sourceImageSha256||""):"";
      result=await api("product-content",{action:"create_product",createOnly:!selectedExisting,model,status,content});
    }else if(action==="new-product-bulk"){
     const file=document.getElementById("cms-new-bulk-file")?.files?.[0];
@@ -430,7 +404,7 @@
     const already=manifest.records.filter(row=>existing.has(row.model)).map(row=>row.model);
     const fresh=manifest.records.filter(row=>!existing.has(row.model));
     if(!fresh.length){say("导入结束：清单中的型号已全部存在，未修改任何商品。");return}
-    if(!window.confirm("来源："+String(manifest.sourceDocument||"工厂目录")+"\n清单："+manifest.records.length+" 款\n本次新建："+fresh.length+" 款\n已存在跳过："+already.length+" 款\n\n将逐款上传原始产品图片到 R2，并通过后台 CMS API 创建已发布英文商品页。已有型号不会覆盖。是否继续？"))return;
+    if(!window.confirm("来源："+String(manifest.sourceDocument||"工厂目录")+"\n清单："+manifest.records.length+" 款\n本次新建："+fresh.length+" 款\n已存在跳过："+already.length+" 款\n\n将逐款上传原始产品图片到 R2，并通过后台 CMS API 创建已发布来源语言商品页。已有型号不会覆盖。是否继续？"))return;
     const created=[],skipped=[...already],failed=[];
     for(let i=0;i<fresh.length;i++){
       const row=fresh[i];let imagePath="";
@@ -442,7 +416,7 @@
         if(hash!==row.imageSha256.toLowerCase())throw Error("产品图片 SHA-256 校验失败");
         const imageFile=new File([bytes],row.model+".webp",{type:"image/webp"});
         const form=new FormData();form.set("kind","product");form.set("image",imageFile);
-        form.set("altByLocale",JSON.stringify(row.imageAlt||{en:(row.content.factoryModel||row.model)+" "+(row.content.name||"drinkware")+" factory catalog product image"}));
+        const fallbackLocale=sourceLocale();form.set("altByLocale",JSON.stringify(row.imageAlt||{[fallbackLocale]:(row.content.factoryModel||row.model)+" "+(row.content.name||"drinkware")+" factory catalog product image"}));
         const upload=await fetch("/api/admin/media",{method:"POST",headers:{authorization:"Bearer "+token()},body:form,cache:"no-store"});
         const media=await upload.json().catch(()=>({}));
         if(!upload.ok||!media.path)throw Error(media.error||"R2 图片上传失败");
@@ -468,13 +442,12 @@
    }else if(action==="product"){
     if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
       throw Error("请先从已有商品型号列表中选择产品");
-    result=await api("product-content",{action:"save_product",model:value("model"),
-     status:value("status"),content:{name:value("name"),material:value("material"),capacity:value("capacity"),
-       description:value("description"),image:value("image"),seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
+    const content={};for(const key of productFieldKeys("legacy"))content[key]=value(key);
+    result=await api("product-content",{action:"save_product",model:value("model"),status:value("status"),content});
    }else if(action==="page-body-source"){
     const route=$("cms-page-body-route").value;
     const response=await fetch(route,{cache:"no-store"});
-    if(!response.ok)throw Error("无法读取英文页面正文");
+    if(!response.ok)throw Error("无法读取来源语言页面正文");
     const main=new DOMParser().parseFromString(await response.text(),"text/html").getElementById("main-content");
     if(!main)throw Error("找不到页面的 main 内容");
     document.querySelector('[data-cms-field="pageBodyHtml"]').value=main.innerHTML;
@@ -486,12 +459,12 @@
       mainHtml:value("pageBodyHtml")});
    }else if(action==="locale-source"){
     const response=await fetch($("cms-locale-route").value,{cache:"no-store"});
-    if(!response.ok)throw Error("无法读取英文页面");
+    if(!response.ok)throw Error("无法读取来源语言页面");
     const doc=new DOMParser().parseFromString(await response.text(),"text/html");
     const main=doc.getElementById("main-content");
-    if(!main)throw Error("英文原页面缺少 main");
+    if(!main)throw Error("来源语言原页面缺少 main");
     document.querySelector('[data-cms-field="localeHtml"]').value=main.innerHTML;
-    say("已读取英文页面。请先完成全文翻译与检查，再点击审核保存。");return;
+    say("已读取来源语言页面。请先完成全文翻译与检查，再点击审核保存。");return;
    }else if(action==="locale-save"){
     if(!window.confirm("确认全部可见正文已按目标语言翻译、图片链接及参数已经核对？"))return;
     result=await api("page-translations",{route:$("cms-locale-route").value,locale:$("cms-locale").value,

@@ -182,9 +182,9 @@ async function queuePublish(db) {
   return { revision: Number(row?.value || 0), requestedAt: now };
 }
 
-function validatePages(input) {
-  if (!Array.isArray(input) || input.length !== DEFAULT_PAGES.length) {
-    throw new Error("Page list must contain all managed pages");
+function validatePages(input, knownRoutes = KNOWN_ROUTES) {
+  if (!Array.isArray(input) || !input.length) {
+    throw new Error("Page list must contain at least one configured page");
   }
   const seen = new Set();
   return input.map((row) => {
@@ -193,7 +193,7 @@ function validatePages(input) {
     const seoTitle = clean(row?.seoTitle);
     const metaDescription = clean(row?.metaDescription);
     const robots = clean(row?.robots) || "noindex,nofollow";
-    if (!KNOWN_ROUTES.has(route)) throw new Error("Unknown managed page: " + route);
+    if (!knownRoutes.has(route)) throw new Error("Unknown configured page: " + route);
     if (seen.has(route)) throw new Error("Duplicate managed page: " + route);
     if (!label || label.length > 120) throw new Error("Invalid page label: " + route);
     if (seoTitle.length > 90) throw new Error("SEO title is too long: " + route);
@@ -220,8 +220,9 @@ async function loadPages(db) {
   }));
   if (!stored.length) return { pages: DEFAULT_PAGES, usingDefaults: true };
   const byRoute = new Map(stored.map((row) => [row.route, row]));
+  const extras=stored.filter(row=>!KNOWN_ROUTES.has(row.route));
   return {
-    pages: DEFAULT_PAGES.map((fallback) => ({ ...fallback, ...(byRoute.get(fallback.route) || {}) })),
+    pages: [...DEFAULT_PAGES.map((fallback) => ({ ...fallback, ...(byRoute.get(fallback.route) || {}) })),...extras].sort((a,b)=>a.route.localeCompare(b.route)),
     usingDefaults: false
   };
 }
@@ -243,7 +244,9 @@ export async function onRequestPost(context) {
   catch { return response({ error: "Invalid JSON" }, 400); }
   if (payload.action !== "save_pages") return response({ error: "Unknown action" }, 400);
   try {
-    const pages = validatePages(payload.pages);
+    const configuredRows=(await db.prepare("SELECT route FROM site_pages").all()).results||[];
+    const knownRoutes=new Set([...KNOWN_ROUTES,...configuredRows.map(row=>String(row.route||""))].filter(Boolean));
+    const pages = validatePages(payload.pages,knownRoutes);
     // NEVER DELETE all of site_pages during an ordinary editor save: source
     // approved LO/G/transparent/new-model records would disappear forever.
     // Update the known rows and retain every other D1-owned route.

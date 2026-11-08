@@ -17,7 +17,7 @@
 <button type="button" class="admin-module-btn" data-admin-target="advanced">05 翻译工作流</button>
 <button type="button" class="admin-module-btn" data-admin-target="content">06 页面 / 品牌 / 产品 / SEO</button>
 <button type="button" class="admin-module-btn" data-admin-target="reviews">07 客户评价 ★</button>
-<button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品 SEO · 五语言 D1</button>
+<button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品 SEO · 多语言 D1</button>
 <button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
 <button type="button" class="admin-module-btn" data-admin-target="scheduler">10 自动发布与定时任务</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
@@ -83,20 +83,16 @@
 <section class="panel" id="product-seo-admin-panel" data-admin-module="productseo">
  <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO · CLOUDFLARE D1</div>
  <h2>产品 SEO 标题和描述（正式数据库）</h2>
- <p>101 个现有产品及以后新增型号均可按语言独立修改。SEO Title、Meta Description 和默认 OG 标题从 D1 正式记录生成；H1 仍由产品正文/正式规格管理。修改后点击顶部「一键全站重建」。</p>
+ <p><span id="product-seo-count">产品数量读取中</span>及以后新增型号均可按已配置语言独立修改。SEO Title、Meta Description 和默认 OG 标题从 D1 正式记录生成；H1 仍由产品正文/正式规格管理。修改后点击顶部「一键全站重建」。<span id="product-seo-language-summary">语言配置读取中</span></p>
  </div></div>
  <div class="row-actions"><button type="button" class="btn ghost" id="product-seo-reload">读取数据库</button></div>
  <p id="product-seo-status" role="status" aria-live="polite"></p>
  <form id="product-seo-editor">
   <label class="block-label">产品型号页面（选择官网真实型号）
-   <input id="product-seo-slug" list="product-seo-models" placeholder="2292、lo-001、2306-transparent" required></label>
+   <input id="product-seo-slug" list="product-seo-models" placeholder="输入官网产品型号，例如型号或 URL 标识" required></label>
   <datalist id="product-seo-models"></datalist>
   <label class="block-label">语言
-   <select id="product-seo-locale">
-    <option value="en">English</option><option value="es">Español</option>
-    <option value="pt">Português</option><option value="ru">Русский</option>
-    <option value="tr">Türkçe</option>
-   </select></label>
+   <select id="product-seo-locale" aria-label="选择已配置语言"></select></label>
   <label class="block-label">SEO Title（建议自然简洁，最多 90 字符）
    <input id="product-seo-title" required maxlength="90" minlength="12"></label>
   <label class="block-label">Meta Description（最多 240 字符）
@@ -111,7 +107,7 @@
  <div class="row-actions">
   <label>R2 文件分类 <select id="media-kind"><optgroup label="后台上传（有保护的删除）"><option value="product">产品图片</option><option value="page">页面图片</option><option value="shared">公共素材</option></optgroup><optgroup label="原始资产（只读）"><option value="ppt">PPT 旧图库</option><option value="excel">Excel 型号图片</option><option value="group">工厂与质检图片</option><option value="capability">制造能力配图</option><option value="gallery">旧款式画廊</option><option value="blog">博客图片</option></optgroup></select></label>
   <label>文件 <input type="file" id="media-upload" accept="image/jpeg,image/png,image/webp"></label>
-  <label>图片 ALT（英文，必填）<input id="media-upload-alt-en" maxlength="180" placeholder="例：550 ml plastic sports water bottle model 2501, product view"></label>
+  <label>图片 ALT（来源语言，必填）<input id="media-upload-alt-en" maxlength="180" placeholder="例：550 ml plastic sports water bottle model 2501, product view"></label>
   <button class="btn primary" type="button" id="media-upload-btn">上传到 R2</button>
   <button class="btn ghost" type="button" id="media-load">刷新素材</button>
  </div>

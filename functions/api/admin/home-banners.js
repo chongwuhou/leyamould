@@ -4,6 +4,11 @@ import {authorizeAdminRequest} from "../../_shared/admin-security.js";
 import {bumpPublishRevision,loadSiteSetting,defaultLanguageConfig,normalizeLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";
 import {normalizeBanners} from "../../_shared/home-banners.js";
 const json=(v,status=200)=>Response.json(v,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
+async function bannerLanguageOptions(db){
+ const saved=await loadSiteSetting(db,"language_config",defaultLanguageConfig());
+ const config=normalizeLanguageConfig(saved.value);
+ return {config,requiredLocales:publicLanguages(config).map(item=>item.code),sourceLocale:config.sourceLocale};
+}
 async function auth(c){
  if(!c.env.ADMIN_TOKEN)return json({error:"Admin not configured"},503);
  if(!(await authorizedBuildRequest(c.request,c.env)))return json({error:"Unauthorized"},401);
@@ -14,7 +19,9 @@ export async function onRequestGet(c){
  const denied=await auth(c);if(denied)return denied;
  try{
   const row=await c.env.XUYI_DB.prepare("SELECT value,updated_at FROM site_state WHERE key='home_banner_config'").first();
-  return json({source:row?"cloudflare-d1":"source-default",config:row?normalizeBanners(JSON.parse(row.value)):null,updatedAt:row?.updated_at||""});
+  const options=await bannerLanguageOptions(c.env.XUYI_DB);
+  return json({source:row?"cloudflare-d1":"source-default",config:row?normalizeBanners(JSON.parse(row.value),options):null,
+   sourceLocale:options.sourceLocale,locales:options.config.languages,updatedAt:row?.updated_at||""});
  }catch(err){return json({error:"Unable to read homepage banner configuration"},503)}
 }
 export async function onRequestPost(c){
@@ -24,8 +31,8 @@ export async function onRequestPost(c){
  let config;
  try{
   const languageRow=await loadSiteSetting(c.env.XUYI_DB,"language_config",defaultLanguageConfig());
-  const required=publicLanguages(normalizeLanguageConfig(languageRow.value)).map(x=>x.code);
-  config=normalizeBanners(value.config,{requiredLocales:required});
+  const configLanguage=normalizeLanguageConfig(languageRow.value);
+  config=normalizeBanners(value.config,{requiredLocales:publicLanguages(configLanguage).map(x=>x.code),sourceLocale:configLanguage.sourceLocale});
  }catch(error){return json({error:String(error.message||error)},400)}
  try{
   const db=c.env.XUYI_DB;

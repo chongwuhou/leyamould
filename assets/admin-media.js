@@ -5,16 +5,16 @@ const $=id=>document.getElementById(id);
 const say=message=>{const node=$("media-status");if(node)node.textContent=message};
 const kind=()=>$("media-kind")?.value||"product";
 const editable=()=>["product","page","shared"].includes(kind());
-let languages=[{code:"en",name:"English"}];
+let languages=[],sourceLocale="";
 function altInputs(parent,values={},includeEnglish=true){
  const inputs={};
  for(const locale of languages){
-  if(!includeEnglish&&locale.code==="en")continue;
+  if(!includeEnglish&&locale.code===sourceLocale)continue;
   const label=document.createElement("label");label.style.cssText="display:flex;flex-direction:column;gap:3px;min-width:180px;font-size:12px";
   label.textContent="ALT · "+(locale.name||locale.code);
   const input=document.createElement("input");
   input.type="text";input.maxLength=180;input.value=values[locale.code]||"";
-  input.placeholder=locale.code==="en"?"Describe this exact image":"审核后填写本语言描述";
+  input.placeholder=locale.code===sourceLocale?"Describe this exact image":"审核后填写本语言描述";
   input.dataset.altLocale=locale.code;label.append(input);parent.append(label);inputs[locale.code]=input;
  }
  return inputs;
@@ -35,7 +35,7 @@ async function list(cursor=""){
  const selectedKind=kind();
  const url="/api/admin/media?kind="+encodeURIComponent(selectedKind)+(cursor?"&cursor="+encodeURIComponent(cursor):"");
  const data=await api(url);
- languages=Array.isArray(data.altLocales)&&data.altLocales.length?data.altLocales:[{code:"en",name:"English"}];
+ languages=Array.isArray(data.altLocales)?data.altLocales:[];sourceLocale=data.sourceLocale||languages[0]?.code||"";
  const uploadLocales=$("media-upload-alt-locales");
  if(uploadLocales&&!cursor){uploadLocales.replaceChildren();
   altInputs(uploadLocales,{},false)}
@@ -60,7 +60,7 @@ async function list(cursor=""){
     const saved=await api("/api/admin/media",{method:"POST",
       headers:{"content-type":"application/json"},
       body:JSON.stringify({action:"save_alt",path:row.path,altByLocale:altValues(inputs)})});
-    photo.alt=saved.altByLocale.en;
+    photo.alt=saved.altByLocale[sourceLocale]||Object.values(saved.altByLocale||{})[0]||"";
     say("图片 ALT 已保存到 D1，发布修订号 "+saved.revision+"；构建完成后本语言页面自动更新。");
    }catch(error){say("保存 ALT 失败："+error.message)}
    finally{saveAlt.disabled=false}
@@ -139,7 +139,7 @@ async function upload(){
  if(!english){say("上传前请填写准确的英文 ALT：实际产品类型、可核实型号或容量");return}
  const button=$("media-upload-btn");button.disabled=true;say("正在上传旭一 R2…");
  try{
-  const values={en:english};
+  const values={[sourceLocale]:sourceAlt};
   for(const input of $("media-upload-alt-locales")?.querySelectorAll("[data-alt-locale]")||[])
    if(input.value.trim())values[input.dataset.altLocale]=input.value.trim();
   const body=new FormData();body.append("kind",kind());body.append("image",file);

@@ -19,10 +19,10 @@ export function safeBannerLink(value){
  try{const u=new URL(value);return u.protocol==="https:"&&!!u.hostname&&!u.username&&!u.password}
  catch{return false}
 }
-export function normalizeBanners(input,{requiredLocales=[]}={}){
+export function normalizeBanners(input,{requiredLocales=[],sourceLocale="en"}={}){
  if(!input||typeof input!=="object"||!Array.isArray(input.slides)||input.slides.length!==3)
   throw Error("Homepage must contain exactly 3 banner slides");
- const registry=new Set([...requiredLocales.filter(x=>x!=="en"),
+ const registry=new Set([...requiredLocales.filter(x=>x!==sourceLocale),
    ...input.slides.flatMap(x=>Object.keys(x?.translations||{}))]);
  return {schemaVersion:1,slides:input.slides.map((row,i)=>{
   if(!row||typeof row!=="object"||!safeBannerPath(row.img)||!safeBannerLink(row.link))

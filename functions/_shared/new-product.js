@@ -7,7 +7,7 @@ export const CATEGORY_OPTIONS=[
  "Spray Water Bottles","Two-Way Drinking Cups","Titanium Vacuum Cups"
 ];
 export const NEW_MODEL=/^[a-z0-9][a-z0-9-]{1,63}$/;
-export function normalizeNewProduct(model,content,status="draft"){
+export function normalizeNewProduct(model,content,status="draft",options={}){
  if(!NEW_MODEL.test(model)||model.includes("..")||MANAGED_MODELS.has(model))
   throw Error("New product model/slug is invalid or already exists");
  if(!content||typeof content!=="object"||Array.isArray(content))
@@ -32,7 +32,8 @@ export function normalizeNewProduct(model,content,status="draft"){
   imageReviewStatus:clean("imageReviewStatus",40),
   seoTitle:clean("seoTitle",90),seoDescription:clean("seoDescription",240)
  };
- if(!CATEGORY_OPTIONS.includes(data.category))throw Error("Choose a valid XUYI drinkware category");
+ const categories=Array.isArray(options.categories)&&options.categories.length?options.categories:CATEGORY_OPTIONS;
+ if(!categories.includes(data.category))throw Error("Choose a valid configured drinkware category");
  for(const [key,max] of [
   ["factoryModel",80],["name",180],["material",200],["capacity",120],["description",1300],
   ["colors",300],["packing",300],["dimensions",160],["unit_weight",120],["temperature_range",120],

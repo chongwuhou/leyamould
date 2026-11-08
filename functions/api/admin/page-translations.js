@@ -13,6 +13,10 @@ async function requireAdmin(c){
   if(!c.env.XUYI_DB)return respond({error:"XUYI_DB missing"},503);
   return null;
 }
+async function configuredRoutes(db){
+  try{return ((await db.prepare("SELECT route FROM site_pages ORDER BY route LIMIT 500").all()).results||[])
+    .map(row=>String(row.route||"")).filter(Boolean)}catch{return []}
+}
 export async function onRequestGet(c){
   const denied=await requireAdmin(c);if(denied)return denied;
   const rows=(await c.env.XUYI_DB.prepare(

@@ -6,10 +6,14 @@ import { MANAGED_ROUTES } from "../../_shared/xuyi-routes.js";
 
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(value,limit)=>String(value??"").trim().slice(0,limit);
-const allowedRoute=(route)=>MANAGED_ROUTES.has(route)
+const allowedRoute=(route,knownRoutes=MANAGED_ROUTES)=>knownRoutes.has(route)
   && (route==="/"||!/^\/(?:products|collections|blog|contact)(?:\/|$)/.test(route))
   && !["/privacy-policy/","/request-sample/"].includes(route);
 
+async function configuredRoutes(db){
+ try{return ((await db.prepare("SELECT route FROM site_pages ORDER BY route LIMIT 500").all()).results||[])
+   .map(row=>String(row.route||"")).filter(Boolean)}catch{return []}
+}
 async function ensure(db){
   await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_page_content(
     route TEXT PRIMARY KEY,
@@ -31,7 +35,8 @@ export async function onRequestGet(c){
   const rows=(await db.prepare(
     "SELECT route,main_html,publication_status,updated_at FROM xuyi_page_content ORDER BY route LIMIT 200"
   ).all()).results||[];
-  return respond({editableRoutes:[...MANAGED_ROUTES].filter(allowedRoute).sort(),
+  const knownRoutes=new Set([...MANAGED_ROUTES,...await configuredRoutes(db)]);
+  return respond({editableRoutes:[...knownRoutes].filter(route=>allowedRoute(route,knownRoutes)).sort(),
     items:rows.map(r=>({route:r.route,mainHtml:r.main_html,status:r.publication_status,updatedAt:r.updated_at}))});
 }
 export async function onRequestPost(c){
@@ -41,7 +46,8 @@ export async function onRequestPost(c){
   const route=clean(payload.route,250);
   const mainHtml=clean(payload.mainHtml,180000);
   const status=payload.status==="published"?"published":"draft";
-  if(!allowedRoute(route))return respond({error:"Route is not an editable XUYI page"},400);
+  const knownRoutes=new Set([...MANAGED_ROUTES,...await configuredRoutes(c.env.XUYI_DB)]);
+  if(!allowedRoute(route,knownRoutes))return respond({error:"Route is not an editable configured page"},400);
   if(mainHtml.length<100||!/<(?:section|article|div|h1)\b/i.test(mainHtml))
     return respond({error:"Complete page-body HTML is required"},400);
   if(/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i.test(mainHtml))

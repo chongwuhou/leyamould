@@ -70,6 +70,20 @@ CHECKS = {
     "locale_registry.py": [
         ('baseline.get("es"', "fixed locale baseline"),
     ],
+    "admin/index.html": [
+        ("101 个现有产品", "fixed admin product count"),
+        ("产品 SEO · 五语言 D1", "fixed admin language count"),
+        ('<option value="es">', "fixed admin SEO locale option"),
+    ],
+    "assets/admin-product-seo.js": [
+        ('models.includes("2292")', "fixed admin product default"),
+    ],
+    "assets/admin-content.js": [
+        ('bannerLocale="en"', "fixed CMS source locale"),
+        ('bannerLocale==="en"', "fixed CMS source locale check"),
+        ("五语", "fixed CMS language count"),
+        ("四语译文", "fixed CMS language count"),
+    ],
 }
 
 errors = []
