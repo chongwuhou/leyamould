@@ -7,7 +7,7 @@ const slugs=[
  "custom-water-bottle-mold-cost-lead-time",
  "custom-water-bottle-color-matching-pantone-guide"
 ];
-const shell='<html><head><title>old</title><meta name="description" content="old"><link rel="canonical" href="old"><meta property="og:url" content="old"></head><body><main id="main-content"></main></body></html>';
+const shell='<html><head><title>old</title><meta name="description" content="old"><link rel="canonical" href="https://xuyibottles.com/blog/"><meta property="og:url" content="old"></head><body><main id="main-content"></main></body></html>';
 for(const slug of slugs){
  const post=GUIDES.find(p=>p.slug===slug);
  assert(post,slug);
