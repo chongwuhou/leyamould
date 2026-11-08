@@ -19,6 +19,9 @@ class MockD1 {
         return {meta:{changes:1}};
       },
       async first(){
+        if(sql.includes("FROM site_state WHERE key=?")&&args[0]==="language_config"){
+          return {value:JSON.stringify({sourceLocale:"en",defaultLocale:"en",languages:["en","es","pt","ru","tr"].map((code,index)=>({code,pathPrefix:code==="en"?"":code,enabled:true,publishReady:true,sortOrder:index+1}))}),updated_at:""};
+        }
         if(sql.includes("FROM xuyi_blog_locale_schedule WHERE slug=? AND locale=?")){
           return db.localeRows.get(args[0]+"|"+args[1])||null;
         }
