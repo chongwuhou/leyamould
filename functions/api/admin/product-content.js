@@ -5,7 +5,7 @@ import { MANAGED_MODELS } from "../../_shared/xuyi-routes.js";
 import { authorizeAdminRequest } from "../../_shared/admin-security.js";
 import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";
 import { imageKey } from "../../_shared/r2-usage.js";
-import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo} from "../../_shared/product-seo.js";
+import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo,configuredProductSeoLocales} from "../../_shared/product-seo.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(v,n=500)=>String(v??"").trim().slice(0,n);
 async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_product_content(
@@ -42,6 +42,7 @@ export async function onRequestPost(context){
     try{content=normalizeNewProduct(model,p.content,status)}
     catch(error){return respond({error:String(error.message||error)},400)}
     const db=context.env.XUYI_DB;await ensure(db);
+    const localeConfig=await configuredProductSeoLocales(db);
     const prior=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
     if(prior){
       if(p.createOnly===true)return respond({error:"Model already exists; create-only import will not overwrite"},409);
@@ -72,7 +73,7 @@ export async function onRequestPost(context){
       return respond({error:"Model already exists; create-only import will not overwrite"},409);
     const revision=await bumpPublishRevision(db);
     return respond({saved:true,model,status,newProduct:true,route:"/products/"+model+"/",
-      locales:"English only until each translation is reviewed",...revision});
+      sourceLocale:localeConfig.sourceLocale,publishableLocales:[...localeConfig.locales],...revision});
   }
   if(p?.action!=="save_product")return respond({error:"Unknown action"},400);
   const model=clean(p.model,80),v=p.content||{},status=p.status==="published"?"published":"draft";
@@ -87,17 +88,18 @@ export async function onRequestPost(context){
   }
   if(status==="published"&&(!content.name||!content.material))return respond({error:"Published product requires name and material"},400);
   const db=context.env.XUYI_DB;await ensure(db);
+  const localeConfig=await configuredProductSeoLocales(db);
   if(content.seoTitle||content.seoDescription){
     await ensureProductSeo(db);
     const slug=canonicalProductSlug(model);
-    const previous=await db.prepare("SELECT seo_title,meta_description FROM xuyi_product_seo WHERE slug=? AND locale='en'")
-      .bind(slug).first();
+    const previous=await db.prepare("SELECT seo_title,meta_description FROM xuyi_product_seo WHERE slug=? AND locale=?")
+      .bind(slug,localeConfig.sourceLocale).first();
     const title=content.seoTitle||previous?.seo_title;
     const desc=content.seoDescription||previous?.meta_description;
     if(!title||!desc)return respond({error:"SEO title and description must both be provided for a new record"},400);
-    try{normalizeProductSeo({slug,locale:"en",seoTitle:title,metaDescription:desc})}
+    try{normalizeProductSeo({slug,locale:localeConfig.sourceLocale,seoTitle:title,metaDescription:desc},localeConfig.locales)}
     catch(err){return respond({error:String(err.message||err)},400)}
-    await upsertProductSeo(db,{slug,locale:"en",seoTitle:title,metaDescription:desc});
+    await upsertProductSeo(db,{slug,locale:localeConfig.sourceLocale,seoTitle:title,metaDescription:desc});
   }
   await db.prepare(`INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at) VALUES(?,?,?,CURRENT_TIMESTAMP)
     ON CONFLICT(model) DO UPDATE SET content_json=excluded.content_json,publication_status=excluded.publication_status,updated_at=CURRENT_TIMESTAMP`)
