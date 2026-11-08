@@ -124,7 +124,8 @@ export async function scheduleBlogLocalePost(db,{slug,locale,scheduledAt,approve
  await ensurePublishScheduler(db);
  const key=String(slug||""),loc=String(locale||"").toLowerCase(),time=Date.parse(String(scheduledAt||""));
  if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(key))throw Error("Localized schedule slug is invalid");
- const supportedLocales=await configuredBlogLocales(db);\n if(!supportedLocales.includes(loc))throw Error("Localized schedule locale is not enabled in D1 language_config");
+ const supportedLocales=await configuredBlogLocales(db);
+ if(!supportedLocales.includes(loc))throw Error("Localized schedule locale is not enabled in D1 language_config");
  if(!Number.isFinite(time)||time<=Date.now())throw Error("Localized publication time must be in the future");
  if(approved!==true)throw Error("Localized article requires explicit owner authorization");
  const payload=String(payloadJson||"");
