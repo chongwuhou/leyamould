@@ -588,7 +588,7 @@ def main():
 
                 translated[(route,loc)]={
 
-                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else ((GALLERY_SHORT_TITLES.get(loc) or name[:40])+" "+row["model"]+" | XUYI"),
+                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else (((GALLERY_SHORT_TITLES.get(loc) or {}).get("title") or name[:40])+" "+row["model"]+" | XUYI"),
 
                     "description":name+". "+gallery_labels[loc][2],
 
