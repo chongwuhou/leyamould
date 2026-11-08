@@ -74,13 +74,14 @@ export async function onRequestGet(context){
    if(!post)return context.next(); // older catalog articles remain in immutable static build
    if(post.status!=="published")return response("<!doctype html><html lang='en'><head><meta name='robots' content='noindex'><title>Article unavailable</title></head><body><p>Article unavailable.</p><a href='/blog/'>Back to Blog</a></body></html>",404);
    // Use THIS article's static shell so the live D1 article preserves the
-   // exact five-language hreflang cluster, not the /blog/ index alternates.
+   // exact configured-language hreflang cluster, not the /blog/ index alternates.
    // D1-only articles with no approved translations intentionally get no
    // alternate links until localized pages are actually published.
    let shell;
    try{
     shell=await assetHtml(context,"/blog/"+tail+"/index.html");
-    if(!shell.includes('<link rel="canonical" href="https://xuyibottles.com/blog/'+tail+'/">'))
+    const origin=new URL(context.request.url).origin;
+    if(!shell.includes('<link rel="canonical" href="'+origin+'/blog/'+tail+'/">'))
      throw Error("Article shell missing or mismatched");
    }catch{
     shell=(await assetHtml(context,"/blog/index.html"))
