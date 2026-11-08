@@ -15,7 +15,7 @@ assert.ok(endpoint.indexOf('sortLocalizedBlogIndexByD1Order(current,d1Order)') <
 assert.ok(scheduler.includes('reorderPublishedBlogIndexes(db)'),'the recurring scheduler must reorder localized indexes too');
 assert.ok(scheduler.includes('sortLocalizedBlogIndexByD1Order(current,d1Order)'),'the recurring scheduler must use the complete D1 order');
 assert.ok(scheduler.includes('configuredBlogLocales(db)'),'the recurring scheduler must read target locales from D1');
-assert.ok(scheduler.includes('loadSiteSetting(db,"language_config")'),'the recurring scheduler must load the D1 language registry');
+assert.ok(/loadSiteSetting\(db,"language_config"/.test(scheduler),'the recurring scheduler must load the D1 language registry');
 assert.ok(!scheduler.includes("locale IN ('es','pt','ru','tr')"),'the locale queue schema must not freeze a locale list');
 assert.ok(!scheduler.includes('const locales=["es","pt","ru","tr"]'),'the recurring scheduler must not freeze a locale list');
 const expected=fixture.live_order_before_repair.en;
