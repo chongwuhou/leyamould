@@ -79,18 +79,15 @@ export async function onRequestPost(c){
     const indexRow=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(locale).first();
     if(!indexRow?.translated_json)return respond({error:"The target language Blog index is not initialized"},409);
     let index;try{index=JSON.parse(indexRow.translated_json)}catch{return respond({error:"Target language Blog index JSON is invalid"},409)}
-    const slug=blogMatch[1],hrefRe=new RegExp('href="/(?:[a-z]{2}/)?blog/'+slug+'/"'),cardRe=/<article class="news-card">[\s\S]*?<\/article>/g;
-    const current=String(index.mainHtml||""),cards=[...current.matchAll(cardRe)],matched=cards.filter(item=>hrefRe.test(item[0]));
-    if(matched.length>1)return respond({error:"Target language Blog index contains duplicate cards"},409);
-    let nextIndex=current;
-    if(matched.length===1){
-      const oldCard=matched[0][0],updatedCard=oldCard.replace(/(<h3><a[^>]*>)[\s\S]*?(<\/a><\/h3>)/i,"$1"+esc(title)+"$2").replace(/(<p>)[\s\S]*?(<\/p>)/i,"$1"+esc(description)+"$2");
-      nextIndex=current.replace(oldCard,updatedCard);
-    }else{
-      const card=blogCard({...sourcePost,slug,title,description}),tail="</div></div></section>";
-      if(!current.endsWith(tail))return respond({error:"Target language Blog index has an unexpected structure"},409);
-      nextIndex=current.slice(0,-tail.length)+card+tail;
-    }
+    const slug=blogMatch[1],localePrefixes=new Set(languageConfig.languages.map(lang=>lang.pathPrefix).filter(Boolean));
+    const canonicalBlogPath=href=>{
+      const parts=String(href||"").split("?")[0].split("/").filter(Boolean);
+      if(parts.length===2&&parts[0]==="blog")return "/blog/"+parts[1]+"/";
+      if(parts.length===3&&localePrefixes.has(parts[0])&&parts[1]==="blog")return "/blog/"+parts[2]+"/";
+      return "";
+    };
+    const cardRe=/<article class="news-card">[\s\S]*?<\/article>/g;
+    const current=String(index.mainHtml||""),cards=[...current.matchAll(cardRe)],matched=cards.filter(item=>[...item[0].matchAll(/href="([^"]+)"/g)].some(match=>canonicalBlogPath(match[1])==="/blog/"+slug+"/"));
     const d1Order=(await listBlogPosts(db,"published")).map(post=>post.slug);
     if(!d1Order.includes(slug))return respond({error:"Published D1 Blog order does not contain this article"},409);
     let ordered;try{ordered=sortLocalizedBlogIndexByD1Order(nextIndex,d1Order)}catch(error){return respond({error:"Target language Blog index failed D1 order validation: "+String(error.message||error)},409)}
