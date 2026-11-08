@@ -41,6 +41,7 @@ on:
       - "docs/BLOG_COVER_VISUAL_STANDARD.md"
       - "docs/BLOG_EDITORIAL_PUBLISH_CHECKLIST.md"
       - "_headers"
+      - "项目圣经/**"
   workflow_dispatch:
     inputs:
       schedule_blog_20261103:
