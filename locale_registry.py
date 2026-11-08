@@ -25,6 +25,7 @@ _RESOURCES={
  "dynamic UI": "data/runtime-ui-translations.json",
  "contact form": "data/contact-form-translations.json",
  "Blog date labels": "data/blog-date-labels.json",
+ "gallery short titles": "data/gallery-short-titles.json",
 }
 
 def approved_locales(state,require_resources=True):
