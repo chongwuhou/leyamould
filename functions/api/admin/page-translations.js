@@ -54,17 +54,16 @@ export async function onRequestPost(c){
       if(blogRow?.status!=="published")
         return respond({error:"Blog article must be published in English before translating"},409);
     }else{
-      // Manual single-product pages enter D1 after the initial 135-page route
-      // baseline. Only reviewed/published XUYI products are eligible for locales.
+      // Product translation eligibility comes from the published D1
+      // record, not from the generated route manifest or a legacy count.
       const match=/^\/products\/([a-z0-9][a-z0-9-]{1,63})\/$/.exec(route);
       if(!match)return respond({error:"Unknown XUYI route"},400);
       let record;
-      try{record=await db.prepare("SELECT content_json,publication_status FROM xuyi_product_content WHERE model=?")
+      try{record=await db.prepare("SELECT publication_status FROM xuyi_product_content WHERE model=?")
         .bind(match[1]).first()}
-      catch{return respond({error:"Unable to validate new-product route"},503)}
-      let entry;try{entry=record&&JSON.parse(record.content_json)}catch{}
-      if(record?.publication_status!=="published"||entry?.newProduct!==true)
-        return respond({error:"New product must be published in English before translating"},409);
+      catch{return respond({error:"Unable to validate D1 product route"},503)}
+      if(record?.publication_status!=="published")
+        return respond({error:"Product must be published in English before translating"},409);
     }
   }
   const translatedJson=JSON.stringify({title,description,mainHtml:html});
