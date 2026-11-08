@@ -71,7 +71,7 @@ def correct_reviewed_drinkware_terms(markup,locale):
 
     changes=EDITORIAL_CORRECTIONS.get(locale,[])
 
-    for incorrect,correct in changes.get(locale,[]):
+    for incorrect,correct in changes:
 
         pat=re.compile(re.escape(incorrect),re.I)
 
