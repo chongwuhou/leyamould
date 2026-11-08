@@ -23,7 +23,7 @@ export async function onRequestGet(context){
    return reply({post:{...post,scheduled_at:q?.scheduled_at||"",schedule_status:q?.status||""}});
   }
   await ensureBlogSchema(context.env.XUYI_DB);const posts=await listBlogPosts(context.env.XUYI_DB);await ensurePublishScheduler(context.env.XUYI_DB);
-  const queued=(await context.env.XUYI_DB.prepare("SELECT slug,scheduled_at,status FROM xuyi_blog_schedule").all()).results||[];
+  const queued=(await context.env.XUYI_DB.prepare("SELECT slug,scheduled_at,status FROM xuyi_blog_schedule WHERE status IN ('scheduled','needs_review')").all()).results||[];
   const scheduleBySlug=new Map(queued.map(x=>[x.slug,x]));
   return reply({posts:posts.map(p=>{const q=scheduleBySlug.get(p.slug);return {slug:p.slug,title:p.title,status:p.status,has_draft:p.has_draft,group:p.group,updated_at:p.updated_at,published_at:p.published_at,cover:p.cover,scheduled_at:q?.scheduled_at||"",schedule_status:q?.status||""}}),count:posts.length});}
 export async function onRequestPost(context){
