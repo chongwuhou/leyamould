@@ -1,4 +1,4 @@
-/* Thin XUYI integration layer for Demalong's existing admin forms and site-settings modules. */
+/* Thin XUYI integration layer for the existing admin forms and site-settings modules. */
 (()=>{'use strict';const KEY='xuyiAdminToken';const $=(q)=>document.querySelector(q);const $$=(q)=>[...document.querySelectorAll(q)];let active='leads';
 function showPanel(name){active=name;$$('[data-admin-target]').forEach(el=>el.classList.toggle('active',el.dataset.adminTarget===name));$$('[data-admin-module]').forEach(el=>{const section=el.dataset.adminModule;const visible=name==='all'||section===name||(name==='settings'&&section==='settings');el.hidden=!visible;});}
 function setAuthenticated(ok){$('#admin-app')?.classList.toggle('hidden',!ok);$('#admin-lock')?.classList.toggle('hidden',ok);if(ok)showPanel(active);}

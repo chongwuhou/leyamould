@@ -1,5 +1,5 @@
 // D1-managed, reviewed English page bodies for XUYI static pages.
-// Reuses the Demalong admin auth/revision pattern; does not touch Blog or catalog sources.
+// Uses the shared admin auth/revision pattern; does not touch Blog or catalog sources.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
 import { MANAGED_ROUTES } from "../../_shared/xuyi-routes.js";

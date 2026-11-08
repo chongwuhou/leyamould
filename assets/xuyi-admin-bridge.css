@@ -1,4 +1,4 @@
-/* Styling adapter; core layout/styles come from Demalong admin-console.css. */
+/* Styling adapter; core layout/styles come from the shared admin-console.css. */
 [hidden]{display:none!important}
 .admin-sidebar-info{font-size:12px;line-height:1.65;color:#aebacc;padding:16px 14px}
 .admin-module-nav button{display:block}

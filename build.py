@@ -348,7 +348,7 @@ def generate():
  for product in SERIES.values():
   model=str(product['model'])
   public_name=public_display_name(product)
-  # Every real model has its own SEO title and description, as in Demalong's
+  # Every real model has its own distinct SEO title and description.
   # evidence-backed model pages. Do not invent MOQ, certification or capacity.
   # Some catalog names already end in Model N: never append N twice.
   existing_model=public_name.casefold().endswith(('model '+model).casefold())

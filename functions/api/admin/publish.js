@@ -1,4 +1,4 @@
-// Explicit full-site rebuild request; based on Demalong's D1 revision contract.
+// Explicit full-site rebuild request; based on the XUYI D1 revision contract.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
 

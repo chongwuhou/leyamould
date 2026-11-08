@@ -1,4 +1,4 @@
-// Thin UI around the existing Demalong-derived XUYI admin security API.
+// Thin UI around the existing XUYI admin security API.
 (()=>{"use strict";
 const $=id=>document.getElementById(id);
 const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";

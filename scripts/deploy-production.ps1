@@ -1,7 +1,7 @@
 param([switch]$DryRun)
 
-# XUYI-specific adaptation of Demalong V1.4 production script.
-# Do not execute against the Demalong site or upload the repository root.
+# XUYI production deployment script.
+# Do not upload the repository root.
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 $root = Split-Path -Parent $PSScriptRoot
@@ -26,7 +26,7 @@ if ($DryRun) {
   exit 0
 }
 
-# Like Demalong V1.4, production content comes from D1, not a stale local
+# Production content comes from D1, not a stale local
 # snapshot or local JSON fixtures. Fail closed without independent XUYI CI credentials.
 RunChecked "python" @("scripts/fetch_build_snapshot.py")
 RunChecked "python" @("scripts/build_release.py")
@@ -45,4 +45,4 @@ if (-not (Test-Path $wrangler)) {
 
 RunChecked $node @($wrangler,"pages","deploy","dist","--project-name","xuyi-drinkware-site","--branch","main")
 RunChecked "python" @("scripts/verify_live.py")
-Write-Host "XUYI PRODUCTION DEPLOYMENT VERIFIED. Demalong remains unchanged."
+Write-Host "XUYI PRODUCTION DEPLOYMENT VERIFIED."

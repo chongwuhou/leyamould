@@ -1,5 +1,5 @@
-// Adapted from Demalong's authenticated revision endpoint.
-// XUYI-specific bindings; no access to Demalong data.
+// XUYI authenticated revision endpoint.
+// XUYI-specific bindings; no access to unrelated data.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
 
 const response=(data,status=200)=>Response.json(data,{status,headers:{

@@ -1,4 +1,4 @@
-// XUYI inquiry readiness regression tests. Reuses the actual Demalong-adapted
+// XUYI inquiry readiness regression tests. Reuses the shared production adapter
 // forms helper; only the Cloudflare SMTP socket import is stubbed for Node tests.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";

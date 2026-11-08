@@ -14,7 +14,7 @@
 > Never redeploy the repository root. The old root-as-Pages-output setup exposed
 > non-public Python/JSON source files. See `项目圣经/目录.md` and
 > `deployment/site.config.json`. XUYI D1/R2/credentials stay independent of
-> Demalong's. GitHub Actions auto-publication requires XUYI-specific secrets and
+> Unrelated project resources remain untouched. GitHub Actions auto-publication requires XUYI-specific secrets and
 > disabling Cloudflare's competing Git build trigger before activating it.
 
 Production branch: main; Cloudflare Pages: xuyi-drinkware-site; GitHub: chongwuhou/xuyi-drinkware-site.
@@ -51,7 +51,7 @@ Kreat-inspired original navigation and UI system: homepage; 4 product categories
 ## Source
 76 Excel catalog row-specific images served from R2 site-preview/excel/.
 79 non-glass PPT catalog photos served from R2 catalog-staging/ppt/.
-Never commit local source catalogs, _local_ops secrets or Wrangler credentials. Original Demalong resources remain untouched.
+Never commit local source catalogs, _local_ops secrets or Wrangler credentials. Unrelated project resources remain untouched.
 
 ## Launch blockers
 Verify SKU variants, 2506 anomalous capacity, official English legal name, company factory photography, product certificates, live email/WhatsApp and functional inquiry delivery, privacy/consent and local translations. No checkout.
@@ -88,7 +88,7 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Removed the overlaid tile labels and large visual company-strength module that disrupted the reference site's spacing.
 - Category labels sit under 1:1 source photos; desktop four-by-two grid, mobile two-column. Shaker short list uses an eighth category discovery card.
 - No fabricated factory capacities or customer associations; logo wall is still awaiting verified, publishable logos.
-- Product detail pages, D1/R2 bindings and the separate Demalong project remain untouched.
+- Product detail pages, D1/R2 bindings and unrelated projects remain untouched.
 
 
 ## Homepage News & Blogs fix
@@ -111,7 +111,7 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 
 ## Four Why Us Pages - Distinct Group Photo Revision
 - Group-approved reference images collected from Kreat OEM, manufacturing, quality, and shipping pages. Image source URL mapping: data/why-us-group-media.json.
-- 20 compressed WebP images (~0.3 MB) uploaded into XUYI's existing R2 bucket at site-preview/group/ and served via /media/group/{allowlisted-file}.webp. Demalong storage not touched.
+- 20 compressed WebP images (~0.3 MB) uploaded into XUYI's existing R2 bucket at site-preview/group/ and served via /media/group/{allowlisted-file}.webp. No unrelated storage is touched.
 - Distinct page compositions implemented in why_us_layouts.py and assets/why-us-v2.css.
 - OEM / ODM: XUYI plastic hero with 5 group customization references (including metal examples clearly identified), approval stages, model selection.
 - Manufacturing: group packing/warehouse workshop images, plastic-specific component map, manufacturing checkpoints. No metal-forming equipment passed off as plastic molding.
@@ -156,4 +156,4 @@ Desktop, tablet and mobile templates, accessible mobile menu, mega menus, model 
 - Favicon designed to match the existing red XUYI wordmark: red rounded-square background + bold white X. SVG, ICO (16/32/48), 16/32 PNG, 180 apple touch and 192/512 PWA icons.
 - All generated HTML pages get favicon/manifest links, a canonical URL under https://xuyibottles.com, and matching og:url metadata; existing JSON-LD and sitemap base URLs updated.
 - Banner bottom-right 01 / 03 means first of three slides; a visible SLIDE label and synchronized accessible description make it explicit.
-- Demalong and other Cloudflare projects were not modified.
+- Other Cloudflare projects were not modified.

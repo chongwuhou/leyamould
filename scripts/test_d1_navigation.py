@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""D1 nav parity with Demalong: real top-level ordering and child menus."""
+"""D1 navigation ordering and child-menu regression test."""
 import sys,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent

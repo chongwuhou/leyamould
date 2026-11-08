@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""XUYI adapter for Demalong's D1 translation queue; output SQL, never touch a live DB.
+"""XUYI D1 translation-source exporter; output SQL, never touch a live DB.
 
 Usage: python scripts/seed-xuyi-translation-sources.py
 Then, after reviewing the generated SQL, import into the isolated XUYI D1 database.
@@ -16,7 +16,7 @@ def quote(value):
 def main():
     products = json.loads((ROOT / "data" / "products.json").read_text(encoding="utf-8"))
     sql = [
-        "-- Import only into XUYI_DB / xuyi-drinkware-d1, NEVER into Demalong D1.",
+        "-- Import only into XUYI_DB / xuyi-drinkware-d1.",
         "CREATE TABLE IF NOT EXISTS xuyi_translation_sources ("
         "resource_id TEXT PRIMARY KEY,resource_type TEXT NOT NULL DEFAULT 'product',"
         "source_locale TEXT NOT NULL DEFAULT 'en',source_json TEXT NOT NULL DEFAULT '{}',"

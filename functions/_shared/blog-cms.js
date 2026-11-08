@@ -1,4 +1,4 @@
-// XUYI Blog CMS extends Demalong's D1-backed page-editor and revision approach.
+// XUYI Blog CMS uses the D1-backed page-editor and revision approach.
 // Match the separately reviewed static Blog sources on D1-backed live routes.
 import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json" with {type:"json"};
 import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json" with {type:"json"};

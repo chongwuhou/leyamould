@@ -1,4 +1,4 @@
-/* XUYI D1 content console. Reuses Demalong's authenticated admin endpoints. */
+/* XUYI D1 content console. Uses authenticated XUYI admin endpoints. */
 (()=>{"use strict";
  const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
  const $=id=>document.getElementById(id);
@@ -99,7 +99,7 @@
     button("保存 3 张 Banner 并等待发布","banners");
   }
   if(tab==="navigation"){
-   html='<h3>导航与跳转管理</h3><p>数组字段与德玛隆 site-config CMS 一致。仅允许网站实际路径或经核准的外链，编辑前请核对目标 URL。</p>'+
+   html='<h3>导航与跳转管理</h3><p>数组字段与 XUYI site-config CMS 一致。仅允许网站实际路径或经核准的外链，编辑前请核对目标 URL。</p>'+
     field("navigation",JSON.stringify(state.site.navigation||[],null,2),"导航 JSON：id / parentId / label / url / sortOrder",16)+
     field("redirects",JSON.stringify(state.site.redirects||[],null,2),"301/302 跳转规则 JSON",7)+
     button("保存导航","navigation")+' '+button("保存跳转规则","redirects");

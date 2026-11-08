@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""XUYI Pages release builder, adapted from Demalong's build/deploy separation.
+"""XUYI Pages release builder with a separate build/deploy process.
 
 Run at repository root. No remote resources are written by this script.
 The build writes only to dist/, never edits the tracked site HTML snapshots.
@@ -129,7 +129,7 @@ def main():
     if total+3>=limit:fail(f"Pages file hard stop: {total+3} >= {limit}")
     source_files=sorted((ROOT/"templates/site").glob("*.html"))
     templates={file.name:file_hash(file) for file in source_files}
-    # Demalong V1.4 reports the true production data origin, not merely
+    # The production snapshot reports the true data origin, not merely
     # whether a D1 API was reachable. Empty D1 tables mean source fallback.
     state=json.loads(snapshot.read_text(encoding="utf-8")) if snapshot.is_file() else {}
     sys.path.insert(0,str(ROOT))

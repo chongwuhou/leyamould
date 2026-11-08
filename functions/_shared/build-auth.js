@@ -46,7 +46,7 @@ async function verifyCloudflareProjectToken(token, env) {
 
 // A Cloudflare project token proves access to deployment metadata, not
 // permission to edit content or read customer records. Preserve the existing
-// Demalong-style admin session for all writes and private admin modules.
+// XUYI admin session for all writes and private admin modules.
 const BUILD_READ_PATHS = new Set([
   "/api/build-snapshot", "/api/publish-state",
   "/api/admin/brand-config", "/api/admin/home-banners", "/api/admin/site-config",

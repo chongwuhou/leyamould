@@ -1,4 +1,4 @@
-// Ported from Demalong V1.4 hybrid fallback, isolated to XUYI product routes.
+// XUYI hybrid fallback, isolated to XUYI product routes.
 // Pages static files always win. R2 is read only for approved removed detail files.
 const reply=(value,status)=>Response.json(value,{status,headers:{"cache-control":"no-store"}});
 export function modelKey(pathname){

@@ -23,5 +23,5 @@ Re-enabled suitable unwatermarked group imagery across the homepage, FAQ, About,
 ## Related settings
 Public email: Janey@xuyibottles.com (plural bottles).
 WhatsApp: 8615395897937.
-English default; es, pt, ru and tr managed through the inherited Demalong backend.
+English default; es, pt, ru and tr managed through the XUYI D1/CMS workflow.
 Do not publish unverified form or translation functions before Cloudflare bindings and security checks.

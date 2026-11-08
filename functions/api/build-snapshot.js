@@ -1,4 +1,4 @@
-// Build-time public-content snapshot (Demalong's D1 truth model, XUYI data).
+// Build-time public-content snapshot (XUYI D1 truth model, XUYI data).
 // Requires a verified XUYI build/admin token. Never exposes submissions, secrets
 // or other private tables; responses are no-store and not indexable.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";

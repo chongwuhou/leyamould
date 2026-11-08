@@ -4,7 +4,7 @@ import {ensureProductSeo,canonicalProductSlug} from "../../_shared/product-seo.j
 const clean = (value) => String(value ?? "").trim();
 const ROBOTS = new Set(["index,follow", "noindex,follow", "noindex,nofollow"]);
 
-// Allowed routes originate from XUYI's checked-in route manifest, never Demalong's filter routes.
+// Allowed routes originate from XUYI's checked-in route manifest, never unrelated product routes.
 const DEFAULT_PAGES = [
   ["/about/", "About"],
   ["/applications/everyday-hydration/", "Everyday Water Bottles"],

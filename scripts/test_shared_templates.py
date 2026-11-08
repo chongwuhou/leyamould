@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reuse Demalong's managed-template contract; test XUYI navigation without D1 writes."""
+"""Validate the managed-template contract; test XUYI navigation without D1 writes."""
 from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))

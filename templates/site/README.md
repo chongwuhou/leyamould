@@ -1,4 +1,4 @@
-# XUYI shared templates (ported from Demalong V1.4 structure)
+# XUYI shared templates (shared structural contract)
 
 These are the only sources for the shared structural shell. The production output is pre-rendered HTML, NOT JavaScript-based client-side assembly.
 
@@ -30,4 +30,4 @@ The content/data variables live in `site_renderer.py`, `data/`, and D1 runtime s
 
 `python scripts/build_release.py` writes a clean `dist/` artifact. Do not deploy repository root. Do not manually edit generated `index.html` copies.
 
-This is a XUYI-specific layout. Never import Demalong's filtration logos, contacts, catalog, database, or CI credentials.
+This is a XUYI-specific layout. Never import unrelated logos, contacts, catalog, database, or CI credentials.

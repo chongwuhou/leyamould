@@ -62,7 +62,7 @@ for page in pages:
         dynamic_blog_route = bool(re.fullmatch(r"/blog/[a-z0-9-]+/", urlsplit(url).path)) and (ROOT/"functions/blog/[[path]].js").is_file()
         if target and not (OUT/target).is_file() and not (OUT/target/"index.html").is_file() and not dynamic_blog_route:
             broken.append((rel,"broken route",url))
-# Demalong V1.4 quality gate: model pages need unique search snippets and
+# Product SEO quality gate: model pages need unique search snippets and
 # self-referencing canonical URLs. A duplicated value blocks deployment.
 product_titles={}
 product_descriptions={}
@@ -150,8 +150,10 @@ nav_text=json.dumps(nav,ensure_ascii=False)
 for slug in ("spray-water-bottles","two-way-drinking-cups","titanium-vacuum-cups"):
     if slug not in nav_text:broken.append(("navigation","missing new drinkware category",slug))
 if len(pages)<130:broken.append(("release","unexpected page loss",len(pages)))
-if any("demalong" in x.read_text(encoding="utf-8").lower() for x in (OUT/"templates").rglob("*") if x.is_file()) if (OUT/"templates").exists() else False:
-    broken.append(("release","DML brand leaked"))
+legacy_markers=("cartridge-media","old-industry-brand","external-filter-catalog")
+if any(any(marker in x.read_text(encoding="utf-8").lower() for marker in legacy_markers)
+       for x in (OUT/"templates").rglob("*") if x.is_file()) if (OUT/"templates").exists() else False:
+    broken.append(("release","unrelated legacy industry content leaked"))
 for sensitive in ("build.py", "site_renderer.py", "product_content.py", "data/products.json", "_local_ops/build-snapshot.json", ".wrangler/config/default.toml"):
     if (OUT/sensitive).exists():broken.append((sensitive,"sensitive source included in public dist"))
 for hidden in ("_local_ops", "functions", "templates", ".wrangler"):

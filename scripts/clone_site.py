@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Safe local Fresh / CloneData scaffolding, adapted from Demalong's wizard.
+"""Safe local Fresh / CloneData scaffolding for isolated site copies.
 
 This command NEVER creates Cloudflare resources, reads production D1/R2, or
 copies secrets. CloneData copies only source-controlled PUBLIC catalog content;
@@ -15,7 +15,7 @@ import shutil
 import sys
 
 SRC=Path(__file__).resolve().parent.parent
-RESERVED={"xuyi-drinkware-site","demalong-replacement-filters-auto"}
+RESERVED={"xuyi-drinkware-site"}
 def require_config(path):
     cfg=json.loads(path.read_text(encoding="utf-8"))
     cloud=cfg.get("cloudflare") or {}
