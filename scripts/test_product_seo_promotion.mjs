@@ -9,10 +9,11 @@ assert.equal(REVIEWED_COUNT,505);
 assert.equal(expectedReviewedRows().size,505);
 const categories=new Map();
 const locales=new Map();
+const allowedLocales=new Set(REVIEWED_SEO_SOURCE.map(r=>r.locale));
 for(const r of REVIEWED_SEO_SOURCE){
   categories.set(r.source,1+(categories.get(r.source)||0));
   locales.set(r.locale,1+(locales.get(r.locale)||0));
-  const cleaned=normalizeProductSeo({slug:r.slug,locale:r.locale,seoTitle:r.newTitle,metaDescription:r.newDescription});
+  const cleaned=normalizeProductSeo({slug:r.slug,locale:r.locale,seoTitle:r.newTitle,metaDescription:r.newDescription},allowedLocales);
   assert.equal(cleaned.title,r.newTitle);
   assert.equal(cleaned.description,r.newDescription);
   const original=r.ownerRoute?{route:r.ownerRoute,title:r.oldTitle,description:r.oldDescription}:null;
@@ -38,7 +39,7 @@ for(const invalid of [
  {slug:"../../g-01",locale:"pt",seoTitle:"Fake title sufficient",metaDescription:"Fake full description of more than thirty characters"},
  {slug:"lo-001",locale:"fr",seoTitle:"Fake title sufficient",metaDescription:"Fake full description of more than thirty characters"},
  {slug:"lo-001",locale:"en",seoTitle:"x",metaDescription:"Fake full description of more than thirty characters"}
-])assert.throws(()=>normalizeProductSeo(invalid));
+])assert.throws(()=>normalizeProductSeo(invalid,allowedLocales));
 const pageApi=readFileSync("functions/api/admin/pages.js","utf8");
 assert(!pageApi.includes('db.prepare("DELETE FROM site_pages")'),
   "The old bulk editor must never erase future-product or source-approved D1 records");
