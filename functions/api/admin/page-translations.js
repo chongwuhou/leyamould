@@ -93,6 +93,20 @@ export async function onRequestPost(c){
     const current=String(index.mainHtml||""),cards=[...current.matchAll(cardRe)],matched=cards.filter(item=>[...item[0].matchAll(/href="([^"]+)"/g)].some(match=>canonicalBlogPath(match[1])==="/blog/"+slug+"/"));
     const d1Order=(await listBlogPosts(db,"published")).map(post=>post.slug);
     if(!d1Order.includes(slug))return respond({error:"Published D1 Blog order does not contain this article"},409);
+    if(matched.length>1)return respond({error:"Target language Blog index contains duplicate cards"},409);
+    let nextIndex=current;
+    if(matched.length===1){
+      const oldCard=matched[0][0];
+      const updatedCard=oldCard
+        .replace(/(<h3><a[^>]*>)[\s\S]*?(<\/a><\/h3>)/i,"$1"+esc(title)+"$2")
+        .replace(/(<p>)[\s\S]*?(<\/p>)/i,"$1"+esc(description)+"$2");
+      nextIndex=current.replace(oldCard,updatedCard);
+    }else{
+      const card=blogCard({...sourcePost,slug,title,description});
+      const tail="</div></div></section>";
+      if(!current.endsWith(tail))return respond({error:"Target language Blog index has an unexpected structure"},409);
+      nextIndex=current.slice(0,-tail.length)+card+tail;
+    }
     let ordered;try{ordered=sortLocalizedBlogIndexByD1Order(nextIndex,d1Order)}catch(error){return respond({error:"Target language Blog index failed D1 order validation: "+String(error.message||error)},409)}
     const nextIndexJson=JSON.stringify({...index,mainHtml:ordered});
     indexStatement=db.prepare("UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=CURRENT_TIMESTAMP WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(nextIndexJson,locale,indexRow.translated_json);

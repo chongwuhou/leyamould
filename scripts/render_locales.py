@@ -482,16 +482,15 @@ def main():
     languages=(data.get("languages") or {}).get("languages",[])
 
     ready=approved_locales(data)
+    language_config=data.get("languages") or {}
+    source_locale=str(language_config.get("sourceLocale") or next((r["code"] for r in ready if not r["pathPrefix"]),ready[0]["code"])).lower()
+    default_locale=str(language_config.get("defaultLocale") or source_locale).lower()
 
-    # Preserve D1-reviewed UI copy while getting the supported code and URL
-
-    # prefix solely from the registry; no es/pt/ru/tr enumeration here.
-
+    # Preserve D1-reviewed UI copy while getting supported codes and URL
+    # prefixes solely from the registry; no fixed language-count list.
     original={r.get("code"):r for r in languages}
-
     live={r["code"]:{**original.get(r["code"],{}),**r}
-
-          for r in ready if r["code"]!="en"}
+          for r in ready if r["code"]!=source_locale}
 
     translated={}
     source_generated_routes=set()
@@ -921,7 +920,7 @@ def main():
         from scripts.source_catalog_capacity_oz import enrich_catalog_body
         text=enrich_catalog_body(text,loc,SERIES)
 
-        text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)
+        text=text.replace('<html lang="'+source_locale+'">','<html lang="'+loc+'">',1)
 
         text=re.sub(r'<title>[^<]*</title>','<title>'+html.escape(fields["title"])+'</title>',text,count=1)
 
@@ -1038,7 +1037,7 @@ def main():
         from scripts.verified_trust_technical_seo import add_at_render as add_trust_technical_seo
         text=add_trust_technical_seo(text,localized,loc)
         from scripts.product_hreflang import apply_to_document as apply_product_hreflang
-        text=apply_product_hreflang(text,localized,loc)
+        text=apply_product_hreflang(text,localized,loc,ready)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
 
@@ -1069,7 +1068,7 @@ def main():
 
             content=link.read_text(encoding="utf-8")
 
-            tags=['<link rel="alternate" hreflang="en" href="'+ORIGIN+route+'">']
+            tags=['<link rel="alternate" hreflang="'+source_locale+'" href="'+ORIGIN+route+'">']
 
             tags.extend('<link rel="alternate" hreflang="'+lang+'" href="'+ORIGIN+url+'">' for lang,url in sorted(alts))
 
@@ -1109,7 +1108,7 @@ def main():
 
         content=src.read_text(encoding="utf-8")
 
-        tags=('<link rel="alternate" hreflang="en" href="'+ORIGIN+route+'">'
+        tags=('<link rel="alternate" hreflang="'+source_locale+'" href="'+ORIGIN+route+'">'
 
               '<link rel="alternate" hreflang="x-default" href="'+ORIGIN+route+'">')
 
@@ -1178,9 +1177,9 @@ def main():
 
     # language pages must not become sitemap/hreflang entries.
 
-    manifest={"schemaVersion":1,"site":"xuyi-drinkware-site","sourceLocale":"en",
+    manifest={"schemaVersion":1,"site":"xuyi-drinkware-site","sourceLocale":source_locale,
 
-              "defaultLocale":"en","origin":ORIGIN,"locales":ready,
+              "defaultLocale":default_locale,"origin":ORIGIN,"locales":ready,
 
               "routes":{lang["code"]:sorted(
 
@@ -1188,9 +1187,9 @@ def main():
 
                 for f in (DIST/(lang["pathPrefix"] or ".")).rglob("index.html")
 
-                if (lang["code"]!="en" or f.relative_to(DIST).parts[0] not in
+                if (lang["code"]!=default_locale or f.relative_to(DIST).parts[0] not in
 
-                    {x["pathPrefix"] for x in ready if x["code"]!="en"}|{"admin"}))
+                    {x["pathPrefix"] for x in ready if x["code"]!=default_locale}|{"admin"}))
 
                 for lang in ready}}
 

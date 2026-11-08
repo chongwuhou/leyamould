@@ -2,6 +2,7 @@
 // Requires a verified XUYI build/admin token. Never exposes submissions, secrets
 // or other private tables; responses are no-store and not indexable.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
+import { defaultLanguageConfig,normalizeLanguageConfig } from "../_shared/site-settings.js";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 async function list(db,sql){
@@ -30,6 +31,8 @@ export async function onRequestGet(context){
       list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY slug")
     ]);
     const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
+    const languageConfig=normalizeLanguageConfig(config.language_config?JSON.parse(config.language_config):defaultLanguageConfig());
+    const publishableLocales=new Set(languageConfig.languages.filter(language=>language.enabled&&language.publishReady).map(language=>language.code));
     const security=config.admin_security_config?JSON.parse(config.admin_security_config):{};
     const adminPath=security.adminPath||"admin";
     if(typeof adminPath!=="string"||!/^[a-z0-9][a-z0-9-]{2,47}$/.test(adminPath))
@@ -59,7 +62,7 @@ export async function onRequestGet(context){
       products:onlyProducts.map(r=>({model:r.model,content:JSON.parse(r.content_json)})),
       blogPosts:onlyBlogPosts,
       productSeo:productSeo.filter(r=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.slug)
-        && ["en","es","pt","ru","tr"].includes(r.locale)
+        && publishableLocales.has(String(r.locale||"").toLowerCase())
         && typeof r.seo_title==="string"&&r.seo_title.length<=90
         && typeof r.meta_description==="string"&&r.meta_description.length<=240)
         .map(r=>({slug:r.slug,locale:r.locale,seoTitle:r.seo_title,

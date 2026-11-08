@@ -25,7 +25,6 @@ from scripts.cms_seo_curation_guard import current_field
 from scripts.verified_capacity_gradient_en import SOURCE_LO
 from product_locale_seo import TRANSPARENT
 
-LOCALES=("en","es","pt","ru","tr")
 MILLILITERS_PER_US_FL_OZ=29.5735295625
 RETAIL_CONFIG=json.loads((ROOT/"data/retail-oz-size-classes.json").read_text(encoding="utf8"))
 if RETAIL_CONFIG.get("site")!="xuyi-drinkware-site" or RETAIL_CONFIG.get("schemaVersion")!=1:
@@ -40,6 +39,7 @@ SIZE_NOTE={
  "ru":"Примерный торговый размер: фактический объём указан в мл. Это не точное равенство.",
  "tr":"Yaklaşık satış boyutu: gerçek kapasite mL ile verilir; bu kesin dönüşüm değildir.",
 }
+LOCALES=tuple(SIZE_NOTE)
 
 # Catalog says 60ml for 2506; other source checks identify that value as
 # suspicious. Never manufacture a 2 fl oz claim until its SKU is verified.

@@ -81,9 +81,9 @@
  <div id="review-admin-list"></div>
 </section>
 <section class="panel" id="product-seo-admin-panel" data-admin-module="productseo">
- <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO · CLOUDFLARE D1</div>
- <h2>产品 SEO 标题和描述（正式数据库）</h2>
- <p><span id="product-seo-count">产品数量读取中</span>及以后新增型号均可按已配置语言独立修改。SEO Title、Meta Description 和默认 OG 标题从 D1 正式记录生成；H1 仍由产品正文/正式规格管理。修改后点击顶部「一键全站重建」。<span id="product-seo-language-summary">语言配置读取中</span></p>
+ <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO + CONTENT · CLOUDFLARE D1</div>
+ <h2>产品 SEO 与多语言正文（正式数据库）</h2>
+ <p><span id="product-seo-count">产品数量读取中</span>及以后新增型号均可按后台已配置语言独立修改。SEO Title、Meta Description、对应语种产品正文和默认 OG 标题均从 D1 正式记录生成；来源语言正文仍由产品商详编辑器维护。修改后点击顶部「一键全站重建」。<span id="product-seo-language-summary">语言配置读取中</span></p>
  </div></div>
  <div class="row-actions"><button type="button" class="btn ghost" id="product-seo-reload">读取数据库</button></div>
  <p id="product-seo-status" role="status" aria-live="polite"></p>
@@ -97,7 +97,12 @@
    <input id="product-seo-title" required maxlength="90" minlength="12"></label>
   <label class="block-label">Meta Description（最多 240 字符）
    <textarea id="product-seo-description" rows="4" required maxlength="240" minlength="30"></textarea></label>
-  <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 到 D1</button>
+  <label class="block-label">对应语种产品正文（完整 Main HTML）
+   <textarea id="product-seo-content" rows="18" placeholder="目标语种：先读取来源语言正文，再完整翻译、检查图片与链接后保存。"></textarea></label>
+  <div class="row-actions"><button type="button" class="btn ghost" id="product-content-source">读取来源语言正文</button>
+   <span id="product-content-status" class="muted"></span></div>
+  <p class="muted">来源语言正文由「06 页面 / 品牌 / 产品 / SEO → 产品商详」维护；目标语种正文写入现有 D1 多语言正式页面记录。正文留空时只保存 SEO，不会删除已有正文。</p>
+  <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 与正文到 D1</button>
    <button type="button" class="btn ghost" id="product-seo-reset">重新载入当前记录</button></div>
  </form>
 </section>
