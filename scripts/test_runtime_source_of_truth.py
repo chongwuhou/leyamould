@@ -42,6 +42,18 @@ CHECKS = {
         ("locale not in ('en','es','pt','ru','tr')", "Blog media locale tuple"),
         ("https://xuyibottles.com", "Blog media origin"),
     ],
+    "blog_editorial_inline.py": [
+        ('LANGS=("en","es","pt","ru","tr")', "Blog editorial locale tuple"),
+        ('locale=="en"', "Blog editorial source locale"),
+    ],
+    "assets/admin-content.js": [
+        ('["en","es","pt","ru","tr"]', "CMS product ALT locale list"),
+    ],
+    "functions/api/admin/product-content.js": [
+        ("locale='en'", "product SEO source locale"),
+        ('locale:"en"', "product SEO source locale"),
+        ("English only until each translation is reviewed", "fixed product locale copy"),
+    ],
     "scripts/admin_route.py": [
         ('"es","pt","ru","tr"', "admin route locale list"),
     ],
