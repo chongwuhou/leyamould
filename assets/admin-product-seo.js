@@ -90,7 +90,6 @@
    content.value=main.innerHTML;content.disabled=false;bodySay("已读取 "+sourceName()+" 正文，请完成全文翻译后保存。");
   }catch(error){if(request===bodyRequest){content.disabled=false;bodySay("来源正文读取失败："+error.message)}}
  });
- document.querySelector('[data-admin-target="productseo"]')?.addEventListener("click",load);
  document.getElementById("content-tab-product-seo")?.addEventListener("click",load);
  el("product-seo-editor")?.addEventListener("submit",async ev=>{
   ev.preventDefault();const {slug,locale}=current();
