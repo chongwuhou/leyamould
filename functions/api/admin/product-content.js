@@ -3,7 +3,7 @@ import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
 import { MANAGED_MODELS } from "../../_shared/xuyi-routes.js";
 import { authorizeAdminRequest } from "../../_shared/admin-security.js";
-import { normalizeNewProduct } from "../../_shared/new-product.js";
+import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";
 import {loadProductAdminConfig} from "../../_shared/product-admin-config.js";
 import { imageKey } from "../../_shared/r2-usage.js";
 import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo,configuredProductSeoLocales} from "../../_shared/product-seo.js";
