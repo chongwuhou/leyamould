@@ -60,25 +60,30 @@
     }))};
   }
   function renderTranslationSettings(){
-    if(!$("#translation-provider"))return; const s=translations.settings||{}, langs=translations.languages?.languages||settings?.languages?.languages||[];
-    $("#translation-provider").value=s.provider||"manual";
+    if(!$("#translation-provider"))return;
+    const s=translations.settings||{}, langs=translations.languages?.languages||settings?.languages?.languages||[];
+    const provider=$("#translation-provider");
+    provider.replaceChildren(new Option("人工或当前 AI 会话草稿","manual"));
+    provider.value="manual"; provider.disabled=true;
     $("#translation-source-locale").innerHTML=langs.map(x=>`<option value="${esc(x.code)}" ${x.code===s.sourceLocale?"selected":""}>${esc(x.nativeName||x.displayName||x.code)} (${esc(x.code)})</option>`).join("");
-    $("#translation-model").value=s.model||""; $("#translation-endpoint").value=s.endpoint||""; $("#translation-auto-queue").checked=s.autoQueue!==false;
-    const mode=s.mode||(s.autoTranslate?(s.requireHumanReview===false?"publish":"review"):"off"); $("#translation-mode").value=mode;
-    const x=translations.secretStatus||{}; $("#translation-secret-status").textContent=`Secret 状态：Google ${x.googleCloudTranslation?"✓":"未配置"}。自动翻译只允许已授权的官方 Google Provider；API Key 不显示、不写入 D1。`;
+    const mode=$("#translation-mode");
+    mode.replaceChildren(new Option("关闭外部自动翻译","off"));
+    mode.value="off"; mode.disabled=true;
+    $("#translation-auto-queue").checked=s.autoQueue!==false;
+    $("#translation-secret-status").textContent="自动翻译接口已按项目费用规则关闭；请人工或使用当前 AI 会话生成草稿，再在此审核入库。";
   }
   function payload(id){const t=$(`.translation-json[data-id="${CSS.escape(id)}"]`);try{return JSON.parse(t.value)}catch{throw new Error("译文 JSON 格式错误")}}
   function renderJobs(){
     const host=$("#translation-jobs"); if(!host)return; const jobs=translations.jobs||[];
-    host.innerHTML=jobs.length?jobs.map(j=>`<article class="batch-card translation-job"><div><strong>${esc(j.resource_id)}</strong> · ${esc(j.source_locale)} → ${esc(j.target_locale)} · <span class="status ${esc(j.status)}">${esc(j.status)}</span></div><div class="muted">Provider: ${esc(j.provider||"manual")} · ${esc(j.updated_at||"")}${j.error_message?" · "+esc(j.error_message):""}</div><textarea class="translation-json" data-id="${esc(j.id)}" rows="7" spellcheck="false">${esc(JSON.stringify(Object.keys(j.translated||{}).length?j.translated:j.source,null,2))}</textarea><div class="row-actions"><button class="btn small ghost tr-save" data-id="${esc(j.id)}">保存译文待审核</button><button class="btn small ghost tr-run" data-id="${esc(j.id)}">调用机翻</button><button class="btn small primary tr-approve" data-id="${esc(j.id)}">审核通过并排队发布</button><button class="btn small ghost tr-requeue" data-id="${esc(j.id)}">重新排队</button></div></article>`).join(""):'<div class="muted">暂无翻译任务。保存源语言型号内容后会自动排队，也可以手工输入型号 ID。</div>';
-    $$(".tr-save",host).forEach(b=>b.onclick=()=>job("save_job",b.dataset.id,true)); $$(".tr-run",host).forEach(b=>b.onclick=()=>job("run_job",b.dataset.id));
+    host.innerHTML=jobs.length?jobs.map(j=>`<article class="batch-card translation-job"><div><strong>${esc(j.resource_id)}</strong> · ${esc(j.source_locale)} → ${esc(j.target_locale)} · <span class="status ${esc(j.status)}">${esc(j.status)}</span></div><div class="muted">Provider: ${esc(j.provider||"manual")} · ${esc(j.updated_at||"")}${j.error_message?" · "+esc(j.error_message):""}</div><textarea class="translation-json" data-id="${esc(j.id)}" rows="7" spellcheck="false">${esc(JSON.stringify(Object.keys(j.translated||{}).length?j.translated:j.source,null,2))}</textarea><div class="row-actions"><button class="btn small ghost tr-save" data-id="${esc(j.id)}">保存译文待审核</button><button class="btn small primary tr-approve" data-id="${esc(j.id)}">审核通过并排队发布</button><button class="btn small ghost tr-requeue" data-id="${esc(j.id)}">重新排队</button></div></article>`).join(""):'<div class="muted">暂无翻译任务。保存源语言型号内容后会自动排队，也可以手工输入型号 ID。</div>';
+    $(".tr-save",host).forEach(b=>b.onclick=()=>job("save_job",b.dataset.id,true));
     $$(".tr-approve",host).forEach(b=>b.onclick=()=>job("approve_job",b.dataset.id,true)); $$(".tr-requeue",host).forEach(b=>b.onclick=()=>job("requeue_job",b.dataset.id));
   }
   async function loadSettings(){settings=await api(SETTINGS);renderLanguages();renderContacts();$("#language-settings-status").textContent="线上 D1 配置已载入。";}
   async function loadTranslations(){translations=await api(TRANSLATIONS);renderTranslationSettings();renderJobs();}
   async function saveLanguages(){const e=$("#language-settings-status");try{const d=await api(SETTINGS,"POST",{action:"save_languages",config:collectLanguages()});settings.languages=d.config;renderLanguages();e.textContent="已保存；发布版本 "+d.revision+" 已排队。";await loadTranslations();}catch(x){e.textContent="保存失败："+x.message}}
   async function saveContacts(){const e=$("#contact-settings-status");try{const d=await api(SETTINGS,"POST",{action:"save_contacts",config:collectContacts()});settings.contacts=d.config;renderContacts();e.textContent="已保存；发布版本 "+d.revision+" 已排队。";}catch(x){e.textContent="保存失败："+x.message}}
-  async function saveTranslation(){const e=$("#translation-settings-status");try{const cfg={schemaVersion:1,mode:$("#translation-mode").value,provider:$("#translation-provider").value,sourceLocale:$("#translation-source-locale").value,autoQueue:$("#translation-auto-queue").checked,model:$("#translation-model").value.trim(),endpoint:$("#translation-endpoint").value.trim()};await api(SETTINGS,"POST",{action:"save_translation",config:cfg});e.textContent="翻译设置已保存。Google API Key 仍只存在 Pages Secret。";await loadTranslations();}catch(x){e.textContent="保存失败："+x.message}}
+  async function saveTranslation(){const e=$("#translation-settings-status");try{const cfg={schemaVersion:1,mode:"off",provider:"manual",sourceLocale:$("#translation-source-locale").value,autoQueue:$("#translation-auto-queue").checked,model:"",endpoint:""};const d=await api(SETTINGS,"POST",{action:"save_translation",config:cfg});e.textContent="翻译设置已保存：仅人工/AI 草稿审核，不调用外部翻译 API。";translations.settings=d.config;await loadTranslations();}catch(x){e.textContent="保存失败："+x.message}}
   async function enqueue(){const id=$("#translation-model-id").value.trim(),e=$("#translation-settings-status");if(!id)return;try{const d=await api(TRANSLATIONS,"POST",{action:"enqueue_model",modelId:id,force:true});e.textContent="已生成/刷新 "+Number(d.queued||0)+" 个产品翻译任务。";await loadTranslations();}catch(x){e.textContent="排队失败："+x.message}}
   async function enqueueBlog(){const slug=$("#translation-blog-slug").value.trim(),e=$("#translation-settings-status");if(!slug)return;try{const d=await api(TRANSLATIONS,"POST",{action:"enqueue_blog",slug,force:true});e.textContent="已生成/刷新 "+Number(d.queued||0)+" 个 Blog 翻译任务。";await loadTranslations();}catch(x){e.textContent="Blog 排队失败："+x.message}}
   async function job(action,id,withPayload=false){const e=$("#translation-settings-status");try{const body={action,id};if(withPayload)body.translated=payload(id);const d=await api(TRANSLATIONS,"POST",body);e.textContent=action==="approve_job"?"译文已审核入库；发布版本 "+d.revision+" 已排队。":"翻译任务已更新。";await loadTranslations();}catch(x){e.textContent="任务失败："+x.message}}

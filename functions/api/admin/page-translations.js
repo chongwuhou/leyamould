@@ -44,31 +44,30 @@ export async function onRequestPost(c){
     return respond({error:"Full translated title, description and main HTML required"},400);
   if(/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i.test(html))
     return respond({error:"Unsafe HTML in translated content"},400);
-  let blogMatch=null;
-  if(!MANAGED_ROUTES.has(route)){
-    // Blog detail routes are D1-owned and grow over time. Validate them from
-    // the published Blog CMS rows instead of freezing the translation API to
-    // the original checked-in route manifest.
-    blogMatch=/^\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(route);
-    if(blogMatch){
-      let blogRow;
-      try{blogRow=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?")
-        .bind(blogMatch[1]).first()}
-      catch{return respond({error:"Unable to validate D1 Blog route"},503)}
-      if(blogRow?.status!=="published")
-        return respond({error:"Blog article must be published in English before translating"},409);
-    }else{
-      // Product translation eligibility comes from the published D1
-      // record, not from the generated route manifest or a legacy count.
-      const match=/^\/products\/([a-z0-9][a-z0-9-]{1,63})\/$/.exec(route);
-      if(!match)return respond({error:"Unknown XUYI route"},400);
-      let record;
-      try{record=await db.prepare("SELECT publication_status FROM xuyi_product_content WHERE model=?")
-        .bind(match[1]).first()}
-      catch{return respond({error:"Unable to validate D1 product route"},503)}
-      if(record?.publication_status!=="published")
-        return respond({error:"Product must be published in English before translating"},409);
-    }
+  const configured=new Set(await configuredRoutes(db));
+  const blogMatch=/^\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(route);
+  const productMatch=/^\/products\/([a-z0-9][a-z0-9-]{1,63})\/$/.exec(route);
+  if(blogMatch){
+    let blogRow;
+    try{blogRow=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?")
+      .bind(blogMatch[1]).first()}
+    catch{return respond({error:"Unable to validate D1 Blog route"},503)}
+    if(blogRow?.status!=="published")
+      return respond({error:"Blog article must be published in English before translating"},409);
+  }else if(productMatch){
+    // Product eligibility comes from D1. The static route manifest is only a
+    // compatibility index and cannot authorize a product translation.
+    const rawSlug=productMatch[1];
+    const aliases=[rawSlug,rawSlug.replace(/-transparent$/,"透明款"),rawSlug.replace(/---$/,"透明款")];
+    const marks=aliases.map(()=>"?").join(",");
+    let record;
+    try{record=await db.prepare("SELECT publication_status FROM xuyi_product_content WHERE model IN ("+marks+") LIMIT 1")
+      .bind(...aliases).first()}
+    catch{return respond({error:"Unable to validate D1 product route"},503)}
+    if(record?.publication_status!=="published")
+      return respond({error:"Product must be published in English before translating"},409);
+  }else if(!MANAGED_ROUTES.has(route)&&!configured.has(route)){
+    return respond({error:"Unknown XUYI route"},400);
   }
   const translatedJson=JSON.stringify({title,description,mainHtml:html});
   let indexStatement=null;

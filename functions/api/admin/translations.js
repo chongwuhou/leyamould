@@ -37,9 +37,7 @@ export async function onRequestGet(context) {
     settings: settings.translation,
     languages: settings.languages,
     secretStatus: {
-      googleCloudTranslation: Boolean(clean(context.env.GOOGLE_TRANSLATE_API_KEY)),
-      deepl: Boolean(clean(context.env.DEEPL_API_KEY)),
-      openaiCompatible: Boolean(clean(context.env.TRANSLATION_API_KEY))
+      automaticTranslation: false
     },
     jobs: (jobs.results || []).map((row) => ({
       ...row,

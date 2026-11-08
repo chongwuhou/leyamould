@@ -112,6 +112,15 @@ if actual_factory_models!=expected_factory_models:
     broken.append(("factory catalog","published D1 source products differ from generated product pages",
         {"missing":sorted(expected_factory_models-actual_factory_models),"extra":sorted(actual_factory_models-expected_factory_models)}))
 blog_snapshot=json.loads(snapshot_path.read_text(encoding="utf-8")) if snapshot_path.is_file() else {}
+language_config=blog_snapshot.get("languages") or {}
+language_rows=language_config.get("languages") if isinstance(language_config,dict) else None
+source_locale=str(language_config.get("sourceLocale") or "en").lower() if isinstance(language_config,dict) else "en"
+target_locales={str(row.get("code")).lower() for row in (language_rows or [])
+                if isinstance(row,dict) and row.get("enabled") is not False
+                and row.get("publishReady") is not False
+                and str(row.get("code")).lower()!=source_locale}
+if not language_rows:
+    broken.append(("D1 language registry","build snapshot has no language configuration"))
 published_blog={row.get("slug") for row in blog_snapshot.get("blogPosts",[])
                 if isinstance(row,dict) and row.get("status")=="published"
                 and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",str(row.get("slug","")))}
@@ -122,7 +131,7 @@ for row in blog_snapshot.get("translations",[]):
     rid=row.get("resourceId","")
     loc=row.get("locale")
     match=re.fullmatch(r"page:(/blog/[a-z0-9-]+/)",rid) if isinstance(rid,str) else None
-    if not match or loc not in {"es","pt","ru","tr"} or match.group(1)=="/blog/":
+    if not match or str(loc).lower() not in target_locales or match.group(1)=="/blog/":
         continue
     slug=match.group(1).strip("/").split("/")[-1]
     if slug in published_blog and not (OUT/loc/"blog"/slug/"index.html").is_file():

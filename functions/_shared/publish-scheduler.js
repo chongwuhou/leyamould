@@ -227,7 +227,7 @@ export async function publishDueBlogPosts(db,task,now=new Date()){
    if(n===0)index.mainHtml=oldHtml.slice(0,-tail.length)+card+tail;
    prepared.push({locale:loc,q,resource,detailJson,card,indexOld:indexRow.translated_json,indexNew:n===0?JSON.stringify(index):indexRow.translated_json,updateIndex:n===0,existingDetail:Boolean(existing)});
   }
-  if(invalid||prepared.length!==4){needsReview++;await markReview(row.slug);continue;}
+  if(invalid||prepared.length!==locales.length){needsReview++;await markReview(row.slug);continue;}
   let preGate="EXISTS (SELECT 1 FROM xuyi_blog_schedule q WHERE q.slug=? AND q.status='scheduled' AND q.approved=1 AND q.scheduled_at=? AND q.content_sha256=?) AND EXISTS (SELECT 1 FROM xuyi_blog_posts p WHERE p.slug=? AND p.status='draft' AND p.content_json=?)";
   const preArgs=[row.slug,row.scheduled_at,row.content_sha256,row.slug,row.content_json];
   for(const x of prepared){
@@ -260,7 +260,7 @@ export async function publishDueBlogPosts(db,task,now=new Date()){
   const postState=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?").bind(row.slug).first();
   const enState=await db.prepare("SELECT status FROM xuyi_blog_schedule WHERE slug=?").bind(row.slug).first();
   const locState=(await db.prepare("SELECT locale,status FROM xuyi_blog_locale_schedule WHERE slug=?").bind(row.slug).all()).results||[];
-  if(postState?.status==="published"&&enState?.status==="published"&&locState.length===4&&locState.every(x=>x.status==="published"))published++;
+  if(postState?.status==="published"&&enState?.status==="published"&&locState.length===locales.length&&locales.every(loc=>locState.some(x=>x.locale===loc&&x.status==="published")))published++;
   else{
    needsReview++;await markReview(row.slug);
    if(postState?.status==="published"){

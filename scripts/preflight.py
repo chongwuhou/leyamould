@@ -4,6 +4,7 @@ from pathlib import Path
 import json
 import sys
 import os
+import re
 from datetime import datetime
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -18,6 +19,8 @@ checks={
  "Independent Pages Functions":all((ROOT/p).is_file() for p in ("functions/blog/[[path]].js","functions/api/admin/blog.js","functions/api/admin/publish.js","functions/api/publish-state.js")),
  "GitHub Actions configured":(ROOT/".github/workflows/publish-xuyi.yml").is_file(),
  "Build artifact isolated":(ROOT/"scripts/build_release.py").is_file(),
+ "No external translation provider code":not any(re.search(r"translation\\.googleapis|api-free\\.deepl|GOOGLE_TRANSLATE_API_KEY|DEEPL_API_KEY|TRANSLATION_API_KEY",(ROOT/p).read_text(encoding="utf-8")) for p in ("functions/_shared/translation.js","functions/_shared/site-settings.js","functions/api/admin/translations.js","functions/api/admin/site-settings.js")),
+ "Scheduler locale count is D1-driven":"prepared.length!==locales.length" in (ROOT/"functions/_shared/publish-scheduler.js").read_text(encoding="utf-8"),
 }
 for name,ok in checks.items():print(("PASS" if ok else "FAIL"),name)
 if not all(checks.values()):sys.exit("XUYI_PREFLIGHT_FAILED")

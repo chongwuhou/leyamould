@@ -156,6 +156,12 @@ def main():
     # Every filename contains an immutable hash of its original image bytes.
     # Do not apply immutable caching to mutable /media/ or editor-uploaded URLs.
     home_headers.extend([
+        "/admin/*",
+        "  Cache-Control: no-store, max-age=0, must-revalidate",
+        "/assets/admin-*",
+        "  Cache-Control: no-store, max-age=0, must-revalidate",
+        "/assets/xuyi-admin-bridge.js",
+        "  Cache-Control: no-store, max-age=0, must-revalidate",
         "/assets/responsive/*",
         "  Cache-Control: public, max-age=31536000, immutable",
     ])
