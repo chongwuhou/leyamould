@@ -57,6 +57,11 @@
  function render(){
   const container=$("content-form");
   if(!container)return;
+  const productPanel=$("content-product-seo");
+  const isProductSeo=tab==="product-seo";
+  if(productPanel)productPanel.hidden=!isProductSeo;
+  container.hidden=isProductSeo;
+  if(isProductSeo)return;
   if(!state[requiredData[tab]]){container.innerHTML="<p>当前栏目数据尚未读取成功，请点击「读取线上 D1 内容」重试；其他栏目可继续编辑。</p>";return}
   let html="";
   if(tab==="brand"){
@@ -69,9 +74,6 @@
     field("footerAbout",footer.about,"页脚介绍",3)+
     button("保存品牌并排队发布","brand");
   }
-  const productPanel=$("content-product-seo");
-  if(productPanel)productPanel.hidden=tab!=="product-seo";
-  container.hidden=tab==="product-seo";
   if(tab==="banners"){
    const items=state.bannerDraft?.slides||[];
    const options=(state.settings?.languages?.languages||[])

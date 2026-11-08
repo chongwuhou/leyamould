@@ -24,19 +24,37 @@
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
 <div id="publish-site-status" role="status" class="muted" aria-live="polite"></div>
 <section class="panel" id="content-admin-panel" data-admin-module="content">
- <div class="panel-head"><div><div class="eyebrow">XUYI · D1 CONTENT CONTROL</div><h2>来源内容与页面管理</h2>
- <p>06 统一管理来源内容、普通页面、Blog 多语言，以及产品多语言 SEO 与正文；所有字段直接读取和写入 D1，避免重复入口。</p></div></div>
- <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
-  <button type="button" class="btn ghost" id="content-load">读取线上 D1 内容</button>
-  <button type="button" class="btn ghost" id="content-tab-brand">品牌</button>
-  <button type="button" class="btn ghost" id="content-tab-banners">首页 Banner</button>
-  <button type="button" class="btn ghost" id="content-tab-navigation">导航</button>
-  <button type="button" class="btn ghost" id="content-tab-pages">页面 SEO</button>
-  <button type="button" class="btn ghost" id="content-tab-page-body">普通页面正文</button>
-  <button type="button" class="btn ghost" id="content-tab-products">产品来源内容</button>
-  <button type="button" class="btn ghost" id="content-tab-new-product">+ 新建产品</button>
-  <button type="button" class="btn ghost" id="content-tab-locales">页面 / Blog 多语言</button>
-  <button type="button" class="btn ghost" id="content-tab-product-seo">产品多语言 SEO + 正文</button>
+ <div class="panel-head"><div><div class="eyebrow">XUYI · D1 CONTENT CONTROL</div><h2>内容与多语言管理</h2>
+ <p>06 是唯一内容编辑入口。按“网站基础、页面与 Blog、产品”三类进入对应功能；数据全部直接读取和写入 D1。</p></div></div>
+ <div class="content-tab-groups" style="display:grid;gap:12px;margin:14px 0">
+  <div style="padding:12px;border:1px solid #dbe6ed;border-radius:10px;background:#f8fbfd">
+   <strong style="display:block;margin-bottom:8px">一、网站基础</strong>
+   <span class="muted" style="display:block;margin-bottom:8px">维护全站通用信息和跳转规则。</span>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button type="button" class="btn ghost" id="content-tab-brand">品牌信息</button>
+    <button type="button" class="btn ghost" id="content-tab-banners">首页 Banner（图片与文案）</button>
+    <button type="button" class="btn ghost" id="content-tab-navigation">导航与跳转</button>
+   </div>
+  </div>
+  <div style="padding:12px;border:1px solid #dbe6ed;border-radius:10px;background:#f8fbfd">
+   <strong style="display:block;margin-bottom:8px">二、页面与 Blog</strong>
+   <span class="muted" style="display:block;margin-bottom:8px">维护普通页面 SEO、正文和 Blog 多语言内容。</span>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button type="button" class="btn ghost" id="content-tab-pages">普通页面 SEO</button>
+    <button type="button" class="btn ghost" id="content-tab-page-body">普通页面正文</button>
+    <button type="button" class="btn ghost" id="content-tab-locales">页面 / Blog 多语言</button>
+   </div>
+  </div>
+  <div style="padding:12px;border:1px solid #dbe6ed;border-radius:10px;background:#f8fbfd">
+   <strong style="display:block;margin-bottom:8px">三、产品</strong>
+   <span class="muted" style="display:block;margin-bottom:8px">来源产品资料与各语种产品 SEO、正文统一在这里维护。</span>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button type="button" class="btn ghost" id="content-tab-products">产品来源商详</button>
+    <button type="button" class="btn ghost" id="content-tab-new-product">新建产品</button>
+    <button type="button" class="btn ghost" id="content-tab-product-seo">产品多语言 SEO 与正文</button>
+   </div>
+  </div>
+  <div><button type="button" class="btn primary" id="content-load">读取线上 D1 内容</button></div>
  </div>
  <p id="content-status" role="status" aria-live="polite"></p>
 <div id="content-form"></div>
