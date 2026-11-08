@@ -1,19 +1,24 @@
 import { authorizedReviewedBlogBatchRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema,listBlogPosts,sortLocalizedBlogIndexByD1Order } from "../../_shared/blog-cms.js";
-import { bumpPublishRevision } from "../../_shared/site-settings.js";
+import { bumpPublishRevision,defaultLanguageConfig,loadSiteSetting,normalizeLanguageConfig } from "../../_shared/site-settings.js";
 
 const SLUGS=[
   "marathon-race-participant-water-bottles-bulk-procurement",
   "spa-wellness-retreat-guest-water-bottles-wholesale",
   "city-sightseeing-tour-guest-water-bottle-kits-wholesale"
 ];
-const LANGS=["es","pt","ru","tr"];
+
 const DAY="2026-11-07",TAIL="</div></div></section>";
 const response=(x,status=200)=>Response.json(x,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
+async function configuredLocales(db){
+ const raw=await loadSiteSetting(db,"language_config",defaultLanguageConfig());
+ const config=normalizeLanguageConfig(raw.value);
+ return config.languages.filter(item=>item.enabled&&item.publishReady&&item.code!==config.sourceLocale).map(item=>item.code);
+}
 const count=(s,t)=>String(s).split(t).length-1;
 const blocked=/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;
-export function validatePayload(p){
- if(!p||!Array.isArray(p.posts)||p.posts.length!==3||!Array.isArray(p.translations)||p.translations.length!==12||!Array.isArray(p.indexCards)||p.indexCards.length!==12)throw Error("Batch shape requires 3 posts and 12 translations/cards");
+export function validatePayload(p,locales){
+ if(!p||!Array.isArray(p.posts)||p.posts.length!==SLUGS.length||!Array.isArray(p.translations)||p.translations.length!==SLUGS.length*locales.length||!Array.isArray(p.indexCards)||p.indexCards.length!==SLUGS.length*locales.length)throw Error("Batch shape requires 3 posts and 12 translations/cards");
  const allowed=new Set(SLUGS),slugs=new Set(),translations=new Set(),cards=new Set();
  for(const item of p.posts){
   const slug=String(item?.slug||""),post=item?.post;
@@ -24,25 +29,27 @@ export function validatePayload(p){
  }
  for(const t of p.translations){
   const slug=String(t?.route||"").match(/^\/blog\/([a-z0-9-]+)\/$/)?.[1],locale=String(t?.locale||""),key=slug+"|"+locale,html=String(t?.mainHtml||"");
-  if(!allowed.has(slug)||!LANGS.includes(locale)||translations.has(key)||String(t.title||"").length<12||String(t.description||"").length<25||html.length<5000||html.length>250000||blocked.test(html)||count(html,'class="blog-section"')!==7||count(html,'class="blog-editorial__product-link"')!==3||count(html,'class="blog-related__item"')!==3||count(html,'class="blog-buyer-matrix"')!==1||count(html,"<details>")!==4)throw Error("Unapproved localized body: "+key);
+  if(!allowed.has(slug)||!locales.includes(locale)||translations.has(key)||String(t.title||"").length<12||String(t.description||"").length<25||html.length<5000||html.length>250000||blocked.test(html)||count(html,'class="blog-section"')!==7||count(html,'class="blog-editorial__product-link"')!==3||count(html,'class="blog-related__item"')!==3||count(html,'class="blog-buyer-matrix"')!==1||count(html,"<details>")!==4)throw Error("Unapproved localized body: "+key);
   const expectedCover=p.posts.find(item=>item.slug===slug)?.post?.cover;
   if(!expectedCover||!html.includes('src="'+expectedCover+'"'))throw Error("Localized hero cover mismatch: "+key);
   translations.add(key);
  }
  for(const t of p.indexCards){
   const slug=String(t?.slug||""),loc=String(t?.locale||""),html=String(t?.html||""),key=slug+"|"+loc;
-  if(!allowed.has(slug)||!LANGS.includes(loc)||cards.has(key)||html.length<100||html.length>10000||blocked.test(html)||!html.startsWith('<article class="news-card">')||!html.endsWith("</article>")||count(html,'href="/blog/'+slug+'/"')!==3)throw Error("Unapproved index card: "+key);
+  if(!allowed.has(slug)||!locales.includes(loc)||cards.has(key)||html.length<100||html.length>10000||blocked.test(html)||!html.startsWith('<article class="news-card">')||!html.endsWith("</article>")||count(html,'href="/blog/'+slug+'/"')!==3)throw Error("Unapproved index card: "+key);
   const expectedCover=p.posts.find(item=>item.slug===slug)?.post?.cover;
   if(!expectedCover||!html.includes('src="'+expectedCover+'"'))throw Error("Localized list cover mismatch: "+key);
   cards.add(key);
  }
- for(const slug of SLUGS)for(const lang of LANGS){const key=slug+"|"+lang;if(!translations.has(key)||!cards.has(key))throw Error("Incomplete locale set");}
+ for(const slug of SLUGS)for(const lang of locales){const key=slug+"|"+lang;if(!translations.has(key)||!cards.has(key))throw Error("Incomplete locale set");}
 }
 export async function onRequestPost(context){
  if(!(await authorizedReviewedBlogBatchRequest(context.request,context.env)))return response({error:"Unauthorized"},401);
  const db=context.env.XUYI_DB;
  if(!db)return response({error:"D1 binding unavailable"},503);
- let p;try{p=await context.request.json();validatePayload(p);}catch(e){return response({error:String(e.message||"Invalid payload").slice(0,240)},400);}
+ const locales=await configuredLocales(db);
+ if(!locales.length)return response({error:"No publish-ready target locales are configured in D1"},409);
+ let p;try{p=await context.request.json();validatePayload(p,locales);}catch(e){return response({error:String(e.message||"Invalid payload").slice(0,240)},400);}
  try{
   await ensureBlogSchema(db);
   const stmts=[];
@@ -51,8 +58,10 @@ export async function onRequestPost(context){
   for(const c of p.indexCards)stmts.push(db.prepare("UPDATE xuyi_translation_overrides SET translated_json=json_set(translated_json,'$.mainHtml',substr(json_extract(translated_json,'$.mainHtml'),1,length(json_extract(translated_json,'$.mainHtml'))-length(?))||?||?),reviewed_at=? WHERE resource_id='page:/blog/' AND locale=? AND substr(json_extract(translated_json,'$.mainHtml'),-length(?))=? AND instr(json_extract(translated_json,'$.mainHtml'),?)=0").bind(TAIL,c.html,TAIL,DAY,c.locale,TAIL,TAIL,"/blog/"+c.slug+"/"));
   const done=await db.batch(stmts);
   const changes=(a,b)=>done.slice(a,b).reduce((total,x)=>total+Number(x?.meta?.changes||0),0);
-  const postsInserted=changes(0,3),translationsInserted=changes(3,15),indexCardsAdded=changes(15,27);
-  const saved=(await db.prepare("SELECT slug,status FROM xuyi_blog_posts WHERE slug IN (?,?,?)").bind(...SLUGS).all()).results||[];
+  const postCount=SLUGS.length,translationCount=SLUGS.length*locales.length;
+  const postsInserted=changes(0,postCount),translationsInserted=changes(postCount,postCount+translationCount),indexCardsAdded=changes(postCount+translationCount,stmts.length);
+  const postPlaceholders=SLUGS.map(()=>"?").join(","),localePlaceholders=locales.map(()=>"?").join(","),refPlaceholders=["page:/blog/",...SLUGS.map(s=>"page:/blog/"+s+"/")].map(()=>"?").join(",");
+  const saved=(await db.prepare("SELECT slug,status FROM xuyi_blog_posts WHERE slug IN ("+postPlaceholders+")").bind(...SLUGS).all()).results||[];
   if(saved.filter(x=>x.status==="published"&&SLUGS.includes(x.slug)).length!==3)return response({error:"Article verification failed"},409);
   // The English live route uses listBlogPosts() (updated_at DESC). Use that
   // complete D1 result as the sole ordering source for every localized index.
@@ -63,7 +72,7 @@ export async function onRequestPost(context){
      ||SLUGS.some(slug=>!d1Order.includes(slug)))
    return response({error:"D1 published Blog order is incomplete or duplicated"},409);
   const orderWrites=[];
-  for(const lang of LANGS){
+  for(const lang of locales){
    const row=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(lang).first();
    if(!row?.translated_json)return response({error:"Localized Blog index override missing: "+lang},409);
    let index;try{index=JSON.parse(row.translated_json);}catch{return response({error:"Localized Blog index JSON invalid: "+lang},409);}
@@ -78,18 +87,18 @@ export async function onRequestPost(context){
   const localizedIndexesReordered=orderResults.reduce((total,item)=>total+Number(item?.meta?.changes||0),0);
   if(localizedIndexesReordered!==orderWrites.length)
    return response({error:"Localized Blog index changed during the conditional D1-order update"},409);
-  const indexRows=(await db.prepare("SELECT locale,translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale IN (?,?,?,?)").bind(...LANGS).all()).results||[];
+  const indexRows=(await db.prepare("SELECT locale,translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale IN ("+localePlaceholders+")").bind(...locales).all()).results||[];
   const indexByLocale=new Map(indexRows.map(row=>[row.locale,JSON.parse(row.translated_json).mainHtml||""]));
-  for(const lang of LANGS){
+  for(const lang of locales){
    const html=indexByLocale.get(lang)||"";
    if(!html||sortLocalizedBlogIndexByD1Order(html,d1Order)!==html)
     return response({error:"Localized Blog index does not match the D1 published order: "+lang},409);
   }
 
   const refs=["page:/blog/",...SLUGS.map(s=>"page:/blog/"+s+"/")];
-  const rows=(await db.prepare("SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN (?,?,?,?) AND locale IN (?,?,?,?)").bind(...refs,...LANGS).all()).results||[];
+  const rows=(await db.prepare("SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN ("+refPlaceholders+") AND locale IN ("+localePlaceholders+")").bind(...refs,...locales).all()).results||[];
   const lookup=new Map(rows.map(x=>[x.resource_id+"|"+x.locale,JSON.parse(x.translated_json).mainHtml||""]));
-  for(const lang of LANGS){
+  for(const lang of locales){
    const index=lookup.get("page:/blog/|"+lang)||"";
    for(const slug of SLUGS){
     const body=lookup.get("page:/blog/"+slug+"/|"+lang)||"";
@@ -99,6 +108,6 @@ export async function onRequestPost(context){
    }
   }
   const revision=await bumpPublishRevision(db);
-  return response({success:true,postsInserted,translationsInserted,indexCardsAdded,localizedIndexesReordered,d1PublishedCount:d1Order.length,indexOrderVerified:LANGS,publishRevision:revision.revision,publishedSlugs:SLUGS});
+  return response({success:true,postsInserted,translationsInserted,indexCardsAdded,localizedIndexesReordered,d1PublishedCount:d1Order.length,indexOrderVerified:locales,publishRevision:revision.revision,publishedSlugs:SLUGS});
  }catch(e){return response({error:"D1 batch failed: "+String(e.message||"unknown").slice(0,160)},500);}
 }
