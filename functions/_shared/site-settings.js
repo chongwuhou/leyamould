@@ -181,21 +181,29 @@ export function defaultTranslationConfig() {
 export function normalizeTranslationConfig(input, languageConfig = defaultLanguageConfig()) {
   const raw = input && typeof input === "object" ? input : {};
   const languages = normalizeLanguageConfig(languageConfig);
+  const provider = clean(raw.provider || "manual", 50).toLowerCase();
+  if (!["manual","google-cloud-translation","deepl","openai-compatible"].includes(provider)) {
+    throw new Error("Unsupported translation provider");
+  }
   const sourceLocale = normalizeLocaleCode(raw.sourceLocale || languages.sourceLocale);
   if (!languages.languages.some((item) => item.code === sourceLocale)) throw new Error("Translation source locale is not configured");
-  // Project policy forbids paid, quota-limited, trial-credit, or unclear
-  // external translation APIs. Keep the queue/manual workflow, but never
-  // retain a provider setting that could trigger an outbound call.
+  const endpoint = clean(raw.endpoint, 1000);
+  if (endpoint && !/^https:\/\//i.test(endpoint)) throw new Error("Translation endpoint must use HTTPS");
+  const legacyAutoTranslate = Boolean(raw.autoTranslate);
+  const requestedMode = clean(raw.mode, 20).toLowerCase();
+  const mode = ["off", "review", "publish"].includes(requestedMode)
+    ? requestedMode
+    : (legacyAutoTranslate ? (raw.requireHumanReview === false ? "publish" : "review") : "off");
   return {
     schemaVersion: 1,
-    mode: "off",
-    provider: "manual",
+    mode,
+    provider,
     sourceLocale,
     autoQueue: raw.autoQueue !== false,
-    autoTranslate: false,
-    model: "",
-    endpoint: "",
-    requireHumanReview: true
+    autoTranslate: mode !== "off" && provider !== "manual",
+    model: clean(raw.model, 160),
+    endpoint,
+    requireHumanReview: mode !== "publish"
   };
 }
 

@@ -15,9 +15,8 @@
 <button type="button" class="admin-module-btn" data-admin-target="settings">03 联系人与邮箱</button>
 <button type="button" class="admin-module-btn" data-admin-target="languages">04 多语言</button>
 <button type="button" class="admin-module-btn" data-admin-target="advanced">05 翻译工作流</button>
-<button type="button" class="admin-module-btn" data-admin-target="content">06 内容基础 · 来源与页面</button>
+<button type="button" class="admin-module-btn" data-admin-target="content">06 内容与多语言</button>
 <button type="button" class="admin-module-btn" data-admin-target="reviews">07 客户评价 ★</button>
-<button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品多语言 SEO + 正文</button>
 <button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
 <button type="button" class="admin-module-btn" data-admin-target="scheduler">10 自动发布与定时任务</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
@@ -26,7 +25,7 @@
 <div id="publish-site-status" role="status" class="muted" aria-live="polite"></div>
 <section class="panel" id="content-admin-panel" data-admin-module="content">
  <div class="panel-head"><div><div class="eyebrow">XUYI · D1 CONTENT CONTROL</div><h2>来源内容与页面管理</h2>
- <p>06 只管理来源语言、品牌、导航、普通页面、产品来源资料，以及普通页面和 Blog 的多语言翻译。产品 SEO 和产品多语言正文统一在 08，避免重复入口。</p></div></div>
+ <p>06 统一管理来源内容、普通页面、Blog 多语言，以及产品多语言 SEO 与正文；所有字段直接读取和写入 D1，避免重复入口。</p></div></div>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
   <button type="button" class="btn ghost" id="content-load">读取线上 D1 内容</button>
   <button type="button" class="btn ghost" id="content-tab-brand">品牌</button>
@@ -37,9 +36,37 @@
   <button type="button" class="btn ghost" id="content-tab-products">产品来源内容</button>
   <button type="button" class="btn ghost" id="content-tab-new-product">+ 新建产品</button>
   <button type="button" class="btn ghost" id="content-tab-locales">页面 / Blog 多语言</button>
+  <button type="button" class="btn ghost" id="content-tab-product-seo">产品多语言 SEO + 正文</button>
  </div>
  <p id="content-status" role="status" aria-live="polite"></p>
 <div id="content-form"></div>
+<div id="content-product-seo" hidden>
+ <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO + CONTENT · CLOUDFLARE D1</div>
+ <h2>产品多语言 SEO 与正文（统一在 06）</h2>
+ <p>06 统一管理产品来源、产品多语言 SEO、目标语种正文，以及普通页面和 Blog 多语言；所有字段直接读写现有 D1。</p>
+ <p><span id="product-seo-count">产品数量读取中</span> · <span id="product-seo-language-summary">语言配置读取中</span> · 修改后点击顶部「一键全站重建」。</p>
+ </div></div>
+ <div class="row-actions"><button type="button" class="btn ghost" id="product-seo-reload">读取数据库</button></div>
+ <p id="product-seo-status" role="status" aria-live="polite"></p>
+ <form id="product-seo-editor">
+  <label class="block-label">产品型号页面（选择官网真实型号）
+   <input id="product-seo-slug" list="product-seo-models" placeholder="输入官网产品型号，例如型号或 URL 标识" required></label>
+  <datalist id="product-seo-models"></datalist>
+  <label class="block-label">语言
+   <select id="product-seo-locale" aria-label="选择已配置语言"></select></label>
+  <label class="block-label">SEO Title（建议自然简洁，最多 90 字符）
+   <input id="product-seo-title" required maxlength="90" minlength="12"></label>
+  <label class="block-label">Meta Description（最多 240 字符）
+   <textarea id="product-seo-description" rows="4" required maxlength="240" minlength="30"></textarea></label>
+  <label class="block-label">对应语种产品正文（完整 Main HTML）
+   <textarea id="product-seo-content" rows="18" placeholder="目标语种：先读取来源语言正文，再完整翻译、检查图片与链接后保存。"></textarea></label>
+  <div class="row-actions"><button type="button" class="btn ghost" id="product-content-source">读取来源语言正文</button>
+   <span id="product-content-status" class="muted"></span></div>
+  <p class="muted">来源语言正文由「06 → 产品来源内容」维护；目标语种正文写入现有 D1 多语言正式页面记录。正文留空时只保存 SEO，不会删除已有正文。</p>
+  <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 与正文到 D1</button>
+   <button type="button" class="btn ghost" id="product-seo-reset">重新载入当前记录</button></div>
+ </form>
+</div>
 </section>
 <section class="panel" id="review-admin-panel" data-admin-module="reviews">
  <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT REVIEWS · D1</div>
@@ -79,33 +106,6 @@
  <h3>已保存评价</h3>
  <label class="block-label">筛选型号 <input type="search" id="review-filter" placeholder="输入型号或姓名查找"></label>
  <div id="review-admin-list"></div>
-</section>
-<section class="panel" id="product-seo-admin-panel" data-admin-module="productseo">
- <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO + CONTENT · CLOUDFLARE D1</div>
- <h2>产品多语言 SEO 与正文（正式数据库）</h2>
- <p>08 只管理产品型号：SEO Title、Meta Description 和目标语种完整正文。产品来源字段请到 06，Blog / 普通页面多语言请到 06；这里不再承担其他页面。</p>
- <p><span id="product-seo-count">产品数量读取中</span> · <span id="product-seo-language-summary">语言配置读取中</span> · 修改后点击顶部「一键全站重建」。</p>
- </div></div>
- <div class="row-actions"><button type="button" class="btn ghost" id="product-seo-reload">读取数据库</button></div>
- <p id="product-seo-status" role="status" aria-live="polite"></p>
- <form id="product-seo-editor">
-  <label class="block-label">产品型号页面（选择官网真实型号）
-   <input id="product-seo-slug" list="product-seo-models" placeholder="输入官网产品型号，例如型号或 URL 标识" required></label>
-  <datalist id="product-seo-models"></datalist>
-  <label class="block-label">语言
-   <select id="product-seo-locale" aria-label="选择已配置语言"></select></label>
-  <label class="block-label">SEO Title（建议自然简洁，最多 90 字符）
-   <input id="product-seo-title" required maxlength="90" minlength="12"></label>
-  <label class="block-label">Meta Description（最多 240 字符）
-   <textarea id="product-seo-description" rows="4" required maxlength="240" minlength="30"></textarea></label>
-  <label class="block-label">对应语种产品正文（完整 Main HTML）
-   <textarea id="product-seo-content" rows="18" placeholder="目标语种：先读取来源语言正文，再完整翻译、检查图片与链接后保存。"></textarea></label>
-  <div class="row-actions"><button type="button" class="btn ghost" id="product-content-source">读取来源语言正文</button>
-   <span id="product-content-status" class="muted"></span></div>
-  <p class="muted">来源语言正文由「06 → 产品来源内容」维护；目标语种正文写入现有 D1 多语言正式页面记录。正文留空时只保存 SEO，不会删除已有正文。</p>
-  <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 与正文到 D1</button>
-   <button type="button" class="btn ghost" id="product-seo-reset">重新载入当前记录</button></div>
- </form>
 </section>
 <section class="panel" id="media-admin-panel" data-admin-module="media">
  <div class="panel-head"><div><div class="eyebrow">XUYI · R2 ASSETS</div>
@@ -279,10 +279,10 @@
       </section>
 
       <section class="panel" id="translation-workflow-panel" data-admin-module="advanced">
-        <div class="panel-head"><div><div class="eyebrow">TRANSLATION WORKFLOW</div><h2>人工 / AI 草稿翻译与审核</h2><p>翻译只允许人工或当前 AI 会话生成草稿，再由后台审核并写入 D1。项目已关闭 Google Cloud、DeepL、OpenAI 及其他外部自动翻译接口，不保存、不探测、不调用任何 API 配额。</p></div><span class="safe-badge">Draft → Review → Publish</span></div>
-        <div class="grid"><label>翻译方式<select id="translation-provider" disabled><option value="manual">人工或当前 AI 会话草稿</option></select></label><label>源语言<select id="translation-source-locale"></select></label><label>自动翻译策略<select id="translation-mode" disabled><option value="off">关闭外部自动翻译</option></select></label></div>
-        <div class="row-actions"><label><input id="translation-auto-queue" type="checkbox" /> 源内容修改后自动生成待审核任务</label><button id="save-translation-settings" class="btn primary">保存翻译设置</button><span id="translation-settings-status" class="muted"></span></div>
-        <p id="translation-secret-status" class="muted">自动翻译接口已关闭；翻译任务只保存人工或当前 AI 会话提交的草稿。</p>
+        <div class="panel-head"><div><div class="eyebrow">TRANSLATION WORKFLOW</div><h2>自动翻译与审核</h2><p>源语言内容修改后生成翻译任务。可选择关闭自动翻译、自动翻译后人工审核，或自动翻译后自动发布。Provider 密钥只放 Cloudflare Pages Secret，不写入 D1；默认关闭自动翻译，启用后仍按人工审核策略执行。</p></div><span class="safe-badge">Queue → Translate → Review → Publish</span></div>
+        <div class="grid"><label>Provider<select id="translation-provider"><option value="manual">Manual（手工翻译）</option><option value="google-cloud-translation">Google Cloud Translation（官方）</option><option value="deepl">DeepL</option><option value="openai-compatible">OpenAI-Compatible</option></select></label><label>源语言<select id="translation-source-locale"></select></label><label>自动翻译策略<select id="translation-mode"><option value="off">关闭自动翻译（人工处理）</option><option value="review">自动翻译 + 人工审核</option><option value="publish">自动翻译 + 自动发布</option></select></label><label>Model（OpenAI-Compatible）<input id="translation-model" type="text" placeholder="例如 gpt-4.1-mini" /></label><label>Endpoint（DeepL/OpenAI-Compatible）<input id="translation-endpoint" type="url" placeholder="https://..." /></label></div>
+        <div class="row-actions"><label><input id="translation-auto-queue" type="checkbox" /> 源内容修改后自动排队</label><button id="save-translation-settings" class="btn primary">保存翻译设置</button><span id="translation-settings-status" class="muted"></span></div>
+        <p id="translation-secret-status" class="muted"></p>
         <div class="row-actions"><input id="translation-model-id" type="text" placeholder="产品型号，例如 2501" /><button id="enqueue-translation-model" class="btn ghost">生成/刷新产品翻译任务</button><input id="translation-blog-slug" type="text" placeholder="Blog slug，例如 wholesale-plastic-water-bottle-buying-guide" /><button id="enqueue-translation-blog" class="btn ghost">生成/刷新 Blog 翻译任务</button><button id="reload-translations" class="btn ghost">刷新任务</button></div>
         <div id="translation-jobs" class="batches"></div>
       </section>

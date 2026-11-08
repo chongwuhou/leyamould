@@ -11,7 +11,7 @@
  const productFieldKeys=kind=>productFieldDefinitions(kind).map(item=>item.key);
  const renderProductFields=kind=>productFieldDefinitions(kind).map(item=>field(item.key,"",item.label,item.rows)).join("");
  const requiredData={brand:"brand",banners:"bannerDraft",navigation:"site",pages:"pages",
-  "page-body":"pageBodies",products:"products","new-product":"products",locales:"locales"};
+  "page-body":"pageBodies",products:"products","new-product":"products",locales:"locales","product-seo":"products"};
  const say=v=>{$("content-status").textContent=v};
  async function api(route,body){
   if(!token())throw Error("请先登录后台");
@@ -69,6 +69,9 @@
     field("footerAbout",footer.about,"页脚介绍",3)+
     button("保存品牌并排队发布","brand");
   }
+  const productPanel=$("content-product-seo");
+  if(productPanel)productPanel.hidden=tab!=="product-seo";
+  container.hidden=tab==="product-seo";
   if(tab==="banners"){
    const items=state.bannerDraft?.slides||[];
    const options=(state.settings?.languages?.languages||[])
@@ -146,7 +149,7 @@
     button("读取当前来源语言页正文","page-body-source")+' '+button("保存页面正文","page-body-save");
   }
   if(tab==="locales"){
-   html='<h3>多语言正式页面 · 翻译审核</h3><p>这里仅维护普通页面和已发布 Blog 的多语言正式页面；产品 SEO 与产品正文统一到后台 08。先复制来源语言原文，再逐段翻译，完整审核并保存后才会更新对应语言 URL。</p>'+
+   html='<h3>多语言正式页面 · 翻译审核</h3><p>这里统一维护普通页面、已发布 Blog 和产品的多语言正式内容。选择来源页面后会直接读取源页面 Title、Meta Description 和正文；完成翻译、审核后写回现有 D1 正式记录。</p>'+
     '<label class="block-label">目标语言 <select id="cms-locale">'+
        (state.settings?.languages?.languages||[])
           .filter(x=>x.code!==state.settings?.languages?.sourceLocale)
@@ -302,7 +305,9 @@
     }
    }
    selector.innerHTML=pages.map(x=>'<option value="'+esc(x.route)+'">'+esc(x.route+" · "+x.label)+'</option>').join("");
-   selector.onchange=fillLocale;$("cms-locale").onchange=fillLocale;fillLocale();
+   selector.onchange=()=>{fillLocale();fillLocaleSourceMeta(selector.value);};
+   $("cms-locale").onchange=()=>{fillLocale();fillLocaleSourceMeta(selector.value);};
+   fillLocale();fillLocaleSourceMeta(selector.value);
   }
 
  }
@@ -312,6 +317,20 @@
   for(const [key,field] of [["localeTitle","title"],["localeDescription","description"],["localeHtml","mainHtml"]]){
    const el=document.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=x?.content?.[field]||"";
   }
+ }
+ async function fillLocaleSourceMeta(route,force=false){
+  if(!route)return;
+  try{
+   const response=await fetch(route,{cache:"no-store"});
+   if(!response.ok)return;
+   const doc=new DOMParser().parseFromString(await response.text(),"text/html");
+   const title=(doc.querySelector("title")?.textContent||"").trim();
+   const description=(doc.querySelector('meta[name="description"]')?.getAttribute("content")||"").trim();
+   const titleField=document.querySelector('[data-cms-field="localeTitle"]');
+   const descriptionField=document.querySelector('[data-cms-field="localeDescription"]');
+   if(titleField&&(force||!titleField.value.trim()))titleField.value=title;
+   if(descriptionField&&(force||!descriptionField.value.trim()))descriptionField.value=description;
+  }catch{}
  }
  function collectBannerFields(){
   if(tab!=="banners")return;
@@ -457,8 +476,10 @@
     const doc=new DOMParser().parseFromString(await response.text(),"text/html");
     const main=doc.getElementById("main-content");
     if(!main)throw Error("来源语言原页面缺少 main");
+    document.querySelector('[data-cms-field="localeTitle"]').value=(doc.querySelector("title")?.textContent||"").trim();
+    document.querySelector('[data-cms-field="localeDescription"]').value=(doc.querySelector('meta[name="description"]')?.getAttribute("content")||"").trim();
     document.querySelector('[data-cms-field="localeHtml"]').value=main.innerHTML;
-    say("已读取来源语言页面。请先完成全文翻译与检查，再点击审核保存。");return;
+    say("已读取来源语言页面 Title、Meta Description 和正文。请完成目标语言翻译与检查，再点击审核保存。");return;
    }else if(action==="locale-save"){
     if(!window.confirm("确认全部可见正文已按目标语言翻译、图片链接及参数已经核对？"))return;
     result=await api("page-translations",{route:$("cms-locale-route").value,locale:$("cms-locale").value,
@@ -468,7 +489,7 @@
    await load();
   }catch(e){say("保存失败："+e.message)}
  }
- for(const tabName of ["brand","banners","navigation","pages","page-body","products","new-product","locales"]){
+ for(const tabName of ["brand","banners","navigation","pages","page-body","products","new-product","locales","product-seo"]){
   $("content-tab-"+tabName)?.addEventListener("click",()=>{tab=tabName;if(!state[requiredData[tab]])load();else render();});
  }
  $("content-load")?.addEventListener("click",load);

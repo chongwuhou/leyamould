@@ -128,8 +128,107 @@ export async function queueBlogTranslationJobs(db, slug, { force = false } = {})
   }
   return { queued, sourceLocale, slug: blogSlug };
 }
-export async function machineTranslatePayload() {
-  throw new Error("外部自动翻译接口已按项目费用规则关闭；请由人工或当前 AI 会话生成草稿后粘贴到翻译任务，再审核入库");
+function walkStrings(value, path = [], out = []) {
+  if (typeof value === "string") {
+    const text = value.trim();
+    if (text && !/^https?:\/\//i.test(text) && !/^[A-Z0-9][A-Z0-9._\/-]{4,}$/i.test(text)) out.push({ path, text });
+    return out;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => walkStrings(item, [...path, index], out));
+    return out;
+  }
+  if (value && typeof value === "object") {
+    for (const [key, item] of Object.entries(value)) {
+      if (key === "geoEntities") continue;
+      walkStrings(item, [...path, key], out);
+    }
+  }
+  return out;
+}
+
+function setPath(root, path, value) {
+  let cursor = root;
+  for (let i = 0; i < path.length - 1; i++) cursor = cursor[path[i]];
+  cursor[path[path.length - 1]] = value;
+}
+
+async function googleTranslate(texts, source, target, apiKey, format = "text") {
+  const response = await fetch("https://translation.googleapis.com/language/translate/v2?key=" + encodeURIComponent(apiKey), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ q: texts, source, target, format: format === "html" ? "html" : "text" })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data?.error?.message || "Google Translation HTTP " + response.status);
+  return (data?.data?.translations || []).map((item) => String(item.translatedText || ""));
+}
+
+async function deeplTranslate(texts, source, target, apiKey, endpoint) {
+  const body = new URLSearchParams();
+  for (const text of texts) body.append("text", text);
+  body.set("source_lang", source.split("-")[0].toUpperCase());
+  body.set("target_lang", target.split("-")[0].toUpperCase());
+  const response = await fetch(endpoint || "https://api-free.deepl.com/v2/translate", {
+    method: "POST",
+    headers: { authorization: "DeepL-Auth-Key " + apiKey, "content-type": "application/x-www-form-urlencoded" },
+    body
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data?.message || "DeepL HTTP " + response.status);
+  return (data?.translations || []).map((item) => String(item.text || ""));
+}
+
+async function openAiCompatibleTranslate(payload, source, target, apiKey, endpoint, model) {
+  if (!endpoint) throw new Error("OpenAI-compatible translation endpoint is not configured");
+  if (!model) throw new Error("OpenAI-compatible translation model is not configured");
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: { authorization: "Bearer " + apiKey, "content-type": "application/json" },
+    body: JSON.stringify({
+      model,
+      temperature: 0.1,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: "Translate the JSON content from " + source + " to " + target + ". Preserve JSON keys, URLs, part numbers, brand names, measurements and technical facts. Return only one JSON object with the same structure." },
+        { role: "user", content: JSON.stringify(payload) }
+      ]
+    })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data?.error?.message || "Translation provider HTTP " + response.status);
+  const content = data?.choices?.[0]?.message?.content || "";
+  try { return JSON.parse(content); }
+  catch { throw new Error("OpenAI-compatible provider did not return valid JSON"); }
+}
+
+export async function machineTranslatePayload(payload, source, target, config, env) {
+  if (config.provider === "manual") throw new Error("Translation provider is manual");
+  if (config.provider === "openai-compatible") {
+    const key = clean(env.TRANSLATION_API_KEY, 4000);
+    if (!key) throw new Error("TRANSLATION_API_KEY Pages Secret is not configured");
+    return openAiCompatibleTranslate(payload, source, target, key, config.endpoint, config.model);
+  }
+  const cloned = JSON.parse(JSON.stringify(payload));
+  const parts = walkStrings(cloned);
+  if (!parts.length) return cloned;
+  const texts = parts.map((item) => item.text);
+  let translated;
+  if (config.provider === "google-cloud-translation") {
+    const key = clean(env.GOOGLE_TRANSLATE_API_KEY, 4000);
+    if (!key) throw new Error("GOOGLE_TRANSLATE_API_KEY Pages Secret is not configured");
+    const format = parts.some((item) => item.path[item.path.length - 1] === "mainHtml") ? "html" : "text";
+    translated = await googleTranslate(texts, source, target, key, format);
+  } else if (config.provider === "deepl") {
+    const key = clean(env.DEEPL_API_KEY, 4000);
+    if (!key) throw new Error("DEEPL_API_KEY Pages Secret is not configured");
+    translated = await deeplTranslate(texts, source, target, key, config.endpoint);
+  } else {
+    throw new Error("Unsupported translation provider");
+  }
+  if (translated.length !== parts.length) throw new Error("Translation provider returned an unexpected item count");
+  translated.forEach((text, index) => setPath(cloned, parts[index].path, text));
+  return cloned;
 }
 
 export async function applyTranslationOverride(db, job, translatedPayload) {

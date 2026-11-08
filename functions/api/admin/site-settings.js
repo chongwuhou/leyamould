@@ -41,7 +41,9 @@ async function currentSettings(db, env) {
       translation: translationRaw.updatedAt
     },
     translationSecrets: {
-      automaticTranslation: false
+      googleCloudTranslation: Boolean(clean(env.GOOGLE_TRANSLATE_API_KEY)),
+      deepl: Boolean(clean(env.DEEPL_API_KEY)),
+      openaiCompatible: Boolean(clean(env.TRANSLATION_API_KEY))
     }
   };
 }

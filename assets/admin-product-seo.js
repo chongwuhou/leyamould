@@ -1,4 +1,4 @@
-/* XUYI D1 product SEO and locale-body console. */
+/* XUYI D1 product SEO and locale-body console, mounted inside admin 06. */
 (()=>{"use strict";
  const el=id=>document.getElementById(id);
  const say=t=>{if(el("product-seo-status"))el("product-seo-status").textContent=t};
@@ -91,6 +91,7 @@
   }catch(error){if(request===bodyRequest){content.disabled=false;bodySay("来源正文读取失败："+error.message)}}
  });
  document.querySelector('[data-admin-target="productseo"]')?.addEventListener("click",load);
+ document.getElementById("content-tab-product-seo")?.addEventListener("click",load);
  el("product-seo-editor")?.addEventListener("submit",async ev=>{
   ev.preventDefault();const {slug,locale}=current();
   if(!locale){say("D1 语言配置为空，不能保存。");return}
