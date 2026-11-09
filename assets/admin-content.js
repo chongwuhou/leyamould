@@ -119,7 +119,7 @@
    button("保存所选页面 SEO","pages");
   }
   if(tab==="products"){
-   html='<h3>产品结构化商详与 SEO</h3><p>可输入完整型号或部分型号（例如 008、LO-008、2095），选择后读取官网现有商详及已保存的 D1 修改。保存草稿不会覆盖原始网站内容。</p>'+
+   html='<h3>来源产品商详（来源语言）与 SEO</h3><p>维护官网来源语言的结构化产品资料、来源语言 SEO 和 D1 产品记录；多语言 SEO 与正文请使用右侧入口。选择型号后读取当前来源页及 D1 修改，保存时只合并本次填写字段。</p>'+
    '<label class="block-label">搜索已有商品型号 <input type="search" id="cms-product-search" placeholder="输入 008 查找 LO-008" autocomplete="off" aria-label="搜索已有商品型号"></label>'+
    '<select id="cms-product-matches" size="6" aria-label="已有商品型号匹配结果" style="width:100%;margin:8px 0 12px"></select>'+
    '<p id="cms-product-current" role="status" aria-live="polite"></p>'+
