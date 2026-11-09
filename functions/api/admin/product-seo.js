@@ -57,7 +57,7 @@ export async function onRequestPost(c){
  if(input?.action!=="save")return respond({error:"Unknown action"},400);
  const localeConfig=await configuredProductSeoLocales(db);
  let value;try{value=normalizeProductSeo(input,localeConfig.locales)}catch(e){return respond({error:e.message},400)}
- if(!await hasProduct(db,value.slug))return respond({error:"产品型号不属于已发布的 XUYI 目录"},400);
+ if(!await hasProduct(db,value.slug))return respond({error:"产品型号不属于当前 XUYI D1 目录"},400);
  const hasBodyField=Object.prototype.hasOwnProperty.call(input,"mainHtml");
  const mainHtml=hasBodyField?clean(input.mainHtml,250000):"";
  if(hasBodyField&&mainHtml&&value.locale===localeConfig.sourceLocale)return respond({error:"来源语言正文必须在产品商详入口维护"},409);
