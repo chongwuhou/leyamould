@@ -61,7 +61,9 @@ export function normalizeLanguageConfig(input) {
     };
   }).sort((a, b) => a.sortOrder - b.sortOrder || a.code.localeCompare(b.code));
   if (!languages.length) throw new Error("At least one language is required");
-  const defaultLocale = normalizeLocaleCode(raw.defaultLocale || "en");
+  // A configured registry is authoritative. Only an empty registry uses the
+  // source-only bootstrap above; never force English onto a configured site.
+  const defaultLocale = normalizeLocaleCode(raw.defaultLocale || raw.sourceLocale || source[0]?.code || "en");
   const sourceLocale = normalizeLocaleCode(raw.sourceLocale || defaultLocale);
   const defaultItem = languages.find((item) => item.code === defaultLocale);
   if (!defaultItem) throw new Error("Default language is not in the language list");
