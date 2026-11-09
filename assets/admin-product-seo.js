@@ -29,7 +29,7 @@
   if(sourceLocale&&languages.some(item=>item.code===sourceLocale))select.value=sourceLocale;
  }
  function renderSummary(data){
-  if(el("product-seo-count"))el("product-seo-count").textContent=(data.productCount??models.length)+" 个已配置产品";
+  if(el("product-seo-count"))el("product-seo-count").textContent="已读取 D1 产品目录";
   if(el("product-seo-language-summary"))el("product-seo-language-summary").textContent=
    "当前语言："+languages.filter(item=>item.enabled!==false).map(item=>item.name||item.code).join("、");
  }
@@ -78,7 +78,7 @@
    el("product-seo-models").replaceChildren(...models.map(x=>{const node=document.createElement("option");node.value=x;return node;}));
    if(!el("product-seo-slug").value&&models[0])el("product-seo-slug").value=models[0];
    populate();await loadBody();
-   say("D1 已读取 "+(data.productCount??models.length)+" 个已配置产品及 "+languages.length+" 种后台语言。");
+   say("D1 产品目录与语言配置已读取，可选择型号和语言编辑。");
   }catch(err){say("读取失败："+err.message)}
  }
  el("product-seo-reload")?.addEventListener("click",load);
