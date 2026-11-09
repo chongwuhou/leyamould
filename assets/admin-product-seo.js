@@ -90,7 +90,20 @@
    content.value=main.innerHTML;content.disabled=false;bodySay("已读取 "+sourceName()+" 正文，请完成全文翻译后保存。");
   }catch(error){if(request===bodyRequest){content.disabled=false;bodySay("来源正文读取失败："+error.message)}}
  });
- document.getElementById("content-tab-product-seo")?.addEventListener("click",load);
+ function openProductPanel(){
+  const panel=el("content-product-seo"),form=el("content-form");
+  if(panel)panel.hidden=false;
+  if(form)form.hidden=true;
+ }
+ // The 06 panel can be mounted/re-mounted by the admin shell. Delegate the
+ // click from document so the entry remains functional in either lifecycle.
+ document.addEventListener("click",event=>{
+  const target=event.target instanceof Element?event.target.closest("#content-tab-product-seo"):null;
+  if(!target)return;
+  event.preventDefault();event.stopPropagation();
+  openProductPanel();
+  load();
+ },true);
  el("product-seo-editor")?.addEventListener("submit",async ev=>{
   ev.preventDefault();const {slug,locale}=current();
   if(!locale){say("D1 语言配置为空，不能保存。");return}
