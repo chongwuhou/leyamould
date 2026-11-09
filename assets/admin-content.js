@@ -7,7 +7,7 @@
  const sourceLocale=()=>state.settings?.languages?.sourceLocale||state.settings?.languages?.defaultLocale||state.settings?.languages?.languages?.[0]?.code||"";
  const sourceLanguageName=()=>{const code=sourceLocale();const item=(state.settings?.languages?.languages||[]).find(x=>x.code===code);return item?.nativeName||item?.displayName||code||"来源语言"};
  const publishableLanguageHint=()=>{const names=(state.settings?.languages?.languages||[]).filter(x=>x.enabled!==false&&x.publishReady!==false).map(x=>x.nativeName||x.displayName||x.code);return names.length?names.join("、"):"已配置语言"};
- const productFieldDefinitions=kind=>state.products?.config?.fields?.[kind]||[];
+ const productFieldDefinitions=kind=>state.products?.fields?.[kind]||state.products?.config?.fields?.[kind]||[];
  const productFieldKeys=kind=>productFieldDefinitions(kind).map(item=>item.key);
  const renderProductFields=kind=>productFieldDefinitions(kind).map(item=>field(item.key,"",item.label,item.rows)).join("");
  const requiredData={brand:"brand",banners:"bannerDraft",navigation:"site",pages:"pages",
@@ -455,6 +455,7 @@
     say("目录导入完成：新建 "+created.length+" 款；跳过 "+skipped.length+" 款；失败 "+failed.length+" 款。"+(details?"失败明细："+details:"")+" 已有商品未覆盖。");
     return;
    }else if(action==="product"){
+    if(!productFieldKeys("legacy").length)throw Error("产品字段配置尚未读取，已停止保存以保护现有 D1 数据");
     if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
       throw Error("请先从已有商品型号列表中选择产品");
     const content={};for(const key of productFieldKeys("legacy"))content[key]=value(key);
