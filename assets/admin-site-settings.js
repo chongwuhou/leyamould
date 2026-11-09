@@ -71,7 +71,7 @@
   function renderJobs(){
     const host=$("#translation-jobs"); if(!host)return; const jobs=translations.jobs||[];
     host.innerHTML=jobs.length?jobs.map(j=>`<article class="batch-card translation-job"><div><strong>${esc(j.resource_id)}</strong> · ${esc(j.source_locale)} → ${esc(j.target_locale)} · <span class="status ${esc(j.status)}">${esc(j.status)}</span></div><div class="muted">Provider: ${esc(j.provider||"manual")} · ${esc(j.updated_at||"")}${j.error_message?" · "+esc(j.error_message):""}</div><textarea class="translation-json" data-id="${esc(j.id)}" rows="7" spellcheck="false">${esc(JSON.stringify(Object.keys(j.translated||{}).length?j.translated:j.source,null,2))}</textarea><div class="row-actions"><button class="btn small ghost tr-save" data-id="${esc(j.id)}">保存译文待审核</button><button class="btn small primary tr-approve" data-id="${esc(j.id)}">审核通过并排队发布</button><button class="btn small ghost tr-requeue" data-id="${esc(j.id)}">重新排队</button></div></article>`).join(""):'<div class="muted">暂无翻译任务。保存源语言型号内容后会自动排队，也可以手工输入型号 ID。</div>';
-    $(".tr-save",host).forEach(b=>b.onclick=()=>job("save_job",b.dataset.id,true));
+    $$(".tr-save",host).forEach(b=>b.onclick=()=>job("save_job",b.dataset.id,true));
     $$(".tr-approve",host).forEach(b=>b.onclick=()=>job("approve_job",b.dataset.id,true)); $$(".tr-requeue",host).forEach(b=>b.onclick=()=>job("requeue_job",b.dataset.id));
   }
   async function loadSettings(){settings=await api(SETTINGS);renderLanguages();renderContacts();$("#language-settings-status").textContent="线上 D1 配置已载入。";}
