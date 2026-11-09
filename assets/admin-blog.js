@@ -86,7 +86,7 @@ async function submit(action){
   if(action==='schedule'){
    const local=$('#blog-scheduled-at').value;
    if(!local)throw Error('请先选择计划发布时间（北京时间）。');
-   payload.scheduledAt=new Date(local+':00:00+08:00').toISOString();
+   payload.scheduledAt=new Date(local+':00+08:00').toISOString();
   }
   const res=await api('POST',payload);
   status(action==='publish'?'已发布到正式站：'+res.url:action==='schedule'?'已安排定时发布：'+res.scheduledAt:'草稿已保存，仅后台可见。');
