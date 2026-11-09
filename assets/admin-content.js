@@ -245,14 +245,17 @@
       capacity:valueFor(/capacity|容量/),
       material:valueFor(/material|材质/),
       image:doc.querySelector(".product-detail__main img")?.getAttribute("src")||"",
-      description:(doc.querySelector(".product-detail > div:last-child > p.copy-muted")?.textContent||"").trim(),
+      description:(doc.querySelector(".product-detail__lead p.copy-muted")?.textContent||doc.querySelector(".product-detail > div:last-child > p.copy-muted")?.textContent||"").trim(),
       seoTitle:doc.title,
       seoDescription:doc.querySelector('meta[name="description"]')?.getAttribute("content")||""
      };
      sourceAvailable=Boolean(original.name);
     }catch(error){if(request===requestNumber)notice.textContent="已选中 "+id+"，但暂无法读取官网当前商品信息："+error.message;}
     if(request!==requestNumber)return;
-    for(const [key,val] of Object.entries({...original,...(entry?.content||{})})){
+    const merged={...original};
+    for(const [key,val] of Object.entries(entry?.content||{}))
+     if(typeof val==="string"&&val.trim())merged[key]=val;
+    for(const [key,val] of Object.entries(merged)){
      const el=container.querySelector('[data-cms-field="'+key+'"]');
      if(el&&typeof val==="string")el.value=val;
     }
