@@ -32,6 +32,7 @@ on:
       - "why_us_*.py"
       - "data/**"
       - "lo_catalog.py"
+      # Admin console JS/CSS lives under assets/ and must publish with the site.
       - "assets/**"
       - "admin/**"
       - "functions/**"
