@@ -38,6 +38,15 @@ export async function onRequestPost(context){
   if(exists?.status==="retired"&&action==="publish")return reply({error:"Restore the retired post to draft first."},409);
   const status=action==="publish"?"published":"draft";
   if(status==="published"&&!post.sections.some(s=>s.paragraph.length>=120))return reply({error:"Cannot publish without substantive article content."},400);
+  if(status==="published"){
+   if(payload.editorialApproved!==true)return reply({error:"正式发布前必须勾选人工审核确认。"},409);
+   const body=post.sections.map(s=>s.paragraph).join("\n");
+   const productLinks=[...new Set([...body.matchAll(/\]\(\/products\/([A-Za-z0-9_-]+)\//g)].map(x=>x[1]))];
+   if(productLinks.length<2||productLinks.length>5)return reply({error:"正式发布前，正文必须包含 2–5 个不同的真实产品型号链接"},400);
+   if(!Array.isArray(post.related)||post.related.length<2||post.related.length>3)return reply({error:"正式发布前必须人工选择 2–3 篇相关阅读"},400);
+   const relatedRows=(await db.prepare("SELECT slug FROM xuyi_blog_posts WHERE status='published' AND slug IN ("+post.related.map(()=>"?").join(",")+")").bind(...post.related).all()).results||[];
+   if(new Set(relatedRows.map(x=>x.slug)).size!==post.related.length)return reply({error:"相关阅读必须全部指向已发布文章"},400);
+  }
   const content=JSON.stringify(post);
   if(content.length>100000)return reply({error:"Article content is too large"},413);
   if(action==="save"&&exists?.status==="published"){
