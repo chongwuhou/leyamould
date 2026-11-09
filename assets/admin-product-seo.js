@@ -48,18 +48,26 @@
   if(!content||!sourceButton)return;
   content.value="";content.disabled=true;sourceButton.disabled=true;bodySay("");
   if(!slug||!locale){bodySay("请先选择产品和语言。");return}
-  if(locale===sourceLocale){
-   bodySay("来源语言正文请在 06「产品商详」入口维护。");
-   return;
-  }
-  bodySay("正在读取 D1 多语言正文…");
+  const isSource=locale===sourceLocale;
+  bodySay(isSource?"正在读取来源语言正文…":"正在读取 D1 多语言正文…");
   try{
-   const data=await readBody(slug,locale);
-   if(request!==bodyRequest)return;
-   content.value=data.content?.mainHtml||"";
-   content.disabled=false;sourceButton.disabled=false;
-   bodySay(data.hasContent?"已读取 D1 正式正文，可直接翻译修订。":"尚无该语种正文；可读取来源语言正文后完整翻译。");
-  }catch(error){if(request===bodyRequest)bodySay("正文读取失败："+error.message)}
+   if(isSource){
+    const response=await fetch(sourceRoute(slug),{cache:"no-store"});
+    if(!response.ok)throw Error("来源语言页面读取失败");
+    const main=new DOMParser().parseFromString(await response.text(),"text/html").getElementById("main-content");
+    if(!main)throw Error("来源语言页面缺少 main 内容");
+    if(request!==bodyRequest)return;
+    content.value=main.innerHTML;
+    content.disabled=true;sourceButton.disabled=true;
+    bodySay("已读取 "+sourceName()+" 来源正文；来源语言正文请在 06「产品商详」入口维护。");
+   }else{
+    const data=await readBody(slug,locale);
+    if(request!==bodyRequest)return;
+    content.value=data.content?.mainHtml||"";
+    content.disabled=false;sourceButton.disabled=false;
+    bodySay(data.hasContent?"已读取 D1 正式正文，可直接翻译修订。":"尚无该语种正文；可读取来源语言正文后完整翻译。");
+   }
+  }catch(error){if(request===bodyRequest){content.disabled=false;bodySay("正文读取失败："+error.message)}}
  }
  async function load(){
   say("读取 D1 产品 SEO 与语言配置…");
