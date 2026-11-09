@@ -113,12 +113,11 @@ export async function authorizedDailyProductReviewRequest(request, env) {
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
 
-// Fixed, source-reviewed one-time migration: the caller may select a batch,
-// but never supply arbitrary SEO copy or model names to a write endpoint.
-export async function authorizedProductSeoPromotionRequest(request, env){
+// Fixed, source-reviewed migration routes: the caller may select a batch,
+ // but never supply arbitrary SEO copy or model names to a write endpoint.
+ export async function authorizedProductSeoPromotionRequest(request, env){
   if(!new Set([
     "/api/admin/product-seo-promotion-20261020",
-    "/api/admin/product-seo-refresh-20261104",
     "/api/admin/collection-seo-refresh-20261105"
   ]).has(new URL(request.url).pathname)||
      !new Set(["GET","POST"]).has(request.method))return false;
