@@ -80,11 +80,13 @@ async function submit(action){
   const post=fromForm();
   if(!post.slug||post.sections.length<2)throw Error('至少需要两段正文内容。');
   const payload={action,post};
+  if(action==='publish'||action==='schedule'){
+   payload.editorialApproved=$('#blog-editorial-approved').checked;
+  }
   if(action==='schedule'){
    const local=$('#blog-scheduled-at').value;
    if(!local)throw Error('请先选择计划发布时间（北京时间）。');
-   payload.scheduledAt=new Date(local+':00+08:00').toISOString();
-   payload.editorialApproved=$('#blog-editorial-approved').checked;
+   payload.scheduledAt=new Date(local+':00:00+08:00').toISOString();
   }
   const res=await api('POST',payload);
   status(action==='publish'?'已发布到正式站：'+res.url:action==='schedule'?'已安排定时发布：'+res.scheduledAt:'草稿已保存，仅后台可见。');
