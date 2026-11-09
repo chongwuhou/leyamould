@@ -4,7 +4,7 @@ Updated: 2026-11-02
 
 ## Purpose
 
-The admin module "10 自动发布与定时任务" is the owner control plane for both authentic product reviews and reviewed Blog articles. It persists task configuration and execution history in XUYI D1. The browser never contains the Cloudflare project token or any source workbook.
+The admin module "09 自动发布与定时任务" is the owner control plane for both authentic product reviews and reviewed Blog articles. It persists task configuration and execution history in XUYI D1. The browser never contains the Cloudflare project token or any source workbook.
 
 ## Default tasks
 
