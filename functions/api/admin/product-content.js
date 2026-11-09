@@ -9,6 +9,7 @@ import { imageKey } from "../../_shared/r2-usage.js";
 import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo,configuredProductSeoLocales} from "../../_shared/product-seo.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(v,n=500)=>String(v??"").trim().slice(0,n);
+const parseObject=(value)=>{try{const parsed=JSON.parse(String(value||""));return parsed&&typeof parsed==="object"&&!Array.isArray(parsed)?parsed:{};}catch{return {}}};
 async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_product_content(
   model TEXT PRIMARY KEY,
   content_json TEXT NOT NULL DEFAULT '{}',
@@ -84,7 +85,8 @@ export async function onRequestPost(context){
   if(!MANAGED_MODELS.has(model))return respond({error:"Model not found in the current XUYI catalog"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
   const allowed=["name","description","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription"];
-  const content={};
+  const prior=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
+  const content={...parseObject(prior?.content_json)};
   for(const key of allowed)if(Object.hasOwn(v,key)){
     if(typeof v[key]!=="string"||v[key].length>3000)return respond({error:"Invalid "+key},400);
     content[key]=v[key].trim();
