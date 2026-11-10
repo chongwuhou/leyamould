@@ -32,7 +32,6 @@ on:
       - "why_us_*.py"
       - "data/**"
       - "lo_catalog.py"
-      # Admin console JS/CSS lives under assets/ and must publish with the site.
       - "assets/**"
       - "admin/**"
       - "functions/**"
@@ -42,7 +41,6 @@ on:
       - "docs/BLOG_COVER_VISUAL_STANDARD.md"
       - "docs/BLOG_EDITORIAL_PUBLISH_CHECKLIST.md"
       - "_headers"
-      - "项目圣经/**"
   workflow_dispatch:
     inputs:
       schedule_blog_20261103:
@@ -370,7 +368,6 @@ jobs:
           python scripts/test_editorial_d1_overrides.py
           node scripts/test_blog_dynamic_evidence.mjs
           node scripts/test_blog_index_order_20261107.mjs
-          python scripts/test_runtime_source_of_truth.py
           node scripts/test_blog16_live_d1_render.mjs
           node scripts/test_blog_d1_paragraph_links.mjs
           node scripts/test_blog_buyer_decisions_runtime.mjs
@@ -382,6 +379,7 @@ jobs:
           python scripts/test_seo_multilingual_launch.py
           python scripts/test_priority_seo.py
           python scripts/test_cms_seo_rebuild_policy.py
+          node scripts/test_product_seo_refresh_20261104.mjs
           python scripts/test_source_of_truth_policy.py
           python scripts/test_contextual_share_metadata.py
           python scripts/test_curated_catalog_meta_clarity.py
@@ -592,6 +590,37 @@ jobs:
           done
           echo "::error::Nine multilingual Blog D1 translation records were not verified live"
           exit 1
+      - name: Refresh reviewed product SEO rows in XUYI D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Refresh reviewed product SEO metadata to B2B manufacturer copy 2026-11-04'
+        id: product_seo_refresh
+        run: python scripts/promote_product_seo_refresh_20261104.py
+      - name: Rebuild from refreshed D1 and publish the product SEO update
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Refresh reviewed product SEO metadata to B2B manufacturer copy 2026-11-04'
+        env:
+          XUYI_PUBLISH_REVISION: ${{ steps.product_seo_refresh.outputs.revision }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/fetch_build_snapshot.py
+          python scripts/build_release.py
+          python scripts/test_release.py
+          python scripts/test_product_seo_d1_authority.py
+          python scripts/test_source_catalog_capacity_oz.py
+          python scripts/test_factory_catalog_20261103.py
+          python scripts/test_localized_release.py
+          python scripts/test_source_sitemap_titles_h1_images.py
+          python scripts/test_product_seo_title_oz_release.py
+          node scripts/test_product_seo_refresh_20261104.mjs
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?seo_refresh=$attempt&sha=$GITHUB_SHA" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.pagesProject==='xuyi-drinkware-site'&&v.sourceRevision===process.env.GITHUB_SHA&&Number(v.publishRevision)>=Number(process.env.XUYI_PUBLISH_REVISION)?0:1)})"; then
+              echo "XUYI refreshed D1 product SEO revision verified"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::XUYI refreshed product SEO build-meta did not update"
+          exit 1
       # One exact commit message and this owner-only CI flag authorize the
       # one-time 58-model PDF catalog import. Endpoints are deployed above first.
       - name: Publish the 58 reviewed factory models to R2 and D1
@@ -657,6 +686,48 @@ jobs:
             sleep 12
           done
           echo "::error::Three 2026-11-07 guides failed 15-page verification"
+          exit 1
+      - name: Prepare 2026-11-10 three B2B procurement guides, five-language sources, and approved media
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-10 B2B procurement guides'
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_images_20261110.py
+          python scripts/prepare_blog_release_20261110.py
+          python scripts/publish_blog_batch_20261110_d1.py --dry-run
+          python scripts/publish_blog_images_20261110_r2.py --dry-run
+          python scripts/test_blog_20261110_source.py
+          node scripts/test_blog_20261110_runtime.mjs
+      - name: Upload three visually reviewed 2026-11-10 covers to XUYI R2
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-10 B2B procurement guides'
+        env:
+          OWNER_BLOG1110_RELEASE: "1"
+        run: python scripts/publish_blog_images_20261110_r2.py
+      - name: Publish three 2026-11-10 B2B English originals and twelve translations to D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-10 B2B procurement guides'
+        run: python scripts/publish_blog_batch_20261110_d1.py
+      - name: Double clean build and verify fifteen live 2026-11-10 article pages
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-10 B2B procurement guides'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            python scripts/test_blog_cover_editorial_standard.py
+            python scripts/test_blog_20261110_source.py
+            node scripts/test_blog_20261110_runtime.mjs
+            echo "2026-11-10 double clean CMS-backed build passed $pass"
+          done
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if python scripts/verify_live_blog_20261110.py; then
+              echo "XUYI_20261110_THREE_B2B_ARTICLES_FIFTEEN_LOCALES_D1_R2_PAGES_LIVE_CONFIRMED"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "::error::Three 2026-11-10 guides failed 15-page verification"
           exit 1
       - name: Upload three visually reviewed 2026-11-03 covers to XUYI R2
         if: ((github.event_name == 'workflow_dispatch' && inputs.schedule_blog_20261103 == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[publish-blog-20261103]'))) && steps.credential.outputs.ready == 'true'

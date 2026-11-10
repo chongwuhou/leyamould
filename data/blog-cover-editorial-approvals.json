@@ -570,6 +570,87 @@
       },
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "compare-custom-plastic-water-bottle-suppliers-bulk-order",
+      "articleTitle": "How Do You Compare Custom Plastic Water Bottle Suppliers for a Bulk Order?",
+      "cover": "/media/blog/plastic-water-bottle-quality-inspection-20261110.webp",
+      "source": "assets/blog/plastic-water-bottle-quality-inspection-20261110.webp",
+      "sha256": "678b9807688ef250632016678980e552887223c6ad82a0d3b59d7d1e349b8b12",
+      "visualScene": "Colorful reusable bottles on a measurement and inspection table in an illustrative production setting.",
+      "buyerContext": "B2B buyers comparing custom plastic water bottle suppliers before a bulk order",
+      "articleUse": "Supplier comparison, sampling, decoration, quality-control and reorder planning for wholesale plastic water bottle buyers",
+      "sceneMatch": "The bottles, measurement tool and inspection checklist provide a relevant illustrative context for comparing supplier evidence and sample-control steps.",
+      "topicAnchors": [
+        "supplier",
+        "plastic"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Existing project editorial asset; contextual illustration that does not show a verified XUYI factory, customer, order or SKU.",
+      "usageDisclosure": "Illustrative supplier and quality-control context; no assertion of exact XUYI product, commercial relationship, factory, certification or shipment.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "wholesale-water-bottle-rfq-oem-pricing-checklist",
+      "articleTitle": "What Should a Wholesale Water Bottle RFQ Include Before You Ask for OEM Pricing?",
+      "cover": "/media/blog/wholesale-water-bottle-rfq-20261110.webp",
+      "source": "assets/blog/wholesale-water-bottle-rfq-20261110.webp",
+      "sha256": "bac60e33bdf3c72e23360a076a9c996720a9880bc8ff21f2405036ab301eac97",
+      "visualScene": "RFQ form graphic listing bottle specification and supplier response fields in an illustrative procurement layout.",
+      "buyerContext": "B2B importers and distributors preparing an OEM water bottle pricing request",
+      "articleUse": "RFQ checklist preparation, like-for-like OEM quotation comparison and supplier response control",
+      "sceneMatch": "The specification fields directly illustrate the article's practical RFQ checklist without presenting a real quotation, order or product certificate.",
+      "topicAnchors": [
+        "pricing",
+        "checklist"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Existing project editorial asset; contextual procurement graphic that does not show a verified XUYI quotation, factory, customer or SKU.",
+      "usageDisclosure": "Illustrative RFQ graphic; no assertion of exact XUYI pricing, commercial relationship, factory, certification or shipment.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "custom-water-bottle-export-carton-packing-planning",
+      "articleTitle": "How Can Importers Plan Carton Packing for Custom Water Bottles Before Export?",
+      "cover": "/media/blog/custom-water-bottle-export-packing-20261110.webp",
+      "source": "assets/blog/custom-water-bottle-export-packing-20261110.webp",
+      "sha256": "c0edc7fc78735488836aa20d6f5fc39621199f256dff132f52cbbd0b5e4de297",
+      "visualScene": "Warehouse cartons and reusable bottles in an illustrative export-packing and loading context.",
+      "buyerContext": "B2B importers, wholesalers and 3PL teams planning custom bottle carton quantities",
+      "articleUse": "Carton packing, pallet or container planning, labels, damage prevention and receiving checks",
+      "sceneMatch": "The cartons, bottles and loading context correspond to export-packing decisions while remaining clearly illustrative rather than shipment evidence.",
+      "topicAnchors": [
+        "carton",
+        "export"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Existing project editorial asset; contextual illustration that does not show a verified XUYI shipment, customer, factory or SKU.",
+      "usageDisclosure": "Illustrative export-packing scene; no assertion of exact XUYI shipment, commercial relationship, factory, certification or order.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
     }
   ]
 }

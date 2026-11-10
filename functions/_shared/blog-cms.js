@@ -1,4 +1,4 @@
-// XUYI Blog CMS uses the D1-backed page-editor and revision approach.
+// XUYI Blog CMS extends Demalong's D1-backed page-editor and revision approach.
 // Match the separately reviewed static Blog sources on D1-backed live routes.
 import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json" with {type:"json"};
 import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json" with {type:"json"};
@@ -35,11 +35,13 @@ import B2B_20261102_2 from "../../data/blog-guides-20261102-2.json" with {type:"
 import B2B_20261102_3 from "../../data/blog-guides-20261102-3.json" with {type:"json"};
 import B2B_20261107_1 from "../../data/blog-guides-20261107-1.json" with {type:"json"};
 import B2B_20261107_2 from "../../data/blog-guides-20261107-2.json" with {type:"json"};
-import B2B_20261107_3 from "../../data/blog-guides-20261107-3.json" with {type:"json"};
+import B2B_20261107_3 from "../../data/blog-guides-20261107-3.json" with {type:"json"};import B2B_20261110_1 from "../../data/blog-guides-20261110-1.json" with {type:"json"};
+import B2B_20261110_2 from "../../data/blog-guides-20261110-2.json" with {type:"json"};
+import B2B_20261110_3 from "../../data/blog-guides-20261110-3.json" with {type:"json"};
 import INLINE_PART1 from "../../data/blog-inline-edits-reviewed-part1.json" with {type:"json"};
 import INLINE_PART2 from "../../data/blog-inline-edits-reviewed-part2.json" with {type:"json"};
 const REVIEWED_INLINE={...INLINE_PART1,...INLINE_PART2};
-const SOURCE_GUIDE_BY_SLUG=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES,...B2B_20261023_GUIDES,...B2B_20261024_GUIDES,...B2B_20261025_GUIDES,...B2B_20261026_GUIDES,...B2B_20261027_GUIDES,...B2B_20261028_GUIDES,B2B_20261029_1,B2B_20261029_2,B2B_20261029_3,B2B_20261030_1,B2B_20261030_2,B2B_20261030_3,B2B_20261031_1,B2B_20261031_2,B2B_20261031_3,B2B_20261101_1,B2B_20261101_2,B2B_20261101_3,B2B_20261102_1,B2B_20261102_2,B2B_20261102_3,B2B_20261107_1,B2B_20261107_2,B2B_20261107_3].map(p=>[p.slug,p]));
+const SOURCE_GUIDE_BY_SLUG=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES,...B2B_20261023_GUIDES,...B2B_20261024_GUIDES,...B2B_20261025_GUIDES,...B2B_20261026_GUIDES,...B2B_20261027_GUIDES,...B2B_20261028_GUIDES,B2B_20261029_1,B2B_20261029_2,B2B_20261029_3,B2B_20261030_1,B2B_20261030_2,B2B_20261030_3,B2B_20261031_1,B2B_20261031_2,B2B_20261031_3,B2B_20261101_1,B2B_20261101_2,B2B_20261101_3,B2B_20261102_1,B2B_20261102_2,B2B_20261102_3,B2B_20261107_1,B2B_20261107_2,B2B_20261107_3,B2B_20261110_1,B2B_20261110_2,B2B_20261110_3].map(p=>[p.slug,p]));
 /** Genuine paragraph-level editorial links, conditional on unchanged D1
  * intro, section heading and paragraph. Owner changes take priority.
  */
@@ -84,7 +86,7 @@ export function reviewedBlogRelatedAtEnd(post){
   out+='<article class="blog-related__item"><a href="/blog/'+esc(info.slug)+'/"><strong>'+esc(info.title)+'</strong></a><p>'+esc(info.description)+'</p></article>';
  return out+'</div></div></section>';
 }
-const ORIGINAL_GUIDE_INTROS=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES,...B2B_20261023_GUIDES,...B2B_20261024_GUIDES,...B2B_20261025_GUIDES,...B2B_20261026_GUIDES,...B2B_20261027_GUIDES,...B2B_20261028_GUIDES,B2B_20261029_1,B2B_20261029_2,B2B_20261029_3,B2B_20261030_1,B2B_20261030_2,B2B_20261030_3,B2B_20261031_1,B2B_20261031_2,B2B_20261031_3,B2B_20261101_1,B2B_20261101_2,B2B_20261101_3,B2B_20261102_1,B2B_20261102_2,B2B_20261102_3,B2B_20261107_1,B2B_20261107_2,B2B_20261107_3].map(post=>[post.slug,post.intro]));
+const ORIGINAL_GUIDE_INTROS=Object.fromEntries([...SOURCE_BLOG_GUIDES,...NEW_B2B_GUIDES,...B2B_20261021_GUIDES,...B2B_20261022_GUIDES,...B2B_20261023_GUIDES,...B2B_20261024_GUIDES,...B2B_20261025_GUIDES,...B2B_20261026_GUIDES,...B2B_20261027_GUIDES,...B2B_20261028_GUIDES,B2B_20261029_1,B2B_20261029_2,B2B_20261029_3,B2B_20261030_1,B2B_20261030_2,B2B_20261030_3,B2B_20261031_1,B2B_20261031_2,B2B_20261031_3,B2B_20261101_1,B2B_20261101_2,B2B_20261101_3,B2B_20261102_1,B2B_20261102_2,B2B_20261102_3,B2B_20261107_1,B2B_20261107_2,B2B_20261107_3,B2B_20261110_1,B2B_20261110_2,B2B_20261110_3].map(post=>[post.slug,post.intro]));
 const DEEP_ENTRIES={...BLOG_DEPTH.articles,...DEEP_PART1.articles,...DEEP_PART2.articles,...DEEP_PART3.articles};
 
 export function renderDepthEvidence(post){
@@ -346,12 +348,7 @@ export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs){
   const match=matches[i],block=match[0],start=match.index;
   if(i>0&&source.slice(previousEnd,start).trim())
    throw Error("Localized Blog cards are not one contiguous grid");
-  const hrefs=[...block.matchAll(/href="([^"]+)"/g)].map(match=>{
-   const parts=String(match[1]||"").split("?")[0].split("/").filter(Boolean);
-   if(parts.length===2&&parts[0]==="blog")return parts[1];
-   if(parts.length===3&&parts[1]==="blog")return parts[2];
-   return "";
-  }).filter(Boolean);
+  const hrefs=[...block.matchAll(/href="\/(?:(?:en|es|pt|ru|tr)\/)?blog\/([a-z0-9]+(?:-[a-z0-9]+)*)\/"/g)].map(x=>x[1]);
   if(hrefs.length!==3||new Set(hrefs).size!==1)
    throw Error("Localized Blog card identity or link count is invalid");
   const slug=hrefs[0];
@@ -372,12 +369,9 @@ export function blogCard(post){
 }
 export function composePage(template,body,post,route){
  if(!template.includes('<main id="main-content">'))throw Error('Blog page template missing');
- const originMatch=template.match(/(?:href|content)="(https?:\/\/[^/]+)\//);
- const origin=originMatch?.[1];
- if(!origin)throw Error('Blog page template origin missing');
  let html=template.replace(/<main id="main-content">[\s\S]*?<\/main>/,'<main id="main-content">'+body+'</main>');
  if(post){
-  const url=origin+route;
+  const url='https://xuyibottles.com'+route;
   html=html.replace(/<title>[\s\S]*?<\/title>/,'<title>'+esc(post.title)+'</title>');
   html=html.replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+esc(post.description)+'">');
   html=html.replace(/<link rel="canonical" href="[^"]*">/,'<link rel="canonical" href="'+esc(url)+'">');
@@ -391,12 +385,12 @@ export function composePage(template,body,post,route){
   // If the owner changes a D1 article cover, do not reuse dimensions of
   // the old immutable static shell's image (they may be incorrect).
   const oldOg=html.match(/<meta property="og:image" content="([^"]*)">/);
-  const newOgUrl=origin+post.cover;
+  const newOgUrl='https://xuyibottles.com'+post.cover;
   if(!oldOg || oldOg[1]!==newOgUrl)
    html=html.replace(/<meta property="og:image:(?:width|height)" content="\d+">/g,'');
   html=html.replace(/<meta property="og:image" content="[^"]*">/,'');
   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g,'');
-  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'XUYI Bottles',url:origin+'/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:[origin+post.cover]};
+  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'XUYI Bottles',url:'https://xuyibottles.com/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:['https://xuyibottles.com'+post.cover]};
   if(actualPublishedDate(post))graph.datePublished=actualPublishedDate(post);
   if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
     .filter(s=>/^https:\/\/(?:www\.fda\.gov|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com|www\.uspto\.gov|www\.pantone\.com|health\.clevelandclinic\.org)\//.test(s.url))
@@ -411,7 +405,7 @@ export function composePage(template,body,post,route){
        mainEntity:validFaqs.map(q=>({'@type':'Question',name:q.question,
          acceptedAnswer:{'@type':'Answer',text:q.answer}}))
      }).replace(/</g,'\\u003c')+'</script>':'';
-  html=html.replace('</head>','<meta property="og:image" content="'+esc(origin+post.cover)+'"><script type="application/ld+json">'+safe+'</script>'+faqMarkup+'</head>');
+  html=html.replace('</head>','<meta property="og:image" content="'+esc('https://xuyibottles.com'+post.cover)+'"><script type="application/ld+json">'+safe+'</script>'+faqMarkup+'</head>');
  }
  return html;
 }
