@@ -81,6 +81,8 @@ jobs:
         run: python scripts/prepare_blog_images_20261101.py
       - name: Build 2026-10-29 three owned-photo editorial covers
         run: python scripts/prepare_blog_covers_20261029.py
+      - name: Prepare three 2026-11-10 covers before the shared P0 image gate
+        run: python scripts/prepare_blog_images_20261110.py
       - name: Enforce P0 B2B Blog image-to-article visual review and unique cover evidence
         run: python scripts/test_blog_cover_editorial_standard.py
       - name: Verify 2026-11-03 D1 CMS article links, related guides and cover alt
@@ -996,19 +998,3 @@ jobs:
               printf '%s' "$index" | grep -Fq "$slug"
             done
           done
-          echo "XUYI_20261026_LIVE_BLOG_ROUTES_VERIFIED"
-      # Owner-approved IndexNow: notify ONLY after Cloudflare deploy and live
-      # revision checks. The verified root key is generated from the
-      # XUYI_INDEXNOW_KEY secret during the standard build, if configured.
-      - name: Notify IndexNow of verified changed URLs
-        if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ -z "${XUYI_INDEXNOW_KEY}" ]; then
-            echo "::warning::IndexNow inactive: add XUYI_INDEXNOW_KEY repository secret."
-            exit 0
-          fi
-          python scripts/search_submission.py --submit
-# Owner-authorized SEO release trigger: 2026-11-05
