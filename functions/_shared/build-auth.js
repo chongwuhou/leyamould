@@ -46,7 +46,7 @@ async function verifyCloudflareProjectToken(token, env) {
 
 // A Cloudflare project token proves access to deployment metadata, not
 // permission to edit content or read customer records. Preserve the existing
-// XUYI admin session for all writes and private admin modules.
+// Demalong-style admin session for all writes and private admin modules.
 const BUILD_READ_PATHS = new Set([
   "/api/build-snapshot", "/api/publish-state",
   "/api/admin/brand-config", "/api/admin/home-banners", "/api/admin/site-config",
@@ -80,7 +80,7 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
     "/api/admin/blog-batch-20261030",
     "/api/admin/blog-batch-20261031",
     "/api/admin/blog-batch-20261102",
-    "/api/admin/blog-batch-20261107",
+    "/api/admin/blog-batch-20261107",    "/api/admin/blog-batch-20261110",
     "/api/admin/blog-schedule-20261103"
   ]).has(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);}
@@ -93,7 +93,7 @@ export async function authorizedReviewedBlogTranslationRepairRequest(request, en
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
 export async function authorizedReviewedBlogImageUploadRequest(request, env) {
-  if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261102","/api/admin/blog-images-20261103","/api/admin/blog-images-20261107"].includes(new URL(request.url).pathname)) return false;
+  if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261102","/api/admin/blog-images-20261103","/api/admin/blog-images-20261107","/api/admin/blog-images-20261110"].includes(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }// Narrow exception for the reviewed 101-model daily XLSX publisher. The
 // existing GitHub CI Cloudflare token proves access to THIS XUYI project,
@@ -113,11 +113,12 @@ export async function authorizedDailyProductReviewRequest(request, env) {
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
 
-// Fixed, source-reviewed migration routes: the caller may select a batch,
- // but never supply arbitrary SEO copy or model names to a write endpoint.
- export async function authorizedProductSeoPromotionRequest(request, env){
+// Fixed, source-reviewed one-time migration: the caller may select a batch,
+// but never supply arbitrary SEO copy or model names to a write endpoint.
+export async function authorizedProductSeoPromotionRequest(request, env){
   if(!new Set([
     "/api/admin/product-seo-promotion-20261020",
+    "/api/admin/product-seo-refresh-20261104",
     "/api/admin/collection-seo-refresh-20261105"
   ]).has(new URL(request.url).pathname)||
      !new Set(["GET","POST"]).has(request.method))return false;
