@@ -1,0 +1,462 @@
+{
+  "es": {
+    "title": "¿Qué tipo de cierre debe elegir para un pedido mayorista de botellas?",
+    "description": "Guía B2B para elegir tapa abatible, pajita, rosca u otro cierre según usuario, cuello, limpieza, prueba y reposición.",
+    "intro": "Una buena tapa deportiva o una botella antifugas todavía no son una especificación. El cierre correcto depende del usuario y del cuerpo exacto. Esta guía convierte la pregunta en un proceso de ajuste, pruebas y repetición.",
+    "coverAlt": "Comparación ilustrativa de cierres; confirme ajuste y pruebas en el modelo.",
+    "sections": [
+      [
+        "1. Explique el propósito comercial antes de listar especificaciones",
+        "Defina el escenario del programa y el usuario final antes de comparar. Abra la RFQ con el canal de venta y el uso previsto. Un distribuidor de retail puede necesitar varios colores y etiquetas de caja, mientras que una empresa que compra para su personal puede priorizar un solo logo y una reposición sencilla. Indique si es un modelo de catálogo, marca propia, promoción o desarrollo. Añada país de destino y fecha necesaria. Una frase como «comparamos 5.000 piezas para un distribuidor europeo» orienta mejor que «mejor precio» sin convertir una estimación en promesa."
+      ],
+      [
+        "2. Separe modelo, capacidad y medidas físicas",
+        "Compare las clases en la misma tabla, manteniendo el dato métrico. El centro de la RFQ debe impedir que se confunda una botella con otra. Indique el modelo si lo conoce o adjunte una imagen clara y diga qué rasgos son imprescindibles. Escriba la capacidad del catálogo en mililitros y pida altura, diámetro, salientes de tapa y peso ensamblado. Estos datos afectan estantería, transporte y embalaje. El modelo XUYI 2501 figura como botella deportiva plástica de 550 ml; debe ser una línea de referencia, no una prueba de las medidas finales. Si acepta varias capacidades, use líneas separadas."
+      ],
+      [
+        "3. Nombre el material y pregunte qué está documentado",
+        "Pruebe la muestra en el entorno real del destinatario. Las preguntas de material deben ser concretas sin convertir la RFQ en una afirmación de certificación. Indique si acepta la dirección del catálogo, si necesita estudiar otro material plástico y qué piezas deben cotizarse. Pida el material del cuerpo, tapa, junta, pajita u otras piezas del modelo exacto y la documentación aplicable al mercado. El modelo XUYI 2106 figura como botella infantil de 750 ml con PC+PP; es una referencia del producto y no una promesa para todas las personalizaciones. Tritan o sin BPA deben tratarse como consultas que requieren evidencia del conjunto."
+      ],
+      [
+        "4. Describa color, logo y decoración como etapas de aprobación",
+        "Relacione capacidad, recarga, caja y coste con datos confirmados. Diga qué debe ver la marca antes de producir. Liste colores, referencias, archivos de logo, área aproximada y método de impresión si lo conoce. Pida coste de preparación, formato de prueba, muestra decorada y diferencias entre un color y varios. Si hay varios colores, entregue el reparto y no solo el total. El proveedor puede recomendar otra técnica para una superficie curva; el comprador debe poder compararla. Una maqueta plana no equivale a una impresión aprobada en la botella real."
+      ],
+      [
+        "5. Incluya embalaje unitario y datos de caja maestra",
+        "Decida si un SKU o una gama corta es más sencilla de mantener. El embalaje es una decisión de coste y operaciones. Indique bolsa OPP, caja de color, faja, código de barras, inserto u otro embalaje confirmado. Pida unidades por caja, dimensiones exteriores, peso bruto y marcas de caja. El modelo XUYI 2305 figura como jarra plástica de gran capacidad de 1600 ml; su plan de caja puede diferir del de una botella deportiva. Si necesita cajas mixtas por color, explique cómo deben contarse y etiquetarse. La RFQ debe mostrar el embalaje junto al precio unitario."
+      ],
+      [
+        "6. Pida una muestra y una secuencia realista de aprobación",
+        "Guarde un registro del modelo, medidas, tapa, arte y caja. Explique qué aprobará el comprador y en qué orden. Pida muestra sin impresión para confirmar forma y manejo, y después prueba decorada para logo y color. Defina quién mide, qué datos deben confirmarse y cómo se registran los cambios. Incluya fecha de respuesta, hito de muestra y ventana de producción, pero no convierta una estimación en plazo garantizado. El resultado debe ser una cotización numerada, una referencia de muestra aprobada y una versión de arte vinculable al pedido."
+      ],
+      [
+        "7. Solicite una respuesta detallada que pueda comparar",
+        "Aplique una regla de decisión que otro comprador pueda auditar. Termine la RFQ con campos separados: modelo, capacidad, material, colores, logo, coste de muestra, precios por cantidad, embalaje, caja, Incoterm, flete estimado, validez y preguntas abiertas. Pida que cada proveedor marque qué está confirmado y qué depende de aprobación. Una respuesta itemizada permite que compras, finanzas, marca y logística revisen los mismos supuestos y facilita el pedido y la reposición. Si falta una línea, registre la duda; no complete el dato copiándolo de otro modelo."
+      ]
+    ],
+    "checklist": [
+      "Explique uso, destino y ventana de primer envío.",
+      "Separe modelo, capacidad y medidas solicitadas.",
+      "Describa cuerpo, tapa, junta y consultas de material.",
+      "Indique reparto de colores, logo, área de impresión y pruebas.",
+      "Pida embalaje unitario, unidades por caja, medidas y peso.",
+      "Separe stock, marca propia y desarrollo personalizado.",
+      "Solicite muestras siguiendo un orden de aprobación.",
+      "Pida campos confirmados, estimados y pendientes.",
+      "Compare precios con la misma cantidad, caja e Incoterm.",
+      "Adjunte muestra y arte aprobados al pedido."
+    ],
+    "faqs": [
+      [
+        "¿Puedo pedir precio OEM solo con una foto?",
+        "Puede iniciar con una foto, pero añada capacidad, uso, cantidad, decoración y destino. Pida confirmación del modelo y una muestra completa antes de aprobar el precio."
+      ],
+      [
+        "¿Debo escribir ml u oz en una RFQ?",
+        "Use mililitros como especificación principal. Si el mercado usa onzas, añada una referencia aproximada o de clase, no una equivalencia exacta no verificada."
+      ],
+      [
+        "¿Qué necesita una fábrica para cotizar material plástico personalizado?",
+        "Necesita dirección de resina, conjunto terminado, componentes, cantidad, color, uso y mercado. La evidencia debe corresponder al producto terminado."
+      ],
+      [
+        "¿Cómo evito cotizaciones incomparables?",
+        "Use la misma plantilla y pida líneas separadas para modelo, capacidad, decoración, embalaje, cantidades, caja, Incoterm y supuestos."
+      ]
+    ],
+    "matrix": {
+      "title": "Matriz de respuesta para una RFQ mayorista de botellas",
+      "intro": "Mantenga las respuestas itemizadas para que producto, marca, logística y finanzas revisen los mismos supuestos.",
+      "head": [
+        "Línea RFQ",
+        "Qué pedir",
+        "Por qué importa"
+      ],
+      "rows": [
+        [
+          "Identidad",
+          "Modelo, foto de referencia y capacidad",
+          "Evita cotizar el SKU equivocado"
+        ],
+        [
+          "Material",
+          "Cuerpo, tapa, juntas y consultas",
+          "Separa hechos de afirmaciones"
+        ],
+        [
+          "Decoración",
+          "Colores, logo, prueba y reparto",
+          "Hace comparable el coste de marca"
+        ],
+        [
+          "Embalaje",
+          "Pack unitario, caja, medidas y peso",
+          "Permite planificar almacén y flete"
+        ],
+        [
+          "Términos",
+          "Cantidades, Incoterm, validez y pendientes",
+          "Crea comparación equivalente"
+        ],
+        [
+          "Aprobación",
+          "Muestras, responsable y cambios",
+          "Protege el pedido final"
+        ]
+      ],
+      "links": [
+        "Guía para evaluar una fábrica",
+        "Checklist de muestras"
+      ]
+    },
+    "inline": [
+      "Leer la guía para evaluar una fábrica",
+      "Comparar cotizaciones OEM equivalentes"
+    ]
+  },
+  "pt": {
+    "title": "Qual tipo de fechamento escolher para um pedido atacadista de garrafas?",
+    "description": "Guia B2B para escolher tampa flip, canudo, rosca ou outro fechamento por uso, gargalo, limpeza, teste e reposição.",
+    "intro": "Uma boa tampa esportiva ainda não é uma especificação. O fechamento correto depende do usuário e do corpo exato. Este guia transforma a pergunta em um processo de encaixe, teste e repetição.",
+    "coverAlt": "Comparação ilustrativa de fechamentos; confirme encaixe e testes.",
+    "sections": [
+      [
+        "1. Explique o objetivo comercial antes das especificações",
+        "Defina o cenário do programa e o usuário antes de comparar. Comece indicando canal de venda e uso. Um distribuidor de varejo pode precisar de várias cores e etiquetas, enquanto uma empresa pode priorizar um logo e reposição simples. Diga se é modelo de catálogo, marca própria, promoção ou desenvolvimento. Inclua país e janela do primeiro envio. Uma frase como “estamos comparando 5.000 peças para um distribuidor europeu” ajuda mais que “melhor preço”, sem transformar estimativa em promessa."
+      ],
+      [
+        "2. Separe modelo, capacidade e medidas físicas",
+        "Compare as classes na mesma tabela e mantenha o dado métrico. A RFQ deve impedir a confusão entre referências. Informe o modelo ou envie uma imagem clara, destacando os recursos obrigatórios. Escreva a capacidade em mililitros e peça altura, diâmetro da base, saliência da tampa e peso montado. Esses dados afetam prateleira, transporte e embalagem. O modelo XUYI 2501 é listado como garrafa esportiva plástica de 550 ml; isso é uma linha de referência, não prova das medidas finais. Capacidades alternativas devem aparecer em linhas separadas."
+      ],
+      [
+        "3. Informe a direção do material e pergunte o que está documentado",
+        "Teste a amostra no ambiente real do destinatário. As perguntas de material precisam ser específicas sem virar alegação de certificação. Diga se o material do catálogo é aceitável, se quer avaliar outra resina e quais peças devem entrar na cotação. Peça material do corpo, tampa, vedação, canudo e documentos aplicáveis ao mercado. O modelo XUYI 2106 é listado como garrafa infantil de 750 ml com PC+PP; é referência do SKU, não promessa para todo projeto personalizado. Tritan ou sem BPA devem ser consultas com evidências do conjunto acabado."
+      ],
+      [
+        "4. Descreva cor, logo e decoração como etapas",
+        "Relacione capacidade, reposição, caixa e custo com dados confirmados. Liste cores, referências, arquivos do logo, área de impressão e método pretendido. Peça custo de preparação, formato de prova, amostra decorada e diferença entre uma e várias cores. Informe a divisão por cor, não apenas o total. O fornecedor pode sugerir outro método para uma superfície curva; a comparação deve registrar essa sugestão. Uma montagem plana do logo não é aprovação da impressão na garrafa real."
+      ],
+      [
+        "5. Faça embalagem individual e dados da caixa parte do pedido",
+        "Decida se um SKU ou uma faixa curta é mais simples. Informe saco OPP, caixa colorida, cinta, código, inserto ou outra embalagem necessária. Peça unidades por caixa, dimensões externas, peso bruto e marcação. O modelo XUYI 2305 é listado como jarra plástica de grande capacidade de 1600 ml; a caixa pode ser diferente de uma garrafa esportiva. Se houver mistura de cores, explique contagem e identificação. A embalagem deve aparecer junto do preço, não como detalhe posterior."
+      ],
+      [
+        "6. Peça amostra e sequência de aprovação realista",
+        "Guarde modelo, medidas, tampa, arte e caixa no registro. Explique o que será aprovado e em que ordem. Solicite amostra sem impressão para forma e uso e depois prova decorada para logo e cor. Defina responsável, medições, documentos e registro de mudanças. Inclua prazo para resposta e marco da amostra, mas não transforme estimativa em prazo garantido. O resultado deve ser cotação numerada, amostra aprovada e arte que possa acompanhar o pedido."
+      ],
+      [
+        "7. Solicite uma resposta itemizada para comparação",
+        "Use uma regra de decisão que outro comprador possa auditar. Peça modelo, capacidade, material, cores, logo, amostra, preços por quantidade, embalagem, dados da caixa, Incoterm, frete estimado, validade e perguntas abertas em campos separados. Peça que o fornecedor marque confirmado, estimado e pendente. Assim compras, finanças, marca e logística avaliam as mesmas premissas. Se faltar informação, registre a dúvida em vez de copiar dados de outro modelo."
+      ]
+    ],
+    "checklist": [
+      "Informe uso, destino e janela do primeiro envio.",
+      "Separe modelo, capacidade e medidas solicitadas.",
+      "Descreva corpo, tampa, vedação e consultas de material.",
+      "Informe cores, logo, área de impressão e provas.",
+      "Peça embalagem unitária, unidades por caixa, medidas e peso.",
+      "Separe estoque, marca própria e desenvolvimento personalizado.",
+      "Defina a sequência de amostras e aprovações.",
+      "Peça campos confirmados, estimados e pendentes.",
+      "Compare preço com a mesma quantidade, caixa e Incoterm.",
+      "Anexe amostra e arte aprovadas ao pedido."
+    ],
+    "faqs": [
+      [
+        "Posso pedir preço OEM somente com uma foto?",
+        "Pode iniciar com uma foto, mas acrescente capacidade, uso, quantidade, decoração e destino. Confirme o modelo e peça amostra completa antes da aprovação."
+      ],
+      [
+        "Devo escrever ml ou oz na RFQ?",
+        "Use mililitros como especificação principal. Para mercados que usam onças, acrescente classe ou aproximação claramente indicada, não uma conversão exata sem validação."
+      ],
+      [
+        "O que a fábrica precisa para cotar material plástico personalizado?",
+        "Direção da resina, conjunto acabado, componentes, quantidade, cor, uso e mercado. A documentação deve corresponder ao produto final."
+      ],
+      [
+        "Como evitar cotações incomparáveis?",
+        "Use a mesma RFQ e peça linhas separadas para modelo, capacidade, decoração, embalagem, quantidade, caixa, Incoterm e premissas."
+      ]
+    ],
+    "matrix": {
+      "title": "Matriz de resposta para RFQ de garrafas no atacado",
+      "intro": "Mantenha cada resposta itemizada para produto, marca, logística e finanças revisarem as mesmas premissas.",
+      "head": [
+        "Linha RFQ",
+        "O que pedir",
+        "Importância"
+      ],
+      "rows": [
+        [
+          "Produto",
+          "Modelo, imagem e capacidade",
+          "Evita cotar o SKU errado"
+        ],
+        [
+          "Material",
+          "Corpo, tampa, vedação e consultas",
+          "Separa fatos de alegações"
+        ],
+        [
+          "Decoração",
+          "Cores, logo, prova e divisão",
+          "Compara o custo de marca"
+        ],
+        [
+          "Embalagem",
+          "Pack, caixa, medidas e peso",
+          "Ajuda estoque e frete"
+        ],
+        [
+          "Termos",
+          "Quantidades, Incoterm, validade e pendências",
+          "Permite comparação equivalente"
+        ],
+        [
+          "Aprovação",
+          "Amostras, responsável e mudanças",
+          "Protege o pedido final"
+        ]
+      ],
+      "links": [
+        "Guia de avaliação de fábrica",
+        "Checklist de aprovação de amostra"
+      ]
+    },
+    "inline": [
+      "Ler o guia de avaliação de fábrica",
+      "Comparar cotações OEM equivalentes"
+    ]
+  },
+  "ru": {
+    "title": "Какой тип крышки выбрать для оптовой партии бутылок?",
+    "description": "B2B-руководство по выбору откидной, трубочной, винтовой или спортивной крышки с учётом сценария, горла и тестов.",
+    "intro": "Запрос хорошей спортивной или непротекающей крышки ещё не является спецификацией. Выбор зависит от пользователя и корпуса. Руководство связывает посадку, тест и повтор.",
+    "coverAlt": "Иллюстративное сравнение крышек; подтвердите посадку и тесты.",
+    "sections": [
+      [
+        "1. Сначала объясните коммерческую задачу",
+        "Опишите сценарий программы и пользователя до сравнения. Начните с канала продаж и использования. Дистрибьютору могут понадобиться разные цвета и маркировка коробов, а корпоративной закупке — один логотип и простая повторная поставка. Укажите, это каталожная модель, private label, промо или разработка. Добавьте страну и окно первой отгрузки. Фраза «сравниваем 5000 штук для европейского дистрибьютора» полезнее просьбы о «лучшей цене» и не выдаёт оценку за обещание."
+      ],
+      [
+        "2. Разделите модель, вместимость и размеры",
+        "Сравнивайте классы в одной таблице, сохраняя метрический факт. RFQ должна исключать путаницу между позициями. Укажите модель или приложите понятное изображение и обязательные особенности. Запишите вместимость в миллилитрах и запросите высоту, диаметр основания, выступ крышки и вес в сборе. Эти данные влияют на полку, транспорт и упаковку. Модель XUYI 2501 указана как пластиковая спортивная бутылка 550 мл; это строка для ориентира, а не доказательство окончательных размеров. Разные вместимости указывайте отдельными строками."
+      ],
+      [
+        "3. Назовите направление материала и запросите документы",
+        "Проверьте образец в реальной среде получателя. Вопрос о материале должен быть точным и не превращаться в необоснованную сертификацию. Укажите, подходит ли каталожное направление, нужен ли анализ другой смолы и какие детали включить в предложение. Запросите материал корпуса, крышки, уплотнения, трубки и документы для рынка. Модель XUYI 2106 указана как детская пластиковая бутылка 750 мл из PC+PP; это характеристика каталога, а не обещание для любого кастомного проекта. Tritan или BPA-free оформляйте как запрос с подтверждением для готовой сборки."
+      ],
+      [
+        "4. Опишите цвет, логотип и нанесение как этапы",
+        "Свяжите объём, пополнение, короб и цену с подтверждёнными данными. Укажите цвета, ссылки на цвет, файл логотипа, площадь печати и предполагаемый метод. Попросите стоимость подготовки, формат макета, декорированный образец и разницу между одной и несколькими красками. При разных цветах укажите распределение, а не только общий тираж. Плоский макет логотипа не является утверждением печати на реальной бутылке. Все варианты должны иметь отдельную версию согласования."
+      ],
+      [
+        "5. Включите индивидуальную упаковку и данные короба",
+        "Решите, проще ли один SKU или короткий ряд. Опишите пакет, цветную коробку, рукав, штрихкод, вкладыш и другую упаковку. Запросите количество в мастер-коробе, внешние размеры, брутто, нетто и маркировку. Модель XUYI 2305 указана как пластиковый кувшин 1600 мл; схема короба может отличаться от спортивной бутылки. Для смешанных цветов заранее укажите правила счёта и этикетки. Упаковка должна стоять рядом с ценой в RFQ."
+      ],
+      [
+        "6. Запросите образец и реальный порядок утверждения",
+        "Сохраните модель, размеры, крышку, макет и короб. Объясните, что и в какой последовательности утверждается. Сначала можно проверить форму и использование на образце без печати, затем логотип и цвет на декорированном образце. Назначьте ответственного, измерения и порядок фиксации изменений. Укажите дату ответа и этап образца, но не называйте оценку гарантированным сроком. Итогом должны быть номер предложения, утверждённый образец и версия макета для заказа."
+      ],
+      [
+        "7. Попросите ответ в раздельных полях",
+        "Используйте правило, которое другой покупатель сможет проверить. Запросите модель, вместимость, материал, цвета, логотип, стоимость образца, цены по тиражам, упаковку, данные короба, Incoterm, оценку фрахта, срок действия и открытые вопросы. Поставщик должен отметить подтверждённое, оценочное и ожидающее согласования. Это позволяет закупкам, финансам, бренду и логистике видеть одинаковые предпосылки. Недостающие данные нужно уточнять, а не брать от другой модели."
+      ]
+    ],
+    "checklist": [
+      "Укажите назначение, рынок и окно первой отгрузки.",
+      "Разделите модель, вместимость и запрашиваемые размеры.",
+      "Опишите корпус, крышку, уплотнения и материал.",
+      "Укажите цвета, логотип, площадь и макет.",
+      "Запросите индивидуальную упаковку, короб, размеры и вес.",
+      "Разделите складскую, private-label и кастомную задачу.",
+      "Опишите последовательность образцов и согласований.",
+      "Попросите отметить подтверждённое и открытое.",
+      "Сравнивайте цены при одинаковых количестве, коробе и Incoterm.",
+      "Приложите утверждённые образец и макет к заказу."
+    ],
+    "faqs": [
+      [
+        "Можно ли запросить OEM-цену только по фотографии?",
+        "Можно начать с фото, но добавьте вместимость, назначение, количество, нанесение и рынок. До утверждения цены подтвердите модель и получите полный образец."
+      ],
+      [
+        "Указывать в RFQ миллилитры или унции?",
+        "Основной спецификацией оставьте миллилитры. Для рынка с унциями добавьте явно обозначенный приблизительный класс, а не неподтверждённое точное равенство."
+      ],
+      [
+        "Что нужно фабрике для цены на кастомный пластик?",
+        "Направление смолы, готовая сборка, комплектующие, количество, цвет, использование и рынок. Документы должны относиться к готовому изделию."
+      ],
+      [
+        "Как избежать несопоставимых предложений?",
+        "Используйте одну форму RFQ и отдельные строки для модели, вместимости, декора, упаковки, тиража, короба, Incoterm и предпосылок."
+      ]
+    ],
+    "matrix": {
+      "title": "Матрица ответа на RFQ по оптовым бутылкам",
+      "intro": "Сохраняйте раздельные поля, чтобы продукт, бренд, логистика и финансы проверяли одинаковые предпосылки.",
+      "head": [
+        "Строка RFQ",
+        "Что запросить",
+        "Зачем"
+      ],
+      "rows": [
+        [
+          "Товар",
+          "Модель, фото и вместимость",
+          "Исключает неверный SKU"
+        ],
+        [
+          "Материал",
+          "Корпус, крышка, уплотнение и запросы",
+          "Отделяет факты от заявлений"
+        ],
+        [
+          "Декор",
+          "Цвета, логотип, макет и тираж",
+          "Делает стоимость сравнимой"
+        ],
+        [
+          "Упаковка",
+          "Индивидуальная упаковка, короб и вес",
+          "Помогает планировать склад и фрахт"
+        ],
+        [
+          "Условия",
+          "Тиражи, Incoterm, срок и вопросы",
+          "Создаёт равную базу"
+        ],
+        [
+          "Согласование",
+          "Образцы, ответственный и изменения",
+          "Защищает заказ"
+        ]
+      ],
+      "links": [
+        "Руководство по проверке фабрики",
+        "Чек-лист утверждения образца"
+      ]
+    },
+    "inline": [
+      "Открыть руководство по проверке фабрики",
+      "Сравнить OEM-предложения на одной базе"
+    ]
+  },
+  "tr": {
+    "title": "Toplu sipariş için hangi su şişesi kapak tipi uygundur?",
+    "description": "Kullanım, boyun uyumu, temizlik, test ve tekrar siparişe göre kapak seçimi için B2B rehberi.",
+    "intro": "İyi spor kapağı talebi tek başına teknik tanım değildir. Doğru seçim kullanıcıya ve gövdeye bağlıdır. Bu rehber uyum, test ve tekrar edilebilirliği birlikte ele alır.",
+    "coverAlt": "Açıklayıcı kapak karşılaştırması; uyum ve testi doğrulayın.",
+    "sections": [
+      [
+        "1. Teknik ayrıntılardan önce ticari amacı anlatın",
+        "Karşılaştırmadan önce programı ve kullanıcıyı tanımlayın. RFQ'ya satış kanalı ve kullanım amacıyla başlayın. Perakende distribütörü birkaç renk ve koli etiketi isteyebilir; çalışan programı ise tek logo ve kolay tekrar sipariş gerektirebilir. Bunun katalog modeli, private-label, promosyon veya geliştirme olup olmadığını yazın. Hedef ülke ve ilk sevkiyat penceresini ekleyin. “Avrupa distribütörü için 5.000 adet karşılaştırıyoruz” ifadesi, “en iyi fiyat” istemekten daha fazla bağlam verir ve tahmini taahhüt gibi göstermez."
+      ],
+      [
+        "2. Model, kapasite ve fiziksel ölçüleri ayırın",
+        "Metrik bilgiyi koruyarak sınıfları aynı tabloda kıyaslayın. RFQ'nun merkezinde karışmayı önleyen ayrı satırlar olmalıdır. Modeli yazın veya açık bir görsel gönderin ve zorunlu özellikleri belirtin. Katalog kapasitesini mililitre olarak yazın; yükseklik, taban çapı, kapak çıkıntısı ve montajlı ağırlığı isteyin. Bu bilgiler raf, nakliye ve koli planını etkiler. XUYI 2501 modelinin katalogda 550 ml plastik spor şişesi olarak listelenmesi, son ölçülerin kanıtı değildir. Birden fazla kapasite varsa her birini ayrı satırda verin."
+      ],
+      [
+        "3. Malzeme yönünü ve belgelenen bilgiyi sorun",
+        "Numuneyi hedef kişinin gerçek ortamında test edin. Malzeme soruları belirli olmalı, ancak RFQ kanıtlanmamış bir sertifika iddiasına dönüşmemelidir. Katalog malzemesinin kabul edilip edilmediğini, başka plastik reçinenin incelenip incelenmeyeceğini ve hangi parçaların fiyatlanacağını yazın. Gövde, kapak, conta, pipet ve hedef pazar belgelerini sorun. XUYI 2106 katalogda 750 ml PC+PP çocuk şişesi olarak listelenir; bu katalog referansıdır, tüm özel projeler için garanti değildir. Tritan veya BPA-free taleplerini bitmiş ürün kanıtı gerektiren özel istek olarak belirtin."
+      ],
+      [
+        "4. Renk, logo ve baskıyı onay aşamaları olarak yazın",
+        "Kapasite, dolum, koli ve maliyeti doğrulanmış verilerle bağlayın. Markanın üretimden önce ne göreceğini açıklayın. Renkleri, renk referanslarını, logo dosyasını, yaklaşık baskı alanını ve istenen yöntemi belirtin. Hazırlık ücreti, prova formatı, baskılı numune ve tek/çok renk farkını isteyin. Renk sayısı birden fazlaysa toplam yerine dağılımı verin. Düz ekran maketi gerçek şişe baskısı için onay sayılmaz; her seçenek ayrı sürümle izlenmelidir."
+      ],
+      [
+        "5. Tekli ambalajı ve master koli verisini RFQ'ya ekleyin",
+        "Tek SKU mu kısa aralık mı daha kolay karar verin. OPP poşet, renkli kutu, kılıf, barkod, insert veya başka ambalajı yazın. Koli içi adet, dış ölçüler, brüt ağırlık, net ağırlık ve koli işaretlerini isteyin. XUYI 2305 katalogda 1600 ml büyük hacimli plastik sürahi olarak listelenir; koli planı spor şişesinden farklı olabilir. Karışık renkli kolilerde sayım ve etiket kuralını açıklayın. Ambalaj fiyatın yanında görünmelidir."
+      ],
+      [
+        "6. Numune ve gerçekçi onay sırası isteyin",
+        "Model, ölçü, kapak, tasarım ve koli kaydını saklayın. Alıcının neyi hangi sırayla onaylayacağını anlatın. Önce baskısız numuneyle şekli ve kullanımı, sonra baskılı numuneyle logo ve rengi kontrol edin. Sorumluyu, ölçümleri, belgeleri ve değişiklik kaydını belirleyin. Yanıt tarihi ve numune kilometre taşını yazın, ancak tahmini süreyi garanti olarak sunmayın. Sonuç; numaralı teklif, onaylı numune ve siparişe bağlanabilecek artwork sürümü olmalıdır."
+      ],
+      [
+        "7. Karşılaştırabileceğiniz kalem kalem bir yanıt isteyin",
+        "Başka bir alıcının denetleyebileceği karar kuralı kullanın. Model, kapasite, malzeme, renk, logo, numune ücreti, miktar fiyatları, ambalaj, koli, Incoterm, navlun tahmini, geçerlilik ve açık soruları ayrı alanlarda isteyin. Tedarikçi onaylı, tahmini ve bekleyen bilgileri işaretlesin. Böylece satın alma, finans, marka ve lojistik aynı varsayımları görür. Bir bilgi yoksa başka modelden kopyalamak yerine soruyu açık bırakın."
+      ]
+    ],
+    "checklist": [
+      "Kullanım, hedef pazar ve ilk sevkiyat penceresini yazın.",
+      "Modeli, kapasiteyi ve ölçüleri ayrı belirtin.",
+      "Gövde, kapak, conta ve malzeme talebini açıklayın.",
+      "Renk, logo, baskı alanı ve prova beklentisini verin.",
+      "Tekli ambalaj, koli adedi, ölçüler ve ağırlık isteyin.",
+      "Stok, private-label ve özel geliştirmeyi ayırın.",
+      "Numune ve onay sırasını tanımlayın.",
+      "Onaylı, tahmini ve bekleyen alanları işaretletin.",
+      "Aynı miktar, koli ve Incoterm ile fiyat karşılaştırın.",
+      "Onaylı numune ve artwork sürümünü siparişe ekleyin."
+    ],
+    "faqs": [
+      [
+        "Sadece görselle OEM fiyatı isteyebilir miyim?",
+        "Başlamak için görsel kullanılabilir; ancak kapasite, kullanım, miktar, baskı ve hedef pazar da eklenmelidir. Fiyatı onaylamadan modeli ve tam numuneyi doğrulayın."
+      ],
+      [
+        "RFQ'da ml mi oz mu kullanmalıyım?",
+        "Ana ölçü olarak mililitre kullanın. Ounce kullanan pazarlarda doğrulanmamış eşitlik yerine yaklaşık veya sınıf bilgisini açıkça belirtin."
+      ],
+      [
+        "Özel plastik malzeme fiyatı için fabrika neye ihtiyaç duyar?",
+        "Reçine yönü, bitmiş montaj, bileşenler, miktar, renk, kullanım ve hedef pazar gerekir. Belgeler bitmiş ürüne ait olmalıdır."
+      ],
+      [
+        "Karşılaştırılamayan teklifleri nasıl önlerim?",
+        "Aynı RFQ şablonunu kullanın; model, kapasite, baskı, ambalaj, miktar, koli, Incoterm ve varsayımları ayrı satırlarda isteyin."
+      ]
+    ],
+    "matrix": {
+      "title": "Toptan su şişesi RFQ yanıt matrisi",
+      "intro": "Ürün, marka, lojistik ve finansın aynı varsayımları incelemesi için her yanıtı kalem kalem tutun.",
+      "head": [
+        "RFQ satırı",
+        "İstenecek bilgi",
+        "Önemi"
+      ],
+      "rows": [
+        [
+          "Ürün kimliği",
+          "Model, referans görseli ve kapasite",
+          "Yanlış SKU fiyatını önler"
+        ],
+        [
+          "Malzeme",
+          "Gövde, kapak, conta ve talepler",
+          "Gerçeği iddiadan ayırır"
+        ],
+        [
+          "Baskı",
+          "Renk, logo, prova ve miktar",
+          "Marka maliyetini karşılaştırır"
+        ],
+        [
+          "Ambalaj",
+          "Tekli paket, koli, ölçü ve ağırlık",
+          "Depo ve navlun planını destekler"
+        ],
+        [
+          "Ticari şartlar",
+          "Miktar, Incoterm, geçerlilik ve açıklar",
+          "Eşit karşılaştırma sağlar"
+        ],
+        [
+          "Onay",
+          "Numune, sorumlu ve değişiklik",
+          "Son siparişi korur"
+        ]
+      ],
+      "links": [
+        "Fabrika değerlendirme rehberi",
+        "Numune onay kontrol listesi"
+      ]
+    },
+    "inline": [
+      "Fabrika değerlendirme rehberini açın",
+      "OEM tekliflerini aynı temelde karşılaştırın"
+    ]
+  }
+}

@@ -652,5 +652,87 @@
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared"
     }
+  ,
+    {
+      "slug": "custom-water-bottle-logo-printing-methods-bulk-order",
+      "articleTitle": "Which Logo Printing and Branding Method Should You Choose for Custom Water Bottles in Bulk?",
+      "cover": "/media/blog/custom-water-bottle-logo-printing-methods-20261111.webp",
+      "source": "assets/blog/custom-water-bottle-logo-printing-methods-20261111.webp",
+      "sha256": "75d4be3db836e124fed74febc5952df37ce3784fe1ae1b549b55dd439b726035",
+      "visualScene": "Illustrative branding and logo printing options across visible reusable water bottles and packaging.",
+      "buyerContext": "B2B brand, distributor and corporate-gift buyers choosing a logo method for a bulk bottle order.",
+      "articleUse": "Logo printing, branding surfaces, artwork proofing and reorder approval for custom bottles.",
+      "sceneMatch": "The visible bottles, varied branding treatments and packaging cues directly support the article's logo-method comparison while remaining an editorial illustration.",
+      "topicAnchors": [
+        "printing",
+        "branding"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Existing XUYI editorial asset; contextual illustration only, not an exact factory, customer or SKU photograph.",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, factory, exact SKU or certification.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "which-water-bottle-closure-type-best-wholesale-order",
+      "articleTitle": "Which Water Bottle Closure Type Is Best for a Wholesale Sourcing Order?",
+      "cover": "/media/blog/water-bottle-cap-types-wholesale-20261111.webp",
+      "source": "assets/blog/water-bottle-cap-types-wholesale-20261111.webp",
+      "sha256": "555092380c865c20bb0dc5f0a84c9f2cb5135d00071a0b4f1cd29b91d0268ecb",
+      "visualScene": "Illustrative water bottle closure and cap type comparison with clearly visible bottle forms and closure examples.",
+      "buyerContext": "Wholesale sourcing teams comparing closure families for reusable bottle orders.",
+      "articleUse": "Closure sourcing, neck compatibility, cleaning, leak-test planning and reorder control.",
+      "sceneMatch": "The visible closure families and bottle examples match the article's cap-selection decision, while the image remains a contextual sourcing graphic.",
+      "topicAnchors": [
+        "closure",
+        "sourcing"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Existing XUYI editorial asset; contextual illustration only, not an exact factory, customer or SKU photograph.",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, factory, exact SKU or certification.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "corporate-wellness-water-bottle-capacity-bulk-order",
+      "articleTitle": "What Water Bottle Capacity Should a Corporate Wellness Program Order in Bulk?",
+      "cover": "/media/blog/corporate-wellness-water-bottle-capacity-20261111.webp",
+      "source": "assets/blog/corporate-wellness-water-bottle-capacity-20261111.webp",
+      "sha256": "34d2bae43d31445b230aadafc95a3f317c75a34373644d91e2c16bf37c01ba90",
+      "visualScene": "Illustrative capacity planning graphic comparing visible 500ml, 750ml and 1L-class bottle choices.",
+      "buyerContext": "Corporate wellness, employee-program and procurement teams choosing a bottle capacity.",
+      "articleUse": "Corporate capacity planning, recipient fit, refill behavior, carton assumptions and reorder control.",
+      "sceneMatch": "The visible capacity classes and procurement cues directly support the corporate capacity decision while remaining an illustrative guide.",
+      "topicAnchors": [
+        "capacity",
+        "corporate"
+      ],
+      "productVisibility": "clearly-visible",
+      "provenance": "Existing XUYI editorial asset; contextual illustration only, not an exact factory, customer or SKU photograph.",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, factory, exact SKU or certification.",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared"
+    }
   ]
 }

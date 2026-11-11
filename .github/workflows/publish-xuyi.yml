@@ -83,6 +83,8 @@ jobs:
         run: python scripts/prepare_blog_covers_20261029.py
       - name: Prepare three 2026-11-10 covers before the shared P0 image gate
         run: python scripts/prepare_blog_images_20261110.py
+      - name: Prepare three 2026-11-11 covers before the shared P0 image gate
+        run: python scripts/prepare_blog_images_20261111.py
       - name: Enforce P0 B2B Blog image-to-article visual review and unique cover evidence
         run: python scripts/test_blog_cover_editorial_standard.py
       - name: Verify 2026-11-03 D1 CMS article links, related guides and cover alt
@@ -730,6 +732,48 @@ jobs:
             sleep 12
           done
           echo "::error::Three 2026-11-10 guides failed 15-page verification"
+          exit 1
+      - name: Prepare 2026-11-11 three B2B procurement guides, five-language sources, and approved media
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-11 B2B procurement guides'
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/prepare_blog_images_20261111.py
+          python scripts/prepare_blog_release_20261111.py
+          python scripts/publish_blog_batch_20261111_d1.py --dry-run
+          python scripts/publish_blog_images_20261111_r2.py --dry-run
+          python scripts/test_blog_20261111_source.py
+          node scripts/test_blog_20261111_runtime.mjs
+      - name: Upload three visually reviewed 2026-11-11 covers to XUYI R2
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-11 B2B procurement guides'
+        env:
+          OWNER_BLOG1111_RELEASE: "1"
+        run: python scripts/publish_blog_images_20261111_r2.py
+      - name: Publish three 2026-11-11 B2B English originals and twelve translations to D1
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-11 B2B procurement guides'
+        run: python scripts/publish_blog_batch_20261111_d1.py
+      - name: Double clean build and verify fifteen live 2026-11-11 article pages
+        if: github.event_name == 'push' && steps.credential.outputs.ready == 'true' && github.event.head_commit.message == 'Publish reviewed 2026-11-11 B2B procurement guides'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            python scripts/fetch_build_snapshot.py
+            python scripts/build_release.py
+            python scripts/test_release.py
+            python scripts/test_blog_cover_editorial_standard.py
+            python scripts/test_blog_20261111_source.py
+            node scripts/test_blog_20261111_runtime.mjs
+            echo "2026-11-11 double clean CMS-backed build passed $pass"
+          done
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+          for attempt in 1 2 3 4 5 6; do
+            if python scripts/verify_live_blog_20261111.py; then
+              echo "XUYI_20261111_THREE_B2B_ARTICLES_FIFTEEN_LOCALES_D1_R2_PAGES_LIVE_CONFIRMED"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "::error::Three 2026-11-11 guides failed 15-page verification"
           exit 1
       - name: Upload three visually reviewed 2026-11-03 covers to XUYI R2
         if: ((github.event_name == 'workflow_dispatch' && inputs.schedule_blog_20261103 == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[publish-blog-20261103]'))) && steps.credential.outputs.ready == 'true'

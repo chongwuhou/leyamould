@@ -1,0 +1,35 @@
+{
+  "site": "xuyi-drinkware-site",
+  "images": [
+    {
+      "slug": "custom-water-bottle-logo-printing-methods-bulk-order",
+      "source": "assets/blog/custom-water-bottle-logo-printing-methods-20261111.webp",
+      "cover": "/media/blog/custom-water-bottle-logo-printing-methods-20261111.webp",
+      "sha256": "75d4be3db836e124fed74febc5952df37ce3784fe1ae1b549b55dd439b726035",
+      "license": "Existing XUYI editorial asset; contextual illustration, not an exact SKU or factory photograph",
+      "fileBytes": 135794,
+      "visualReview": "actual-image-and-article-compared",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, factory, exact SKU or certification."
+    },
+    {
+      "slug": "which-water-bottle-closure-type-best-wholesale-order",
+      "source": "assets/blog/water-bottle-cap-types-wholesale-20261111.webp",
+      "cover": "/media/blog/water-bottle-cap-types-wholesale-20261111.webp",
+      "sha256": "555092380c865c20bb0dc5f0a84c9f2cb5135d00071a0b4f1cd29b91d0268ecb",
+      "license": "Existing XUYI editorial asset; contextual illustration, not an exact SKU or factory photograph",
+      "fileBytes": 37142,
+      "visualReview": "actual-image-and-article-compared",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, factory, exact SKU or certification."
+    },
+    {
+      "slug": "corporate-wellness-water-bottle-capacity-bulk-order",
+      "source": "assets/blog/corporate-wellness-water-bottle-capacity-20261111.webp",
+      "cover": "/media/blog/corporate-wellness-water-bottle-capacity-20261111.webp",
+      "sha256": "34d2bae43d31445b230aadafc95a3f317c75a34373644d91e2c16bf37c01ba90",
+      "license": "Existing XUYI editorial asset; contextual illustration, not an exact SKU or factory photograph",
+      "fileBytes": 32264,
+      "visualReview": "actual-image-and-article-compared",
+      "usageDisclosure": "Contextual illustration; no claim of a pictured XUYI customer, factory, exact SKU or certification."
+    }
+  ]
+}
