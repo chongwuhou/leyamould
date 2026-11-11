@@ -36,7 +36,7 @@ function requestContext(slug,{index=false}={}){
   else body=body.replace('<meta name="robots" content="index,follow">','<meta name="robots" content="noindex,nofollow">');
   return new Response(body,{status:200,headers:{"content-type":"text/html"}});
  }};
- return {request:new Request(ORIGIN+"/blog/"+slug+"/"),env:{XUYI_DB:db,ASSETS:assets},next:()=>{throw Error("Unexpected static fallback")}};
+ return {request:new Request(ORIGIN+"/blog/"+slug+"/"),env:{XUYI_DB:db,ASSETS:assets,XUYI_BLOG_RUNTIME_MODE:"dynamic"},next:()=>{throw Error("Unexpected static fallback")}};
 }
 const route="plastic-bottle-material-selection";
 const res=await onRequestGet(requestContext(route));
