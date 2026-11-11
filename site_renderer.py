@@ -99,9 +99,9 @@ def render_d1_blog_index(body):
         # Preserve an owner-edited D1 cover. If the row still contains the
         # known legacy source cover, use the already reviewed source image.
         try:
-            from blog_editorial import GUIDES,cover_path
-            if slug in GUIDES:
-                baseline=str(GUIDES[slug].get("cover") or "")
+            from blog_editorial import cover_path
+            if slug in BLOG_POSTS:
+                baseline=str(BLOG_POSTS[slug].get("cover") or "")
                 if baseline and not baseline.startswith("/"):
                     baseline="/media/ppt/"+baseline
                 if cover==baseline:
