@@ -59,6 +59,12 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
     repairs=SOURCE_REPAIRS
     if locale==SOURCE_LOCALE:
         repairs={slug:SOURCE_REPAIRS[slug] for slug in PHOTO_CONTEXT_20261026 if slug in SOURCE_REPAIRS}
+        # These reviewed 2026-10-25 covers are also source-authorized for
+        # English. Apply them at the same boundary as localized output.
+        PHOTO_20261025=json.loads((ROOT/'data/blog-photo-corrections-20261025.json').read_text(encoding='utf8'))
+        repairs.update({slug:(value['baseline'],value['photo'])
+                         for slug,value in PHOTO_20261025.items()
+                         if slug in SOURCE_REPAIRS})
     if route=='/blog/':
         for slug,(old,new) in repairs.items():
             prefix=(r'(<a class="news-card__image" href="/blog/'+re.escape(slug)+r'/"><img src=")')
