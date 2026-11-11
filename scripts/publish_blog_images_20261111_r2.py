@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Upload only the three SHA-256-reviewed 2026-11-11 Blog covers to XUYI R2."""
+"""Upload only the four SHA-256-reviewed 2026-11-11 Blog covers to XUYI R2."""
 import hashlib,json,os,time,sys
 from pathlib import Path
 from urllib.request import Request,urlopen
@@ -36,7 +36,7 @@ def post_image(token,slug,path):
 
 def main():
     if "--dry-run" in sys.argv:
-        print("DRY_RUN_REVIEWED_B2B_20261111_R2",3);return
+        print("DRY_RUN_REVIEWED_B2B_20261111_R2",4);return
     require(os.environ.get("OWNER_BLOG1111_RELEASE")=="1","Owner dispatch flag missing")
     require(os.environ.get("GITHUB_ACTIONS")=="true","Only GitHub Actions may upload")
     require(os.environ.get("GITHUB_REPOSITORY")=="chongwuhou/xuyi-drinkware-site","Wrong repository")
@@ -44,7 +44,7 @@ def main():
     token=os.environ.get("CLOUDFLARE_API_TOKEN","")
     require(bool(token),"Cloudflare project token missing")
     manifest=json.loads(Path("data/blog-images-reviewed-20261111.json").read_text(encoding="utf-8"))
-    require(manifest.get("site")=="xuyi-drinkware-site" and len(manifest.get("images",[]))==3,"Wrong reviewed image manifest")
+    require(manifest.get("site")=="xuyi-drinkware-site" and len(manifest.get("images",[]))==4,"Wrong reviewed image manifest")
     for item in manifest["images"]:
       path=Path(item["source"])
       require(path.is_file(),"Missing approved source image "+str(path))
@@ -81,5 +81,6 @@ def main():
           time.sleep(2+2*attempt)
       require(last_error is None,"Public R2 media read-back did not converge: "+item["slug"]+" "+str(last_error))
       print("R2_COVER_VERIFIED",item["slug"],"bytes",len(data),"sha256",digest)
-    print("XUYI_20261111_THREE_REVIEWED_COVERS_R2_READY")
+    print("XUYI_20261111_FOUR_REVIEWED_COVERS_R2_READY")
 if __name__=="__main__": main()
+

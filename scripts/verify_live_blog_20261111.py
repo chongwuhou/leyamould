@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify all 15 localized B2B pages, three real R2 covers, index cards, and sitemap."""
+"""Verify the reviewed localized B2B pages, R2 covers, index cards, and sitemap."""
 import urllib.request,json,re,time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -20,7 +20,8 @@ def check(inp):
   if 'src="'+row["cover"]+'"' not in html:raise RuntimeError("Approved R2 image missing from "+row["slug"]+" "+loc)
  if page.count('class="blog-editorial__product-link"')!=3:raise RuntimeError("Missing exact SKU links "+row["slug"]+" "+loc)
  if page.count('class="blog-related__item"')!=3:raise RuntimeError("Missing related reads "+row["slug"]+" "+loc)
- if '2026-11-11' not in page:raise RuntimeError("Wrong publication date "+row["slug"]+" "+loc)
+ expected_date="2026-11-10" if row["slug"]=="wholesale-water-bottle-rfq-oem-pricing-checklist" else "2026-11-11"
+ if expected_date not in page:raise RuntimeError("Wrong publication date "+row["slug"]+" "+loc)
  if '/blog/'+row["slug"]+'/' not in idx:raise RuntimeError("Missing localized index card "+row["slug"]+" "+loc)
  return (row["slug"],loc)
 def main():
@@ -32,6 +33,7 @@ def main():
   if any('/'+loc+'/blog/'+row['slug']+'/' not in sitemap for loc in ('es','pt','ru','tr')) or '/blog/'+row['slug']+'/' not in sitemap:raise RuntimeError("Missing sitemap "+row["slug"])
  with ThreadPoolExecutor(max_workers=9) as pool:
   checked=list(pool.map(check,[(row,loc) for row in rows for loc in ("en","es","pt","ru","tr")]))
- assert len(checked)==15
- print("XUYI_20261111_THREE_B2B_ARTICLES_15_LOCALE_ROUTES_THREE_R2_COVERS_INDEX_AND_SITEMAP_PASS",flush=True)
+ assert len(checked)==20
+ print("XUYI_20261111_FOUR_REVIEWED_COVERS_20_LOCALE_ROUTES_INDEX_AND_SITEMAP_PASS",flush=True)
 if __name__=="__main__":main()
+

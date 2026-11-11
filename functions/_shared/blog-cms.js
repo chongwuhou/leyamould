@@ -334,7 +334,7 @@ export function blogHtml(post){
  * Card HTML is owner/localizer content: keep each complete article block
  * byte-for-byte and change only its position. No batch slug or date is hardcoded.
  */
-export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs){
+function legacySortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs){
  const source=String(currentHtml??"");
  if(!Array.isArray(d1OrderedSlugs)||!d1OrderedSlugs.length)
   throw Error("D1 published Blog order is required");
@@ -366,6 +366,69 @@ export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs){
  const cards=expected.map(slug=>bySlug.get(slug));
  return source.slice(0,matches[0].index)+cards.join("\n")+source.slice(previousEnd);
 }
+function blogGridRange(source){
+ const open='<div class="blog-listing__grid">',start=source.indexOf(open);
+ if(start<0)throw Error("Localized Blog grid is missing");
+ const token=/<\/?div\b[^>]*>/gi;token.lastIndex=start+open.length;
+ let depth=1,match;
+ while((match=token.exec(source))){
+  if(/^<div\b/i.test(match[0])&&!/\/\s*>$/.test(match[0]))depth++;
+  else if(/^<\/div\b/i.test(match[0]))depth--;
+  if(depth===0)return {start,openEnd:start+open.length,closeStart:match.index,closeEnd:token.lastIndex};
+ }
+ throw Error("Localized Blog grid is not balanced");
+}
+
+// Read balanced card tags instead of using a non-nesting regex. This also
+// repairs the old failure mode where one card wrapped the remaining cards.
+function balancedBlogCards(inner){
+ const token=/<\/?article\b[^>]*>/gi,stack=[],records=[];let match;
+ while((match=token.exec(inner))){
+  const tag=match[0];
+  if(/^<article\b/i.test(tag)&&/\bclass=["'][^"']*\bnews-card\b[^"']*["']/i.test(tag))
+   stack.push({start:match.index,end:0});
+  else if(/^<\/article\b/i.test(tag)){
+   const item=stack.pop();
+   if(!item)throw Error("Localized Blog card closing tag is not balanced");
+   item.end=token.lastIndex;records.push(item);
+  }
+ }
+ if(stack.length)throw Error("Localized Blog card opening tag is not balanced");
+ const leaves=records.filter(item=>!records.some(child=>child!==item&&child.start>item.start&&child.end<item.end));
+ return {records,leaves:leaves.sort((a,b)=>a.start-b.start)};
+}
+
+function cardSlug(block){
+ const hrefs=[...String(block).matchAll(/href="\/(?:[a-z]{2}\/)?blog\/([a-z0-9]+(?:-[a-z0-9]+)*)\//g)].map(x=>x[1]);
+ if(hrefs.length!==3||new Set(hrefs).size!==1)throw Error("Localized Blog card identity or link count is invalid");
+ return hrefs[0];
+}
+
+export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs,replacements=new Map()){
+ const source=String(currentHtml??"");
+ if(!Array.isArray(d1OrderedSlugs)||!d1OrderedSlugs.length)throw Error("D1 published Blog order is required");
+ const expected=d1OrderedSlugs.map(value=>String(value??""));
+ if(expected.some(slug=>!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))||new Set(expected).size!==expected.length)
+  throw Error("D1 published Blog order contains an invalid or duplicate slug");
+ const grid=blogGridRange(source),parsed=balancedBlogCards(source.slice(grid.openEnd,grid.closeStart));
+ if(parsed.leaves.length!==expected.length)throw Error("Localized Blog card count differs from D1 published count");
+ const bySlug=new Map(),actual=[];
+ for(const item of parsed.leaves){
+  const block=source.slice(grid.openEnd+item.start,grid.openEnd+item.end),slug=cardSlug(block);
+  if(bySlug.has(slug))throw Error("Duplicate localized Blog card: "+slug);
+  bySlug.set(slug,replacements.get(slug)||block);actual.push(slug);
+ }
+ for(const [slug,block] of replacements){
+  if(!expected.includes(slug))throw Error("Replacement is not in D1 published Blog order: "+slug);
+  bySlug.set(slug,block);
+ }
+ for(const slug of expected)if(!bySlug.has(slug))throw Error("D1 published Blog article has no localized card: "+slug);
+ const cards=expected.map(slug=>bySlug.get(slug));
+ const nested=parsed.records.length!==parsed.leaves.length;
+ if(!nested&&replacements.size===0&&actual.every((slug,index)=>slug===expected[index]))return source;
+ return source.slice(0,grid.openEnd)+cards.join("\n")+source.slice(grid.closeStart);
+}
+
 export function blogCard(post){
  const url='/blog/'+post.slug+'/';
  return '<article class="news-card"><a href="'+url+'" class="news-card__image"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+esc((post.group||'Buyer Resources').toUpperCase())+'</span><h3><a href="'+url+'">'+esc(post.title)+'</a></h3><p>'+esc(post.description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>';
@@ -412,3 +475,4 @@ export function composePage(template,body,post,route){
  }
  return html;
 }
+

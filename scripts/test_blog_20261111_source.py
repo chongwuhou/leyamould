@@ -8,9 +8,10 @@ DAY="20261111"
 posts=[json.loads((ROOT/f"data/blog-guides-{DAY}-{i}.json").read_text(encoding="utf8")) for i in (1,2,3)]
 trans=[json.loads((ROOT/f"data/blog-localized-copy-{DAY}-{i}.json").read_text(encoding="utf8")) for i in (1,2,3)]
 covers=json.loads((ROOT/f"data/blog-images-reviewed-{DAY}.json").read_text(encoding="utf8"))["images"]
-assert len(posts)==len(covers)==3
 assert len({p["slug"] for p in posts})==3
-assert len({c["sha256"] for c in covers})==3
+post_covers=[c for c in covers if c["slug"] in {p["slug"] for p in posts}]
+assert len(post_covers)==len(posts)==3
+assert len({c["sha256"] for c in post_covers})==3
 for post,copy in zip(posts,trans):
  assert post["updated"]=="2026-11-11"
  assert len(post["sections"])==7 and all(len(x["paragraph"])>=650 for x in post["sections"])
@@ -34,3 +35,4 @@ for post,copy in zip(posts,trans):
  with Image.open(path) as image:
   assert image.format=="WEBP" and image.size==(1200,800)
 print("XUYI_20261111_THREE_B2B_POST_SOURCES_FIVE_LOCALES_AND_MEDIA_PASS")
+

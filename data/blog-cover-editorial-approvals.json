@@ -601,20 +601,20 @@
     {
       "slug": "wholesale-water-bottle-rfq-oem-pricing-checklist",
       "articleTitle": "What Should a Wholesale Water Bottle RFQ Include Before You Ask for OEM Pricing?",
-      "cover": "/media/blog/wholesale-water-bottle-rfq-20261110.webp",
-      "source": "assets/blog/wholesale-water-bottle-rfq-20261110.webp",
-      "sha256": "bac60e33bdf3c72e23360a076a9c996720a9880bc8ff21f2405036ab301eac97",
-      "visualScene": "RFQ form graphic listing bottle specification and supplier response fields in an illustrative procurement layout.",
+      "cover": "/media/blog/wholesale-water-bottle-rfq-photo-20261111.webp",
+      "source": "assets/blog/wholesale-water-bottle-rfq-photo-20261111.webp",
+      "sha256": "e9d4f71fa721811036d06f84ed78dbecee924a0eaf2c6458edd5e63d471efc6c",
+      "visualScene": "Natural product photograph of a reusable bottle sample, cap components and quotation review materials on a review table.",
       "buyerContext": "B2B importers and distributors preparing an OEM water bottle pricing request",
       "articleUse": "RFQ checklist preparation, like-for-like OEM quotation comparison and supplier response control",
-      "sceneMatch": "The specification fields directly illustrate the article's practical RFQ checklist without presenting a real quotation, order or product certificate.",
+      "sceneMatch": "The photographed bottle sample, cap components and review materials support the article's practical RFQ checklist without presenting a real quotation, order or product certificate.",
       "topicAnchors": [
         "pricing",
         "checklist"
       ],
       "productVisibility": "clearly-visible",
-      "provenance": "Existing project editorial asset; contextual procurement graphic that does not show a verified XUYI quotation, factory, customer or SKU.",
-      "usageDisclosure": "Illustrative RFQ graphic; no assertion of exact XUYI pricing, commercial relationship, factory, certification or shipment.",
+      "provenance": "Existing project editorial product photograph; it does not show a verified XUYI quotation, factory, customer or exact SKU.",
+      "usageDisclosure": "Natural product photograph for context; no assertion of exact XUYI pricing, commercial relationship, factory, certification or shipment.",
       "scores": {
         "sector": 5,
         "productUse": 5,
@@ -736,3 +736,4 @@
     }
   ]
 }
+

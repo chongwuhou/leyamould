@@ -9,8 +9,21 @@ const SLUGS=[
 ];
 const LANGS=["es","pt","ru","tr"];
 const DAY="2026-11-11",TAIL="</div></div></section>";
+const RFQ_MIGRATION=Object.freeze({
+ slug:"wholesale-water-bottle-rfq-oem-pricing-checklist",
+ oldCover:"/media/blog/wholesale-water-bottle-rfq-20261110.webp",
+ newCover:"/media/blog/wholesale-water-bottle-rfq-photo-20261111.webp",
+ alt:{
+  en:"Natural product photograph of a reusable bottle sample, cap components and quotation review materials for a wholesale RFQ; confirm the exact SKU before ordering.",
+  es:"Fotografía natural de una muestra de botella reutilizable, componentes de tapa y materiales de revisión de una RFQ mayorista; confirme el SKU exacto antes de comprar.",
+  pt:"Fotografia natural de uma amostra de garrafa reutilizável, componentes da tampa e materiais de revisão de uma RFQ no atacado; confirme o SKU exato antes da compra.",
+  ru:"Натуральная фотография образца многоразовой бутылки, компонентов крышки и материалов для проверки оптового RFQ; подтвердите точный SKU перед заказом.",
+  tr:"Toptan RFQ incelemesi için yeniden kullanılabilir matara numunesi, kapak bileşenleri ve teklif malzemelerinin doğal ürün fotoğrafı; siparişten önce kesin SKU'yu doğrulayın."
+ }
+});
 const response=(x,status=200)=>Response.json(x,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const count=(s,t)=>String(s).split(t).length-1;
+const replaceCoverMarkup=(html,oldCover,newCover,alt)=>String(html||"").replace(new RegExp('<img src="'+oldCover.replaceAll(".","\\.")+'" alt="[^"]*"','g'),'<img src="'+newCover+'" alt="'+alt+'"');
 const cardFor=(cards,locale,slug)=>cards.find(card=>card.locale===locale&&card.slug===slug)?.html||"";
 const blocked=/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;export function validatePayload(p){
  if(!p||!Array.isArray(p.posts)||p.posts.length!==3||!Array.isArray(p.translations)||p.translations.length!==12||!Array.isArray(p.indexCards)||p.indexCards.length!==12)throw Error("Batch shape requires 3 posts and 12 translations/cards");
@@ -67,28 +80,17 @@ export async function onRequestPost(context){
    if(!row?.translated_json)return response({error:"Localized Blog index override missing: "+lang},409);
    let index;try{index=JSON.parse(row.translated_json);}catch{return response({error:"Localized Blog index JSON invalid: "+lang},409);}
    let current=String(index.mainHtml||"");
-   const originalIndex=current;
+   const replacements=new Map();
    for(const slug of SLUGS){
     const card=cardFor(p.indexCards,lang,slug);
     if(!card)return response({error:"Localized Blog card missing: "+lang+"|"+slug},409);
-    const parts=current.split('<article class="news-card">');
-    let hits=0;
-    for(let i=1;i<parts.length;i++){
-     const end=parts[i].indexOf("</article>");
-     if(end<0||!parts[i].slice(0,end).includes(slug))continue;
-     parts[i]=card+parts[i].slice(end+"</article>".length);hits++;
-    }
-    if(hits>1)return response({error:"Localized Blog card duplicated: "+lang+"|"+slug},409);
-    if(hits===1){current=parts.join('<article class="news-card">');}
-    else{
-     const tail=current.lastIndexOf(TAIL);
-     if(tail<0)return response({error:"Localized Blog index insertion point missing: "+lang+"|"+slug},409);
-     current=current.slice(0,tail)+card+current.slice(tail);
-    }
-    indexCardsUpdated++;
+    replacements.set(slug,card);indexCardsUpdated++;
    }
-   const ordered=sortLocalizedBlogIndexByD1Order(current,d1Order);
-   if(ordered!==originalIndex){
+   // Rebuild the complete grid from balanced leaf cards. This repairs old
+   // nested-card records and prevents a replacement from spanning adjacent
+   // cards when a localized URL contains /blog/.
+   const ordered=sortLocalizedBlogIndexByD1Order(current,d1Order,replacements);
+   if(ordered!==current){
     const updated={...index,mainHtml:ordered};
     orderWrites.push({locale:lang,statement:db.prepare("UPDATE xuyi_translation_overrides SET translated_json=? WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(JSON.stringify(updated),lang,row.translated_json)});
    }
@@ -104,6 +106,42 @@ export async function onRequestPost(context){
     return response({error:"Localized Blog index does not match the D1 published order: "+lang},409);
   }
 
+  // Fixed owner-approved migration for the RFQ cover shown in the defect
+  // report. It updates D1 post/detail/index records together and never
+  // replaces a cover that an editor has already changed to another path.
+  const rfqRow=await db.prepare("SELECT status,content_json FROM xuyi_blog_posts WHERE slug=?").bind(RFQ_MIGRATION.slug).first();
+  if(!rfqRow||rfqRow.status!=="published")return response({error:"RFQ article is not published in D1"},409);
+  let rfqPost;try{rfqPost=JSON.parse(rfqRow.content_json||"{}")}catch{return response({error:"RFQ D1 content JSON invalid"},409)}
+  if(![RFQ_MIGRATION.oldCover,RFQ_MIGRATION.newCover].includes(rfqPost.cover))
+   return response({error:"RFQ cover was changed by an editor; migration preserved it"},409);
+  const migrationWrites=[];let rfqChanged=0;
+  if(rfqPost.cover===RFQ_MIGRATION.oldCover){
+   const next={...rfqPost,cover:RFQ_MIGRATION.newCover,coverAlt:RFQ_MIGRATION.alt.en};
+   migrationWrites.push(db.prepare("UPDATE xuyi_blog_posts SET content_json=? WHERE slug=? AND status='published' AND content_json=?").bind(JSON.stringify(next),RFQ_MIGRATION.slug,rfqRow.content_json));
+   rfqChanged++;
+  }
+  for(const lang of LANGS){
+   const detailId="page:/blog/"+RFQ_MIGRATION.slug+"/";
+   const detail=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id=? AND locale=?").bind(detailId,lang).first();
+   const index=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(lang).first();
+   if(!detail?.translated_json||!index?.translated_json)return response({error:"RFQ localized D1 record missing: "+lang},409);
+   let detailJson,indexJson;try{detailJson=JSON.parse(detail.translated_json);indexJson=JSON.parse(index.translated_json)}catch{return response({error:"RFQ localized D1 JSON invalid: "+lang},409)}
+   for(const [kind,row,json,id] of [["detail",detail,detailJson,detailId],["index",index,indexJson,"page:/blog/"]]){
+    const current=String(json.mainHtml||"");
+    if(!current.includes(RFQ_MIGRATION.oldCover)&&!current.includes(RFQ_MIGRATION.newCover))return response({error:"RFQ "+kind+" cover was changed by an editor; migration preserved it: "+lang},409);
+    const nextHtml=current.includes(RFQ_MIGRATION.oldCover)?replaceCoverMarkup(current,RFQ_MIGRATION.oldCover,RFQ_MIGRATION.newCover,RFQ_MIGRATION.alt[lang]):current;
+    if(nextHtml!==current){
+     const next={...json,mainHtml:nextHtml};
+     migrationWrites.push(db.prepare("UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=CURRENT_TIMESTAMP WHERE resource_id=? AND locale=? AND translated_json=?").bind(JSON.stringify(next),id,lang,row.translated_json));
+     rfqChanged++;
+    }
+   }
+  }
+  if(migrationWrites.length){
+   const migrationResults=await db.batch(migrationWrites);
+   if(migrationResults.some(item=>Number(item?.meta?.changes||0)!==1))return response({error:"RFQ cover migration changed during the conditional D1 update"},409);
+  }
+
   const refs=["page:/blog/",...SLUGS.map(s=>"page:/blog/"+s+"/")];
   const rows=(await db.prepare("SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN (?,?,?,?) AND locale IN (?,?,?,?)").bind(...refs,...LANGS).all()).results||[];
   const lookup=new Map(rows.map(x=>[x.resource_id+"|"+x.locale,JSON.parse(x.translated_json).mainHtml||""]));
@@ -116,6 +154,7 @@ export async function onRequestPost(context){
      if(matched.length!==1||count(matched[0],'/blog/'+slug+'/')!==3)return response({error:"Incomplete persisted index"},409);   }
   }
   const revision=await bumpPublishRevision(db);
-  return response({success:true,postsInserted,translationsInserted,indexCardsAdded:indexCardsUpdated,localizedIndexesReordered,d1PublishedCount:d1Order.length,indexOrderVerified:LANGS,publishRevision:revision.revision,publishedSlugs:SLUGS});
+  return response({success:true,postsInserted,translationsInserted,indexCardsAdded:indexCardsUpdated,localizedIndexesReordered,rfqCoverRecordsChanged:rfqChanged,d1PublishedCount:d1Order.length,indexOrderVerified:LANGS,publishRevision:revision.revision,publishedSlugs:SLUGS});
  }catch(e){return response({error:"D1 batch failed: "+String(e.message||"unknown").slice(0,160)},500);}
 }
+
