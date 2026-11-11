@@ -1081,6 +1081,10 @@ def main():
         text=add_trust_technical_seo(text,localized,loc)
         from scripts.product_hreflang import apply_to_document as apply_product_hreflang
         text=apply_product_hreflang(text,localized,loc,languages)
+        # Re-apply at the final document boundary so later SEO/enrichment
+        # helpers cannot reintroduce a different localized card sequence.
+        if route=="/blog/":
+            text=sort_localized_blog_index(text,blog_order)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
 

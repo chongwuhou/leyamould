@@ -59,6 +59,29 @@ def dedupe_catalog_cards(body):
         return card
     return pattern.sub(replace,body)
 
+def sort_d1_blog_index(body):
+    """Keep the static English Blog index in the D1 published order."""
+    ordered=[str(row.get("slug")) for row in BUILD_STATE.get("blogPosts",[])
+             if isinstance(row,dict) and row.get("status")=="published"
+             and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",str(row.get("slug","")))]
+    if not ordered or len(ordered)!=len(set(ordered)):
+        return body
+    cards=list(re.finditer(r'<article class="news-card">[\s\S]*?</article>',body,re.I))
+    if len(cards)!=len(ordered):
+        return body
+    parsed=[]
+    for match in cards:
+        links=re.findall(r'href=["\']/((?:[a-z0-9_-]+/)?blog/([a-z0-9]+(?:-[a-z0-9]+)*)/)["\']',match.group(0),re.I)
+        slugs={slug for _,slug in links}
+        if len(slugs)!=1:
+            return body
+        parsed.append((next(iter(slugs)),match.group(0)))
+    if len(set(slug for slug,_ in parsed))!=len(parsed) or set(slug for slug,_ in parsed)!=set(ordered):
+        return body
+    by_slug=dict(parsed)
+    separator=body[cards[0].end():cards[1].start()] if len(cards)>1 else ""
+    replacement=separator.join(by_slug[slug] for slug in ordered)
+    return body[:cards[0].start()]+replacement+body[cards[-1].end()]
 
 RAW=json.loads((ROOT/"data/products.json").read_text(encoding="utf-8"))
 IMAGES=json.loads((ROOT/"data/excel-images.json").read_text(encoding="utf-8"))
@@ -160,6 +183,7 @@ def build_url(path,title,content):
   if route=="/blog/":
    from blog_listing_layout import single_blog_index_heading
    main=single_blog_index_heading(main,"en")
+   main=sort_d1_blog_index(main)
   # Upgrade only exact, still-unedited original covers in English CMS-rendered
   # Blog bodies and cards, matching the same source boundary used by locales.
   if route.startswith("/blog/"):

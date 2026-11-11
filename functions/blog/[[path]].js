@@ -62,6 +62,10 @@ function response(html,status=200){
  return new Response(html,{status,headers:{"content-type":"text/html; charset=UTF-8","cache-control":"public, max-age=90","x-robots-tag":canIndex?"index,follow":"noindex,follow","x-content-type-options":"nosniff"}});
 }
 export async function onRequestGet(context){
+ // Static build output is the default source of public Blog pages. The D1
+ // runtime renderer remains available only as an explicit, reviewed switch.
+ const runtimeMode=String(context.env.XUYI_BLOG_RUNTIME_MODE||"static").trim().toLowerCase();
+ if(runtimeMode!=="dynamic")return context.next();
  if(!context.env.XUYI_DB)return context.next();
  const pathname=new URL(context.request.url).pathname;
  const tail=pathname.replace(/^\/blog\/?/,"").replace(/\/$/,"");

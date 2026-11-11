@@ -120,9 +120,15 @@ blog_order=[str(row.get("slug")) for row in blog_snapshot.get("blogPosts",[])
             and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",str(row.get("slug","")))]
 language_config=blog_snapshot.get("languages") if isinstance(blog_snapshot.get("languages"),dict) else {}
 source_locale=str(language_config.get("sourceLocale") or "en")
-publishable_locales=[str(row.get("code")) for row in language_config.get("languages",[])
-                     if isinstance(row,dict) and row.get("code")!=source_locale
-                     and row.get("enabled") is True and row.get("publishReady") is True]
+manifest_path=OUT/"locale-manifest.json"
+locale_manifest=json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.is_file() else {}
+publishable_locales=[str(row.get("code")) for row in locale_manifest.get("locales",[])
+                     if isinstance(row,dict) and str(row.get("code"))!=source_locale
+                     and row.get("enabled") is not False and row.get("publishReady") is not False]
+if not publishable_locales:
+    publishable_locales=[str(row.get("code")) for row in language_config.get("languages",[])
+                         if isinstance(row,dict) and str(row.get("code"))!=source_locale
+                         and row.get("enabled") is not False and row.get("publishReady") is not False]
 def localized_blog_order(content,locale):
     cards=re.findall(r'<article class="news-card">[\s\S]*?</article>',content,re.I)
     order=[]
@@ -133,7 +139,11 @@ def localized_blog_order(content,locale):
             return []
         order.append(links[0])
     return order
-if blog_order and len(blog_order)==len(set(blog_order)):
+if not blog_order or len(blog_order)!=len(set(blog_order)):
+    broken.append(("blog CMS","D1 published Blog order is missing or duplicated",len(blog_order)))
+elif not publishable_locales:
+    broken.append(("blog CMS","No publish-ready localized Blog output found",None))
+else:
     for locale in publishable_locales:
         localized_index=OUT/locale/"blog"/"index.html"
         if not localized_index.is_file():
