@@ -70,7 +70,7 @@ export async function onRequestPost(context){
    for(const slug of SLUGS){
     const card=cardFor(p.indexCards,lang,slug);
     if(!card)return response({error:"Localized Blog card missing: "+lang+"|"+slug},409);
-    const re=new RegExp('<article class="news-card">[\\s\\S]*?href="/blog/'+slug+'/"[\\s\\S]*?</article>');
+    const re=new RegExp('<article class="news-card">[\\s\\S]*?/blog/'+slug+'/"[\\s\\S]*?</article>');
     if(!re.test(current))return response({error:"Localized Blog card not found: "+lang+"|"+slug},409);
     current=current.replace(re,card);indexCardsUpdated++;
    }
@@ -99,9 +99,8 @@ export async function onRequestPost(context){
    for(const slug of SLUGS){
     const body=lookup.get("page:/blog/"+slug+"/|"+lang)||"";
     if(body.length<5000||count(body,'class="blog-section"')!==7||count(body,'class="blog-editorial__product-link"')!==3||count(body,'class="blog-related__item"')!==3||count(body,'class="blog-buyer-matrix"')!==1||count(body,"<details>")!==4)return response({error:"Incomplete persisted translation"},409);
-    const matched=index.split('<article class="news-card">').slice(1).map(x=>x.split("</article>",1)[0]).filter(x=>x.includes('href="/blog/'+slug+'/"'));
-    if(matched.length!==1||count(matched[0],'href="/blog/'+slug+'/"')!==3)return response({error:"Incomplete persisted index"},409);
-   }
+     const matched=index.split('<article class="news-card">').slice(1).map(x=>x.split("</article>",1)[0]).filter(x=>x.includes('/blog/'+slug+'/'));
+     if(matched.length!==1||count(matched[0],'/blog/'+slug+'/')!==3)return response({error:"Incomplete persisted index"},409);   }
   }
   const revision=await bumpPublishRevision(db);
   return response({success:true,postsInserted,translationsInserted,indexCardsAdded:indexCardsUpdated,localizedIndexesReordered,d1PublishedCount:d1Order.length,indexOrderVerified:LANGS,publishRevision:revision.revision,publishedSlugs:SLUGS});
