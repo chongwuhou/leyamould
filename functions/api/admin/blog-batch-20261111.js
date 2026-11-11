@@ -67,6 +67,7 @@ export async function onRequestPost(context){
    if(!row?.translated_json)return response({error:"Localized Blog index override missing: "+lang},409);
    let index;try{index=JSON.parse(row.translated_json);}catch{return response({error:"Localized Blog index JSON invalid: "+lang},409);}
    let current=String(index.mainHtml||"");
+   const originalIndex=current;
    for(const slug of SLUGS){
     const card=cardFor(p.indexCards,lang,slug);
     if(!card)return response({error:"Localized Blog card missing: "+lang+"|"+slug},409);
@@ -87,7 +88,7 @@ export async function onRequestPost(context){
     indexCardsUpdated++;
    }
    const ordered=sortLocalizedBlogIndexByD1Order(current,d1Order);
-   if(ordered!==current){
+   if(ordered!==originalIndex){
     const updated={...index,mainHtml:ordered};
     orderWrites.push({locale:lang,statement:db.prepare("UPDATE xuyi_translation_overrides SET translated_json=? WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(JSON.stringify(updated),lang,row.translated_json)});
    }
