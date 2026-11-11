@@ -31,14 +31,13 @@ globalThis.__rev={value:revision};
 globalThis.__raceInsert={value:false};
 const apiText=source("functions/api/admin/product-content.js")
  .replace('import { authorizedBuildRequest } from "../../_shared/build-auth.js";','const authorizedBuildRequest=async()=>true;')
- .replace('import { bumpPublishRevision } from "../../_shared/site-settings.js";','const bumpPublishRevision=async()=>({revision:++globalThis.__rev.value});')
+ .replace('import { bumpPublishRevision,loadLanguageConfig } from "../../_shared/site-settings.js";','const bumpPublishRevision=async()=>({revision:++globalThis.__rev.value});const loadLanguageConfig=async()=>({sourceLocale:"en",languages:[]});')
  .replace('import { MANAGED_MODELS } from "../../_shared/xuyi-routes.js";','const MANAGED_MODELS=new Set(["2095","LO-008"]);')
  .replace('import { authorizeAdminRequest } from "../../_shared/admin-security.js";','const authorizeAdminRequest=async()=>globalThis.__allowed.value;')
  .replace('import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";','import {normalizeNewProduct,CATEGORY_OPTIONS} from "'+url(productSource)+'";')
- .replace('import {loadProductAdminConfig} from "../../_shared/product-admin-config.js";','const loadProductAdminConfig=async()=>({config:{categories:["Plastic Sports Water Bottles","Large Capacity Water Jugs","Kids Plastic Water Bottles","Plastic Shaker Bottles","Spray Water Bottles","Two-Way Drinking Cups","Titanium Vacuum Cups"],fields:{legacy:[],newProduct:[]}}});')
  .replace('import { imageKey } from "../../_shared/r2-usage.js";','import {imageKey} from "'+url(usage)+'";')
- .replace('import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo,configuredProductSeoLocales} from "../../_shared/product-seo.js";',
-  'const ensureProductSeo=async()=>{};const canonicalProductSlug=s=>s.toLowerCase();const normalizeProductSeo=s=>s;const upsertProductSeo=async()=>{};const configuredProductSeoLocales=async()=>({sourceLocale:"en",locales:new Set(["en"])});');
+ .replace('import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo} from "../../_shared/product-seo.js";',
+  'const ensureProductSeo=async()=>{};const canonicalProductSlug=s=>s.toLowerCase();const normalizeProductSeo=s=>s;const upsertProductSeo=async()=>{};');
 const api=await import(url(apiText));
 const db={
  prepare(sql){
@@ -111,3 +110,4 @@ assert.equal(list.categories.length,7);
 assert.equal(list.items[0].content.newProduct,true);
 assert.deepEqual(list.catalogModels,["2095","LO-008"],"All source catalog models remain searchable without synthetic D1 rows");
 console.log("XUYI_SINGLE_PRODUCT_CMS_API_TESTS_PASSED; isolated mock only; no remote D1 writes");
+
