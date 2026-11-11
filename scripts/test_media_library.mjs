@@ -14,8 +14,8 @@ const raw=readFileSync(base("functions/api/admin/media.js"),"utf8")
    'import { checkedImage } from "'+uri(imageHelper)+'";')
  .replace('import {normalizeAltMap,ensureMediaAlt,upsertMediaAlt} from "../../_shared/media-alt.js";',
    'import {normalizeAltMap,ensureMediaAlt,upsertMediaAlt} from "'+uri(altHelper)+'";')
- .replace('import {bumpPublishRevision,defaultLanguageConfig,loadSiteSetting,normalizeLanguageConfig} from "../../_shared/site-settings.js";',
-   'const bumpPublishRevision=async()=>({revision:++globalThis.__testMediaRevision.value});const defaultLanguageConfig=()=>({sourceLocale:"en",languages:[{code:"en",nativeName:"English",displayName:"English",enabled:true,publishReady:true,pathPrefix:""}]});const loadSiteSetting=async(db,key,fallback)=>({value:fallback,updatedAt:""});const normalizeLanguageConfig=value=>value;');
+ .replace('import {bumpPublishRevision,loadLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";',
+   'const bumpPublishRevision=async()=>({revision:++globalThis.__testMediaRevision.value});const loadLanguageConfig=async()=>({sourceLocale:"en",languages:[{code:"en",nativeName:"English"},{code:"es",nativeName:"Español"}]});const publicLanguages=config=>config.languages;');
 const {onRequestGet,onRequestPost,onRequestDelete}=await import(uri(raw));
 const objects=new Map();
 const storage={
@@ -122,3 +122,4 @@ const savedAssets=env.ASSETS;delete env.ASSETS;
 assert.equal((await onRequestDelete(deleteRequest())).status,503,"missing released reference index must fail closed");
 env.ASSETS=savedAssets;
 console.log("XUYI_R2_SHARED_MEDIA_REGRESSION_PASSED",14,"assertions, no remote writes");
+
