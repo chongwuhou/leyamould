@@ -37,7 +37,7 @@ def post_image(token,slug,path):
 def main():
     if "--dry-run" in sys.argv:
         print("DRY_RUN_REVIEWED_B2B_20261111_R2",3);return
-    require(os.environ.get("OWNER_BLOG1110_RELEASE")=="1","Owner dispatch flag missing")
+    require(os.environ.get("OWNER_BLOG1111_RELEASE")=="1","Owner dispatch flag missing")
     require(os.environ.get("GITHUB_ACTIONS")=="true","Only GitHub Actions may upload")
     require(os.environ.get("GITHUB_REPOSITORY")=="chongwuhou/xuyi-drinkware-site","Wrong repository")
     require(os.environ.get("GITHUB_REF")=="refs/heads/main","Only main may upload")
