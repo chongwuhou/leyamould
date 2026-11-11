@@ -11,8 +11,8 @@ const LANGS=["es","pt","ru","tr"];
 const DAY="2026-11-11",TAIL="</div></div></section>";
 const response=(x,status=200)=>Response.json(x,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const count=(s,t)=>String(s).split(t).length-1;
-const blocked=/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;
-export function validatePayload(p){
+const cardFor=(cards,locale,slug)=>cards.find(card=>card.locale===locale&&card.slug===slug)?.html||"";
+const blocked=/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;export function validatePayload(p){
  if(!p||!Array.isArray(p.posts)||p.posts.length!==3||!Array.isArray(p.translations)||p.translations.length!==12||!Array.isArray(p.indexCards)||p.indexCards.length!==12)throw Error("Batch shape requires 3 posts and 12 translations/cards");
  const allowed=new Set(SLUGS),slugs=new Set(),translations=new Set(),cards=new Set();
  for(const item of p.posts){
@@ -46,13 +46,11 @@ export async function onRequestPost(context){
  try{
   await ensureBlogSchema(db);
   const stmts=[];
-  for(const item of p.posts)stmts.push(db.prepare("INSERT INTO xuyi_blog_posts (slug,status,content_json,published_at,updated_at) VALUES(?,'published',?,?,CURRENT_TIMESTAMP) ON CONFLICT(slug) DO NOTHING").bind(item.slug,JSON.stringify(item.post),DAY+"T00:00:00Z"));
-  for(const t of p.translations)stmts.push(db.prepare("INSERT INTO xuyi_translation_overrides (resource_id,locale,translated_json,reviewed_at) VALUES(?,?,?,?) ON CONFLICT(resource_id,locale) DO NOTHING").bind("page:"+t.route,t.locale,JSON.stringify({title:t.title,description:t.description,mainHtml:t.mainHtml}),DAY));
-  for(const c of p.indexCards)stmts.push(db.prepare("UPDATE xuyi_translation_overrides SET translated_json=json_set(translated_json,'$.mainHtml',substr(json_extract(translated_json,'$.mainHtml'),1,length(json_extract(translated_json,'$.mainHtml'))-length(?))||?||?),reviewed_at=? WHERE resource_id='page:/blog/' AND locale=? AND substr(json_extract(translated_json,'$.mainHtml'),-length(?))=? AND instr(json_extract(translated_json,'$.mainHtml'),?)=0").bind(TAIL,c.html,TAIL,DAY,c.locale,TAIL,TAIL,"/blog/"+c.slug+"/"));
+  for(const item of p.posts)stmts.push(db.prepare("INSERT INTO xuyi_blog_posts (slug,status,content_json,published_at,updated_at) VALUES(?,'published',?,?,CURRENT_TIMESTAMP) ON CONFLICT(slug) DO UPDATE SET status=excluded.status,content_json=excluded.content_json,published_at=excluded.published_at,updated_at=CURRENT_TIMESTAMP").bind(item.slug,JSON.stringify(item.post),DAY+"T00:00:00Z"));
+  for(const t of p.translations)stmts.push(db.prepare("INSERT INTO xuyi_translation_overrides (resource_id,locale,translated_json,reviewed_at) VALUES(?,?,?,?) ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=excluded.reviewed_at").bind("page:"+t.route,t.locale,JSON.stringify({title:t.title,description:t.description,mainHtml:t.mainHtml}),DAY));
   const done=await db.batch(stmts);
   const changes=(a,b)=>done.slice(a,b).reduce((total,x)=>total+Number(x?.meta?.changes||0),0);
-  const postsInserted=changes(0,3),translationsInserted=changes(3,15),indexCardsAdded=changes(15,27);
-  const saved=(await db.prepare("SELECT slug,status FROM xuyi_blog_posts WHERE slug IN (?,?,?)").bind(...SLUGS).all()).results||[];
+  const postsInserted=changes(0,3),translationsInserted=changes(3,15);  const saved=(await db.prepare("SELECT slug,status FROM xuyi_blog_posts WHERE slug IN (?,?,?)").bind(...SLUGS).all()).results||[];
   if(saved.filter(x=>x.status==="published"&&SLUGS.includes(x.slug)).length!==3)return response({error:"Article verification failed"},409);
 
   // The English live route uses listBlogPosts() (updated_at DESC). Use that
@@ -63,19 +61,25 @@ export async function onRequestPost(context){
   if(!d1Order.length||new Set(d1Order).size!==d1Order.length
      ||SLUGS.some(slug=>!d1Order.includes(slug)))
    return response({error:"D1 published Blog order is incomplete or duplicated"},409);
-  const orderWrites=[];
+  const orderWrites=[];let indexCardsUpdated=0;
   for(const lang of LANGS){
    const row=await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(lang).first();
    if(!row?.translated_json)return response({error:"Localized Blog index override missing: "+lang},409);
    let index;try{index=JSON.parse(row.translated_json);}catch{return response({error:"Localized Blog index JSON invalid: "+lang},409);}
-   const current=String(index.mainHtml||"");
+   let current=String(index.mainHtml||"");
+   for(const slug of SLUGS){
+    const card=cardFor(p.indexCards,lang,slug);
+    if(!card)return response({error:"Localized Blog card missing: "+lang+"|"+slug},409);
+    const re=new RegExp('<article class="news-card">[\\s\\S]*?href="/blog/'+slug+'/"[\\s\\S]*?</article>');
+    if(!re.test(current))return response({error:"Localized Blog card not found: "+lang+"|"+slug},409);
+    current=current.replace(re,card);indexCardsUpdated++;
+   }
    const ordered=sortLocalizedBlogIndexByD1Order(current,d1Order);
    if(ordered!==current){
     const updated={...index,mainHtml:ordered};
     orderWrites.push({locale:lang,statement:db.prepare("UPDATE xuyi_translation_overrides SET translated_json=? WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(JSON.stringify(updated),lang,row.translated_json)});
    }
-  }
-  const orderResults=orderWrites.length?await db.batch(orderWrites.map(item=>item.statement)):[];
+  }  const orderResults=orderWrites.length?await db.batch(orderWrites.map(item=>item.statement)):[];
   const localizedIndexesReordered=orderResults.reduce((total,item)=>total+Number(item?.meta?.changes||0),0);
   if(localizedIndexesReordered!==orderWrites.length)
    return response({error:"Localized Blog index changed during the conditional D1-order update"},409);
@@ -100,6 +104,6 @@ export async function onRequestPost(context){
    }
   }
   const revision=await bumpPublishRevision(db);
-  return response({success:true,postsInserted,translationsInserted,indexCardsAdded,localizedIndexesReordered,d1PublishedCount:d1Order.length,indexOrderVerified:LANGS,publishRevision:revision.revision,publishedSlugs:SLUGS});
+  return response({success:true,postsInserted,translationsInserted,indexCardsAdded:indexCardsUpdated,localizedIndexesReordered,d1PublishedCount:d1Order.length,indexOrderVerified:LANGS,publishRevision:revision.revision,publishedSlugs:SLUGS});
  }catch(e){return response({error:"D1 batch failed: "+String(e.message||"unknown").slice(0,160)},500);}
 }
