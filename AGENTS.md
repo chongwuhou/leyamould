@@ -69,7 +69,7 @@ test reproducing a realistic owner/CMS update before publishing.
 
 ### 博客与评价
 
-- 多语言 Blog 列表顺序必须以 D1 查询为唯一依据。英文实时 /blog/ 路由调用 listBlogPosts(db,'published')，当前 SQL 为 ORDER BY updated_at DESC。ES/PT/RU/TR 的 page:/blog/ 翻译记录保存本地化卡片 HTML，但全部卡片的顺序必须与同一次 D1 查询返回的完整 slug 顺序一致。批量写入卡片后，必须按 D1 结果重新排序，只改变卡片位置并原样保留每张卡片 HTML。禁止把追加到列表末尾当作最终顺序，禁止硬编码批次 slug 置顶，禁止修改 dist/ 或线上 HTML。缺卡、重复卡、额外卡或 slug 不匹配时必须停止发布。
+- 多语言 Blog 列表顺序必须以同一次 D1 snapshot 的完整 published slug 顺序为唯一依据。生产默认走 Cloudflare Pages 静态构建：英文列表与 page:/blog/ 的所有已发布语种都从 D1/CMS snapshot 生成，卡片只按 D1 顺序重排并原样保留卡片 HTML；动态 `functions/blog/[[path]].js` 仅在显式设置 `XUYI_BLOG_RUNTIME_MODE=dynamic` 时作为备用入口，且必须使用同样的 `updated_at DESC,slug ASC` 查询。缺卡、重复卡、额外卡或 slug 不匹配必须停止发布。
 
 - 博客正文在 D1/CMS 编辑并审核；自然放入 2–5 个真实相关产品链接，结尾人工选择 2–3 篇相关阅读，所有 D1 当前已发布语种路径同步检查。图片必须先看正文与画面，记录来源、SHA 和审核结论，不用通用图、旧 SKU 图或虚构工厂/客户证据。
 - 评价只接受来源可核验、能精确映射 SKU、未重复的真实内容，并保存 fingerprint、source 和审核状态。AI 只能做草稿、翻译、去重、格式整理与风险筛查；禁止生成虚假体验、补造型号参数或把未经人工/来源审核的内容写入 D1。

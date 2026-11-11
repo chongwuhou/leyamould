@@ -92,3 +92,11 @@ not regressions merely because a legacy rewrite no longer finds its old input.
 D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数据源 → bump publish revision → 两次干净构建/回归 → 检查 D1 当前已发布语种、canonical/hreflang、sitemap、重复卡片与链接 → 核验代表线上路由。失败停在 CI，不发布临时产物；不要用 dist、线上 HTML 或一次性后处理替代正式修复。
 
 
+
+
+## Blog 静态发布与列表一致性（2026-11-11 定稿）
+
+- 生产 Blog 默认走 Cloudflare Pages 静态构建；D1/CMS snapshot 是唯一内容源。英文和所有后台标记为 enabled + publishReady 的语种，其 /blog/ 列表都从同一份 D1 published blogPosts 生成。
+- 列表顺序统一为 D1 查询 `ORDER BY updated_at DESC, slug ASC`。多语列表只调整完整卡片的位置，保留 D1 卡片 HTML；不按语言分别排序、不把新卡片追加到末尾、不写死批次 slug。
+- `functions/blog/[[path]].js` 保留动态 D1 能力但默认不接管页面，只有显式设置 `XUYI_BLOG_RUNTIME_MODE=dynamic` 才启用；动态入口必须使用同一排序规则。
+- 发布门禁必须检查英文和所有发布就绪语种的卡片数量、slug 集合、顺序、单 H1、图片/正文/OG 一致性；任一缺卡、重复卡、额外卡或顺序不一致都停止发布。
