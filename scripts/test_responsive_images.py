@@ -60,6 +60,8 @@ def main():
     assert "srcset=" in enhanced
     owner_image = '<img src="/media/product/owner-updated-20261020.webp" alt="Owner update">'
     assert enhance_source_markup(owner_image) == owner_image
+    stale_generated = '<img src="/media/product/stale-source.webp" alt="Stale" srcset="/assets/responsive/old-480.webp 480w, /assets/responsive/old-960.webp 960w" sizes="100vw">'
+    assert enhance_source_markup(stale_generated) == '<img src="/media/product/stale-source.webp" alt="Stale">'
     authored = f'<img src="{sample}" alt="Owner" width="400" height="300" srcset="/assets/owner-480.webp 480w" sizes="100vw">'
     retained = enhance_source_markup(authored)
     assert retained == authored, ("Owner dimensions/srcset changed", retained)

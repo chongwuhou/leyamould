@@ -10,6 +10,21 @@ IMAGE = re.compile(r"<img\b[^>]*>", re.I)
 SRC = re.compile(r'\bsrc="([^"]+)"', re.I)
 STANDARD = "(max-width: 760px) 92vw, (max-width: 1200px) 48vw, 360px"
 MAIN = "(max-width: 760px) 92vw, 48vw"
+
+GENERATED_VARIANT = re.compile(r"/assets/responsive/[A-Za-z0-9._-]+\s+\d+w$")
+
+
+def strip_stale_generated_hints(tag):
+    """Remove only renderer-owned responsive hints whose source is no longer current."""
+    match = re.search(r'\bsrcset="([^"]*)"', tag, re.I)
+    if not match:
+        return tag
+    parts = [part.strip() for part in match.group(1).split(",") if part.strip()]
+    if not parts or not all(GENERATED_VARIANT.fullmatch(part) for part in parts):
+        return tag
+    tag = re.sub(r'\s+srcset="[^"]*"', "", tag, count=1, flags=re.I)
+    return re.sub(r'\s+sizes="[^"]*"', "", tag, count=1, flags=re.I)
+
 # Legacy editorial substitutions still rewrite some specific PPT placeholders
 # after page rendering. Adding srcset for them would pair the replacement
 # picture with previews derived from the displaced original. Preserve current
@@ -47,7 +62,10 @@ def enhance_source_markup(markup):
             return tag
         entry = data.get(src)
         if not entry:
-            return tag
+            # A D1/CMS record can retain a renderer-generated srcset from an
+            # earlier build. Do not publish derived files that are absent from
+            # the current source manifest; preserve owner-authored srcsets.
+            return strip_stale_generated_hints(tag)
         add = []
         for k in ("width", "height"):
             if not re.search(r"\b" + k + r"\s*=", tag, re.I):
