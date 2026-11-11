@@ -70,7 +70,7 @@ export async function onRequestPost(context){
    for(const slug of SLUGS){
     const card=cardFor(p.indexCards,lang,slug);
     if(!card)return response({error:"Localized Blog card missing: "+lang+"|"+slug},409);
-    const re=new RegExp('<article class="news-card">[\\s\\S]*?/blog/'+slug+'/"[\\s\\S]*?</article>');
+    const re=new RegExp('<article class="news-card">[\\s\\S]*?/(?:[a-z]{2}/)?blog/'+slug+'/"[\\s\\S]*?</article>');
     if(!re.test(current))return response({error:"Localized Blog card not found: "+lang+"|"+slug},409);
     current=current.replace(re,card);indexCardsUpdated++;
    }

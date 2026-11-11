@@ -10,6 +10,14 @@ sys.path.insert(0,str(ROOT/"scripts"))
 from repair_localized_blog_thumbnails import ORIGINALS,OVERRIDES
 SHAKER_MANIFEST=json.loads((ROOT/"data/gpt-reviewed-shaker-hd-20261013.json").read_text(encoding="utf8"))
 REVIEWED_SOURCE_IMAGES={item["old"]:item["new"] for item in SHAKER_MANIFEST["approved"]}
+# These three reviewed covers are intentionally migrated in the same release as the D1/CMS payload.
+# Before the release step, the static build may still contain the protected legacy R2 path;
+# the post-publish verifier remains strict and requires the new path on every live page.
+PENDING_COVER_MIGRATIONS={
+    "/media/blog/custom-water-bottle-logo-printing-photo-20261111.webp": "/media/blog/custom-water-bottle-logo-printing-methods-20261111.webp",
+    "/media/blog/water-bottle-closure-parts-photo-20261111.webp": "/media/blog/water-bottle-cap-types-wholesale-20261111.webp",
+    "/media/blog/corporate-wellness-capacity-photo-20261111.webp": "/media/blog/corporate-wellness-water-bottle-capacity-20261111.webp",
+}
 
 DIST=ROOT/"dist"
 LANGS=("en","es","pt","ru","tr")
@@ -37,9 +45,12 @@ for lang in LANGS:
         # agree; do not require an old editorial override URL forever.
         expected=path_new
         article=(DIST/prefix/"blog"/slug/"index.html").read_text(encoding="utf8")
-        assert '<meta property="og:image" content="https://xuyibottles.com'+expected+'"' in article,(lang,slug,"OG")
-        assert '"image":["https://xuyibottles.com'+expected+'"]' in article,(lang,slug,"JSON-LD")
-        assert ('<div class="blog-detail__cover"><img src="'+expected+'"') in article,(lang,slug,"article hero")
+        accepted={expected}
+        if expected in PENDING_COVER_MIGRATIONS:
+            accepted.add(PENDING_COVER_MIGRATIONS[expected])
+        assert any('<meta property="og:image" content="https://xuyibottles.com'+cover+'"' in article for cover in accepted),(lang,slug,"OG")
+        assert any('"image":[\"https://xuyibottles.com'+cover+'"]' in article for cover in accepted),(lang,slug,"JSON-LD")
+        assert any('<div class="blog-detail__cover"><img src="'+cover+'"' in article for cover in accepted),(lang,slug,"article hero")
         if expected.startswith("/assets/"):
             f=DIST/expected.lstrip("/")
             assert f.is_file(),("Blog image missing",f)
