@@ -108,6 +108,20 @@ def render_d1_blog_index(body):
                     cover=cover_path(slug)
         except (ImportError,KeyError):
             pass
+        # Three legacy D1 rows still collide with reviewed covers used by
+        # other published guides. These are source-approved image choices,
+        # applied only after the baseline guard above; owner-edited covers win.
+        distinct_legacy={
+            "custom-logo-water-bottle-checklist":"/assets/blog/custom-water-bottle-logo-printing-methods-20261111.webp",
+            "custom-water-bottle-export-packaging":"/assets/blog/wholesale-water-bottle-rfq-photo-20261111.webp",
+            "how-to-start-private-label-water-bottle-brand":"/assets/blog/bottle-factory-rfq-template-20261016.webp"
+        }
+        if slug in distinct_legacy and cover in {
+            "/assets/blog/branding-logo-options-20261013.webp",
+            "/assets/blog/export-packing-topics-20261013.webp",
+            "/assets/curated-hd/gradient-sports.webp"
+        }:
+            cover=distinct_legacy[slug]
         if len(title)<12 or len(description)<25 or not cover.startswith("/"):
             raise ValueError("Published D1 Blog row has incomplete index fields: "+slug)
         url="/blog/"+e(slug)+"/"
