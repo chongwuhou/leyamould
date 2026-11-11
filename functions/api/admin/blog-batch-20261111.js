@@ -70,9 +70,21 @@ export async function onRequestPost(context){
    for(const slug of SLUGS){
     const card=cardFor(p.indexCards,lang,slug);
     if(!card)return response({error:"Localized Blog card missing: "+lang+"|"+slug},409);
-    const re=new RegExp('<article class="news-card">[\\s\\S]*?'+slug+'[\\s\\S]*?</article>');
-    if(!re.test(current))return response({error:"Localized Blog card not found: "+lang+"|"+slug},409);
-    current=current.replace(re,card);indexCardsUpdated++;
+    const parts=current.split('<article class="news-card">');
+    let hits=0;
+    for(let i=1;i<parts.length;i++){
+     const end=parts[i].indexOf("</article>");
+     if(end<0||!parts[i].slice(0,end).includes(slug))continue;
+     parts[i]=card+parts[i].slice(end+"</article>".length);hits++;
+    }
+    if(hits>1)return response({error:"Localized Blog card duplicated: "+lang+"|"+slug},409);
+    if(hits===1){current=parts.join('<article class="news-card">');}
+    else{
+     const tail=current.lastIndexOf(TAIL);
+     if(tail<0)return response({error:"Localized Blog index insertion point missing: "+lang+"|"+slug},409);
+     current=current.slice(0,tail)+card+current.slice(tail);
+    }
+    indexCardsUpdated++;
    }
    const ordered=sortLocalizedBlogIndexByD1Order(current,d1Order);
    if(ordered!==current){
