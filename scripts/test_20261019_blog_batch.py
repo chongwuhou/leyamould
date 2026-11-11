@@ -147,9 +147,10 @@ assert 'os.environ.get("CLOUDFLARE_API_TOKEN","")' in publisher
 assert '"/api/admin/blog-batch"' in publisher
 assert "api.cloudflare.com/client/v4/accounts/" not in publisher
 assert "authorizedReviewedBlogBatchRequest" in endpoint and "authorizedReviewedBlogBatchRequest" in auth
-assert "ON CONFLICT(slug) DO NOTHING" in endpoint
-assert "ON CONFLICT(resource_id,locale) DO NOTHING" in endpoint
-assert "instr(json_extract(translated_json,'$.mainHtml'),?)=0" in endpoint
+assert "if (!existing) newPostStatements.push" in endpoint
+assert "if (!existing) newTranslationStatements.push" in endpoint
+assert "UPDATE xuyi_translation_overrides SET translated_json=?" in endpoint
+assert "AND translated_json=?" in endpoint
 assert "CLOUDFLARE_D1_API_TOKEN" not in publisher
 if os.environ.get("XUYI_BATCH_BOOTSTRAP_ONLY") == "1":
  assert "prepare_blog_bootstrap_snapshot.py" in workflow
@@ -158,4 +159,5 @@ else:
  assert "github.event.head_commit.message == 'Publish reviewed 2026-10-19 blog batch through existing CMS'" in workflow
 print("XUYI_20261019_D1_SNAPSHOT_OWNER_TRANSLATIONS_INDEX_CARDS_PASSED")
 print("XUYI_20261019_THREE_BLOGS_FIVE_LOCALES_SEO_LINKS_IMAGES_SITEMAP_PASSED")
+
 
