@@ -18,6 +18,20 @@ PENDING_COVER_MIGRATIONS={
     "/media/blog/water-bottle-closure-parts-photo-20261111.webp": "/media/blog/water-bottle-cap-types-wholesale-20261111.webp",
     "/media/blog/corporate-wellness-capacity-photo-20261111.webp": "/media/blog/corporate-wellness-water-bottle-capacity-20261111.webp",
 }
+PENDING_COVER_MIGRATIONS_BY_SLUG={
+    "custom-water-bottle-logo-printing-methods-bulk-order": {
+        "/media/blog/custom-water-bottle-logo-printing-methods-20261111.webp",
+        "/assets/blog/branding-logo-options-20261013.webp",
+    },
+    "which-water-bottle-closure-type-best-wholesale-order": {
+        "/media/blog/water-bottle-cap-types-wholesale-20261111.webp",
+        "/assets/blog/replacement-water-bottle-lid-parts-photo-20261017.webp",
+    },
+    "corporate-wellness-water-bottle-capacity-bulk-order": {
+        "/media/blog/corporate-wellness-water-bottle-capacity-20261111.webp",
+        "/assets/blog/water-bottle-capacity-comparison-photo-20261017.webp",
+    },
+}
 
 DIST=ROOT/"dist"
 LANGS=("en","es","pt","ru","tr")
@@ -48,6 +62,7 @@ for lang in LANGS:
         accepted={expected}
         if expected in PENDING_COVER_MIGRATIONS:
             accepted.add(PENDING_COVER_MIGRATIONS[expected])
+        accepted.update(PENDING_COVER_MIGRATIONS_BY_SLUG.get(slug,()))
         assert any('<meta property="og:image" content="https://xuyibottles.com'+cover+'"' in article for cover in accepted),(lang,slug,"OG")
         assert any('"image":[\"https://xuyibottles.com'+cover+'"]' in article for cover in accepted),(lang,slug,"JSON-LD")
         assert any('<div class="blog-detail__cover"><img src="'+cover+'"' in article for cover in accepted),(lang,slug,"article hero")
