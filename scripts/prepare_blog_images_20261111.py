@@ -4,9 +4,9 @@ from pathlib import Path
 from PIL import Image,ImageOps
 ROOT=Path(__file__).resolve().parent.parent
 items=[
-("custom-water-bottle-logo-printing-methods-bulk-order","assets/blog/branding-logo-options-20261013.webp","assets/blog/custom-water-bottle-logo-printing-methods-20261111.webp","Real product photography for custom bottle branding and logo-printing discussions"),
-("which-water-bottle-closure-type-best-wholesale-order","assets/blog/replacement-water-bottle-lid-parts-photo-20261017.webp","assets/blog/water-bottle-cap-types-wholesale-20261111.webp","Real product photography of bottle lids, seals and straw components for wholesale sourcing"),
-("corporate-wellness-water-bottle-capacity-bulk-order","assets/blog/water-bottle-capacity-comparison-photo-20261017.webp","assets/blog/corporate-wellness-water-bottle-capacity-20261111.webp","Real product photography comparing 500ml, 750ml and 1L-class bottle capacities"),
+("custom-water-bottle-logo-printing-methods-bulk-order","assets/blog/branding-logo-options-20261013.webp","assets/blog/custom-water-bottle-logo-printing-photo-20261111.webp","Real product photography for custom bottle branding and logo-printing discussions"),
+("which-water-bottle-closure-type-best-wholesale-order","assets/blog/replacement-water-bottle-lid-parts-photo-20261017.webp","assets/blog/water-bottle-closure-parts-photo-20261111.webp","Real product photography of bottle lids, seals and straw components for wholesale sourcing"),
+("corporate-wellness-water-bottle-capacity-bulk-order","assets/blog/water-bottle-capacity-comparison-photo-20261017.webp","assets/blog/corporate-wellness-capacity-photo-20261111.webp","Real product photography comparing 500ml, 750ml and 1L-class bottle capacities"),
 ]
 rows=[]
 for slug,source,target,topic in items:
