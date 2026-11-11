@@ -3,7 +3,7 @@ import {authorizeAdminRequest} from "../../_shared/admin-security.js";
 import {checkedImage} from "../../_shared/media-image.js";
 import {KINDS,readUsageIndex,findMediaUsage,imageKey} from "../../_shared/r2-usage.js";
 import {normalizeAltMap,ensureMediaAlt,upsertMediaAlt} from "../../_shared/media-alt.js";
-import {bumpPublishRevision,defaultLanguageConfig,loadSiteSetting,normalizeLanguageConfig} from "../../_shared/site-settings.js";
+import {bumpPublishRevision,loadLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";
 const PREFIX="site-media/";
 const MAX_BYTES=1024*1024*1024;
 const reply=(data,status=200)=>Response.json(data,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -71,12 +71,10 @@ export async function onRequestGet(c){
      etag:o.etag||"",usageStatus:refs.length?"used":index?"needs-check":"unknown",
      referenceCount:refs.length,references:refs.slice(0,4),canDelete:!!KINDS[kind].editable};
   });
-  const saved=await loadSiteSetting(c.env.XUYI_DB,"language_config",defaultLanguageConfig());
-  const languageConfig=normalizeLanguageConfig(saved.value);
-  return reply({kind,readOnly:!KINDS[kind].editable,referenceIndexReady:!!index,
+   const languageConfig=await loadLanguageConfig(c.env.XUYI_DB);
+   return reply({kind,sourceLocale:languageConfig.sourceLocale,readOnly:!KINDS[kind].editable,referenceIndexReady:!!index,
     ...stats,items,cursor:page.truncated?page.cursor||"":"",
-    sourceLocale:languageConfig.sourceLocale,
-    altLocales:languageConfig.languages.map(x=>({code:x.code,name:x.nativeName||x.displayName||x.code}))});
+     altLocales:publicLanguages(languageConfig).map(x=>({code:x.code,name:x.nativeName||x.displayName||x.code}))});
  }catch{return reply({error:"R2 inventory unavailable"},503)}
 }
 export async function onRequestPost(c){
@@ -149,4 +147,5 @@ export async function onRequestDelete(c){
  catch{return reply({deleted:true,path,warning:"ALT cleanup pending"})}
  return reply({deleted:true,path,usageStatus:"unused"});
 }
+
 

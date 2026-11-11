@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare the three 2026-11-11 XUYI Blog articles and all four reviewed locale variants.
+"""Prepare the three 2026-11-11 XUYI Blog articles and all configured locale variants.
 
 The output is an offline CMS schedule payload. It does not publish or mutate dist.
 """
@@ -15,9 +15,10 @@ OUT=ROOT/"_local_ops"/"blog-batch-20261111"
 OUT.mkdir(parents=True,exist_ok=True)
 POSTS=[json.loads((ROOT/f"data/blog-guides-20261111-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)]
 LOCAL=[json.loads((ROOT/f"data/blog-localized-copy-20261111-{i}.json").read_text(encoding="utf-8")) for i in (1,2,3)]
-LANGS=("es","pt","ru","tr")
+LANGS=tuple(sorted(LOCAL[0])) if LOCAL else ()
 assert len(POSTS)==3 and len({p["slug"] for p in POSTS})==3
 assert len(LOCAL)==3
+assert LANGS and all(set(copy)==set(LANGS) for copy in LOCAL)
 
 # Add approved earlier articles so the localized related cards can use their
 # reviewed titles/descriptions from the build snapshot when available.
@@ -129,6 +130,7 @@ payload={"posts":[{"slug":p["slug"],"post":p,"publishedAt":DATE+"T00:00:00Z"} fo
          "translations":translations,"indexCards":cards}
 target=OUT/"payload.json"
 target.write_text(json.dumps(payload,ensure_ascii=True,separators=(",",":")),encoding="utf-8")
-print("XUYI_20261111_FIVE_LANGUAGE_PAYLOAD_READY",
+print("XUYI_20261111_CONFIGURED_LOCALE_PAYLOAD_READY",
       "posts",len(POSTS),"translations",len(translations),"index_cards",len(cards),
       "bytes",target.stat().st_size)
+

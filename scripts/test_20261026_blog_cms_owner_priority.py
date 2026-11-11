@@ -24,7 +24,8 @@ assert all('"'+s+'"' in endpoint for s in SLUGS)
 assert "ON CONFLICT(slug) DO NOTHING" in endpoint
 assert "ON CONFLICT(resource_id,locale) DO NOTHING" in endpoint
 assert "instr(json_extract(translated_json,'$.mainHtml'),?)=0" in endpoint
-assert "/api/admin/blog-batch-20261026" in auth
+assert '"/api/admin/blog-batch"' in auth
+assert "/api/admin/blog-batch-20261026" not in auth
 from blog_catalog_source import load_guides
 assert 'from blog_catalog_source import load_guides' in renderer
 assert 'from blog_catalog_source import load_guides' in editorial
@@ -71,3 +72,4 @@ for p in posts:
  assert len({n["sku"] for n in p["product_notes"]})==3
  for note in p["product_notes"]: assert note["text"]["en"].count("{product}")==1
 print("XUYI_20261026_APPEND_ONLY_CMS_OWNER_PRIORITY_AND_SOURCE_ROUTES_PASS",len(posts))
+

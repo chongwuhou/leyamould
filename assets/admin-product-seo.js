@@ -1,127 +1,61 @@
-/* XUYI D1 product SEO and locale-body console, mounted inside admin 06. */
+/* Exactly one canonical D1 record for each product route and locale. */
 (()=>{"use strict";
  const el=id=>document.getElementById(id);
  const say=t=>{if(el("product-seo-status"))el("product-seo-status").textContent=t};
- const bodySay=t=>{if(el("product-content-status"))el("product-content-status").textContent=t};
  const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
- let rows=[],models=[],languages=[],sourceLocale="",bodyRequest=0;
- const current=()=>({slug:el("product-seo-slug").value.trim().toLowerCase(),locale:el("product-seo-locale").value});
- const languageName=code=>languages.find(item=>item.code===code)?.name||code;
- const sourceName=()=>languageName(sourceLocale)||sourceLocale||"来源语言";
- const sourceRoute=slug=>"/products/"+encodeURIComponent(slug)+"/";
+ let rows=[],models=[],languages=[];
+ const current=()=>({
+  slug:el("product-seo-slug").value.trim().toLowerCase(),
+  locale:el("product-seo-locale").value
+ });
  async function api(body){
   if(!token())throw Error("请先登录后台");
-  const opts={method:body?"POST":"GET",headers:{authorization:"Bearer "+token()},cache:"no-store"};
+  const opts={method:body?"POST":"GET",headers:{"authorization":"Bearer "+token()},cache:"no-store"};
   if(body){opts.headers["content-type"]="application/json";opts.body=JSON.stringify(body)}
-  const r=await fetch("/api/admin/product-seo",opts),d=await r.json().catch(()=>({}));
-  if(!r.ok)throw Error(d.error||"HTTP "+r.status);return d;
- }
- async function readBody(slug,locale){
-  const query="?slug="+encodeURIComponent(slug)+"&locale="+encodeURIComponent(locale);
-  const r=await fetch("/api/admin/product-seo"+query,{headers:{authorization:"Bearer "+token()},cache:"no-store"});
+  const r=await fetch("/api/admin/product-seo",opts);
   const d=await r.json().catch(()=>({}));
-  if(!r.ok)throw Error(d.error||"HTTP "+r.status);return d;
- }
- function renderLanguages(){
-  const select=el("product-seo-locale");if(!select)return;
-  select.replaceChildren(...languages.map(item=>{const node=document.createElement("option");
-   node.value=item.code;node.textContent=item.name||item.displayName||item.code;return node;}));
-  if(sourceLocale&&languages.some(item=>item.code===sourceLocale))select.value=sourceLocale;
- }
- function renderSummary(data){
-  if(el("product-seo-count"))el("product-seo-count").textContent="已读取 D1 产品目录";
-  if(el("product-seo-language-summary"))el("product-seo-language-summary").textContent=
-   "当前语言："+languages.filter(item=>item.enabled!==false).map(item=>item.name||item.code).join("、");
+  if(!r.ok)throw Error(d.error||"HTTP "+r.status);
+  return d;
  }
  function populate(){
-  const {slug,locale}=current(),row=rows.find(x=>x.slug===slug&&x.locale===locale);
+  const {slug,locale}=current();
+  const row=rows.find(x=>x.slug===slug&&x.locale===locale);
   el("product-seo-title").value=row?.seoTitle||"";
   el("product-seo-description").value=row?.metaDescription||"";
-  const content=el("product-seo-content");
-  if(content)content.value="";
-  bodySay("");
-  say(row?"D1 已保存的 "+languageName(locale)+" 正式 SEO 文案。":"此语言没有 D1 SEO 记录，请核对型号或重新读取。");
+  say(row?"D1 已保存的 "+locale+" 正式 SEO 文案。":"此语言没有 D1 记录，请核对型号或重新读取。");
  }
- async function loadBody(){
-  const {slug,locale}=current(),content=el("product-seo-content"),sourceButton=el("product-content-source");
-  const request=++bodyRequest;
-  if(!content||!sourceButton)return;
-  content.value="";content.disabled=true;sourceButton.disabled=true;bodySay("");
-  if(!slug||!locale){bodySay("请先选择产品和语言。");return}
-  const isSource=locale===sourceLocale;
-  bodySay(isSource?"正在读取来源语言正文…":"正在读取 D1 多语言正文…");
-  try{
-   if(isSource){
-    const response=await fetch(sourceRoute(slug),{cache:"no-store"});
-    if(!response.ok)throw Error("来源语言页面读取失败");
-    const main=new DOMParser().parseFromString(await response.text(),"text/html").getElementById("main-content");
-    if(!main)throw Error("来源语言页面缺少 main 内容");
-    if(request!==bodyRequest)return;
-    content.value=main.innerHTML;
-    content.disabled=true;sourceButton.disabled=true;
-    bodySay("已读取 "+sourceName()+" 来源正文；来源语言正文请在 06「产品商详」入口维护。");
-   }else{
-    const data=await readBody(slug,locale);
-    if(request!==bodyRequest)return;
-    content.value=data.content?.mainHtml||"";
-    content.disabled=false;sourceButton.disabled=false;
-    bodySay(data.hasContent?"已读取 D1 正式正文，可直接翻译修订。":"尚无该语种正文；可读取来源语言正文后完整翻译。");
-   }
-  }catch(error){if(request===bodyRequest){content.disabled=false;bodySay("正文读取失败："+error.message)}}
+ function renderLanguages(items){
+  languages=Array.isArray(items)?items:[];
+  const select=el("product-seo-locale"),prior=select.value;
+  select.replaceChildren(...languages.map(item=>{const option=document.createElement("option");option.value=item.code;option.textContent=(item.nativeName||item.displayName||item.code)+" ("+item.code+")";return option;}));
+  if(languages.some(item=>item.code===prior))select.value=prior;
  }
  async function load(){
-  say("读取 D1 产品 SEO 与语言配置…");
+  say("读取 D1 产品 SEO...");
   try{
-   const data=await api();rows=data.items||[];models=data.models||[];languages=data.languages||[];
-   sourceLocale=data.sourceLocale||languages[0]?.code||"";
-   renderLanguages();renderSummary(data);
-   el("product-seo-models").replaceChildren(...models.map(x=>{const node=document.createElement("option");node.value=x;return node;}));
+   const data=await api();rows=data.items||[];models=data.models||[];renderLanguages(data.languages);
+   el("product-seo-models").replaceChildren(...models.map(x=>{
+    const node=document.createElement("option");node.value=x;return node;
+   }));
    if(!el("product-seo-slug").value&&models[0])el("product-seo-slug").value=models[0];
-   populate();await loadBody();
-   say("D1 产品目录与语言配置已读取，可选择型号和语言编辑。");
+   populate();
+   say("D1 已读取 "+rows.length+" 条产品语言 SEO 记录。");
   }catch(err){say("读取失败："+err.message)}
  }
  el("product-seo-reload")?.addEventListener("click",load);
- el("product-seo-reset")?.addEventListener("click",()=>{populate();loadBody()});
- el("product-seo-slug")?.addEventListener("change",()=>{populate();loadBody()});
- el("product-seo-locale")?.addEventListener("change",()=>{populate();loadBody()});
- el("product-content-source")?.addEventListener("click",async()=>{
-  const {slug,locale}=current(),content=el("product-seo-content");
-  if(!slug||!locale||locale===sourceLocale||!content)return;
-  const request=++bodyRequest;content.disabled=true;bodySay("正在读取来源语言正文…");
-  try{
-   const response=await fetch(sourceRoute(slug),{cache:"no-store"});
-   if(!response.ok)throw Error("来源语言页面读取失败");
-   const main=new DOMParser().parseFromString(await response.text(),"text/html").getElementById("main-content");
-   if(!main)throw Error("来源语言页面缺少 main 内容");
-   if(request!==bodyRequest)return;
-   content.value=main.innerHTML;content.disabled=false;bodySay("已读取 "+sourceName()+" 正文，请完成全文翻译后保存。");
-  }catch(error){if(request===bodyRequest){content.disabled=false;bodySay("来源正文读取失败："+error.message)}}
- });
- function openProductPanel(){
-  const panel=el("content-product-seo"),form=el("content-form");
-  if(panel)panel.hidden=false;
-  if(form)form.hidden=true;
- }
- // The 06 panel can be mounted/re-mounted by the admin shell. Delegate the
- // click from document so the entry remains functional in either lifecycle.
- document.addEventListener("click",event=>{
-  const target=event.target instanceof Element?event.target.closest("#content-tab-product-seo"):null;
-  if(!target)return;
-  event.preventDefault();event.stopPropagation();
-  openProductPanel();
-  load();
- },true);
+ el("product-seo-reset")?.addEventListener("click",populate);
+ el("product-seo-slug")?.addEventListener("change",populate);
+ el("product-seo-locale")?.addEventListener("change",populate);
+ document.querySelector('[data-admin-target="productseo"]')?.addEventListener("click",load);
  el("product-seo-editor")?.addEventListener("submit",async ev=>{
-  ev.preventDefault();const {slug,locale}=current();
-  if(!locale){say("D1 语言配置为空，不能保存。");return}
-  if(!models.includes(slug)){say("请先选择真实产品型号，不能把其它型号的文案套用过来。");return}
-  const input={action:"save",slug,locale,seoTitle:el("product-seo-title").value.trim(),metaDescription:el("product-seo-description").value.trim()};
-  const mainHtml=el("product-seo-content")?.value.trim()||"";
-  if(locale!==sourceLocale&&mainHtml)input.mainHtml=mainHtml;
+  ev.preventDefault();
+  const {slug,locale}=current();
+  if(!models.includes(slug)){say("请先选择真实产品型号，不能把其它型号的 SEO 文案套用过来。");return}
+  const input={action:"save",slug,locale,seoTitle:el("product-seo-title").value.trim(),
+   metaDescription:el("product-seo-description").value.trim()};
   try{
-   const result=await api(input);await load();
-   say((result.contentSaved?"SEO 与对应语种正文":"SEO")+" 已保存至 Cloudflare D1。点击顶部「一键全站重建」后更新正式页面。");
+   await api(input);await load();say("已保存至 Cloudflare D1。点击顶部「一键全站重建」后，已配置语种页面和 OG 同步更新。");
   }catch(err){say("保存失败："+err.message)}
  });
 })();
+

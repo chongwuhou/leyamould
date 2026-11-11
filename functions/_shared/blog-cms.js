@@ -208,7 +208,7 @@ export function normalizeBlogPost(raw){
 }
 export async function listBlogPosts(db,status=''){
  await ensureBlogSchema(db);
- const st=status?db.prepare('SELECT * FROM xuyi_blog_posts WHERE status=? ORDER BY updated_at DESC').bind(status):db.prepare('SELECT * FROM xuyi_blog_posts ORDER BY updated_at DESC');
+  const st=status?db.prepare('SELECT * FROM xuyi_blog_posts WHERE status=? ORDER BY updated_at DESC,slug ASC').bind(status):db.prepare('SELECT * FROM xuyi_blog_posts ORDER BY updated_at DESC,slug ASC');
  const rows=(await st.all()).results||[];
  const saved=(await db.prepare('SELECT slug FROM xuyi_blog_drafts').all()).results||[];
  const hasDraft=new Set(saved.map(x=>x.slug));
@@ -334,38 +334,6 @@ export function blogHtml(post){
  * Card HTML is owner/localizer content: keep each complete article block
  * byte-for-byte and change only its position. No batch slug or date is hardcoded.
  */
-function legacySortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs){
- const source=String(currentHtml??"");
- if(!Array.isArray(d1OrderedSlugs)||!d1OrderedSlugs.length)
-  throw Error("D1 published Blog order is required");
- const expected=d1OrderedSlugs.map(value=>String(value??""));
- if(expected.some(slug=>!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))
-    ||new Set(expected).size!==expected.length)
-  throw Error("D1 published Blog order contains an invalid or duplicate slug");
- const matches=[...source.matchAll(/<article class="news-card">[\s\S]*?<\/article>/g)];
- if(matches.length!==expected.length)
-  throw Error("Localized Blog card count differs from D1 published count");
- const bySlug=new Map(),actual=[];
- let previousEnd=matches[0]?.index??0;
- for(let i=0;i<matches.length;i++){
-  const match=matches[i],block=match[0],start=match.index;
-  if(i>0&&source.slice(previousEnd,start).trim())
-   throw Error("Localized Blog cards are not one contiguous grid");
-  const hrefs=[...block.matchAll(/href="\/(?:(?:en|es|pt|ru|tr)\/)?blog\/([a-z0-9]+(?:-[a-z0-9]+)*)\/"/g)].map(x=>x[1]);
-  if(hrefs.length!==3||new Set(hrefs).size!==1)
-   throw Error("Localized Blog card identity or link count is invalid");
-  const slug=hrefs[0];
-  if(bySlug.has(slug))throw Error("Duplicate localized Blog card: "+slug);
-  bySlug.set(slug,block);
-  actual.push(slug);
-  previousEnd=start+block.length;
- }
- for(const slug of expected)if(!bySlug.has(slug))
-  throw Error("D1 published Blog article has no localized card: "+slug);
- if(actual.every((slug,index)=>slug===expected[index]))return source;
- const cards=expected.map(slug=>bySlug.get(slug));
- return source.slice(0,matches[0].index)+cards.join("\n")+source.slice(previousEnd);
-}
 function blogGridRange(source){
  const open='<div class="blog-listing__grid">',start=source.indexOf(open);
  if(start<0)throw Error("Localized Blog grid is missing");
@@ -413,7 +381,7 @@ export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs,repla
  if(expected.some(slug=>!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))||new Set(expected).size!==expected.length)
   throw Error("D1 published Blog order contains an invalid or duplicate slug");
  const grid=blogGridRange(source),parsed=balancedBlogCards(source.slice(grid.openEnd,grid.closeStart));
- if(parsed.leaves.length!==expected.length)throw Error("Localized Blog card count differs from D1 published count");
+  if(parsed.leaves.length>expected.length||(!replacements.size&&parsed.leaves.length!==expected.length))throw Error("Localized Blog card count differs from D1 published count");
  const bySlug=new Map(),actual=[];
  for(const item of parsed.leaves){
   const block=source.slice(grid.openEnd+item.start,grid.openEnd+item.end),slug=cardSlug(block);
@@ -424,7 +392,7 @@ export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs,repla
   if(!expected.includes(slug))throw Error("Replacement is not in D1 published Blog order: "+slug);
   bySlug.set(slug,block);
  }
- for(const slug of expected)if(!bySlug.has(slug))throw Error("D1 published Blog article has no localized card: "+slug);
+  for(const slug of expected)if(!bySlug.has(slug)&&!replacements.has(slug))throw Error("D1 published Blog article has no localized card: "+slug);
  const cards=expected.map(slug=>bySlug.get(slug));
  const nested=parsed.records.length!==parsed.leaves.length;
  if(!nested&&replacements.size===0&&actual.every((slug,index)=>slug===expected[index]))return source;

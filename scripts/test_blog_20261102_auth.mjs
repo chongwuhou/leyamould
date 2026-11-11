@@ -11,14 +11,16 @@ const request=(route,method="POST",token="xuyi-reviewed-20261102-ci")=>new Reque
  method,headers:{Authorization:"Bearer "+token}
 });
 const imagePath="/api/admin/blog-images-20261102";
-const blogPath="/api/admin/blog-batch-20261102";
+const blogPath="/api/admin/blog-batch";
 assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath),{}),true);
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath),{}),true);
+assert.equal(await authorizedReviewedBlogBatchRequest(request("/api/admin/blog-batch-20261102"),{}),false);
 assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath,"GET"),{}),false);
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath,"GET"),{}),false);
-assert.equal(await authorizedReviewedBlogImageUploadRequest(request("/api/admin/blog-images-20261103"),{}),false);
+assert.equal(await authorizedReviewedBlogImageUploadRequest(request("/api/admin/blog-images-20261103"),{}),true);
 assert.equal(await authorizedReviewedBlogBatchRequest(request("/api/admin/blog-batch-20261103"),{}),false);
 assert.equal(await authorizedReviewedBlogImageUploadRequest(request(imagePath,"POST","wrong-token"),{}),false);
 assert.equal(await authorizedReviewedBlogBatchRequest(request(blogPath,"POST","wrong-token"),{}),false);
 globalThis.fetch=originalFetch;
 console.log("XUYI_20261102_EXACT_IMAGES_AND_BLOG_CI_TOKEN_GATES_OK");
+

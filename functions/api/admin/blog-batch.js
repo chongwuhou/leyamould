@@ -1,49 +1,51 @@
+// Single reviewed Blog batch writer. D1 remains the only content authority.
+// The endpoint is generic and follows the configured publish-ready locales.
+// Existing D1 records are never overwritten by a batch rerun.
 import { authorizedReviewedBlogBatchRequest } from "../../_shared/build-auth.js";
-import { ensureBlogSchema } from "../../_shared/blog-cms.js";
-import { bumpPublishRevision,defaultLanguageConfig,loadSiteSetting,normalizeLanguageConfig } from "../../_shared/site-settings.js";
+import { ensureBlogSchema, listBlogPosts, sortLocalizedBlogIndexByD1Order } from "../../_shared/blog-cms.js";
+import { ensureTranslationSchema } from "../../_shared/translation.js";
+import { bumpPublishRevision, loadLanguageConfig, publicLanguages } from "../../_shared/site-settings.js";
 
-const SLUGS = [
-  "can-you-put-hot-water-in-plastic-water-bottle",
-  "are-plastic-water-bottles-dishwasher-safe",
-  "why-does-reusable-water-bottle-smell-bad"
-];
-const REVIEWED_AT = "2026-10-19";
-const TAIL = "</div></div></section>";
 const reply = (body, status = 200) => Response.json(body, {
   status,
   headers: { "cache-control": "no-store", "x-robots-tag": "noindex,nofollow,noarchive" }
 });
 const count = (value, part) => String(value).split(part).length - 1;
 const unsafeHtml = /<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;
+const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+function configuredLocales(config) {
+  return publicLanguages(config).filter(item => item.code !== config.sourceLocale).map(item => item.code);
+}
 
 function validatePayload(payload, locales) {
-  if (!Array.isArray(locales) || !locales.length) throw new Error("No publish-ready D1 locales configured.");
-  if (!payload || !Array.isArray(payload.posts) || payload.posts.length !== SLUGS.length
-      || !Array.isArray(payload.translations) || payload.translations.length !== SLUGS.length * locales.length
-      || !Array.isArray(payload.indexCards) || payload.indexCards.length !== SLUGS.length * locales.length) {
-    throw new Error("The reviewed batch must contain "+SLUGS.length+" posts, "+(SLUGS.length*locales.length)+" translations and "+(SLUGS.length*locales.length)+" index cards.");
+  if (!payload || !Array.isArray(payload.posts) || payload.posts.length < 1 || payload.posts.length > 12 ||
+      !Array.isArray(payload.translations) || !Array.isArray(payload.indexCards)) {
+    throw Error("A reviewed Blog batch must contain posts, translations and index cards.");
   }
-  const expected = new Set(SLUGS);
-  const seenPosts = new Set();
+  const expected = new Set();
   for (const item of payload.posts) {
     const slug = String(item?.slug || "");
     const post = item?.post;
-    if (!expected.has(slug) || seenPosts.has(slug) || post?.slug !== slug) throw new Error("Unexpected or duplicate reviewed article.");
-    if (typeof post.title !== "string" || post.title.length < 12
-        || typeof post.description !== "string" || post.description.length < 25
-        || typeof post.intro !== "string" || post.intro.length < 50
-        || !/^\/assets\/blog\/[a-z0-9-]+\.webp$/.test(String(post.cover || ""))
-        || !Array.isArray(post.sections) || post.sections.length !== 7
-        || !Array.isArray(post.checklist) || post.checklist.length !== 10
-        || !Array.isArray(post.faqs) || post.faqs.length !== 4
-        || !Array.isArray(post.related) || post.related.length !== 3
-        || !Array.isArray(post.product_notes) || post.product_notes.length !== 3
-        || JSON.stringify(post).length > 100000) {
-      throw new Error("Reviewed article content failed validation: " + slug);
+    if (!slugPattern.test(slug) || expected.has(slug) || post?.slug !== slug) throw Error("Unexpected or duplicate reviewed article: " + slug);
+    if (typeof post.title !== "string" || post.title.length < 12 ||
+        typeof post.description !== "string" || post.description.length < 25 ||
+        typeof post.intro !== "string" || post.intro.length < 50 ||
+        !/^\/(?:assets\/(?:blog|editorial|curated-hd|products)|media\/(?:blog|ppt|excel))\/[a-z0-9_-]+\.webp$/.test(String(post.cover || "")) ||
+        !Array.isArray(post.sections) || post.sections.length !== 7 || post.sections.some(section => String(section?.paragraph || "").length < 650) ||
+        !Array.isArray(post.checklist) || post.checklist.length !== 10 ||
+        !Array.isArray(post.faqs) || post.faqs.length !== 4 ||
+        !Array.isArray(post.related) || post.related.length !== 3 ||
+        !Array.isArray(post.product_notes) || post.product_notes.length !== 3 ||
+        JSON.stringify(post).length > 100000) {
+      throw Error("Reviewed article content failed validation: " + slug);
     }
-    seenPosts.add(slug);
+    expected.add(slug);
   }
-  if (seenPosts.size !== expected.size) throw new Error("Reviewed article set is incomplete.");
+  const expectedCells = expected.size * locales.length;
+  if (payload.translations.length !== expectedCells || payload.indexCards.length !== expectedCells) {
+    throw Error("The batch must contain one reviewed article page and one index card for every configured publish-ready locale.");
+  }
 
   const seenTranslations = new Set();
   for (const item of payload.translations) {
@@ -52,20 +54,17 @@ function validatePayload(payload, locales) {
     const locale = String(item?.locale || "");
     const key = route + "|" + locale;
     const html = String(item?.mainHtml || "");
-    if (!match || !expected.has(match[1]) || !locales.includes(locale) || seenTranslations.has(key)
-        || String(item?.title || "").length < 12 || String(item?.description || "").length < 25
-        || html.length < 5000 || html.length > 250000 || unsafeHtml.test(html)
-        || count(html, 'id="primary-sources"') !== 1
-        || count(html, 'class="blog-editorial__product-link"') !== 3
-        || count(html, 'class="blog-related__item"') !== 3
-        || count(html, 'class="blog-buyer-matrix"') !== 1
-        || count(html, "<details>") !== 4) {
-      throw new Error("Reviewed translation failed validation: " + key);
+    if (!match || !expected.has(match[1]) || !locales.includes(locale) || seenTranslations.has(key) ||
+        String(item?.title || "").length < 12 || String(item?.description || "").length < 25 ||
+        html.length < 5000 || html.length > 250000 || unsafeHtml.test(html) ||
+        count(html, 'id="primary-sources"') !== 1 || count(html, 'class="blog-editorial__product-link"') !== 3 ||
+        count(html, 'class="blog-related__item"') !== 3 || count(html, 'class="blog-buyer-matrix"') !== 1 || count(html, "<details>") !== 4) {
+      throw Error("Reviewed translation failed validation: " + key);
     }
     seenTranslations.add(key);
   }
-  for (const slug of SLUGS) for (const locale of locales) {
-    if (!seenTranslations.has("/blog/" + slug + "/|" + locale)) throw new Error("Missing reviewed translation.");
+  for (const slug of expected) for (const locale of locales) {
+    if (!seenTranslations.has("/blog/" + slug + "/|" + locale)) throw Error("Missing reviewed translation: " + slug + "|" + locale);
   }
 
   const seenCards = new Set();
@@ -75,111 +74,101 @@ function validatePayload(payload, locales) {
     const key = slug + "|" + locale;
     const html = String(item?.html || "");
     const href = 'href="/blog/' + slug + '/"';
-    if (!expected.has(slug) || !locales.includes(locale) || seenCards.has(key)
-        || html.length < 100 || html.length > 10000 || unsafeHtml.test(html)
-        || !html.startsWith('<article class="news-card">') || !html.endsWith("</article>")
-        || count(html, href) !== 3) {
-      throw new Error("Reviewed index card failed validation: " + key);
+    if (!expected.has(slug) || !locales.includes(locale) || seenCards.has(key) || html.length < 100 || html.length > 10000 ||
+        unsafeHtml.test(html) || !html.startsWith('<article class="news-card">') || !html.endsWith("</article>") || count(html, href) !== 3) {
+      throw Error("Reviewed index card failed validation: " + key);
     }
     seenCards.add(key);
   }
-  for (const slug of SLUGS) for (const locale of locales) {
-    if (!seenCards.has(slug + "|" + locale)) throw new Error("Missing reviewed index card.");
+  for (const slug of expected) for (const locale of locales) {
+    if (!seenCards.has(slug + "|" + locale)) throw Error("Missing reviewed index card: " + slug + "|" + locale);
   }
+  return [...expected];
+}
+
+function contentForTranslation(item) {
+  return JSON.stringify({ title: item.title, description: item.description, mainHtml: item.mainHtml });
 }
 
 export async function onRequestPost(context) {
-  if (!(await authorizedReviewedBlogBatchRequest(context.request, context.env))) {
-    return reply({ error: "Unauthorized reviewed batch request" }, 401);
-  }
+  if (!(await authorizedReviewedBlogBatchRequest(context.request, context.env))) return reply({ error: "Unauthorized reviewed batch request" }, 401);
   const db = context.env.XUYI_DB;
   if (!db) return reply({ error: "XUYI_DB binding missing" }, 503);
-  const languageSaved = await loadSiteSetting(db, "language_config", defaultLanguageConfig());
-  const languageConfig = normalizeLanguageConfig(languageSaved.value);
-  const locales = languageConfig.languages.filter(item => item.enabled && item.publishReady && item.code !== languageConfig.sourceLocale).map(item => item.code);
-  const localePlaceholders = locales.map(() => "?").join(",");
-
   let payload;
-  try { payload = await context.request.json(); }
-  catch { return reply({ error: "Invalid JSON" }, 400); }
-  try { validatePayload(payload, locales); }
-  catch (error) { return reply({ error: String(error?.message || "Invalid reviewed batch").slice(0, 240) }, 400); }
+  try { payload = await context.request.json(); } catch { return reply({ error: "Invalid JSON" }, 400); }
 
   try {
     await ensureBlogSchema(db);
-    const statements = [];
-    const postSql = "INSERT INTO xuyi_blog_posts (slug,status,content_json,published_at,updated_at) VALUES(?,'published',?,?,CURRENT_TIMESTAMP) ON CONFLICT(slug) DO NOTHING";
+    await ensureTranslationSchema(db);
+    const languageConfig = await loadLanguageConfig(db);
+    const locales = configuredLocales(languageConfig);
+    const slugs = validatePayload(payload, locales);
+    const now = new Date().toISOString();
+
+    // Preflight conflicts before any write. A rerun is idempotent only when
+    // the current D1 record is byte-for-byte the same reviewed record.
+    const newPostStatements = [];
     for (const item of payload.posts) {
-      statements.push(db.prepare(postSql).bind(item.slug, JSON.stringify(item.post), "2026-10-19T00:00:00Z"));
+      const content = JSON.stringify(item.post);
+      const existing = await db.prepare("SELECT status,content_json FROM xuyi_blog_posts WHERE slug=?").bind(item.slug).first();
+      if (existing && (existing.status !== "published" || existing.content_json !== content)) {
+        return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
+      }
+      if (!existing) newPostStatements.push(db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,'published',?,?)").bind(item.slug, content, item.publishedAt || now));
     }
-    const translationSql = "INSERT INTO xuyi_translation_overrides (resource_id,locale,translated_json,reviewed_at) VALUES(?,?,?,?) ON CONFLICT(resource_id,locale) DO NOTHING";
+
+    const newTranslationStatements = [];
     for (const item of payload.translations) {
-      const content = JSON.stringify({ title: item.title, description: item.description, mainHtml: item.mainHtml });
-      statements.push(db.prepare(translationSql).bind("page:" + item.route, item.locale, content, REVIEWED_AT));
+      const resource = "page:" + item.route;
+      const translated = contentForTranslation(item);
+      const existing = await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id=? AND locale=?").bind(resource, item.locale).first();
+      if (existing && existing.translated_json !== translated) {
+        return reply({ error: "Existing D1 translation was changed; batch preserved the owner edit: " + resource + "|" + item.locale }, 409);
+      }
+      if (!existing) newTranslationStatements.push(db.prepare("INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at) VALUES(?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(resource_id,locale) DO NOTHING").bind(resource, item.locale, translated));
     }
-    const indexSql = "UPDATE xuyi_translation_overrides SET translated_json=json_set(translated_json,'$.mainHtml',substr(json_extract(translated_json,'$.mainHtml'),1,length(json_extract(translated_json,'$.mainHtml'))-length(?))||?||?), reviewed_at=? WHERE resource_id='page:/blog/' AND locale=? AND substr(json_extract(translated_json,'$.mainHtml'),-length(?))=? AND instr(json_extract(translated_json,'$.mainHtml'),?)=0";
-    for (const item of payload.indexCards) {
-      const href = "/blog/" + item.slug + "/";
-      statements.push(db.prepare(indexSql).bind(TAIL, item.html, TAIL, REVIEWED_AT, item.locale, TAIL, TAIL, href));
-    }
+    const insertResults = (newPostStatements.length || newTranslationStatements.length)
+      ? await db.batch([...newPostStatements, ...newTranslationStatements]) : [];
+    const postsInserted = insertResults.slice(0, newPostStatements.length).reduce((sum, row) => sum + Number(row?.meta?.changes || 0), 0);
+    const translationsInserted = insertResults.slice(newPostStatements.length).reduce((sum, row) => sum + Number(row?.meta?.changes || 0), 0);
 
-    const results = await db.batch(statements);
-    const postsInserted = results.slice(0, SLUGS.length)
-      .reduce((sum, row) => sum + Number(row?.meta?.changes || 0), 0);
-    const translationsInserted = results.slice(SLUGS.length, SLUGS.length + payload.translations.length)
-      .reduce((sum, row) => sum + Number(row?.meta?.changes || 0), 0);
-    const indexCardsAdded = results.slice(SLUGS.length + payload.translations.length)
-      .reduce((sum, row) => sum + Number(row?.meta?.changes || 0), 0);
-
-    const posts = (await db.prepare(
-      "SELECT slug,status FROM xuyi_blog_posts WHERE slug IN (?,?,?)"
-    ).bind(...SLUGS).all()).results || [];
-    if (new Set(posts.filter(row => row.status === "published").map(row => row.slug)).size !== SLUGS.length) {
-      return reply({ error: "Final D1 check failed: all three reviewed articles are not published." }, 409);
+    const d1Order = (await listBlogPosts(db, "published")).map(post => post.slug);
+    if (!d1Order.length || new Set(d1Order).size !== d1Order.length || slugs.some(slug => !d1Order.includes(slug))) {
+      return reply({ error: "D1 published Blog order is incomplete or duplicated" }, 409);
     }
 
-    const resources = ["page:/blog/", ...SLUGS.map(slug => "page:/blog/" + slug + "/")];
-    const rows = (await db.prepare(
-      "SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN (?,?,?,?) AND locale IN ("+localePlaceholders+")"
-    ).bind(...resources, ...locales).all()).results || [];
-    const lookup = new Map(rows.map(row => [row.resource_id + "|" + row.locale, row]));
-    for (const slug of SLUGS) for (const locale of locales) {
-      const row = lookup.get("page:/blog/" + slug + "/|" + locale);
-      if (!row) return reply({ error: "Final D1 check failed: missing article translation." }, 409);
-      let body = "";
-      try { body = JSON.parse(row.translated_json).mainHtml || ""; } catch {}
-      if (body.length < 5000 || count(body, 'id="primary-sources"') !== 1
-          || count(body, 'class="blog-editorial__product-link"') !== 3
-          || count(body, 'class="blog-related__item"') !== 3
-          || count(body, 'class="blog-buyer-matrix"') !== 1 || count(body, "<details>") !== 4) {
-        return reply({ error: "Final D1 check failed: reviewed article translation is incomplete." }, 409);
+    const indexCards = new Map(payload.indexCards.map(item => [item.locale + "|" + item.slug, item.html]));
+    const orderStatements = [];
+    for (const locale of locales) {
+      const row = await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(locale).first();
+      if (!row?.translated_json) return reply({ error: "Localized Blog index override missing: " + locale }, 409);
+      let index; try { index = JSON.parse(row.translated_json); } catch { return reply({ error: "Localized Blog index JSON invalid: " + locale }, 409); }
+      const replacements = new Map(slugs.map(slug => [slug, indexCards.get(locale + "|" + slug)]));
+      if ([...replacements.values()].some(value => !value)) return reply({ error: "Localized Blog index card missing: " + locale }, 409);
+      const ordered = sortLocalizedBlogIndexByD1Order(String(index.mainHtml || ""), d1Order, replacements);
+      if (ordered !== index.mainHtml) {
+        orderStatements.push(db.prepare("UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=CURRENT_TIMESTAMP WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(JSON.stringify({ ...index, mainHtml: ordered }), locale, row.translated_json));
       }
     }
+    const orderResults = orderStatements.length ? await db.batch(orderStatements) : [];
+    if (orderResults.some(row => Number(row?.meta?.changes || 0) !== 1)) return reply({ error: "Localized Blog index changed during the conditional D1-order update" }, 409);
+
     for (const locale of locales) {
-      const row = lookup.get("page:/blog/|" + locale);
-      if (!row) return reply({ error: "Final D1 check failed: missing localized Blog index." }, 409);
-      let body = "";
-      try { body = JSON.parse(row.translated_json).mainHtml || ""; } catch {}
-      for (const slug of SLUGS) {
-        const cards = body.split('<article class="news-card">').slice(1)
-          .map(part => '<article class="news-card">' + part.split("</article>", 1)[0] + "</article>")
-          .filter(card => card.includes("/blog/" + slug + "/"));
-        if (cards.length !== 1 || count(cards[0], 'href="/blog/' + slug + '/"') !== 3) {
-          return reply({ error: "Final D1 check failed: localized Blog index card is missing or duplicated." }, 409);
-        }
+      const row = await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?").bind(locale).first();
+      let index; try { index = JSON.parse(row?.translated_json || "{}"); } catch { return reply({ error: "Final localized Blog index JSON invalid: " + locale }, 409); }
+      if (sortLocalizedBlogIndexByD1Order(String(index.mainHtml || ""), d1Order) !== index.mainHtml) return reply({ error: "Localized Blog index does not match D1 order: " + locale }, 409);
+      for (const slug of slugs) {
+        const detail = await db.prepare("SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id=? AND locale=?").bind("page:/blog/" + slug + "/", locale).first();
+        let detailJson; try { detailJson = JSON.parse(detail?.translated_json || "{}"); } catch { return reply({ error: "Final article translation JSON invalid: " + slug + "|" + locale }, 409); }
+        const body = String(detailJson.mainHtml || "");
+        if (body.length < 5000 || count(body, 'class="blog-section"') !== 7 || count(body, 'class="blog-editorial__product-link"') !== 3 || count(body, 'class="blog-related__item"') !== 3 || count(body, 'class="blog-buyer-matrix"') !== 1 || count(body, "<details>") !== 4) return reply({ error: "Final article translation is incomplete: " + slug + "|" + locale }, 409);
       }
     }
 
     const revision = await bumpPublishRevision(db);
-    return reply({
-      success: true,
-      postsInserted,
-      translationsInserted,
-      indexCardsAdded,
-      publishRevision: revision.revision,
-      publishedSlugs: SLUGS
-    });
+    return reply({ success: true, postsInserted, translationsInserted, indexCardsAdded: payload.indexCards.length, localizedIndexesReordered: orderStatements.length, publishRevision: revision.revision, publishedSlugs: slugs, indexOrderVerified: locales, d1PublishedCount: d1Order.length });
   } catch (error) {
-    return reply({ error: "D1 batch operation failed: " + String(error?.message || "unknown error").slice(0, 180) }, 500);
+    return reply({ error: "D1 batch operation failed: " + String(error?.message || "unknown error").slice(0, 240) }, 500);
   }
 }
+

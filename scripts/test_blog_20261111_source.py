@@ -12,13 +12,15 @@ assert len({p["slug"] for p in posts})==3
 post_covers=[c for c in covers if c["slug"] in {p["slug"] for p in posts}]
 assert len(post_covers)==len(posts)==3
 assert len({c["sha256"] for c in post_covers})==3
+locale_set=None
 for post,copy in zip(posts,trans):
  assert post["updated"]=="2026-11-11"
  assert len(post["sections"])==7 and all(len(x["paragraph"])>=650 for x in post["sections"])
  assert len(post["checklist"])==10 and len(post["faqs"])==4 and len(post["product_notes"])==3
  assert len({n["sku"] for n in post["product_notes"]})==3
  assert len(post["related"])==len(set(post["related"]))==3 and post["slug"] not in post["related"]
- assert set(copy)=={"es","pt","ru","tr"}
+ assert set(copy) and (locale_set is None or set(copy)==locale_set)
+ locale_set=set(copy)
  for loc,row in copy.items():
   assert len(row["sections"])==7 and all(len(s[1])>230 for s in row["sections"])
   assert len(row["checklist"])==10 and len(row["faqs"])==4
@@ -34,5 +36,6 @@ for post,copy in zip(posts,trans):
  assert hashlib.sha256(buf).hexdigest()==cover["sha256"]
  with Image.open(path) as image:
   assert image.format=="WEBP" and image.size==(1200,800)
-print("XUYI_20261111_THREE_B2B_POST_SOURCES_FIVE_LOCALES_AND_MEDIA_PASS")
+assert locale_set
+print("XUYI_20261111_THREE_B2B_POST_SOURCES_CONFIGURED_LOCALES_AND_MEDIA_PASS")
 

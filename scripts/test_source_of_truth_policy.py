@@ -42,13 +42,14 @@ for expected in (
 ):
     assert expected in workflow,("Missing required release gate",expected)
 
-try:
+if not (ROOT/".git").exists():
+    # Exported WebCodex workspaces may intentionally omit .git; GitHub CI
+    # performs the tracked-output assertion in the real checkout.
+    print("NOTE: local workspace has no .git checkout; GitHub runner verifies tracked output")
+else:
     result=subprocess.run(["git","ls-files","-z","dist"],
                           cwd=ROOT,capture_output=True,check=True,timeout=15)
-except FileNotFoundError:
-    # Local WebCodex runner may not provide git; .gitignore is still tested.
-    print("NOTE: git executable unavailable locally; GitHub runner verifies tracked output")
-else:
     tracked=[item.decode("utf8","replace") for item in result.stdout.split(b"\0") if item]
     assert not tracked,("Generated dist content must not be tracked",tracked[:10])
 print("XUYI_P0_TEMPLATE_CMS_OWNER_POLICY_GATE_PASSED")
+

@@ -4,26 +4,29 @@ const bcp47Re = /^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/;
 const slugRe = /^[a-z0-9](?:[a-z0-9-]{0,30}[a-z0-9])?$/;
 const e164Re = /^\+[1-9]\d{6,15}$/;
 
-// This is only a fail-safe bootstrap when D1 has no language_config row yet.
-// It deliberately contains the source locale only. Once D1 has a language
-// registry, every caller must use that registry; this fallback must never
-// silently invent or verify a multilingual release.
+const BUILTIN_LANGUAGES = [
+  ["en", "English", "English", "", 10],
+  ["es", "Spanish", "Español", "es", 20],
+  ["pt", "Portuguese", "Português", "pt", 30],
+  ["ru", "Russian", "Русский", "ru", 40],
+  ["tr", "Turkish", "Türkçe", "tr", 50]
+];
+
 export function defaultLanguageConfig() {
-  const sourceLocale = "en";
   return {
     schemaVersion: 1,
-    sourceLocale,
-    defaultLocale: sourceLocale,
-    languages: [{
-      code: sourceLocale,
-      displayName: "English",
-      nativeName: "English",
-      pathPrefix: "",
+    sourceLocale: "en",
+    defaultLocale: "en",
+    languages: BUILTIN_LANGUAGES.map(([code, displayName, nativeName, pathPrefix, sortOrder]) => ({
+      code,
+      displayName,
+      nativeName,
+      pathPrefix,
       enabled: true,
-      publishReady: true,
-      sortOrder: 10,
+      publishReady: code === "en",
+      sortOrder,
       uiText: {}
-    }]
+    }))
   };
 }
 
@@ -61,9 +64,7 @@ export function normalizeLanguageConfig(input) {
     };
   }).sort((a, b) => a.sortOrder - b.sortOrder || a.code.localeCompare(b.code));
   if (!languages.length) throw new Error("At least one language is required");
-  // A configured registry is authoritative. Only an empty registry uses the
-  // source-only bootstrap above; never force English onto a configured site.
-  const defaultLocale = normalizeLocaleCode(raw.defaultLocale || raw.sourceLocale || source[0]?.code || "en");
+  const defaultLocale = normalizeLocaleCode(raw.defaultLocale || "en");
   const sourceLocale = normalizeLocaleCode(raw.sourceLocale || defaultLocale);
   const defaultItem = languages.find((item) => item.code === defaultLocale);
   if (!defaultItem) throw new Error("Default language is not in the language list");
@@ -79,6 +80,21 @@ export function normalizeLanguageConfig(input) {
 export function publicLanguages(config) {
   const normalized = normalizeLanguageConfig(config);
   return normalized.languages.filter((item) => item.enabled && item.publishReady);
+}
+
+// Runtime consumers must read the enabled/publish-ready language registry from
+// D1. Keep the built-in list only as a first-install fallback; it is never the
+// authority once language_config exists in site_state.
+export async function loadLanguageConfig(db) {
+  const raw = await loadSiteSetting(db, "language_config", defaultLanguageConfig());
+  return normalizeLanguageConfig(raw.value);
+}
+
+export async function publishableLanguageCodes(db, { excludeSource = false } = {}) {
+  const config = await loadLanguageConfig(db);
+  return publicLanguages(config)
+    .filter((item) => !excludeSource || item.code !== config.sourceLocale)
+    .map((item) => item.code);
 }
 
 export function defaultContactConfig(brandConfig = {}) {
@@ -169,7 +185,6 @@ export function selectExternalContact(config, { locale = "", region = "" } = {})
 export function defaultTranslationConfig() {
   return {
     schemaVersion: 1,
-    mode: "off",
     provider: "manual",
     sourceLocale: "en",
     autoQueue: true,
@@ -191,21 +206,15 @@ export function normalizeTranslationConfig(input, languageConfig = defaultLangua
   if (!languages.languages.some((item) => item.code === sourceLocale)) throw new Error("Translation source locale is not configured");
   const endpoint = clean(raw.endpoint, 1000);
   if (endpoint && !/^https:\/\//i.test(endpoint)) throw new Error("Translation endpoint must use HTTPS");
-  const legacyAutoTranslate = Boolean(raw.autoTranslate);
-  const requestedMode = clean(raw.mode, 20).toLowerCase();
-  const mode = ["off", "review", "publish"].includes(requestedMode)
-    ? requestedMode
-    : (legacyAutoTranslate ? (raw.requireHumanReview === false ? "publish" : "review") : "off");
   return {
     schemaVersion: 1,
-    mode,
     provider,
     sourceLocale,
     autoQueue: raw.autoQueue !== false,
-    autoTranslate: mode !== "off" && provider !== "manual",
+    autoTranslate: Boolean(raw.autoTranslate) && provider !== "manual",
     model: clean(raw.model, 160),
     endpoint,
-    requireHumanReview: mode !== "publish"
+    requireHumanReview: raw.requireHumanReview !== false
   };
 }
 
@@ -240,3 +249,4 @@ export async function bumpPublishRevision(db) {
 }
 
 export { emailRe, bcp47Re, e164Re };
+

@@ -29,7 +29,7 @@
    a specific product image without exact source/model visual review.
 4. **Guard growth, not a frozen count.** A new approved product, article or
    language page should not fail a release simply because previous totals were
-   historical page/product/locale totals. Detect missing baseline routes and actual broken links.
+   85, 101, 505 or 755. Detect missing baseline routes and actual broken links.
 5. **Rebuild verification is mandatory.** Rebuild from source (the builder
    deletes and regenerates dist), run SEO/locale/Blog/media regressions and
    verify a second clean rebuild produces the same intended outputs. Test
@@ -55,7 +55,7 @@ not regressions merely because a legacy rewrite no longer finds its old input.
 - 每个相关修复把测试加入 `.github/workflows/publish-xuyi.yml`。全站构建和 CI 验证通过后才允许生产发布，并核对 Cloudflare 实际版本。**本政策不等于自动获准部署。**
 
 ## 产品容量和定制材料长期统一要求（2026-10-14）
-- 现在与未来核实的产品容量，须在全部已配置发布语种详情、型号卡片及允许改写的 SEO 中展示 **工厂真实 ml + 海外常用 oz 规格档位**，不再机械整数换算。海外销售档位明确标注 **size class/approximate**，不得将 1000ml 与 32 US fl oz 写成等式，真实容量以源表 ml 为准。全部现有规格用 `data/retail-oz-size-classes.json` 中经审核映射；多容量如 5247/5248 分别对应；未来容量优先匹配有界偏差的常见档位，不合适时明确标注 approx。
+- 现在与未来核实的产品容量，须在五语详情、型号卡片及允许改写的 SEO 中展示 **工厂真实 ml + 海外常用 oz 规格档位**，不再机械整数换算。海外销售档位明确标注 **size class/approximate**，不得将 1000ml 与 32 US fl oz 写成等式，真实容量以源表 ml 为准。全部现有规格用 `data/retail-oz-size-classes.json` 中经审核映射；多容量如 5247/5248 分别对应；未来容量优先匹配有界偏差的常见档位，不合适时明确标注 approx。
 - 未经核实的容量不可臆测。G 系列仍是**工厂型号**，但其容量资料未齐，2506 标有异常 60ml，确认前不应追加对应 oz 参数。
 - 用户提供 Tritan 与 BPA Free 作为可询价的定制业务方向：所有产品允许展示**定制材料询盘关键词**，但不得把旧目录 PC/PP/ABS 材质直接改为 Tritan、不得称已有成品已获得 BPA Free 认证。询盘时须核对树脂、盖体密封件、样品与测试。
 - 唯一入口：`scripts/source_catalog_capacity_oz.py`、`data/volume-oz-cms-baseline-*.json` 和自动化测试。D1/CMS 后台主动改写的 SEO 原文优先；新型号在无后台独立 SEO 文案时自动补充 ml/oz，已有文案则保留。
@@ -71,15 +71,8 @@ not regressions merely because a legacy rewrite no longer finds its old input.
 
 ### AI/工具发布与 D1/R2 唯一写入门禁（2026-11-05）
 
-产品、博客、评价、翻译和图片等业务数据必须写入 Cloudflare D1/CMS；图片必须先进入 R2，再由 D1 保存路径、ALT、语言和引用关系。工具默认只读或 dry-run，正式写入必须使用已鉴权的正式入口，采用条件写入并记录 publish revision。严禁直接改 dist、线上 HTML、Pages 成品或 R2 缓存。完整门禁见 [项目圣经/2026-11-05_统一内容发布与翻译审计标准.md](项目圣经/2026-11-05_统一内容发布与翻译审计标准.md)。
+产品、博客、评价、翻译和图片等业务数据必须写入 Cloudflare D1/CMS；图片必须先进入 R2，再由 D1 保存路径、ALT、语言和引用关系。AI 只能生成待审核草稿、翻译初稿和审计结果，不能直接发布或编造事实；工具只能使用已鉴权的正式 D1/CMS、R2 入口，默认 dry-run，条件写入，保留人工值，记录 publish revision。严禁直接改 dist、线上 HTML、Pages 成品或 R2 缓存。完整门禁见 [项目圣经/2026-11-05_统一内容发布与翻译审计标准.md](项目圣经/2026-11-05_统一内容发布与翻译审计标准.md)。
 
-#### 两种正式操作模式
-
-- **人工模式：** 操作者在后台读取当前 D1/CMS 值，修改正式字段，人工核验事实和语言，审核后写入 D1/CMS，再走标准构建、CI 和线上核验。
-- **AI API 模式：** AI API 只生成草稿、翻译初稿、SEO 建议、去重和审计结果；结果先进入 D1/CMS 任务或待审核状态，保存资源 ID、语言、source hash、provider、操作者、时间和错误信息。未经明确授权和人工审核，不得自动发布。
-- **API 安全：** 任何付费、限量免费、试用赠金、额度或计费不明确的 API 均禁止；允许的 API 也必须使用受控 Secret，不得写入 D1、GitHub、日志或前台。API 失败、版本冲突、字段缺失或事实无法核验时停止，不强制覆盖。
-- **网页翻译边界：** Google Translate 网页不是后台 API，不提供稳定的 D1 自动回写能力；不得使用网页抓取、非官方接口或浏览器自动搬运替代正式翻译任务。需要翻译的内容仍必须通过 D1/CMS 正式审核入口。
-- **D1/R2 优先：** 任何操作都先确认字段所有者；后台人工值优先，产品/Blog/评价/翻译写 D1，图片先写 R2 再写 D1 引用。不得用旧静态文件、临时 JSON 或生成 HTML 覆盖正式数据。
 
 ### 产品 SEO
 
@@ -90,82 +83,12 @@ not regressions merely because a legacy rewrite no longer finds its old input.
 
 ### 博客与评价
 
-- 博客正文在 D1/CMS 编辑并审核；自然放入 2–5 个真实相关产品链接，结尾人工选择 2–3 篇相关阅读，全部已配置发布语种路径同步检查。图片必须先看正文与画面，记录来源、SHA 和审核结论，不用通用图、旧 SKU 图或虚构工厂/客户证据。
+- 博客正文在 D1/CMS 编辑并审核；自然放入 2–5 个真实相关产品链接，结尾人工选择 2–3 篇相关阅读，所有 D1 当前已发布语种路径同步检查。图片必须先看正文与画面，记录来源、SHA 和审核结论，不用通用图、旧 SKU 图或虚构工厂/客户证据。
 - 评价只接受来源可核验、能精确映射 SKU、未重复的真实内容，并保存 fingerprint、source 和审核状态。AI 只能做草稿、翻译、去重、格式整理与风险筛查；禁止生成虚假体验、补造型号参数或把未经人工/来源审核的内容写入 D1。
 - AI 的作用是提效，不是替代事实核验；涉及发布的最终内容须按来源和后台人工修改复核。所有追加或修改采用条件写入，绝不删除、覆盖用户已有数据。
 
 ### 固定发布流程
 
-D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数据源 → bump publish revision → 两次干净构建/回归 → 检查全部已配置发布语种、canonical/hreflang、sitemap、重复卡片与链接 → 核验代表线上路由。失败停在 CI，不发布临时产物；不要用 dist、线上 HTML 或一次性后处理替代正式修复。
-
-#### 直接发布 Blog 的永久默认口径（2026-11-08）
-
-凡用户直接提出“发布、上线、更新 Blog”而未另行限定，默认是英文源文加 D1 `site_state.language_config` 中全部 `enabled=true` 且 `publishReady=true` 语种的完整发布；只发布英文或只写翻译队列不算完成。
-
-针对 AI、localGPT、脚本和自动化工具，整篇文章更新采用 API-only 流程：读取 D1/CMS → 审核图片并上传 R2 → D1 保存媒体引用 → 通过 `/api/admin/blog`、`/api/admin/blog-media`、`/api/admin/page-translations` 等受控入口写入 → bump publish revision → GitHub Actions 标准构建/CI → Cloudflare Pages 部署 → API 与线上 URL 回读。人工操作者可以在正式后台浏览器中编辑和审核，但 AI/脚本/自动化不得打开浏览器后台代替 API，不得直接改 dist、线上 HTML、Pages 成品或 R2 缓存。AI 生成内容只能先形成审核稿；通过事实、语言、SEO/GEO、内链、图片场景和安全门禁后，才可写入正式 D1/CMS。
-
-每篇 B2B Blog 必须有独立标题/H1/搜索意图，正文有 2–5 个真实产品链接、2–3 篇相关阅读、FAQ 或采购清单、清楚的事实边界；各语言必须独立写入正文、列表卡片、ALT、CTA 和元数据，不得英文回退。封面图必须唯一、契合采购场景、清晰压缩为 WebP，记录 R2 路径、尺寸、SHA-256 和编辑插图边界。完成验收要核对 D1/R2、publish revision、构建/部署、全部语言 URL 状态 200、html lang、title/H1、canonical/hreflang、sitemap、列表数量及 D1 顺序；任何一项失败都不能报告为完成。
-
-- **构建失败必须修复源数据或共享模板**：若标准构建因 D1/CMS 字段形状、语言内容或模板门禁失败，必须修正对应正式数据/共享模板并重新走 CI；禁止 AI/脚本/自动化以临时静态文件、浏览器改页面或跳过验证来“补发布”。人工应使用正式后台编辑器修正 D1/CMS。
-- **多语 Blog 详情源 HTML必须保留标准品牌眉标**：多语文章正文要保留与共享渲染器兼容的 `blog-meta` 时间线和 `XUYI · ...` 品牌眉标，D1/CMS 更新必须先通过这些源字段门禁再进入静态构建。
-- **多语译文任务标记 approved 后仍必须重新构建**：`approve_job` 只是 D1 审核状态变更，不替代发布；完成批量审核后必须 bump revision、重新构建/部署并回读最终线上 URL，避免静态产物落后于 D1。
+D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数据源 → bump publish revision → 两次干净构建/回归 → 检查 D1 当前已发布语种、canonical/hreflang、sitemap、重复卡片与链接 → 核验代表线上路由。失败停在 CI，不发布临时产物；不要用 dist、线上 HTML 或一次性后处理替代正式修复。
 
 
-## 2026-11-08 发布复盘：源头清理与固定执行卡（P0）
-
-本次三篇 B2B Blog 发布暴露出的主要问题已经在源代码层处理，不能靠记忆或聊天上下文补救。以后 localGPT、人工、AI API、脚本和 GitHub Actions 都按本节执行。
-
-### 已清理的硬编码和不合理点
-
-1. **语种不再由代码猜测。** 语言列表、启用状态、可发布状态、URL 前缀和排序全部读取 D1 的 `site_state.language_config`。旧调度器、批量入口和语言队列中的固定 `es/pt/ru/tr` 数组与 SQLite 语言 CHECK 约束已移除；旧表会在保留数据的前提下迁移到无固定语种约束的表。D1 没有语言注册表时只保留英文源语种作为 fail-safe，不得假装完成多语发布。
-
-2. **多语 Blog 列表不再按“本次新增文章”硬推顺序。** 英文运行时列表的 `listBlogPosts(db,"published")` 完整结果是唯一顺序源；其他语种只对自己的 D1 翻译卡片做同序重排，必须保留卡片 HTML、图片、标题和链接。任何数量不一致、重复 slug、缺卡片或条件更新冲突都停止发布。
-
-3. **翻译卡片匹配不再假定目录只有两位字母。** 统一通过 D1 语言注册表中的 `pathPrefix` 解析 `/blog/` 与多语路径，允许将来新增 BCP47 语种，不再使用 `[a-z]{2}` 这样的隐含规则。
-
-4. **已完成的定时任务不再污染活动队列。** `published/cancelled` 历史记录保留在 D1 供审计，但后台活动队列只显示 `scheduled/needs_review`，不会因为历史状态长期显示“待处理”。
-
-5. **静态构建与 D1 不再混用旧快照。** 所有文章、翻译、媒体引用和列表顺序先在 D1/R2 条件写入，再 bump revision，最后由干净构建生成静态页面。审批状态变化本身不等于已发布，必须重新构建并核验线上结果。
-
-### 固定执行卡（每次 Blog 发布/更新照抄）
-
-1. 读取项目圣经、`AGENTS.md`、本文件、D1 当前 revision、`language_config` 和目标资源；先确定字段所有者。
-2. API 读取 D1/CMS 当前文章；生成或修改英文源文；事实不明确时停在草稿，不补造容量、材质、认证、MOQ、工厂、客户或评价事实。
-3. 读取 D1 中所有 `enabled=true && publishReady=true` 的目标语种，不能自己维护语种数组。英文源文发布成功后，为每个目标语种建立唯一的翻译任务和 source hash。
-4. 图片先目视核对主题和采购场景，再压缩为清晰 WebP 上传 R2；成功后把路径、ALT、语言、SHA-256 和引用关系写入 D1。
-5. 翻译由人工或当前 AI 会话生成草稿；逐语种审核 title、H1、description、正文、FAQ、CTA、ALT、列表卡片、链接和品牌/产品事实。任何整句英文回退、HTML 不完整、产品链接错误或 source hash 变化都停止。
-6. 通过正式 API 条件写入 D1：文章用 Blog CMS 入口，媒体用 Blog Media 入口，页面翻译用 Page Translations 入口；不直接改 dist、线上 HTML、Pages 成品或 R2 缓存。
-7. 运行两次干净构建和全部相关 CI；重点检查 Blog 元信息、品牌眉标、FAQ/结构化数据、内部链接、列表数量、D1 顺序、canonical、hreflang、sitemap、图片引用和新增语种兼容性。
-8. CI 通过后才部署。API 回读 D1 revision、构建 SHA、R2 HEAD、英文及全部目标语种 URL 状态 200；英文与各语种 Blog 列表必须逐项同序。失败只能报告草稿/待审核，不得报告完成。
-
-### 明确禁止的捷径
-
-- 人工可以使用正式后台浏览器完成编辑、审核和发布；AI、localGPT、脚本和自动化发布不得使用浏览器自动化或网页抓取代替受控 API。Google Translate 网页不是后端发布接口，不能作为自动回写链路；仍不得使用非官方或费用/额度不明翻译 API。
-- 不在构建后用一次性正则或脚本修改 `dist/**/*.html` 来掩盖 D1/模板问题。
-- 不以固定文章总数、固定语种数、固定产品数或固定分页数作为成功条件；只验证 D1 当前资源的完整性、增长和一致性。
-- 不为了通过 CI 临时删除图片、翻译、卡片、评价或 D1 数据；必须修复真正的 D1 记录、共享模板、渲染器或迁移逻辑。
-
-## 2026-11-08 全站源码硬编码审计补充
-
-本轮审计覆盖运行时 Blog CMS、翻译审批、定时发布、语言构建器、产品渲染器、路由校验和发布工作流。新增 `scripts/test_runtime_source_of_truth.py` 并接入 CI。
-
-已移除或改为数据/配置来源：
-
-- 固定语种数组、语种 CHECK 约束、只支持两位字母的 Blog 路径正则；
-- Blog 日期标签、已知语言修正词、图库短标题中的语言字典；
-- 构建器中固定站点域名、产品图片行截断、固定产品总数断言；
-- 产品多语资格不再依赖生成路由清单或“newProduct”标记，而是直接核验已发布 D1 产品记录；
-- Blog 排序器和翻译审批器都按路径结构识别 Blog 卡片，不再列举当前语种。
-
-以下属于允许保留的“有意常量”，但不得拿来当业务事实源：安全限制、HTML 安全标签黑名单、状态枚举、URL/slug 格式、人工审核的产品分类映射、历史回放批次和测试 fixture。历史批处理只用于审计/回放，不是日常发布入口。
-
-以后新增语种只需完成 D1 `language_config`、对应审核资源和 D1 翻译记录；若必须改线上业务代码才能加入语种，视为硬编码回归，CI 必须阻止发布。
-
-
-## 2026-11-08 最终源码复核补充
-
-本次最终复核以 GitHub main 当前提交为准，排除了 dist/、生成的静态页面、图片和项目历史文档，扫描了 460 个受控源码/发布/测试入口，并对关键运行文件逐一做了语法与回归检查。
-
-新增修复已落到源码：产品 SEO 语言校验、产品图片 ALT 导入校验、旧 Blog 批处理、Blog 图片审核、媒体 canonical、Blog 编辑增强和后台路由冲突检查均不再维护固定语种数组；全部改为 D1 language_config、受控站点配置或已审核资源驱动。Blog 动态 Function 的 canonical 也按请求 origin 校验，避免把域名写死在运行逻辑中。
-
-全量扫描仍能看到历史日期批次、一次性迁移/修复接口和测试 fixture 中的固定语种、固定日期或固定域名。这些只保留用于可审计回放，不能作为日常发布入口，也不参与当前 D1 语种、产品数量、Blog 排序或翻译资格判断；新增业务代码不得复制这种模式。线上运行路径的回归规则已继续加入 `scripts/test_runtime_source_of_truth.py`。

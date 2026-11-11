@@ -1,8 +1,7 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { ensureTranslationSchema } from "../../_shared/translation.js";
-import { bumpPublishRevision } from "../../_shared/site-settings.js";
+import { bumpPublishRevision, publishableLanguageCodes } from "../../_shared/site-settings.js";
 
-const LOCALES = ["es", "pt", "ru", "tr"];
 const reply = (body, status = 200) => Response.json(body, {
   status,
   headers: { "cache-control": "no-store", "x-robots-tag": "noindex,nofollow,noarchive" }
@@ -31,7 +30,7 @@ function removeDuplicateHeading(mainHtml, locale) {
   const next = html.slice(0, start) + html.slice(end);
   if (count(next, 'class="section__head"') !== 0 ||
       count(next, 'class="blog-listing__grid"') !== 1 ||
-      count(next, '<article class="news-card">') !== 73 ||
+       count(next, '<article class="news-card">') < 1 ||
       count(next, "<h1>") !== 1 ||
       !next.includes('class="page-intro"')) {
     throw Error("Localized Blog heading cleanup validation failed: " + locale);
@@ -50,10 +49,11 @@ export async function onRequestPost(context) {
 
   const db = context.env.XUYI_DB;
   await ensureTranslationSchema(db);
+  const locales = await publishableLanguageCodes(db, { excludeSource: true });
   const statements = [];
   let rowsWritten = 0;
 
-  for (const locale of LOCALES) {
+  for (const locale of locales) {
     const row = await db.prepare(
       "SELECT translated_json FROM xuyi_translation_overrides WHERE resource_id='page:/blog/' AND locale=?"
     ).bind(locale).first();
@@ -73,8 +73,9 @@ export async function onRequestPost(context) {
     }
   }
 
-  if (!statements.length) return reply({ success: true, alreadyCurrent: true, locales: LOCALES });
+  if (!statements.length) return reply({ success: true, alreadyCurrent: true, locales });
   await db.batch(statements);
   const revision = await bumpPublishRevision(db);
-  return reply({ success: true, rowsWritten, locales: LOCALES, ...revision });
+  return reply({ success: true, rowsWritten, locales, ...revision });
 }
+

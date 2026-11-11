@@ -1,8 +1,8 @@
-// Build-time public-content snapshot (XUYI D1 truth model, XUYI data).
+// Build-time public-content snapshot (Demalong's D1 truth model, XUYI data).
 // Requires a verified XUYI build/admin token. Never exposes submissions, secrets
 // or other private tables; responses are no-store and not indexable.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
-import { defaultLanguageConfig,normalizeLanguageConfig } from "../_shared/site-settings.js";
+import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from "../_shared/site-settings.js";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 async function list(db,sql){
@@ -11,6 +11,9 @@ async function list(db,sql){
     if (/no such table/i.test(String(error?.message||error)))return [];
     throw error;
   }
+}
+function parseJson(value,fallback){
+  try{return value?JSON.parse(value):fallback}catch{return fallback}
 }
 export async function onRequestGet(context){
   if(!(await authorizedBuildRequest(context.request,context.env)))return json({error:"Unauthorized"},401);
@@ -30,10 +33,10 @@ export async function onRequestGet(context){
       list(db,"SELECT slug,locale,seo_title,meta_description FROM xuyi_product_seo ORDER BY slug,locale"),
       list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY slug")
     ]);
-    const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
-    const languageConfig=normalizeLanguageConfig(config.language_config?JSON.parse(config.language_config):defaultLanguageConfig());
-    const publishableLocales=new Set(languageConfig.languages.filter(language=>language.enabled&&language.publishReady).map(language=>language.code));
-    const security=config.admin_security_config?JSON.parse(config.admin_security_config):{};
+      const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
+      const languageConfig=normalizeLanguageConfig(parseJson(config.language_config,defaultLanguageConfig()));
+     const publicLocaleCodes=new Set(publicLanguages(languageConfig).map(item=>item.code));
+     const security=parseJson(config.admin_security_config,{});
     const adminPath=security.adminPath||"admin";
     if(typeof adminPath!=="string"||!/^[a-z0-9][a-z0-9-]{2,47}$/.test(adminPath))
       throw new Error("Invalid XUYI admin route");
@@ -52,17 +55,17 @@ export async function onRequestGet(context){
       site:"xuyi-drinkware-site",schemaVersion:1,
       adminPath,
       publishRevision:Number(config.publish_revision||0),
-      brand:config.brand_config?JSON.parse(config.brand_config):null,
-      contacts:config.contact_config?JSON.parse(config.contact_config):null,
-      languages:config.language_config?JSON.parse(config.language_config):null,
+       brand:parseJson(config.brand_config,null),
+       contacts:parseJson(config.contact_config,null),
+       languages:languageConfig,
       pages:onlyRoutes,navigation,redirects,
-      banners:config.home_banner_config?JSON.parse(config.home_banner_config):null,
+       banners:parseJson(config.home_banner_config,null),
       pageBodies:pageBodies.filter(r=>typeof r.route==="string"&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
-      products:onlyProducts.map(r=>({model:r.model,content:JSON.parse(r.content_json)})),
+       products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
       blogPosts:onlyBlogPosts,
-      productSeo:productSeo.filter(r=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.slug)
-        && publishableLocales.has(String(r.locale||"").toLowerCase())
+       productSeo:productSeo.filter(r=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.slug)
+         && publicLocaleCodes.has(r.locale)
         && typeof r.seo_title==="string"&&r.seo_title.length<=90
         && typeof r.meta_description==="string"&&r.meta_description.length<=240)
         .map(r=>({slug:r.slug,locale:r.locale,seoTitle:r.seo_title,
@@ -75,9 +78,10 @@ export async function onRequestGet(context){
           && typeof r.content==="string"&&r.content.length>=12)
         .map(r=>({id:r.id,model:r.model,rating:r.rating,author:r.author,
           reviewDate:r.review_date,content:r.content,status:"published"})),
-      mediaAlts:mediaAlts.filter(r=>/^\/media\/(?:product|page|shared|ppt|excel|group|capability|gallery|blog)\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(r.path))
-        .map(r=>({path:r.path,translations:JSON.parse(r.alt_json)})),
-      translations:translations.map(r=>({resourceId:r.resource_id,locale:r.locale,content:JSON.parse(r.translated_json)}))
+       mediaAlts:mediaAlts.filter(r=>/^\/media\/(?:product|page|shared|ppt|excel|group|capability|gallery|blog)\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(r.path))
+         .map(r=>({path:r.path,translations:parseJson(r.alt_json,{})})),
+       translations:translations.map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})}))
     });
   }catch(error){return json({error:"XUYI build snapshot unavailable"},503)}
 }
+

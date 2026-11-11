@@ -7,7 +7,7 @@
 <button type="submit" class="btn primary">进入后台</button><p id="lock-error" class="error" role="alert"></p>
 </form></div>
 <div id="admin-app" class="app hidden"><header class="topbar"><div><div class="brand-line">XUYI · CLOUDFLARE D1</div><h1>网站后台管理</h1></div>
-<div class="top-actions"><a href="/" class="btn ghost" target="_blank" rel="noopener">网站首页 ↗</a>
+<div class="top-actions"><span class="pill">D1 / CMS 数据源</span><a href="/" class="btn ghost" target="_blank" rel="noopener">网站首页 ↗</a>
 <button type="button" id="publish-site-btn" class="btn primary">一键全站重建</button><button type="button" id="publish-check-btn" class="btn ghost">检查发布状态</button><button id="refresh-btn" class="btn ghost">刷新</button><button id="logout-btn" class="btn ghost">退出</button></div></header>
 <div class="admin-layout"><aside class="admin-sidebar"><div class="admin-sidebar-head"><span class="eyebrow">MANAGEMENT</span><strong>管理模块</strong></div><nav class="admin-module-nav">
 <button type="button" class="admin-module-btn active" data-admin-target="leads">01 询盘客户</button>
@@ -15,76 +15,31 @@
 <button type="button" class="admin-module-btn" data-admin-target="settings">03 联系人与邮箱</button>
 <button type="button" class="admin-module-btn" data-admin-target="languages">04 多语言</button>
 <button type="button" class="admin-module-btn" data-admin-target="advanced">05 翻译工作流</button>
-<button type="button" class="admin-module-btn" data-admin-target="content">06 内容与多语言</button>
+<button type="button" class="admin-module-btn" data-admin-target="content">06 页面 / 品牌 / 产品 / SEO</button>
 <button type="button" class="admin-module-btn" data-admin-target="reviews">07 客户评价 ★</button>
-<button type="button" class="admin-module-btn" data-admin-target="media">08 R2 通用媒体库</button>
-<button type="button" class="admin-module-btn" data-admin-target="scheduler">09 自动发布与定时任务</button>
+<button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品 SEO · D1</button>
+<button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
+<button type="button" class="admin-module-btn" data-admin-target="scheduler">10 自动发布与定时任务</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
-<p class="admin-sidebar-info">后台模块采用 XUYI 现有实现，数据与密钥仅属于旭一网站。</p></aside><main class="shell admin-main">
+<p class="admin-sidebar-info">所有正式内容、语种配置和发布状态均以 D1/CMS 为准。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">XUYI BOTTLES</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
 <div id="publish-site-status" role="status" class="muted" aria-live="polite"></div>
 <section class="panel" id="content-admin-panel" data-admin-module="content">
- <div class="panel-head"><div><div class="eyebrow">XUYI · D1 CONTENT CONTROL</div><h2>内容与多语言管理</h2>
- <p>06 是唯一内容编辑入口。按“网站基础、页面与 Blog、产品”三类进入对应功能；数据全部直接读取和写入 D1。</p></div></div>
- <div class="content-tab-groups" style="display:grid;gap:12px;margin:14px 0">
-  <div style="padding:12px;border:1px solid #dbe6ed;border-radius:10px;background:#f8fbfd">
-   <strong style="display:block;margin-bottom:8px">一、网站基础</strong>
-   <span class="muted" style="display:block;margin-bottom:8px">维护全站通用信息和跳转规则。</span>
-   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button type="button" class="btn ghost" id="content-tab-brand">品牌信息</button>
-    <button type="button" class="btn ghost" id="content-tab-banners">首页 Banner（图片与文案）</button>
-    <button type="button" class="btn ghost" id="content-tab-navigation">导航与跳转</button>
-   </div>
-  </div>
-  <div style="padding:12px;border:1px solid #dbe6ed;border-radius:10px;background:#f8fbfd">
-   <strong style="display:block;margin-bottom:8px">二、页面与 Blog</strong>
-   <span class="muted" style="display:block;margin-bottom:8px">维护普通页面 SEO、正文和 Blog 多语言内容。</span>
-   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button type="button" class="btn ghost" id="content-tab-pages">普通页面 SEO</button>
-    <button type="button" class="btn ghost" id="content-tab-page-body">普通页面正文</button>
-    <button type="button" class="btn ghost" id="content-tab-locales">页面 / Blog 多语言</button>
-   </div>
-  </div>
-  <div style="padding:12px;border:1px solid #dbe6ed;border-radius:10px;background:#f8fbfd">
-   <strong style="display:block;margin-bottom:8px">三、产品</strong>
-   <span class="muted" style="display:block;margin-bottom:8px">来源产品资料与来源语言 SEO、各语种产品 SEO 和正文统一在这里维护。</span>
-   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button type="button" class="btn ghost" id="content-tab-products">产品来源商详</button>
-    <button type="button" class="btn ghost" id="content-tab-new-product">新建产品</button>
-    <button type="button" class="btn ghost" id="content-tab-product-seo">产品多语言 SEO 与正文</button>
-   </div>
-  </div>
-  <div><button type="button" class="btn primary" id="content-load">读取线上 D1 内容</button></div>
+ <div class="panel-head"><div><div class="eyebrow">XUYI · D1 CONTENT CONTROL</div><h2>网站内容、导航、SEO 管理</h2>
+ <p>使用德玛隆的 D1 CMS 保存机制；草稿和未审核翻译不会发布，英文原有页面保留。编辑后由 GitHub Actions 生成静态页面。</p></div></div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
+  <button type="button" class="btn ghost" id="content-load">读取线上 D1 内容</button>
+  <button type="button" class="btn ghost" id="content-tab-brand">品牌</button>
+  <button type="button" class="btn ghost" id="content-tab-banners">首页 Banner</button>
+  <button type="button" class="btn ghost" id="content-tab-navigation">导航</button>
+  <button type="button" class="btn ghost" id="content-tab-pages">页面 SEO</button>
+  <button type="button" class="btn ghost" id="content-tab-page-body">页面正文</button>
+  <button type="button" class="btn ghost" id="content-tab-products">产品商详</button>
+  <button type="button" class="btn ghost" id="content-tab-new-product">+ 单个新商品</button>
+  <button type="button" class="btn ghost" id="content-tab-locales">多语言正式页面</button>
  </div>
  <p id="content-status" role="status" aria-live="polite"></p>
 <div id="content-form"></div>
-<div id="content-product-seo" hidden>
- <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO + CONTENT · CLOUDFLARE D1</div>
- <h2>产品多语言 SEO 与正文（统一在 06）</h2>
- <p>06 统一管理产品来源、产品多语言 SEO、目标语种正文，以及普通页面和 Blog 多语言；所有字段直接读写现有 D1。</p>
- <p><span id="product-seo-count">产品数量读取中</span> · <span id="product-seo-language-summary">语言配置读取中</span> · 修改后点击顶部「一键全站重建」。</p>
- </div></div>
- <div class="row-actions"><button type="button" class="btn ghost" id="product-seo-reload">读取数据库</button></div>
- <p id="product-seo-status" role="status" aria-live="polite"></p>
- <form id="product-seo-editor">
-  <label class="block-label">产品型号页面（选择官网真实型号）
-   <input id="product-seo-slug" list="product-seo-models" placeholder="输入官网产品型号，例如型号或 URL 标识" required></label>
-  <datalist id="product-seo-models"></datalist>
-  <label class="block-label">语言
-   <select id="product-seo-locale" aria-label="选择已配置语言"></select></label>
-  <label class="block-label">SEO Title（建议自然简洁，最多 90 字符）
-   <input id="product-seo-title" required maxlength="90" minlength="12"></label>
-  <label class="block-label">Meta Description（最多 240 字符）
-   <textarea id="product-seo-description" rows="4" required maxlength="240" minlength="30"></textarea></label>
-  <label class="block-label">对应语种产品正文（完整 Main HTML）
-   <textarea id="product-seo-content" rows="18" placeholder="目标语种：先读取来源语言正文，再完整翻译、检查图片与链接后保存。"></textarea></label>
-  <div class="row-actions"><button type="button" class="btn ghost" id="product-content-source">读取来源语言正文</button>
-   <span id="product-content-status" class="muted"></span></div>
-  <p class="muted">来源语言正文由「06 → 产品来源内容」维护；目标语种正文写入现有 D1 多语言正式页面记录。正文留空时只保存 SEO，不会删除已有正文。</p>
-  <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 与正文到 D1</button>
-   <button type="button" class="btn ghost" id="product-seo-reset">重新载入当前记录</button></div>
- </form>
-</div>
 </section>
 <section class="panel" id="review-admin-panel" data-admin-module="reviews">
  <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT REVIEWS · D1</div>
@@ -125,13 +80,34 @@
  <label class="block-label">筛选型号 <input type="search" id="review-filter" placeholder="输入型号或姓名查找"></label>
  <div id="review-admin-list"></div>
 </section>
+<section class="panel" id="product-seo-admin-panel" data-admin-module="productseo">
+ <div class="panel-head"><div><div class="eyebrow">XUYI · PRODUCT SEO · CLOUDFLARE D1</div>
+ <h2>产品 SEO 标题和描述（正式数据库）</h2>
+  <p>产品型号和语种均从 D1/后台配置读取。SEO Title、Meta Description 和默认 OG 标题从 D1 正式记录生成；H1 仍由产品正文/正式规格管理。修改后点击顶部「一键全站重建」。</p>
+ </div></div>
+ <div class="row-actions"><button type="button" class="btn ghost" id="product-seo-reload">读取数据库</button></div>
+ <p id="product-seo-status" role="status" aria-live="polite"></p>
+ <form id="product-seo-editor">
+  <label class="block-label">产品型号页面（选择官网真实型号）
+   <input id="product-seo-slug" list="product-seo-models" placeholder="输入或选择已发布产品型号" required></label>
+  <datalist id="product-seo-models"></datalist>
+  <label class="block-label">语言
+   <select id="product-seo-locale" required></select></label>
+  <label class="block-label">SEO Title（建议自然简洁，最多 90 字符）
+   <input id="product-seo-title" required maxlength="90" minlength="12"></label>
+  <label class="block-label">Meta Description（最多 240 字符）
+   <textarea id="product-seo-description" rows="4" required maxlength="240" minlength="30"></textarea></label>
+  <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 到 D1</button>
+   <button type="button" class="btn ghost" id="product-seo-reset">重新载入当前记录</button></div>
+ </form>
+</section>
 <section class="panel" id="media-admin-panel" data-admin-module="media">
  <div class="panel-head"><div><div class="eyebrow">XUYI · R2 ASSETS</div>
  <h2>R2 图片管理与引用检查</h2><p>管理旭一媒体桶。上传素材可在确认所有正式页面与 D1 草稿均未引用后删除；原始 PPT、Excel、工厂、博客图库禁止直接删除，但支持上传核对后的高清新图替换，并自动备份旧版。第二个型号溢出桶不在这里删除。</p></div></div>
  <div class="row-actions">
   <label>R2 文件分类 <select id="media-kind"><optgroup label="后台上传（有保护的删除）"><option value="product">产品图片</option><option value="page">页面图片</option><option value="shared">公共素材</option></optgroup><optgroup label="原始资产（只读）"><option value="ppt">PPT 旧图库</option><option value="excel">Excel 型号图片</option><option value="group">工厂与质检图片</option><option value="capability">制造能力配图</option><option value="gallery">旧款式画廊</option><option value="blog">博客图片</option></optgroup></select></label>
   <label>文件 <input type="file" id="media-upload" accept="image/jpeg,image/png,image/webp"></label>
-  <label>图片 ALT（来源语言，必填）<input id="media-upload-alt-en" maxlength="180" placeholder="例：550 ml plastic sports water bottle model 2501, product view"></label>
+   <label>图片 ALT（源语言，必填）<input id="media-upload-alt-en" maxlength="180" placeholder="例：550 ml plastic sports water bottle model 2501, product view"></label>
   <button class="btn primary" type="button" id="media-upload-btn">上传到 R2</button>
   <button class="btn ghost" type="button" id="media-load">刷新素材</button>
  </div>
@@ -143,7 +119,7 @@
  </section>
       <section class="panel" id="blog-admin-panel" data-admin-module="blog">
 <div class="panel-head"><div><div class="eyebrow">BLOG CONTENT MANAGEMENT · D1</div><h2>Blog 内容管理 / 文章发布</h2>
-<p>沿用后台统一的保存草稿、正式发布与修订流程。旭一博客按文章而不是外部行业型号管理，保存草稿不会公开。</p></div></div>
+<p>复用德玛隆后台的保存草稿、正式发布与修订流程。旭一博客按文章而不是滤芯型号管理，保存草稿不会公开。</p></div></div>
 <div class="row" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:15px 0">
 <button class="btn primary" type="button" id="blog-new-btn">+ 新建文章</button>
 <button class="btn ghost" type="button" id="blog-refresh-btn">刷新文章列表</button>
@@ -175,7 +151,7 @@
 <button type="button" class="btn primary" id="blog-schedule-btn">保存并安排定时发布</button>
 <button type="button" class="btn ghost" id="blog-close-btn">返回列表</button>
 <a id="blog-preview-link" class="btn ghost" href="/blog/" target="_blank" rel="noopener">查看已发布页面 ↗</a></div>
-<p class="muted">Blog 英语原稿优先；其他语言仍沿用统一的审核工作流，不会自动发布未经审核的翻译。</p>
+<p class="muted">Blog 英语原稿优先；其他语言仍沿用德玛隆的审核工作流，不会自动发布未经审核的翻译。</p>
 </form></section>
 <section class="panel" id="scheduler-admin-panel" data-admin-module="scheduler">
  <div class="panel-head"><div><div class="eyebrow">XUYI · UNIFIED PUBLISH SCHEDULER</div><h2>自动发布与定时任务</h2>
@@ -297,11 +273,11 @@
       </section>
 
       <section class="panel" id="translation-workflow-panel" data-admin-module="advanced">
-        <div class="panel-head"><div><div class="eyebrow">TRANSLATION WORKFLOW</div><h2>自动翻译与审核</h2><p>源语言内容修改后生成翻译任务。可选择关闭自动翻译、自动翻译后人工审核，或自动翻译后自动发布。Provider 密钥只放 Cloudflare Pages Secret，不写入 D1；默认关闭自动翻译，启用后仍按人工审核策略执行。</p></div><span class="safe-badge">Queue → Translate → Review → Publish</span></div>
-        <div class="grid"><label>Provider<select id="translation-provider"><option value="manual">Manual（手工翻译）</option><option value="google-cloud-translation">Google Cloud Translation（官方）</option><option value="deepl">DeepL</option><option value="openai-compatible">OpenAI-Compatible</option></select></label><label>源语言<select id="translation-source-locale"></select></label><label>自动翻译策略<select id="translation-mode"><option value="off">关闭自动翻译（人工处理）</option><option value="review">自动翻译 + 人工审核</option><option value="publish">自动翻译 + 自动发布</option></select></label><label>Model（OpenAI-Compatible）<input id="translation-model" type="text" placeholder="例如 gpt-4.1-mini" /></label><label>Endpoint（DeepL/OpenAI-Compatible）<input id="translation-endpoint" type="url" placeholder="https://..." /></label></div>
-        <div class="row-actions"><label><input id="translation-auto-queue" type="checkbox" /> 源内容修改后自动排队</label><button id="save-translation-settings" class="btn primary">保存翻译设置</button><span id="translation-settings-status" class="muted"></span></div>
+        <div class="panel-head"><div><div class="eyebrow">TRANSLATION WORKFLOW</div><h2>自动翻译与审核</h2><p>源语言内容修改后生成翻译任务。默认 Manual + 人工审核，不产生 API 费用；Google / DeepL / OpenAI-Compatible 的密钥只放 Cloudflare Pages Secret，不写入 D1。</p></div><span class="safe-badge">Queue → Translate → Review → Publish</span></div>
+        <div class="grid"><label>Provider<select id="translation-provider"><option value="manual">Manual（手工翻译）</option><option value="google-cloud-translation">Google Cloud Translation</option><option value="deepl">DeepL</option><option value="openai-compatible">OpenAI-Compatible</option></select></label><label>源语言<select id="translation-source-locale"></select></label><label>Model（OpenAI-Compatible）<input id="translation-model" type="text" placeholder="例如 gpt-4.1-mini" /></label><label>Endpoint（DeepL/OpenAI-Compatible）<input id="translation-endpoint" type="url" placeholder="https://..." /></label></div>
+        <div class="row-actions"><label><input id="translation-auto-queue" type="checkbox" /> 源内容修改后自动排队</label><label><input id="translation-auto-run" type="checkbox" /> 自动调用机翻（配置 Secret 后）</label><label><input id="translation-review" type="checkbox" checked /> 发布前必须人工审核</label><button id="save-translation-settings" class="btn primary">保存翻译设置</button><span id="translation-settings-status" class="muted"></span></div>
         <p id="translation-secret-status" class="muted"></p>
-        <div class="row-actions"><input id="translation-model-id" type="text" placeholder="产品型号，例如 2501" /><button id="enqueue-translation-model" class="btn ghost">生成/刷新产品翻译任务</button><input id="translation-blog-slug" type="text" placeholder="Blog slug，例如 wholesale-plastic-water-bottle-buying-guide" /><button id="enqueue-translation-blog" class="btn ghost">生成/刷新 Blog 翻译任务</button><button id="reload-translations" class="btn ghost">刷新任务</button></div>
+        <div class="row-actions"><input id="translation-model-id" type="text" placeholder="产品型号，例如 2501" /><button id="enqueue-translation-model" class="btn ghost">生成/刷新翻译任务</button><button id="reload-translations" class="btn ghost">刷新任务</button></div>
         <div id="translation-jobs" class="batches"></div>
       </section>
 
@@ -327,3 +303,4 @@
 <script src="/assets/admin-product-seo.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>
 </body></html>
+

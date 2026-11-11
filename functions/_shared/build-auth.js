@@ -62,28 +62,11 @@ export async function authorizedBuildRequest(request, env) {
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
 
-// The reviewed batch endpoint is the only write route that may accept the
-// existing CI token after it proves access to this exact Pages project.
+// The single generic reviewed batch endpoint is the only Blog write route that
+// may accept the existing CI token. Historical date-named routes intentionally
+// fail closed so an old workflow cannot mutate D1 with fragile HTML logic.
 export async function authorizedReviewedBlogBatchRequest(request, env) {
-  if (request.method !== "POST" || !new Set([
-    "/api/admin/blog-batch",
-    "/api/admin/blog-batch-20261020",
-    "/api/admin/blog-batch-20261021",
-    "/api/admin/blog-batch-20261022",
-    "/api/admin/blog-batch-20261023",
-    "/api/admin/blog-batch-20261024",
-    "/api/admin/blog-batch-20261025",
-    "/api/admin/blog-batch-20261026",
-    "/api/admin/blog-batch-20261027",
-    "/api/admin/blog-batch-20261028",
-    "/api/admin/blog-batch-20261029",
-    "/api/admin/blog-batch-20261030",
-    "/api/admin/blog-batch-20261031",
-    "/api/admin/blog-batch-20261102",
-    "/api/admin/blog-batch-20261107",    "/api/admin/blog-batch-20261110",
-    "/api/admin/blog-batch-20261111",
-    "/api/admin/blog-schedule-20261103"
-  ]).has(new URL(request.url).pathname)) return false;
+  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-batch") return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);}
 
 // Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
@@ -142,3 +125,4 @@ export async function authorizedReviewedFactoryCatalogCommitRequest(request, env
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-20261103")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
+

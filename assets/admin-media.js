@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id);
 const say=message=>{const node=$("media-status");if(node)node.textContent=message};
 const kind=()=>$("media-kind")?.value||"product";
 const editable=()=>["product","page","shared"].includes(kind());
-let languages=[],sourceLocale="";
+let languages=[{code:"en",name:"English"}],sourceLocale="en";
 function altInputs(parent,values={},includeEnglish=true){
  const inputs={};
  for(const locale of languages){
@@ -35,7 +35,8 @@ async function list(cursor=""){
  const selectedKind=kind();
  const url="/api/admin/media?kind="+encodeURIComponent(selectedKind)+(cursor?"&cursor="+encodeURIComponent(cursor):"");
  const data=await api(url);
- languages=Array.isArray(data.altLocales)?data.altLocales:[];sourceLocale=data.sourceLocale||languages[0]?.code||"";
+  languages=Array.isArray(data.altLocales)&&data.altLocales.length?data.altLocales:[{code:"en",name:"English"}];
+  sourceLocale=data.sourceLocale||languages[0]?.code||"en";
  const uploadLocales=$("media-upload-alt-locales");
  if(uploadLocales&&!cursor){uploadLocales.replaceChildren();
   altInputs(uploadLocales,{},false)}
@@ -60,7 +61,7 @@ async function list(cursor=""){
     const saved=await api("/api/admin/media",{method:"POST",
       headers:{"content-type":"application/json"},
       body:JSON.stringify({action:"save_alt",path:row.path,altByLocale:altValues(inputs)})});
-    photo.alt=saved.altByLocale[sourceLocale]||Object.values(saved.altByLocale||{})[0]||"";
+    photo.alt=saved.altByLocale[sourceLocale]||saved.altByLocale.en||"";
     say("图片 ALT 已保存到 D1，发布修订号 "+saved.revision+"；构建完成后本语言页面自动更新。");
    }catch(error){say("保存 ALT 失败："+error.message)}
    finally{saveAlt.disabled=false}
@@ -139,7 +140,7 @@ async function upload(){
  if(!english){say("上传前请填写准确的英文 ALT：实际产品类型、可核实型号或容量");return}
  const button=$("media-upload-btn");button.disabled=true;say("正在上传旭一 R2…");
  try{
-  const values={[sourceLocale]:sourceAlt};
+  const values={[sourceLocale]:english};
   for(const input of $("media-upload-alt-locales")?.querySelectorAll("[data-alt-locale]")||[])
    if(input.value.trim())values[input.dataset.altLocale]=input.value.trim();
   const body=new FormData();body.append("kind",kind());body.append("image",file);
@@ -156,3 +157,4 @@ $("media-more")?.addEventListener("click",()=>list($("media-more").dataset.curso
 $("media-upload-btn")?.addEventListener("click",upload);
 document.querySelector('[data-admin-target="media"]')?.addEventListener("click",()=>list().catch(err=>say("读取失败："+err.message)));
 })();
+

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Publish only the reviewed 2026-11-11 XUYI B2B batch via dedicated authenticated D1 endpoint."""
+"""Publish the reviewed Blog batch through the single generic D1 endpoint."""
 import json,os,sys,urllib.error,urllib.request
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 FILE=ROOT/"_local_ops/blog-batch-20261111/payload.json"
-URL="https://xuyibottles.com/api/admin/blog-batch-20261111"
+URL="https://xuyibottles.com/api/admin/blog-batch"
 EXPECTED={
     "custom-water-bottle-logo-printing-methods-bulk-order",
     "which-water-bottle-closure-type-best-wholesale-order",
@@ -13,7 +13,8 @@ EXPECTED={
 def main():
     p=json.loads(FILE.read_text("utf8"))
     assert {r["slug"] for r in p["posts"]}==EXPECTED
-    assert len(p["translations"])==12 and len(p["indexCards"])==12
+    locales=sorted({row["locale"] for row in p["translations"]})
+    assert locales and len(p["translations"])==len(EXPECTED)*len(locales) and len(p["indexCards"])==len(EXPECTED)*len(locales)
     if "--dry-run" in sys.argv:
         print("DRY_RUN_REVIEWED_B2B_20261111",sorted(EXPECTED));return
     if (os.environ.get("GITHUB_ACTIONS")!="true"
@@ -36,15 +37,16 @@ def main():
         raise RuntimeError("CMS refused publication: HTTP "+str(err.code)+" "+str(message)[:250]) from None
     if not response.get("success") or set(response.get("publishedSlugs",[]))!=EXPECTED:
         raise RuntimeError("D1 publication not fully confirmed")
-    if response.get("indexOrderVerified")!=["es","pt","ru","tr"]:
-        raise RuntimeError("All four localized Blog indexes were not verified against D1 order")
+    verified=sorted(response.get("indexOrderVerified",[]))
+    if verified!=locales:
+        raise RuntimeError("All configured localized Blog indexes were not verified against D1 order")
     if int(response.get("d1PublishedCount",0))<len(EXPECTED):
         raise RuntimeError("D1 published Blog order did not include the full published set")
     output=os.environ.get("GITHUB_OUTPUT")
     if output:
         with open(output,"a",encoding="utf8") as stream:
             stream.write("revision="+str(response["publishRevision"])+"\n")
-    print("XUYI_20261111_D1_BATCH_AND_FOUR_LOCALIZED_INDEX_ORDERS_CONFIRMED",
+    print("XUYI_GENERIC_D1_BATCH_AND_CONFIGURED_LOCALIZED_INDEX_ORDERS_CONFIRMED",
         "POSTS_INSERTED",response["postsInserted"],
         "TRANSLATIONS_INSERTED",response["translationsInserted"],
         "INDEX_CARDS_ADDED",response["indexCardsAdded"],
@@ -52,3 +54,4 @@ def main():
         "D1_PUBLISHED_COUNT",response["d1PublishedCount"],
         "PUBLISH_REVISION",response["publishRevision"])
 if __name__=="__main__":main()
+
