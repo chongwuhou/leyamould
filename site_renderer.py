@@ -96,6 +96,18 @@ def render_d1_blog_index(body):
         title=str(post.get("title") or "").strip()
         description=str(post.get("description") or "").strip()
         cover=str(post.get("cover") or "").strip()
+        # Preserve an owner-edited D1 cover. If the row still contains the
+        # known legacy source cover, use the already reviewed source image.
+        try:
+            from blog_editorial import GUIDES,cover_path
+            if slug in GUIDES:
+                baseline=str(GUIDES[slug].get("cover") or "")
+                if baseline and not baseline.startswith("/"):
+                    baseline="/media/ppt/"+baseline
+                if cover==baseline:
+                    cover=cover_path(slug)
+        except (ImportError,KeyError):
+            pass
         if len(title)<12 or len(description)<25 or not cover.startswith("/"):
             raise ValueError("Published D1 Blog row has incomplete index fields: "+slug)
         url="/blog/"+e(slug)+"/"
