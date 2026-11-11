@@ -46,18 +46,23 @@ DIST=ROOT/"dist"
 
 SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
 
-SITE_CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
-ORIGIN=SITE_CONFIG["site"]["origin"]
+ORIGIN="https://xuyibottles.com"
 
 UI_TRANSLATIONS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
 
 RUNTIME_UI_TRANSLATIONS=json.loads((ROOT/"data/runtime-ui-translations.json").read_text(encoding="utf-8"))
 
-BLOG_DATE_LABELS=json.loads((ROOT/"data/blog-date-labels.json").read_text(encoding="utf-8"))
+BLOG_DATE_LABELS={
 
-EDITORIAL_CORRECTIONS=json.loads((ROOT/"data/locale-editorial-corrections.json").read_text(encoding="utf-8"))
+    "es":("Publicado el","Revisado el"),
 
-GALLERY_SHORT_TITLES=json.loads((ROOT/"data/gallery-short-titles.json").read_text(encoding="utf-8"))
+    "pt":("Publicado em","Revisto em"),
+
+    "ru":("Опубликовано","Проверено"),
+
+    "tr":("Yayımlandı","Gözden geçirildi")
+
+}
 
 def correct_reviewed_drinkware_terms(markup,locale):
 
@@ -69,9 +74,17 @@ def correct_reviewed_drinkware_terms(markup,locale):
 
     """
 
-    changes=EDITORIAL_CORRECTIONS.get(locale,[])
+    changes={
 
-    for incorrect,correct in changes:
+        "es":[("variadores de plástico","botellas de plástico"),
+
+              ("bebidas de plástico","botellas de plástico")],
+
+        "pt":[("bebidas de plástico","garrafas de plástico")],
+
+    }
+
+    for incorrect,correct in changes.get(locale,[]):
 
         pat=re.compile(re.escape(incorrect),re.I)
 
@@ -105,6 +118,32 @@ def dedupe_catalog_cards(body):
         seen.add(url)
         return card
     return pattern.sub(replace,body)
+
+def sort_localized_blog_index(body,ordered_slugs):
+    """Match localized Blog card order to the build's D1 published order.
+
+    Card HTML remains owner/D1-authored; only the card sequence is changed at
+    the source-render boundary. If the index is incomplete or contains an
+    unexpected card, preserve it and let the release gates report the issue.
+    """
+    if not ordered_slugs:
+        return body
+    cards=list(re.finditer(r'<article class="news-card">[\s\S]*?</article>',body,re.I))
+    if len(cards)!=len(ordered_slugs):
+        return body
+    parsed=[]
+    for match in cards:
+        links=re.findall(r'href=["\']/((?:[a-z0-9_-]+/)?blog/([a-z0-9]+(?:-[a-z0-9]+)*)/)["\']',match.group(0),re.I)
+        slugs={slug for _,slug in links}
+        if len(slugs)!=1:
+            return body
+        parsed.append((next(iter(slugs)),match.group(0)))
+    if len(set(slug for slug,_ in parsed))!=len(parsed) or set(slug for slug,_ in parsed)!=set(ordered_slugs):
+        return body
+    by_slug=dict(parsed)
+    separator=body[cards[0].end():cards[1].start()] if len(cards)>1 else ""
+    replacement=separator.join(by_slug[slug] for slug in ordered_slugs)
+    return body[:cards[0].start()]+replacement+body[cards[-1].end():]
 
 def relocate_product_intro(body):
     """Move the existing product intro below the full two-column product block.
@@ -162,10 +201,7 @@ def localize_blog_timeline(body,original,locale,route):
 
     if not published:return body  # No verified source date: preserve approved D1 copy.
 
-    labels=BLOG_DATE_LABELS.get(locale)
-    if not isinstance(labels,dict) or not labels.get("published") or not labels.get("reviewed"):
-        raise RuntimeError("Missing reviewed Blog date labels: "+locale)
-    first,reviewed=labels["published"],labels["reviewed"]
+    first,reviewed=BLOG_DATE_LABELS[locale]
 
     timeline='<time datetime="'+published+'">'+html.escape(first)+" "+published+"</time>"
 
@@ -482,17 +518,23 @@ def main():
     languages=(data.get("languages") or {}).get("languages",[])
 
     ready=approved_locales(data)
-    language_config=data.get("languages") or {}
-    source_locale=str(language_config.get("sourceLocale") or next((r["code"] for r in ready if not r["pathPrefix"]),ready[0]["code"])).lower()
-    default_locale=str(language_config.get("defaultLocale") or source_locale).lower()
 
-    # Preserve D1-reviewed UI copy while getting supported codes and URL
-    # prefixes solely from the registry; no fixed language-count list.
+    # Preserve D1-reviewed UI copy while getting the supported code and URL
+
+    # prefix solely from the registry; no es/pt/ru/tr enumeration here.
+
     original={r.get("code"):r for r in languages}
+
     live={r["code"]:{**original.get(r["code"],{}),**r}
-          for r in ready if r["code"]!=source_locale}
+
+          for r in ready if r["code"]!="en"}
 
     translated={}
+    blog_order=[str(row.get("slug")) for row in data.get("blogPosts",[])
+                if isinstance(row,dict) and row.get("status")=="published"
+                and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",str(row.get("slug","")))]
+    if len(blog_order)!=len(set(blog_order)):
+        raise RuntimeError("D1 Blog snapshot contains duplicate published slugs")
     source_generated_routes=set()
 
     for item in data.get("translations",[]):
@@ -587,7 +629,7 @@ def main():
 
                 translated[(route,loc)]={
 
-                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else (((GALLERY_SHORT_TITLES.get(loc) or {}).get("title") or name[:40])+" "+row["model"]+" | XUYI"),
+                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else ({"es":"Botella deportiva","pt":"Garrafa esportiva","ru":"Спортивная бутылка","tr":"Spor şişesi"}[loc]+" "+row["model"]+" | XUYI"),
 
                     "description":name+". "+gallery_labels[loc][2],
 
@@ -654,6 +696,7 @@ def main():
             from blog_listing_layout import single_blog_index_heading
 
             fields={**fields,"mainHtml":single_blog_index_heading(fields["mainHtml"],loc)}
+            fields={**fields,"mainHtml":sort_localized_blog_index(fields["mainHtml"],blog_order)}
 
         # Correct a reviewed Turkish bottle-cap false friend in D1 source
 
@@ -920,7 +963,7 @@ def main():
         from scripts.source_catalog_capacity_oz import enrich_catalog_body
         text=enrich_catalog_body(text,loc,SERIES)
 
-        text=text.replace('<html lang="'+source_locale+'">','<html lang="'+loc+'">',1)
+        text=text.replace('<html lang="en">','<html lang="'+loc+'">',1)
 
         text=re.sub(r'<title>[^<]*</title>','<title>'+html.escape(fields["title"])+'</title>',text,count=1)
 
@@ -1037,7 +1080,7 @@ def main():
         from scripts.verified_trust_technical_seo import add_at_render as add_trust_technical_seo
         text=add_trust_technical_seo(text,localized,loc)
         from scripts.product_hreflang import apply_to_document as apply_product_hreflang
-        text=apply_product_hreflang(text,localized,loc,ready)
+        text=apply_product_hreflang(text,localized,loc)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
 
@@ -1068,7 +1111,7 @@ def main():
 
             content=link.read_text(encoding="utf-8")
 
-            tags=['<link rel="alternate" hreflang="'+source_locale+'" href="'+ORIGIN+route+'">']
+            tags=['<link rel="alternate" hreflang="en" href="'+ORIGIN+route+'">']
 
             tags.extend('<link rel="alternate" hreflang="'+lang+'" href="'+ORIGIN+url+'">' for lang,url in sorted(alts))
 
@@ -1108,7 +1151,7 @@ def main():
 
         content=src.read_text(encoding="utf-8")
 
-        tags=('<link rel="alternate" hreflang="'+source_locale+'" href="'+ORIGIN+route+'">'
+        tags=('<link rel="alternate" hreflang="en" href="'+ORIGIN+route+'">'
 
               '<link rel="alternate" hreflang="x-default" href="'+ORIGIN+route+'">')
 
@@ -1177,9 +1220,9 @@ def main():
 
     # language pages must not become sitemap/hreflang entries.
 
-    manifest={"schemaVersion":1,"site":"xuyi-drinkware-site","sourceLocale":source_locale,
+    manifest={"schemaVersion":1,"site":"xuyi-drinkware-site","sourceLocale":"en",
 
-              "defaultLocale":default_locale,"origin":ORIGIN,"locales":ready,
+              "defaultLocale":"en","origin":ORIGIN,"locales":ready,
 
               "routes":{lang["code"]:sorted(
 
@@ -1187,9 +1230,9 @@ def main():
 
                 for f in (DIST/(lang["pathPrefix"] or ".")).rglob("index.html")
 
-                if (lang["code"]!=default_locale or f.relative_to(DIST).parts[0] not in
+                if (lang["code"]!="en" or f.relative_to(DIST).parts[0] not in
 
-                    {x["pathPrefix"] for x in ready if x["code"]!=default_locale}|{"admin"}))
+                    {x["pathPrefix"] for x in ready if x["code"]!="en"}|{"admin"}))
 
                 for lang in ready}}
 
@@ -1198,3 +1241,4 @@ def main():
     print("XUYI_REVIEWED_LOCALIZED_PAGES",created,"LANGUAGES",sorted(live),"ALTERNATE_SETS",len(alternates))
 
 if __name__=="__main__":main()
+

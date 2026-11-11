@@ -31,7 +31,10 @@ export async function onRequestGet(context){
       list(db,"SELECT path,alt_json FROM xuyi_media_alt ORDER BY path LIMIT 12000"),
       list(db,"SELECT id,model,rating,author,review_date,content,status FROM xuyi_product_reviews WHERE status='published' ORDER BY model,review_date DESC,id"),
       list(db,"SELECT slug,locale,seo_title,meta_description FROM xuyi_product_seo ORDER BY slug,locale"),
-      list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY slug")
+      // Keep the build snapshot in the same deterministic order as the live
+      // English Blog route. Localized static indexes are rendered from this
+      // D1 order so every language presents the same article sequence.
+      list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY updated_at DESC,slug ASC")
     ]);
       const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
       const languageConfig=normalizeLanguageConfig(parseJson(config.language_config,defaultLanguageConfig()));

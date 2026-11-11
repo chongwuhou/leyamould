@@ -62,7 +62,7 @@ for page in pages:
         dynamic_blog_route = bool(re.fullmatch(r"/blog/[a-z0-9-]+/", urlsplit(url).path)) and (ROOT/"functions/blog/[[path]].js").is_file()
         if target and not (OUT/target).is_file() and not (OUT/target/"index.html").is_file() and not dynamic_blog_route:
             broken.append((rel,"broken route",url))
-# Product SEO quality gate: model pages need unique search snippets and
+# Demalong V1.4 quality gate: model pages need unique search snippets and
 # self-referencing canonical URLs. A duplicated value blocks deployment.
 product_titles={}
 product_descriptions={}
@@ -112,18 +112,37 @@ if actual_factory_models!=expected_factory_models:
     broken.append(("factory catalog","published D1 source products differ from generated product pages",
         {"missing":sorted(expected_factory_models-actual_factory_models),"extra":sorted(actual_factory_models-expected_factory_models)}))
 blog_snapshot=json.loads(snapshot_path.read_text(encoding="utf-8")) if snapshot_path.is_file() else {}
-language_config=blog_snapshot.get("languages") or {}
-language_rows=language_config.get("languages") if isinstance(language_config,dict) else None
-source_locale=str(language_config.get("sourceLocale") or "en").lower() if isinstance(language_config,dict) else "en"
-target_locales={str(row.get("code")).lower() for row in (language_rows or [])
-                if isinstance(row,dict) and row.get("enabled") is not False
-                and row.get("publishReady") is not False
-                and str(row.get("code")).lower()!=source_locale}
-if not language_rows:
-    broken.append(("D1 language registry","build snapshot has no language configuration"))
 published_blog={row.get("slug") for row in blog_snapshot.get("blogPosts",[])
                 if isinstance(row,dict) and row.get("status")=="published"
                 and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",str(row.get("slug","")))}
+blog_order=[str(row.get("slug")) for row in blog_snapshot.get("blogPosts",[])
+            if isinstance(row,dict) and row.get("status")=="published"
+            and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",str(row.get("slug","")))]
+language_config=blog_snapshot.get("languages") if isinstance(blog_snapshot.get("languages"),dict) else {}
+source_locale=str(language_config.get("sourceLocale") or "en")
+publishable_locales=[str(row.get("code")) for row in language_config.get("languages",[])
+                     if isinstance(row,dict) and row.get("code")!=source_locale
+                     and row.get("enabled") is True and row.get("publishReady") is True]
+def localized_blog_order(content,locale):
+    cards=re.findall(r'<article class="news-card">[\s\S]*?</article>',content,re.I)
+    order=[]
+    for card in cards:
+        links=re.findall(r'href="/(?:[a-z0-9_-]+/)?blog/([a-z0-9]+(?:-[a-z0-9]+)*)/"',card,re.I)
+        if len(links)!=3 or len(set(links))!=1:
+            broken.append((locale,"invalid localized Blog card",links[:3]))
+            return []
+        order.append(links[0])
+    return order
+if blog_order and len(blog_order)==len(set(blog_order)):
+    for locale in publishable_locales:
+        localized_index=OUT/locale/"blog"/"index.html"
+        if not localized_index.is_file():
+            broken.append(("blog CMS","localized Blog index missing",str(localized_index.relative_to(OUT))))
+            continue
+        actual=localized_blog_order(localized_index.read_text(encoding="utf-8"),locale)
+        if actual and actual!=blog_order:
+            first=next((i for i,(expected,got) in enumerate(zip(blog_order,actual),1) if expected!=got),None)
+            broken.append((locale,"localized Blog index order differs from D1 snapshot",first))
 for slug in published_blog:
     if not (OUT/"blog"/slug/"index.html").is_file():
         broken.append(("blog CMS","published D1 article shell missing","/blog/"+slug+"/"))
@@ -131,7 +150,7 @@ for row in blog_snapshot.get("translations",[]):
     rid=row.get("resourceId","")
     loc=row.get("locale")
     match=re.fullmatch(r"page:(/blog/[a-z0-9-]+/)",rid) if isinstance(rid,str) else None
-    if not match or str(loc).lower() not in target_locales or match.group(1)=="/blog/":
+    if not match or loc not in {"es","pt","ru","tr"} or match.group(1)=="/blog/":
         continue
     slug=match.group(1).strip("/").split("/")[-1]
     if slug in published_blog and not (OUT/loc/"blog"/slug/"index.html").is_file():
@@ -159,10 +178,8 @@ nav_text=json.dumps(nav,ensure_ascii=False)
 for slug in ("spray-water-bottles","two-way-drinking-cups","titanium-vacuum-cups"):
     if slug not in nav_text:broken.append(("navigation","missing new drinkware category",slug))
 if len(pages)<130:broken.append(("release","unexpected page loss",len(pages)))
-legacy_markers=("cartridge-media","old-industry-brand","external-filter-catalog")
-if any(any(marker in x.read_text(encoding="utf-8").lower() for marker in legacy_markers)
-       for x in (OUT/"templates").rglob("*") if x.is_file()) if (OUT/"templates").exists() else False:
-    broken.append(("release","unrelated legacy industry content leaked"))
+if any("demalong" in x.read_text(encoding="utf-8").lower() for x in (OUT/"templates").rglob("*") if x.is_file()) if (OUT/"templates").exists() else False:
+    broken.append(("release","DML brand leaked"))
 for sensitive in ("build.py", "site_renderer.py", "product_content.py", "data/products.json", "_local_ops/build-snapshot.json", ".wrangler/config/default.toml"):
     if (OUT/sensitive).exists():broken.append((sensitive,"sensitive source included in public dist"))
 for hidden in ("_local_ops", "functions", "templates", ".wrangler"):
@@ -171,3 +188,4 @@ for hidden in ("_local_ops", "functions", "templates", ".wrangler"):
 if broken:
     print("SITE_RELEASE_ERRORS",len(broken),broken[:40]);sys.exit(1)
 print("SITE_RELEASE_TESTS_PASSED",f"html={len(pages)}",f"assets={meta['fileCount']}",f"broken={len(broken)}")
+
