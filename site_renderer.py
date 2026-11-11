@@ -100,7 +100,7 @@ def render_d1_blog_index(body):
             raise ValueError("Published D1 Blog row has incomplete index fields: "+slug)
         url="/blog/"+e(slug)+"/"
         category=e(str(post.get("group") or "Buyer Resources").upper())
-        cards.append('<article class="news-card"><a href="'+url+'" class="news-card__image"><img src="'+e(cover)+'" alt="'+e(str(post.get("coverAlt") or title))+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+category+'</span><h3><a href="'+url+'">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>')
+        cards.append('<article class="news-card"><a class="news-card__image" href="'+url+'"><img src="'+e(cover)+'" alt="'+e(str(post.get("coverAlt") or title))+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+category+'</span><h3><a href="'+url+'">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>')
     pattern=re.compile(r'(<section class="section blog-listing"><div class="shell"><div class="blog-listing__grid">)[\s\S]*?(</div></div></section>)',re.I)
     updated,count=pattern.subn(lambda m:m.group(1)+''.join(cards)+m.group(2),body,count=1)
     if count!=1:
