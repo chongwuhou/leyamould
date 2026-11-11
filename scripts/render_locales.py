@@ -1080,7 +1080,7 @@ def main():
         from scripts.verified_trust_technical_seo import add_at_render as add_trust_technical_seo
         text=add_trust_technical_seo(text,localized,loc)
         from scripts.product_hreflang import apply_to_document as apply_product_hreflang
-        text=apply_product_hreflang(text,localized,loc)
+        text=apply_product_hreflang(text,localized,loc,languages)
         dest=DIST/localized.lstrip("/")/"index.html";dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(text,encoding="utf-8")
 
