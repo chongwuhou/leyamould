@@ -141,6 +141,17 @@ def localized_blog_order(content,locale):
     return order
 if not blog_order or len(blog_order)!=len(set(blog_order)):
     broken.append(("blog CMS","D1 published Blog order is missing or duplicated",len(blog_order)))
+else:
+    english_index=OUT/"blog"/"index.html"
+    if not english_index.is_file():
+        broken.append(("blog CMS","English Blog index missing",str(english_index.relative_to(OUT))))
+    else:
+        english_actual=localized_blog_order(english_index.read_text(encoding="utf-8"),"en")
+        if english_actual!=blog_order:
+            first=next((i for i,(expected,got) in enumerate(zip(blog_order,english_actual),1) if expected!=got),None)
+            broken.append(("en","English Blog index order/count differs from D1 snapshot",first))
+if not blog_order or len(blog_order)!=len(set(blog_order)):
+    pass
 elif not publishable_locales:
     broken.append(("blog CMS","No publish-ready localized Blog output found",None))
 else:

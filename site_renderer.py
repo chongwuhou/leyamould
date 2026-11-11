@@ -83,6 +83,30 @@ def sort_d1_blog_index(body):
     replacement=separator.join(by_slug[slug] for slug in ordered)
     return body[:cards[0].start()]+replacement+body[cards[-1].end()]
 
+def render_d1_blog_index(body):
+    """Render every published D1 Blog row into the static English index."""
+    posts=[row for row in BUILD_STATE.get("blogPosts",[])
+           if isinstance(row,dict) and row.get("status")=="published"
+           and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",str(row.get("slug","")))]
+    if not posts:
+        return body
+    cards=[]
+    for post in posts:
+        slug=str(post["slug"])
+        title=str(post.get("title") or "").strip()
+        description=str(post.get("description") or "").strip()
+        cover=str(post.get("cover") or "").strip()
+        if len(title)<12 or len(description)<25 or not cover.startswith("/"):
+            raise ValueError("Published D1 Blog row has incomplete index fields: "+slug)
+        url="/blog/"+e(slug)+"/"
+        category=e(str(post.get("group") or "Buyer Resources").upper())
+        cards.append('<article class="news-card"><a href="'+url+'" class="news-card__image"><img src="'+e(cover)+'" alt="'+e(str(post.get("coverAlt") or title))+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+category+'</span><h3><a href="'+url+'">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>')
+    pattern=re.compile(r'(<section class="section blog-listing"><div class="shell"><div class="blog-listing__grid">)[\s\S]*?(</div></div></section>)',re.I)
+    updated,count=pattern.subn(lambda m:m.group(1)+''.join(cards)+m.group(2),body,count=1)
+    if count!=1:
+        raise ValueError("Static Blog listing template is missing its D1 card grid")
+    return updated
+
 RAW=json.loads((ROOT/"data/products.json").read_text(encoding="utf-8"))
 IMAGES=json.loads((ROOT/"data/excel-images.json").read_text(encoding="utf-8"))
 CAT={
@@ -184,6 +208,7 @@ def build_url(path,title,content):
    from blog_listing_layout import single_blog_index_heading
    main=single_blog_index_heading(main,"en")
    main=sort_d1_blog_index(main)
+   main=render_d1_blog_index(main)
   # Upgrade only exact, still-unedited original covers in English CMS-rendered
   # Blog bodies and cards, matching the same source boundary used by locales.
   if route.startswith("/blog/"):
