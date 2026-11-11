@@ -379,22 +379,24 @@ function blogGridRange(source){
  throw Error("Localized Blog grid is not balanced");
 }
 
-// Read balanced card tags instead of using a non-nesting regex. This also
-// repairs the old failure mode where one card wrapped the remaining cards.
+// Recover leaf cards from both valid HTML and the historical malformed records
+// where wrapper articles were added without matching closing tags. A card's
+// own first closing tag is sufficient because real cards do not contain
+// nested article elements; wrapper openings are discarded when another card
+// opening appears before that first close.
 function balancedBlogCards(inner){
- const token=/<\/?article\b[^>]*>/gi,stack=[],records=[];let match;
- while((match=token.exec(inner))){
-  const tag=match[0];
-  if(/^<article\b/i.test(tag)&&/\bclass=["'][^"']*\bnews-card\b[^"']*["']/i.test(tag))
-   stack.push({start:match.index,end:0});
-  else if(/^<\/article\b/i.test(tag)){
-   const item=stack.pop();
-   if(!item)throw Error("Localized Blog card closing tag is not balanced");
-   item.end=token.lastIndex;records.push(item);
-  }
+ const open=/<article\b[^>]*class=["'][^"']*\bnews-card\b[^"']*["'][^>]*>/gi;
+ const openings=[...inner.matchAll(open)].map(match=>({start:match.index,tagEnd:match.index+match[0].length}));
+ const records=[],leaves=[];
+ for(const item of openings){
+  const close=/<\/article\b[^>]*>/i.exec(inner.slice(item.tagEnd));
+  if(!close)continue;
+  const candidate={start:item.start,end:item.tagEnd+close.index+close[0].length};
+  records.push(candidate);
+  const next=openings.find(nextItem=>nextItem.start>item.start);
+  if(!next||next.start>=candidate.end)leaves.push(candidate);
  }
- if(stack.length)throw Error("Localized Blog card opening tag is not balanced");
- const leaves=records.filter(item=>!records.some(child=>child!==item&&child.start>item.start&&child.end<item.end));
+ if(!leaves.length)throw Error("Localized Blog cards could not be recovered");
  return {records,leaves:leaves.sort((a,b)=>a.start-b.start)};
 }
 
