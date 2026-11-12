@@ -67,7 +67,9 @@ export async function authorizedBuildRequest(request, env) {
 // fail closed so an old workflow cannot mutate D1 with fragile HTML logic.
 export async function authorizedReviewedBlogBatchRequest(request, env) {
   if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-batch") return false;
-  return verifyCloudflareProjectToken(bearerToken(request), env);}
+  if (await authorizeAdminRequest(request, env)) return true;
+  return verifyCloudflareProjectToken(bearerToken(request), env);
+}
 
 // Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
 // Narrow, source-reviewed repair for the nine multilingual Blog D1 records identified

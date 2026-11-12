@@ -24,6 +24,7 @@ assert "configuredLocales(languageConfig)" in batch
 assert "loadLanguageConfig(db)" in batch
 assert '"/api/admin/blog-batch"' in auth
 assert "/api/admin/blog-batch-20261111" not in auth
+assert "if (await authorizeAdminRequest(request, env)) return true;" in auth
 assert "locale IN ('es','pt','ru','tr')" not in scheduler
 assert "prepared.length!==4" not in scheduler
 assert "ORDER BY updated_at DESC,slug ASC" in cms
