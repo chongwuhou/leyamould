@@ -1,4 +1,4 @@
-import { authorizedBuildRequest } from "../../_shared/build-auth.js";
+import { authorizedBuildRequest, authorizedExplicitPublishRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema, normalizeBlogPost, listBlogPosts, findEditableBlogPost } from "../../_shared/blog-cms.js";
 import {scheduleBlogPost,cancelBlogSchedule,ensurePublishScheduler} from "../../_shared/publish-scheduler.js";
 import {MANAGED_MODELS} from "../../_shared/xuyi-routes.js";
@@ -54,6 +54,11 @@ export async function onRequestPost(context){
  const db=context.env.XUYI_DB;
  await ensureBlogSchema(db);
  const action=clean(payload.action);
+ if(action==="publish"||action==="schedule"){
+  if(!(await authorizedExplicitPublishRequest(context.request,context.env))){
+   return reply({error:"Explicit owner publish authorization required"},428);
+  }
+ }
  if(action==="save"||action==="publish"){
   let post;try{post=normalizeBlogPost(payload.post)}catch(error){return reply({error:String(error.message||error)},400)}
   const exists=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?").bind(post.slug).first();

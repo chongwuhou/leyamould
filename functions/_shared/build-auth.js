@@ -65,10 +65,20 @@ export async function authorizedBuildRequest(request, env) {
 // The single generic reviewed batch endpoint is the only Blog write route that
 // may accept the existing CI token. Historical date-named routes intentionally
 // fail closed so an old workflow cannot mutate D1 with fragile HTML logic.
+// AI/API publication requires an explicit per-request owner intent.
+// A project token proves project access; it does not prove that this task was
+// authorized to publish. Human backend sessions remain the normal manual path.
+export async function authorizedExplicitPublishRequest(request, env) {
+  if (request.method !== "POST") return false;
+  if (await authorizeAdminRequest(request, env)) return true;
+  const intent = clean(request.headers.get("x-xuyi-publish-intent")).toLowerCase();
+  if (intent !== "explicit-owner-approval") return false;
+  return verifyCloudflareProjectToken(bearerToken(request), env);
+}
+
 export async function authorizedReviewedBlogBatchRequest(request, env) {
   if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-batch") return false;
-  if (await authorizeAdminRequest(request, env)) return true;
-  return verifyCloudflareProjectToken(bearerToken(request), env);
+  return authorizedExplicitPublishRequest(request, env);
 }
 
 // Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
