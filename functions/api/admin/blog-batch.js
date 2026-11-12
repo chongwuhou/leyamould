@@ -54,9 +54,19 @@ function validatePayload(payload, locales) {
     const locale = String(item?.locale || "");
     const key = route + "|" + locale;
     const html = String(item?.mainHtml || "");
+    const requiredPageMarkers = [
+      '<section class="page-intro">',
+      '<h1>',
+      '<section class="section blog-editorial">',
+      'class="blog-detail__cover"',
+      'class="blog-editorial__body"',
+      'class="blog-meta"',
+      'class="blog-editorial__cta"'
+    ];
     if (!match || !expected.has(match[1]) || !locales.includes(locale) || seenTranslations.has(key) ||
         String(item?.title || "").length < 12 || String(item?.description || "").length < 25 ||
         html.length < 5000 || html.length > 250000 || unsafeHtml.test(html) ||
+        !requiredPageMarkers.every(marker => html.includes(marker)) ||
         count(html, 'id="primary-sources"') !== 1 || count(html, 'class="blog-editorial__product-link"') !== 3 ||
         count(html, 'class="blog-related__item"') !== 3 || count(html, 'class="blog-buyer-matrix"') !== 1 || count(html, "<details>") !== 4) {
       throw Error("Reviewed translation failed validation: " + key);
@@ -171,4 +181,3 @@ export async function onRequestPost(context) {
     return reply({ error: "D1 batch operation failed: " + String(error?.message || "unknown error").slice(0, 240) }, 500);
   }
 }
-
