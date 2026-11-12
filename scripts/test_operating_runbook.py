@@ -72,7 +72,7 @@ if "schedule_blog_20261103" in workflow:
     fail("historical date-specific workflow input remains")
 if re.search(r"^\s*- name: (?:Prepare|Publish|Upload|Repair|Schedule|Rebuild|Double).*20\d{2}", workflow, re.MULTILINE):
     fail("historical date-specific release step remains in the live publisher")
-if re.search(r"scripts/[^\s"']*20\d{2}", workflow):
+if re.search(r"scripts/[^\s]*20\d{2}", workflow):
     fail("historical date-specific script remains in the live publisher")
 if re.search(r"(?i)(?:five|four|fifteen|twenty)[ -]language", workflow):
     fail("fixed locale batch wording remains in the live publisher")
