@@ -1,0 +1,518 @@
+{
+  "es": {
+    "title": "¿Qué deben probar los comercios deportivos antes de reponer botellas reutilizables al por mayor?",
+    "description": "Lista de control B2B para probar tapa, fugas, transporte, limpieza y reposición de botellas deportivas antes de una compra mayorista.",
+    "intro": "Una foto no permite saber si la botella sirve al cliente o su rutina. Antes de repetir un pedido, evalúa una muestra montada como la llevarán, abrirán, rellenarán y limpiarán los clientes; registra modelo y condiciones exactas.",
+    "coverAlt": "Manos abren una botella reutilizable al aire libre; foto contextual, no es modelo, cliente ni prueba de rendimiento de XUYI.",
+    "sections": [
+      [
+        "1. Define la actividad y las condiciones",
+        "La prueba sirve si el comprador indica qué hará el cliente. Una tienda de montaña, gimnasio, ciclismo y equipos puede tener distintos medios de transporte, puntos de relleno y rutinas de limpieza. Registra usuario, bolsa o soporte, frecuencia de apertura e información prevista para la ficha. Limita el resultado al SKU y al uso indicado por el fabricante; una revisión de tienda no es prueba de laboratorio ni garantía universal."
+      ],
+      [
+        "2. Prueba la tapa real con el usuario previsto",
+        "Usa la muestra montada, no una tapa suelta de otro modelo. Pide al usuario previsto que abra y cierre y prueba guantes solo si son parte del uso real. Anota agarre, dirección, piezas y pasos; una foto no demuestra apertura con una mano. Solicita instrucciones de limpieza del modelo exacto y revisa cada variante de tapa antes de transferir una aprobación."
+      ],
+      [
+        "3. Documenta una prueba de fugas controlada",
+        "Antes de probar, define nivel de llenado, cierre, tiempo, orientación, bolsa y punto de inspección. Usa agua y sigue instrucciones del fabricante. Fotografía el método y registra el resultado de esa muestra bajo esas condiciones. Un resultado en una unidad no demuestra todo el lote, líquidos calientes ni cualquier posición de transporte. Si hay dudas, detén la aprobación, revisa el montaje y pide aclaración al proveedor."
+      ],
+      [
+        "4. Comprueba el transporte en el uso real",
+        "Mide ancho máximo y altura, y compáralos con el portabidón, bolsillo de mochila, bolsa de gimnasio, expositor o equipación. Prueba la correa si forma parte de la versión. Anota si se coloca y se retira sin interferencias, sin afirmar compatibilidad universal por una sola prueba. Pide dimensiones exactas por modelo y revisión; la capacidad no sustituye la medición."
+      ],
+      [
+        "5. Incluye limpieza y cuidado en la decisión",
+        "Pide instrucciones para cuerpo, tapa y piezas removibles del modelo exacto; compáralas con la información que publicará la tienda. No deduzcas aptitud para lavavajillas, calor o líquidos calientes por una abreviatura de resina o por otra botella. Si se espera uso repetido, pregunta qué piezas se retiran y cómo se montan. Registra cualquier paso confuso; esta revisión no reemplaza documentos de material."
+      ],
+      [
+        "6. Compara tamaño sin convertir clases en promesas",
+        "Conserva la capacidad exacta en ml y evalúa la muestra llena en el contexto del cliente. Las páginas listan 380 ml para 2400, 650 ml para 2401 y 800 ml para 2470; las onzas son clases aproximadas. No deduzcas peso, medidas o tiempo de uso solo por capacidad. Si ficha, muestra y cotización discrepan, detén la reposición y aclara el dato. Usa una fila por modelo y tapa."
+      ],
+      [
+        "7. Firma una aprobación que producción pueda seguir",
+        "Cierra con modelo, versión de cuerpo y tapa, capacidad, color, impresión, embalaje, cantidad, destino, instrucciones y referencia de muestra. Añade fotos claras y los pasos realmente probados. Evita afirmaciones más amplias que la evidencia. Pide al proveedor que identifique sustituciones antes de producir; conserva la aprobación junto a la orden para comparar entregas futuras."
+      ]
+    ],
+    "checklist": [
+      "Nombra el cliente deportivo y la actividad.",
+      "Registra modelo, tapa y revisión exactos.",
+      "Sigue instrucciones y anota condiciones de prueba.",
+      "Prueba apertura y cierre con el usuario previsto.",
+      "Documenta fugas sin prometer garantía universal.",
+      "Mide contra bolsa, portabidón o expositor real.",
+      "Pide instrucciones de cuidado del modelo exacto.",
+      "Conserva ml exactos y marca oz como aproximado.",
+      "Compara prueba, ficha, cotización y orden.",
+      "Aprueba muestra fechada y controla cambios."
+    ],
+    "faqs": [
+      [
+        "¿Se puede aprobar una botella con una foto?",
+        "La foto ayuda a elegir modelos, pero no verifica tapa, dimensiones, limpieza ni muestra montada. Revisa el SKU real y guarda el resultado antes de reponer."
+      ],
+      [
+        "¿Una prueba de fugas aprobada garantiza todo el lote?",
+        "No. Registra muestra y condiciones. No conviertas una revisión limitada en garantía de toda la producción sin evidencia adecuada."
+      ],
+      [
+        "¿Debe probarse llena?",
+        "Usa un método seguro y acorde con instrucciones y transporte previsto. Registra llenado, cierre, orientación y revisión para que otra persona entienda el resultado."
+      ],
+      [
+        "¿Qué documentos guardar con la reposición?",
+        "Fotos de muestra, modelo y tapa, capacidad, color, arte, embalaje, cuidados, notas de prueba y confirmación escrita de cambios."
+      ]
+    ],
+    "matrix": {
+      "title": "Revisión de muestra deportiva: registra evidencia",
+      "intro": "El resultado solo aplica a la muestra, pasos y condiciones anotados.",
+      "head": [
+        "Punto",
+        "Registro",
+        "Detener si"
+      ],
+      "rows": [
+        [
+          "Tapa",
+          "Usuario, pasos y revisión",
+          "Instrucciones confusas"
+        ],
+        [
+          "Fuga",
+          "Llenado, cierre y orientación",
+          "Método no repetible"
+        ],
+        [
+          "Transporte",
+          "Medida y soporte real",
+          "Cambia la variante"
+        ],
+        [
+          "Limpieza",
+          "Cuidado y piezas",
+          "Instrucciones difieren"
+        ],
+        [
+          "Reposición",
+          "Muestra, orden y cambios",
+          "Sustitución pendiente"
+        ]
+      ]
+    },
+    "sources": {
+      "title": "Documentación por producto y mercado",
+      "intro": "Una prueba de manejo solo cubre la muestra evaluada; la documentación de contacto alimentario debe corresponder al artículo y mercado.",
+      "labels": [
+        "Comisión Europea: legislación sobre materiales en contacto con alimentos",
+        "FDA: estado regulatorio de componentes en contacto con alimentos"
+      ]
+    },
+    "related": [
+      [
+        "¿Qué tipo de tapa de botella es mejor para una compra mayorista?",
+        "Compara criterios de cierre antes de cotizar."
+      ],
+      [
+        "Control de calidad de botellas: 9 revisiones antes de producir",
+        "Sigue una secuencia documentada antes de producción."
+      ],
+      [
+        "¿Qué capacidad debe pedir un programa corporativo?",
+        "Relaciona el tamaño con el uso y el usuario."
+      ]
+    ],
+    "cta": [
+      "¿Necesitas cotizar un modelo concreto?",
+      "Envía modelo, cantidad, logotipo y destino para revisar opciones confirmadas.",
+      "Solicitar cotización"
+    ]
+  },
+  "pt": {
+    "title": "O que lojas esportivas devem testar antes de repor garrafas reutilizáveis no atacado?",
+    "description": "Checklist B2B para testar tampa, vazamento, transporte, limpeza e reposição antes de comprar garrafas esportivas em volume.",
+    "intro": "Uma foto não mostra se a garrafa funciona para o cliente ou a rotina esportiva. Antes de repetir o pedido, avalie a amostra montada como será carregada, aberta, abastecida e limpa; registre o modelo e as condições exatas.",
+    "coverAlt": "Mãos abrem uma garrafa reutilizável ao ar livre; foto contextual, sem relação com modelo, cliente ou teste da XUYI.",
+    "sections": [
+      [
+        "1. Defina a atividade e as condições",
+        "O teste só ajuda quando o comprador descreve o que o cliente fará. Loja de trilha, academia, ciclismo e equipe podem ter diferentes formas de transporte, pontos de abastecimento e limpeza. Registre usuário, bolsa ou suporte, frequência de abertura e informações da página de venda. Limite a conclusão ao SKU e ao uso indicado pelo fabricante; checagem na loja não é teste de laboratório nem garantia universal."
+      ],
+      [
+        "2. Teste a tampa real com o usuário previsto",
+        "Use a amostra montada, não uma tampa solta de outro modelo. Peça ao usuário que abra e feche e teste luvas somente se fizerem parte do uso real. Anote pega, direção, peças e sequência; foto não prova uso com uma mão. Solicite cuidados do modelo exato e verifique cada versão de tampa antes de transferir aprovação."
+      ],
+      [
+        "3. Registre um teste de vazamento controlado",
+        "Antes, defina nível de enchimento, fechamento, tempo, orientação, bolsa e ponto de inspeção. Use água e siga as instruções do fabricante. Fotografe o método e registre o resultado daquela amostra nessas condições. Um resultado em uma unidade não comprova todo o lote, líquidos quentes ou qualquer posição de transporte. Em caso de dúvida, suspenda a aprovação e peça esclarecimento."
+      ],
+      [
+        "4. Confira o transporte no uso real",
+        "Meça largura máxima e altura e compare com suporte de bicicleta, bolso da mochila, bolsa de academia, expositor ou uniforme. Teste a alça se fizer parte da versão. Registre se a garrafa entra e sai sem interferência, sem alegar compatibilidade universal a partir de um único teste. Peça dimensões por modelo e revisão; capacidade não substitui medição."
+      ],
+      [
+        "5. Inclua limpeza e cuidados na decisão",
+        "Peça instruções para corpo, tampa e peças removíveis do modelo exato e compare com o texto da loja. Não deduza uso em lava-louças, calor ou líquidos quentes por uma sigla de resina ou outra garrafa. Para uso repetido, pergunte quais peças saem e como montar novamente. Registre etapas confusas; essa checagem não substitui documentos de material."
+      ],
+      [
+        "6. Compare capacidade sem transformar classe em promessa",
+        "Mantenha ml como dado exato e avalie a amostra cheia no transporte real. As páginas listam 380 ml para 2400, 650 ml para 2401 e 800 ml para 2470; oz são classes aproximadas. Não deduza peso, dimensões ou duração do uso pela capacidade. Se página, amostra e cotação divergirem, suspenda o pedido. Use uma linha por modelo e tampa."
+      ],
+      [
+        "7. Assine uma aprovação que a produção possa seguir",
+        "Finalize com modelo, versão do corpo e tampa, capacidade, cor, impressão, embalagem, quantidade, destino, instruções e referência da amostra. Inclua fotos claras e os passos realmente testados. Evite declarações mais amplas que as evidências. Peça que substituições sejam identificadas antes da produção e guarde a aprovação junto ao pedido."
+      ]
+    ],
+    "checklist": [
+      "Identifique o cliente esportivo e a atividade.",
+      "Registre modelo, tampa e revisão exatos.",
+      "Siga instruções e anote condições do teste.",
+      "Teste abertura e fechamento com o usuário.",
+      "Documente vazamento sem prometer garantia universal.",
+      "Meça com bolsa, suporte ou expositor real.",
+      "Peça cuidados específicos do modelo.",
+      "Mantenha ml exato e marque oz como aproximado.",
+      "Compare teste, página, cotação e pedido.",
+      "Aprove amostra datada e controle mudanças."
+    ],
+    "faqs": [
+      [
+        "A loja pode aprovar pela foto?",
+        "A foto ajuda a escolher, mas não verifica tampa, dimensões, limpeza ou amostra montada. Confira o SKU real antes da reposição."
+      ],
+      [
+        "Um teste de vazamento aprovado garante todo o lote?",
+        "Não. Registre amostra e condições. Não transforme uma checagem limitada em garantia de produção sem evidência adequada."
+      ],
+      [
+        "O teste deve ser feito com a garrafa cheia?",
+        "Use método seguro e compatível com instruções e transporte previsto. Registre nível, fechamento, orientação e inspeção."
+      ],
+      [
+        "Que documentos guardar na reposição?",
+        "Fotos da amostra, modelo e tampa, capacidade, cor, arte, embalagem, cuidados, notas de teste e confirmação escrita de mudanças."
+      ]
+    ],
+    "matrix": {
+      "title": "Revisão de amostra esportiva: registre evidências",
+      "intro": "O resultado vale apenas para a amostra, os passos e as condições anotadas.",
+      "head": [
+        "Ponto",
+        "Registro",
+        "Parar se"
+      ],
+      "rows": [
+        [
+          "Tampa",
+          "Usuário, passos e revisão",
+          "Instruções confusas"
+        ],
+        [
+          "Vazamento",
+          "Nível, fechamento e posição",
+          "Método não repetível"
+        ],
+        [
+          "Transporte",
+          "Medidas e suporte real",
+          "Variação mudou"
+        ],
+        [
+          "Limpeza",
+          "Cuidados e peças",
+          "Instruções divergem"
+        ],
+        [
+          "Reposição",
+          "Amostra, pedido e mudanças",
+          "Substituição pendente"
+        ]
+      ]
+    },
+    "sources": {
+      "title": "Documentação por produto e mercado",
+      "intro": "A checagem cobre a amostra testada; documentos de contato com alimentos devem corresponder ao artigo e ao destino.",
+      "labels": [
+        "Comissão Europeia: legislação de materiais em contato com alimentos",
+        "FDA: status de componentes de contato alimentar"
+      ]
+    },
+    "related": [
+      [
+        "Qual tipo de tampa é melhor para uma compra no atacado?",
+        "Compare os critérios de fechamento antes da cotação."
+      ],
+      [
+        "Checklist de qualidade de garrafas: 9 verificações antes da produção",
+        "Siga uma sequência documentada antes de produzir."
+      ],
+      [
+        "Qual capacidade pedir para um programa corporativo?",
+        "Relacione o tamanho com uso e usuário."
+      ]
+    ],
+    "cta": [
+      "Precisa cotar um modelo específico?",
+      "Envie modelo, quantidade, logotipo e destino para revisar opções confirmadas.",
+      "Solicitar cotação"
+    ]
+  },
+  "ru": {
+    "title": "Что спортивным магазинам проверить перед повторным оптовым заказом многоразовых бутылок?",
+    "description": "Практический B2B-чек-лист для проверки образца, крышки, посадки, цвета и записи о качестве перед повторным заказом бутылок.",
+    "intro": "Повторный заказ безопаснее, когда магазин сравнивает новый образец с сохранённой спецификацией, а не полагается на память или фотографию. Проверьте комплектацию, посадку, крышку, упаковку и открытые вопросы по каждому варианту.",
+    "coverAlt": "Руки открывают многоразовую бутылку на улице; иллюстративный снимок, не изображение конкретной модели XUYI.",
+    "sections": [
+      [
+        "1. Сравнивайте новый заказ с утверждённой версией",
+        "Перед запросом цены найдите карточку прошлой закупки: модель, заявленная ёмкость, цвет корпуса и крышки, аксессуары, логотип, упаковка, количество и полученный результат проверки. Укажите номер версии и дату образца. Если прошлый заказ не имеет такого файла, восстановите сведения по фактической бутылке и отметьте, что нужно подтвердить. Не считайте одинаковый внешний вид доказательством одинаковой детали или спецификации."
+      ],
+      [
+        "2. Проверьте сборку и каждую часть, которая может измениться",
+        "Попросите образец именно выбранной модели и варианта. Осмотрите корпус, крышку, уплотнение, ремешок и съёмные детали вместе, затем запишите маркировку, цвет и замечания по каждой части. Небольшое изменение крышки или ремешка может повлиять на переноску и внешний вид. Не переносите одобрение с другой модели, даже если бутылки похожи. Запишите, кто согласовал сборку и по какой версии заказа."
+      ],
+      [
+        "3. Испытайте переноску в реальном сценарии покупателя",
+        "Для спортивной розницы важны не только полка и фотография. Проверьте образец в сумке покупателя, держателе велосипеда или спортивном отсеке, если это относится к целевому каналу. Измерьте собранную бутылку, выступы крышки и свободное пространство вокруг неё. Проверяйте фактическую посадку на конкретном держателе; размеры товара в каталоге сами по себе не подтверждают совместимость. Запишите место, модель держателя и результат."
+      ],
+      [
+        "4. Проведите проверку крышки по понятным критериям",
+        "Сформулируйте, что именно должно делать выбранное закрытие: удобно открываться, собираться без перекоса, соответствовать предполагаемой очистке и не мешать способу переноски. Сначала осмотрите образец, затем выполняйте только безопасные и нужные тесты по согласованной процедуре. Фото крышки не доказывает герметичность или пригодность для горячих напитков. Если результат важен, укажите метод проверки, условия и ответственного, а не используйте общую фразу «прошла тест»."
+      ],
+      [
+        "5. Свяжите цвет, логотип и упаковку с конкретным SKU",
+        "Перед повтором сверяйте одобренный цвет корпуса, крышки, ремешка и печати с сохранённой физической или документированной эталонной ссылкой. Зафиксируйте версию макета, положение логотипа и вариант упаковки. Экранная картинка может выглядеть иначе при другом освещении, поэтому не заменяйте ею утверждённый образец. Разделите количество по каждому продаваемому варианту, чтобы склад не смешал близкие цвета или разные крышки."
+      ],
+      [
+        "6. Проведите входную проверку партии по рискам",
+        "Составьте проверку под конкретную закупку: модель и маркировка, ёмкость по записи, цвет, сборка, видимые повреждения, комплектность, печать, коробка и её этикетка. Согласуйте объём выборки и способ эскалации с поставщиком до отгрузки. Если нужен документ по материалу или рынку, запросите его для точной модели и компонентов; не делайте вывод о соответствии только по внешнему виду. Сохраните фото, номер партии и замечания."
+      ],
+      [
+        "7. Решайте повторный заказ по журналу изменений",
+        "После приёмки сравните фактический результат с утверждённым образцом и запишите отклонения по SKU. Уточните, что вызвало каждое изменение: материал, крышка, цвет, печать, упаковка или корректировка проекта. Перед следующим заказом поставщик и покупатель должны сверить один и тот же файл. Новый образец нужен, если меняется критичный компонент или результат, а не потому, что переписка потеряла контекст."
+      ]
+    ],
+    "checklist": [
+      "Сохраните номер модели, версию спецификации и дату утверждения.",
+      "Сравните корпус, крышку, уплотнение и аксессуары как комплект.",
+      "Измерьте собранную бутылку и проверьте фактическую посадку.",
+      "Запишите конкретный сценарий переноски спортивного покупателя.",
+      "Проверьте открытие, сборку и очистку по согласованному плану.",
+      "Не считайте фото подтверждением герметичности или теста.",
+      "Сверьте цвет каждого компонента и версию печатного макета.",
+      "Разделите количество и упаковку по точным вариантам SKU.",
+      "Сохраните выборку, фото партии и список несоответствий.",
+      "Перед повторным заказом согласуйте все изменения письменно."
+    ],
+    "faqs": [
+      [
+        "Что проверить перед повторным оптовым заказом бутылок?",
+        "Сверьте модель, сборку, цвета, крышку, упаковку и результаты приёмки с утверждённой версией. Изменения и неподтверждённые данные отметьте отдельно."
+      ],
+      [
+        "Можно ли использовать прежнее одобрение крышки для другой модели?",
+        "Не следует предполагать совместимость. Проверьте крышку на полном образце конкретной модели и запишите результат."
+      ],
+      [
+        "Как понять, подходит ли бутылка для держателя или сумки?",
+        "Измерьте собранный образец и проверьте его в конкретном держателе или сумке целевого канала. Каталожная фотография не подтверждает посадку."
+      ],
+      [
+        "Что хранить после проверки партии?",
+        "Сохраните SKU, версию заказа, фотографии, метод проверки, результат, номер партии, выявленные отклонения и согласованное действие."
+      ]
+    ],
+    "matrix": {
+      "title": "Матрица проверки перед повторным заказом",
+      "intro": "Привяжите каждый вывод к точному варианту и проверяемой записи.",
+      "head": [
+        "Область",
+        "Что сверить",
+        "Запись"
+      ],
+      "rows": [
+        [
+          "Идентичность",
+          "Модель, SKU, версия",
+          "Карточка заказа"
+        ],
+        [
+          "Сборка",
+          "Корпус, крышка, уплотнение",
+          "Утверждённый образец"
+        ],
+        [
+          "Посадка",
+          "Размеры и реальный держатель",
+          "Результат примерки"
+        ],
+        [
+          "Брендинг",
+          "Цвет, макет, упаковка",
+          "Версия эталона"
+        ],
+        [
+          "Качество",
+          "Метод, выборка и отклонения",
+          "Отчёт партии"
+        ]
+      ]
+    },
+    "sources": {
+      "title": "Официальные источники и границы применения",
+      "intro": "Эти страницы описывают общие требования, а не подтверждают соответствие конкретной бутылки. Сверяйте материалы, компоненты и рынок.",
+      "labels": [
+        "Европейская комиссия: законодательство о материалах, контактирующих с пищей",
+        "FDA США: нормативный статус компонентов для контакта с пищей"
+      ]
+    },
+    "related": [
+      [
+        "Как выбрать тип крышки для оптового заказа многоразовых бутылок?",
+        "Сравните назначение крышки, уход и совместимость с моделью."
+      ],
+      [
+        "Как составить план контроля качества оптовых бутылок?",
+        "Привяжите проверки и записи к партии и SKU."
+      ],
+      [
+        "Какую ёмкость бутылки выбрать для корпоративной программы?",
+        "Сопоставьте размер с задачей и фактическим сценарием использования."
+      ]
+    ],
+    "cta": [
+      "Нужна проверка конкретного варианта?",
+      "Укажите модель, количество по вариантам, требования к сборке и рынок назначения; спорные параметры сначала подтвердите на образце.",
+      "Запросить коммерческое предложение"
+    ]
+  },
+  "tr": {
+    "title": "Spor perakendecileri, yeniden toplu siparişten önce tekrar kullanılabilir mataralarda neyi test etmeli?",
+    "description": "Yeniden sipariş öncesi numune, kapak, taşıma uyumu, renk ve kalite kayıtları için uygulanabilir B2B kontrol listesi.",
+    "intro": "Yeniden siparişte güven, hafızaya veya fotoğrafa değil onaylı ürün kaydına dayanır. Her varyant için montajı, taşıma uyumunu, kapağı, ambalajı ve açık kalan soruları kontrol edin.",
+    "coverAlt": "Açık havada tekrar kullanılabilir mataranın kapağını açan eller; belirli bir XUYI modelini göstermeyen temsili fotoğraf.",
+    "sections": [
+      [
+        "1. Yeni siparişi onaylı sürümle karşılaştırın",
+        "Fiyat istemeden önce önceki sipariş dosyasını bulun: model, listelenen kapasite, gövde ve kapak rengi, aksesuarlar, logo, ambalaj, miktar ve kabul kontrolü sonucu. Numune tarihini ve dosya sürümünü yazın. Böyle bir kayıt yoksa eldeki ürünü inceleyin ve doğrulanması gerekenleri açıkça işaretleyin. Görünüşün aynı olması, parçanın veya spesifikasyonun aynı olduğunu kanıtlamaz."
+      ],
+      [
+        "2. Montajı ve değişebilecek parçaları birlikte inceleyin",
+        "Seçilen model ve varyanta ait numuneyi isteyin. Gövdeyi, kapağı, contayı, taşıma askısını ve çıkarılabilir parçaları birlikte inceleyin; her birinin işaretini, rengini ve gözlemini kaydedin. Kapak ya da askıdaki küçük bir değişiklik taşıma veya görünümü etkileyebilir. Benzer görünse bile başka bir modele ait onayı devralmayın. Montajı kimin, hangi sipariş sürümüne göre onayladığını belirtin."
+      ],
+      [
+        "3. Spor müşterisinin gerçek taşıma senaryosunda deneyin",
+        "Spor mağazasında yalnızca raf görünümü önemli değildir. Hedef satış kanalına göre numuneyi müşteri çantasında, bisiklet tutucusunda veya spor çantası bölmesinde kontrol edin. Montajlı matarayı, kapak çıkıntılarını ve çevresindeki boşluğu ölçün. Uyum için belirli tutucuda gerçek prova yapın; katalog ölçüleri tek başına uyumluluğu kanıtlamaz. Denenen yeri, tutucu modelini ve sonucu kaydedin."
+      ],
+      [
+        "4. Kapak kontrolünü açık ölçütlere bağlayın",
+        "Seçilen kapağın ne yapması gerektiğini belirleyin: kolay açılma, düzgün montaj, planlanan temizliğe uygunluk ve taşıma şekline engel olmama. Önce numuneyi inceleyin; yalnızca kararlaştırılan güvenli testleri uygulayın. Kapak fotoğrafı sızdırmazlığı veya sıcak içecek kullanımını kanıtlamaz. Sonuç önemliyse yöntemi, koşulları ve sorumluyu kaydedin; genel bir “test edildi” ifadesi kullanmayın."
+      ],
+      [
+        "5. Renk, logo ve ambalajı belirli SKU ile eşleştirin",
+        "Yeniden siparişte gövde, kapak, askı ve baskı rengini saklanan fiziksel ya da belgeli referansla karşılaştırın. Tasarım sürümünü, logonun yerini ve ambalaj varyantını kaydedin. Ekrandaki görüntü ışığa göre değişebilir; onaylı numunenin yerine geçmez. Depoda yakın renklerin veya farklı kapakların karışmaması için miktarı satılabilir her varyanta göre ayırın."
+      ],
+      [
+        "6. Parti kabul kontrolünü risklere göre planlayın",
+        "Satın alma için bir kontrol listesi oluşturun: model ve işaretleme, kayıtlı kapasite, renk, montaj, görünür hasar, parça tamlığı, baskı, kutu ve kutu etiketi. Örnekleme miktarını ve uygunsuzlukta izlenecek yolu sevkiyattan önce tedarikçiyle netleştirin. Malzeme veya pazar belgesi gerekiyorsa tam model ve bileşenler için isteyin; yalnızca görünüşe bakarak uygunluk sonucu çıkarmayın. Fotoğraf, parti numarası ve notları saklayın."
+      ],
+      [
+        "7. Yeniden sipariş kararını değişiklik kaydına dayandırın",
+        "Teslimattan sonra gerçek ürünü onaylı numuneyle karşılaştırın ve sapmaları SKU bazında kaydedin. Her değişikliğin nedenini belirtin: malzeme, kapak, renk, baskı, ambalaj veya tasarım revizyonu. Sonraki siparişten önce tedarikçi ve alıcı aynı dosyayı kontrol etmelidir. Önemli bir bileşen veya sonuç değiştiğinde yeni numune isteyin; yazışma geçmişi kayboldu diye değil."
+      ]
+    ],
+    "checklist": [
+      "Modeli, spesifikasyon sürümünü ve onay tarihini saklayın.",
+      "Gövde, kapak, conta ve aksesuarları montajlı olarak karşılaştırın.",
+      "Montajlı matarayı ölçün ve gerçek tutucuda deneyin.",
+      "Spor müşterisinin gerçek taşıma senaryosunu kaydedin.",
+      "Açılma, montaj ve temizliği kararlaştırılan plana göre inceleyin.",
+      "Fotoğrafı sızdırmazlık veya test kanıtı saymayın.",
+      "Her parçanın rengini ve baskı tasarım sürümünü doğrulayın.",
+      "Miktarı ve ambalajı tam SKU varyantlarına göre ayırın.",
+      "Parti fotoğrafını, örnekleme yöntemini ve sapmaları saklayın.",
+      "Yeniden siparişten önce değişiklikleri yazılı olarak onaylayın."
+    ],
+    "faqs": [
+      [
+        "Mataraları yeniden toplu sipariş etmeden önce ne kontrol edilmeli?",
+        "Modeli, montajı, renkleri, kapağı, ambalajı ve kabul sonuçlarını onaylı sürümle karşılaştırın. Değişiklikleri ve doğrulanmamış bilgileri ayrı işaretleyin."
+      ],
+      [
+        "Eski kapak onayı başka modelde kullanılabilir mi?",
+        "Uyum varsayılmamalıdır. Belirli modelin tam numunesindeki kapağı kontrol edin ve sonucu kaydedin."
+      ],
+      [
+        "Matara tutucuya veya çantaya sığar mı nasıl anlaşılır?",
+        "Montajlı numuneyi ölçün ve hedef kanaldaki gerçek tutucu ya da çantada deneyin. Katalog fotoğrafı uyumu kanıtlamaz."
+      ],
+      [
+        "Parti kontrolünden sonra hangi kayıtlar saklanmalı?",
+        "SKU, sipariş sürümü, fotoğraflar, kontrol yöntemi, sonuç, parti numarası, sapmalar ve mutabık kalınan düzeltmeyi saklayın."
+      ]
+    ],
+    "matrix": {
+      "title": "Yeniden sipariş öncesi kontrol tablosu",
+      "intro": "Her kararı belirli varyant ve doğrulanabilir kayıtla eşleştirin.",
+      "head": [
+        "Alan",
+        "Karşılaştırılacaklar",
+        "Kayıt"
+      ],
+      "rows": [
+        [
+          "Kimlik",
+          "Model, SKU, sürüm",
+          "Sipariş dosyası"
+        ],
+        [
+          "Montaj",
+          "Gövde, kapak, conta",
+          "Onaylı numune"
+        ],
+        [
+          "Uyum",
+          "Ölçü ve gerçek tutucu",
+          "Prova sonucu"
+        ],
+        [
+          "Markalama",
+          "Renk, tasarım, ambalaj",
+          "Referans sürümü"
+        ],
+        [
+          "Kalite",
+          "Yöntem, örnekleme, sapma",
+          "Parti raporu"
+        ]
+      ]
+    },
+    "sources": {
+      "title": "Resmî kaynaklar ve kapsam sınırı",
+      "intro": "Bu sayfalar genel kuralları açıklar; belirli bir mataranın uygunluğunu kanıtlamaz. Malzeme, bileşen ve pazarı ayrıca doğrulayın.",
+      "labels": [
+        "Avrupa Komisyonu: Gıda ile temas eden malzemeler mevzuatı",
+        "ABD FDA: Gıda temaslı bileşenlerin düzenleyici statüsü"
+      ]
+    },
+    "related": [
+      [
+        "Toptan siparişte hangi matara kapağı türü seçilmeli?",
+        "Kapağın amacını, bakımını ve model uyumunu karşılaştırın."
+      ],
+      [
+        "Toptan mataralar için kalite kontrol planı nasıl hazırlanır?",
+        "Kontrolleri ve kayıtları parti ile SKU'ya bağlayın."
+      ],
+      [
+        "Kurumsal program için hangi matara kapasitesi seçilmeli?",
+        "Boyutu gerçek kullanım senaryosuyla eşleştirin."
+      ]
+    ],
+    "cta": [
+      "Belirli bir varyantı değerlendirmek ister misiniz?",
+      "Modeli, varyant başına miktarı, montaj beklentisini ve hedef pazarı paylaşın; belirsiz özellikleri numuneyle doğrulayın.",
+      "Teklif isteyin"
+    ]
+  }
+}

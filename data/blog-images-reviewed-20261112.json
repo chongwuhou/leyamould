@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "images": [
+    {
+      "path": "assets/blog/0eb56b5214df449aa13abd55d269.webp",
+      "bytes": 99618,
+      "sha256": "92512fb80337c731a97f1d09785cfb3f7738e58203dd43e700abebf8c3c97190"
+    },
+    {
+      "path": "assets/blog/bbff0a9ab73e419cb829a0a91f8a.webp",
+      "bytes": 60976,
+      "sha256": "66944b24c3422c508975cc725d54e41908bf17ec5a1d2c8484d613824b11b537"
+    },
+    {
+      "path": "assets/blog/c8a6dc603be24b7d8c08a8ae3b7c.webp",
+      "bytes": 49582,
+      "sha256": "9b91040716cc6ea6cc48a707612232f23636987ee45415fb3a02d37a8ec99f04"
+    }
+  ]
+}

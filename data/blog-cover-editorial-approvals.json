@@ -651,8 +651,7 @@
       },
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared"
-    }
-  ,
+    },
     {
       "slug": "custom-water-bottle-logo-printing-methods-bulk-order",
       "articleTitle": "Which Logo Printing and Branding Method Should You Choose for Custom Water Bottles in Bulk?",
@@ -733,7 +732,93 @@
       },
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared"
+    },
+    {
+      "slug": "wholesale-reusable-bottle-retail-assortment-checklist",
+      "visualScene": "Two adult shoppers examine reusable bottles displayed on a physical retail shelf, with several bottle shapes and colors visible.",
+      "buyerContext": "Retail category buyers building a multi-SKU reusable bottle assortment.",
+      "articleUse": "Choosing shelf roles, capacity classes and variants for an initial wholesale order.",
+      "sceneMatch": "The physical bottle display and shoppers comparing visible variants directly match the article's retail assortment decision; it is contextual stock photography, not an XUYI order or customer display.",
+      "topicAnchors": [
+        "retail",
+        "assortment",
+        "buyer"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "articleTitle": "How Can a Retail Buyer Build a Reusable Water Bottle Assortment for a First Wholesale Order?",
+      "cover": "/media/blog/0eb56b5214df449aa13abd55d269.webp",
+      "source": "assets/blog/0eb56b5214df449aa13abd55d269.webp",
+      "sha256": "92512fb80337c731a97f1d09785cfb3f7738e58203dd43e700abebf8c3c97190",
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels stock photograph by Tom Tillhub, photo 6925916; source page and free-use license reviewed.",
+      "usageDisclosure": "Contextual stock photograph. It does not show an XUYI customer, factory, confirmed SKU, order or product certification.",
+      "sourceUrl": "https://www.pexels.com/photo/women-looking-at-products-in-a-shop-with-water-bottles-6925916/"
+    },
+    {
+      "slug": "sports-retail-reusable-water-bottle-bulk-reorder-testing",
+      "visualScene": "Close-up of hands opening a reusable bottle outdoors; the cap, grip and opening action are clearly visible.",
+      "buyerContext": "Sports retail buyers reviewing sample handling before a bulk reorder.",
+      "articleUse": "Checking closure operation and grip as part of model-specific sample review.",
+      "sceneMatch": "The image shows a real bottle being opened by hand, matching the article's sample-handling and cap review. Its outdoor context supports an active-use discussion, while the photo does not claim a sports store, a test result or an XUYI model.",
+      "topicAnchors": [
+        "sports",
+        "retail",
+        "reorder"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 4,
+        "productUse": 5,
+        "commercialRealism": 4,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "articleTitle": "What Should Sports Retail Buyers Test Before Reordering Reusable Water Bottles in Bulk?",
+      "cover": "/media/blog/bbff0a9ab73e419cb829a0a91f8a.webp",
+      "source": "assets/blog/bbff0a9ab73e419cb829a0a91f8a.webp",
+      "sha256": "66944b24c3422c508975cc725d54e41908bf17ec5a1d2c8484d613824b11b537",
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels stock photograph by Katya Wolf, photo 8728504; source page and free-use license reviewed.",
+      "usageDisclosure": "Contextual stock photograph of bottle handling. It does not show an XUYI customer, factory, confirmed SKU, order or test result.",
+      "sourceUrl": "https://www.pexels.com/photo/man-opening-his-water-bottle-8728504/"
+    },
+    {
+      "slug": "wholesale-water-bottle-refill-station-fit-checklist",
+      "visualScene": "A person fills a reusable bottle at a wall-mounted water filter tap; the bottle is positioned directly beneath the outlet.",
+      "buyerContext": "Facility and workplace buyers checking a reusable bottle refill station.",
+      "articleUse": "A practical site-fit checklist for clearance, refill steps and repeatable approval.",
+      "sceneMatch": "The real bottle-and-tap interaction matches the article's physical fit and refill workflow topic. It is a contextual household filter scene, not a claimed customer facility, compatibility test, public station, XUYI product or compliance demonstration.",
+      "topicAnchors": [
+        "refill",
+        "station",
+        "checklist"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 4,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 4
+      },
+      "articleTitle": "Will a Reusable Water Bottle Fit Your Refill Station? A B2B Site-Test Checklist",
+      "cover": "/media/blog/c8a6dc603be24b7d8c08a8ae3b7c.webp",
+      "source": "assets/blog/c8a6dc603be24b7d8c08a8ae3b7c.webp",
+      "sha256": "9b91040716cc6ea6cc48a707612232f23636987ee45415fb3a02d37a8ec99f04",
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Pexels stock photograph by Helena Lopes, photo 27176108; source page and free-use license reviewed.",
+      "usageDisclosure": "Contextual photo of filling a reusable bottle at a tap. It is not an XUYI model, site-fit test, customer facility, certification or performance claim.",
+      "sourceUrl": "https://www.pexels.com/photo/filling-reusable-bottle-at-kitchen-sink-27176108/"
     }
   ]
 }
-

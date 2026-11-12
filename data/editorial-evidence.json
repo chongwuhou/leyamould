@@ -189,5 +189,50 @@
         "url": "https://www.eastman.com/en/products/brands/tritan/applications/hydration/water-bottles"
       }
     ]
+  },
+  "wholesale-reusable-bottle-retail-assortment-checklist": {
+    "title": "Retail SKU identity and food-contact documentation",
+    "insight": "A retail range is easier to maintain when each sellable variant is identified and product claims are tied to documentation for the exact item and market. GS1 guidance addresses product identifiers; the European Commission describes the food-contact framework. Neither source certifies an XUYI SKU.",
+    "next_step": "Have the brand owner confirm GTIN assignment before packaging is printed. Separately request model- and component-specific documents for any food-contact claim that applies to the destination market.",
+    "sources": [
+      {
+        "label": "GS1: GTINs for products with many sizes and colours",
+        "url": "https://support.gs1.org/support/solutions/articles/43000734083-how-many-gs1-gtins-do-i-need-when-i-have-a-product-with-many-sizes-and-colours-"
+      },
+      {
+        "label": "European Commission: Food Contact Materials",
+        "url": "https://food.ec.europa.eu/food-safety/chemical-safety/food-contact-materials_en"
+      }
+    ]
+  },
+  "sports-retail-reusable-water-bottle-bulk-reorder-testing": {
+    "title": "Product-specific documents and market requirements",
+    "insight": "A buyer's handling check is limited to the sample and method used. Food-contact documentation and use statements must match the material, finished article and destination market.",
+    "next_step": "Ask the supplier for exact-model care and material documents; review current rules for the destination rather than treating a generic certificate or sample check as proof.",
+    "sources": [
+      {
+        "label": "European Commission: Food Contact Materials legislation",
+        "url": "https://food.ec.europa.eu/food-safety/chemical-safety/food-contact-materials/legislation_en"
+      },
+      {
+        "label": "U.S. FDA: Regulatory status of food-contact material components",
+        "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
+      }
+    ]
+  },
+  "wholesale-water-bottle-refill-station-fit-checklist": {
+    "title": "Market documents and model references",
+    "insight": "A refill demonstration checks physical fit at one site. It does not establish material compliance or validate an untested model. Match documents to the exact components, intended use and destination market.",
+    "next_step": "Keep the facility equipment manual beside the bottle measurement sheet, and request material and care evidence for the selected SKU before approving a purchase.",
+    "sources": [
+      {
+        "label": "European Commission: Food Contact Materials legislation",
+        "url": "https://food.ec.europa.eu/food-safety/chemical-safety/food-contact-materials/legislation_en"
+      },
+      {
+        "label": "U.S. FDA: Regulatory status of food-contact material components",
+        "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
+      }
+    ]
   }
 }

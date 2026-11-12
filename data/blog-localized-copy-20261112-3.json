@@ -1,0 +1,518 @@
+{
+  "es": {
+    "title": "¿Cabe la botella reutilizable en tu estación de recarga? Lista de prueba para instalaciones",
+    "description": "Guía B2B para medir una estación de recarga, probar una botella montada y documentar el ajuste antes de comprar al por mayor.",
+    "intro": "La capacidad anunciada no confirma que una botella quepa bajo un surtidor. Mide el punto real, prueba la muestra completa y registra la secuencia de uso, la limpieza y las aprobaciones antes de ampliar la compra.",
+    "coverAlt": "Una persona rellena una botella reutilizable en un punto de agua; escena ilustrativa, no prueba de compatibilidad de un modelo XUYI.",
+    "sections": [
+      [
+        "1. Identifica el punto de recarga y el uso real",
+        "Empieza por el equipo exacto y la rutina de las personas que lo usarán. Anota fabricante y modelo del surtidor cuando estén disponibles, altura libre, tipo de boquilla, bandeja, espacio lateral, ubicación y afluencia esperada. Pregunta si se rellenará durante una pausa breve, en un gimnasio o en una zona de trabajo. No presupongas que dos surtidores parecidos tienen el mismo espacio. Esta información define la prueba y ayuda a compras a comparar propuestas de proveedor sobre las mismas condiciones."
+      ],
+      [
+        "2. Mide la botella montada y el espacio de acceso",
+        "Mide la botella seleccionada con su tapa, asa, correa u otros accesorios colocados. Registra altura total, anchura máxima, base, salientes y espacio necesario para sujetarla al llenarla. Después mide el hueco vertical y lateral del punto de recarga. La tapa puede ser más alta que el cuerpo; una botella que cabe inclinada quizá no se mantenga estable en el uso normal. Conserva la unidad, el método de medición y una foto con escala cuando sea posible."
+      ],
+      [
+        "3. Prueba la muestra en la ubicación real",
+        "Lleva una muestra ensamblada al lugar donde se usará. Colócala bajo la boquilla, comprueba si puede apoyarse con estabilidad, si la mano alcanza la botella y si el chorro entra sin golpear el borde. Repite la operación en la posición normal del usuario y con el espacio disponible. No conviertas una demostración en una garantía para otros modelos, puntos de agua o instalaciones. Anota fecha, ubicación, modelo del equipo y resultado observado."
+      ],
+      [
+        "4. Comprueba el proceso completo, no solo el espacio de la boquilla",
+        "Una prueba práctica también considera cómo abrir la tapa, sujetar la botella, evitar contacto innecesario, cerrar, limpiar y guardarla después. Si el equipo tiene bandeja o sensor, observa si interfiere con el cuerpo o la mano. Define cómo se mantiene limpia la zona y sigue las instrucciones del equipo. No afirmes que el uso es higiénico o que evita contaminación sin una evaluación apropiada. Registra los pasos que funcionaron y cualquier dificultad del usuario."
+      ],
+      [
+        "5. Compara capacidad, peso lleno y frecuencia de recarga",
+        "La capacidad afecta cuántas veces una persona quizá necesite rellenar, pero también el tamaño y el peso de la botella llena. Usa la capacidad exacta en ml que figure para el modelo y marca la clase en oz como aproximada si la comunicas. No derives capacidad de una foto o de la forma del cuerpo. Pregunta a los usuarios por la duración habitual entre recargas y considera el tipo de tarea. La decisión debe equilibrar ajuste, carga, comodidad y rutina, no perseguir el volumen mayor."
+      ],
+      [
+        "6. Revisa documentos de material y cuidado para el mercado",
+        "La prueba de encaje solo demuestra que una muestra cupo en un punto específico. No certifica material, contacto con alimentos, resistencia, temperatura ni cumplimiento local. Solicita documentos que correspondan al modelo, componentes y mercado de destino; confirma instrucciones de limpieza y restricciones de uso. Si se solicita Tritan, material sin BPA u otra resina, trátalo como una opción de personalización por confirmar mediante especificación y evidencia del conjunto. Las páginas regulatorias explican marcos generales, no aprueban un SKU de XUYI."
+      ],
+      [
+        "7. Aprueba el modelo probado y conserva el registro para la compra",
+        "Guarda una ficha con modelo, ml, dimensiones medidas, tapa y accesorios, identificación del punto de recarga, fotografías, resultado de la prueba, documentos revisados y responsable de aprobación. Añade cantidad por variante, embalaje y cambios pendientes al RFQ. Antes del pedido repetido, compara la muestra y el equipo con la misma versión. Si cambia la tapa, altura, equipo o lugar de uso, repite la verificación pertinente en vez de asumir que el resultado anterior aún aplica."
+      ]
+    ],
+    "checklist": [
+      "Registra el modelo y la ubicación exacta del surtidor.",
+      "Mide altura, anchura, base y espacio libre para la mano.",
+      "Mide la botella con la tapa y los accesorios montados.",
+      "Prueba estabilidad y llenado bajo la boquilla real.",
+      "Registra fecha, lugar, equipo, usuario y resultado observado.",
+      "Comprueba apertura, cierre, bandeja, sensor y rutina de limpieza.",
+      "Usa ml exactos y presenta oz solo como clase aproximada.",
+      "Solicita documentos aplicables al SKU, componentes y destino.",
+      "Separa ajuste físico de cumplimiento de materiales y rendimiento.",
+      "Guarda la aprobación y repite la prueba tras cambios relevantes."
+    ],
+    "faqs": [
+      [
+        "¿La capacidad basta para saber si una botella cabe bajo un surtidor?",
+        "No. La capacidad no informa por sí sola la altura montada, anchura, tapa ni espacio de la boquilla. Mide la botella completa y pruébala en la instalación real."
+      ],
+      [
+        "¿Una prueba de encaje confirma que la botella es apta para alimentos?",
+        "No. Solo documenta el ajuste físico en unas condiciones concretas. Los documentos de materiales deben corresponder al modelo, sus componentes y el mercado."
+      ],
+      [
+        "¿Debo probar cada tamaño y tapa por separado?",
+        "Si las dimensiones o componentes cambian, comprueba cada combinación pertinente. No transfieras automáticamente el resultado de otra variante."
+      ],
+      [
+        "¿Qué debe incluir el RFQ para una instalación?",
+        "Incluye modelo y capacidad, cantidades por variante, dimensiones o espacio medido, fotos del punto de recarga, tapa, limpieza, destino y documentos requeridos."
+      ]
+    ],
+    "matrix": {
+      "title": "Matriz de prueba de ajuste en el punto de recarga",
+      "intro": "Separa medidas observadas, hechos del SKU y aprobaciones de instalación.",
+      "head": [
+        "Elemento",
+        "Qué verificar",
+        "Evidencia"
+      ],
+      "rows": [
+        [
+          "Equipo",
+          "Modelo, boquilla, espacio",
+          "Ficha del lugar"
+        ],
+        [
+          "Botella",
+          "Altura montada, base, anchura",
+          "Hoja de medidas"
+        ],
+        [
+          "Operación",
+          "Estabilidad, alcance, llenado",
+          "Prueba presencial"
+        ],
+        [
+          "Cuidado",
+          "Apertura, cierre y limpieza",
+          "Instrucciones"
+        ],
+        [
+          "Compra",
+          "SKU, cantidad, destino, documentos",
+          "RFQ aprobado"
+        ]
+      ]
+    },
+    "sources": {
+      "title": "Fuentes oficiales y límites",
+      "intro": "Estas páginas explican el marco regulatorio general. No certifican un modelo XUYI ni sustituyen la verificación del producto exacto.",
+      "labels": [
+        "Comisión Europea: legislación sobre materiales en contacto con alimentos",
+        "FDA de EE. UU.: estado regulatorio de componentes para contacto con alimentos"
+      ]
+    },
+    "related": [
+      [
+        "Cómo comparar proveedores de botellas plásticas personalizadas al por mayor",
+        "Compara la documentación, la muestra y las condiciones de cotización."
+      ],
+      [
+        "Qué debe incluir un RFQ de botellas antes de pedir precios OEM",
+        "Prepara datos comparables de modelo, cantidad, embalaje y destino."
+      ],
+      [
+        "Cómo planificar las cajas de exportación de botellas al por mayor",
+        "Vincula variantes, embalaje y datos de caja con el pedido confirmado."
+      ]
+    ],
+    "cta": [
+      "¿Tienes una estación concreta que validar?",
+      "Comparte el modelo de botella, la capacidad, el equipo y el espacio medido; confirma el ajuste y los documentos antes del pedido.",
+      "Solicitar una cotización"
+    ]
+  },
+  "pt": {
+    "title": "A garrafa reutilizável cabe no seu ponto de reabastecimento? Checklist para instalações",
+    "description": "Guia B2B para medir o ponto de água, testar uma amostra montada e documentar o encaixe antes da compra em grande quantidade.",
+    "intro": "A capacidade indicada não confirma se a garrafa cabe sob o bico. Meça o equipamento real, teste a amostra completa e registre o uso, a limpeza e as aprovações antes de ampliar o pedido.",
+    "coverAlt": "Pessoa enchendo uma garrafa reutilizável em um ponto de água; cena ilustrativa, não comprova compatibilidade com um modelo XUYI.",
+    "sections": [
+      [
+        "1. Identifique o ponto de reabastecimento e o uso",
+        "Comece pelo equipamento exato e pela rotina de quem vai usá-lo. Registre fabricante e modelo do bebedouro quando disponíveis, altura livre, tipo de bico, bandeja, espaço lateral, localização e fluxo de pessoas. Pergunte se o reabastecimento ocorrerá em pausas curtas, academia ou área de trabalho. Não presuma que equipamentos parecidos tenham o mesmo espaço. Esses dados definem o teste e permitem comparar propostas de fornecedores nas mesmas condições."
+      ],
+      [
+        "2. Meça a garrafa montada e o espaço para manuseio",
+        "Meça a garrafa escolhida com tampa, alça, tira ou outros acessórios instalados. Registre altura total, largura máxima, base, saliências e espaço para segurar o produto durante o enchimento. Em seguida, meça o espaço vertical e lateral do ponto de água. A tampa pode ultrapassar o corpo; uma garrafa que entra inclinada talvez não fique estável no uso normal. Guarde a unidade, o método de medição e, quando possível, uma foto com escala."
+      ],
+      [
+        "3. Teste a amostra na instalação real",
+        "Leve uma amostra montada ao local de uso. Posicione-a sob o bico, veja se fica apoiada com estabilidade, se a mão alcança a garrafa e se o fluxo entra sem bater na borda. Repita a operação na posição normal do usuário e com o espaço disponível. Uma demonstração não garante compatibilidade com outros modelos ou instalações. Registre data, local, modelo do equipamento e o resultado observado."
+      ],
+      [
+        "4. Verifique o processo inteiro, não apenas a folga do bico",
+        "Um teste útil também considera como abrir a tampa, segurar a garrafa, evitar contato desnecessário, fechar, limpar e guardar. Se houver bandeja ou sensor, veja se o corpo ou a mão interferem. Defina como manter a área limpa e siga as instruções do equipamento. Não afirme que o uso é higiênico ou que evita contaminação sem avaliação apropriada. Registre quais etapas funcionaram e as dificuldades observadas."
+      ],
+      [
+        "5. Compare capacidade, peso cheio e frequência de recarga",
+        "A capacidade influencia quantas recargas uma pessoa talvez precise fazer, mas também altera o tamanho e o peso cheio. Use a capacidade em ml publicada para o modelo e marque a classe em oz como aproximada, quando aplicável. Não deduza capacidade pela foto ou pelo formato. Pergunte com que frequência as pessoas usam o ponto e considere a tarefa. A decisão deve equilibrar encaixe, peso, conforto e rotina, sem simplesmente escolher o maior volume."
+      ],
+      [
+        "6. Verifique documentos de material e cuidado do mercado",
+        "O teste de encaixe demonstra apenas que uma amostra coube em um ponto específico. Ele não certifica material, contato com alimentos, resistência, temperatura ou conformidade local. Solicite documentos que correspondam ao modelo, aos componentes e ao destino; confirme instruções de limpeza e limites de uso. Tritan, material sem BPA ou outra resina deve ser tratado como opção personalizada sujeita à confirmação da especificação e das evidências do conjunto. Páginas regulatórias explicam regras gerais, não aprovam um SKU XUYI."
+      ],
+      [
+        "7. Aprove o modelo testado e arquive o registro para a compra",
+        "Mantenha uma ficha com modelo, ml, dimensões medidas, tampa e acessórios, identificação do ponto de água, fotos, resultado do teste, documentos revisados e responsável pela aprovação. Acrescente quantidade por variante, embalagem e dúvidas pendentes ao RFQ. Antes da reposição, compare a amostra e o equipamento usando a mesma versão. Se mudar tampa, altura, equipamento ou local, refaça a verificação pertinente em vez de presumir que o resultado anterior ainda vale."
+      ]
+    ],
+    "checklist": [
+      "Registre o modelo e o local exato do ponto de água.",
+      "Meça altura, largura, base e espaço para a mão.",
+      "Meça a garrafa com tampa e acessórios instalados.",
+      "Teste estabilidade e enchimento sob o bico real.",
+      "Registre data, local, equipamento, usuário e resultado observado.",
+      "Verifique abertura, fechamento, bandeja, sensor e limpeza.",
+      "Use ml exatos; apresente oz apenas como classe aproximada.",
+      "Solicite documentos aplicáveis ao SKU, componentes e destino.",
+      "Separe encaixe físico de conformidade de material e desempenho.",
+      "Guarde a aprovação e repita o teste após mudanças relevantes."
+    ],
+    "faqs": [
+      [
+        "A capacidade basta para saber se a garrafa cabe no bebedouro?",
+        "Não. A capacidade não informa a altura montada, a largura, a tampa ou o espaço do bico. Meça o conjunto e teste no ponto real."
+      ],
+      [
+        "Um teste de encaixe confirma contato seguro com alimentos?",
+        "Não. Ele registra o encaixe físico em determinadas condições. A documentação de materiais deve corresponder ao modelo, componentes e mercado."
+      ],
+      [
+        "Devo testar cada capacidade e tipo de tampa separadamente?",
+        "Se dimensões ou componentes forem diferentes, verifique cada combinação relevante. Não transfira automaticamente o resultado de outra variante."
+      ],
+      [
+        "O que incluir no RFQ para uma instalação?",
+        "Inclua modelo e capacidade, quantidade por variante, espaço medido, fotos do ponto, tampa, limpeza, destino e documentos necessários."
+      ]
+    ],
+    "matrix": {
+      "title": "Matriz de teste no ponto de reabastecimento",
+      "intro": "Separe medidas observadas, dados do SKU e aprovação da instalação.",
+      "head": [
+        "Item",
+        "O que verificar",
+        "Evidência"
+      ],
+      "rows": [
+        [
+          "Equipamento",
+          "Modelo, bico e espaço",
+          "Ficha do local"
+        ],
+        [
+          "Garrafa",
+          "Altura montada, base e largura",
+          "Folha de medidas"
+        ],
+        [
+          "Operação",
+          "Estabilidade, alcance e enchimento",
+          "Teste presencial"
+        ],
+        [
+          "Cuidados",
+          "Abertura, fechamento e limpeza",
+          "Instruções"
+        ],
+        [
+          "Compra",
+          "SKU, quantidade, destino e documentos",
+          "RFQ aprovado"
+        ]
+      ]
+    },
+    "sources": {
+      "title": "Fontes oficiais e limites",
+      "intro": "Estas páginas explicam o quadro regulatório geral. Não certificam um modelo XUYI e não substituem a verificação do produto exato.",
+      "labels": [
+        "Comissão Europeia: legislação sobre materiais em contato com alimentos",
+        "FDA dos EUA: situação regulatória de componentes para contato com alimentos"
+      ]
+    },
+    "related": [
+      [
+        "Como comparar fornecedores de garrafas plásticas personalizadas no atacado",
+        "Compare documentos, amostras e condições comerciais."
+      ],
+      [
+        "O que um RFQ de garrafas deve incluir antes do preço OEM",
+        "Prepare informações comparáveis sobre modelo, quantidade, embalagem e destino."
+      ],
+      [
+        "Como planejar caixas de exportação para garrafas no atacado",
+        "Vincule variantes e dados da caixa ao pedido confirmado."
+      ]
+    ],
+    "cta": [
+      "Tem um ponto de água específico para validar?",
+      "Informe o modelo da garrafa, capacidade, equipamento e espaço medido; confirme encaixe e documentos antes de fechar o pedido.",
+      "Solicitar cotação"
+    ]
+  },
+  "ru": {
+    "title": "Подойдёт ли многоразовая бутылка к вашей точке розлива? Чек-лист для объекта",
+    "description": "B2B-руководство: как измерить кулер, проверить собранный образец и зафиксировать совместимость перед оптовой закупкой.",
+    "intro": "Заявленная ёмкость не показывает, поместится ли бутылка под носиком. Измерьте реальное оборудование, проверьте собранный образец и зафиксируйте порядок использования, уход и согласования до расширения заказа.",
+    "coverAlt": "Человек наполняет многоразовую бутылку у точки воды; иллюстративная сцена не подтверждает совместимость с моделью XUYI.",
+    "sections": [
+      [
+        "1. Определите точку розлива и сценарий использования",
+        "Начните с конкретного оборудования и распорядка пользователей. Запишите производителя и модель кулера, если они известны, свободную высоту, тип носика, поддон, боковой зазор, место и предполагаемый поток людей. Уточните, будут ли бутылку наполнять во время короткого перерыва, в спортзале или рабочей зоне. Не считайте похожие устройства одинаковыми. Эти сведения задают условия проверки и позволяют сравнить предложения поставщиков на равной основе."
+      ],
+      [
+        "2. Измерьте собранную бутылку и пространство для рук",
+        "Измеряйте выбранную бутылку с установленной крышкой, ручкой, ремешком и другими аксессуарами. Запишите общую высоту, максимальную ширину, основание, выступы и место для удержания при наполнении. Затем измерьте вертикальный и боковой зазор у точки воды. Крышка может быть выше корпуса; бутылка, проходящая под углом, не обязательно будет устойчивой в обычном положении. Сохраните единицы, способ измерения и по возможности фото с масштабом."
+      ],
+      [
+        "3. Проверьте образец на реальном месте",
+        "Привезите полностью собранный образец туда, где им будут пользоваться. Поставьте его под носик и проверьте устойчивость, доступ рукой и попадание струи внутрь без удара о край. Повторите действие в обычной позе пользователя и в доступном пространстве. Демонстрация не гарантирует совместимость с другими моделями оборудования или объектами. Зафиксируйте дату, место, модель устройства и фактически наблюдавшийся результат."
+      ],
+      [
+        "4. Проверьте весь процесс, а не только зазор под носиком",
+        "Практическая проверка учитывает открытие крышки, удержание бутылки, ненужные касания, закрытие, очистку и хранение. Если у оборудования есть поддон или датчик, проверьте, не мешают ли корпус или рука. Определите порядок ухода за зоной и соблюдайте руководство оборудования. Без соответствующей оценки не заявляйте о гигиеничности или предотвращении загрязнения. Запишите успешные этапы и затруднения пользователей."
+      ],
+      [
+        "5. Сопоставьте ёмкость, полный вес и частоту наполнения",
+        "Ёмкость влияет на возможную частоту наполнения, но также на размер и вес полной бутылки. Используйте значение в мл, опубликованное для модели; класс в oz указывайте как приблизительный. Не выводите ёмкость из фотографии или формы корпуса. Спросите пользователей, как часто они подходят к кулеру, и учтите рабочую задачу. Решение должно учитывать посадку, нагрузку, удобство и режим использования, а не только максимальный объём."
+      ],
+      [
+        "6. Проверьте документы о материале и уходе для рынка",
+        "Проверка посадки показывает лишь то, что один образец поместился в конкретном месте. Она не подтверждает материал, контакт с пищей, прочность, температурный режим или местное соответствие. Запросите документы для точной модели, компонентов и рынка назначения; подтвердите уход и ограничения эксплуатации. Tritan, материал без BPA или другая смола — это запрос на индивидуальную конфигурацию, требующую подтверждения спецификации и доказательств для готовой сборки. Регуляторные страницы описывают общую систему, но не одобряют SKU XUYI."
+      ],
+      [
+        "7. Утвердите проверенную модель и сохраните запись для заказа",
+        "Сохраните карточку с моделью, мл, измерениями, крышкой и аксессуарами, данными точки розлива, фотографиями, результатом проверки, изученными документами и ответственным за утверждение. Добавьте в запрос цены количество по вариантам, упаковку и открытые вопросы. При повторном заказе сверяйте образец и оборудование с той же версией записи. Если меняются крышка, высота, устройство или место, выполните соответствующую проверку заново, не полагаясь на старый результат."
+      ]
+    ],
+    "checklist": [
+      "Запишите модель и точный адрес точки розлива.",
+      "Измерьте высоту, ширину, основание и место для руки.",
+      "Измеряйте бутылку с установленной крышкой и аксессуарами.",
+      "Проверьте устойчивость и наполнение под реальным носиком.",
+      "Зафиксируйте дату, место, оборудование, пользователя и результат.",
+      "Проверьте открытие, закрытие, поддон, датчик и очистку.",
+      "Используйте точные мл, а oz обозначайте как примерный класс.",
+      "Запросите документы для точного SKU, деталей и рынка.",
+      "Отделяйте физическую посадку от материалов и характеристик.",
+      "Сохраните согласование и повторите тест после важных изменений."
+    ],
+    "faqs": [
+      [
+        "Достаточно ли ёмкости, чтобы понять, поместится ли бутылка под кулер?",
+        "Нет. Ёмкость не показывает высоту в сборе, ширину, крышку и зазор носика. Измерьте всю сборку и проверьте её на месте."
+      ],
+      [
+        "Подтверждает ли тест посадки безопасность контакта с пищей?",
+        "Нет. Он фиксирует только физическое размещение в конкретных условиях. Документы должны относиться к модели, компонентам и рынку."
+      ],
+      [
+        "Нужно ли отдельно проверять каждую ёмкость и крышку?",
+        "Если размеры или компоненты отличаются, проверяйте каждую соответствующую комбинацию. Не переносите автоматически результат другой версии."
+      ],
+      [
+        "Что включить в запрос цены для конкретного объекта?",
+        "Укажите модель и ёмкость, количество по вариантам, измеренный зазор, фото точки, крышку, требования по уходу, рынок и нужные документы."
+      ]
+    ],
+    "matrix": {
+      "title": "Матрица проверки бутылки на точке розлива",
+      "intro": "Разделяйте наблюдаемые измерения, сведения SKU и утверждение объекта.",
+      "head": [
+        "Часть",
+        "Что проверить",
+        "Подтверждение"
+      ],
+      "rows": [
+        [
+          "Оборудование",
+          "Модель, носик и зазор",
+          "Карточка объекта"
+        ],
+        [
+          "Бутылка",
+          "Высота в сборе, основание, ширина",
+          "Лист измерений"
+        ],
+        [
+          "Работа",
+          "Устойчивость, доступ и наполнение",
+          "Очная проверка"
+        ],
+        [
+          "Уход",
+          "Открытие, закрытие и очистка",
+          "Инструкция"
+        ],
+        [
+          "Закупка",
+          "SKU, количество, рынок, документы",
+          "Утверждённый RFQ"
+        ]
+      ]
+    },
+    "sources": {
+      "title": "Официальные источники и ограничения",
+      "intro": "Эти страницы описывают общие нормы. Они не сертифицируют модель XUYI и не заменяют проверку конкретного товара.",
+      "labels": [
+        "Европейская комиссия: законодательство о материалах, контактирующих с пищей",
+        "FDA США: нормативный статус компонентов для контакта с пищей"
+      ]
+    },
+    "related": [
+      [
+        "Как сравнить поставщиков пластиковых бутылок под заказ для оптовой закупки",
+        "Сопоставьте документы, образцы и условия предложения."
+      ],
+      [
+        "Что включить в RFQ на бутылки до запроса OEM-цены?",
+        "Подготовьте сопоставимые данные о модели, количестве, упаковке и рынке."
+      ],
+      [
+        "Как спланировать экспортные коробки для оптовых бутылок",
+        "Свяжите варианты, упаковку и данные коробов с подтверждённым заказом."
+      ]
+    ],
+    "cta": [
+      "Нужно проверить конкретную точку розлива?",
+      "Сообщите модель бутылки, ёмкость, оборудование и измеренный зазор; подтвердите совместимость и документы до заказа.",
+      "Запросить предложение"
+    ]
+  },
+  "tr": {
+    "title": "Yeniden kullanılabilir matara dolum noktanıza sığar mı? Tesisler için saha testi kontrol listesi",
+    "description": "Toplu alımdan önce dolum noktasını ölçmek, montajlı numuneyi denemek ve uyumu kaydetmek için B2B rehberi.",
+    "intro": "Listelenen kapasite, mataranın musluk altına sığacağını göstermez. Gerçek ekipmanı ölçün, tam montajlı numuneyi deneyin ve siparişi büyütmeden önce kullanım adımlarını, temizliği ve onayları kaydedin.",
+    "coverAlt": "Bir kişi su noktasında tekrar kullanılabilir matarayı dolduruyor; bu temsili sahne belirli bir XUYI modeliyle uyumu kanıtlamaz.",
+    "sections": [
+      [
+        "1. Dolum noktasını ve gerçek kullanım biçimini belirleyin",
+        "Belirli ekipman ve kullanıcı rutininden başlayın. Varsa su sebilinin üreticisini ve modelini, boş yüksekliği, musluk tipini, damlama tepsisini, yan boşluğu, konumu ve beklenen kullanıcı yoğunluğunu kaydedin. Dolumun kısa molada, spor salonunda veya iş alanında mı yapılacağını sorun. Benzer görünen sebillerin aynı açıklığa sahip olduğunu varsaymayın. Bu bilgiler test koşullarını belirler ve tedarikçi tekliflerini aynı şartlarda karşılaştırmayı sağlar."
+      ],
+      [
+        "2. Montajlı matarayı ve el erişimini ölçün",
+        "Seçilen matarayı kapak, tutma kolu, askı ve diğer aksesuarları takılı halde ölçün. Toplam yüksekliği, en geniş noktayı, tabanı, çıkıntıları ve doldururken tutmak için gereken alanı kaydedin. Ardından dolum noktasındaki dikey ve yan boşluğu ölçün. Kapak gövdeden yüksek olabilir; eğik halde giren bir matara normal kullanımda dengeli durmayabilir. Birimleri, ölçüm yöntemini ve mümkünse ölçekli fotoğrafı saklayın."
+      ],
+      [
+        "3. Numuneyi gerçek kullanım yerinde deneyin",
+        "Tam montajlı numuneyi kullanılacağı yere götürün. Musluğun altına yerleştirip dengeli durduğunu, elin mataraya eriştiğini ve suyun kenara çarpmadan içeri aktığını kontrol edin. İşlemi kullanıcının normal duruşunda ve mevcut alanla tekrarlayın. Tek bir gösterim başka model veya tesiste uyumluluğu garanti etmez. Tarihi, konumu, sebil modelini ve gözlemlenen sonucu kaydedin."
+      ],
+      [
+        "4. Yalnızca musluk boşluğunu değil tüm akışı kontrol edin",
+        "Uygulamalı test; kapağı açmayı, matarayı tutmayı, gereksiz teması önlemeyi, kapatmayı, temizlemeyi ve sonrasında saklamayı da kapsar. Tepsi veya sensör varsa gövde ya da elin bunlarla çakışıp çakışmadığına bakın. Alanın nasıl temiz tutulacağını belirleyin ve ekipman talimatlarına uyun. Uygun değerlendirme olmadan hijyen veya bulaşmayı önleme iddiasında bulunmayın. İşleyen adımları ve kullanıcı güçlüklerini kaydedin."
+      ],
+      [
+        "5. Kapasiteyi, dolu ağırlığı ve dolum sıklığını birlikte değerlendirin",
+        "Kapasite dolum sıklığını etkileyebilir; aynı zamanda dolu matarayı büyütür ve ağırlaştırır. Model için listelenen kesin ml bilgisini kullanın; oz ifadesini kullanıyorsanız yaklaşık sınıf olarak belirtin. Kapasiteyi fotoğraftan veya gövde biçiminden tahmin etmeyin. Kullanıcılara dolum noktasına ne sıklıkla geldiklerini sorun ve yaptıkları işi dikkate alın. Karar, yalnızca en büyük hacmi seçmek yerine uyum, taşıma yükü, rahatlık ve rutini dengelemelidir."
+      ],
+      [
+        "6. Hedef pazar için malzeme ve bakım belgelerini inceleyin",
+        "Uyum testi yalnızca bir numunenin belirli noktaya sığdığını gösterir. Malzemeyi, gıda temasını, dayanımı, sıcaklığı veya yerel mevzuat uygunluğunu belgelemez. Tam model, bileşenler ve hedef pazar için geçerli belgeleri isteyin; temizlik talimatı ve kullanım sınırlarını doğrulayın. Tritan, BPA içermeyen malzeme veya başka reçine özel üretim talebi olarak ele alınmalı; bitmiş montaj için şartname ve kanıtla teyit edilmelidir. Mevzuat sayfaları genel çerçeveyi anlatır, XUYI SKU'sunu onaylamaz."
+      ],
+      [
+        "7. Denenen modeli onaylayın ve satın alma kaydını saklayın",
+        "Modeli, ml değerini, ölçümleri, kapak ve aksesuarları, dolum noktasını, fotoğrafları, test sonucunu, incelenen belgeleri ve onay sorumlusunu içeren kayıt oluşturun. RFQ'ya varyant başına miktarı, ambalajı ve açık soruları ekleyin. Tekrar sipariş öncesinde numuneyi ve ekipmanı aynı kayıt sürümüyle karşılaştırın. Kapak, yükseklik, ekipman veya kullanım yeri değişirse eski sonucun hâlâ geçerli olduğunu varsaymayın; ilgili testi tekrarlayın."
+      ]
+    ],
+    "checklist": [
+      "Dolum noktasının modelini ve tam konumunu kaydedin.",
+      "Yüksekliği, genişliği, tabanı ve el boşluğunu ölçün.",
+      "Matarayı kapak ve aksesuarlar takılı halde ölçün.",
+      "Gerçek musluğun altında dengeyi ve dolumu test edin.",
+      "Tarih, yer, ekipman, kullanıcı ve gözlemi kaydedin.",
+      "Açılma, kapanma, tepsi, sensör ve temizliği kontrol edin.",
+      "Kesin ml kullanın; oz değerini yaklaşık sınıf olarak yazın.",
+      "SKU, bileşen ve hedef pazar belgelerini isteyin.",
+      "Fiziksel uyumu malzeme ve performans uygunluğundan ayırın.",
+      "Onayı saklayın ve önemli değişikliklerde testi yineleyin."
+    ],
+    "faqs": [
+      [
+        "Kapasite, matarının sebilin altına sığacağını anlamaya yeter mi?",
+        "Hayır. Kapasite montajlı yüksekliği, genişliği, kapağı ve musluk boşluğunu göstermez. Tam montajı ölçün ve gerçek noktada deneyin."
+      ],
+      [
+        "Uyum testi gıda temasına uygunluğu doğrular mı?",
+        "Hayır. Yalnızca belirli koşullardaki fiziksel yerleşimi kaydeder. Malzeme belgeleri model, bileşenler ve pazarla eşleşmelidir."
+      ],
+      [
+        "Her kapasite ve kapak türünü ayrı ayrı test etmeli miyim?",
+        "Ölçüler veya bileşenler değişiyorsa ilgili kombinasyonları doğrulayın. Başka varyantın sonucunu otomatik olarak taşımayın."
+      ],
+      [
+        "Bir tesis için RFQ'ya neler eklenmeli?",
+        "Model ve kapasiteyi, varyant miktarını, ölçülen boşluğu, nokta fotoğraflarını, kapağı, temizlik beklentisini, pazarı ve gerekli belgeleri ekleyin."
+      ]
+    ],
+    "matrix": {
+      "title": "Dolum noktası uyum test tablosu",
+      "intro": "Gözlenen ölçüleri, SKU verilerini ve tesis onayını ayrı tutun.",
+      "head": [
+        "Alan",
+        "Kontrol",
+        "Kanıt"
+      ],
+      "rows": [
+        [
+          "Ekipman",
+          "Model, musluk, boşluk",
+          "Tesis kaydı"
+        ],
+        [
+          "Matara",
+          "Montajlı yükseklik, taban, genişlik",
+          "Ölçüm formu"
+        ],
+        [
+          "Kullanım",
+          "Denge, erişim, dolum",
+          "Yerinde test"
+        ],
+        [
+          "Bakım",
+          "Açma, kapama, temizlik",
+          "Talimat"
+        ],
+        [
+          "Satın alma",
+          "SKU, miktar, pazar, belge",
+          "Onaylı RFQ"
+        ]
+      ]
+    },
+    "sources": {
+      "title": "Resmî kaynaklar ve kapsam sınırı",
+      "intro": "Bu sayfalar genel düzenleyici çerçeveyi açıklar. XUYI modelini belgelendirmez ve belirli ürünü doğrulamanın yerini almaz.",
+      "labels": [
+        "Avrupa Komisyonu: Gıda ile temas eden malzemeler mevzuatı",
+        "ABD FDA: Gıda temaslı bileşenlerin düzenleyici statüsü"
+      ]
+    },
+    "related": [
+      [
+        "Toptan özel üretim plastik matara tedarikçileri nasıl karşılaştırılır?",
+        "Belgeleri, numuneleri ve teklif koşullarını kıyaslayın."
+      ],
+      [
+        "OEM fiyatı istemeden önce matara RFQ'suna neler eklenmeli?",
+        "Model, miktar, ambalaj ve hedef pazar için karşılaştırılabilir bilgiler hazırlayın."
+      ],
+      [
+        "Toptan mataralar için ihracat kolileri nasıl planlanır?",
+        "Varyantları ve koli verilerini onaylı siparişe bağlayın."
+      ]
+    ],
+    "cta": [
+      "Belirli bir dolum noktasını doğrulamak mı istiyorsunuz?",
+      "Matara modelini, kapasiteyi, ekipmanı ve ölçülen boşluğu paylaşın; sipariş öncesinde uyum ve belgeleri teyit edin.",
+      "Teklif isteyin"
+    ]
+  }
+}
