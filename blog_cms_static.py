@@ -26,6 +26,66 @@ def _paragraph(value):
     )
 
 
+def _product_notes(post, section_index, locale="en"):
+    notes = post.get("product_notes", [])
+    if not isinstance(notes, list):
+        return ""
+    out = ""
+    for note in notes:
+        if not isinstance(note, dict) or note.get("section") != section_index:
+            continue
+        sku = str(note.get("sku") or "").strip()
+        if not re.fullmatch(r"[A-Za-z0-9_-]{2,80}", sku):
+            continue
+        text_map = note.get("text") if isinstance(note.get("text"), dict) else {}
+        pattern = str(text_map.get(locale) or text_map.get("en") or "")
+        if pattern.count("{product}") != 1:
+            continue
+        label_map = note.get("label") if isinstance(note.get("label"), dict) else {}
+        label = str(label_map.get(locale) or label_map.get("en") or sku).strip()
+        front, back = pattern.split("{product}")
+        link = '<a class="blog-editorial__product-link" href="/products/' + esc(sku) + '/">' + esc(label) + '</a>'
+        out += ' <span class="blog-editorial__product-note" data-editorial-model="' + esc(sku) + '">' + esc(front) + link + esc(back) + '</span>'
+    return out
+
+
+def _inline_links(post):
+    links = post.get("inline_links", [])
+    if not isinstance(links, list):
+        return ""
+    safe = [pair for pair in links if isinstance(pair, list) and len(pair) == 2
+            and isinstance(pair[0], str) and isinstance(pair[1], str)
+            and LOCAL_LINK.fullmatch(pair[1])]
+    if not safe:
+        return ""
+    out = '<nav class="blog-buyer-matrix__links blog-inline-links" aria-label="Related reading">'
+    out += ''.join('<a href="' + esc(url) + '">' + esc(label) + ' →</a>' for label, url in safe)
+    return out + '</nav>'
+
+
+def _sources(post):
+    sources = post.get("sources")
+    if not isinstance(sources, dict):
+        return ""
+    insight = str(sources.get("insight") or "").strip()
+    next_step = str(sources.get("next_step") or "").strip()
+    caveat = str(sources.get("caveat") or "").strip()
+    if not insight and not next_step and not caveat:
+        return ""
+    out = '<section class="blog-evidence" id="primary-sources" aria-labelledby="primary-sources-heading"><span class="eyebrow">SOURCE-CHECKED BUYER NOTES</span><h2 id="primary-sources-heading">Reference points</h2>'
+    if insight:
+        out += '<p>' + esc(insight) + '</p>'
+    if next_step:
+        out += '<p><strong>Practical next step:</strong> ' + esc(next_step) + '</p>'
+    out += '<h3>Primary references</h3><ul>'
+    out += '<li><a href="https://www.fda.gov/food/food-ingredients-packaging/food-contact-substances" target="_blank" rel="noopener noreferrer">FDA food-contact substance reference ↗</a></li>'
+    out += '<li><a href="https://eur-lex.europa.eu/eli/reg/2004/1935/oj" target="_blank" rel="noopener noreferrer">European food-contact materials framework ↗</a></li>'
+    out += '</ul>'
+    if caveat:
+        out += '<p class="blog-evidence__caveat">' + esc(caveat) + '</p>'
+    return out + '</section>'
+
+
 def _date(value):
     raw = str(value or "")[:10]
     return raw if re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw) else ""
@@ -101,8 +161,8 @@ def render(post, known_slugs=()):
             '<li>' + esc(item) + '</li>' for item in checklist[:3]
         ) + '</ul></div>'
     for index, section in enumerate(sections):
-        body += '<section class="blog-section" id="article-section-' + str(index) + '"><h2>' + esc(section["heading"]) + '</h2><p>' + _paragraph(section["paragraph"]) + '</p></section>'
-    body += _buyer_table(post)
+        body += '<section class="blog-section" id="article-section-' + str(index) + '"><h2>' + esc(section["heading"]) + '</h2><p>' + _paragraph(section["paragraph"]) + _product_notes(post, index) + '</p></section>'
+    body += _inline_links(post) + _sources(post) + _buyer_table(post)
     if checklist:
         body += '<section class="blog-checklist"><h2>Buyer checklist</h2><ul>' + ''.join(
             '<li>' + esc(item) + '</li>' for item in checklist
