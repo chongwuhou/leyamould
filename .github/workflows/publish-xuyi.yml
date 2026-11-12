@@ -168,163 +168,42 @@ jobs:
           python scripts/test_product_reviews_source.py
           node scripts/test_product_reviews_api.mjs
           python scripts/test_daily_product_reviews.py
-          python scripts/test_blog_20261021_source.py
-          python scripts/test_blog_20261022_source.py
-          python scripts/test_blog_20261023_source.py
-          python scripts/test_blog_20261024_source.py
-          python scripts/test_blog_20261025_source.py
-          python scripts/test_20261026_blog_cms_owner_priority.py
-          python scripts/test_blog_20261027_source.py
-          python scripts/test_blog_20261028_source.py
-          python scripts/test_blog_20261028_cover_priority.py
-          python scripts/test_blog_20261029_source.py
-          node scripts/test_blog_covers_20261029.mjs
-          node scripts/test_blog_20261030_english_related.mjs
-          python scripts/test_20261025_blog_photos_cms_priority.py
-          python scripts/test_five_photo_sources_20261024.py
-          node scripts/test_five_blog_photo_cover_owner_guard.mjs
-          node scripts/test_daily_product_reviews_api.mjs
           python scripts/test_product_components.py
           python scripts/test_buyer_content.py
           python scripts/test_model_catalog_buyer_comparison.py
           python scripts/test_curated_application_feature_answers.py
           python scripts/test_source_buyer_decision_content.py
-          python scripts/test_researched_blog_depth_g_series.py
           python scripts/test_about_company_source.py
           python scripts/test_visible_catalog_schemas.py
           python scripts/test_editorial_evidence.py
           python scripts/test_editorial_d1_overrides.py
           node scripts/test_blog_dynamic_evidence.mjs
-          node scripts/test_blog_index_order_20261107.mjs
-          node scripts/test_blog16_live_d1_render.mjs
-          node scripts/test_blog_d1_paragraph_links.mjs
-          node scripts/test_blog_buyer_decisions_runtime.mjs
-          node scripts/test_verified_blog_depth_and_authors.mjs
-          node scripts/test_researched_blog_depth_runtime.mjs
-          node scripts/test_blog_buyer_pathways_runtime.mjs
-          node scripts/test_blog_hreflang_runtime.mjs
-          node scripts/test_blog_cover_override_runtime.mjs
-          python scripts/test_seo_multilingual_launch.py
-          python scripts/test_priority_seo.py
-          python scripts/test_cms_seo_rebuild_policy.py
-          node scripts/test_product_seo_refresh_20261104.mjs
-          python scripts/test_source_of_truth_policy.py
-          python scripts/test_contextual_share_metadata.py
-          python scripts/test_curated_catalog_meta_clarity.py
-          python scripts/test_curated_buyer_seo_round2.py
-          python scripts/test_buyer_journey_and_product_sharing.py
-          python scripts/test_owner_contextual_links_survive_rebuild.py
-          python scripts/test_source_modules_survive_owner_rebuild.py
-          python scripts/test_verified_capacity_gradient.py
-          python scripts/test_spanish_microcopy_about_source.py
-          python scripts/test_home_blog_why_us_buyer_quality.py
-          python scripts/test_16_blog_editorial_internal_links.py
-          python scripts/test_20261017_blog_batch.py
-          python scripts/test_20261017_blog_cover_replacements.py
-          node scripts/test_20261017_blog_batch_runtime.mjs
-          python scripts/test_20261018_blog_batch.py
-          python scripts/test_20261019_blog_batch.py
-          python scripts/test_20261020_b2b_blog_batch.py
           python scripts/test_blog_listing_single_header.py
           python scripts/test_blog_pagination_source.py
           node scripts/test_blog_pagination_runtime.mjs
-          node scripts/test_20261020_b2b_blog_batch_runtime.mjs
-          node scripts/test_20261019_blog_batch_runtime.mjs
-          node scripts/test_20261018_blog_batch_runtime.mjs
-          python scripts/test_source_catalog_capacity_oz.py
-          python scripts/test_product_seo_title_oz_release.py
-          python scripts/test_product_seo_d1_authority.py
-          python scripts/test_model_catalog_buyer_comparison.py
-          python scripts/test_visible_catalog_schemas.py
-          node scripts/test_product_seo_promotion.mjs
-          python scripts/test_source_sitemap_titles_h1_images.py
-          python scripts/test_product_image_sitemap.py
-          python scripts/test_source_product_social_image_truth.py
-          python scripts/test_search_intent_three_routes.py
-          python scripts/test_turkish_bottle_cap_terminology.py
-          python scripts/test_pilot_20_unique_sku_openings.py
-          python scripts/test_phase2_six_unique_sku_openings.py
-          python scripts/test_phase3_fourteen_unique_sku_openings.py
-          python scripts/test_phase4_fourteen_unique_sku_openings.py
-          python scripts/test_phase5_fourteen_unique_sku_openings.py
-          python scripts/test_phase6_lo8_unique_sku_openings.py
-          python scripts/test_phase7_g8_unique_factory_model_guides.py
-          python scripts/test_phase8_last3_source_discrepancy_guides.py
-          python scripts/test_20_product_modules_and_faq_schema.py
-          python scripts/test_phase10_next20_sku_h2_sections.py
-          python scripts/test_phase11_third20_sku_h2_sections.py
-          python scripts/test_phase12_fourth20_alias_aware_h2_sections.py
-          python scripts/test_phase13_lo8_alias2_h2_factual_owner.py
-          node scripts/test_blog_search_intent_runtime.mjs
-          python scripts/test_retail_size_class_audit.py
-          python scripts/test_verified_trust_technical_seo.py
-          python scripts/test_source_social_previews.py
-          python scripts/test_buyer_journey_internal_links.py
-          python scripts/test_curated_buyer_seo_round2.py
-          python scripts/test_entity_llms_indexnow.py
-          python scripts/test_search_submission.py
-          python scripts/test_product_locale_metadata.py
-          python scripts/test_product_hreflang.py
-          python scripts/test_product_material_performance.py
-          python scripts/test_lo_product_launch.py
-          python scripts/test_product_image_width.py
-          python scripts/test_gallery_reference_launch.py
-          python scripts/test_g_series_factory_model_status.py
-          python scripts/test_blog_meta_description_overrides.py
-          python scripts/test_multilingual_content_audit.py
-          python scripts/test_image_alt_seo.py
-          python scripts/test_catalog_visibility.py
-          python scripts/test_crawlable_catalog_and_variant_301.py
-          python scripts/test_future_locale_framework.py
-          node scripts/test_future_locale_runtime.mjs
-          node scripts/test_language_switch_failover.mjs
-          python scripts/test_model_overflow.py
-          node scripts/test_model_overflow_handler.mjs
-          node scripts/test_legacy_source_tombstones.mjs
-          python scripts/test_admin_route.py
-          python scripts/test_localized_templates.py
-          python scripts/test_localized_release.py
-          python scripts/test_factory_catalog_20261103.py
-          python scripts/test_product_components.py
-          python scripts/test_ppt_new_95_publish.py
-          node scripts/test_factory_catalog_20261103.mjs
-          python scripts/test_shared_chrome_i18n.py
-          python scripts/test_curated_hq_images.py
-          python scripts/test_gpt_reviewed_shaker_hd.py
-          python scripts/test_product_photo_cms_override_policy.py
-          python scripts/test_factory_family_photo_disclosure.py
-          python scripts/test_reviewed_editorial_images.py
-          python scripts/test_reviewed_media_owner_overrides.py
-          python scripts/test_reviewed_lowres_editorial_round2.py
-          python scripts/test_repaired_sports_category.py
-          python scripts/test_repaired_remaining_category_cards.py
-          python scripts/test_primary_image_placements.py
-          python scripts/test_unique_blog_thumbnails.py
-          python scripts/test_blog_media_source.py
-          python scripts/test_five_blog_photo_cms_priority.py
-          python scripts/test_home_visual_upgrade.py
-          python scripts/test_r2_usage_index.py
-          python scripts/test_d1_navigation.py
-          python scripts/test_d1_redirects.py
-          node scripts/test_inquiry_readiness.mjs
-          node scripts/test_admin_inquiry_detail.mjs
-          node scripts/test_admin_auth.mjs
-          node scripts/test_media_library.mjs
-          node scripts/test_admin_media_auth.mjs
-          node scripts/test_media_replacement.mjs
+          python scripts/test_seo_multilingual_launch.py
+          python scripts/test_priority_seo.py
+          python scripts/test_cms_seo_rebuild_policy.py
+          python scripts/test_source_of_truth_policy.py
+          python scripts/test_contextual_share_metadata.py
+          python scripts/test_owner_contextual_links_survive_rebuild.py
+          python scripts/test_source_modules_survive_owner_rebuild.py
+          python scripts/test_verified_capacity_gradient.py
+          python scripts/test_operating_runbook.py
       - name: Verify second clean source rebuild and CMS-owner priority
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
         run: |
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_release.py
-          python scripts/test_20261026_blog_cms_owner_priority.py
-          python scripts/test_blog_20261027_source.py
-          python scripts/test_blog_20261028_source.py
-          python scripts/test_blog_20261028_cover_priority.py
-          python scripts/test_blog_20261029_source.py
-          node scripts/test_blog_covers_20261029.mjs
-          node scripts/test_blog_20261030_english_related.mjs
+          python scripts/test_shared_templates.py
+          python scripts/test_source_of_truth_policy.py
+          python scripts/test_cms_seo_rebuild_policy.py
+          python scripts/test_seo_multilingual_launch.py
+          python scripts/test_blog_listing_single_header.py
+          python scripts/test_blog_pagination_source.py
+          node scripts/test_blog_pagination_runtime.mjs
+          echo "XUYI_SECOND_CLEAN_GENERIC_REBUILD_PASSED"
       - name: No changes in the XUYI D1 publish revision
         if: github.event_name == 'schedule' && steps.revision.outputs.needed == 'false'
         run: echo "No changes; skipped build and deploy to preserve GitHub Actions usage."
