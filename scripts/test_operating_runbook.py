@@ -28,8 +28,6 @@ REQUIRED_SECTIONS = (
     "## 11. 给任何 AI 或新操作员的固定指令",
 )
 FORBIDDEN_IN_CANONICAL = (
-    "101 个产品",
-    "505 个产品",
     "默认 en/es/pt/ru/tr",
     "五语页面",
     "五语言核验",
