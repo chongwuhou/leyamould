@@ -69,6 +69,8 @@ jobs:
       XUYI_PUBLISH_REVISION: "0"
     steps:
       - uses: actions/checkout@v4
+      - name: Verify canonical human and AI operating runbook
+        run: python scripts/test_operating_runbook.py
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
