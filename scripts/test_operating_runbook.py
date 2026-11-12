@@ -61,4 +61,10 @@ quickstart = (ROOT / "docs" / "AI_COLLABORATION_QUICKSTART_ZH.md").read_text(enc
 if re.search(r"默认\s*(en/es/pt/ru/tr)|五语页面|五语言核验", quickstart):
     fail("quickstart still contains a fixed locale-count instruction")
 
-print("Operating runbook guard passed: one source of truth, human/API modes, authorization boundary, and D1-driven locales are documented.")
+workflow = (ROOT / ".github" / "workflows" / "publish-xuyi.yml").read_text(encoding="utf-8")
+if "schedule_blog_20261103" in workflow:
+    fail("historical date-specific workflow input remains")
+if re.search(r"^\\s*- name: (?:Prepare|Publish|Upload|Repair|Schedule|Rebuild|Double).*20\\d{2}", workflow, re.MULTILINE):
+    fail("historical date-specific release step remains in the live publisher")
+
+print("Operating runbook guard passed: one source of truth, human/API modes, authorization boundary, D1-driven locales, and one generic publisher are documented.")
