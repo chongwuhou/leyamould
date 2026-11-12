@@ -11,6 +11,7 @@ const reply = (body, status = 200) => Response.json(body, {
   headers: { "cache-control": "no-store", "x-robots-tag": "noindex,nofollow,noarchive" }
 });
 const count = (value, part) => String(value).split(part).length - 1;
+const countPattern = (value, pattern) => String(value).match(pattern)?.length || 0;
 const hasClass = (html, className) => new RegExp(`<[^>]+\\bclass="[^"]*\\b${className}\\b[^"]*"[^>]*>`, "i").test(String(html));
 const unsafeHtml = /<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -84,9 +85,9 @@ function validatePayload(payload, locales) {
     const locale = String(item?.locale || "");
     const key = slug + "|" + locale;
     const html = String(item?.html || "");
-    const href = 'href="/blog/' + slug + '/"';
+    const hrefPattern = new RegExp('href="(?:/[^"]+)?/blog/' + slug + '/"', "g");
     if (!expected.has(slug) || !locales.includes(locale) || seenCards.has(key) || html.length < 100 || html.length > 10000 ||
-        unsafeHtml.test(html) || !html.startsWith('<article class="news-card">') || !html.endsWith("</article>") || count(html, href) !== 3) {
+        unsafeHtml.test(html) || !html.startsWith('<article class="news-card">') || !html.endsWith("</article>") || countPattern(html, hrefPattern) !== 3) {
       throw Error("Reviewed index card failed validation: " + key);
     }
     seenCards.add(key);
