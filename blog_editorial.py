@@ -51,7 +51,7 @@ def render_primary_evidence(slug):
     h+='<p>'+e(evidence["insight"])+'</p><p><strong>Practical next step:</strong> '+e(evidence["next_step"])+'</p>'
     h+='<h3>Primary references</h3><ul>'
     for source in evidence["sources"]:
-        assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/","https://www.uspto.gov/","https://www.pantone.com/","https://health.clevelandclinic.org/"))
+        assert source["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://support.gs1.org/","https://food.ec.europa.eu/","https://www.iso.org/","https://www.eastman.com/","https://www.uspto.gov/","https://www.pantone.com/","https://health.clevelandclinic.org/"))
         h+='<li><a href="'+e(source["url"])+'" target="_blank" rel="noopener noreferrer">'+e(source["label"])+' ↗</a></li>'
     h+='</ul><p class="blog-evidence__caveat">External regulations and standards are independent references, not product certification or proof of testing by XUYI. Confirm applicability and the latest rules for the exact product, destination and transaction date.</p></section>'
     return h
@@ -109,7 +109,7 @@ def render_depth_evidence(slug):
         out+='<nav class="blog-deep-dive__sources" aria-label="Official research references"><h3>Research references from official authorities</h3><ul>'
         for source in entry["sources"]:
             url=source["url"]
-            if not url.startswith(("https://www.fda.gov/","https://www.cpsc.gov/","https://www.iso.org/","https://www.ftc.gov/","https://www.ista.org/","https://www.eastman.com/","https://food.ec.europa.eu/","https://eur-lex.europa.eu/","https://echa.europa.eu/","https://iccwbo.org/","https://www.uspto.gov/")):
+            if not url.startswith(("https://www.fda.gov/","https://www.cpsc.gov/","https://www.iso.org/","https://www.ftc.gov/","https://www.ista.org/","https://www.eastman.com/","https://support.gs1.org/","https://food.ec.europa.eu/","https://eur-lex.europa.eu/","https://echa.europa.eu/","https://iccwbo.org/","https://www.uspto.gov/")):
                 raise ValueError("Unreviewed reference domain: "+url)
             out+='<li><a href="'+e(url)+'" rel="noopener noreferrer" target="_blank">'+e(source["label"])+' ↗</a></li>'
         out+='</ul><p>These are independent educational sources; they do not certify any XUYI bottle, factory or material.</p></nav>'

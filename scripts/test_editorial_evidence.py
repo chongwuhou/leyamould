@@ -2,8 +2,11 @@
 """Check traceable sources and non-generic content, no external requests."""
 from pathlib import Path
 import json,re,html
+import sys
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
+sys.path.insert(0,str(ROOT))
+from blog_catalog_source import load_guides
 items=json.loads((ROOT/"data/editorial-evidence.json").read_text(encoding="utf-8"))
 assert len(items)>=6
 for slug,item in items.items():
@@ -16,13 +19,13 @@ for slug,item in items.items():
     reviewed=json.loads((ROOT/"data/blog-depth-evidence-en.json").read_text(encoding="utf8"))["articles"]
     for batch in (1,2,3):
         reviewed.update(json.loads((ROOT/f"data/blog-deep-research-part{batch}.json").read_text(encoding="utf8"))["articles"])
-    guides=json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf8"))
+    guides=load_guides(ROOT)
     post=next(item for item in guides if item["slug"]==slug)
     date=max(post["updated"],"2026-10-14" if slug in reviewed else "2026-10-10")
     assert f'article:modified_time" content="{date}"' in doc,slug
     for ref in item["sources"]:
         assert ref["url"] in doc,(slug,ref["url"])
-        assert ref["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://www.iso.org/","https://www.eastman.com/","https://www.uspto.gov/","https://www.pantone.com/","https://health.clevelandclinic.org/"))
+        assert ref["url"].startswith(("https://www.fda.gov/","https://eur-lex.europa.eu/","https://support.gs1.org/","https://food.ec.europa.eu/","https://www.iso.org/","https://www.eastman.com/","https://www.uspto.gov/","https://www.pantone.com/","https://health.clevelandclinic.org/"))
     assert 'not product certification' in doc,slug
 quality=(DIST/"quality-control/index.html").read_text(encoding="utf-8")
 factory=(DIST/"manufacturing/index.html").read_text(encoding="utf-8")

@@ -13,7 +13,7 @@ D=ROOT/"dist"
 completed=set()
 all_titles=set()
 all_body_paragraphs=set()
-official_domains=("www.fda.gov","www.cpsc.gov","www.iso.org","www.ftc.gov","www.ista.org","www.eastman.com",
+official_domains=("www.fda.gov","www.cpsc.gov","www.iso.org","www.ftc.gov","www.ista.org","www.eastman.com","support.gs1.org",
  "food.ec.europa.eu","eur-lex.europa.eu","echa.europa.eu","iccwbo.org","www.uspto.gov")
 for batch in (1,2,3):
     data=json.loads((ROOT/f"data/blog-deep-research-part{batch}.json").read_text(encoding="utf8"))
