@@ -185,6 +185,7 @@ jobs:
           python scripts/test_priority_seo.py
           python scripts/test_cms_seo_rebuild_policy.py
           python scripts/test_source_of_truth_policy.py
+          python scripts/test_verified_trust_technical_seo.py
           python scripts/test_contextual_share_metadata.py
           python scripts/test_owner_contextual_links_survive_rebuild.py
           python scripts/test_source_modules_survive_owner_rebuild.py
