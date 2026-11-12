@@ -1,5 +1,7 @@
 # XUYI site — durable change rules
 
+> **唯一执行入口：** 具体操作统一按 [XUYI 网站统一执行手册](docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md)。本文件的原则优先级不变；带日期的历史说明仅供追溯。
+
 **The site owner requires all fixes to survive subsequent complete rebuilds.**
 ## P0 / Mandatory owner directive — Template or CMS only (2026-10-14; applies to every future task)
 

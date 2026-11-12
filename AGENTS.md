@@ -1,5 +1,7 @@
 # XUYI website mandatory change policy
 
+> **唯一执行入口：** 具体操作统一按 [XUYI 网站统一执行手册](docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md)。本文件的原则优先级不变；带日期的历史说明仅供追溯。
+
 Before editing this project, read [PROJECT_CHANGE_POLICY.md](PROJECT_CHANGE_POLICY.md).
 This applies to localGPT, Codex, other coding agents and human maintainers.
 ## P0：站长永久指令——所有批量变更只允许在模板 / 正式数据源实施（每次任务开工前必读）
@@ -78,5 +80,4 @@ test reproducing a realistic owner/CMS update before publishing.
 ### 固定发布流程
 
 D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数据源 → bump publish revision → 两次干净构建/回归 → 检查 D1 当前已发布语种、canonical/hreflang、sitemap、重复卡片与链接 → 核验代表线上路由。失败停在 CI，不发布临时产物；不要用 dist、线上 HTML 或一次性后处理替代正式修复。
-
 
