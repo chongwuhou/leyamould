@@ -793,10 +793,10 @@
     },
     {
       "slug": "wholesale-water-bottle-refill-station-fit-checklist",
-      "visualScene": "A person fills a reusable bottle at a wall-mounted water filter tap; the bottle is positioned directly beneath the outlet.",
-      "buyerContext": "Facility and workplace buyers checking a reusable bottle refill station.",
-      "articleUse": "A practical site-fit checklist for clearance, refill steps and repeatable approval.",
-      "sceneMatch": "The real bottle-and-tap interaction matches the article's physical fit and refill workflow topic. It is a contextual household filter scene, not a claimed customer facility, compatibility test, public station, XUYI product or compliance demonstration.",
+      "visualScene": "A woman fills a clear bottle beneath a metal water outlet in an industrial interior; the bottle, outlet and hand positioning are visible.",
+      "buyerContext": "Facility and workplace buyers assessing the physical fit of reusable bottles at refill points.",
+      "articleUse": "A real filling action at a metal outlet illustrates the clearance and handling questions in a site-fit checklist.",
+      "sceneMatch": "The photo shows a clear bottle positioned under an industrial water outlet with a hand operating the tap, matching the article's outlet-clearance and refill-step review. It is contextual stock imagery, not a public station, verified customer site, XUYI product or compatibility test.",
       "topicAnchors": [
         "refill",
         "station",
@@ -804,21 +804,21 @@
       ],
       "productVisibility": "clearly-visible",
       "scores": {
-        "sector": 4,
+        "sector": 5,
         "productUse": 5,
-        "commercialRealism": 5,
+        "commercialRealism": 4,
         "truthfulness": 5,
         "composition": 4
       },
       "articleTitle": "Will a Reusable Water Bottle Fit Your Refill Station? A B2B Site-Test Checklist",
-      "cover": "/media/blog/c8a6dc603be24b7d8c08a8ae3b7c.webp",
-      "source": "assets/blog/c8a6dc603be24b7d8c08a8ae3b7c.webp",
-      "sha256": "9b91040716cc6ea6cc48a707612232f23636987ee45415fb3a02d37a8ec99f04",
+      "cover": "/media/blog/d4ce29effe2e43d6b48dbe07f47d.webp",
+      "source": "assets/blog/d4ce29effe2e43d6b48dbe07f47d.webp",
+      "sha256": "f031cc90a9aa87ca00975c4d28014e3ffea9370c6def2e749e766f9c9ccb705f",
       "reviewDecision": "visually-reviewed-approved",
       "visualReview": "actual-image-and-article-compared",
-      "provenance": "Pexels stock photograph by Helena Lopes, photo 27176108; source page and free-use license reviewed.",
-      "usageDisclosure": "Contextual photo of filling a reusable bottle at a tap. It is not an XUYI model, site-fit test, customer facility, certification or performance claim.",
-      "sourceUrl": "https://www.pexels.com/photo/filling-reusable-bottle-at-kitchen-sink-27176108/"
+      "provenance": "Pexels stock photo by Rene Terp, photo 13821183; its Pexels source page lists a free license.",
+      "usageDisclosure": "Contextual stock photo. It is not an XUYI factory, customer site, confirmed refill station, model compatibility result or certification.",
+      "sourceUrl": "https://www.pexels.com/photo/a-smiling-woman-filling-up-her-water-bottle-13821183/"
     }
   ]
 }
