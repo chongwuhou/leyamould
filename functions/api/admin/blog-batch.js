@@ -11,6 +11,7 @@ const reply = (body, status = 200) => Response.json(body, {
   headers: { "cache-control": "no-store", "x-robots-tag": "noindex,nofollow,noarchive" }
 });
 const count = (value, part) => String(value).split(part).length - 1;
+const hasClass = (html, className) => new RegExp(`<[^>]+\\bclass="[^"]*\\b${className}\\b[^"]*"[^>]*>`, "i").test(String(html));
 const unsafeHtml = /<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i;
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -66,7 +67,7 @@ function validatePayload(payload, locales) {
     if (!match || !expected.has(match[1]) || !locales.includes(locale) || seenTranslations.has(key) ||
         String(item?.title || "").length < 12 || String(item?.description || "").length < 25 ||
         html.length < 5000 || html.length > 250000 || unsafeHtml.test(html) ||
-        !requiredPageMarkers.every(marker => html.includes(marker)) ||
+        (!requiredPageMarkers.every(marker => marker.startsWith("class=") ? hasClass(html, marker.slice(7, -1)) : html.includes(marker))) ||
         count(html, 'id="primary-sources"') !== 1 || count(html, 'class="blog-editorial__product-link"') !== 3 ||
         count(html, 'class="blog-related__item"') !== 3 || count(html, 'class="blog-buyer-matrix"') !== 1 || count(html, "<details>") !== 4) {
       throw Error("Reviewed translation failed validation: " + key);
