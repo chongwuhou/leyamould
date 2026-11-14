@@ -65,7 +65,7 @@ def render_copy(value):
         if not href.startswith("/") or href.startswith("//"):
             return match.group(0)
         return "<a href=\"" + e(href) + "\">" + label + "</a>"
-    return re.sub(r"\\[([^\\]]+)\\]\\((/[^)\\s]+)\\)", replace, escaped)
+    return re.sub(r"\[([^\]]+)\]\((/[^)\s]+)\)", replace, escaped)
 
 def render_primary_evidence(slug):
     evidence=EVIDENCE.get(slug)
