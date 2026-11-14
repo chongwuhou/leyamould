@@ -691,4 +691,15 @@ FAQS=[
 ]
 from blog_catalog_source import load_guides
 BLOG_POSTS={post["slug"]:post for post in load_guides(ROOT)}
+# D1 is the editable source of truth for published Blog bodies. The build
+# snapshot may contain summary rows for the index and full rows for CMS-owned
+# articles; when a full row is present, overlay the matching static guide so
+# the default static build reflects the reviewed D1 content without changing
+# its existing slug or route. Incomplete summary rows never erase the
+# reviewed template fallback.
+for _d1_post in BUILD_STATE.get("blogPosts",[]):
+ if not isinstance(_d1_post,dict):continue
+ _slug=str(_d1_post.get("slug") or "")
+ if _slug in BLOG_POSTS and isinstance(_d1_post.get("sections"),list) and len(_d1_post["sections"])>=2:
+  BLOG_POSTS[_slug]={**BLOG_POSTS[_slug],**_d1_post}
 ARTICLES=[(post["slug"],post["title"],post["description"]) for post in reversed(list(BLOG_POSTS.values()))]
