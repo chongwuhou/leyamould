@@ -1,10 +1,18 @@
 """XUYI editorial page rendering. Article copy lives in data/blog-guides.json."""
 import json
 import re
-from site_renderer import ROOT, e, photo, intro, SITE_ORIGIN
+from site_renderer import BUILD_STATE, ROOT, e, photo, intro, SITE_ORIGIN
 
 from blog_catalog_source import load_guides
 GUIDES = {post["slug"]:post for post in load_guides(ROOT)}
+# D1 is the source of truth for published Blog copy. Existing static slugs
+# must render the reviewed D1 row too; otherwise the index can be current
+# while the detail page silently keeps the old six-section template.
+for _d1_post in BUILD_STATE.get("blogPosts",[]):
+    if not isinstance(_d1_post,dict):continue
+    _slug=str(_d1_post.get("slug") or "")
+    if _slug in GUIDES and isinstance(_d1_post.get("sections"),list) and len(_d1_post["sections"])>=2:
+        GUIDES[_slug]={**GUIDES[_slug],**_d1_post}
 COVER_OVERRIDES = json.loads((ROOT / "data/blog-cover-overrides.json").read_text(encoding="utf-8"))
 assert set(COVER_OVERRIDES).issubset(GUIDES), "Unknown blog cover override"
 EVIDENCE=json.loads((ROOT / "data/editorial-evidence.json").read_text(encoding="utf-8"))
