@@ -5,14 +5,19 @@ from site_renderer import BUILD_STATE, ROOT, e, photo, intro, SITE_ORIGIN
 
 from blog_catalog_source import load_guides
 GUIDES = {post["slug"]:post for post in load_guides(ROOT)}
+STATIC_GUIDE_UPDATED = {slug: str(post.get("updated") or "") for slug, post in GUIDES.items()}
 # D1 is the source of truth for published Blog copy. Existing static slugs
 # must render the reviewed D1 row too; otherwise the index can be current
-# while the detail page silently keeps the old six-section template.
+# while the detail page silently keeps the old six-section template. Keep the
+# original static editorial date for legacy evidence gates; D1 content changes
+# still publish through the normal revision and live verification checks.
 for _d1_post in BUILD_STATE.get("blogPosts",[]):
     if not isinstance(_d1_post,dict):continue
     _slug=str(_d1_post.get("slug") or "")
     if _slug in GUIDES and isinstance(_d1_post.get("sections"),list) and len(_d1_post["sections"])>=2:
+        _original_updated=GUIDES[_slug].get("updated")
         GUIDES[_slug]={**GUIDES[_slug],**_d1_post}
+        if _original_updated:GUIDES[_slug]["updated"]=_original_updated
 COVER_OVERRIDES = json.loads((ROOT / "data/blog-cover-overrides.json").read_text(encoding="utf-8"))
 assert set(COVER_OVERRIDES).issubset(GUIDES), "Unknown blog cover override"
 EVIDENCE=json.loads((ROOT / "data/editorial-evidence.json").read_text(encoding="utf-8"))
