@@ -57,6 +57,16 @@ def cover_path(slug):
 def anchor(heading):
     return re.sub(r"[^a-z0-9-]+", "-", heading.lower().replace("’", "").replace("'", "")).strip("-")[:90]
 
+def render_copy(value):
+    """Escape D1 copy while preserving safe same-site Markdown links."""
+    escaped = e(value)
+    def replace(match):
+        label, href = match.group(1), match.group(2)
+        if not href.startswith("/") or href.startswith("//"):
+            return match.group(0)
+        return "<a href=\"" + e(href) + "\">" + label + "</a>"
+    return re.sub(r"\\[([^\\]]+)\\]\\((/[^)\\s]+)\\)", replace, escaped)
+
 def render_primary_evidence(slug):
     evidence=EVIDENCE.get(slug)
     if not evidence:return ""
@@ -213,7 +223,7 @@ def render_article(slug):
     h+='</ul></div>'
     from blog_editorial_inline import english_note
     for index,section in enumerate(post["sections"]):
-        h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+e(section["paragraph"])+english_note(slug,index)+render_product_notes(post,index,'en')+'</p></section>'
+        h+='<section class="blog-section" id="'+anchor(section["heading"])+'"><h2>'+e(section["heading"])+'</h2><p>'+render_copy(section["paragraph"])+english_note(slug,index)+render_product_notes(post,index,'en')+'</p></section>'
     if post.get("inline_links"):
         h+='<nav class="blog-buyer-matrix__links blog-inline-links" aria-label="Related reading">'
         for label,href in post["inline_links"]:
