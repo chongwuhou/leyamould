@@ -47,6 +47,7 @@ def main():
     image_count=0
     article_keywords={}
     citation_pages=0
+    evidence_pages=0
     for language in locales:
         code=str(language.get("code") or "")
         prefix=str(language.get("pathPrefix") or "")
@@ -62,6 +63,8 @@ def main():
             assert len(blog_schema)==1 and str(blog_schema[0].get("keywords") or "").strip(), (code,slug,"localized Blog keywords")
             assert isinstance(blog_schema[0].get("citation"),list) and blog_schema[0]["citation"], (code,slug,"Blog citations")
             citation_pages+=1
+            assert any(marker in document for marker in ('id="blog-geo-evidence"','id="primary-sources"','id="source-reviewed-deep-dive"')), (code,slug,"visible GEO evidence")
+            evidence_pages+=1
             article_keywords[(code,slug)]=str(blog_schema[0].get("keywords") or "").strip()
             breadcrumbs=[item for item in parsed if item.get("@type")=="BreadcrumbList"]
             assert len(breadcrumbs)==1 and len(breadcrumbs[0].get("itemListElement") or [])>=3,(code,slug,"BreadcrumbList")
@@ -93,7 +96,7 @@ def main():
             localized=article_keywords.get((code,slug),"")
             english=article_keywords.get(("en",slug),"")
             assert localized and localized != english, (code,slug,"English Blog keywords inherited")
-    print("XUYI_PHASE2_BLOG_SEO_PASSED",checked,"localized_blog_pages",faq_pages,"FAQPage",breadcrumb_pages,"BreadcrumbList",image_count,"images","localized_keywords",len(article_keywords),"citation_pages",citation_pages)
+    print("XUYI_PHASE2_BLOG_SEO_PASSED",checked,"localized_blog_pages",faq_pages,"FAQPage",breadcrumb_pages,"BreadcrumbList",image_count,"images","localized_keywords",len(article_keywords),"citation_pages",citation_pages,"evidence_pages",evidence_pages)
 
 if __name__=="__main__":
     main()
