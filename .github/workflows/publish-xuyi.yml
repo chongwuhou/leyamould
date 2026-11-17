@@ -118,6 +118,18 @@ jobs:
       - name: Apply reviewed localized Blog index and copy cleanup
         if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Repair localized Blog index and copy')
         run: python scripts/publish_blog_index_copy_cleanup.py
+
+      # Reviewed one-time D1 migration; corrections are stored in translation_json,
+      # never applied to generated HTML, so later backend rebuilds retain them.
+      - name: Bootstrap reviewed Blog SEO phase-two correction endpoint
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Repair Blog SEO phase 2 translations')
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/build_release.py
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
+      - name: Apply reviewed Blog SEO phase-two D1 corrections
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Repair Blog SEO phase 2 translations')
+        run: python scripts/publish_blog_seo_phase2_corrections.py
       - name: Read XUYI D1 publish revision
         if: steps.credential.outputs.ready == 'true' && github.event_name == 'schedule'
         id: revision
