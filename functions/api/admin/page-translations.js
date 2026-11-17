@@ -17,6 +17,45 @@ async function configuredRoutes(db){
   try{return ((await db.prepare("SELECT route FROM site_pages ORDER BY route LIMIT 500").all()).results||[])
     .map(row=>String(row.route||"")).filter(Boolean)}catch{return []}
 }
+
+async function saveBlogTranslationBatch(c,items){
+  if(!Array.isArray(items)||!items.length||items.length>250)return respond({error:"Bulk translation batch must contain 1-250 items"},400);
+  const db=c.env.XUYI_DB;
+  const languageRow=await loadSiteSetting(db,"language_config",defaultLanguageConfig());
+  const languageConfig=normalizeLanguageConfig(languageRow.value);
+  const allowedLocales=new Set(languageConfig.languages.filter(lang=>lang.code!==languageConfig.sourceLocale).map(lang=>lang.code));
+  let publishedRows;
+  try{publishedRows=(await db.prepare("SELECT slug FROM xuyi_blog_posts WHERE status='published' LIMIT 5000").all()).results||[]}
+  catch{return respond({error:"Unable to read published D1 Blog source"},503)}
+  const published=new Set(publishedRows.map(row=>String(row.slug||"")));
+  const seen=new Set(),statements=[];
+  for(const item of items){
+    const route=clean(item?.route,250),locale=clean(item?.locale,12).toLowerCase();
+    const title=clean(item?.title,180),description=clean(item?.description,450),html=clean(item?.mainHtml,250000);
+    const blogMatch=/^\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(route);
+    if(!blogMatch||!allowedLocales.has(locale))return respond({error:"Bulk item must target a published Blog detail route and configured non-source locale",route,locale},400);
+    const key=locale+"|"+route;
+    if(seen.has(key))return respond({error:"Duplicate bulk translation item",route,locale},400);
+    seen.add(key);
+    if(!published.has(blogMatch[1]))return respond({error:"Blog article must be published in English before translating",route},409);
+    if(!title||!description||html.length<120||!/<(?:section|article|div|h1)\\b/i.test(html))
+      return respond({error:"Full translated title, description and main HTML required",route,locale},400);
+    if(/<\\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\\b|\\bon[a-z-]+\\s*=|\\bsrcdoc\\s*=|(?:javascript|vbscript|data)\\s*:/i.test(html))
+      return respond({error:"Unsafe HTML in translated content",route,locale},400);
+    statements.push(db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
+      VALUES(?,?,?,CURRENT_TIMESTAMP)
+      ON CONFLICT(resource_id,locale) DO UPDATE SET translated_json=excluded.translated_json,reviewed_at=CURRENT_TIMESTAMP`)
+      .bind("page:"+route,locale,JSON.stringify({title,description,mainHtml:html})));
+  }
+  let results;
+  try{results=await db.batch(statements)}
+  catch{return respond({error:"Bulk translation write failed"},503)}
+  const failed=results.filter(result=>Number(result?.meta?.changes||0)!==1);
+  if(failed.length)return respond({error:"Bulk translation write was not confirmed",failed:failed.length},409);
+  const revision=await bumpPublishRevision(db);
+  return respond({saved:true,reviewed:true,bulk:true,count:items.length,...revision});
+}
+
 export async function onRequestGet(c){
   const denied=await requireAdmin(c);if(denied)return denied;
   const rows=(await c.env.XUYI_DB.prepare(
