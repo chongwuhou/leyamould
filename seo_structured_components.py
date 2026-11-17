@@ -4,7 +4,7 @@ Only visible page content and reviewed catalog fields are used. No offers,
 prices, stock, ratings, certification or performance claims are inferred.
 """
 from __future__ import annotations
-from html import unescape
+from html import unescape,escape as html_escape
 import json
 import re
 
@@ -64,6 +64,35 @@ def _head_meta(page):
     desc=re.search(r'<meta\s+name="description"\s+content="([^"]*)"',head,re.I)
     return (unescape(title.group(1)).strip() if title else "",
             unescape(desc.group(1)).strip() if desc else "")
+
+def _localized_blog_keywords(page,locale):
+    """Derive target-language Blog keywords from the final visible D1-rendered page.
+
+    Non-English pages must not inherit the English primary_keyword list. The
+    visible translated title, description, headings and FAQ questions are the
+    only inputs, so new D1 articles and configured locales work automatically.
+    """
+    if locale == "en":
+        return ""
+    title,description=_head_meta(page)
+    candidates=[title,description]
+    for pattern in (
+        r"<h1\\b[^>]*>(.*?)</h1>",
+        r"<h2\\b[^>]*>(.*?)</h2>",
+        r"<h3\\b[^>]*>(.*?)</h3>",
+        r"<summary\\b[^>]*>(.*?)</summary>",
+    ):
+        candidates.extend(match.group(1) for match in re.finditer(pattern,page,re.I|re.S))
+    values=[]
+    for value in candidates:
+        text=re.sub(r"<[^>]+>"," ",unescape(str(value or "")))
+        text=re.sub(r"\\s+"," ",text).strip(" \\t\\r\\n|·•")
+        if len(text)<4 or text.casefold() in {item.casefold() for item in values}:
+            continue
+        values.append(text[:180])
+        if len(values)>=10:
+            break
+    return ", ".join(values)
 
 def _route_base(route,locale):
     base=str(route or "/")
@@ -250,6 +279,30 @@ def _blog_nodes(page,route,locale):
                        "acceptedAnswer":{"@type":"Answer","text":a}} for q,a in pairs]} if pairs else None
     return breadcrumb,faq
 
+def _update_blog_keywords(page,keywords):
+    if not keywords:
+        return page
+    def update(match):
+        try:obj=json.loads(match.group(2))
+        except (ValueError,TypeError):return match.group(0)
+        nodes=obj.get("@graph",[]) if isinstance(obj,dict) and isinstance(obj.get("@graph"),list) else [obj]
+        changed=False
+        for node in nodes:
+            if isinstance(node,dict) and node.get("@type") in {"BlogPosting","Article"}:
+                if node.get("keywords")!=keywords:
+                    node["keywords"]=keywords
+                    changed=True
+        if not changed:return match.group(0)
+        payload=json.dumps(obj,ensure_ascii=False,separators=(",",":")).replace("<",r"\\u003c")
+        return match.group(1)+payload+match.group(3)
+    page=JSONLD.sub(update,page)
+    escaped=html_escape(keywords,quote=True)
+    meta=re.compile(r'<meta\\s+name=["\\']keywords["\\'][^>]*>',re.I)
+    replacement='<meta name="keywords" content="'+escaped+'">'
+    if meta.search(page):
+        return meta.sub(replacement,page,count=1)
+    return page.replace("</head>",replacement+"</head>",1)
+
 def _update_blog_breadcrumb(page,breadcrumb):
     def update(match):
         try:obj=json.loads(match.group(2))
@@ -292,6 +345,7 @@ def add_at_render(page,route,locale):
     elif base.startswith("/blog/") and base!="/blog/":
         breadcrumb,faq=_blog_nodes(page,route,locale)
         page=_update_blog_breadcrumb(page,breadcrumb)
+        page=_update_blog_keywords(page,_localized_blog_keywords(page,locale))
         types,_=_existing_schema(page)
         if "BreadcrumbList" not in types:nodes.append(breadcrumb)
         if faq and "FAQPage" not in types:nodes.append(faq)
