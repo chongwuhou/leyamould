@@ -108,6 +108,12 @@ jobs:
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/xuyi-drinkware-site" \
             | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||j.result?.name!=='xuyi-drinkware-site')throw new Error('XUYI project identity mismatch');const c=j.result?.source?.config||{};if(c.production_deployments_enabled!==false||c.preview_deployment_setting!=='none')throw new Error('Disable old Git auto deploy for XUYI before enabling the CI publisher');console.log('One controlled production publisher verified')})"
+      - name: Bootstrap reviewed Blog cleanup endpoint
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Repair localized Blog index and copy')
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python scripts/build_release.py
+          npx --yes wrangler@4.148.0 pages deploy dist --project-name xuyi-drinkware-site --branch main
       - name: Apply reviewed localized Blog index and copy cleanup
         if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Repair localized Blog index and copy')
         run: python scripts/publish_blog_index_copy_cleanup.py
