@@ -211,7 +211,7 @@ export function normalizeBlogPost(raw){
 }
 export async function listBlogPosts(db,status=''){
  await ensureBlogSchema(db);
-  const st=status?db.prepare('SELECT * FROM xuyi_blog_posts WHERE status=? ORDER BY updated_at DESC,slug ASC').bind(status):db.prepare('SELECT * FROM xuyi_blog_posts ORDER BY updated_at DESC,slug ASC');
+  const st=status?db.prepare('SELECT * FROM xuyi_blog_posts WHERE status=? ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC').bind(status):db.prepare('SELECT * FROM xuyi_blog_posts ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC');
  const rows=(await st.all()).results||[];
  const saved=(await db.prepare('SELECT slug FROM xuyi_blog_drafts').all()).results||[];
  const hasDraft=new Set(saved.map(x=>x.slug));

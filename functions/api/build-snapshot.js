@@ -34,7 +34,7 @@ export async function onRequestGet(context){
       // Keep the build snapshot in the same deterministic order as the live
       // English Blog route. Localized static indexes are rendered from this
       // D1 order so every language presents the same article sequence.
-      list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY updated_at DESC,slug ASC")
+      list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC")
     ]);
       const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
       const languageConfig=normalizeLanguageConfig(parseJson(config.language_config,defaultLanguageConfig()));

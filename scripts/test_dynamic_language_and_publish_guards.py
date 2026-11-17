@@ -27,7 +27,11 @@ assert "/api/admin/blog-batch-20261111" not in auth
 assert "if (await authorizeAdminRequest(request, env)) return true;" in auth
 assert "locale IN ('es','pt','ru','tr')" not in scheduler
 assert "prepared.length!==4" not in scheduler
-assert "ORDER BY updated_at DESC,slug ASC" in cms
+assert "ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC" in cms
+assert "ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC" in snapshot
+runtime = read("functions/blog/[[path]].js")
+assert 'runtimeMode=String(context.env.XUYI_BLOG_RUNTIME_MODE||"static").trim().toLowerCase()' in runtime
+assert 'if(runtimeMode!=="dynamic")return context.next();' in runtime
 assert "legacySortLocalizedBlogIndexByD1Order" not in cms
 assert '<select id="product-seo-locale" required></select>' in admin
 assert "五语言" not in admin and "101 个现有产品" not in admin
