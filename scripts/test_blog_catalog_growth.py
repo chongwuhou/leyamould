@@ -6,7 +6,7 @@ import json
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from blog_catalog_source import load_guides
-from site_renderer import ROOT,BLOG_POSTS,ARTICLES,BUILD_STATE
+from site_renderer import ROOT,BLOG_POSTS,ARTICLES,BUILD_STATE,render_d1_blog_index
 from blog_editorial import GUIDES,BUYER_MATRICES
 from build import blog_index,blog_index_rows
 from sitemap_modification import source_lastmod
@@ -42,6 +42,19 @@ rows=blog_index_rows()
 assert [row["slug"] for row in rows[:2]]==["cms-only-published-guide",static_slug]
 assert len({row["slug"] for row in rows})==len(rows)
 assert len(rows)==len(ARTICLES)+1
+
+# Owner-edited D1 page bodies may use a different wrapper. The renderer must
+# still inject every published D1 card without replacing the owner content.
+owner_body='<section class="owner-copy"><p>Owner-managed introduction.</p></section>'
+owner_rendered=render_d1_blog_index(owner_body)
+assert "Owner-managed introduction." in owner_rendered
+assert owner_rendered.count('class="news-card"')==len(BUILD_STATE["blogPosts"])
+
+legacy_body='<div class="owner-cards"><article class="news-card">stale card</article></div>'
+legacy_rendered=render_d1_blog_index(legacy_body)
+assert legacy_rendered.count('class="news-card"')==len(BUILD_STATE["blogPosts"])
+assert "stale card" not in legacy_rendered
+
 if previous is None:BUILD_STATE.pop("blogPosts",None)
 else:BUILD_STATE["blogPosts"]=previous
 with TemporaryDirectory() as tmp:
