@@ -12,6 +12,12 @@ SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
 JSONLD=re.compile(r'<script\b[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',re.I|re.S)
 IMG=re.compile(r"<img\b[^>]*>",re.I)
 NS="{http://www.sitemaps.org/schemas/sitemap/0.9}"
+BAD_TRANSLATION_FRAGMENTS = {
+    "es": ("gorras deportivas",),
+    "pt": ("especificar it", "depende depende"),
+    "ru": ("спортивных кепок", "оба понятны, но не являются синонимами"),
+    "tr": ("anlaşılır olabilir",),
+}
 
 def attr(tag,key):
     return re.search(r"\b"+re.escape(key)+r'=["\']([^"\']+)["\']',tag,re.I)
@@ -47,6 +53,8 @@ def main():
             page=root/slug/"index.html"
             assert page.is_file(), (code,slug,"missing static Blog page")
             document=page.read_text(encoding="utf8")
+            for fragment in BAD_TRANSLATION_FRAGMENTS.get(code, ()):
+                assert fragment.casefold() not in document.casefold(), (code,slug,"known translation fragment",fragment)
             parsed=schema_nodes(document)
             breadcrumbs=[item for item in parsed if item.get("@type")=="BreadcrumbList"]
             assert len(breadcrumbs)==1 and len(breadcrumbs[0].get("itemListElement") or [])>=3,(code,slug,"BreadcrumbList")
