@@ -44,7 +44,7 @@ def _data(filename):
     return json.loads(path.read_text(encoding="utf8")) if path.is_file() else {}
 
 
-def enhance_source_markup(markup):
+def enhance_source_markup(markup, include_legacy=False):
     filename = os.environ.get("XUYI_RESPONSIVE_MANIFEST")
     if not filename:
         return markup
@@ -58,7 +58,7 @@ def enhance_source_markup(markup):
         if not m:
             return tag
         src = html.unescape(m.group(1)).split("?", 1)[0].split("#", 1)[0]
-        if src in LEGACY_REPLACED_SOURCES:
+        if src in LEGACY_REPLACED_SOURCES and not include_legacy:
             return tag
         entry = data.get(src)
         if not entry:

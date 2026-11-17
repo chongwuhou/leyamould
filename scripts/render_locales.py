@@ -1105,7 +1105,7 @@ def main():
         text=apply_approved_product_images(text,localized,loc)
         from responsive_image_render import promote_primary_blog_image
         if route.startswith('/blog/') and route!='/blog/':text=promote_primary_blog_image(text)
-        text=enhance_source_markup(text)
+        text=enhance_source_markup(text, include_legacy=True)
         from scripts.polish_priority_seo import apply_to_document as apply_priority_seo
         text=apply_priority_seo(text,localized,loc)
         from scripts.curated_buyer_seo_round2 import apply_to_document as apply_curated_buyer_seo

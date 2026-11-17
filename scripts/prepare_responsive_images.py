@@ -36,7 +36,10 @@ def candidates(snapshot):
         if p.is_file() and p.suffix.lower() in (".webp", ".png", ".jpg", ".jpeg"):
             if "catalog" not in p.relative_to(ROOT / "assets").parts:
                 found.add("/" + p.relative_to(ROOT).as_posix())
-    return sorted(found - LEGACY_REPLACED_SOURCES)
+    # Keep reviewed legacy sources in the geometry manifest. The first render
+    # still skips their derivatives; the final source boundary may measure the
+    # selected legacy image after any approved source replacement has run.
+    return sorted(found)
 
 
 def source_bytes(src):
