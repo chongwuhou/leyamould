@@ -128,3 +128,13 @@
 - 相关阅读和产品内链要服务于当前主意图，避免高度同质文章互相循环抢权重。人工与 AI 使用完全相同的门禁，AI 只能辅助检索/相似度筛查，不能以改标题绕过。
 - 主题登记至少保留：`slug`、`intent`、`audience`、`funnelStage`、`primaryKeyword`、`coveredQuestions`、`evidenceSources`、`supportingLinks`、`canonicalRole`、`lastReviewed`。优先写入 D1/CMS 审计记录；不得写入静态 HTML 代替。
 - 文章已发布后只做一致性复核，不自动删除、合并、改 URL 或改发布日期；未来如需整合，必须先取得站长明确授权并完成流量、收录、内链、canonical 和可回滚方案评估。
+
+
+## 2026-11-17 多语种页面人工问题收口记录
+
+- 处理范围严格限定为报告中已核实的渲染、串语、界面泄漏和事实冲突：不删除文章、不合并主题、不改既有 URL、slug、canonical 或发布日期。
+- 已通过 D1/CMS 正式页面翻译记录清理 3 篇文章在 PT/RU/TR 中混入的西语标题、清单和 FAQ；英文、ES、PT、RU、TR 的内部审核标记不再作为可见正文输出。
+- 已按后台语言配置统一博客详情页面包屑、品牌眉题、相关阅读标题，并解码非 ASCII 数字实体；D1 多语翻译行、而不是 dist 或线上 HTML，是唯一写入对象。
+- 为避免 Cloudflare Worker 因大量单条页面写入触发资源限制，新增受保护的 D1 Blog 详情页批量翻译入口；仅接受已发布文章、已配置非源语言、完整 HTML，使用 D1 batch 原子写入并一次 bump revision，不处理列表排序、产品或文章删除。
+- data/llms-verified-facts.json 已修正目录范围与 llms.txt 事实段的冲突；新文章发布仍必须先通过主题唯一性/信息增量门禁。
+- 本次 D1 多语整理最终 revision：1004。完成定义仍是标准构建、第二次干净构建、CI 和线上逐语种核验全部通过。
