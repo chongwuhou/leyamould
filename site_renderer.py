@@ -433,6 +433,9 @@ def build_url(path,title,content):
  content=apply_curated_buyer_seo(content,route,'en')
  from scripts.buyer_journey_internal_links import apply_to_document as apply_buyer_journey_links
  content,_=apply_buyer_journey_links(content,route,'en')
+ from responsive_image_render import promote_primary_blog_image
+ if route.startswith('/blog/') and route!='/blog/':content=promote_primary_blog_image(content)
+ content=enhance_source_markup(content)
  from seo_structured_components import add_at_render
  content=add_at_render(content,route,'en')
  from scripts.contextual_share_metadata import apply_to_document as apply_contextual_share_preview

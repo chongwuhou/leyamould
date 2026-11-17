@@ -81,3 +81,16 @@ def enhance_source_markup(markup):
         return tag[:-1] + (" " + " ".join(add) if add else "") + ">"
 
     return IMAGE.sub(image, markup)
+
+def promote_primary_blog_image(markup):
+    """Make the source-selected Blog cover discoverable without layout shift."""
+    pattern=re.compile(r'(<(?:div|figure)\b[^>]*class="[^"]*\bblog-(?:detail|editorial)__cover\b[^"]*"[^>]*>\s*<img\b[^>]*)(>)',re.I|re.S)
+    def replace(match):
+        tag=match.group(1)
+        if re.search(r"\bloading\s*=",tag,re.I):
+            tag=re.sub(r'\s+loading="[^"]*"',' loading="eager"',tag,count=1,flags=re.I)
+        else:
+            tag+=' loading="eager"'
+        if not re.search(r"\bfetchpriority\s*=",tag,re.I):tag+=' fetchpriority="high"'
+        return tag+match.group(2)
+    return pattern.sub(replace,markup,count=1)

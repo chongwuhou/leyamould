@@ -11,11 +11,13 @@ import re
 ORIGIN="https://xuyibottles.com"
 DETAIL=re.compile(r"<details\b[^>]*>\s*<summary>(.*?)</summary>\s*<p>(.*?)</p>\s*</details>",re.I|re.S)
 FAQ_LIST=re.compile(r'<div\b[^>]*class="[^"]*\bfaq-list\b[^"]*"[^>]*>(.*?)</div>',re.I|re.S)
+BLOG_FAQ_SECTION=re.compile(r'<section\b[^>]*class="[^"]*\bblog-faq\b[^"]*"[^>]*>(.*?)</section>',re.I|re.S)
 CARD=re.compile(r'<a\b(?=[^>]*\bdata-product-card\b)([^>]*?)>',re.I|re.S)
 HREF=re.compile(r'\bhref="([^"]+)"',re.I)
 JSONLD=re.compile(r'(<script\b[^>]*type=["\']application/ld\+json["\'][^>]*>)(.*?)(</script>)',re.I|re.S)
 
 HOME={"en":"Home","es":"Inicio","pt":"Início","ru":"Главная","tr":"Ana sayfa"}
+BLOG={"en":"Blog","es":"Blog","pt":"Blog","ru":"Блог","tr":"Blog"}
 PRODUCTS={"en":"Products","es":"Productos","pt":"Produtos","ru":"Продукция","tr":"Ürünler"}
 PROPERTY={
  "en":{"capacity":"Catalog capacity (mL)","oz":"Approximate US fl oz size class","material":"Catalog-listed material","dimensions":"Catalog dimensions","colors":"Catalog-listed colors","unit_weight":"Catalog unit weight","packing":"Unit packing","carton_quantity":"Units per master carton","carton_size":"Master carton size","carton_gross_weight":"Master carton gross weight"},
@@ -31,6 +33,15 @@ def plain(markup):
 def visible_faq(page):
     body=page.split("<main",1)[-1].split("</main>",1)[0]
     group=FAQ_LIST.search(body)
+    if not group:return []
+    pairs=[(plain(q),plain(a)) for q,a in DETAIL.findall(group.group(1))]
+    pairs=[(q,a) for q,a in pairs if len(q)>=8 and len(a)>=15]
+    return pairs if len({q for q,a in pairs})==len(pairs) else []
+
+
+def visible_blog_faq(page):
+    body=page.split("<main",1)[-1].split("</main>",1)[0]
+    group=BLOG_FAQ_SECTION.search(body)
     if not group:return []
     pairs=[(plain(q),plain(a)) for q,a in DETAIL.findall(group.group(1))]
     pairs=[(q,a) for q,a in pairs if len(q)>=8 and len(a)>=15]
@@ -223,6 +234,37 @@ def _listing_nodes(page,route,locale):
       "mainEntity":{"@id":list_id},"isPartOf":{"@id":ORIGIN+"/#website"}}
     return [itemlist,webpage]
 
+
+def _blog_nodes(page,route,locale):
+    canonical=ORIGIN+route
+    title,description=_head_meta(page)
+    prefix="" if locale=="en" else "/"+locale
+    breadcrumb={"@type":"BreadcrumbList","@id":canonical+"#breadcrumb","itemListElement":[
+        {"@type":"ListItem","position":1,"name":HOME.get(locale,HOME["en"]),"item":ORIGIN+prefix+"/"},
+        {"@type":"ListItem","position":2,"name":BLOG.get(locale,BLOG["en"]),"item":ORIGIN+prefix+"/blog/"},
+        {"@type":"ListItem","position":3,"name":title,"item":canonical},
+    ]}
+    pairs=visible_blog_faq(page)
+    faq={"@type":"FAQPage","@id":canonical+"#faq","url":canonical,"inLanguage":locale,
+         "mainEntity":[{"@type":"Question","name":q,
+                       "acceptedAnswer":{"@type":"Answer","text":a}} for q,a in pairs]} if pairs else None
+    return breadcrumb,faq
+
+def _update_blog_breadcrumb(page,breadcrumb):
+    def update(match):
+        try:obj=json.loads(match.group(2))
+        except (ValueError,TypeError):return match.group(0)
+        nodes=obj.get("@graph",[]) if isinstance(obj,dict) and isinstance(obj.get("@graph"),list) else [obj]
+        changed=False
+        for node in nodes:
+            if isinstance(node,dict) and node.get("@type")=="BreadcrumbList":
+                if node!=breadcrumb:
+                    node.clear();node.update(breadcrumb);changed=True
+        if not changed:return match.group(0)
+        payload=json.dumps(obj,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
+        return match.group(1)+payload+match.group(3)
+    return JSONLD.sub(update,page)
+
 def add_at_render(page,route,locale):
     """Add/update structured data from the final visible source-rendered page."""
     if "</head>" not in page:return page
@@ -247,6 +289,12 @@ def add_at_render(page,route,locale):
             types,_=_existing_schema(page)
             if "ItemList" not in types:nodes.append(listing[0])
             if "WebPage" not in types:nodes.append(listing[1])
+    elif base.startswith("/blog/") and base!="/blog/":
+        breadcrumb,faq=_blog_nodes(page,route,locale)
+        page=_update_blog_breadcrumb(page,breadcrumb)
+        types,_=_existing_schema(page)
+        if "BreadcrumbList" not in types:nodes.append(breadcrumb)
+        if faq and "FAQPage" not in types:nodes.append(faq)
     if not nodes:return page
     payload=json.dumps({"@context":"https://schema.org","@graph":nodes},
                        ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
