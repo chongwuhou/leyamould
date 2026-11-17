@@ -92,6 +92,13 @@ export async function authorizedReviewedBlogIndexCopyCleanupRequest(request, env
   if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-index-copy-cleanup-20261117") return false;
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
+
+// Narrow, reviewed phase-two D1 translation semantics repair. It accepts no arbitrary
+// copy and only targets the fixed multilingual records in the migration endpoint.
+export async function authorizedReviewedBlogSeoPhase2Request(request, env) {
+  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-seo-phase2-corrections") return false;
+  return verifyCloudflareProjectToken(bearerToken(request), env);
+}
 export async function authorizedReviewedBlogImageUploadRequest(request, env) {
   if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261102","/api/admin/blog-images-20261103","/api/admin/blog-images-20261107","/api/admin/blog-images-20261110","/api/admin/blog-images-20261111"].includes(new URL(request.url).pathname)) return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
