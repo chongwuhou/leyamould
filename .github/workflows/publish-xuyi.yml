@@ -192,6 +192,7 @@ jobs:
           python scripts/test_blog_pagination_source.py
           node scripts/test_blog_pagination_runtime.mjs
           python scripts/test_seo_multilingual_launch.py
+          python scripts/test_phase2_blog_seo.py
           python scripts/test_priority_seo.py
           python scripts/test_cms_seo_rebuild_policy.py
           python scripts/test_source_of_truth_policy.py
@@ -211,6 +212,7 @@ jobs:
           python scripts/test_source_of_truth_policy.py
           python scripts/test_cms_seo_rebuild_policy.py
           python scripts/test_seo_multilingual_launch.py
+          python scripts/test_phase2_blog_seo.py
           python scripts/test_blog_listing_single_header.py
           python scripts/test_blog_pagination_source.py
           node scripts/test_blog_pagination_runtime.mjs
