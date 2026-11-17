@@ -53,11 +53,13 @@ def main():
 
     # Simulate an owner updating a source image. Never reinstate stale metadata.
     os.environ["XUYI_RESPONSIVE_MANIFEST"] = str(MANIFEST)
-    sample = next(iter(manifest))
+    sample = next((source for source,item in manifest.items() if item.get("variants")), next(iter(manifest)))
     markup = f'<img src="{sample}" alt="Owner ALT" loading="lazy">'
     enhanced = enhance_source_markup(markup)
     assert f'src="{sample}"' in enhanced and 'alt="Owner ALT"' in enhanced
-    assert "srcset=" in enhanced
+    assert "width=" in enhanced and "height=" in enhanced
+    if manifest[sample].get("variants"):
+        assert "srcset=" in enhanced
     owner_image = '<img src="/media/product/owner-updated-20261020.webp" alt="Owner update">'
     assert enhance_source_markup(owner_image) == owner_image
     stale_generated = '<img src="/media/product/stale-source.webp" alt="Stale" srcset="/assets/responsive/old-480.webp 480w, /assets/responsive/old-960.webp 960w" sizes="100vw">'
