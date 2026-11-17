@@ -297,7 +297,7 @@ def _update_blog_keywords(page,keywords):
         return match.group(1)+payload+match.group(3)
     page=JSONLD.sub(update,page)
     escaped=html_escape(keywords,quote=True)
-    meta=re.compile(r'<meta\s+name=["\\']keywords["\\'][^>]*>',re.I)
+    meta=re.compile(r"""<meta\s+name=["']keywords["'][^>]*>""",re.I)
     replacement='<meta name="keywords" content="'+escaped+'">'
     if meta.search(page):
         return meta.sub(replacement,page,count=1)
