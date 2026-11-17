@@ -113,11 +113,26 @@ def render_d1_blog_index(body):
         url="/blog/"+e(slug)+"/"
         category=e(str(post.get("group") or "Buyer Resources").upper())
         cards.append('<article class="news-card"><a class="news-card__image" href="'+url+'"><img src="'+e(cover)+'" alt="'+e(str(post.get("coverAlt") or title))+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+category+'</span><h3><a href="'+url+'">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>')
+    # D1 owns the published rows, while the surrounding page body may be
+    # owner-edited and therefore may not keep the historical wrapper exactly.
+    # Replace the known wrapper when present; otherwise replace any existing
+    # card run or append a controlled grid without discarding owner content.
     pattern=re.compile(r'(<section class="section blog-listing"><div class="shell"><div class="blog-listing__grid">)[\s\S]*?(</div></div></section>)',re.I)
     updated,count=pattern.subn(lambda m:m.group(1)+''.join(cards)+m.group(2),body,count=1)
-    if count!=1:
-        raise ValueError("Static Blog listing template is missing its D1 card grid")
-    return updated
+    if count==1:
+        return updated
+
+    existing=list(re.finditer(r'<article class="news-card">[\s\S]*?</article>',body,re.I))
+    if existing:
+        separator=body[existing[0].end():existing[1].start()] if len(existing)>1 else ""
+        replacement=separator.join(cards)
+        return body[:existing[0].start()]+replacement+body[existing[-1].end():]
+
+    listing='<section class="section blog-listing"><div class="shell"><div class="blog-listing__grid">'+''.join(cards)+'</div></div></section>'
+    main_close=re.search(r'</main>',body,re.I)
+    if main_close:
+        return body[:main_close.start()]+listing+body[main_close.start():]
+    return body+listing
 
 RAW=json.loads((ROOT/"data/products.json").read_text(encoding="utf-8"))
 IMAGES=json.loads((ROOT/"data/excel-images.json").read_text(encoding="utf-8"))
