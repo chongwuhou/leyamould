@@ -319,14 +319,17 @@ def build_url(path,title,content):
     main=main.replace(news,logos+news,1)
   # Some published blog bodies also come from D1 and may predate their
   # source-reviewed reference section. Never erase the approved article.
-  if route.startswith("/blog/") and 'id="primary-sources"' not in main:
-   from blog_editorial import render_primary_evidence
-   slug=route.strip("/").split("/")[-1]
-   sources_section=render_primary_evidence(slug)
-   if sources_section:
-    related_start='<section class="section section--soft blog-related">'
-    if related_start in main:main=main.replace(related_start,sources_section+related_start,1)
-    else:main+=sources_section
+  if route.startswith("/blog/"):
+   if 'id="primary-sources"' not in main:
+    from blog_editorial import render_primary_evidence
+    slug=route.strip("/").split("/")[-1]
+    sources_section=render_primary_evidence(slug)
+    if sources_section:
+     related_start='<section class="section section--soft blog-related">'
+     if related_start in main:main=main.replace(related_start,sources_section+related_start,1)
+     else:main+=sources_section
+   from blog_geo_evidence import render as render_blog_geo_evidence
+   main=render_blog_geo_evidence(main,route,"en")
   # Capacity, oz-class, material options and model-specific comparison content
   # are rendered into product detail bodies before the page is written.
   from scripts.source_catalog_capacity_oz import enrich_catalog_body,source_body_enrichment
