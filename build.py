@@ -187,8 +187,36 @@ def contact():
  return h
 
 # Illustrations use XUYI's own approved product imagery.
-def news_cover(slug,title,alt_suffix=""):
- return photo(cover_path(slug),title+" | XUYI bottle sourcing guide"+alt_suffix,aspect_ratio="4/3")
+def blog_index_rows():
+ # The published D1 snapshot is the complete Blog catalogue and its order.
+ # The versioned source registry remains a safe fallback for a first build or
+ # an older snapshot, but it must never hide a published CMS article.
+ static={post["slug"]:post for post in BLOG_POSTS.values()}
+ rows=[];seen=set()
+ for post in BUILD_STATE.get("blogPosts",[]):
+  if not isinstance(post,dict) or post.get("status")!="published":continue
+  slug=str(post.get("slug") or "")
+  if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",slug) or slug in seen:continue
+  fallback=static.get(slug,{})
+  title=str(post.get("title") or fallback.get("title") or "").strip()
+  description=str(post.get("description") or fallback.get("description") or "").strip()
+  cover=str(post.get("cover") or fallback.get("cover") or "").strip()
+  if not title or not description or not cover:continue
+  if not cover.startswith("/"):cover="/media/ppt/"+cover
+  rows.append({"slug":slug,"title":title,"description":description,
+               "cover":cover,"group":str(post.get("group") or "BUYER RESOURCES")})
+  seen.add(slug)
+ for slug,title,description in ARTICLES:
+  if slug in seen:continue
+  source=static.get(slug,{})
+  cover=str(source.get("cover") or "").strip()
+  if not cover.startswith("/"):cover="/media/ppt/"+cover
+  rows.append({"slug":slug,"title":title,"description":description,
+               "cover":cover,"group":str(source.get("group") or "BUYER RESOURCES")})
+ return rows
+
+def news_cover(slug,title,alt_suffix="",cover=None):
+ return photo(cover or cover_path(slug),title+" | XUYI bottle sourcing guide"+alt_suffix,aspect_ratio="4/3")
 
 # Keep the homepage's eight editorial slots intentionally curated. New blog
 # posts still appear first on /blog/, but must not silently replace approved
@@ -219,9 +247,9 @@ def blog_index():
  # The page intro is the single Blog listing heading; render cards below it.
  h+='<section class="section blog-listing"><div class="shell">'
  h+='<div class="blog-listing__grid">'
- for slug,title,description in ARTICLES:
-  post=BLOG_POSTS[slug]
-  h+='<article class="news-card"><a class="news-card__image" href="/blog/'+e(slug)+'/">'+news_cover(slug,title)+'</a><div class="news-card__info"><span class="news-card__category">'+e(post["group"]).upper()+'</span><h3><a href="/blog/'+e(slug)+'/">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="/blog/'+e(slug)+'/">Read Article →</a></div></article>'
+ for post in blog_index_rows():
+  slug,title,description,cover=post["slug"],post["title"],post["description"],post["cover"]
+  h+='<article class="news-card"><a class="news-card__image" href="/blog/'+e(slug)+'/">'+news_cover(slug,title,cover=cover)+'</a><div class="news-card__info"><span class="news-card__category">'+e(post["group"]).upper()+'</span><h3><a href="/blog/'+e(slug)+'/">'+e(title)+'</a></h3><p>'+e(description)+'</p><a class="news-card__read" href="/blog/'+e(slug)+'/">Read Article →</a></div></article>'
  h+='</div></div></section>'
  return h
 
@@ -348,7 +376,7 @@ def generate():
  for product in SERIES.values():
   model=str(product['model'])
   public_name=public_display_name(product)
-  # Every real model has its own distinct SEO title and description.
+  # Every real model has its own SEO title and description, as in Demalong's
   # evidence-backed model pages. Do not invent MOQ, certification or capacity.
   # Some catalog names already end in Model N: never append N twice.
   existing_model=public_name.casefold().endswith(('model '+model).casefold())
@@ -465,3 +493,4 @@ def generate():
  write('data/route-manifest.json',json.dumps([{'path':'/'+x.replace('index.html',''),'title':title} for x,title in sorted(URLS.items()) if x.endswith('index.html')],ensure_ascii=False,indent=2))
  print('BUILD_OK','HTML_FILES',len(URLS),'PRODUCT_PAGES',len(SERIES),'CAT_PAGES',len(CAT),'CAPABILITY_PAGES',len(CAPABILITIES),'ARTICLES',len(ARTICLES))
 if __name__=='__main__':generate()
+
