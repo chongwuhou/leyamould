@@ -45,6 +45,7 @@ def main():
     faq_pages=0
     breadcrumb_pages=0
     image_count=0
+    article_keywords={}
     for language in locales:
         code=str(language.get("code") or "")
         prefix=str(language.get("pathPrefix") or "")
@@ -56,6 +57,9 @@ def main():
             for fragment in BAD_TRANSLATION_FRAGMENTS.get(code, ()):
                 assert fragment.casefold() not in document.casefold(), (code,slug,"known translation fragment",fragment)
             parsed=schema_nodes(document)
+            blog_schema=[item for item in parsed if item.get("@type") in {"BlogPosting","Article"}]
+            assert len(blog_schema)==1 and str(blog_schema[0].get("keywords") or "").strip(), (code,slug,"localized Blog keywords")
+            article_keywords[(code,slug)]=str(blog_schema[0].get("keywords") or "").strip()
             breadcrumbs=[item for item in parsed if item.get("@type")=="BreadcrumbList"]
             assert len(breadcrumbs)==1 and len(breadcrumbs[0].get("itemListElement") or [])>=3,(code,slug,"BreadcrumbList")
             breadcrumb_pages+=1
@@ -79,7 +83,14 @@ def main():
             item=sitemap_rows.get(url)
             assert item is not None and item.find(NS+"lastmod") is not None,(code,slug,"sitemap lastmod")
             checked+=1
-    print("XUYI_PHASE2_BLOG_SEO_PASSED",checked,"localized_blog_pages",faq_pages,"FAQPage",breadcrumb_pages,"BreadcrumbList",image_count,"images")
+    for language in locales:
+        code=str(language.get("code") or "")
+        if code=="en": continue
+        for slug in published:
+            localized=article_keywords.get((code,slug),"")
+            english=article_keywords.get(("en",slug),"")
+            assert localized and localized != english, (code,slug,"English Blog keywords inherited")
+    print("XUYI_PHASE2_BLOG_SEO_PASSED",checked,"localized_blog_pages",faq_pages,"FAQPage",breadcrumb_pages,"BreadcrumbList",image_count,"images","localized_keywords",len(article_keywords))
 
 if __name__=="__main__":
     main()
