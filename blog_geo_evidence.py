@@ -159,6 +159,6 @@ def render(page, route, locale):
         out+="</ul>"
     out+='<h3>'+escape(labels["references"])+"</h3><ul>"
     out+="".join('<li><a href="'+escape(source["url"],quote=True)+'" target="_blank" rel="noopener noreferrer">'+escape(source["label"])+" ↗</a></li>" for source in item["sources"])
-    out+="</ul><p class="blog-geo-evidence__caveat">"+escape(labels["caveat"])+"</p></section>"
+    out+='</ul><p class="blog-geo-evidence__caveat">'+escape(labels["caveat"])+"</p></section>"
     anchor='<section class="section section--soft blog-related">'
     return page.replace(anchor,out+anchor,1) if anchor in page else page+out
