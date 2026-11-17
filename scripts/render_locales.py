@@ -865,6 +865,10 @@ def main():
 
             body=localize_blog_timeline(body,original,loc,route)
 
+            from blog_geo_evidence import render as render_blog_geo_evidence
+
+            body=render_blog_geo_evidence(body,localized,loc)
+
         if route=="/products/" or route.startswith("/collections/"):
 
             body=dedupe_catalog_cards(body)
