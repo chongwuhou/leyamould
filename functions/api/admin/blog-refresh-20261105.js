@@ -208,7 +208,7 @@ export async function onRequestPost(context) {
     try { validatePost(slug, post); } catch (error) { return reply({ error: String(error.message || error) }, 400); }
     existing[slug] = { row, old: JSON.parse(row.content_json || "{}"), next: post };
   }
-  const liveOrder = ((await db.prepare("SELECT slug FROM xuyi_blog_posts WHERE status='published' ORDER BY updated_at DESC").all()).results || []).map(x => x.slug);
+  const liveOrder = ((await db.prepare("SELECT slug FROM xuyi_blog_posts WHERE status='published' ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC").all()).results || []).map(x => x.slug);
   const sourceOrder = [...TARGET_ORDER, ...liveOrder.filter(slug => !TARGET_ORDER.includes(slug))];
   let postsWritten = 0;
   for (let i = 0; i < TARGET_ORDER.length; i++) {
