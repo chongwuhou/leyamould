@@ -115,6 +115,11 @@ for rel,html in all_published_documents():
                     pairs=visible_faq(html)
                     if [x.get("name") for x in obj.get("mainEntity",[])]!=[q for q,a in pairs]:
                         errors.append((route,"Product FAQPage differs from visible translation"))
+                elif re.fullmatch(r"/"+re.escape(PREFIX[locale])+r"/blog/[a-z0-9-]+/",route):
+                    from seo_structured_components import visible_blog_faq
+                    pairs=visible_blog_faq(html)
+                    if [x.get("name") for x in obj.get("mainEntity",[])]!=[q for q,a in pairs]:
+                        errors.append((route,"Blog FAQPage differs from visible translation"))
                 else:errors.append((route,"FAQPage on unsupported translated page"))
     records[expected]={"route":route,"locale":locale,"title":title,"description":desc,"hreflang":hrefs}
 expected_published=sum(len(manifest["routes"].get(code,[])) for code in LOCALES)
