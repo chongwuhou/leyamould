@@ -81,3 +81,10 @@ test reproducing a realistic owner/CMS update before publishing.
 
 D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数据源 → bump publish revision → 两次干净构建/回归 → 检查 D1 当前已发布语种、canonical/hreflang、sitemap、重复卡片与链接 → 核验代表线上路由。失败停在 CI，不发布临时产物；不要用 dist、线上 HTML 或一次性后处理替代正式修复。
 
+### 阶段二 Blog SEO 永久执行契约（2026-11-17）
+
+- Blog 详情页的 FAQPage、BreadcrumbList、首图 eager/宽高、正文图片几何属性和 sitemap lastmod 均由共享渲染器读取 D1 快照自动生成；新文章只要进入 D1 的 published 数据，不能再新增人工补丁或静态页面特判。
+- 多语翻译内容只能通过 D1/CMS 正式字段修改；已核实的术语错误使用可审计、条件写入、可重复执行的 D1 迁移完成，禁止在模板中硬编码翻译替换。后台再次编辑后，以后台值为准。
+- scripts/test_phase2_blog_seo.py 是发布门禁：按后台配置语种、D1 已发布文章和当前 sitemap 动态核验，另拦截已知跨语种术语回归。新增语种或文章不依赖固定数量。
+- 阶段二仍未把 TDK 长度提示、外部证据和主题去重变成自动篡改；这些属于 D1/CMS 编辑审核项，必须有真实来源和新增信息后再写回，不能靠截断、伪造引用或生成 HTML 代替。
+
