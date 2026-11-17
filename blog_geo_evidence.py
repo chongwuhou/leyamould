@@ -72,11 +72,11 @@ SOURCES = {
 }
 
 LABELS = {
-    "en": {"eyebrow": "SOURCE-CHECKED BUYER NOTES", "references": "Authoritative references", "facts": "Figures already stated in this guide", "caveat": "These references support the buyer's verification process. They do not certify an XUYI product, factory, material or test result. Confirm the exact SKU, destination market and current rule before purchase."},
-    "es": {"eyebrow": "NOTAS DE COMPRA CON FUENTES", "references": "Referencias autorizadas", "facts": "Cifras ya indicadas en esta guía", "caveat": "Estas referencias apoyan la verificación del comprador. No certifican ningún producto, fábrica, material ni ensayo de XUYI. Confirme el SKU exacto, el mercado de destino y la norma vigente antes de comprar."},
-    "pt": {"eyebrow": "NOTAS DE COMPRA COM FONTES", "references": "Referências oficiais", "facts": "Números já indicados neste guia", "caveat": "Estas referências apoiam a verificação do comprador. Não certificam qualquer produto, fábrica, material ou ensaio da XUYI. Confirme o SKU exato, o mercado de destino e a regra vigente antes da compra."},
-    "ru": {"eyebrow": "ЗАМЕТКИ ДЛЯ ПОКУПАТЕЛЯ С ИСТОЧНИКАМИ", "references": "Авторитетные источники", "facts": "Цифры, уже указанные в руководстве", "caveat": "Эти источники помогают покупателю провести проверку. Они не подтверждают сертификацию продукта, фабрики, материала или испытаний XUYI. Перед закупкой подтвердите точный SKU, рынок назначения и действующие требования."},
-    "tr": {"eyebrow": "KAYNAKLI ALICI NOTLARI", "references": "Yetkili kaynaklar", "facts": "Bu rehberde zaten belirtilen ölçümler", "caveat": "Bu kaynaklar alıcının doğrulama sürecini destekler. Herhangi bir XUYI ürünü, fabrikası, malzemesi veya testi için sertifika anlamına gelmez. Satın almadan önce gerçek SKU'yu, hedef pazarı ve güncel kuralı doğrulayın."},
+    "en": {"eyebrow": "SOURCE-CHECKED BUYER NOTES", "scope": "Verification scope: {theme}. Use the references below to check the exact product, market and purchase condition.", "references": "Authoritative references", "facts": "Figures already stated in this guide", "caveat": "These references support the buyer's verification process. They do not certify an XUYI product, factory, material or test result. Confirm the exact SKU, destination market and current rule before purchase."},
+    "es": {"eyebrow": "NOTAS DE COMPRA CON FUENTES", "scope": "Alcance de verificación: {theme}. Use las referencias para comprobar el producto, el mercado y la condición exactos.", "references": "Referencias autorizadas", "facts": "Cifras ya indicadas en esta guía", "caveat": "Estas referencias apoyan la verificación del comprador. No certifican ningún producto, fábrica, material ni ensayo de XUYI. Confirme el SKU exacto, el mercado de destino y la norma vigente antes de comprar."},
+    "pt": {"eyebrow": "NOTAS DE COMPRA COM FONTES", "scope": "Âmbito da verificação: {theme}. Use as referências para confirmar o produto, o mercado e a condição exatos.", "references": "Referências oficiais", "facts": "Números já indicados neste guia", "caveat": "Estas referências apoiam a verificação do comprador. Não certificam qualquer produto, fábrica, material ou ensaio da XUYI. Confirme o SKU exato, o mercado de destino e a regra vigente antes da compra."},
+    "ru": {"eyebrow": "ЗАМЕТКИ ДЛЯ ПОКУПАТЕЛЯ С ИСТОЧНИКАМИ", "scope": "Область проверки: {theme}. Используйте источники, чтобы подтвердить точный продукт, рынок и условия закупки.", "references": "Авторитетные источники", "facts": "Цифры, уже указанные в руководстве", "caveat": "Эти источники помогают покупателю провести проверку. Они не подтверждают сертификацию продукта, фабрики, материала или испытаний XUYI. Перед закупкой подтвердите точный SKU, рынок назначения и действующие требования."},
+    "tr": {"eyebrow": "KAYNAKLI ALICI NOTLARI", "scope": "Doğrulama kapsamı: {theme}. Gerçek ürünü, pazarı ve satın alma koşulunu kontrol etmek için kaynakları kullanın.", "references": "Yetkili kaynaklar", "facts": "Bu rehberde zaten belirtilen ölçümler", "caveat": "Bu kaynaklar alıcının doğrulama sürecini destekler. Herhangi bir XUYI ürünü, fabrikası, malzemesi veya testi için sertifika anlamına gelmez. Satın almadan önce gerçek SKU'yu, hedef pazarı ve güncel kuralı doğrulayın."},
 }
 
 THEMES = {
@@ -152,7 +152,7 @@ def render(page, route, locale):
         return page
     labels=LABELS.get(locale,LABELS["en"])
     out='<section class="blog-geo-evidence" id="blog-geo-evidence"><span class="eyebrow">'+escape(labels["eyebrow"])+"</span><h2>"+escape(item["theme"])+"</h2>"
-    out+='<p>Verification scope: '+escape(item["theme"])+'. Use the references below to check the exact product, market and purchase condition.</p>'
+    out+='<p>'+escape(labels["scope"].format(theme=item["theme"]))+'</p>'
     if item["facts"]:
         out+='<h3>'+escape(labels["facts"])+"</h3><ul>"
         out+="".join("<li>"+escape(fact)+"</li>" for fact in item["facts"])
