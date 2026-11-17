@@ -4,8 +4,8 @@ import json, os, sys, urllib.error, urllib.request
 
 ORIGIN=os.environ.get("SITE_ORIGIN","https://xuyibottles.com").rstrip("/")
 ENDPOINT=ORIGIN+"/api/admin/blog-seo-phase2-corrections"
-EXPECTED_RECORDS=4
-BATCH_ID="2026-11-17-blog-seo-phase2-translation-semantics"
+EXPECTED_RECORDS=6
+BATCH_ID="2026-11-17-blog-seo-phase2-translation-semantics-v2"
 
 def request_write(token):
     body=json.dumps({"batchId":BATCH_ID},ensure_ascii=False,separators=(",",":")).encode("utf-8")
