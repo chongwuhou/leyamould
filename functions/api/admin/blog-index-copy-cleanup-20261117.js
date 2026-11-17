@@ -43,7 +43,7 @@ export async function onRequestPost(context){
   const normalizeResourceId=value=>{
    const raw=String(value||"");
    if(!raw.startsWith("page:/blog/"))return raw;
-   const route=raw.slice(5).replace(/\\/+$/,"")+"/";
+  const route=raw.slice(5).replace(/\/+$/,"")+"/";
    return "page:"+route;
   };
   const lookup=new Map(rows.map(row=>[normalizeResourceId(row.resource_id)+"|"+row.locale,row]));
