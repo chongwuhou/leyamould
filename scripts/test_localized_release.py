@@ -57,6 +57,21 @@ for language in published:
    for required in ('company','email','model','quantity','country','type','material','requirements','consent','website'):
     assert 'name="'+required+'"' in html,(locale,"contact form field",required)
    assert '<button class="button" type="submit">' in html,(locale,"submit action missing")
+ # The localized Blog index must contain every published D1 slug in the same order,
+ # including articles added after the older page:/blog/ override was saved.
+ blog_index=folder/"blog"/"index.html"
+ assert blog_index.is_file(),(locale,"missing localized Blog index")
+ blog_html=blog_index.read_text(encoding="utf8")
+ blog_main=blog_html.split('<main id="main-content">',1)[1].split('</main>',1)[0]
+ blog_cards=re.findall(r'<article class="news-card">[\s\S]*?</article>',blog_main,re.I)
+ expected_blog=[str(row.get("slug")) for row in json.loads((ROOT/"_local_ops/build-snapshot.json").read_text(encoding="utf8")).get("blogPosts",[])
+                if row.get("status")=="published"]
+ actual_blog=[]
+ for card in blog_cards:
+  found=set(re.findall(r'href="/'+re.escape(locale)+r'/blog/([a-z0-9]+(?:-[a-z0-9]+)*)/"',card))
+  assert len(found)==1,(locale,"localized Blog card identity",found)
+  actual_blog.append(next(iter(found)))
+ assert actual_blog==expected_blog,(locale,"localized Blog index is not complete or in D1 order",len(actual_blog),len(expected_blog))
  result[locale]=len(files)
 # Match the actual approved D1 snapshot, not only a permissive minimum.
 snapshot=ROOT/"_local_ops/build-snapshot.json"

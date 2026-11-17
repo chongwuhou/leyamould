@@ -119,31 +119,59 @@ def dedupe_catalog_cards(body):
         return card
     return pattern.sub(replace,body)
 
-def sort_localized_blog_index(body,ordered_slugs):
-    """Match localized Blog card order to the build's D1 published order.
+def _localized_blog_card(slug,locale,fields,source):
+    """Build a missing index card from the reviewed D1 article record."""
+    title=str((fields or {}).get("title") or (source or {}).get("title") or "").strip()
+    description=str((fields or {}).get("description") or (source or {}).get("description") or "").strip()
+    cover=str((source or {}).get("cover") or "").strip()
+    main=str((fields or {}).get("mainHtml") or "")
+    cover_match=re.search(r'<div class="blog-detail__cover"><img\b[^>]*\bsrc="([^"]+)"',main,re.I)
+    if cover_match and cover_match.group(1).startswith("/"):
+        cover=cover_match.group(1)
+    if not cover.startswith("/"):
+        cover="/media/blog/"+cover.lstrip("/")
+    prefix="/"+locale
+    url=prefix+"/blog/"+slug+"/"
+    category=html.escape(str((source or {}).get("group") or "BUYER RESOURCES").upper())
+    return ('<article class="news-card"><a class="news-card__image" href="'+html.escape(url,quote=True)+'">'
+            '<img src="'+html.escape(cover,quote=True)+'" alt="'+html.escape(title,quote=True)+'" loading="lazy"></a>'
+            '<div class="news-card__info"><span class="news-card__category">'+category+'</span>'
+            '<h3><a href="'+html.escape(url,quote=True)+'">'+html.escape(title)+'</a></h3>'
+            '<p>'+html.escape(description)+'</p><a class="news-card__read" href="'+html.escape(url,quote=True)+'">Read Article →</a></div></article>')
 
-    Card HTML remains owner/D1-authored; only the card sequence is changed at
-    the source-render boundary. If the index is incomplete or contains an
-    unexpected card, preserve it and let the release gates report the issue.
-    """
+def sort_localized_blog_index(body,ordered_slugs,replacements=None):
+    """Order all localized cards by D1 and fill cards missing from an old index override."""
     if not ordered_slugs:
         return body
+    replacements=replacements or {}
     cards=list(re.finditer(r'<article class="news-card">[\s\S]*?</article>',body,re.I))
-    if len(cards)!=len(ordered_slugs):
-        return body
     parsed=[]
     for match in cards:
         links=re.findall(r'href=["\']/((?:[a-z0-9_-]+/)?blog/([a-z0-9]+(?:-[a-z0-9]+)*)/)["\']',match.group(0),re.I)
         slugs={slug for _,slug in links}
         if len(slugs)!=1:
             return body
-        parsed.append((next(iter(slugs)),match.group(0)))
-    if len(set(slug for slug,_ in parsed))!=len(parsed) or set(slug for slug,_ in parsed)!=set(ordered_slugs):
-        return body
+        slug=next(iter(slugs))
+        if any(item[0]==slug for item in parsed):
+            return body
+        parsed.append((slug,match.group(0)))
     by_slug=dict(parsed)
-    separator=body[cards[0].end():cards[1].start()] if len(cards)>1 else ""
-    replacement=separator.join(by_slug[slug] for slug in ordered_slugs)
-    return body[:cards[0].start()]+replacement+body[cards[-1].end():]
+    missing=[slug for slug in ordered_slugs if slug not in by_slug]
+    if any(slug not in replacements for slug in missing):
+        return body
+    ordered_cards=[by_slug.get(slug) or replacements[slug] for slug in ordered_slugs]
+    actual=[slug for slug,_ in parsed]
+    if not missing and actual==list(ordered_slugs):
+        return body
+    if cards:
+        separator=body[cards[0].end():cards[1].start()] if len(cards)>1 else "\n"
+        replacement=separator.join(ordered_cards)
+        return body[:cards[0].start()]+replacement+body[cards[-1].end():]
+    grid=re.search(r'(<div class="blog-listing__grid">)([\s\S]*?)(</div>)',body,re.I)
+    if not grid:
+        return body
+    replacement="\n".join(ordered_cards)
+    return body[:grid.start(2)]+replacement+body[grid.end(2):]
 
 def relocate_product_intro(body):
     """Move the existing product intro below the full two-column product block.
@@ -535,6 +563,8 @@ def main():
                 and re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",str(row.get("slug","")))]
     if len(blog_order)!=len(set(blog_order)):
         raise RuntimeError("D1 Blog snapshot contains duplicate published slugs")
+    blog_sources={str(row.get("slug")):row for row in data.get("blogPosts",[])
+                  if isinstance(row,dict) and isinstance(row.get("slug"),str)}
     source_generated_routes=set()
 
     for item in data.get("translations",[]):
@@ -696,7 +726,13 @@ def main():
             from blog_listing_layout import single_blog_index_heading
 
             fields={**fields,"mainHtml":single_blog_index_heading(fields["mainHtml"],loc)}
-            fields={**fields,"mainHtml":sort_localized_blog_index(fields["mainHtml"],blog_order)}
+            fallback_cards={
+                slug:_localized_blog_card(
+                    slug,loc,translated.get(("/blog/"+slug+"/",loc),{}),blog_sources.get(slug,{})
+                )
+                for slug in blog_order
+            }
+            fields={**fields,"mainHtml":sort_localized_blog_index(fields["mainHtml"],blog_order,fallback_cards)}
 
         # Correct a reviewed Turkish bottle-cap false friend in D1 source
 
