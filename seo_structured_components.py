@@ -77,16 +77,16 @@ def _localized_blog_keywords(page,locale):
     title,description=_head_meta(page)
     candidates=[title,description]
     for pattern in (
-        r"<h1\\b[^>]*>(.*?)</h1>",
-        r"<h2\\b[^>]*>(.*?)</h2>",
-        r"<h3\\b[^>]*>(.*?)</h3>",
-        r"<summary\\b[^>]*>(.*?)</summary>",
+        r"<h1\b[^>]*>(.*?)</h1>",
+        r"<h2\b[^>]*>(.*?)</h2>",
+        r"<h3\b[^>]*>(.*?)</h3>",
+        r"<summary\b[^>]*>(.*?)</summary>",
     ):
         candidates.extend(match.group(1) for match in re.finditer(pattern,page,re.I|re.S))
     values=[]
     for value in candidates:
         text=re.sub(r"<[^>]+>"," ",unescape(str(value or "")))
-        text=re.sub(r"\\s+"," ",text).strip(" \\t\\r\\n|·•")
+        text=re.sub(r"\s+"," ",text).strip(" \\t\\r\\n|·•")
         if len(text)<4 or text.casefold() in {item.casefold() for item in values}:
             continue
         values.append(text[:180])
@@ -293,11 +293,11 @@ def _update_blog_keywords(page,keywords):
                     node["keywords"]=keywords
                     changed=True
         if not changed:return match.group(0)
-        payload=json.dumps(obj,ensure_ascii=False,separators=(",",":")).replace("<",r"\\u003c")
+        payload=json.dumps(obj,ensure_ascii=False,separators=(",",":")).replace("<",r"\u003c")
         return match.group(1)+payload+match.group(3)
     page=JSONLD.sub(update,page)
     escaped=html_escape(keywords,quote=True)
-    meta=re.compile(r'<meta\\s+name=["\\']keywords["\\'][^>]*>',re.I)
+    meta=re.compile(r'<meta\s+name=["\\']keywords["\\'][^>]*>',re.I)
     replacement='<meta name="keywords" content="'+escaped+'">'
     if meta.search(page):
         return meta.sub(replacement,page,count=1)
