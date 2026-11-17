@@ -72,8 +72,6 @@ def _localized_blog_keywords(page,locale):
     visible translated title, description, headings and FAQ questions are the
     only inputs, so new D1 articles and configured locales work automatically.
     """
-    if locale == "en":
-        return ""
     title,description=_head_meta(page)
     candidates=[title,description]
     for pattern in (
