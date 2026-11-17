@@ -67,6 +67,7 @@ export async function onRequestGet(c){
 export async function onRequestPost(c){
   const denied=await requireAdmin(c);if(denied)return denied;
   let p;try{p=await c.request.json()}catch{return respond({error:"Invalid JSON"},400)}
+  if(p?.action==="bulk-update")return saveBlogTranslationBatch(c,p.items);
   const route=clean(p.route,250),locale=clean(p.locale,12).toLowerCase();
   const title=clean(p.title,180),description=clean(p.description,450),html=clean(p.mainHtml,250000);
   if(!(route==="/"||/^\/(?:[a-z0-9_-]+\/)+$/.test(route)))
