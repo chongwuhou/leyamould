@@ -38,9 +38,9 @@ async function saveBlogTranslationBatch(c,items){
     if(seen.has(key))return respond({error:"Duplicate bulk translation item",route,locale},400);
     seen.add(key);
     if(!published.has(blogMatch[1]))return respond({error:"Blog article must be published in English before translating",route},409);
-    if(!title||!description||html.length<120||!/<(?:section|article|div|h1)\\b/i.test(html))
+    if(!title||!description||html.length<120||!/<(?:section|article|div|h1)\b/i.test(html))
       return respond({error:"Full translated title, description and main HTML required",route,locale},400);
-    if(/<\\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\\b|\\bon[a-z-]+\\s*=|\\bsrcdoc\\s*=|(?:javascript|vbscript|data)\\s*:/i.test(html))
+    if(/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i.test(html))
       return respond({error:"Unsafe HTML in translated content",route,locale},400);
     statements.push(db.prepare(`INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at)
       VALUES(?,?,?,CURRENT_TIMESTAMP)
