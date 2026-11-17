@@ -14,7 +14,7 @@
 - **No SearchAction markup**: the site has no real website-wide search result endpoint. In addition, Google stopped showing sitelinks-searchbox rich results in November 2024. Claiming a nonexistent search action would be inaccurate.
 
 ## llms.txt — source-generated
-- `data/llms-verified-facts.json` owns the verified legal entity, Taizhou origin, plastic-only scope and substantial review date (stable, **not** the build timestamp).
+- `data/llms-verified-facts.json` owns the verified legal entity, Taizhou origin, current catalog scope and substantial review date (stable, **not** the build timestamp).
 - `scripts/verified_trust_technical_seo.py::build_llms` reads eight existing English FAQs from the canonical `data/faq-expanded.json`, includes brief fact-preserving answers plus the official FAQ source page, and skips questions that are no longer displayed in the published FAQ after an owner CMS update.
 - This file is an optional navigation aid, not an API, indexing directive or guarantee that generative search engines will read or cite it.
 - All source changes only, no direct `dist` or online HTML mutation as implementation, no fake materials/compliance/pricing/staffing numbers.
