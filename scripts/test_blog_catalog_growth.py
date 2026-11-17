@@ -6,9 +6,9 @@ import json
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from blog_catalog_source import load_guides
-from site_renderer import ROOT,BLOG_POSTS,ARTICLES
+from site_renderer import ROOT,BLOG_POSTS,ARTICLES,BUILD_STATE
 from blog_editorial import GUIDES,BUYER_MATRICES
-from build import blog_index
+from build import blog_index,blog_index_rows
 from sitemap_modification import source_lastmod
 
 expected={
@@ -26,6 +26,24 @@ for slug in expected:
  assert '/blog/'+slug+'/' in body
  assert source_lastmod("/blog/"+slug+"/")=="2026-11-01",slug
  assert source_lastmod("/pt/blog/"+slug+"/")=="2026-11-01",slug
+# A static build with a live D1 snapshot must render the full published D1
+# catalogue, including CMS-only articles not yet in the source registry.
+static_slug=ARTICLES[0][0]
+static_post=BLOG_POSTS[static_slug]
+previous=BUILD_STATE.get("blogPosts")
+BUILD_STATE["blogPosts"]=[
+ {"slug":"cms-only-published-guide","status":"published",
+  "title":"CMS-only published buyer guide","description":"A complete CMS article description for the catalogue regression.",
+  "cover":"/media/blog/cms-only-published-guide.webp","group":"BUYER RESOURCES"},
+ {"slug":static_slug,"status":"published","title":static_post["title"],
+  "description":static_post["description"],"cover":static_post["cover"],"group":static_post["group"]}
+]
+rows=blog_index_rows()
+assert [row["slug"] for row in rows[:2]]==["cms-only-published-guide",static_slug]
+assert len({row["slug"] for row in rows})==len(rows)
+assert len(rows)==len(ARTICLES)+1
+if previous is None:BUILD_STATE.pop("blogPosts",None)
+else:BUILD_STATE["blogPosts"]=previous
 with TemporaryDirectory() as tmp:
  root=Path(tmp);data=root/"data";data.mkdir()
  base={"slug":"baseline","title":"Baseline title","description":"A validated source"}
@@ -43,3 +61,4 @@ with TemporaryDirectory() as tmp:
  else:
   raise AssertionError("Duplicate future slug not rejected")
 print("XUYI_BLOG_SOURCE_DYNAMIC_GROWTH_OK",len(BLOG_POSTS),"articles; 3 20261101 routes and future additions validated")
+
