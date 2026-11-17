@@ -867,7 +867,7 @@ def main():
 
             from blog_geo_evidence import render as render_blog_geo_evidence
 
-            body=render_blog_geo_evidence(body,localized,loc)
+            body=render_blog_geo_evidence(body,route,loc)
 
         if route=="/products/" or route.startswith("/collections/"):
 
