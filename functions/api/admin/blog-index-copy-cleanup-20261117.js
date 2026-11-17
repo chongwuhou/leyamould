@@ -39,26 +39,31 @@ export async function onRequestPost(context){
  if(!(await authorizedReviewedBlogIndexCopyCleanupRequest(context.request,context.env)))return json({error:"Unauthorized reviewed Blog cleanup request"},401);
  const db=context.env.XUYI_DB;if(!db)return json({error:"XUYI_DB binding missing"},503);
  try{
-  const placeholders=ORIGIN_ROUTES.map(()=>"?").join(",");
-  const rows=(await db.prepare("SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN ("+placeholders+") AND locale IN (?,?,?,?)").bind(...ORIGIN_ROUTES,...LOCALES).all()).results||[];
-  const lookup=new Map(rows.map(row=>[row.resource_id+"|"+row.locale,row]));
+  const rows=(await db.prepare("SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE locale IN (?,?,?,?) AND resource_id LIKE 'page:/blog/%'").bind(...LOCALES).all()).results||[];
+  const normalizeResourceId=value=>{
+   const raw=String(value||"");
+   if(!raw.startsWith("page:/blog/"))return raw;
+   const route=raw.slice(5).replace(/\\/+$/,"")+"/";
+   return "page:"+route;
+  };
+  const lookup=new Map(rows.map(row=>[normalizeResourceId(row.resource_id)+"|"+row.locale,row]));
   const plans=[];
   for(const route of ORIGIN_ROUTES)for(const locale of LOCALES){
    const resourceId="page:"+route,row=lookup.get(resourceId+"|"+locale),payload=parse(row);
    if(!payload)return json({error:"Missing or invalid D1 Blog translation: "+resourceId+"|"+locale},409);
    const before=payload.mainHtml,after=transform(before,locale,route);
-   plans.push({resourceId,locale,before,after,changed:before!==after});
+   plans.push({resourceId,actualResourceId:row.resource_id,locale,before,after,changed:before!==after});
   }
   const now=new Date().toISOString(),statements=[];
   for(const plan of plans)if(plan.changed){
    const original=parse(lookup.get(plan.resourceId+"|"+plan.locale));
    const payload={...original,mainHtml:plan.after};
-   statements.push(db.prepare("UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=? WHERE resource_id=? AND locale=? AND translated_json=?").bind(JSON.stringify(payload),now,plan.resourceId,plan.locale,JSON.stringify(original)));
+   statements.push(db.prepare("UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=? WHERE resource_id=? AND locale=? AND translated_json=?").bind(JSON.stringify(payload),now,plan.actualResourceId,plan.locale,JSON.stringify(original)));
   }
   const results=statements.length?await db.batch(statements):[];
   if(results.some(result=>Number(result?.meta?.changes||0)!==1))return json({error:"D1 cleanup compare-and-swap failed; no safe final state claimed"},409);
-  const afterRows=(await db.prepare("SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE resource_id IN ("+placeholders+") AND locale IN (?,?,?,?)").bind(...ORIGIN_ROUTES,...LOCALES).all()).results||[];
-  const afterLookup=new Map(afterRows.map(row=>[row.resource_id+"|"+row.locale,row]));
+  const afterRows=(await db.prepare("SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides WHERE locale IN (?,?,?,?) AND resource_id LIKE 'page:/blog/%'").bind(...LOCALES).all()).results||[];
+  const afterLookup=new Map(afterRows.map(row=>[normalizeResourceId(row.resource_id)+"|"+row.locale,row]));
   for(const plan of plans){
    const body=parse(afterLookup.get(plan.resourceId+"|"+plan.locale))?.mainHtml||"";
    const error=validate(body,plan.locale);
