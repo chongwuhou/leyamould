@@ -73,7 +73,7 @@ not regressions merely because a legacy rewrite no longer finds its old input.
 
 ### AI/工具发布与 D1/R2 唯一写入门禁（2026-11-05）
 
-产品、博客、评价、翻译和图片等业务数据必须写入 Cloudflare D1/CMS；图片必须先进入 R2，再由 D1 保存路径、ALT、语言和引用关系。AI 只能生成待审核草稿、翻译初稿和审计结果，不能直接发布或编造事实；工具只能使用已鉴权的正式 D1/CMS、R2 入口，默认 dry-run，条件写入，保留人工值，记录 publish revision。严禁直接改 dist、线上 HTML、Pages 成品或 R2 缓存。完整门禁见 [项目圣经/2026-11-05_统一内容发布与翻译审计标准.md](项目圣经/2026-11-05_统一内容发布与翻译审计标准.md)。
+产品、博客、评价、翻译和图片等业务数据必须写入 Cloudflare D1/CMS；图片必须先进入 R2，再由 D1 保存路径、ALT、语言和引用关系。AI 只能生成待审核草稿、翻译初稿和审计结果，不能直接发布或编造事实；工具只能使用已鉴权的正式 D1/CMS、R2 入口，默认 dry-run，条件写入，保留人工值，记录 publish revision。严禁直接改 dist、线上 HTML、Pages 成品或 R2 缓存。完整门禁见 [项目圣经/统一内容发布与翻译审计标准.md](项目圣经/统一内容发布与翻译审计标准.md)。
 
 
 ### 产品 SEO

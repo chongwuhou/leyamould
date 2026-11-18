@@ -22,4 +22,4 @@ jobs:
         with:
           python-version: "3.11"
       - name: Read D1 review ledger and occupied SKU set (GET only)
-        run: python scripts/audit_d1_review_state_readonly_20261102.py
+        run: python scripts/audit_d1_review_state_readonly.py

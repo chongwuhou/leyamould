@@ -2,7 +2,7 @@
 
 > **唯一执行入口：** 具体操作统一按 [XUYI 网站统一执行手册](docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md)。本文件的原则优先级不变；带日期的历史说明仅供追溯。
 
-> **统一内容/翻译/AI/工具发布标准：** [项目圣经/2026-11-05_统一内容发布与翻译审计标准.md](项目圣经/2026-11-05_统一内容发布与翻译审计标准.md)。业务数据走 D1/CMS，媒体走 R2，禁止直接改 dist 或线上 HTML。
+> **统一内容/翻译/AI/工具发布标准：** [项目圣经/统一内容发布与翻译审计标准.md](项目圣经/统一内容发布与翻译审计标准.md)。业务数据走 D1/CMS，媒体走 R2，禁止直接改 dist 或线上 HTML。
 
 > **中文快速上手（换电脑 / 新同事用 AI 更新网站）：** [docs/AI_COLLABORATION_QUICKSTART_ZH.md](docs/AI_COLLABORATION_QUICKSTART_ZH.md)。说明 GitHub + localGPT + GitHub Actions + Cloudflare D1 的实际权限和操作方法。
 

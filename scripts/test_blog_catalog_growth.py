@@ -64,7 +64,7 @@ with TemporaryDirectory() as tmp:
  (data/"blog-guides.json").write_text(json.dumps([base]),encoding="utf8")
  (data/"blog-guides-20261102-1.json").write_text(json.dumps(future),encoding="utf8")
  (data/"blog-guides-20261102-not-approved.json").write_text("invalid",encoding="utf8")
- (data/"blog-scheduled-20261103-1.json").write_text(json.dumps({"slug":"scheduled-draft","title":"Scheduled draft","description":"Must stay out of the static catalog until D1 publishes it."}),encoding="utf8")
+ (data/"blog-scheduled-draft.json").write_text(json.dumps({"slug":"scheduled-draft","title":"Scheduled draft","description":"Must stay out of the static catalog until D1 publishes it."}),encoding="utf8")
  assert [p["slug"] for p in load_guides(root)]==["baseline","new-future-topic"],"D1-scheduled drafts must not leak into the static public Blog catalogue"
  (data/"blog-guides-20261102-2.json").write_text(json.dumps(future),encoding="utf8")
  try:

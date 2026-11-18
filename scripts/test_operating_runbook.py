@@ -93,4 +93,7 @@ if "scripts/test_pages_functions_syntax.py" not in workflow:
 if "scripts/test_blog_card_contract.py" not in workflow:
     fail("Blog card compatibility gate is missing")
 
+if "scripts/test_repository_hygiene.py" not in workflow:
+    fail("repository hygiene gate is missing")
+
 print("Operating runbook guard passed: one source of truth, human/API modes, authorization boundary, D1-driven locales, one generic publisher, and generic regression tests are documented.")
