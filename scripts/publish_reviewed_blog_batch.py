@@ -13,8 +13,9 @@ import base64
 import html
 import json
 import os
+import subprocess
+import tempfile
 from pathlib import Path
-from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 
@@ -34,23 +35,29 @@ def r2_upload(filename: str) -> None:
     local = ROOT / "assets" / "blog" / filename
     if not local.is_file():
         raise RuntimeError(f"missing reviewed cover: {local}")
-    url = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT}/r2/buckets/{BUCKET}/objects/site-blog/{filename}"
-    headers = {"Authorization": f"Bearer {TOKEN}"}
+    remote_key = f"{BUCKET}/site-blog/{filename}"
+    with tempfile.NamedTemporaryFile(prefix="xuyi-r2-check-", suffix=".webp", delete=False) as handle:
+        probe = Path(handle.name)
     try:
-        # Cloudflare's R2 object HTTP endpoint does not accept HEAD here.
-        # A one-byte ranged GET keeps this a read-only existence check.
-        with urlopen(Request(url, headers={**headers, "Range": "bytes=0-0"}, method="GET"), timeout=45) as response:
-            if response.status in (200, 206):
-                print(f"R2 kept existing object site-blog/{filename}")
-                return
-    except HTTPError as error:
-        if error.code != 404:
-            raise
-    request_headers = {**headers, "Content-Type": "image/webp", "Content-Length": str(local.stat().st_size)}
-    with urlopen(Request(url, data=local.read_bytes(), headers=request_headers, method="PUT"), timeout=90) as response:
-        if response.status not in (200, 201, 204):
-            raise RuntimeError(f"R2 upload failed with HTTP {response.status}")
-    print(f"R2 uploaded site-blog/{filename} ({local.stat().st_size} bytes)")
+        checked = subprocess.run(
+            ["npx", "--yes", "wrangler@4.148.0", "r2", "object", "get", remote_key, "--file", str(probe), "--remote"],
+            cwd=ROOT, text=True, capture_output=True, timeout=120,
+            env={**os.environ, "CLOUDFLARE_ACCOUNT_ID": ACCOUNT},
+        )
+        if checked.returncode == 0:
+            print(f"R2 kept existing object site-blog/{filename}")
+            return
+        uploaded = subprocess.run(
+            ["npx", "--yes", "wrangler@4.148.0", "r2", "object", "put", remote_key, "--file", str(local), "--content-type", "image/webp", "--remote"],
+            cwd=ROOT, text=True, capture_output=True, timeout=180,
+            env={**os.environ, "CLOUDFLARE_ACCOUNT_ID": ACCOUNT},
+        )
+        if uploaded.returncode != 0:
+            detail = (uploaded.stderr or uploaded.stdout or "R2 Wrangler upload failed").strip()[-600:]
+            raise RuntimeError(detail)
+        print(f"R2 uploaded site-blog/{filename} ({local.stat().st_size} bytes)")
+    finally:
+        probe.unlink(missing_ok=True)
 
 
 def section(heading: str, paragraph: str) -> dict[str, str]:
