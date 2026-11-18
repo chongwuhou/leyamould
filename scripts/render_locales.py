@@ -207,6 +207,7 @@ def relocate_product_intro(body):
         raise RuntimeError("Cannot locate matching product-detail closing div")
     return body[:closing_end]+'<div class="product-detail__lead">'+paragraph+'</div>'+body[closing_end:]
 
+# CMS-owned Blog translations may use direct or wrapped timeline markup.
 def localize_blog_timeline(body,original,locale,route):
 
     """Reflect actual source publication/review dates in the translated page.
