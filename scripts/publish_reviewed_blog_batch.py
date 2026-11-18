@@ -277,6 +277,7 @@ def build_payload() -> dict:
 # Media-first publication is verified before the D1 batch.
 # Owner-approved multilingual Blog release.
 # Deployment refresh ensures the Pages secret is live.
+# Final owner-approved release trigger.
 def publish() -> None:
     if not TOKEN:
         raise RuntimeError("protected Cloudflare publisher credentials are missing")
