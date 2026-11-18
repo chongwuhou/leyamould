@@ -52,7 +52,7 @@ function validatePayload(payload, locales) {
   const seenTranslations = new Set();
   for (const item of payload.translations) {
     const route = String(item?.route || "");
-    const match = /^\/media\/blog\/([a-z0-9_-]+\\.webp)$/.exec(path);
+    const match = /^\/media\/blog\/([a-z0-9_-]+\.webp)$/.exec(path);
     const locale = String(item?.locale || "");
     const key = route + "|" + locale;
     const html = String(item?.mainHtml || "");
