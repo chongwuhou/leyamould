@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "editorialStatus": "reviewed-b2b-20261021",
+  "articles": {
+    "compare-oem-water-bottle-quotes-like-for-like": {
+      "title": "Quote comparison: normalize the scope",
+      "intro": "Use this worksheet row by row before discussing a price award. A missing item is an open question, not a free inclusion.",
+      "head": [
+        "Cost / risk item",
+        "Evidence to request",
+        "Common comparison error"
+      ],
+      "rows": [
+        [
+          "Bottle and cap",
+          "Specific SKU, bill of materials and approved physical sample",
+          "Different closures described as identical"
+        ],
+        [
+          "Artwork and setup",
+          "Print proof, positions, one-time fees, tooling ownership",
+          "Setup hidden in unit-price comparison"
+        ],
+        [
+          "Variants and MOQ",
+          "Quantity per color, cap and logo with tiers",
+          "Total MOQ mistaken for per-variant MOQ"
+        ],
+        [
+          "Packaging",
+          "Retail and master carton diagrams, measurements and labels",
+          "Transport-ready packaging assumed included"
+        ],
+        [
+          "QC and documents",
+          "Lot inspection criteria, relevant sample reports and correction plan",
+          "A generic report accepted for every assembly"
+        ],
+        [
+          "Delivery",
+          "Rule plus named place, independent freight and destination charges",
+          "EXW compared directly with delivered pricing"
+        ]
+      ],
+      "links": [
+        [
+          "Ask for a matched RFQ",
+          "/blog/bottle-factory-rfq-template/"
+        ],
+        [
+          "Plan payment safeguards",
+          "/blog/custom-water-bottle-deposit-checklist/"
+        ]
+      ]
+    },
+    "wholesale-water-bottle-carton-label-3pl-retail-checklist": {
+      "title": "Retailer/3PL label approval matrix",
+      "intro": "Use the receiving partner's own instructions for the final acceptance criteria; this matrix is a handoff checklist, not a universal labeling standard.",
+      "head": [
+        "Label decision",
+        "Evidence from buyer and supplier",
+        "Release check"
+      ],
+      "rows": [
+        [
+          "Sellable unit identity",
+          "Approved SKU-to-model/color/lid mapping",
+          "No two distinct fulfillable variants share one code"
+        ],
+        [
+          "Trade-item barcode",
+          "Brand-owner GTIN data where applicable",
+          "Printed symbol scans to the correct case or item"
+        ],
+        [
+          "Logistic identification",
+          "SSCC allocation and label instructions where required",
+          "Unique logistics ID matches ASN or dispatch data"
+        ],
+        [
+          "Carton content",
+          "Quantity, variant mix, carton numbers and packing list",
+          "Each carton reconciles to the order"
+        ],
+        [
+          "Physical label proof",
+          "Print, location, contrast and protection from tape",
+          "Approved photograph and decode test"
+        ],
+        [
+          "Receiving coordination",
+          "3PL booking/ASN/routing-guide requirements",
+          "Written acceptance or documented exception"
+        ]
+      ],
+      "links": [
+        [
+          "Plan the master carton",
+          "/blog/custom-water-bottle-export-packaging/"
+        ],
+        [
+          "Check mixed-variant orders",
+          "/blog/mixed-color-size-water-bottle-wholesale-order/"
+        ]
+      ]
+    },
+    "custom-water-bottle-reorder-planning-lead-time-buffer": {
+      "title": "Reorder plan: evidence, trigger and fallback",
+      "intro": "All quantities and dates must be calculated from the buyer's own sell-through and confirmed partner schedules; the table gives questions, not guaranteed delivery terms.",
+      "head": [
+        "Planning variable",
+        "Evidence to record",
+        "Action if uncertain"
+      ],
+      "rows": [
+        [
+          "Demand by SKU",
+          "Sales and commitments per model, color, lid and logo",
+          "Use scenarios, not blended averages"
+        ],
+        [
+          "Available stock",
+          "On hand, inspected usable stock and confirmed incoming",
+          "Avoid double-counting open orders"
+        ],
+        [
+          "Factory schedule",
+          "Approval date, material, decoration, assembly and QC milestones",
+          "Escalate at a named hold point"
+        ],
+        [
+          "Logistics schedule",
+          "Forwarder booking, mode, customs and 3PL receipt window",
+          "Model a late-arrival case"
+        ],
+        [
+          "MOQ and cash",
+          "Per-variant production ladder and carton rounding",
+          "Compare overstock cost with order breaks"
+        ],
+        [
+          "Replacement parts",
+          "Exact lid/seal revisions and after-sales failure data",
+          "Validate compatibility and parts availability"
+        ]
+      ],
+      "links": [
+        [
+          "Spare lids and replacement components",
+          "/blog/replacement-water-bottle-lids-bulk/"
+        ],
+        [
+          "What to check before a reorder",
+          "/blog/water-bottle-sample-approval-checklist/"
+        ]
+      ]
+    }
+  }
+}

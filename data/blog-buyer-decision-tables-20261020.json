@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "editorialStatus": "reviewed-b2b-20261020",
+  "articles": {
+    "how-to-vet-plastic-water-bottle-factory-bulk-order": {
+      "title": "Supplier evidence matrix: request, proof and decision",
+      "intro": "Use a pass/conditional/pending evidence log to compare suppliers. This matrix is a procurement tool, not an independent certification of any XUYI product or site.",
+      "head": [
+        "Approval checkpoint",
+        "Evidence to obtain",
+        "What remains unresolved"
+      ],
+      "rows": [
+        [
+          "Company and site",
+          "Legal name, invoice entity, facility address and named process contact",
+          "Subcontracted steps and beneficial ownership to verify"
+        ],
+        [
+          "Material and components",
+          "Model-level body, lid, seal, straw and decoration bill of materials",
+          "Destination-market documentation for exact finished assembly"
+        ],
+        [
+          "Approved sample",
+          "Dated physical sample, marked drawing, artwork and packaging",
+          "Difference between sample and production lots"
+        ],
+        [
+          "Quality management",
+          "Incoming material checks, in-process controls and inspection instructions",
+          "Independence, scope and traceability of records"
+        ],
+        [
+          "Commercial readiness",
+          "Itemized offer, trade term, shipment plan and change-approval terms",
+          "Unpriced options, tooling ownership or split-quantity constraints"
+        ],
+        [
+          "Purchase decision",
+          "Signed risk register classifying items verified, conditional or missing",
+          "High-risk uncertainties requiring further inspection or expert advice"
+        ]
+      ],
+      "links": [
+        [
+          "Compare sports bottle references",
+          "/products/2095/"
+        ],
+        [
+          "Verify kids bottle configuration",
+          "/products/2106/"
+        ],
+        [
+          "Examine large-jug SKU",
+          "/products/2305/"
+        ]
+      ]
+    },
+    "mixed-color-size-water-bottle-wholesale-order": {
+      "title": "Mixed-bottle order matrix: what may share a minimum?",
+      "intro": "Quote each commercial variant separately before combining shipment volume. A shared shipment does not make separate molding or printing runs interchangeable.",
+      "head": [
+        "Variant dimension",
+        "Supplier must confirm",
+        "Buyer's control"
+      ],
+      "rows": [
+        [
+          "Bottle model and size",
+          "MOQ per body mold, resin and lid configuration",
+          "Distinct SKU line and verified ml capacity"
+        ],
+        [
+          "Body or cap color",
+          "Separate changeover and pigment quantities",
+          "Reference swatch and physical approval"
+        ],
+        [
+          "Logo and print area",
+          "Setup or plate charge for every artwork revision",
+          "Artwork file, position and color approval"
+        ],
+        [
+          "Inner and master carton",
+          "Units per carton, dimensions, gross weight and markings",
+          "Receiving plan and carton-range identity"
+        ],
+        [
+          "Shipment combination",
+          "Shared booking eligibility and readiness date of each line",
+          "Purchase-order split and carrier handover plan"
+        ],
+        [
+          "Price and Incoterm",
+          "Unit basis, included services and named delivery point",
+          "Like-for-like supplier comparison"
+        ]
+      ],
+      "links": [
+        [
+          "Small sports bottle reference",
+          "/products/2095/"
+        ],
+        [
+          "Kids line reference",
+          "/products/2106/"
+        ],
+        [
+          "Large capacity jug reference",
+          "/products/2305/"
+        ]
+      ]
+    },
+    "custom-water-bottle-deposit-checklist": {
+      "title": "Pre-deposit release matrix: what must be signed first?",
+      "intro": "Agree the supplier's deliverables and buyer approvals before deposit transfer. This is a decision tool, not legal advice or a warranty of any XUYI transaction.",
+      "head": [
+        "Purchase condition",
+        "Required record",
+        "Reason to stop release"
+      ],
+      "rows": [
+        [
+          "Exact SKU and components",
+          "Approved specification, revision and model/variant schedule",
+          "Substitutions or undefined cap/material choices"
+        ],
+        [
+          "Sample and decoration",
+          "Physical golden sample, artwork proof and any exceptions",
+          "Unapproved logo, color or assembly performance"
+        ],
+        [
+          "Tooling and IP",
+          "Tooling scope, fees, ownership and storage terms",
+          "Ambiguous buyer-funded mold rights"
+        ],
+        [
+          "Testing and inspection",
+          "Market-specific evidence, inspection method and failed-lot remedy",
+          "Unsupported certification or unclear acceptance"
+        ],
+        [
+          "Trade and payment",
+          "Proforma, named Incoterm place, milestone triggers and beneficiary",
+          "Mismatched seller, bank details or undefined risk transfer"
+        ],
+        [
+          "Packing and export",
+          "Carton dimensions, label/marking file and shipping document list",
+          "Missing logistics data or unchecked market-specific requirements"
+        ]
+      ],
+      "links": [
+        [
+          "Check sports bottle specification",
+          "/products/2501/"
+        ],
+        [
+          "Check kids bottle parts",
+          "/products/2109/"
+        ],
+        [
+          "Check jug packing requirements",
+          "/products/2305/"
+        ]
+      ]
+    }
+  }
+}
