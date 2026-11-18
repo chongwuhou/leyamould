@@ -128,6 +128,12 @@ jobs:
           else
             echo "needed=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Backfill reviewed source fields into D1 once
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, '[xuyi-d1-source-migration]')
+        env:
+          SITE_ORIGIN: https://xuyibottles.com
+        run: python scripts/migrate_blog_source_to_d1.py
+
       - name: Verify XUYI CMS APIs against D1 (read-only)
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         shell: bash

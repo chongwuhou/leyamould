@@ -83,6 +83,13 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
   return authorizedExplicitPublishRequest(request, env);
 }
 
+// Generic, idempotent source-to-D1 field backfill. It may add only missing
+// reviewed fields and never overwrite an existing owner value.
+export async function authorizedCmsSourceMigrationRequest(request, env) {
+  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/cms-source-migration") return false;
+  return authorizedExplicitPublishRequest(request, env);
+}
+
 // Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
 // Narrow, source-reviewed repair for the nine multilingual Blog D1 records identified
 // by the 2026-11-05 live translation audit. It accepts no arbitrary copy.

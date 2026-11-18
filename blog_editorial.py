@@ -81,15 +81,6 @@ def render_primary_evidence(slug):
 
 BUYER_MATRICES = {
     **json.loads((ROOT / "data/blog-buyer-decision-tables.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261020.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261021.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261022.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261023.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261024.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261025.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261026.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261027.json").read_text(encoding="utf-8"))["articles"],
-    **json.loads((ROOT / "data/blog-buyer-decision-tables-20261028.json").read_text(encoding="utf-8"))["articles"],
     **{post["slug"]:post["buyerDecisionTable"] for post in GUIDES.values() if "buyerDecisionTable" in post}
 }
 assert set(BUYER_MATRICES)==set(GUIDES),"Every reviewed buyer guide needs its own decision table"

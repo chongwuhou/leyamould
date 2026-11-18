@@ -170,7 +170,7 @@ export async function ensureBlogSchema(db){
 const str=(x,max=300)=>String(x??'').trim().slice(0,max);
 const slugOk=x=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(x)&&x.length<=120;
 const IMAGE=/^(\/media\/(?:ppt\/slide-\d{3}\.webp|excel\/row-\d{3}\.webp|group\/[a-z0-9-]+\.webp|blog\/[a-z0-9_-]+\.(?:webp|png|jpg|jpeg))|\/assets\/[a-zA-Z0-9/_-]+\.(?:webp|png|jpg|jpeg))$/;
-function normalizeBuyerDecisionTable(raw){
+export function normalizeBuyerDecisionTable(raw){
  if(raw===false)return false; // Explicit CMS editorial suppression.
  if(raw==null)return undefined; // Fall back to reviewed source for untouched posts.
  if(typeof raw!=="object"||Array.isArray(raw))throw Error("Invalid buyer table");
