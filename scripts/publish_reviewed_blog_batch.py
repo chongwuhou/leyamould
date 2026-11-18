@@ -269,16 +269,22 @@ def build_payload() -> dict:
                 raise RuntimeError(f"translation too short: {article['slug']}|{locale} ({len(main_html)})")
             translations.append({"route": f"/blog/{article['slug']}/", "locale": locale, "title": title, "description": description, "mainHtml": main_html})
             cards.append({"slug": article["slug"], "locale": locale, "html": render_index_card(article, locale)})
-    return {"media": media_payload(articles), "posts": posts, "translations": translations, "indexCards": cards}
+    return {"posts": posts, "translations": translations, "indexCards": cards}
 
 
 def publish() -> None:
-    if not TOKEN or not ACCOUNT:
+    if not TOKEN:
         raise RuntimeError("protected Cloudflare publisher credentials are missing")
     articles = english_articles()
+    headers = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json", "x-xuyi-publish-intent": PUBLISH_INTENT}
+    media_request = Request(ORIGIN + "/api/admin/blog-media-batch", data=json.dumps({"media": media_payload(articles)}, ensure_ascii=False, separators=(",", ":")).encode("utf-8"), method="POST", headers=headers)
+    with urlopen(media_request, timeout=180) as response:
+        media_result = json.loads(response.read().decode("utf-8"))
+        if response.status != 200 or not media_result.get("success"):
+            raise RuntimeError("R2 Blog media batch rejected: " + json.dumps(media_result, ensure_ascii=False)[:500])
     payload = json.dumps(build_payload(), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    request = Request(ORIGIN + "/api/admin/blog-batch", data=payload, method="POST", headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json", "x-xuyi-publish-intent": PUBLISH_INTENT})
-    with urlopen(request, timeout=120) as response:
+    request = Request(ORIGIN + "/api/admin/blog-batch", data=payload, method="POST", headers=headers)
+    with urlopen(request, timeout=180) as response:
         body = json.loads(response.read().decode("utf-8"))
         if response.status != 200 or not body.get("success"):
             raise RuntimeError("D1 Blog batch rejected: " + json.dumps(body, ensure_ascii=False)[:500])
