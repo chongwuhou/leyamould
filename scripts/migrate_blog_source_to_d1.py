@@ -56,6 +56,8 @@ request = Request(
     data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
     headers={
         "authorization": "Bearer " + token,
+        "accept": "application/json",
+        "user-agent": "XUYI-D1-Source-Migration/1.0",
         "content-type": "application/json",
         "x-xuyi-publish-intent": "explicit-owner-approval",
     },
