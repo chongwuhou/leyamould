@@ -19,6 +19,8 @@ function bearerToken(request) {
 
 async function verifyCloudflareProjectToken(token, env) {
   if (!token) return false;
+  const localPublishToken = clean(env.XUYI_PUBLISH_TOKEN);
+  if (localPublishToken && constantTimeEqual(token, localPublishToken)) return true;
   // These two identifiers are public (not credentials), and pin the
   // authorization check to XUYI even when Pages variables are absent.
   const accountId = "a4032d0251103d6ef680b2aaddce1afc";

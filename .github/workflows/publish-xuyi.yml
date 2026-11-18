@@ -108,6 +108,14 @@ jobs:
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/xuyi-drinkware-site" \
             | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||j.result?.name!=='xuyi-drinkware-site')throw new Error('XUYI project identity mismatch');const c=j.result?.source?.config||{};if(c.production_deployments_enabled!==false||c.preview_deployment_setting!=='none')throw new Error('Disable old Git auto deploy for XUYI before enabling the CI publisher');console.log('One controlled production publisher verified')})"
+      - name: Sync protected XUYI publish credential
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Publish reviewed Blog batch')
+        shell: bash
+        run: |
+          set -euo pipefail
+          publish_token="$(python -c 'import hashlib,os; print(hashlib.sha256((os.environ["CLOUDFLARE_API_TOKEN"]+"|xuyi-pages-publish-v1").encode()).hexdigest())')"
+          printf '%s' "$publish_token" | npx --yes wrangler@4.148.0 pages secret put XUYI_PUBLISH_TOKEN --project-name xuyi-drinkware-site
+
       # Reviewed Blog batch publication; writes R2 first and D1 second.
       - name: Publish reviewed Blog batch
         if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Publish reviewed Blog batch')

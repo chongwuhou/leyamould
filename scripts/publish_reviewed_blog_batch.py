@@ -10,6 +10,7 @@ it never edits dist/ or deployed HTML.
 from __future__ import annotations
 
 import base64
+import hashlib
 import html
 import json
 import os
@@ -278,7 +279,8 @@ def publish() -> None:
     if not TOKEN:
         raise RuntimeError("protected Cloudflare publisher credentials are missing")
     articles = english_articles()
-    headers = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json", "x-xuyi-publish-intent": PUBLISH_INTENT}
+    publish_token = hashlib.sha256((TOKEN + "|xuyi-pages-publish-v1").encode("utf-8")).hexdigest()
+    headers = {"Authorization": f"Bearer {publish_token}", "Content-Type": "application/json", "x-xuyi-publish-intent": PUBLISH_INTENT}
     media_request = Request(ORIGIN + "/api/admin/blog-media-batch", data=json.dumps({"media": media_payload(articles)}, ensure_ascii=False, separators=(",", ":")).encode("utf-8"), method="POST", headers=headers)
     with urlopen(media_request, timeout=180) as response:
         media_result = json.loads(response.read().decode("utf-8"))
