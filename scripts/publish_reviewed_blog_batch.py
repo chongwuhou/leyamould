@@ -36,8 +36,10 @@ def r2_upload(filename: str) -> None:
     url = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT}/r2/buckets/{BUCKET}/objects/site-blog/{filename}"
     headers = {"Authorization": f"Bearer {TOKEN}"}
     try:
-        with urlopen(Request(url, headers=headers, method="HEAD"), timeout=45) as response:
-            if response.status == 200:
+        # Cloudflare's R2 object HTTP endpoint does not accept HEAD here.
+        # A one-byte ranged GET keeps this a read-only existence check.
+        with urlopen(Request(url, headers={**headers, "Range": "bytes=0-0"}, method="GET"), timeout=45) as response:
+            if response.status in (200, 206):
                 print(f"R2 kept existing object site-blog/{filename}")
                 return
     except HTTPError as error:
