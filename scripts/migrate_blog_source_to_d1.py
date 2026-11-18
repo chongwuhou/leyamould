@@ -3,6 +3,7 @@
 
 This is a migration utility, not a build input. It reads the currently reviewed
 source registries only to seed missing D1 fields, never replaces owner values.
+# The workflow marker is intentionally required for execution; ordinary builds skip this utility.
 """
 from __future__ import annotations
 import json, os, re, sys
