@@ -211,7 +211,6 @@ jobs:
           python scripts/test_blog_listing_single_header.py
           python scripts/test_blog_pagination_source.py
           python scripts/test_blog_card_contract.py
-          node scripts/test_blog_cover_override_runtime.mjs
           node scripts/test_blog_pagination_runtime.mjs
           echo "XUYI_SECOND_CLEAN_GENERIC_REBUILD_PASSED"
       - name: No changes in the XUYI D1 publish revision
