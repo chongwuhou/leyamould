@@ -273,6 +273,7 @@ def build_payload() -> dict:
 
 
 # Owner-approved release trigger.
+# Media-first publication is verified before the D1 batch.
 def publish() -> None:
     if not TOKEN:
         raise RuntimeError("protected Cloudflare publisher credentials are missing")
