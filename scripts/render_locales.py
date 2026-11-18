@@ -237,7 +237,7 @@ def localize_blog_timeline(body,original,locale,route):
 
         timeline+=' · <time datetime="'+modified+'">'+html.escape(reviewed)+" "+modified+"</time>"
 
-    updated,count=re.subn(r'(<div class="blog-meta">\s*<span>[^<]*</span>\s*)(?:<span>.*?</span>|<time\\b[^>]*>.*?</time>)(\s*</div>)',
+    updated,count=re.subn(r'(<div class="blog-meta">\s*<span>[^<]*</span>\s*)(?:<span>.*?</span>|<time\b[^>]*>.*?</time>)(\s*</div>)',
         lambda match:match.group(1)+'<span>'+timeline+'</span>'+match.group(2),body,count=1,flags=re.S)
 
     if count!=1:raise RuntimeError("Cannot update localized blog date safely: "+locale+" "+route)
