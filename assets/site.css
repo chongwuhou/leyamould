@@ -482,7 +482,18 @@ body:has(.kreat-collections) .kreat-intro__media img{min-height:0;max-height:non
 .news-section__slider{display:flex;gap:28px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;scroll-snap-type:x mandatory;scroll-behavior:smooth;overscroll-behavior-inline:contain;padding:0 0 7px;min-width:0}
 .news-section__slider::-webkit-scrollbar{display:none}
 .news-card{flex:0 0 calc((100% - 28px)/2);min-width:0;scroll-snap-align:start;overflow:hidden}
-.news-card__image{display:block;width:100%;aspect-ratio:1.24/1;overflow:hidden;border-radius:29px;background:#eceff0}
+.news-card__image{display:block;width:100%;aspect-ratio:1.24/1;overflow:hidden;border-radius:29px;background:#eceff0}
+/* Keep legacy D1-rendered blog cards on the same image contract as current cards. */
+.news-card__media{display:block;width:100%;aspect-ratio:1.23/1;overflow:hidden;border-radius:29px;background:#eceff0}
+.news-card__media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.news-card__media:hover img{transform:scale(1.045)}
+.news-card__content{padding:22px 2px 4px}
+.news-card__content .eyebrow{display:inline-flex;color:var(--red);font-size:11px;letter-spacing:.1em;font-weight:900;margin:0 0 12px}
+.news-card__content h2{font-size:clamp(19px,1.6vw,25px);line-height:1.3;letter-spacing:-.025em;font-weight:900;margin:0 0 14px}
+.news-card__content h2 a{color:inherit;text-decoration:none}
+.news-card__content>p:not(.eyebrow){color:#656565;font-size:14px;line-height:1.72;max-width:540px;margin:0 0 17px}
+.news-card__link{display:inline-block;color:var(--red);font-size:14px;font-weight:900;padding:4px 0}
+.news-card__link:hover{text-decoration:underline}
 .news-card__image img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
 .news-card__image:hover img{transform:scale(1.045)}
 .news-card__info{padding:22px 2px 4px}
