@@ -77,4 +77,20 @@ if re.search(r"scripts/[^\s]*20\d{2}", workflow):
 if re.search(r"(?i)(?:five|four|fifteen|twenty)[ -]language", workflow):
     fail("fixed locale batch wording remains in the live publisher")
 
+
+if "Bootstrap reviewed Blog cleanup endpoint" in workflow:
+    fail("one-time Blog cleanup publisher remains in the live workflow")
+if "Apply reviewed localized Blog index and copy cleanup" in workflow:
+    fail("one-time Blog index cleanup remains in the live workflow")
+if "Bootstrap reviewed Blog SEO phase-two correction endpoint" in workflow:
+    fail("one-time Blog SEO publisher remains in the live workflow")
+if "Apply reviewed Blog SEO phase-two D1 corrections" in workflow:
+    fail("one-time Blog SEO correction remains in the live workflow")
+if "cancel-in-progress: true" not in workflow:
+    fail("superseded production runs are not cancelled")
+if "scripts/test_pages_functions_syntax.py" not in workflow:
+    fail("Pages Function syntax gate is missing")
+if "scripts/test_blog_card_contract.py" not in workflow:
+    fail("Blog card compatibility gate is missing")
+
 print("Operating runbook guard passed: one source of truth, human/API modes, authorization boundary, D1-driven locales, one generic publisher, and generic regression tests are documented.")

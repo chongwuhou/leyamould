@@ -102,3 +102,7 @@ D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数�
 - 列表顺序统一为 D1 查询 `ORDER BY COALESCE(published_at, updated_at) DESC, slug ASC`。多语列表只调整完整卡片的位置，保留 D1 卡片 HTML；不按语言分别排序、不把新卡片追加到末尾、不写死批次 slug。
 - `functions/blog/[[path]].js` 保留动态 D1 能力但默认不接管页面，只有显式设置 `XUYI_BLOG_RUNTIME_MODE=dynamic` 才启用；动态入口必须使用同一排序规则。
 - 发布门禁必须检查英文和所有发布就绪语种的卡片数量、slug 集合、顺序、单 H1、图片/正文/OG 一致性；任一缺卡、重复卡、额外卡或顺序不一致都停止发布。
+
+## 2026-11-18 根因加固：禁止重复支付同一类成本
+
+近期复盘结论和永久门禁统一见 [docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md](docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md) 第 12 节及 [项目圣经/2026-11-18_近期Bug返工回滚与防复发复盘](项目圣经/2026-11-18_近期Bug返工回滚与防复发复盘.md)。正式 workflow 只允许通用发布入口；Pages Functions 必须先做语法检查；共享渲染器不得依赖历史 HTML 精确替换；旧新组件契约、静态资源版本和并发取消策略必须有自动门禁。任何修复若没有对应回归测试、两次干净构建和线上证据，不得标记完成。

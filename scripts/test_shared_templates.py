@@ -46,4 +46,9 @@ try:
 finally:
     if original is None: site.BUILD_STATE.pop("navigation",None)
     else: site.BUILD_STATE["navigation"]=original
+
+head_template = site.read_template("head")
+assert "{{ASSET_VERSION}}" in head_template
+assert "/assets/site.css?v={{ASSET_VERSION}}" in head_template
+
 print("XUYI_SHARED_TEMPLATES_NAV_REGRESSION_PASSED",len(names),"templates")
