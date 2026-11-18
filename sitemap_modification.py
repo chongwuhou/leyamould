@@ -11,6 +11,18 @@ from pathlib import Path
 
 CONFIG=json.loads((Path(__file__).resolve().parent/"data/sitemap-reviewed-lastmod.json").read_text(encoding="utf8"))
 BASELINE=CONFIG["routes"]
+DATE_RE=re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+def valid_date(value):
+    if not isinstance(value,str) or not DATE_RE.fullmatch(value):return None
+    try:
+        result=date.fromisoformat(value)
+        # Publication dates use the site editorial timezone, not UTC runner dates.
+        if result>datetime.now(ZoneInfo("Asia/Shanghai")).date():return None
+        return value
+    except ValueError:return None
+
+
 def _load_d1_dates(field):
     snapshot=Path(__file__).resolve().parent/"_local_ops"/"build-snapshot.json"
     if not snapshot.is_file():return {}
@@ -37,40 +49,6 @@ def _load_d1_dates(field):
 
 _D1_BLOG_DATES=_load_d1_dates("blogPosts")
 _D1_PRODUCT_SEO_DATES=_load_d1_dates("productSeo")
-
-DATE_RE=re.compile(r"^\d{4}-\d{2}-\d{2}$")
-
-def valid_date(value):
-    if not isinstance(value,str) or not DATE_RE.fullmatch(value):return None
-    try:
-        result=date.fromisoformat(value)
-        # Publication dates use the site editorial timezone, not UTC runner dates.
-        if result>datetime.now(ZoneInfo("Asia/Shanghai")).date():return None
-        return value
-    except ValueError:return None
-
-
-def _load_d1_blog_dates():
-    snapshot=Path(__file__).resolve().parent/"_local_ops"/"build-snapshot.json"
-    if not snapshot.is_file():return {}
-    try:data=json.loads(snapshot.read_text(encoding="utf8"))
-    except (OSError,ValueError):return {}
-    result={}
-    for post in data.get("blogPosts",[]):
-        if not isinstance(post,dict) or post.get("status")!="published":continue
-        slug=str(post.get("slug") or "")
-        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",slug):continue
-        raw=str(post.get("updated") or post.get("updated_at") or post.get("published_at") or "")
-        candidate=re.match(r"(\d{4}-\d{2}-\d{2})",raw)
-        if not candidate:
-            parsed=re.match(r"(\d{1,2})/(\d{1,2})/(\d{4})",raw)
-            if parsed:candidate=re.match(r"(.*)",f"{parsed.group(3)}-{int(parsed.group(1)):02d}-{int(parsed.group(2)):02d}")
-        if candidate:
-            value=valid_date(candidate.group(1))
-            if value:result["/blog/"+slug+"/"]=value
-    return result
-
-_D1_BLOG_DATES=_load_d1_blog_dates()
 
 def review_change_dates(series, product_reviews):
     """Actual source-dated reviews may meaningfully change product pages.
