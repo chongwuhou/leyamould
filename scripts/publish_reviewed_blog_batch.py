@@ -278,6 +278,7 @@ def build_payload() -> dict:
 # Owner-approved multilingual Blog release.
 # Deployment refresh ensures the Pages secret is live.
 # Final owner-approved release trigger.
+# Live media endpoint passed its anonymous 401 health check.
 def publish() -> None:
     if not TOKEN:
         raise RuntimeError("protected Cloudflare publisher credentials are missing")
