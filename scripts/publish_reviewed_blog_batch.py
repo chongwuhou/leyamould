@@ -284,7 +284,7 @@ def publish() -> None:
         raise RuntimeError("protected Cloudflare publisher credentials are missing")
     articles = english_articles()
     publish_token = hashlib.sha256((TOKEN + "|xuyi-pages-publish-v1").encode("utf-8")).hexdigest()
-    headers = {"Authorization": f"Bearer {publish_token}", "Content-Type": "application/json", "x-xuyi-publish-intent": PUBLISH_INTENT}
+    headers = {"Authorization": f"Bearer {publish_token}", "Content-Type": "application/json", "User-Agent": "xuyi-reviewed-blog-batch/1.0", "x-xuyi-publish-intent": PUBLISH_INTENT}
     media_request = Request(ORIGIN + "/api/admin/blog-media-batch", data=json.dumps({"media": media_payload(articles)}, ensure_ascii=False, separators=(",", ":")).encode("utf-8"), method="POST", headers=headers)
     with urlopen(media_request, timeout=180) as response:
         media_result = json.loads(response.read().decode("utf-8"))
