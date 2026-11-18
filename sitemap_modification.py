@@ -11,68 +11,33 @@ from pathlib import Path
 
 CONFIG=json.loads((Path(__file__).resolve().parent/"data/sitemap-reviewed-lastmod.json").read_text(encoding="utf8"))
 BASELINE=CONFIG["routes"]
-_BLOG_20261020={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261020.json").read_text(encoding="utf8"))
-}
-_BLOG_20261021={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261021.json").read_text(encoding="utf8"))
-}
-_BLOG_20261022={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261022.json").read_text(encoding="utf8"))
-}
-_BLOG_20261023={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261023.json").read_text(encoding="utf8"))
-}
-_BLOG_20261024={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261024.json").read_text(encoding="utf8"))
-}
-_BLOG_20261025={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261025.json").read_text(encoding="utf8"))
-}
-_BLOG_20261026={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261026.json").read_text(encoding="utf8"))
-}
-_BLOG_20261027={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261027.json").read_text(encoding="utf8"))
-}
-_BLOG_20261028={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for post in json.loads((Path(__file__).resolve().parent/"data/blog-guides-20261028.json").read_text(encoding="utf8"))
-}
-_BLOG_20261029={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for i in (1,2,3)
-    for post in [json.loads((Path(__file__).resolve().parent/f"data/blog-guides-20261029-{i}.json").read_text(encoding="utf8"))]
-}
-_BLOG_20261030={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for i in (1,2,3)
-    for post in [json.loads((Path(__file__).resolve().parent/f"data/blog-guides-20261030-{i}.json").read_text(encoding="utf8"))]
-}
-_BLOG_20261031={
-    "/blog/"+post["slug"]+"/":post["updated"]
-    for i in (1,2,3)
-    for post in [json.loads((Path(__file__).resolve().parent/f"data/blog-guides-20261031-{i}.json").read_text(encoding="utf8"))]
-}
-from blog_catalog_source import load_guides
-# Editorial lastmod comes from versioned source data; future approved dates
-# are discovered automatically and never inferred from build/deploy timestamps.
-_BLOG_SOURCE_DATES={"/blog/"+post["slug"]+"/":post["updated"]
-                    for post in load_guides(Path(__file__).resolve().parent)
-                    if isinstance(post.get("updated"),str)}
-_SEO_TITLE_RELEASE=json.loads((Path(__file__).resolve().parent/"data/product-seo-title-refresh-20261020.json").read_text(encoding="utf8"))
-if _SEO_TITLE_RELEASE.get("schemaVersion")!=1 or len(_SEO_TITLE_RELEASE.get("slugs",[]))!=92:
-    raise ValueError("Product SEO change-set is not the reviewed 92-model release")
-_SEO_TITLE_20261020={"/products/"+slug+"/":_SEO_TITLE_RELEASE["significantChangeDate"]
-                      for slug in _SEO_TITLE_RELEASE["slugs"]}
+def _load_d1_dates(field):
+    snapshot=Path(__file__).resolve().parent/"_local_ops"/"build-snapshot.json"
+    if not snapshot.is_file():return {}
+    try:data=json.loads(snapshot.read_text(encoding="utf8"))
+    except (OSError,ValueError):return {}
+    result={}
+    for row in data.get(field,[]):
+        if not isinstance(row,dict):continue
+        if field=="blogPosts":
+            if row.get("status")!="published":continue
+            slug=str(row.get("slug") or "")
+            route="/blog/"+slug+"/"
+            raw=str(row.get("updated_at") or row.get("updated") or row.get("published_at") or "")
+        else:
+            slug=str(row.get("slug") or "")
+            route="/products/"+slug+"/"
+            raw=str(row.get("updatedAt") or row.get("updated_at") or "")
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9-]*)*",slug):continue
+        match=re.match(r"(\d{4}-\d{2}-\d{2})",raw)
+        if not match:continue
+        value=valid_date(match.group(1))
+        if value and value>result.get(route,""):result[route]=value
+    return result
+
+_D1_BLOG_DATES=_load_d1_dates("blogPosts")
+_D1_PRODUCT_SEO_DATES=_load_d1_dates("productSeo")
+
 DATE_RE=re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 def valid_date(value):
@@ -141,9 +106,10 @@ def source_lastmod(route,locale="en",revision=None,review_dates=None):
                 break
     # Use reviewed content dates and genuine D1 publication dates, not
     # deployment timestamps. A rebuild alone must never change lastmod.
-    baseline=valid_date(_SEO_TITLE_20261020.get(canonical) or BASELINE.get(canonical)
-                        or _D1_BLOG_DATES.get(canonical)
-                        or _BLOG_20261020.get(canonical) or _BLOG_20261021.get(canonical) or _BLOG_20261022.get(canonical) or _BLOG_20261023.get(canonical) or _BLOG_20261024.get(canonical) or _BLOG_20261025.get(canonical) or _BLOG_20261026.get(canonical) or _BLOG_20261027.get(canonical) or _BLOG_20261028.get(canonical) or _BLOG_20261029.get(canonical) or _BLOG_20261030.get(canonical) or _BLOG_20261031.get(canonical) or _BLOG_SOURCE_DATES.get(canonical))
+    candidates=[valid_date(BASELINE.get(canonical)),
+                valid_date(_D1_PRODUCT_SEO_DATES.get(canonical)),
+                valid_date(_D1_BLOG_DATES.get(canonical))]
+    baseline=max((value for value in candidates if value),default=None)
     feedback=valid_date((review_dates or {}).get(canonical))
     dates=[v for v in (edited or baseline, feedback) if v]
     return max(dates) if dates else None

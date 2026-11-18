@@ -30,7 +30,7 @@ export async function onRequestGet(context){
       list(db,"SELECT route,main_html FROM xuyi_page_content WHERE publication_status='published' ORDER BY route"),
       list(db,"SELECT path,alt_json FROM xuyi_media_alt ORDER BY path LIMIT 12000"),
       list(db,"SELECT id,model,rating,author,review_date,content,status FROM xuyi_product_reviews WHERE status='published' ORDER BY model,review_date DESC,id"),
-      list(db,"SELECT slug,locale,seo_title,meta_description FROM xuyi_product_seo ORDER BY slug,locale"),
+      list(db,"SELECT slug,locale,seo_title,meta_description,updated_at FROM xuyi_product_seo ORDER BY slug,locale"),
       // Keep the build snapshot in the same deterministic order as the live
       // English Blog route. Localized static indexes are rendered from this
       // D1 order so every language presents the same article sequence.
@@ -72,7 +72,7 @@ export async function onRequestGet(context){
         && typeof r.seo_title==="string"&&r.seo_title.length<=90
         && typeof r.meta_description==="string"&&r.meta_description.length<=240)
         .map(r=>({slug:r.slug,locale:r.locale,seoTitle:r.seo_title,
-          metaDescription:r.meta_description})),
+          metaDescription:r.meta_description,updatedAt:r.updated_at})),
       productReviews:productReviews
         .filter(r=>/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(r.model)
           && Number.isInteger(r.rating)&&r.rating>=1&&r.rating<=5
