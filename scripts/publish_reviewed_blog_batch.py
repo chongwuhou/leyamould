@@ -272,6 +272,7 @@ def build_payload() -> dict:
     return {"posts": posts, "translations": translations, "indexCards": cards}
 
 
+# Owner-approved release trigger.
 def publish() -> None:
     if not TOKEN:
         raise RuntimeError("protected Cloudflare publisher credentials are missing")
