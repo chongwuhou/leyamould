@@ -20,7 +20,7 @@ def fail(message):
 for selector in (".news-card__image", ".news-card__image img", ".news-card__media", ".news-card__media img"):
     if selector not in CSS:
         fail("missing Blog card compatibility selector: " + selector)
-if "object-fit: cover" not in CSS:
+if not re.search(r"object-fit\\s*:\\s*cover", CSS):
     fail("Blog card images must use object-fit: cover")
 if 'class="news-card__image"' not in RENDERER:
     fail("canonical Blog renderer no longer emits news-card__image")
