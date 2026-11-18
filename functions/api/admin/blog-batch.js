@@ -102,13 +102,39 @@ function contentForTranslation(item) {
   return JSON.stringify({ title: item.title, description: item.description, mainHtml: item.mainHtml });
 }
 
+
+function validateMediaItems(items) {
+  const list = Array.isArray(items) ? items : [];
+  if (list.length > 12) throw Error("Too many reviewed Blog media objects");
+  const byPath = new Map();
+  for (const item of list) {
+    const path = String(item?.path || "");
+    const match = /^\\/media\\/blog\\/([a-z0-9_-]+\\.webp)$/.exec(path);
+    const contentType = String(item?.contentType || "");
+    const encoded = String(item?.contentBase64 || "");
+    if (!match || contentType !== "image/webp" || !encoded || encoded.length > 500000 || !/^[A-Za-z0-9+/]+={0,2}$/.test(encoded)) {
+      throw Error("Reviewed Blog media failed path, type or encoding validation: " + path);
+    }
+    let binary;
+    try { binary = atob(encoded); } catch { throw Error("Reviewed Blog media is not valid base64: " + path); }
+    if (binary.length < 30000 || binary.length > 350 * 1024) throw Error("Reviewed Blog media size is outside the approved range: " + path);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+    if (byPath.has(path)) throw Error("Duplicate reviewed Blog media path: " + path);
+    byPath.set(path, { path, key: "site-blog/" + match[1], contentType, bytes });
+  }
+  return byPath;
+}
+
 export async function onRequestPost(context) {
   if (!(await authorizedReviewedBlogBatchRequest(context.request, context.env))) return reply({ error: "Unauthorized reviewed batch request" }, 401);
   const db = context.env.XUYI_DB;
   if (!db) return reply({ error: "XUYI_DB binding missing" }, 503);
+  if (!context.env.XUYI_ASSETS) return reply({ error: "XUYI_ASSETS binding missing" }, 503);
   let payload;
   try { payload = await context.request.json(); } catch { return reply({ error: "Invalid JSON" }, 400); }
 
+  let uploadedMediaKeys = [];
   try {
     await ensureBlogSchema(db);
     await ensureTranslationSchema(db);
@@ -139,6 +165,27 @@ export async function onRequestPost(context) {
       }
       if (!existing) newTranslationStatements.push(db.prepare("INSERT INTO xuyi_translation_overrides(resource_id,locale,translated_json,reviewed_at) VALUES(?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(resource_id,locale) DO NOTHING").bind(resource, item.locale, translated));
     }
+    const reviewedMedia = validateMediaItems(payload.media);
+    const requiredCovers = new Set(payload.posts.map(item => String(item.post.cover || "")));
+    for (const cover of requiredCovers) {
+      const supplied = reviewedMedia.get(cover);
+      if (supplied) {
+        const existing = await context.env.XUYI_ASSETS.head(supplied.key);
+        if (existing && existing.httpMetadata?.contentType && existing.httpMetadata.contentType !== supplied.contentType) {
+          throw Error("Existing Blog cover has a different content type: " + cover);
+        }
+        if (!existing) {
+          await context.env.XUYI_ASSETS.put(supplied.key, supplied.bytes, {
+            httpMetadata: { contentType: supplied.contentType },
+            customMetadata: { source: "xuyi-reviewed-blog-batch" }
+          });
+          uploadedMediaKeys.push(supplied.key);
+        }
+      } else if (!(await context.env.XUYI_ASSETS.head("site-blog/" + cover.split("/").pop()))) {
+        throw Error("Published Blog cover is not present in R2 and was not supplied: " + cover);
+      }
+    }
+
     const insertResults = (newPostStatements.length || newTranslationStatements.length)
       ? await db.batch([...newPostStatements, ...newTranslationStatements]) : [];
     const postsInserted = insertResults.slice(0, newPostStatements.length).reduce((sum, row) => sum + Number(row?.meta?.changes || 0), 0);
@@ -180,6 +227,9 @@ export async function onRequestPost(context) {
     const revision = await bumpPublishRevision(db);
     return reply({ success: true, postsInserted, translationsInserted, indexCardsAdded: payload.indexCards.length, localizedIndexesReordered: orderStatements.length, publishRevision: revision.revision, publishedSlugs: slugs, indexOrderVerified: locales, d1PublishedCount: d1Order.length });
   } catch (error) {
+    for (const key of uploadedMediaKeys) {
+      try { await context.env.XUYI_ASSETS.delete(key); } catch {}
+    }
     return reply({ error: "D1 batch operation failed: " + String(error?.message || "unknown error").slice(0, 240) }, 500);
   }
 }
