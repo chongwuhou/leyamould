@@ -13,8 +13,7 @@ import base64
 import html
 import json
 import os
-import subprocess
-import tempfile
+import base64
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -22,8 +21,6 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 ORIGIN = os.environ.get("SITE_ORIGIN", "https://xuyibottles.com").rstrip("/")
 TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "").strip()
-ACCOUNT = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "").strip()
-BUCKET = "xuyi-drinkware-r2"
 PUBLISH_INTENT = "explicit-owner-approval"
 
 
@@ -31,33 +28,18 @@ def esc(value: object) -> str:
     return html.escape(str(value or ""), quote=True)
 
 
-def r2_upload(filename: str) -> None:
-    local = ROOT / "assets" / "blog" / filename
-    if not local.is_file():
-        raise RuntimeError(f"missing reviewed cover: {local}")
-    remote_key = f"{BUCKET}/site-blog/{filename}"
-    with tempfile.NamedTemporaryFile(prefix="xuyi-r2-check-", suffix=".webp", delete=False) as handle:
-        probe = Path(handle.name)
-    try:
-        checked = subprocess.run(
-            ["npx", "--yes", "wrangler@4.148.0", "r2", "object", "get", remote_key, "--file", str(probe), "--remote"],
-            cwd=ROOT, text=True, capture_output=True, timeout=120,
-            env={**os.environ, "CLOUDFLARE_ACCOUNT_ID": ACCOUNT},
-        )
-        if checked.returncode == 0:
-            print(f"R2 kept existing object site-blog/{filename}")
-            return
-        uploaded = subprocess.run(
-            ["npx", "--yes", "wrangler@4.148.0", "r2", "object", "put", remote_key, "--file", str(local), "--content-type", "image/webp", "--remote"],
-            cwd=ROOT, text=True, capture_output=True, timeout=180,
-            env={**os.environ, "CLOUDFLARE_ACCOUNT_ID": ACCOUNT},
-        )
-        if uploaded.returncode != 0:
-            detail = (uploaded.stderr or uploaded.stdout or "R2 Wrangler upload failed").strip()[-600:]
-            raise RuntimeError(detail)
-        print(f"R2 uploaded site-blog/{filename} ({local.stat().st_size} bytes)")
-    finally:
-        probe.unlink(missing_ok=True)
+def media_payload(articles: list[dict]) -> list[dict]:
+    result = []
+    for article in articles:
+        local = ROOT / "assets" / "blog" / Path(article["cover"]).name
+        if not local.is_file():
+            raise RuntimeError(f"missing reviewed cover: {local}")
+        result.append({
+            "path": article["cover"],
+            "contentType": "image/webp",
+            "contentBase64": base64.b64encode(local.read_bytes()).decode("ascii"),
+        })
+    return result
 
 
 def section(heading: str, paragraph: str) -> dict[str, str]:
@@ -287,15 +269,13 @@ def build_payload() -> dict:
                 raise RuntimeError(f"translation too short: {article['slug']}|{locale} ({len(main_html)})")
             translations.append({"route": f"/blog/{article['slug']}/", "locale": locale, "title": title, "description": description, "mainHtml": main_html})
             cards.append({"slug": article["slug"], "locale": locale, "html": render_index_card(article, locale)})
-    return {"posts": posts, "translations": translations, "indexCards": cards}
+    return {"media": media_payload(articles), "posts": posts, "translations": translations, "indexCards": cards}
 
 
 def publish() -> None:
     if not TOKEN or not ACCOUNT:
         raise RuntimeError("protected Cloudflare publisher credentials are missing")
     articles = english_articles()
-    for article in articles:
-        r2_upload(Path(article["cover"]).name)
     payload = json.dumps(build_payload(), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     request = Request(ORIGIN + "/api/admin/blog-batch", data=payload, method="POST", headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json", "x-xuyi-publish-intent": PUBLISH_INTENT})
     with urlopen(request, timeout=120) as response:
