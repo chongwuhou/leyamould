@@ -1,9 +1,16 @@
 from pathlib import Path
 from functools import lru_cache
-import json,html,re,collections,os
+import json,html,re,collections,os,hashlib
 from home_banner_config import tag as banner_tag,for_locale as banner_slides
 from locale_registry import approved_locales
 ROOT=Path(__file__).parent
+def _asset_version():
+ data=[]
+ for name in ("site.css","site-settings.css"):
+  asset=ROOT/"assets"/name
+  if asset.is_file():data.append(asset.read_bytes())
+ return hashlib.sha256(b"\0".join(data)).hexdigest()[:12]
+ASSET_VERSION=_asset_version()
 INDEXING_APPROVED=(json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
                    .get("site",{}).get("indexingApproved") is True)
 BUILD_STATE={}
@@ -632,7 +639,7 @@ def footer():
 def page(title,description,body,canonical=None,blog_pager=False):
  # The release gate defaults to noindex until business approval. Once explicitly
  # enabled, all public locales inherit the same indexable head from this template.
- head=render_template("head",TITLE=e(title),DESCRIPTION=e(description)[:220])
+ head=render_template("head",TITLE=e(title),DESCRIPTION=e(description)[:220],ASSET_VERSION=ASSET_VERSION)
  if blog_pager:
   # Blog-only shared source component; the English D1 runtime and all four
   # localized builds inherit this exact head. Never patch generated HTML.
