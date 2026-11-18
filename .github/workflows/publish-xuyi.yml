@@ -71,11 +71,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      # Reviewed Blog batch publication; writes R2 first and D1 second.
-      - name: Publish reviewed Blog batch
-        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Publish reviewed Blog batch')
-        run: python scripts/publish_reviewed_blog_batch.py
-
       - name: Install pinned build-only image encoder
         run: python -m pip install --disable-pip-version-check "Pillow==11.3.0"
       - name: Validate site isolation
@@ -113,6 +108,11 @@ jobs:
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/xuyi-drinkware-site" \
             | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||j.result?.name!=='xuyi-drinkware-site')throw new Error('XUYI project identity mismatch');const c=j.result?.source?.config||{};if(c.production_deployments_enabled!==false||c.preview_deployment_setting!=='none')throw new Error('Disable old Git auto deploy for XUYI before enabling the CI publisher');console.log('One controlled production publisher verified')})"
+      # Reviewed Blog batch publication; writes R2 first and D1 second.
+      - name: Publish reviewed Blog batch
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Publish reviewed Blog batch')
+        run: python scripts/publish_reviewed_blog_batch.py
+
       # Reviewed one-time D1 cleanup bootstrap; guarded by the explicit repair commit message.
       - name: Bootstrap reviewed Blog cleanup endpoint
         if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Repair localized Blog index and copy')
