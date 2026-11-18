@@ -5,6 +5,7 @@ This file is intentionally temporary and is executed only by the protected
 XUYI Actions publisher when the commit message contains its exact release
 phrase.  It writes R2 first, then D1 through the generic Blog batch endpoint;
 it never edits dist/ or deployed HTML.
+# Reviewed payload is triggered only by the generic owner-approved release commit.
 """
 from __future__ import annotations
 
