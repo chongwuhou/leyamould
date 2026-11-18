@@ -119,6 +119,11 @@ jobs:
         if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Repair localized Blog index and copy')
         run: python scripts/publish_blog_index_copy_cleanup.py
 
+      # Reviewed one-time Blog batch publication; writes R2 first and D1 second.
+      - name: Publish reviewed Blog batch 20261118
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Publish reviewed Blog batch 20261118')
+        run: python scripts/publish_blog_20261118.py
+
       # Reviewed one-time D1 migration; corrections are stored in translation_json,
       # never applied to generated HTML, so later backend rebuilds retain them.
       - name: Bootstrap reviewed Blog SEO phase-two correction endpoint
