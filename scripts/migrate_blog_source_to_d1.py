@@ -11,8 +11,8 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
-MATRIX_FILE = re.compile(r"blog-buyer-decision-tables(?:-20\\d{6})?\\.json$")
-GUIDE_FILE = re.compile(r"blog-guides(?:-20\\d{6}(?:-\\d+)?)?\\.json$")
+MATRIX_FILE = re.compile(r"blog-buyer-decision-tables(?:-20\d{6})?\.json$")
+GUIDE_FILE = re.compile(r"blog-guides(?:-20\d{6}(?:-\d+)?)?\.json$")
 
 def add_table(tables, slug, value, source):
     if not isinstance(slug, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
