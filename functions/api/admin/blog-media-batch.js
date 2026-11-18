@@ -1,4 +1,4 @@
-import { authorizedReviewedBlogBatchRequest } from "../../_shared/build-auth.js";
+import { authorizedExplicitPublishRequest } from "../../_shared/build-auth.js";
 
 const reply = (body, status = 200) => Response.json(body, {
   status,
@@ -54,3 +54,4 @@ export async function onRequestPost(context) {
     return reply({ error: "R2 Blog media batch failed: " + String(error?.message || "unknown error").slice(0, 240) }, 500);
   }
 }
+
