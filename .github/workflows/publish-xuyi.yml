@@ -128,12 +128,6 @@ jobs:
           else
             echo "needed=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Backfill reviewed source fields into D1 once
-        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, '[xuyi-d1-source-migration]')
-        env:
-          SITE_ORIGIN: https://xuyibottles.com
-        run: python scripts/migrate_blog_source_to_d1.py
-
       - name: Verify XUYI CMS APIs against D1 (read-only)
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         shell: bash
@@ -183,6 +177,7 @@ jobs:
           python scripts/test_model_catalog_buyer_comparison.py
           python scripts/test_curated_application_feature_answers.py
           python scripts/test_source_buyer_decision_content.py
+          python scripts/test_d1_blog_field_authority.py
           python scripts/test_about_company_source.py
           python scripts/test_visible_catalog_schemas.py
           python scripts/test_editorial_evidence.py
@@ -194,6 +189,7 @@ jobs:
           node scripts/test_blog_pagination_runtime.mjs
           python scripts/test_seo_multilingual_launch.py
           python scripts/test_phase2_blog_seo.py
+          python scripts/test_d1_blog_field_authority.py
           python scripts/test_priority_seo.py
           python scripts/test_cms_seo_rebuild_policy.py
           python scripts/test_source_of_truth_policy.py
