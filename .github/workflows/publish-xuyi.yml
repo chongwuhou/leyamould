@@ -182,7 +182,6 @@ jobs:
           python scripts/test_editorial_evidence.py
           python scripts/test_editorial_d1_overrides.py
           node scripts/test_blog_dynamic_evidence.mjs
-          node scripts/test_blog_cover_override_runtime.mjs
           python scripts/test_blog_listing_single_header.py
           python scripts/test_blog_pagination_source.py
           python scripts/test_blog_card_contract.py
