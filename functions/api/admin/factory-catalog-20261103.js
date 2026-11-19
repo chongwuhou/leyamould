@@ -2,11 +2,10 @@ import {authorizedReviewedFactoryCatalogCommitRequest} from "../../_shared/build
 import {normalizeNewProduct} from "../../_shared/new-product.js";
 import {normalizeAltMap,ensureMediaAlt} from "../../_shared/media-alt.js";
 import {imageKey} from "../../_shared/r2-usage.js";
-import {bumpPublishRevision} from "../../_shared/site-settings.js";
+import {bumpPublishRevision,loadLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";
 import manifest from "../../../data/factory-catalog-manifest-2026-11-03.json" with {type:"json"};
 
 const json=(value,status=200)=>Response.json(value,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
-const LANGUAGES=["en","es","pt","ru","tr"];
 const byModel=new Map((manifest.models||[]).map(item=>[item.model,item]));
 const stable=value=>{
   if(Array.isArray(value))return "["+value.map(stable).join(",")+"]";
@@ -31,6 +30,7 @@ export async function onRequestPost(context){
   if(!(await authorizedReviewedFactoryCatalogCommitRequest(context.request,context.env)))return json({error:"Unauthorized"},401);
   const env=context.env,db=env.XUYI_DB;
   if(!db||!env.XUYI_ASSETS)return json({error:"XUYI D1 or R2 binding unavailable"},503);
+  const languages=publicLanguages(await loadLanguageConfig(db)).map(item=>item.code);
   let payload;
   try{payload=await context.request.json()}catch{return json({error:"Invalid JSON"},400);}
   if(payload?.site!=="xuyi-drinkware-site"||
@@ -67,7 +67,7 @@ export async function onRequestPost(context){
       if(source.image&&source.image!==imagePath)throw Error("Unexpected image path: "+model);
       const content=normalizeNewProduct(model,{...source,image:imagePath},"published");
       const alt=normalizeAltMap(record.imageAlt);
-      if(!LANGUAGES.every(language=>alt[language]))throw Error("Five reviewed image ALT languages are required: "+model);
+      if(!languages.every(language=>alt[language]))throw Error("Reviewed image ALT is missing for a configured language: "+model);
       const key=imageKey("product",filename);
       if(!key)throw Error("Invalid R2 image key: "+model);
       items.push({model,content,alt,imagePath,key,sha256:expected.imageSha256});

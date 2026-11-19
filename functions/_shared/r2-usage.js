@@ -13,7 +13,7 @@ export const KINDS={
 const SQL=[
   ["产品内容（草稿及正式）","SELECT model AS ref FROM xuyi_product_content WHERE instr(content_json,?)>0 LIMIT 12"],
   ["页面正文（草稿及正式）","SELECT route AS ref FROM xuyi_page_content WHERE instr(main_html,?)>0 LIMIT 12"],
-  ["五语译文","SELECT resource_id||' ['||locale||']' AS ref FROM xuyi_translation_overrides WHERE instr(translated_json,?)>0 LIMIT 12"],
+  ["翻译覆盖","SELECT resource_id||' ['||locale||']' AS ref FROM xuyi_translation_overrides WHERE instr(translated_json,?)>0 LIMIT 12"],
   ["博客内容","SELECT slug AS ref FROM xuyi_blog_posts WHERE instr(content_json,?)>0 LIMIT 12"],
   ["博客未发布草稿","SELECT slug AS ref FROM xuyi_blog_drafts WHERE instr(draft_json,?)>0 LIMIT 12"],
   ["品牌与联系人","SELECT key AS ref FROM site_state WHERE instr(value,?)>0 LIMIT 12"]

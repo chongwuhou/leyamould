@@ -14,25 +14,19 @@ SITE_CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="
 ORIGIN=SITE_CONFIG["site"]["origin"]
 SOURCE_LOCALE=SITE_CONFIG["site"]["defaultLocale"]
 COVERS=json.loads((ROOT/'data/blog-cover-overrides.json').read_text(encoding='utf8'))
-PHOTO_CORRECTIONS=json.loads((ROOT/'data/blog-photo-corrections-20261024.json').read_text(encoding='utf8'))
+PHOTO_CORRECTIONS=json.loads((ROOT/'data/blog-photo-corrections.json').read_text(encoding='utf8'))
 GUIDES=json.loads((ROOT/'data/blog-guides.json').read_text(encoding='utf8'))
 ORIGINALS={p['slug']:(p['cover'] if p['cover'].startswith('/') else '/media/ppt/'+p['cover']) for p in GUIDES}
 # Reviewed legacy covers plus five late-published D1-only buyer articles.
 # Compare exact old image URLs; never overwrite later operator-selected paths.
 SOURCE_REPAIRS={slug:(ORIGINALS[slug],new) for slug,new in COVERS.items() if slug in ORIGINALS}
 SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_CORRECTIONS.items()})
-PHOTO_20261025=json.loads((ROOT/'data/blog-photo-corrections-20261025.json').read_text(encoding='utf8'))
-SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_20261025.items()})
-PHOTO_20261026=json.loads((ROOT/'data/blog-photo-corrections-20261026.json').read_text(encoding='utf8'))
-SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_20261026.items()})
-PHOTO_CONTEXT_20261026=json.loads((ROOT/'data/blog-photo-context-corrections-20261026.json').read_text(encoding='utf8'))
-SOURCE_REPAIRS.update({slug:(value['baseline'],value['photo']) for slug,value in PHOTO_CONTEXT_20261026.items()})
-SOURCE_ALTS={slug:value['alt'] for slug,value in PHOTO_CONTEXT_20261026.items()}
+SOURCE_ALTS={slug:value['alt'] for slug,value in PHOTO_CORRECTIONS.items() if value.get('alt')}
 # The D1 cover column and translated mainHtml can have different original paths.
 # Upgrade only these exact localized article slots; never replace a shared URL globally.
 PHOTO_CONTEXT_LOCALIZED_REPAIRS={
     slug:(value['localizedBaseline'],value['photo'])
-    for slug,value in PHOTO_CONTEXT_20261026.items()
+    for slug,value in PHOTO_CORRECTIONS.items()
     if value.get('localizedBaseline')
 }
 
@@ -58,13 +52,8 @@ def blog_cover_from_cms_source(markup: str, route: str, locale: str) -> str:
     # Older general corrections remain limited to the four localized renders.
     repairs=SOURCE_REPAIRS
     if locale==SOURCE_LOCALE:
-        repairs={slug:SOURCE_REPAIRS[slug] for slug in PHOTO_CONTEXT_20261026 if slug in SOURCE_REPAIRS}
-        # These reviewed 2026-10-25 covers are also source-authorized for
-        # English. Apply them at the same boundary as localized output.
-        PHOTO_20261025=json.loads((ROOT/'data/blog-photo-corrections-20261025.json').read_text(encoding='utf8'))
-        repairs.update({slug:(value['baseline'],value['photo'])
-                         for slug,value in PHOTO_20261025.items()
-                         if slug in SOURCE_REPAIRS})
+        repairs={slug:SOURCE_REPAIRS[slug] for slug,value in PHOTO_CORRECTIONS.items()
+                 if value.get('english') and slug in SOURCE_REPAIRS}
     if route=='/blog/':
         for slug,(old,new) in repairs.items():
             prefix=(r'(<a class="news-card__image" href="/blog/'+re.escape(slug)+r'/"><img src=")')

@@ -1,9 +1,8 @@
-"""Keep the repository focused on current generic entrypoints.
+"""Keep the repository focused on current generic entrypoints and sources.
 
-Historical Blog batch publishers, dated repair endpoints and dated live
-verification scripts are intentionally removed. Dated JSON that is imported
-by the current renderer is allowed; this guard checks entrypoints, not content
-timestamps.
+Historical Blog batch publishers, dated source registries and dated live
+verification scripts must not return. D1/CMS and the canonical JSON sources
+are the only supported content boundaries.
 """
 from pathlib import Path
 import re
@@ -16,6 +15,9 @@ FORBIDDEN=(
     re.compile(r"^scripts/test_blog_(?:covers|index_order|localized_schedule|schedule|translation_repair)_20\d+"),
     re.compile(r"^functions/api/admin/blog-(?:batch|covers|images|index-(?:copy|heading)-cleanup|refresh|schedule|translation-repair)-20\d+"),
     re.compile(r"^functions/api/admin/(?:blog-seo-phase2-corrections|collection-seo-refresh|product-seo-(?:promotion|refresh))"),
+    re.compile(r"^scripts/(?:publish|verify)_owner_.*20\d{6}.*\.py$"),
+    re.compile(r"^data/blog-guides-20\d{6}(?:-\d+)?\.json$"),
+    re.compile(r"^data/blog-photo-(?:context-)?corrections-20\d{6}\.json$"),
 )
 REQUIRED=(
     "functions/api/admin/blog-batch.js",
@@ -24,6 +26,8 @@ REQUIRED=(
     "scripts/fetch_build_snapshot.py",
     "scripts/test_pages_functions_syntax.py",
     "docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md",
+    "data/blog-guides.json",
+    "data/blog-photo-corrections.json",
 )
 paths=[p.relative_to(ROOT).as_posix() for p in ROOT.rglob("*") if p.is_file() and ".git" not in p.parts]
 bad=[path for path in paths if any(pattern.search(path) for pattern in FORBIDDEN)]

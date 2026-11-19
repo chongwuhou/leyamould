@@ -57,7 +57,7 @@ not regressions merely because a legacy rewrite no longer finds its old input.
 - 每个相关修复把测试加入 `.github/workflows/publish-xuyi.yml`。全站构建和 CI 验证通过后才允许生产发布，并核对 Cloudflare 实际版本。**本政策不等于自动获准部署。**
 
 ## 产品容量和定制材料长期统一要求（2026-10-14）
-- 现在与未来核实的产品容量，须在五语详情、型号卡片及允许改写的 SEO 中展示 **工厂真实 ml + 海外常用 oz 规格档位**，不再机械整数换算。海外销售档位明确标注 **size class/approximate**，不得将 1000ml 与 32 US fl oz 写成等式，真实容量以源表 ml 为准。全部现有规格用 `data/retail-oz-size-classes.json` 中经审核映射；多容量如 5247/5248 分别对应；未来容量优先匹配有界偏差的常见档位，不合适时明确标注 approx。
+- 现在与未来核实的产品容量，须在所有当前配置的公开语言详情、型号卡片及允许改写的 SEO 中展示 **工厂真实 ml + 海外常用 oz 规格档位**，不再机械整数换算。海外销售档位明确标注 **size class/approximate**，不得将 1000ml 与 32 US fl oz 写成等式，真实容量以源表 ml 为准。全部现有规格用 `data/retail-oz-size-classes.json` 中经审核映射；多容量如 5247/5248 分别对应；未来容量优先匹配有界偏差的常见档位，不合适时明确标注 approx。
 - 未经核实的容量不可臆测。G 系列仍是**工厂型号**，但其容量资料未齐，2506 标有异常 60ml，确认前不应追加对应 oz 参数。
 - 用户提供 Tritan 与 BPA Free 作为可询价的定制业务方向：所有产品允许展示**定制材料询盘关键词**，但不得把旧目录 PC/PP/ABS 材质直接改为 Tritan、不得称已有成品已获得 BPA Free 认证。询盘时须核对树脂、盖体密封件、样品与测试。
 - 唯一入口：`scripts/source_catalog_capacity_oz.py`、`data/volume-oz-cms-baseline-*.json` 和自动化测试。D1/CMS 后台主动改写的 SEO 原文优先；新型号在无后台独立 SEO 文案时自动补充 ml/oz，已有文案则保留。
@@ -105,4 +105,4 @@ D1/CMS snapshot → 读取当前值和字段所有者 → 条件写入正式数�
 
 ## 2026-11-18 根因加固：禁止重复支付同一类成本
 
-近期复盘结论和永久门禁统一见 [docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md](docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md) 第 12 节及 [项目圣经/2026-11-18_近期Bug返工回滚与防复发复盘](项目圣经/2026-11-18_近期Bug返工回滚与防复发复盘.md)。正式 workflow 只允许通用发布入口；Pages Functions 必须先做语法检查；共享渲染器不得依赖历史 HTML 精确替换；旧新组件契约、静态资源版本和并发取消策略必须有自动门禁。任何修复若没有对应回归测试、两次干净构建和线上证据，不得标记完成。
+近期复盘结论和永久门禁统一见 [docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md](docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md) 第 12 节。正式 workflow 只允许通用发布入口；Pages Functions 必须先做语法检查；共享渲染器不得依赖历史 HTML 精确替换；旧新组件契约、静态资源版本和并发取消策略必须有自动门禁。任何修复若没有对应回归测试、两次干净构建和线上证据，不得标记完成。

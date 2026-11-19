@@ -86,7 +86,7 @@ def card_html(post, locale, data):
 
 def main():
     if len(sys.argv)!=2:
-        raise SystemExit("usage: publish_blog_batch.py data/blog-guides-YYYYMMDD.json")
+        raise SystemExit("usage: publish_blog_batch.py <reviewed-batch.json>")
     token=os.environ.get("CLOUDFLARE_API_TOKEN","")
     if not token:
         raise SystemExit("CLOUDFLARE_API_TOKEN unavailable")

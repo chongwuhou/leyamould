@@ -1,0 +1,112 @@
+{
+  "water-bottle-cap-types-bulk-guide": {
+    "baseline": "/assets/lo/detail/lo-006-lifestyle.webp",
+    "photo": "/assets/sku-hd/slide-092-gpt-reviewed-20261013.webp",
+    "scene": "Photographed water bottle samples with several real lid and carry-cap styles",
+    "runtime": true,
+    "english": true
+  },
+  "bottle-factory-rfq-template": {
+    "baseline": "/assets/lo/detail/lo-002-lifestyle.webp",
+    "photo": "/assets/catalog/excel/row-003.webp",
+    "scene": "Photographed OEM bottle sample assortment with different materials and closure styles for RFQ comparisons",
+    "runtime": true,
+    "english": true
+  },
+  "outdoor-tour-operator-group-water-bottle-wholesale": {
+    "baseline": "/assets/lo/detail/lo-004-lifestyle.webp",
+    "photo": "/assets/catalog/excel/row-021.webp",
+    "scene": "Photographed reusable water bottle samples during an outdoor recreation activity; illustrative rather than a documented group tour",
+    "runtime": true,
+    "english": true
+  },
+  "supplement-brand-shaker-bottle-bundle-oem-sourcing": {
+    "baseline": "/assets/sku-hd/slide-094-gpt-reviewed-20261013.webp",
+    "photo": "/assets/sku-hd/slide-096-gpt-reviewed-20261013.webp",
+    "scene": "Logo-branded plastic shaker bottle lineup, illustrating private label packaging rather than actual protein powder",
+    "runtime": true,
+    "english": true
+  },
+  "trade-show-promotional-water-bottle-deadline-procurement": {
+    "baseline": "/assets/lo/detail/lo-005-lifestyle.webp",
+    "photo": "/assets/catalog/excel/row-050.webp",
+    "scene": "Photo of colorful logo-printing examples on water bottle samples suitable for promotional giveaways; not an actual trade show",
+    "runtime": true,
+    "english": true
+  },
+  "university-bookstore-custom-water-bottles-wholesale": {
+    "baseline": "/assets/curated-hd/gradient-sports.webp",
+    "photo": "/assets/catalog/excel/row-015.webp",
+    "scene": "Photograph of factory bottle samples, illustrative of a campus retail assortment without implying licensing.",
+    "runtime": true,
+    "english": true
+  },
+  "music-festival-branded-water-bottles-bulk-merchandise": {
+    "baseline": "/assets/blog/branding-logo-options-20261013.webp",
+    "photo": "/assets/sku-hd/slide-095-gpt-reviewed-20261013.webp",
+    "scene": "Photographed reusable plastic bottle products, illustrative of a branded merchandise format rather than a festival scene.",
+    "runtime": true,
+    "english": true
+  },
+  "subscription-box-private-label-water-bottle-fulfillment-sourcing": {
+    "baseline": "/assets/blog/export-packing-topics-20261013.webp",
+    "photo": "/assets/sku-hd/slide-093-gpt-reviewed-20261013.webp",
+    "scene": "Photographed plastic shaker bottle sample, illustrative of an optional subscription kit item and not a completed subscription box.",
+    "runtime": true,
+    "english": true
+  },
+  "coffee-shop-branded-water-bottles-wholesale": {
+    "baseline": "/assets/catalog/excel/row-004.webp",
+    "photo": "/assets/blog/coffee-shop-drinkware-display-20261026.webp",
+    "alt": "Coffee shop counter with stacked cups, bottled drinks and drinkware supplies",
+    "scene": "Illustrative coffee-shop drinkware context; not a documented XUYI customer or endorsement",
+    "runtime": true,
+    "english": true,
+    "localized": true,
+    "localizedBaseline": "/assets/blog/branding-logo-options-20261013.webp"
+  },
+  "museum-gift-shop-custom-water-bottles-wholesale": {
+    "baseline": "/assets/catalog/excel/row-017.webp",
+    "photo": "/assets/blog/museum-gift-shop-retail-20261026.webp",
+    "alt": "Colorful souvenir shop shelves displaying gifts and memorabilia",
+    "scene": "Illustrative souvenir-retail context; not a documented XUYI museum customer or endorsement",
+    "runtime": true,
+    "english": true,
+    "localized": true,
+    "localizedBaseline": "/assets/blog/bottle-inspection-topics-20261013.webp"
+  },
+  "auto-dealership-branded-water-bottles-bulk": {
+    "baseline": "/assets/catalog/excel/row-020.webp",
+    "photo": "/assets/blog/auto-dealership-customer-handover-20261026.webp",
+    "alt": "Customer and salesperson discussing a vehicle inside a modern car dealership showroom",
+    "scene": "Illustrative automotive customer-handover context; not a documented XUYI customer or endorsement",
+    "runtime": true,
+    "english": true,
+    "localized": true,
+    "localizedBaseline": "/assets/blog/bottle-factory-rfq-template-20261016.webp"
+  },
+  "how-can-importers-source-replacement-lids-and-spare-parts-for-wholesale-water-bottles": {
+    "baseline": "/media/blog/replacement-water-bottle-lid-parts-photo-20261017.webp",
+    "photo": "/media/blog/644308f938084b72971184f8af9c.webp",
+    "alt": "Wholesale buyer reviewing replacement water bottle lids, seals and spare parts during a factory leak test",
+    "scene": "Natural factory inspection scene showing closure compatibility and leak testing; illustrative procurement context, not a documented customer order or endorsement.",
+    "runtime": true,
+    "english": true
+  },
+  "what-should-buyers-verify-before-using-dishwasher-safe-plastic-water-bottle-claims": {
+    "baseline": "/media/blog/dishwasher-safe-water-bottles-20261019.webp",
+    "photo": "/media/blog/97ef456727334f1680bd26f8a4d5.webp",
+    "alt": "Buyer comparing reusable plastic bottle materials and closure options in a real fitness retail setting",
+    "scene": "Natural product-material comparison scene; illustrative procurement context, not a product certification or customer endorsement.",
+    "runtime": true,
+    "english": true
+  },
+  "how-should-wholesalers-build-a-multi-capacity-water-bottle-assortment-for-retail-shelves": {
+    "baseline": "/media/blog/water-bottle-capacity-comparison-photo-20261017.webp",
+    "photo": "/media/blog/c93e4f0ce97243bab7f8d638d5bb.webp",
+    "alt": "Wholesale buyer comparing multiple water bottle capacities in a warehouse packing and assortment review",
+    "scene": "Natural warehouse assortment and packing scene showing different bottle capacities; illustrative procurement context, not a documented customer order.",
+    "runtime": true,
+    "english": true
+  }
+}

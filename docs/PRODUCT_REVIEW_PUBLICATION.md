@@ -1,65 +1,30 @@
-# XUYI product-review publication system — multi-review per SKU
+# XUYI 客户评价发布标准
 
-Updated: 2026-11-02
+## 唯一来源
 
-## Authoritative private source files
+仅使用站长提供并已核验的两个私有来源文件及其受控派生 JSON：
 
-Only these two owner-provided workbooks are approved sources:
+- review_import_private/101_verified_buyer_reviews.json
+- review_import_private/101_additional_verified_buyer_reviews.json
 
-| Workbook | Workbook SHA-256 | Original rows | Eligible rows |
-|---|---|---:|---:|
-| \`101-zhenshipingjia.xlsx\` | \`1cce3652003a78d3e175a2c02a07caf08bda136dc63bea9e246b0006ae2f3163\` | 101 | 101 |
-| \`101-additional-reviews-only.xlsx\` | \`ebd5f045fc476d429dcf2c6c68f6fb49c3983b145701fe4587e2e9936b771aa8\` | 101 | 100 |
+来源文件、原文、作者、星级、型号、行号和 SHA-256 指纹必须保持一致。私有来源不得进入 dist、R2 公共对象或公开 API。
 
-Private JSON files under \`review_import_private/\` are derived, validated payloads, not additional source workbooks. Never copy them into \`dist/\`, R2 public storage, or public endpoints.
+## 发布规则
 
-The second workbook's row 59 (Beatriz Santos, model 2319) is excluded because the first workbook row 59 has the same customer name and model. The texts differ, but it is treated as a possible duplicate customer/SKU attribution and is not published.
+- 同一型号可以有多条不同客户评价；同一 source row、fingerprint 或 review UUID 不能重复。
+- 永久账本以 review UUID 和 source fingerprint 去重；已发布记录不能因为前台删除而再次使用。
+- 每个北京时间日最多新增 3 条，常规任务从未使用的真实评价中随机选择；当天已满或候选不足时正常跳过。
+- AI 只能整理、翻译和筛查真实评价，不能生成或改写客户体验。
+- 评价写入 D1 后必须回读 inserted 数量、型号、来源行号、指纹、publish revision 和产品页显示结果。
 
-Total eligible unique source reviews: **201 across 101 product models**.
+## 运行入口
 
-## Publication rules
+- 常规入口：scripts/publish_daily_product_reviews.py
+- 调度入口：scripts/run_publish_scheduler.py
+- 校验：scripts/test_daily_product_reviews.py、scripts/test_daily_product_reviews_api.mjs
 
-- A product model may have multiple different customer reviews.
-- Every review has its own UUID in \`xuyi_product_reviews.id\`.
-- The publication ledger is keyed by review UUID and unique source fingerprint, not product model.
-- Source identity is \`(source_file, source_row)\`; row 2 in each workbook is a different source record.
-- SHA-256 fingerprint: \`model + newline + rating + newline + author + newline + original review text\`.
-- Fingerprints already in the ledger or already published in D1 are never published again.
-- The same model may appear more than once in a batch; the same source row or fingerprint may not.
-- Maximum **3 new review records per Beijing calendar date**, across both workbooks.
-- The original model-unique \`xuyi_review_publication_ledger\` remains read-only as the migration source. New rows go to \`xuyi_review_publication_ledger_v2\`.
-- The v2 migration copies every legacy ledger row with \`source_file='legacy-unmapped'\`; it is additive and idempotent. Existing published reviews and review IDs are preserved.
-- The product renderer already supports multiple visible review cards and JSON-LD Review arrays plus AggregateRating. The build snapshot already reads all published D1 reviews.
+所有入口都必须先 dry-run/只读核对，再条件写入 D1；失败或响应不明确时先读取账本，不盲目重复 POST。人工和 AI 遵守同一套上限、去重、审核和回读规则。
 
-## Expected reconciliation after migration
+## 完成与回滚
 
-The verified D1 baseline on 2026-11-02 was 42 published review records:
-- 40 exact source fingerprints from the first workbook.
-- 2 exact source fingerprints from the second workbook.
-- 42 unique review IDs and 42 occupied product models.
-- No extra D1 draft rows or unledgered model placeholders.
-
-The 42 old ledger fingerprints map to the two source payloads. Therefore **159 of the 201 eligible source reviews remain unpublished**. The first workbook has 61 not yet published; the second has 98 eligible reviews not yet published. This is a source-review count, not a SKU count.
-
-The regular publisher samples up to three unused review fingerprints each day. Do not bypass this limit with a bulk import or one-time batch unless the owner explicitly changes that rule.
-
-## Deployment and data safety
-
-1. Deploy the v2 endpoint/schema code first; the first authorized GET performs the idempotent legacy-ledger migration and verifies all old rows.
-2. Run publisher dry-run and verify the 201/101/two-source reconciliation.
-3. Rebuild from the authenticated D1 snapshot and confirm multiple review cards for a same-SKU fixture in all five locales.
-4. Only after tests and migration read-back succeed should the feature branch be merged/deployed.
-5. Do not publish new reviews as part of schema deployment; the daily publisher remains a separate, explicit workflow action.
-
-## Production rollout completed — 2026-11-02
-
-- PR #18 was merged to main (merge commit `171e9dce44590f043faf773d06303e7b11237952`).
-- Cloudflare Pages deployment and live revision verification succeeded in GitHub Actions run `41409913675` (successful retry/attempt 2; deployed source commit `b0d5eddca3ce15927e04173a08d9887dda27baff`).
-- The production endpoint's authenticated, GET-only v2 migration completed successfully after deployment.
-- All 42 legacy publication-ledger rows were preserved in the v2 ledger; all 42 published review fingerprints still match published review records.
-- D1 `publishRevision` remained `50` before and after migration.
-- The migration did not publish, edit, or delete any customer review. Production still contains 42 published reviews.
-- The independent daily publisher remains capped at three new reviews per Beijing date. The 2026-11-02 daily cap was already reached; next scheduled run is 2026-11-03 at 09:17 Asia/Shanghai.
-- Remaining eligible source reviews: 159 (61 from the first workbook, 98 from the second). The second workbook's row 59 remains excluded.
-
-The first production workflow attempt encountered transient HTTP 503 responses from the build-snapshot endpoint and did not deploy. The redundant dry-run snapshot fetches were reduced; the subsequent workflow completed successfully. A separate read-only snapshot health check confirmed revision 50, 119 pages, 85 products, 42 reviews, and 756 translations.
+评价发布不等于 Blog 或全站发布。只有 D1 写入、产品页显示、构建、CI 和线上核验全部有证据，才报告完成。回滚使用 D1 历史记录和 Git 正式版本，不删除源评价，不修改 dist，不把业务数据回写到代码快照。

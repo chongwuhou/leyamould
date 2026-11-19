@@ -46,22 +46,22 @@ DIST=ROOT/"dist"
 
 SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
 
-ORIGIN="https://xuyibottles.com"
+SITE_CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
+
+ORIGIN=SITE_CONFIG["site"]["origin"]
 
 UI_TRANSLATIONS=json.loads((ROOT/"data/ui-translations.json").read_text(encoding="utf-8"))
 
 RUNTIME_UI_TRANSLATIONS=json.loads((ROOT/"data/runtime-ui-translations.json").read_text(encoding="utf-8"))
 
-BLOG_DATE_LABELS={
+LOCALIZED_DATE_LABELS={
+    locale:(labels["published"],labels["reviewed"])
+    for locale,labels in json.loads((ROOT/"data/blog-date-labels.json").read_text(encoding="utf-8")).items()
+}
 
-    "es":("Publicado el","Revisado el"),
-
-    "pt":("Publicado em","Revisto em"),
-
-    "ru":("Опубликовано","Проверено"),
-
-    "tr":("Yayımlandı","Gözden geçirildi")
-
+GALLERY_FALLBACK_TITLES={
+    locale:entry["title"]
+    for locale,entry in json.loads((ROOT/"data/gallery-short-titles.json").read_text(encoding="utf-8")).items()
 }
 
 def correct_reviewed_drinkware_terms(markup,locale):
@@ -230,7 +230,7 @@ def localize_blog_timeline(body,original,locale,route):
 
     if not published:return body  # No verified source date: preserve approved D1 copy.
 
-    first,reviewed=BLOG_DATE_LABELS[locale]
+    first,reviewed=LOCALIZED_DATE_LABELS[locale]
 
     timeline='<time datetime="'+published+'">'+html.escape(first)+" "+published+"</time>"
 
@@ -659,7 +659,7 @@ def main():
 
                 translated[(route,loc)]={
 
-                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else ({"es":"Botella deportiva","pt":"Garrafa esportiva","ru":"Спортивная бутылка","tr":"Spor şişesi"}[loc]+" "+row["model"]+" | XUYI"),
+                    "title":(name+" | "+row["model"]+" | XUYI") if len(name+" | "+row["model"]+" | XUYI")<=60 else (GALLERY_FALLBACK_TITLES[loc]+" "+row["model"]+" | XUYI"),
 
                     "description":name+". "+gallery_labels[loc][2],
 

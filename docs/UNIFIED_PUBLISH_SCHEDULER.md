@@ -1,6 +1,6 @@
 # XUYI unified scheduled publishing
 
-Updated: 2026-11-02
+Status: current architecture
 
 ## Purpose
 
@@ -42,7 +42,7 @@ No source workbook, derived review payload, or private customer data is copied t
 
 ## Execution architecture
 
-- GitHub Actions runs a five-minute scheduler heartbeat from the private repository's main branch.
+- GitHub Actions runs a five-minute scheduler heartbeat only when the repository/workflow credentials and owner policy permit it; repository visibility alone does not grant Cloudflare access.
 - The runner uses the existing CLOUDFLARE_API_TOKEN secret. The dedicated /api/admin/scheduler-runner endpoint accepts only POST and verifies that token against this exact Cloudflare Pages project.
 - The regular /api/admin/scheduler CRUD API remains protected by the normal website admin session.
 - D1 task claims are idempotent: review tasks claim once per task/date; Blog tasks claim once per five-minute local-time bucket. The GitHub workflow has a concurrency group to prevent overlapping scheduler runs.
@@ -64,4 +64,4 @@ All new tables are additive and created idempotently. No existing reviews or art
 - No existing Blog article is automatically queued; the owner must schedule a draft in the Blog editor.
 - Pausing a task prevents new claims. Resuming permits the next due task check.
 - Daily quotas are enforced server-side; changing the UI alone cannot bypass them.
-- Do not deploy the scheduler workflow until the Cloudflare project token and GITHUB_TOKEN workflow permission are available. Do not run the scheduler against production during a dry-run or validation pass.
+- The scheduler is a separate, explicit capability. If the owner pauses automated publication, keep the workflow and D1 task history but leave task execution disabled; manual publication remains available through the same formal D1/CMS rules.
