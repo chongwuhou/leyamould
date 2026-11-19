@@ -234,5 +234,58 @@
         "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
       }
     ]
+  },
+  "wholesale-water-bottle-purchase-order-approved-sample-substitution": {
+    "title": "A purchase order is safer when product identity, approved sample scope and change control are written together",
+    "insight": "A purchase order is safer when product identity, approved sample scope and change control are written together. GS1 guidance helps buyers think about item identity across sizes and colours; food-contact evidence still needs to match the exact finished article and destination market.",
+    "next_step": "Attach the exact model, component list, variant record, sample reference and any destination-market documents to the order. Treat a proposed substitution as a new decision, not as an automatic equivalent.",
+    "sources": [
+      {
+        "label": "GS1: GTINs for products with many sizes and colours",
+        "url": "https://support.gs1.org/support/solutions/articles/43000734083-how-many-gs1-gtins-do-i-need-when-i-have-a-product-with-many-sizes-and-colours-"
+      },
+      {
+        "label": "US FDA: food-contact material components",
+        "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
+      }
+    ]
+  },
+  "distributor-bottle-component-change-control-checklist": {
+    "title": "A component change must be checked against the complete finished assembly and its intended market",
+    "insight": "A component change must be checked against the complete finished assembly and its intended market. ISO sampling guidance can structure a buyer inspection plan, while food-contact authorities describe the need to consider the relevant components and conditions of use.",
+    "next_step": "Ask for the changed part, revised assembly, exact material information and destination-market evidence. Keep the old and new revision records separate until the buyer has made a documented decision.",
+    "sources": [
+      {
+        "label": "ISO 2859-1: sampling schemes indexed by acceptance quality limit",
+        "url": "https://www.iso.org/cms/live/live/en/sites/isoorg/contents/data/standard/08/54/85464.html"
+      },
+      {
+        "label": "US FDA: food-contact material components",
+        "url": "https://www.fda.gov/food/packaging-food-contact-substances-fcs/determining-regulatory-status-components-food-contact-material"
+      },
+      {
+        "label": "European Commission: Food Contact Materials legislation",
+        "url": "https://food.ec.europa.eu/food-safety/chemical-safety/food-contact-materials/legislation_en"
+      }
+    ]
+  },
+  "retail-custom-water-bottle-color-variant-reorder-control": {
+    "title": "Colour and variant control benefits from a physical reference, a clear item identity and a record of which component was approved",
+    "insight": "Colour and variant control benefits from a physical reference, a clear item identity and a record of which component was approved. GS1 explains that products with different sizes or colours may need separate identifiers under the brand owner's rules; Pantone provides plastic standards for communicating colour, but neither source certifies a finished XUYI product.",
+    "next_step": "Choose the reference system, approve the actual assembled variant and keep colour, packaging and identifier decisions in the same reorder record.",
+    "sources": [
+      {
+        "label": "Pantone: Plastic Standard Chips",
+        "url": "https://www.pantone.com/products/fashion-home-interiors/pantone-plastic-standard-chips"
+      },
+      {
+        "label": "GS1: GTINs for products with many sizes and colours",
+        "url": "https://support.gs1.org/support/solutions/articles/43000734083-how-many-gs1-gtins-do-i-need-when-i-have-a-product-with-many-sizes-and-colours-"
+      },
+      {
+        "label": "Pantone: plastics standards explained",
+        "url": "https://www.pantone.com/hk/en-hk/articles/uses-and-best-practices/did-you-know-pantone-plastics-standards-explained"
+      }
+    ]
   }
 }

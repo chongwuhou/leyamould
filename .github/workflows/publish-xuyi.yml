@@ -112,6 +112,9 @@ jobs:
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/xuyi-drinkware-site" \
             | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||j.result?.name!=='xuyi-drinkware-site')throw new Error('XUYI project identity mismatch');const c=j.result?.source?.config||{};if(c.production_deployments_enabled!==false||c.preview_deployment_setting!=='none')throw new Error('Disable old Git auto deploy for XUYI before enabling the CI publisher');console.log('One controlled production publisher verified')})"
+      - name: Publish reviewed Blog batch through generic D1 API
+        if: steps.credential.outputs.ready == 'true' && github.event_name == 'push' && contains(github.event.head_commit.message, '[xuyi-blog-batch]')
+        run: python scripts/publish_blog_batch.py data/blog-guides-20261119.json
       - name: Read XUYI D1 publish revision
         if: steps.credential.outputs.ready == 'true' && github.event_name == 'schedule'
         id: revision

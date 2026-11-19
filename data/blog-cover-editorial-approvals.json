@@ -819,6 +819,90 @@
       "provenance": "Pexels stock photo by Rene Terp, photo 13821183; its Pexels source page lists a free license.",
       "usageDisclosure": "Contextual stock photo. It is not an XUYI factory, customer site, confirmed refill station, model compatibility result or certification.",
       "sourceUrl": "https://www.pexels.com/photo/a-smiling-woman-filling-up-her-water-bottle-13821183/"
+    },
+    {
+      "slug": "wholesale-water-bottle-purchase-order-approved-sample-substitution",
+      "articleTitle": "What Should a Wholesale Water Bottle Purchase Order Say About Approved Samples and Substitutions?",
+      "cover": "/assets/blog/water-bottle-sample-approval-photo-20261017.webp",
+      "source": "assets/blog/water-bottle-sample-approval-photo-20261017.webp",
+      "sha256": "4277d3cbbbd70933e3bf8f12732fe11a83f1b67079279b2db2a382bb7d681732",
+      "visualScene": "A buyer reviews assembled reusable water bottle samples beside a purchase-order approval sheet on a clean worktable.",
+      "buyerContext": "wholesale purchasing and private-label order approval",
+      "articleUse": "approved samples, purchase orders and substitution control",
+      "sceneMatch": "The samples and approval record visibly support the article's focus on locking an exact wholesale configuration before production.",
+      "topicAnchors": [
+        "purchase",
+        "samples",
+        "substitution"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Existing 1200x800 editorial photograph stored in the reviewed XUYI assets collection; used as a contextual sourcing image, not as a pictured XUYI customer, exact SKU or factory inspection record.",
+      "usageDisclosure": "Contextual editorial photograph; it does not prove an XUYI customer, model, factory result, certification or shipment."
+    },
+    {
+      "slug": "distributor-bottle-component-change-control-checklist",
+      "articleTitle": "How Can a Distributor Check Bottle Components When a Supplier Announces a Product Change?",
+      "cover": "/assets/blog/replacement-water-bottle-lid-parts-photo-20261017.webp",
+      "source": "assets/blog/replacement-water-bottle-lid-parts-photo-20261017.webp",
+      "sha256": "d7c9e3ba1f237335221b3195af382208ca77c4484baaa50e2220861cbf562537",
+      "visualScene": "Reusable bottle lids, seals and drinking parts are arranged on a work surface for a component-change review.",
+      "buyerContext": "distributors checking supplier component revisions",
+      "articleUse": "lid, seal, straw and assembly change control",
+      "sceneMatch": "The close view of separate lids, seals and drinking parts directly illustrates the distributor's need to review a changed bottle component as part of the complete assembly.",
+      "topicAnchors": [
+        "distributor",
+        "component",
+        "change"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Existing 1200x800 editorial photograph stored in the reviewed XUYI assets collection; used as contextual component-review imagery, not as an exact XUYI component specification.",
+      "usageDisclosure": "Contextual editorial photograph; it does not prove a pictured XUYI component, customer, factory, certification or test result."
+    },
+    {
+      "slug": "retail-custom-water-bottle-color-variant-reorder-control",
+      "articleTitle": "How Do Retail Buyers Keep Custom Water Bottle Colors and Variants Consistent Across Reorders?",
+      "cover": "/assets/blog/custom-water-bottle-color-matching-20261018.webp",
+      "source": "assets/blog/custom-water-bottle-color-matching-20261018.webp",
+      "sha256": "aa05661ce130982cc3d97fc4b4cd016a931ae19a5f6ffc4b1fe8ce36be5807b2",
+      "visualScene": "Several reusable bottle color variants sit beside physical color references and approval materials on a retail sourcing desk.",
+      "buyerContext": "retail buyers controlling custom color variants and reorder variants",
+      "articleUse": "color matching, variant registers and repeat-order approval",
+      "sceneMatch": "The visible range of bottle colors and physical swatches directly supports the article's focus on controlling component colors and variants across retail reorders.",
+      "topicAnchors": [
+        "retail",
+        "color",
+        "variant"
+      ],
+      "productVisibility": "clearly-visible",
+      "scores": {
+        "sector": 5,
+        "productUse": 5,
+        "commercialRealism": 5,
+        "truthfulness": 5,
+        "composition": 5
+      },
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "Existing 1200x800 editorial photograph stored in the reviewed XUYI assets collection; used as contextual color-control imagery, not as an exact XUYI color standard or customer order.",
+      "usageDisclosure": "Contextual editorial photograph; it does not establish an XUYI color standard, customer, factory, certification or production result."
     }
   ]
 }
