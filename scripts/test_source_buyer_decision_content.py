@@ -20,9 +20,12 @@ from scripts.render_locales import CONTACT_FORM_TRANSLATIONS
 DIST=ROOT/"dist"
 
 guides=json.loads((ROOT/"data/blog-guides.json").read_text(encoding="utf8"))
-buyer=json.loads((ROOT/"data/blog-buyer-decision-tables.json").read_text(encoding="utf8"))["articles"]
-assert set(buyer)=={item["slug"] for item in guides}
-assert len(buyer)>=16  # Historic reviewed baseline; new published blogs are allowed
+baseline_buyer=json.loads((ROOT/"data/blog-buyer-decision-tables.json").read_text(encoding="utf8"))["articles"]
+buyer=blog_editorial.BUYER_MATRICES
+guide_slugs={item["slug"] for item in guides}
+assert set(baseline_buyer)<=guide_slugs
+assert set(buyer)==guide_slugs
+assert len(buyer)>=16  # Keep the reviewed baseline while allowing canonical growth.
 blog_links=0
 for slug,source_table in buyer.items():
     # D1 is authoritative. A CMS owner may have changed this table after the
