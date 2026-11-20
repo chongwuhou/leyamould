@@ -28,8 +28,8 @@ dates=0
 expected_dates=0
 for item in urls:
     url=item.find(ns+"loc").text
-    assert url.startswith("https://xuyibottles.com/")
-    path=url.removeprefix("https://xuyibottles.com")
+    assert url.startswith("https://leyamould.com/")
+    path=url.removeprefix("https://leyamould.com")
     date=item.find(ns+"lastmod")
     revision=next((x for x in BUILD_STATE.get("pages",[]) if x.get("route")==path),None)
     expected=source_lastmod(path,"en",revision,review_dates=REVIEW_DATE_CHANGES)
