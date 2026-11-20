@@ -17,7 +17,7 @@ MANIFEST = ROOT / "data/gpt-reviewed-shaker-hd-20261013.json"
 @lru_cache(maxsize=1)
 def approved_manifest():
     data=json.loads(MANIFEST.read_text(encoding="utf-8"))
-    if data.get("schemaVersion")!=1 or data.get("site")!="xuyi-drinkware-site":
+    if data.get("schemaVersion")!=1 or data.get("site")!="leyamould":
         raise ValueError("Unknown approved image manifest")
     approved=data.get("approved",[])
     if len(approved)!=6 or len({x.get("old") for x in approved})!=6:
@@ -59,7 +59,7 @@ def apply_to_document(markup,route=None,locale=None):
 def apply(dist):
     dist = Path(dist)
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    if data.get("schemaVersion") != 1 or data.get("site") != "xuyi-drinkware-site":
+    if data.get("schemaVersion") != 1 or data.get("site") != "leyamould":
         raise ValueError("Unknown approved image manifest")
     approved = data["approved"]
     if len(approved) != 6 or len({x["old"] for x in approved}) != 6:
