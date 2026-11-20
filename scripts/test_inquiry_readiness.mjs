@@ -54,7 +54,7 @@ const submitSource = readFileSync(new URL("../functions/api/form-submit.js", imp
 const { onRequestPost } = await import(dataUrl(submitSource));
 const submit = (payload) => onRequestPost({
   env: { XUYI_DB: dbFor({...readyRecord,enabled:0}) },
-  request: new Request("https://xuyibottles.com/api/form-submit", {
+  request: new Request("https://leyamould.com/api/form-submit", {
     method: "POST", headers: {"content-type":"application/json"},
     body: JSON.stringify(payload)
   })
