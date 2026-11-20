@@ -22,7 +22,7 @@ def fingerprint(value):
 @lru_cache(maxsize=1)
 def baseline():
     data=json.loads(BASELINE.read_text(encoding="utf-8"))
-    if data.get("site")!="xuyi-drinkware-site" or data.get("schemaVersion")!=1:
+    if data.get("site")!="leyamould" or data.get("schemaVersion")!=1:
         raise ValueError("CMS curation baseline belongs to another site")
     return data["baseline"]
 
@@ -31,7 +31,7 @@ def snapshot():
     if not SNAPSHOT.exists():
         return None
     data=json.loads(SNAPSHOT.read_text(encoding="utf-8"))
-    if data.get("site")!="xuyi-drinkware-site":
+    if data.get("site")!="leyamould":
         raise ValueError("CMS snapshot belongs to another site")
     return data
 
