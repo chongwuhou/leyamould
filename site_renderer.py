@@ -19,7 +19,7 @@ if _build_state_path:
  _state_path=Path(_build_state_path).resolve()
  if not _state_path.is_file():raise RuntimeError("Missing XUYI build snapshot")
  BUILD_STATE=json.loads(_state_path.read_text(encoding="utf-8"))
- if BUILD_STATE.get("site")!="xuyi-drinkware-site" or BUILD_STATE.get("schemaVersion")!=1:
+ if BUILD_STATE.get("site")!="leyamould" or BUILD_STATE.get("schemaVersion")!=1:
   raise RuntimeError("Refusing build snapshot from another project")
 BUILD_LANGUAGES=approved_locales(BUILD_STATE,require_resources=False) if BUILD_STATE else []
 PAGE_OVERRIDES={str(v.get("route")):v for v in BUILD_STATE.get("pages",[]) if isinstance(v,dict)}
