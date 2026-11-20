@@ -5,11 +5,11 @@ import {authorizedDailyProductReviewRequest} from "../functions/_shared/build-au
 const FILE_A="101-zhenshipingjia.xlsx",FILE_B="101-additional-reviews-only.xlsx",today=beijingDate();
 const originalFetch=globalThis.fetch;
 globalThis.fetch=async(url,options)=>{
- assert.equal(url,"https://api.cloudflare.com/client/v4/accounts/a4032d0251103d6ef680b2aaddce1afc/pages/projects/xuyi-drinkware-site");
+ assert.equal(url,"https://api.cloudflare.com/client/v4/accounts/a4032d0251103d6ef680b2aaddce1afc/pages/projects/leyamould");
  const ok=options.headers.authorization==="Bearer cloudflare-review-ci-test";
- return Response.json({success:ok,result:{name:ok?"xuyi-drinkware-site":"other-site"}},{status:ok?200:403});
+ return Response.json({success:ok,result:{name:ok?"leyamould":"other-site"}},{status:ok?200:403});
 };
-const special=new Request("https://xuyibottles.com/api/admin/daily-product-reviews",{method:"GET",headers:{authorization:"Bearer cloudflare-review-ci-test"}});
+const special=new Request("https://leyamould.com/api/admin/daily-product-reviews",{method:"GET",headers:{authorization:"Bearer cloudflare-review-ci-test"}});
 assert.equal(await authorizedDailyProductReviewRequest(special,{ADMIN_TOKEN:"not-the-project-token"}),true);
 assert.equal(beijingDate(new Date("2026-10-20T16:01:00Z")),"2026-10-21");
 const make=(model,row,rating,file,author)=>({model,sourceModel:model,sourceRow:row,sourceFile:file,rating,author,
@@ -78,10 +78,10 @@ class D1Mock{
  }
 }
 const db=new D1Mock(),env={ADMIN_TOKEN:"xuyi-test-admin",XUYI_DB:db};
-const ctx=(body,token=env.ADMIN_TOKEN)=>({env,request:new Request("https://xuyibottles.com/api/admin/daily-product-reviews",{
+const ctx=(body,token=env.ADMIN_TOKEN)=>({env,request:new Request("https://leyamould.com/api/admin/daily-product-reviews",{
  method:body?"POST":"GET",headers:{authorization:"Bearer "+token,"content-type":"application/json"},body:body?JSON.stringify(body):undefined})});
 assert.equal((await onRequestGet(ctx(undefined,"wrong"))).status,401);
-assert.equal(await authorizedDailyProductReviewRequest(new Request("https://xuyibottles.com/api/admin/product-reviews",{method:"GET",headers:{authorization:"Bearer xuyi-test-admin"}}),env),false);
+assert.equal(await authorizedDailyProductReviewRequest(new Request("https://leyamould.com/api/admin/product-reviews",{method:"GET",headers:{authorization:"Bearer xuyi-test-admin"}}),env),false);
 const legacyId="d55abf0c-71ca-4dd2-a3ab-a4107e62fd83";
 const legacy={id:legacyId,model:"LO-004",rating:5,author:"Legacy Buyer",content:"A legacy published review must survive the v2 migration.",status:"published"};
 db.reviews.set(legacyId,legacy);
