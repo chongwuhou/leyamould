@@ -42,6 +42,11 @@ on:
       - "docs/BLOG_EDITORIAL_PUBLISH_CHECKLIST.md"
       - "_headers"
   workflow_dispatch:
+    inputs:
+      blog_batch_path:
+        description: "Reviewed Blog batch JSON to publish through the D1/R2 CMS route"
+        required: false
+        type: string
   schedule:
     - cron: "7,37 * * * *"
 
@@ -91,6 +96,12 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::warning::XUYI Pages publication requires its independent Cloudflare GitHub Actions secrets."
           fi
+      - name: Publish reviewed Blog batch to D1 and R2
+        if: steps.credential.outputs.ready == 'true' && ((github.event_name == 'workflow_dispatch' && inputs.blog_batch_path != '') || (github.event_name == 'push' && hashFiles('data/reviewed-blog-batch.json') != ''))
+        run: |
+          batch_path="${{ inputs.blog_batch_path }}"
+          if [ -z "$batch_path" ]; then batch_path="data/reviewed-blog-batch.json"; fi
+          python scripts/publish_blog_batch.py "$batch_path"
       - name: Prepare stable IndexNow ownership key
         if: steps.credential.outputs.ready == 'true'
         shell: bash
@@ -255,6 +266,7 @@ jobs:
             exit 0
           fi
           python scripts/search_submission.py --submit
+
 
 
 

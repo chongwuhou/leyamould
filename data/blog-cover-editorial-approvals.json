@@ -903,6 +903,61 @@
       "visualReview": "actual-image-and-article-compared",
       "provenance": "Existing 1200x800 editorial photograph stored in the reviewed XUYI assets collection; used as contextual color-control imagery, not as an exact XUYI color standard or customer order.",
       "usageDisclosure": "Contextual editorial photograph; it does not establish an XUYI color standard, customer, factory, certification or production result."
+    },
+    {
+      "slug": "custom-water-bottle-landed-cost-checklist-importers",
+      "articleTitle": "How Can Importers Compare Landed Cost for Custom Water Bottles Before Ordering?",
+      "cover": "/media/blog/custom-water-bottle-landed-cost-checklist-importers-20261120.webp",
+      "source": "assets/blog/custom-water-bottle-landed-cost-checklist-importers-20261120.webp",
+      "sha256": "519dd085b6ddbe0c7a8ff40281ff71f63412184c7417d3d47ba706db9ae10b0d",
+      "visualScene": "A wholesale importer reviews landed-cost figures, custom water bottle cartons and a procurement worksheet at a warehouse desk.",
+      "buyerContext": "importers comparing landed cost before a wholesale order",
+      "articleUse": "landed cost, packing and destination charge comparison",
+      "sceneMatch": "The importer, cost worksheet, cartons and calculator visibly match the article's landed-cost comparison process before ordering.",
+      "topicAnchors": ["landed", "importers", "cost"],
+      "productVisibility": "clearly-visible",
+      "scores": {"sector": 5, "productUse": 5, "commercialRealism": 5, "truthfulness": 5, "composition": 5},
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "AI-generated editorial photograph; generated for XUYI's B2B landed-cost buying guide and reviewed as a contextual sourcing image, not a real customer, factory, order or certification record.",
+      "usageDisclosure": "Contextual editorial photograph; it does not prove an XUYI customer, exact SKU, factory result, certification or shipment."
+    },
+    {
+      "slug": "wholesale-water-bottle-artwork-proof-approval-checklist",
+      "articleTitle": "What Should a Wholesale Buyer Check in a Custom Water Bottle Artwork Proof Before Sampling?",
+      "cover": "/media/blog/wholesale-water-bottle-artwork-proof-approval-checklist-20261120.webp",
+      "source": "assets/blog/wholesale-water-bottle-artwork-proof-approval-checklist-20261120.webp",
+      "sha256": "854541778f714089592a620155489633a21bbd68459ea6ce06c31733239e070a",
+      "visualScene": "A wholesale buyer and supplier review a custom bottle artwork proof, color swatches and a sample bottle across a sourcing table.",
+      "buyerContext": "wholesale buyers approving artwork before sampling",
+      "articleUse": "artwork proof, color reference and sample approval",
+      "sceneMatch": "The proof sheet, color swatches, bottle sample and two-person review directly match the article's artwork approval workflow.",
+      "topicAnchors": ["artwork", "proof", "sampling"],
+      "productVisibility": "clearly-visible",
+      "scores": {"sector": 5, "productUse": 5, "commercialRealism": 5, "truthfulness": 5, "composition": 5},
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "AI-generated editorial photograph; generated for XUYI's B2B artwork-proof guide and reviewed as a contextual sourcing image, not a real customer approval, factory proof, order or certification record.",
+      "usageDisclosure": "Contextual editorial photograph; it does not prove an XUYI customer, exact print result, factory process, certification or shipment."
+    },
+    {
+      "slug": "multi-size-water-bottle-cap-compatibility-buyer-guide",
+      "articleTitle": "Can One Bottle Cap Fit Multiple Water Bottle Sizes? A Wholesale Compatibility Checklist",
+      "cover": "/media/blog/multi-size-water-bottle-cap-compatibility-buyer-guide-20261120.webp",
+      "source": "assets/blog/multi-size-water-bottle-cap-compatibility-buyer-guide-20261120.webp",
+      "sha256": "e4a1a7a081b8db29f21959371f35ca21ec68e860e5bf3ffb70e3c388cbfde891",
+      "visualScene": "A wholesale buyer checks bottle caps, seals and a caliper beside several water bottle bodies on a warehouse sample table.",
+      "buyerContext": "wholesale buyers checking cap compatibility across sizes",
+      "articleUse": "cap, seal and cross-size compatibility review",
+      "sceneMatch": "The caps, seals, bottle bodies and measuring tool visibly support the article's compatibility check before a wholesale reorder.",
+      "topicAnchors": ["cap", "compatibility", "sizes"],
+      "productVisibility": "clearly-visible",
+      "scores": {"sector": 5, "productUse": 5, "commercialRealism": 5, "truthfulness": 5, "composition": 5},
+      "reviewDecision": "visually-reviewed-approved",
+      "visualReview": "actual-image-and-article-compared",
+      "provenance": "AI-generated editorial photograph; generated for XUYI's B2B cap-compatibility guide and reviewed as a contextual sourcing image, not a real customer measurement, factory specification, order or certification record.",
+      "usageDisclosure": "Contextual editorial photograph; it does not prove a pictured XUYI component, universal compatibility, certification or test result."
     }
   ]
 }
+
