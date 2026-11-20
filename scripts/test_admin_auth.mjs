@@ -7,9 +7,9 @@ const imported=raw.replace('import { authorizeAdminRequest } from "./admin-secur
 assert.notEqual(imported,raw);
 let cloudflareChecks=0;
 globalThis.fetch=async()=>{cloudflareChecks++;return {ok:true,json:async()=>({
-  success:true,result:{name:"xuyi-drinkware-site"}})}};
+  success:true,result:{name:"leyamould"}})}};
 const {authorizedBuildRequest:allow}=await import("data:text/javascript;base64,"+Buffer.from(imported).toString("base64"));
-const request=(path,method="GET",admin=false)=>new Request("https://xuyibottles.com"+path,
+const request=(path,method="GET",admin=false)=>new Request("https://leyamould.com"+path,
   {method,headers:{"authorization":"Bearer sample-ci-token","x-test-admin":admin?"allowed":"no"}});
 for(const route of ["/api/build-snapshot","/api/publish-state",
   "/api/admin/brand-config","/api/admin/home-banners","/api/admin/site-config","/api/admin/pages",
