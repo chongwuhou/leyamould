@@ -618,7 +618,18 @@ def whatsapp_display_number():
 
 def footer():
  links=''.join('<p><a href="'+uri+'">'+e(label)+'</a></p>' for label,uri in category_links())
- result=render_template("footer",PRODUCT_LINKS=links,WHATSAPP_NUMBER=e(whatsapp_display_number()))
+ result=render_template("footer",PRODUCT_LINKS=links,WHATSAPP_NUMBER=e(whatsapp_display_number()),
+  FOOTER_EYEBROW="LEYA MOULD · ENGINEERING · MANUFACTURING",
+  FOOTER_CTA_TITLE="Ready to discuss your mould project?",
+  FOOTER_CTA_TEXT="Send your drawing, sample or PDF and tell us the production target.",
+  FOOTER_CTA_BUTTON="Request a Quote",
+  FOOTER_TAGLINE="Bottle, cap, preform and custom product mould support for international buyers.",
+  FOOTER_ADDRESS="4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China",
+  FOOTER_PRODUCTS_TITLE="Products",FOOTER_CAPABILITIES_TITLE="Capabilities",
+  FOOTER_DESIGN="Mould Design & Engineering",FOOTER_MANUFACTURING="Precision Manufacturing",
+  FOOTER_QUALITY="Quality & Inspection",FOOTER_SUPPORT="Trial & Technical Support",
+  FOOTER_CONTACT_TITLE="Contact Us",FOOTER_QUOTE="Request a Quote →",
+  FOOTER_FAQ="FAQs",FOOTER_PRIVACY="Privacy Policy",FOOTER_STICKY="Mould Project Enquiries")
  footer_config=BRAND_CONFIG.get("footer") or {}
  identity=BRAND_CONFIG.get("identity") or {}
  brand_name=str(identity.get("displayName","")).strip()
@@ -648,8 +659,8 @@ def page(title,description,body,canonical=None,blog_pager=False):
  if INDEXING_APPROVED:
   head=head.replace('<meta name="robots" content="noindex,nofollow">',
                     '<meta name="robots" content="index,follow">',1)
-  rail=render_template("sidebar",ICON_FORM=ICONS["form"],ICON_MAIL=ICONS["mail"],ICON_WHATSAPP=ICONS["whatsapp"],ICON_TOP=ICONS["top"])
-  return render_template("shell",HEAD=head,HEADER=header(),SIDEBAR=rail,BODY=body,FOOTER=footer())
+ rail=render_template("sidebar",ICON_FORM=ICONS["form"],ICON_MAIL=ICONS["mail"],ICON_WHATSAPP=ICONS["whatsapp"],ICON_TOP=ICONS["top"])
+ return render_template("shell",HEAD=head,HEADER=header(),SIDEBAR=rail,BODY=body,FOOTER=footer())
 def intro(crumb,title,subtitle=""):
  return render_template("page-intro",CRUMB=e(crumb),TITLE=e(title),SUBTITLE=e(subtitle))
 def category_card(cat):
@@ -731,4 +742,5 @@ for _d1_post in BUILD_STATE.get("blogPosts",[]):
  if _slug in BLOG_POSTS and isinstance(_d1_post.get("sections"),list) and len(_d1_post["sections"])>=2:
   BLOG_POSTS[_slug]={**BLOG_POSTS[_slug],**_d1_post}
 ARTICLES=[(post["slug"],post["title"],post["description"]) for post in reversed(list(BLOG_POSTS.values()))]
+
 
