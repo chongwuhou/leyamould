@@ -14,7 +14,7 @@ import re
 from urllib.parse import urlsplit, unquote
 
 ROOT=Path(__file__).resolve().parent.parent
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 LANGS={"en":"","es":"es/","pt":"pt/","ru":"ru/","tr":"tr/"}
 AUTHOR_WORDING={
  "en":"By XUYI Bottles · Product Sourcing Editorial Team",
