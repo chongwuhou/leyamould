@@ -43,7 +43,7 @@ urls=(ROOT/"dist/sitemap.xml").read_text(encoding="utf8")
 assert urls.count("<loc>")>=755
 for p in GALLERY:
  for loc in lang:
-  u=("https://xuyibottles.com/"+("" if loc=="en" else loc+"/")+"products/"+p["slug"]+"/")
+  u=("https://leyamould.com/"+("" if loc=="en" else loc+"/")+"products/"+p["slug"]+"/")
   assert u in urls,u
 for group in GALLERY:
  assert group["model"] in SERIES and SERIES[group["model"]]["galleryReference"] is True
