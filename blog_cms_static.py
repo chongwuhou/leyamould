@@ -187,7 +187,7 @@ def render(post, known_slugs=()):
     return body + '</article></div></div></section>'
 
 
-def enrich(document, post, origin="https://xuyibottles.com"):
+def enrich(document, post, origin="https://leyamould.com"):
     slug = post["slug"]
     url = origin + "/blog/" + slug + "/"
     published = _date(post.get("published_at")) or _date(post.get("updated")) or _date(post.get("updated_at"))
