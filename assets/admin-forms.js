@@ -181,7 +181,7 @@
       $("#smtp-password").value = "";
       $("#smtp-password").placeholder = s.passwordConfigured ? "已保存密码；留空 = 不修改" : "尚未保存密码";
       $("#smtp-from-name").value = s.fromName || "XUYI Bottles Website";
-      let defaultEmail = "Janey@leyamould.com";
+  let defaultEmail = "amyhu@leyamould.com";
       try {
         const publicResponse = await fetch("/api/site-settings", { cache: "no-store" });
         if (publicResponse.ok) {
@@ -279,3 +279,4 @@
   }
   if (token()) setTimeout(loadAll, 250);
 })();
+
