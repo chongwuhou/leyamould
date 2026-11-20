@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 HOST="xuyibottles.com"
 CONFIG=ROOT/"deployment/site.config.json"
 INDEXNOW="https://api.indexnow.org/indexnow"
@@ -28,7 +28,7 @@ NS="{http://www.sitemaps.org/schemas/sitemap/0.9}"
 
 def approved():
     data=json.loads(CONFIG.read_text(encoding="utf-8"))
-    if data["site"]["origin"]!=ORIGIN or data["cloudflare"]["pagesProjectName"]!="xuyi-drinkware-site":
+    if data["site"]["origin"]!=ORIGIN or data["cloudflare"]["pagesProjectName"]!="leyamould":
         raise ValueError("Refusing search submission for another project")
     return data["site"]["indexingApproved"] is True
 
@@ -57,11 +57,11 @@ def create_manifest():
     storage_manifest=storage/"manifest.json"
     if storage_manifest.is_file():
         bundles=json.loads(storage_manifest.read_text(encoding="utf-8"))
-        if bundles.get("site")!="xuyi-drinkware-site":
+        if bundles.get("site")!="leyamould":
             raise ValueError("Foreign R2 sitemap bundle")
         for row in bundles.get("objects",[]):
             data=json.loads((storage/row["key"]).read_text(encoding="utf-8"))
-            if data.get("site")!="xuyi-drinkware-site":
+            if data.get("site")!="leyamould":
                 raise ValueError("Foreign R2 route bundle")
             overflow.update(data.get("routes",{}))
     for url in urls:
@@ -79,7 +79,7 @@ def create_manifest():
         hashes[url]=sha256(html+extra).hexdigest()
     if len(hashes)!=len(urls):
         raise ValueError("Missing IndexNow page hashes")
-    manifest={"site":"xuyi-drinkware-site","origin":ORIGIN,"schemaVersion":1,
+    manifest={"site":"leyamould","origin":ORIGIN,"schemaVersion":1,
               "urls":hashes}
     (DIST/"search-submission-manifest.json").write_text(
         json.dumps(manifest,ensure_ascii=False,separators=(",",":"),sort_keys=True)+"\n",
@@ -97,7 +97,7 @@ def key_file():
 def new_or_changed(old,current,*,first_launch=False):
     urls=current.get("urls",{})
     if first_launch:return sorted(urls)
-    if not isinstance(old,dict) or old.get("site")!="xuyi-drinkware-site":
+    if not isinstance(old,dict) or old.get("site")!="leyamould":
         raise ValueError("Missing previous verified manifest: refusing repeat bulk submission")
     old_urls=old.get("urls",{})
     return sorted(url for url,digest in urls.items() if old_urls.get(url)!=digest)
@@ -118,7 +118,7 @@ def verify_live():
     if 'content="noindex' in head or 'content="index,follow"' not in head:
         raise ValueError("Live homepage is still noindex")
     meta=json.loads(fetch(ORIGIN+"/build-meta.json?search_submit_verify=1"))
-    if meta.get("noindex") is not False or meta.get("pagesProject")!="xuyi-drinkware-site":
+    if meta.get("noindex") is not False or meta.get("pagesProject")!="leyamould":
         raise ValueError("Live deployment has not approved indexing")
     return meta
 
