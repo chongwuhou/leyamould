@@ -13,7 +13,7 @@ def main():
         '<a href="/blog/">All guides</a>'
         '<a href="/products/2501/">Product</a>'
         '<a href="https://example.com/blog/external/">External</a>'
-        '<a href="https://xuyibottles.com/blog/future-absolute/">Future absolute</a>'
+        '<a href="https://leyamould.com/blog/future-absolute/">Future absolute</a>'
         '</article>'
     )
     published = {"/blog/", "/blog/live-guide/", "/products/2501/"}
@@ -27,7 +27,7 @@ def main():
     assert 'href="/blog/"' in rendered
     assert 'href="/products/2501/"' in rendered
     assert 'href="https://example.com/blog/external/"' in rendered
-    assert 'href="https://xuyibottles.com/blog/future-absolute/"' not in rendered
+    assert 'href="https://leyamould.com/blog/future-absolute/"' not in rendered
     assert 'data-xuyi-unpublished-route="/blog/future-absolute/"' in rendered
     assert disable_unpublished_blog_links(rendered, published) == rendered
     print("LOCALIZED_BLOG_UNPUBLISHED_LINK_TESTS_PASSED")
