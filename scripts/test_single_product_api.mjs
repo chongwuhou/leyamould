@@ -74,7 +74,7 @@ const db={
 };
 const env={ADMIN_TOKEN:"test-admin",XUYI_DB:db,
  XUYI_ASSETS:{head:async()=>assetFound?{size:15200}:null}};
-const ctx=body=>({request:new Request("https://xuyibottles.com/api/admin/product-content",{
+const ctx=body=>({request:new Request("https://leyamould.com/api/admin/product-content",{
  method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}),env});
 const payload=(model,status,content)=>({action:"create_product",model,status,content});
 let res=await api.onRequestPost(ctx(payload("bottle-qa-9001","published",good)));
@@ -104,7 +104,7 @@ assert.equal(JSON.parse(dbRows.get("bottle-qa-race").content).name,"Concurrent o
 res=await api.onRequestPost(ctx(payload("bottle-qa-9001","draft",{...good,name:"Owner-edited product copy"})));
 assert.equal(res.status,200,"Existing imported new products remain editable");
 assert.equal(JSON.parse(dbRows.get("bottle-qa-9001").content).name,"Owner-edited product copy","D1 owner edit is saved");
-const list=await (await api.onRequestGet({request:new Request("https://xuyibottles.com/api/admin/product-content"),env})).json();
+const list=await (await api.onRequestGet({request:new Request("https://leyamould.com/api/admin/product-content"),env})).json();
 assert.equal(list.items.length,2);
 assert.equal(list.categories.length,7);
 assert.equal(list.items[0].content.newProduct,true);
