@@ -16,6 +16,7 @@ if CONFIG.get("localizationFrameworkVersion")!=2:
     raise ValueError("XUYI multilingual SEO framework must use the reviewed v2 locale registry")
 DEFAULT=CONFIG["site"]["defaultLocale"]
 ORIGIN=CONFIG["site"]["origin"]
+PUBLISHED_CODES={str(code).strip().lower() for code in CONFIG["site"].get("publishedLocales",[]) if str(code).strip()}
 _CODE=re.compile(r"^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$")
 _PREFIX=re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,30}[a-z0-9])?$")
 _RESERVED={"admin","api","assets","media","products","collections","blog",
@@ -38,13 +39,19 @@ def approved_locales(state,require_resources=True):
     if default!=DEFAULT or source!=DEFAULT:
         raise ValueError("XUYI default/source locale migration needs dedicated approval and URL redirects")
     all_rows=config.get("languages") or [
-       {"code":DEFAULT,"pathPrefix":"","enabled":True,"publishReady":True,"nativeName":"English","sortOrder":10}
+       {"code":"en","pathPrefix":"","enabled":True,"publishReady":True,"nativeName":"English","sortOrder":10},
+       {"code":"es","pathPrefix":"es","enabled":True,"publishReady":True,"nativeName":"Español","sortOrder":20},
+       {"code":"pt","pathPrefix":"pt","enabled":True,"publishReady":True,"nativeName":"Português","sortOrder":30},
+       {"code":"ru","pathPrefix":"ru","enabled":True,"publishReady":True,"nativeName":"Русский","sortOrder":40},
+       {"code":"tr","pathPrefix":"tr","enabled":True,"publishReady":True,"nativeName":"Türkçe","sortOrder":50},
     ]
     seen_codes=set()
     seen_prefix=set()
     locales=[]
     for row in sorted(all_rows,key=lambda x:(int(x.get("sortOrder",999)),str(x.get("code","")))):
         code=str(row.get("code","")).strip().lower()
+        if PUBLISHED_CODES and code not in PUBLISHED_CODES:
+            continue
         if not _CODE.fullmatch(code) or code in seen_codes:
             raise ValueError("Invalid or duplicate XUYI locale code: "+code)
         seen_codes.add(code)
@@ -92,3 +99,4 @@ def local_url(lang,route):
     if not(route.startswith("/") and route.endswith("/")):raise ValueError("Invalid canonical route")
     prefix=lang["pathPrefix"]
     return ORIGIN+("/"+prefix+route if prefix else route)
+
