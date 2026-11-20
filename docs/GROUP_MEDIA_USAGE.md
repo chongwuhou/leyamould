@@ -18,10 +18,10 @@ The owner confirmed these four companies/websites belong to the same group and a
 - Approved image sources remain in the private group media inventory and R2 allowlist.
 
 ## Changes made
-Re-enabled suitable unwatermarked group imagery across the homepage, FAQ, About, Why Us, sample planning, capabilities, manufacturing, QA and shipping. Public URLs use /media/group/*.webp through the XUYI R2 proxy. All 13 referenced images returned HTTP 200 when checked on xuyibottles.com.
+Re-enabled suitable unwatermarked group imagery across the homepage, FAQ, About, Why Us, sample planning, capabilities, manufacturing, QA and shipping. Public URLs use /media/group/*.webp through the XUYI R2 proxy. All 13 referenced images returned HTTP 200 when checked on leyamould.com.
 
 ## Related settings
-Public email: Janey@xuyibottles.com (plural bottles).
+Public email: Janey@leyamould.com (plural bottles).
 WhatsApp: 8615395897937.
 English default; es, pt, ru and tr managed through the XUYI D1/CMS workflow.
 Do not publish unverified form or translation functions before Cloudflare bindings and security checks.
