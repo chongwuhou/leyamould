@@ -8,7 +8,7 @@ SNAP=ROOT/"_local_ops/build-snapshot.json"
 assert SNAP.is_file(),"Local XUYI snapshot required, never use live D1"
 original=SNAP.read_bytes()
 data=json.loads(original.decode("utf8"))
-assert data.get("site")=="xuyi-drinkware-site"
+assert data.get("site")=="leyamould"
 defaults=json.loads((ROOT/"assets/home-banner-defaults.json").read_text(encoding="utf8"))
 changed=json.loads(json.dumps(defaults,ensure_ascii=False))
 changed["slides"][0]["img"]="/assets/curated-hd/feature-flip-top.webp"
