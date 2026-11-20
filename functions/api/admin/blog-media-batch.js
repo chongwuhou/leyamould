@@ -24,7 +24,7 @@ function decodeReviewedMedia(item) {
 
 export async function onRequestPost(context) {
   if (!(await authorizedExplicitPublishRequest(context.request, context.env))) return reply({ error: "Unauthorized reviewed batch request" }, 401);
-  if (!context.env.XUYI_ASSETS) return reply({ error: "XUYI_ASSETS binding missing" }, 503);
+  if (!context.env.LEYA_ASSETS) return reply({ error: "LEYA_ASSETS binding missing" }, 503);
   let payload;
   try { payload = await context.request.json(); } catch { return reply({ error: "Invalid JSON" }, 400); }
   if (!Array.isArray(payload?.media) || payload.media.length < 1 || payload.media.length > 12) return reply({ error: "A reviewed Blog media batch is required" }, 400);
@@ -40,13 +40,13 @@ export async function onRequestPost(context) {
     const uploaded = [];
     const kept = [];
     for (const item of items) {
-      const existing = await context.env.XUYI_ASSETS.head(item.key);
+      const existing = await context.env.LEYA_ASSETS.head(item.key);
       if (existing) {
         if (existing.httpMetadata?.contentType && existing.httpMetadata.contentType !== item.contentType) throw Error("Existing Blog cover has a different content type: " + item.path);
         kept.push(item.path);
         continue;
       }
-      await context.env.XUYI_ASSETS.put(item.key, item.bytes, { httpMetadata: { contentType: item.contentType }, customMetadata: { source: "xuyi-reviewed-blog-batch" } });
+      await context.env.LEYA_ASSETS.put(item.key, item.bytes, { httpMetadata: { contentType: item.contentType }, customMetadata: { source: "leya-reviewed-blog-batch" } });
       uploaded.push(item.key);
     }
     return reply({ success: true, uploaded, kept, count: items.length });

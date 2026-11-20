@@ -12,14 +12,14 @@ async function bannerLanguageOptions(db){
 async function auth(c){
  if(!c.env.ADMIN_TOKEN)return json({error:"Admin not configured"},503);
  if(!(await authorizedBuildRequest(c.request,c.env)))return json({error:"Unauthorized"},401);
- if(!c.env.XUYI_DB)return json({error:"XUYI_DB unavailable"},503);
+ if(!c.env.LEYA_DB)return json({error:"LEYA_DB unavailable"},503);
  return null;
 }
 export async function onRequestGet(c){
  const denied=await auth(c);if(denied)return denied;
  try{
-  const row=await c.env.XUYI_DB.prepare("SELECT value,updated_at FROM site_state WHERE key='home_banner_config'").first();
-  const options=await bannerLanguageOptions(c.env.XUYI_DB);
+  const row=await c.env.LEYA_DB.prepare("SELECT value,updated_at FROM site_state WHERE key='home_banner_config'").first();
+  const options=await bannerLanguageOptions(c.env.LEYA_DB);
   return json({source:row?"cloudflare-d1":"source-default",config:row?normalizeBanners(JSON.parse(row.value),options):null,
    sourceLocale:options.sourceLocale,locales:options.config.languages,updatedAt:row?.updated_at||""});
  }catch(err){return json({error:"Unable to read homepage banner configuration"},503)}
@@ -30,13 +30,13 @@ export async function onRequestPost(c){
  let value;try{value=await c.request.json()}catch{return json({error:"Invalid JSON"},400)}
  let config;
  try{
-  const languageRow=await loadSiteSetting(c.env.XUYI_DB,"language_config",defaultLanguageConfig());
+  const languageRow=await loadSiteSetting(c.env.LEYA_DB,"language_config",defaultLanguageConfig());
   const configLanguage=normalizeLanguageConfig(languageRow.value);
   config=normalizeBanners(value.config,{requiredLocales:publicLanguages(configLanguage).map(x=>x.code),sourceLocale:configLanguage.sourceLocale});
  }catch(error){return json({error:String(error.message||error)},400)}
  try{
-  const db=c.env.XUYI_DB;
-  if(!c.env.XUYI_ASSETS)return json({error:"Cannot validate R2 media without XUYI_ASSETS"},503);
+  const db=c.env.LEYA_DB;
+  if(!c.env.LEYA_ASSETS)return json({error:"Cannot validate R2 media without LEYA_ASSETS"},503);
   // R2 objects must actually exist; deployed /assets files are validated by the release gate.
   for(const slide of config.slides){
    if(slide.img.startsWith("/assets/")){
@@ -52,7 +52,7 @@ export async function onRequestPost(c){
     ppt:"catalog-staging/ppt/",excel:"site-preview/excel/",group:"site-preview/group/",
     capability:"site-capabilities/",gallery:"site-gallery/",blog:"site-blog/"};
    if(!Object.hasOwn(prefixes,kind))return json({error:"Unsupported R2 image group"},400);
-   const exists=await c.env.XUYI_ASSETS.head(prefixes[kind]+name);
+   const exists=await c.env.LEYA_ASSETS.head(prefixes[kind]+name);
    if(!exists)return json({error:"R2 image not found: "+slide.img},409);
   }
   await db.prepare("INSERT INTO site_state(key,value,updated_at) VALUES('home_banner_config',?,CURRENT_TIMESTAMP) "+

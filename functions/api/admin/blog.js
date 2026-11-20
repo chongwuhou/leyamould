@@ -30,7 +30,7 @@ async function editorialError(db,post){
 async function authorized(context){
  if(!clean(context.env.ADMIN_TOKEN))return reply({error:"ADMIN_TOKEN not configured"},503);
  if(!(await authorizedBuildRequest(context.request,context.env)))return reply({error:"Unauthorized"},401);
- if(!context.env.XUYI_DB)return reply({error:"XUYI_DB binding missing"},503);
+ if(!context.env.LEYA_DB)return reply({error:"LEYA_DB binding missing"},503);
  return null;
 }
 export async function onRequestGet(context){
@@ -38,20 +38,20 @@ export async function onRequestGet(context){
  const url=new URL(context.request.url);
   if(url.searchParams.has("slug")){
    const slug=url.searchParams.get("slug");
-   const post=await findEditableBlogPost(context.env.XUYI_DB,slug);
+   const post=await findEditableBlogPost(context.env.LEYA_DB,slug);
    if(!post)return reply({error:"Article not found"},404);
-   await ensurePublishScheduler(context.env.XUYI_DB);
-   const q=await context.env.XUYI_DB.prepare("SELECT scheduled_at,status FROM xuyi_blog_schedule WHERE slug=?").bind(slug).first();
+   await ensurePublishScheduler(context.env.LEYA_DB);
+   const q=await context.env.LEYA_DB.prepare("SELECT scheduled_at,status FROM xuyi_blog_schedule WHERE slug=?").bind(slug).first();
    return reply({post:{...post,scheduled_at:q?.scheduled_at||"",schedule_status:q?.status||""}});
   }
-  await ensureBlogSchema(context.env.XUYI_DB);const posts=await listBlogPosts(context.env.XUYI_DB);await ensurePublishScheduler(context.env.XUYI_DB);
-  const queued=(await context.env.XUYI_DB.prepare("SELECT slug,scheduled_at,status FROM xuyi_blog_schedule").all()).results||[];
+  await ensureBlogSchema(context.env.LEYA_DB);const posts=await listBlogPosts(context.env.LEYA_DB);await ensurePublishScheduler(context.env.LEYA_DB);
+  const queued=(await context.env.LEYA_DB.prepare("SELECT slug,scheduled_at,status FROM xuyi_blog_schedule").all()).results||[];
   const scheduleBySlug=new Map(queued.map(x=>[x.slug,x]));
   return reply({posts:posts.map(p=>{const q=scheduleBySlug.get(p.slug);return {slug:p.slug,title:p.title,status:p.status,has_draft:p.has_draft,group:p.group,updated_at:p.updated_at,published_at:p.published_at,cover:p.cover,scheduled_at:q?.scheduled_at||"",schedule_status:q?.status||""}}),count:posts.length});}
 export async function onRequestPost(context){
  const denied=await authorized(context);if(denied)return denied;
  let payload;try{payload=await context.request.json()}catch{return reply({error:"Invalid JSON"},400)}
- const db=context.env.XUYI_DB;
+ const db=context.env.LEYA_DB;
  await ensureBlogSchema(db);
  const action=clean(payload.action);
  if(action==="publish"||action==="schedule"){

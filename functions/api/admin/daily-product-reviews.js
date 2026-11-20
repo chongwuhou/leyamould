@@ -42,8 +42,8 @@ async function ensureLedger(db){
 async function requireDb(c){
  if(!c.env.ADMIN_TOKEN)return {error:json({error:"Admin not configured"},503)};
  if(!(await authorizedDailyProductReviewRequest(c.request,c.env)))return {error:json({error:"Unauthorized"},401)};
- if(!c.env.XUYI_DB)return {error:json({error:"Database unavailable"},503)};
- const db=c.env.XUYI_DB;
+ if(!c.env.LEYA_DB)return {error:json({error:"Database unavailable"},503)};
+ const db=c.env.LEYA_DB;
   try{await ensureProductReviews(db);await ensureLedger(db);await ensurePublishScheduler(db);}
   catch{return {error:json({error:"Review ledger migration failed; no publication was attempted"},503)};} return {db};
 }

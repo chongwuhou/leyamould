@@ -22,8 +22,8 @@ async function loadJob(db, id) {
 
 export async function onRequestGet(context) {
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  const db = context.env.XUYI_DB;
-  if (!db) return response({ error: "XUYI_DB binding missing" }, 503);
+  const db = context.env.LEYA_DB;
+  if (!db) return response({ error: "LEYA_DB binding missing" }, 503);
   await ensureTranslationSchema(db);
   const url = new URL(context.request.url);
   const limit = Math.min(300, Math.max(10, Number(url.searchParams.get("limit")) || 100));
@@ -51,8 +51,8 @@ export async function onRequestGet(context) {
 
 export async function onRequestPost(context) {
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  const db = context.env.XUYI_DB;
-  if (!db) return response({ error: "XUYI_DB binding missing" }, 503);
+  const db = context.env.LEYA_DB;
+  if (!db) return response({ error: "LEYA_DB binding missing" }, 503);
   await ensureTranslationSchema(db);
   let payload;
   try { payload = await context.request.json(); }

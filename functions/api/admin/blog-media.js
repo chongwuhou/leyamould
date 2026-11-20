@@ -4,7 +4,7 @@ const reply=(data,status=200)=>Response.json(data,{status,headers:{"cache-contro
 export async function onRequestPost(context){
  if(!context.env.ADMIN_TOKEN)return reply({error:"Admin secret missing"},503);
  if(!(await authorizedBuildRequest(context.request,context.env)))return reply({error:"Unauthorized"},401);
- const bucket=context.env.XUYI_ASSETS;if(!bucket)return reply({error:"XUYI_ASSETS missing"},503);
+ const bucket=context.env.LEYA_ASSETS;if(!bucket)return reply({error:"LEYA_ASSETS missing"},503);
  const length=Number(context.request.headers.get("content-length")||0);
  if(length>7*1024*1024)return reply({error:"Image too large"},413);
  let form;try{form=await context.request.formData()}catch{return reply({error:"Invalid upload"},400)}

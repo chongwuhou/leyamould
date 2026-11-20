@@ -61,11 +61,11 @@ export async function onRequestGet(context){
  // runtime renderer remains available only as an explicit, reviewed switch.
  const runtimeMode=String(context.env.XUYI_BLOG_RUNTIME_MODE||"static").trim().toLowerCase();
  if(runtimeMode!=="dynamic")return context.next();
- if(!context.env.XUYI_DB)return context.next();
+ if(!context.env.LEYA_DB)return context.next();
  const pathname=new URL(context.request.url).pathname;
  const tail=pathname.replace(/^\/blog\/?/,"").replace(/\/$/,"");
  if(tail&&(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(tail)))return context.next();
- const db=context.env.XUYI_DB;
+ const db=context.env.LEYA_DB;
  try{
   await ensureBlogSchema(db);
   if(tail){

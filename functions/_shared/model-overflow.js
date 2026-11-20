@@ -18,9 +18,9 @@ export async function serveModelOverflow(context){
   if(!key)return context.next();
   const staticResponse=await context.next();
   if(staticResponse.status!==404)return staticResponse;
-  if(!context.env.XUYI_MODEL_PAGES)return staticResponse;
+  if(!context.env.LEYA_MODEL_PAGES)return staticResponse;
   let object;
-  try{object=await context.env.XUYI_MODEL_PAGES.get(key)}
+  try{object=await context.env.LEYA_MODEL_PAGES.get(key)}
   catch{return reply({error:"Overflow store unavailable"},503)}
   if(!object)return staticResponse;
   let bundle;
@@ -40,9 +40,9 @@ export async function serveModelOverflow(context){
   return new Response(method==="HEAD"?null:document,{status:200,headers});
 }
 export async function overflowHealth(env){
-  if(!env.XUYI_MODEL_PAGES)return {ready:false,binding:false,error:"XUYI_MODEL_PAGES binding missing"};
+  if(!env.LEYA_MODEL_PAGES)return {ready:false,binding:false,error:"LEYA_MODEL_PAGES binding missing"};
   let raw;
-  try{raw=await env.XUYI_MODEL_PAGES.get("__system/manifest.json")}
+  try{raw=await env.LEYA_MODEL_PAGES.get("__system/manifest.json")}
   catch{return {ready:false,binding:true,error:"R2 manifest unavailable"}}
   if(!raw)return {ready:false,binding:true,manifest:false,error:"R2 overflow manifest missing"};
   try{

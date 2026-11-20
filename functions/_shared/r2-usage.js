@@ -1,4 +1,4 @@
-// Protected XUYI R2 image usage checks. Fail closed when checks are unavailable.
+// Protected LEYA R2 image usage checks. Fail closed when checks are unavailable.
 export const KINDS={
   product:{prefix:"site-media/product/",editable:true},
   page:{prefix:"site-media/page/",editable:true},
@@ -30,8 +30,8 @@ export async function readUsageIndex(env,url){
   return data;
 }
 export async function findMediaUsage(env,path,index){
-  if(!env.XUYI_DB)throw Error("D1 usage verification unavailable");
-  const state=await env.XUYI_DB.prepare("SELECT value FROM site_state WHERE key=?")
+  if(!env.LEYA_DB)throw Error("D1 usage verification unavailable");
+  const state=await env.LEYA_DB.prepare("SELECT value FROM site_state WHERE key=?")
     .bind("publish_revision").first();
   if(!state||!Number.isFinite(Number(state.value))||
      Number(state.value)<Number(index.publishRevision))
@@ -40,7 +40,7 @@ export async function findMediaUsage(env,path,index){
   const locations=new Set(index.references[path]||[]);
   for(const [description,sql] of SQL){
     try{
-      const rows=(await env.XUYI_DB.prepare(sql).bind(path).all()).results||[];
+      const rows=(await env.LEYA_DB.prepare(sql).bind(path).all()).results||[];
       for(const row of rows)locations.add(description+": "+String(row.ref||"unknown"));
     }catch(error){
       // CMS tables may not exist before the first record is created.

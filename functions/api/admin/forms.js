@@ -6,16 +6,16 @@ function response(data, status = 200) {
 }
 
 async function guard(context) {
-  if (!context.env.XUYI_DB) return response({ error: "XUYI_DB binding missing" }, 503);
+  if (!context.env.LEYA_DB) return response({ error: "LEYA_DB binding missing" }, 503);
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  await ensureFormSchema(context.env.XUYI_DB);
+  await ensureFormSchema(context.env.LEYA_DB);
   return null;
 }
 
 export async function onRequestGet(context) {
   const denied = await guard(context);
   if (denied) return denied;
-  const db = context.env.XUYI_DB;
+  const db = context.env.LEYA_DB;
   const url = new URL(context.request.url);
   const id = clean(url.searchParams.get("id"), 100);
   if (id) {
@@ -60,13 +60,13 @@ export async function onRequestPost(context) {
   if (payload.action === "set_status") {
     const status = clean(payload.status, 20);
     if (!["new", "read", "replied", "spam"].includes(status)) return response({ error: "Invalid status" }, 400);
-    const result = await context.env.XUYI_DB.prepare(
+    const result = await context.env.LEYA_DB.prepare(
       "UPDATE form_submissions SET status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?"
     ).bind(status, id).run();
     return response({ saved: true, status, changes: result.meta?.changes || 0 });
   }
   if (payload.action === "retry_notification") {
-    const db = context.env.XUYI_DB;
+    const db = context.env.LEYA_DB;
     const row = await db.prepare("SELECT * FROM form_submissions WHERE id=?").bind(id).first();
     if (!row) return response({ error: "Inquiry not found" }, 404);
     if (row.status === "spam") return response({ error: "Spam enquiries cannot trigger notifications" }, 400);
@@ -103,6 +103,6 @@ export async function onRequestDelete(context) {
   if (denied) return denied;
   const id = clean(new URL(context.request.url).searchParams.get("id"), 100);
   if (!id) return response({ error: "Submission id is required" }, 400);
-  const result = await context.env.XUYI_DB.prepare("DELETE FROM form_submissions WHERE id=?").bind(id).run();
+  const result = await context.env.LEYA_DB.prepare("DELETE FROM form_submissions WHERE id=?").bind(id).run();
   return response({ deleted: true, changes: result.meta?.changes || 0 });
 }

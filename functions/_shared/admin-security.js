@@ -152,7 +152,7 @@ async function verifySignedSession(token, env) {
   if (claims.k === "recovery") {
     secret = adminToken + "|recovery";
   } else if (claims.k === "password") {
-    const security = await loadAdminSecurityConfig(env.XUYI_DB);
+    const security = await loadAdminSecurityConfig(env.LEYA_DB);
     if (!security.password?.hash) return false;
     secret = adminToken + "|" + security.password.hash;
   } else return false;

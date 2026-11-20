@@ -29,15 +29,15 @@ async function nextRevision(db) {
 export async function onRequestGet(context) {
   if (!clean(context.env.ADMIN_TOKEN)) return response({ error: "ADMIN_TOKEN is not configured" }, 503);
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  const db = context.env.XUYI_DB;
-  if (!db) return response({ error: "XUYI_DB binding missing" }, 503);
+  const db = context.env.LEYA_DB;
+  if (!db) return response({ error: "LEYA_DB binding missing" }, 503);
   const stored = await loadBrandConfigFromD1(db);
-  if (!stored) return response({ source:"xuyi-default",updatedAt:"",config:{
-    identity:{legalName:"XUYI Bottles",displayName:"XUYI Bottles",textName:"XUYI",upperName:"XUYI",filterBrandName:"XUYI Bottles",acronym:"XY"},
-    contact:{email:"Janey@leyamould.com",phoneDisplay:"+86 153 9589 7937",phoneE164:"+8615395897937",whatsappUrl:"https://wa.me/8615395897937",address:"Taizhou, China"},
-    logos:{header:{src:"/favicon.svg",alt:"XUYI Bottles"},footer:{src:"/favicon.svg",alt:"XUYI Bottles"}},
-    social:{},footer:{about:"Plastic drinkware and custom bottle sourcing.",contactHeading:"Contact XUYI",copyright:"XUYI Bottles"},
-    seo:{home:{en:{title:"Custom Plastic Water Bottles | XUYI Bottles",description:"Wholesale custom plastic water bottles and private-label drinkware."}}}
+  if (!stored) return response({ source:"leya-default",updatedAt:"",config:{
+    identity:{legalName:"LEYA MOULD Co.,Ltd",displayName:"LEYA MOULD",textName:"LEYA MOULD",upperName:"LEYA MOULD",filterBrandName:"LEYA MOULD",acronym:"LM"},
+    contact:{email:"amyhu@leyamould.com",phoneDisplay:"+86 136 0672 7715",phoneE164:"+8613606727715",whatsappUrl:"https://wa.me/8613606727715",address:"4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China"},
+    logos:{header:{src:"/favicon.svg",alt:"LEYA MOULD"},footer:{src:"/favicon.svg",alt:"LEYA MOULD"}},
+    social:{},footer:{about:"Plastic moulds and tooling solutions for bottle, cap, preform and custom packaging projects.",contactHeading:"Contact LEYA MOULD",copyright:"LEYA MOULD"},
+    seo:{home:{en:{title:"Plastic Mould Manufacturer in China | LEYA MOULD",description:"Plastic injection moulds and tooling solutions for bottle, cap, preform and custom packaging projects."}}}
   }});
   return response(brandPublicPayload(stored.config, stored.updatedAt));
 }
@@ -45,8 +45,8 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   if (!clean(context.env.ADMIN_TOKEN)) return response({ error: "ADMIN_TOKEN is not configured" }, 503);
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  const db = context.env.XUYI_DB;
-  if (!db) return response({ error: "XUYI_DB binding missing" }, 503);
+  const db = context.env.LEYA_DB;
+  if (!db) return response({ error: "LEYA_DB binding missing" }, 503);
   await ensureState(db);
   let payload;
   try { payload = await context.request.json(); }

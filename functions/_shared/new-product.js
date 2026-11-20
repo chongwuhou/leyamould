@@ -49,7 +49,7 @@ export function normalizeNewProduct(model,content,status="draft",options={}){
    throw Error("Factory catalog products require source page and PDF SHA-256");
   if(data.image){
    const match=/^\/media\/([a-z]+)\/([a-zA-Z0-9._-]{3,140}\.(?:webp|jpg|png))$/.exec(data.image);
-   if(!match||!imageKey(match[1],match[2]))throw Error("Choose an image from the XUYI R2 media library");
+   if(!match||!imageKey(match[1],match[2]))throw Error("Choose an image from the LEYA R2 media library");
   }
   if(status==="published"){
    if(/pending/i.test(data.imageReviewStatus))throw Error("Review the replacement product image before publishing");

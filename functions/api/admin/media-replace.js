@@ -10,7 +10,7 @@ const response=(obj,status=200)=>Response.json(obj,{status,headers:{"cache-contr
 async function guard(c){
  if(!c.env.ADMIN_TOKEN)return response({error:"Admin unavailable"},503);
  if(!(await authorizeAdminRequest(c.request,c.env)))return response({error:"Unauthorized"},401);
- if(!c.env.XUYI_ASSETS)return response({error:"XUYI_ASSETS missing"},503);
+ if(!c.env.LEYA_ASSETS)return response({error:"LEYA_ASSETS missing"},503);
  return null;
 }
 const reference=c=>{
@@ -68,10 +68,10 @@ export async function onRequestGet(c){
  const denied=await guard(c);if(denied)return denied;
  const x=reference(c);if(!x)return response({error:"Unsupported R2 image path"},400);
  try{
-  const current=await c.env.XUYI_ASSETS.head(x.key);
+  const current=await c.env.LEYA_ASSETS.head(x.key);
   if(!current)return response({error:"R2 image not found"},404);
   return response({path:x.path,etag:current.etag,size:current.size,
-    versions:await listHistory(c.env.XUYI_ASSETS,x)});
+    versions:await listHistory(c.env.LEYA_ASSETS,x)});
  }catch(error){return response({error:"Cannot read version history: "+String(error.message||error)},503)}
 }
 export async function onRequestPut(c){
@@ -89,7 +89,7 @@ export async function onRequestPut(c){
  try{dimensions=imageDimensions(file.buffer,file.type)}
  catch{return response({error:"Cannot determine new image dimensions"},400)}
  try{
-  const bucket=c.env.XUYI_ASSETS;
+  const bucket=c.env.LEYA_ASSETS;
   const original=await stored(bucket,x);
   if(!original)return response({error:"Original R2 image no longer exists"},404);
   try{await checkEtag(original,String(form.get("etag")||""))}
@@ -120,7 +120,7 @@ export async function onRequestPost(c){
  if(data?.action!=="restore"||!validVersion(data?.version)||data.confirm!=="restore")
   return response({error:"Invalid restore confirmation/version"},400);
  try{
-  const bucket=c.env.XUYI_ASSETS;
+  const bucket=c.env.LEYA_ASSETS;
   const current=await stored(bucket,x);
   if(!current)return response({error:"Image not found"},404);
   try{await checkEtag(current,String(data.etag||""))}

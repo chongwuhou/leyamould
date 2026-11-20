@@ -2,20 +2,20 @@
   "schemaVersion": 1,
   "localizationFrameworkVersion": 2,
   "site": {
-    "brand": "XUYI Bottles",
+    "brand": "LEYA MOULD",
     "origin": "https://leyamould.com",
     "defaultLocale": "en",
-    "indexingApproved": true
+    "indexingApproved": false
   },
   "cloudflare": {
     "pagesProjectName": "leyamould",
     "productionBranch": "main",
     "d1Database": "leyamould-d1",
-    "d1Binding": "XUYI_DB",
+    "d1Binding": "LEYA_DB",
     "r2Bucket": "leyamould-r2",
-    "r2Binding": "XUYI_ASSETS",
+    "r2Binding": "LEYA_ASSETS",
     "r2OverflowBucket": "leyamould-model-pages",
-    "r2OverflowBinding": "XUYI_MODEL_PAGES"
+    "r2OverflowBinding": "LEYA_MODEL_PAGES"
   },
   "build": {
     "source": "source-controlled templates/site plus product/blog datasets",

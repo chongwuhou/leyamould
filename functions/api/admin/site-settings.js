@@ -51,8 +51,8 @@ async function currentSettings(db, env) {
 export async function onRequestGet(context) {
   if (!clean(context.env.ADMIN_TOKEN)) return response({ error: "ADMIN_TOKEN is not configured" }, 503);
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  const db = context.env.XUYI_DB;
-  if (!db) return response({ error: "XUYI_DB binding missing" }, 503);
+  const db = context.env.LEYA_DB;
+  if (!db) return response({ error: "LEYA_DB binding missing" }, 503);
   try {
     return response(await currentSettings(db, context.env));
   } catch (error) {
@@ -63,8 +63,8 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   if (!clean(context.env.ADMIN_TOKEN)) return response({ error: "ADMIN_TOKEN is not configured" }, 503);
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  const db = context.env.XUYI_DB;
-  if (!db) return response({ error: "XUYI_DB binding missing" }, 503);
+  const db = context.env.LEYA_DB;
+  if (!db) return response({ error: "LEYA_DB binding missing" }, 503);
   let payload;
   try { payload = await context.request.json(); }
   catch { return response({ error: "Invalid JSON" }, 400); }
@@ -77,7 +77,7 @@ export async function onRequestPost(context) {
       // The current root URL and CMS source are English. Changing them needs
       // a separate canonical/redirect migration, not a language checkbox.
       if(languages.defaultLocale!=="en"||languages.sourceLocale!=="en")
-        throw new Error("XUYI default/source language is English. Changing it requires a separate SEO URL migration.");
+        throw new Error("LEYA default/source language is English. Changing it requires a separate SEO URL migration.");
       const enabled = languages.languages.filter((item) => item.enabled && item.publishReady);
       if (!enabled.length) throw new Error("At least one enabled publish-ready language is required");
       await saveSiteSetting(db, "language_config", languages);

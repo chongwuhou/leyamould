@@ -17,8 +17,8 @@ function parseJson(value,fallback){
 }
 export async function onRequestGet(context){
   if(!(await authorizedBuildRequest(context.request,context.env)))return json({error:"Unauthorized"},401);
-  const db=context.env.XUYI_DB;
-  if(!db)return json({error:"XUYI_DB binding missing"},503);
+  const db=context.env.LEYA_DB;
+  if(!db)return json({error:"LEYA_DB binding missing"},503);
   try{
     const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config')"),

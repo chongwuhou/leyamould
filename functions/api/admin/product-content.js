@@ -17,12 +17,12 @@ async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_prod
 async function auth(c){
   if(!c.env.ADMIN_TOKEN)return respond({error:"Admin not configured"},503);
   if(!(await authorizedBuildRequest(c.request,c.env)))return respond({error:"Unauthorized"},401);
-  if(!c.env.XUYI_DB)return respond({error:"XUYI_DB unavailable"},503);
+  if(!c.env.LEYA_DB)return respond({error:"LEYA_DB unavailable"},503);
   return null;
 }
 export async function onRequestGet(context){
   const denied=await auth(context);if(denied)return denied;
-  const db=context.env.XUYI_DB;await ensure(db);
+  const db=context.env.LEYA_DB;await ensure(db);
   const rows=(await db.prepare("SELECT model,content_json,publication_status,updated_at FROM xuyi_product_content ORDER BY model LIMIT 1000").all()).results||[];
   // D1 stores content overrides, not the original 93 product records.
   // Expose the allowlisted source models to the authenticated CMS picker,
@@ -41,7 +41,7 @@ export async function onRequestPost(context){
     let content;
     try{content=normalizeNewProduct(model,p.content,status)}
     catch(error){return respond({error:String(error.message||error)},400)}
-    const db=context.env.XUYI_DB;await ensure(db);
+    const db=context.env.LEYA_DB;await ensure(db);
     const prior=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
     if(prior){
       if(p.createOnly===true)return respond({error:"Model already exists; create-only import will not overwrite"},409);
@@ -52,11 +52,11 @@ export async function onRequestPost(context){
     if(status==="published"){
       const match=/^\/media\/([a-z]+)\/([a-zA-Z0-9._-]+)$/.exec(content.image);
       const key=match?imageKey(match[1],match[2]):null;
-      if(!key||!context.env.XUYI_ASSETS)return respond({error:"A verified R2 image is required before publication"},409);
+      if(!key||!context.env.LEYA_ASSETS)return respond({error:"A verified R2 image is required before publication"},409);
       let object;
-      try{object=await context.env.XUYI_ASSETS.head(key)}
-      catch{return respond({error:"Could not verify product photo in XUYI R2"},503)}
-      if(!object)return respond({error:"Product image not present in XUYI R2"},409);
+      try{object=await context.env.LEYA_ASSETS.head(key)}
+      catch{return respond({error:"Could not verify product photo in LEYA R2"},503)}
+      if(!object)return respond({error:"Product image not present in LEYA R2"},409);
     }
     const saveSql=p.createOnly===true
       ? `INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at)
@@ -86,7 +86,7 @@ export async function onRequestPost(context){
     content[key]=v[key].trim();
   }
   if(status==="published"&&(!content.name||!content.material))return respond({error:"Published product requires name and material"},400);
-  const db=context.env.XUYI_DB;await ensure(db);
+  const db=context.env.LEYA_DB;await ensure(db);
   if(content.seoTitle||content.seoDescription){
     await ensureProductSeo(db);
     const slug=canonicalProductSlug(model);

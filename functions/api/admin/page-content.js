@@ -26,12 +26,12 @@ async function ensure(db){
 async function deny(c){
   if(!c.env.ADMIN_TOKEN)return respond({error:"Admin not configured"},503);
   if(!(await authorizedBuildRequest(c.request,c.env)))return respond({error:"Unauthorized"},401);
-  if(!c.env.XUYI_DB)return respond({error:"XUYI_DB missing"},503);
+  if(!c.env.LEYA_DB)return respond({error:"LEYA_DB missing"},503);
   return null;
 }
 export async function onRequestGet(c){
   const denied=await deny(c);if(denied)return denied;
-  const db=c.env.XUYI_DB;await ensure(db);
+  const db=c.env.LEYA_DB;await ensure(db);
   const rows=(await db.prepare(
     "SELECT route,main_html,publication_status,updated_at FROM xuyi_page_content ORDER BY route LIMIT 200"
   ).all()).results||[];
@@ -46,13 +46,13 @@ export async function onRequestPost(c){
   const route=clean(payload.route,250);
   const mainHtml=clean(payload.mainHtml,180000);
   const status=payload.status==="published"?"published":"draft";
-  const knownRoutes=new Set([...MANAGED_ROUTES,...await configuredRoutes(c.env.XUYI_DB)]);
+  const knownRoutes=new Set([...MANAGED_ROUTES,...await configuredRoutes(c.env.LEYA_DB)]);
   if(!allowedRoute(route,knownRoutes))return respond({error:"Route is not an editable configured page"},400);
   if(mainHtml.length<100||!/<(?:section|article|div|h1)\b/i.test(mainHtml))
     return respond({error:"Complete page-body HTML is required"},400);
   if(/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i.test(mainHtml))
     return respond({error:"Unsafe HTML in edited page body"},400);
-  const db=c.env.XUYI_DB;await ensure(db);
+  const db=c.env.LEYA_DB;await ensure(db);
   await db.prepare(`INSERT INTO xuyi_page_content(route,main_html,publication_status,updated_at)
     VALUES(?,?,?,CURRENT_TIMESTAMP)
     ON CONFLICT(route) DO UPDATE SET

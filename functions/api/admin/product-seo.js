@@ -9,8 +9,8 @@ const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-cont
 async function ready(c){
  if(!c.env.ADMIN_TOKEN)return {error:respond({error:"Admin not configured"},503)};
  if(!(await authorizeAdminRequest(c.request,c.env)))return {error:respond({error:"Unauthorized"},401)};
- if(!c.env.XUYI_DB)return {error:respond({error:"XUYI_DB unavailable"},503)};
- const db=c.env.XUYI_DB;await ensureProductSeo(db);return {db};
+ if(!c.env.LEYA_DB)return {error:respond({error:"LEYA_DB unavailable"},503)};
+ const db=c.env.LEYA_DB;await ensureProductSeo(db);return {db};
 }
 async function hasProduct(db,slug){
  if([...MANAGED_MODELS].some(model=>canonicalProductSlug(model)===slug))return true;

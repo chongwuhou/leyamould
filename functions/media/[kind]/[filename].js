@@ -3,7 +3,7 @@ const CAPABILITY_IMAGES = new Set(["everich-plastic-bottles.webp","everich-engin
 // Read-only XUYI catalog media proxy. Allowlisted paths from XUYI-owned source catalogs.
 // Only XUYI media resources are allowed.
 export async function onRequestGet({ params, env }) {
-  if (!env.XUYI_ASSETS) return new Response("Media unavailable", {status:503});
+  if (!env.LEYA_ASSETS) return new Response("Media unavailable", {status:503});
   const kind = String(params.kind || "");
   const filename = String(params.filename || "");
   let key;
@@ -31,7 +31,7 @@ export async function onRequestGet({ params, env }) {
     return new Response("Not found", {status:404});
   }
   try {
-    const obj = await env.XUYI_ASSETS.get(key);
+    const obj = await env.LEYA_ASSETS.get(key);
     if (!obj) return new Response("Not found", {status:404});
     return new Response(obj.body, {
       headers: {

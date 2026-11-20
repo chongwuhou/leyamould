@@ -133,7 +133,7 @@ export async function decryptSetting(value, env) {
 
 export async function loadSmtpSettings(db, env, includePassword = false) {
   await ensureFormSchema(db);
-  const brandStored = { config: { email: { defaultFromName: "XUYI Bottles" } } };
+  const brandStored = { config: { email: { defaultFromName: "LEYA MOULD" } } };
   const brandDefaultFromName = brandStored?.config?.email?.defaultFromName || "Website";
   const row = await db.prepare("SELECT * FROM form_smtp_settings WHERE id=1").first();
   const settings = {

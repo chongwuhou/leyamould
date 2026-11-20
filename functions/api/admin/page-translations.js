@@ -10,7 +10,7 @@ const clean=(v,n)=>String(v??"").trim().slice(0,n);
 async function requireAdmin(c){
   if(!c.env.ADMIN_TOKEN)return respond({error:"Admin not configured"},503);
   if(!(await authorizedBuildRequest(c.request,c.env)))return respond({error:"Unauthorized"},401);
-  if(!c.env.XUYI_DB)return respond({error:"XUYI_DB missing"},503);
+  if(!c.env.LEYA_DB)return respond({error:"LEYA_DB missing"},503);
   return null;
 }
 async function configuredRoutes(db){
@@ -20,7 +20,7 @@ async function configuredRoutes(db){
 
 async function saveBlogTranslationBatch(c,items){
   if(!Array.isArray(items)||!items.length||items.length>250)return respond({error:"Bulk translation batch must contain 1-250 items"},400);
-  const db=c.env.XUYI_DB;
+  const db=c.env.LEYA_DB;
   const languageRow=await loadSiteSetting(db,"language_config",defaultLanguageConfig());
   const languageConfig=normalizeLanguageConfig(languageRow.value);
   const allowedLocales=new Set(languageConfig.languages.filter(lang=>lang.code!==languageConfig.sourceLocale).map(lang=>lang.code));
@@ -58,7 +58,7 @@ async function saveBlogTranslationBatch(c,items){
 
 export async function onRequestGet(c){
   const denied=await requireAdmin(c);if(denied)return denied;
-  const rows=(await c.env.XUYI_DB.prepare(
+  const rows=(await c.env.LEYA_DB.prepare(
     "SELECT resource_id,locale,translated_json,reviewed_at FROM xuyi_translation_overrides WHERE resource_id LIKE 'page:%' ORDER BY locale,resource_id LIMIT 12000"
   ).all()).results||[];
   return respond({items:rows.map(x=>({route:x.resource_id.slice(5),locale:x.locale,
@@ -72,7 +72,7 @@ export async function onRequestPost(c){
   const title=clean(p.title,180),description=clean(p.description,450),html=clean(p.mainHtml,250000);
   if(!(route==="/"||/^\/(?:[a-z0-9_-]+\/)+$/.test(route)))
     return respond({error:"Invalid XUYI route"},400);
-  const db=c.env.XUYI_DB;
+  const db=c.env.LEYA_DB;
   const languageRow=await loadSiteSetting(db,"language_config",defaultLanguageConfig());
   const languageConfig=normalizeLanguageConfig(languageRow.value);
   // Translation may be prepared while a language remains disabled/draft.

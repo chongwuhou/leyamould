@@ -1,4 +1,4 @@
-// XUYI R2 media manager: safe inventory, live references and fail-closed delete.
+// LEYA R2 media manager: safe inventory, live references and fail-closed delete.
 import {authorizeAdminRequest} from "../../_shared/admin-security.js";
 import {checkedImage} from "../../_shared/media-image.js";
 import {KINDS,readUsageIndex,findMediaUsage,imageKey} from "../../_shared/r2-usage.js";
@@ -10,8 +10,8 @@ const reply=(data,status=200)=>Response.json(data,{status,headers:{"cache-contro
 async function guard(c){
  if(!c.env.ADMIN_TOKEN)return reply({error:"Admin unavailable"},503);
  if(!(await authorizeAdminRequest(c.request,c.env)))return reply({error:"Unauthorized"},401);
- if(!c.env.XUYI_ASSETS)return reply({error:"XUYI_ASSETS missing"},503);
- if(!c.env.XUYI_DB)return reply({error:"XUYI_DB missing; ALT cannot be saved"},503);
+ if(!c.env.LEYA_ASSETS)return reply({error:"LEYA_ASSETS missing"},503);
+ if(!c.env.LEYA_DB)return reply({error:"LEYA_DB missing; ALT cannot be saved"},503);
  return null;
 }
 async function allDescriptions(db,kind){
@@ -47,7 +47,7 @@ export async function onRequestGet(c){
   try{
    const index=await readUsageIndex(c.env,c.request.url);
    const path="/media/"+kind+"/"+selected;
-   const metadata=await allDescriptions(c.env.XUYI_DB,kind);
+   const metadata=await allDescriptions(c.env.LEYA_DB,kind);
    return reply({kind,filename:selected,path,altByLocale:metadata[path]||{},
     canDelete:!!KINDS[kind].editable,
     ...await findMediaUsage(c.env,"/media/"+kind+"/"+selected,index)});
@@ -57,9 +57,9 @@ export async function onRequestGet(c){
  if(cursor&&(cursor.length>1024||!/^[a-zA-Z0-9_=-]+$/.test(cursor)))return reply({error:"Invalid cursor"},400);
  try{
   const [page,stats,metadata]=await Promise.all([
-   c.env.XUYI_ASSETS.list({prefix:KINDS[kind].prefix,limit:80,...(cursor?{cursor}:{})}),
-   usage(c.env.XUYI_ASSETS),
-   allDescriptions(c.env.XUYI_DB,kind)
+   c.env.LEYA_ASSETS.list({prefix:KINDS[kind].prefix,limit:80,...(cursor?{cursor}:{})}),
+   usage(c.env.LEYA_ASSETS),
+   allDescriptions(c.env.LEYA_DB,kind)
   ]);
   let index=null;try{index=await readUsageIndex(c.env,c.request.url)}catch{}
   const items=(page.objects||[]).map(o=>{
@@ -71,7 +71,7 @@ export async function onRequestGet(c){
      etag:o.etag||"",usageStatus:refs.length?"used":index?"needs-check":"unknown",
      referenceCount:refs.length,references:refs.slice(0,4),canDelete:!!KINDS[kind].editable};
   });
-   const languageConfig=await loadLanguageConfig(c.env.XUYI_DB);
+   const languageConfig=await loadLanguageConfig(c.env.LEYA_DB);
    return reply({kind,sourceLocale:languageConfig.sourceLocale,readOnly:!KINDS[kind].editable,referenceIndexReady:!!index,
     ...stats,items,cursor:page.truncated?page.cursor||"":"",
      altLocales:publicLanguages(languageConfig).map(x=>({code:x.code,name:x.nativeName||x.displayName||x.code}))});
@@ -84,16 +84,16 @@ export async function onRequestPost(c){
   if(body?.action!=="save_alt")return reply({error:"Unknown media action"},400);
   const url=String(body.path||"");
   const match=/^\/media\/([a-z]+)\/([^/?#]+)$/.exec(url);
-  if(!match||!imageKey(match[1],match[2]))return reply({error:"Only XUYI R2 media ALT may be edited"},400);
+  if(!match||!imageKey(match[1],match[2]))return reply({error:"Only LEYA R2 media ALT may be edited"},400);
   let alt;try{alt=normalizeAltMap(body.altByLocale)}
   catch(error){return reply({error:String(error.message||error)},400)}
-  const original=await c.env.XUYI_ASSETS.head(imageKey(match[1],match[2]));
+  const original=await c.env.LEYA_ASSETS.head(imageKey(match[1],match[2]));
   if(!original)return reply({error:"R2 image does not exist"},404);
   try{
-   await upsertMediaAlt(c.env.XUYI_DB,url,alt);
-   const revision=await bumpPublishRevision(c.env.XUYI_DB);
+   await upsertMediaAlt(c.env.LEYA_DB,url,alt);
+   const revision=await bumpPublishRevision(c.env.LEYA_DB);
    return reply({saved:true,path:url,altByLocale:alt,...revision});
-  }catch{return reply({error:"Could not save image ALT to XUYI D1"},503)}
+  }catch{return reply({error:"Could not save image ALT to LEYA D1"},503)}
  }
  if(Number(c.request.headers.get("content-length")||0)>7*1024*1024)return reply({error:"Image too large"},413);
  let form;try{form=await c.request.formData()}catch{return reply({error:"Invalid form-data"},400)}
@@ -104,21 +104,21 @@ export async function onRequestPost(c){
  catch(error){return reply({error:String(error.message||error)},400)}
  let media;try{media=await checkedImage(form.get("image"))}
  catch(err){return reply({error:String(err?.message||err)},400)}
- let stats;try{stats=await usage(c.env.XUYI_ASSETS)}
+ let stats;try{stats=await usage(c.env.LEYA_ASSETS)}
  catch{return reply({error:"Cannot verify R2 storage quota"},503)}
  if(stats.usageBytes+media.buffer.byteLength>MAX_BYTES)return reply({error:"R2 media quota reached",...stats},413);
  const name=crypto.randomUUID().replaceAll("-","")+"."+media.extension;
  const key=PREFIX+kind+"/"+name;
- await c.env.XUYI_ASSETS.put(key,media.buffer,{
+ await c.env.LEYA_ASSETS.put(key,media.buffer,{
   httpMetadata:{contentType:media.type},
   customMetadata:{source:"xuyi-admin-media",originalName:String(form.get("image")?.name||"").slice(0,180)}
  });
  const path="/media/"+kind+"/"+name;
  try{
-  await upsertMediaAlt(c.env.XUYI_DB,path,alt);
-  await bumpPublishRevision(c.env.XUYI_DB);
+  await upsertMediaAlt(c.env.LEYA_DB,path,alt);
+  await bumpPublishRevision(c.env.LEYA_DB);
  }catch{
-  await c.env.XUYI_ASSETS.delete(key);
+  await c.env.LEYA_ASSETS.delete(key);
   return reply({error:"Image ALT could not be saved; upload rolled back"},503);
  }
  return reply({saved:true,kind,path:"/media/"+kind+"/"+name,
@@ -139,11 +139,11 @@ export async function onRequestDelete(c){
   usage=await findMediaUsage(c.env,path,index);
  }catch{return reply({error:"Cannot verify deployed-page and D1 usages; deletion blocked"},503)}
  if(usage.used)return reply({error:"Image is in use; remove all references before deletion",...usage},409);
- const stored=await c.env.XUYI_ASSETS.head(key);
+ const stored=await c.env.LEYA_ASSETS.head(key);
  if(!stored)return reply({error:"Image not found"},404);
- await c.env.XUYI_ASSETS.delete(key);
- try{await ensureMediaAlt(c.env.XUYI_DB);
-   await c.env.XUYI_DB.prepare("DELETE FROM xuyi_media_alt WHERE path=?").bind(path).run()}
+ await c.env.LEYA_ASSETS.delete(key);
+ try{await ensureMediaAlt(c.env.LEYA_DB);
+   await c.env.LEYA_DB.prepare("DELETE FROM xuyi_media_alt WHERE path=?").bind(path).run()}
  catch{return reply({deleted:true,path,warning:"ALT cleanup pending"})}
  return reply({deleted:true,path,usageStatus:"unused"});
 }

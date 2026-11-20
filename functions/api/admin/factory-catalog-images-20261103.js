@@ -12,7 +12,7 @@ export async function onRequestGet(){return json({error:"Unauthorized"},401);}
 export async function onRequestPost(context){
   if(!(await authorizedReviewedFactoryCatalogImageUploadRequest(context.request,context.env)))return json({error:"Unauthorized"},401);
   const env=context.env;
-  if(!env.XUYI_ASSETS)return json({error:"XUYI R2 binding unavailable"},503);
+  if(!env.LEYA_ASSETS)return json({error:"LEYA R2 binding unavailable"},503);
   let form;
   try{form=await context.request.formData()}catch{return json({error:"Malformed multipart form"},400);}
   const model=String(form.get("model")||"");
@@ -36,7 +36,7 @@ export async function onRequestPost(context){
   const key=imageKey("product",filename);
   if(!key)return json({error:"Invalid deterministic product image key"},400);
   let prior;
-  try{prior=await env.XUYI_ASSETS.head(key)}catch{return json({error:"Could not inspect XUYI R2 object"},503);}
+  try{prior=await env.LEYA_ASSETS.head(key)}catch{return json({error:"Could not inspect LEYA R2 object"},503);}
   if(prior&&(prior.customMetadata?.sha256!==actual||
       prior.customMetadata?.model!==model||
       prior.customMetadata?.sourceSha256!==manifest.sourceSha256)){
@@ -44,7 +44,7 @@ export async function onRequestPost(context){
   }
   if(!prior){
     try{
-      await env.XUYI_ASSETS.put(key,media.buffer,{
+      await env.LEYA_ASSETS.put(key,media.buffer,{
         httpMetadata:{contentType:"image/webp",cacheControl:"public, max-age=31536000, immutable"},
         customMetadata:{
           sha256:actual,model,sourceDocument:manifest.sourceDocument,
@@ -55,7 +55,7 @@ export async function onRequestPost(context){
     }catch{return json({error:"R2 upload failed"},503);}
   }
   let stored;
-  try{stored=await env.XUYI_ASSETS.head(key)}catch{return json({error:"Could not verify uploaded R2 object"},503);}
+  try{stored=await env.LEYA_ASSETS.head(key)}catch{return json({error:"Could not verify uploaded R2 object"},503);}
   if(!stored||stored.customMetadata?.sha256!==actual||stored.customMetadata?.model!==model||
      Number(stored.size)!==media.buffer.byteLength){
     return json({error:"R2 read-back verification failed"},503);

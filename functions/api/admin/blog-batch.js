@@ -104,8 +104,8 @@ function contentForTranslation(item) {
 
 export async function onRequestPost(context) {
   if (!(await authorizedReviewedBlogBatchRequest(context.request, context.env))) return reply({ error: "Unauthorized reviewed batch request" }, 401);
-  const db = context.env.XUYI_DB;
-  if (!db) return reply({ error: "XUYI_DB binding missing" }, 503);
+  const db = context.env.LEYA_DB;
+  if (!db) return reply({ error: "LEYA_DB binding missing" }, 503);
   let payload;
   try { payload = await context.request.json(); } catch { return reply({ error: "Invalid JSON" }, 400); }
 

@@ -242,7 +242,7 @@ export function blogHtml(post){
  const person=vettedBlogPerson(post);
  const byline='<p class="blog-author-byline"><a rel="author" href="'+esc(person?.url||'/about/')+'">'+
    (person?'By '+esc(person.name)+' · '+esc(person.jobTitle):
-     'By XUYI Bottles · Product Sourcing Editorial Team')+'</a></p>';
+     'By LEYA MOULD · Product Sourcing Editorial Team')+'</a></p>';
  body+='</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>BUYER RESOURCES</span><span>'+timeline+'</span></div>'+byline+'<p class="blog-lede">'+esc(post.intro)+'</p>';
  if(post.checklist?.length){body+='<div class="blog-takeaway"><strong>Before requesting a quote</strong><ul>';for(const tip of post.checklist.slice(0,3))body+='<li>'+esc(tip)+'</li>';body+='</ul></div>'}
  post.sections.forEach((section,i)=>{body+='<section class="blog-section" id="article-section-'+i+'"><h2>'+esc(section.heading)+'</h2><p>'+renderEditableParagraph(section.paragraph)+reviewedBlogParagraphNote(post,section,i)+reviewedProductNotes(post,i)+'</p></section>'});
@@ -396,7 +396,7 @@ export function composePage(template,body,post,route){
    html=html.replace(/<meta property="og:image:(?:width|height)" content="\d+">/g,'');
   html=html.replace(/<meta property="og:image" content="[^"]*">/,'');
   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g,'');
-  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'XUYI Bottles',url:SITE_ORIGIN+'/about/'},publisher:{'@type':'Organization',name:'XUYI Bottles'},image:[SITE_ORIGIN+post.cover]};
+  const graph={'@context':'https://schema.org','@type':'BlogPosting',headline:post.title,description:post.description,inLanguage:'en',dateModified:contentModifiedDate(post),mainEntityOfPage:url,author:vettedBlogPerson(post)||{'@type':'Organization',name:'LEYA MOULD',url:SITE_ORIGIN+'/about/'},publisher:{'@type':'Organization',name:'LEYA MOULD'},image:[SITE_ORIGIN+post.cover]};
   if(actualPublishedDate(post))graph.datePublished=actualPublishedDate(post);
   if(EDITORIAL_EVIDENCE[post.slug])graph.citation=EDITORIAL_EVIDENCE[post.slug].sources
     .filter(s=>/^https:\/\/(?:www\.fda\.gov|support\.gs1\.org|food\.ec\.europa\.eu|eur-lex\.europa\.eu|www\.iso\.org|www\.eastman\.com|www\.uspto\.gov|www\.pantone\.com|health\.clevelandclinic\.org)\//.test(s.url))

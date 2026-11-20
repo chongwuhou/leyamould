@@ -28,8 +28,8 @@ export async function onRequestGet(){return json({error:"Unauthorized"},401);}
 
 export async function onRequestPost(context){
   if(!(await authorizedReviewedFactoryCatalogCommitRequest(context.request,context.env)))return json({error:"Unauthorized"},401);
-  const env=context.env,db=env.XUYI_DB;
-  if(!db||!env.XUYI_ASSETS)return json({error:"XUYI D1 or R2 binding unavailable"},503);
+  const env=context.env,db=env.LEYA_DB;
+  if(!db||!env.LEYA_ASSETS)return json({error:"LEYA D1 or R2 binding unavailable"},503);
   const languages=publicLanguages(await loadLanguageConfig(db)).map(item=>item.code);
   let payload;
   try{payload=await context.request.json()}catch{return json({error:"Invalid JSON"},400);}
@@ -90,7 +90,7 @@ export async function onRequestPost(context){
       selectIn(db,"xuyi_product_content","model",models,"model,content_json,publication_status"),
       selectIn(db,"xuyi_media_alt","path",paths,"path,alt_json")
     ]);
-  }catch{return json({error:"Could not preflight the existing XUYI D1 catalog"},503);}
+  }catch{return json({error:"Could not preflight the existing LEYA D1 catalog"},503);}
   const productMap=new Map(existingProducts.map(row=>[row.model,row]));
   const altMap=new Map(existingAlts.map(row=>[row.path,row]));
   for(const item of items){
@@ -112,7 +112,7 @@ export async function onRequestPost(context){
 
   try{
     const imageChecks=await Promise.all(items.map(async item=>{
-      const object=await env.XUYI_ASSETS.head(item.key);
+      const object=await env.LEYA_ASSETS.head(item.key);
       if(!object||object.customMetadata?.sha256!==item.sha256||
          object.customMetadata?.model!==item.model||
          object.customMetadata?.sourceSha256!==manifest.sourceSha256){

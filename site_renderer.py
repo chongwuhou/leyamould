@@ -364,13 +364,13 @@ def build_url(path,title,content):
   page_desc=re.search(r'<meta name="description" content="([^"]*)"',content)
   graph={"@context":"https://schema.org","@graph":[
    {"@type":"Organization","@id":SITE_ORIGIN+"/#organization",
-    "name":"XUYI Bottles","legalName":"台州市旭一家居用品有限公司",
+    "name":"LEYA MOULD","legalName":"台州市旭一家居用品有限公司",
     "url":SITE_ORIGIN+"/","address":{"@type":"PostalAddress","addressLocality":"Taizhou","addressRegion":"Zhejiang","addressCountry":"CN"}},
    {"@type":"WebSite","@id":SITE_ORIGIN+"/#website","url":SITE_ORIGIN+"/",
-    "name":"XUYI Bottles","publisher":{"@id":SITE_ORIGIN+"/#organization"},
+    "name":"LEYA MOULD","publisher":{"@id":SITE_ORIGIN+"/#organization"},
     "inLanguage":[lang["code"] for lang in approved_locales(BUILD_STATE)]},
    {"@type":"WebPage","@id":SITE_ORIGIN+"/#webpage","url":SITE_ORIGIN+"/",
-    "name":html.unescape(page_title.group(1)) if page_title else "XUYI Bottles",
+    "name":html.unescape(page_title.group(1)) if page_title else "LEYA MOULD",
     "description":html.unescape(page_desc.group(1)) if page_desc else "",
     "inLanguage":"en","isPartOf":{"@id":SITE_ORIGIN+"/#website"}}]}
   from organization_source_schema import enrich_organization
@@ -479,7 +479,7 @@ PRODUCT_COLUMNS=[(group["heading"],group["image"],
                 for group in MENU_DEFAULTS["productColumns"]]
 MINI_MENUS={name:[(link["label"],link["url"]) for link in links]
             for name,links in MENU_DEFAULTS["miniMenus"].items()}
-if len(PRODUCT_COLUMNS)!=4:raise ValueError("Expected four XUYI mega-menu categories")
+if len(PRODUCT_COLUMNS)!=4:raise ValueError("Expected four LEYA MOULD mega-menu categories")
 def header():
  navitems=[]
  defaults=["Home","Products","Capabilities","About","Why Us","Blog","FAQ","Contact Us"]
@@ -592,13 +592,13 @@ def header():
  navitems=[a[2] for a in combined]
  mobile="".join(a[3] for a in combined)
  mobile+='<a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Instant Quote →</a>'
- top='<div class="topbar"><div class="shell topbar__inner"><a href="/about/" aria-label="XUYI company">XUYI · Taizhou, China</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Contact</a></div></div>'
- logo='<a href="/" class="logo" aria-label="XUYI Bottles home">XUYI<small>BOTTLES</small></a>'
+ top='<div class="topbar"><div class="shell topbar__inner"><a href="/about/" aria-label="LEYA MOULD company">LEYA MOULD · Huangyan, Taizhou, Zhejiang, China</a><a href="/request-sample/">Request Sample</a><a href="/contact/#inquiry">Contact</a></div></div>'
+ logo='<a href="/" class="logo" aria-label="LEYA MOULD home">LEYA<small>MOULD</small></a>'
  identity=BRAND_CONFIG.get("identity") or {}
- if isinstance(identity.get("displayName"),str) and identity["displayName"].strip() and identity["displayName"].strip()!="XUYI Bottles":
+ if isinstance(identity.get("displayName"),str) and identity["displayName"].strip() and identity["displayName"].strip()!="LEYA MOULD":
   brand=e(identity["displayName"].strip()[:120])
   logo='<a href="/" class="logo" aria-label="'+brand+' home">'+brand+'</a>'
-  top=top.replace("XUYI · Taizhou, China",brand+" · Taizhou, China",1)
+  top=top.replace("LEYA MOULD · Huangyan, Taizhou, Zhejiang, China",brand+" · Taizhou, China",1)
  locale_options="".join('<option value="'+e(lang["code"])+'">'+e(lang["nativeName"])+'</option>'
                         for lang in approved_locales(BUILD_STATE))
  actions='<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language">'+locale_options+'</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button">'+ICONS['search']+'</button><a class="button header__quote" href="/contact/#inquiry">Instant Quote</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation" type="button">'+ICONS['menu']+'<span class="menu-label">Menu</span></button></div>'
@@ -608,7 +608,7 @@ def header():
 def whatsapp_display_number():
  contact=BRAND_CONFIG.get("contact") or {}
  digits=re.search(r"^https://wa\.me/([1-9][0-9]{7,14})$",str(contact.get("whatsappUrl") or ""))
- value=digits.group(1) if digits else "8615395897937"
+ value=digits.group(1) if digits else "8613606727715"
  display=str(contact.get("phoneDisplay") or "").strip()
  if display and re.sub(r"\D","",display)==value and display.startswith("+"):
   return display
@@ -622,9 +622,9 @@ def footer():
  footer_config=BRAND_CONFIG.get("footer") or {}
  identity=BRAND_CONFIG.get("identity") or {}
  brand_name=str(identity.get("displayName","")).strip()
- if brand_name and brand_name!="XUYI Bottles":
-  result=result.replace("XUYI<small>BOTTLES</small>",e(brand_name),1)
-  result=result.replace("© 2026 XUYI Bottles", "© 2026 "+e(brand_name),1)
+ if brand_name and brand_name!="LEYA MOULD":
+  result=result.replace("LEYA<small>MOULD</small>",e(brand_name),1)
+  result=result.replace("© 2026 LEYA MOULD", "© 2026 "+e(brand_name),1)
  if footer_config.get("about"):
   result=result.replace("Factory-backed plastic water bottles for wholesale, branding and OEM/ODM projects.",
                         e(str(footer_config["about"])[:1000]),1)
@@ -632,9 +632,9 @@ def footer():
  if contact.get("email"):
   email=str(contact["email"]).strip()
   if re.fullmatch(r"[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+",email):
-   result=result.replace("Janey@xuyibottles.com",e(email))
+   result=result.replace("amyhu@leyamould.com",e(email))
  if contact.get("whatsappUrl") and str(contact["whatsappUrl"]).startswith("https://wa.me/"):
-  result=result.replace("https://wa.me/8615395897937",e(str(contact["whatsappUrl"])))
+  result=result.replace("https://wa.me/8613606727715",e(str(contact["whatsappUrl"])))
  return result
 def page(title,description,body,canonical=None,blog_pager=False):
  # The release gate defaults to noindex until business approval. Once explicitly

@@ -7,7 +7,7 @@ const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control
 async function authorized(c){
  if(!c.env.ADMIN_TOKEN)return json({error:"Admin not configured"},503);
  if(!(await authorizeAdminRequest(c.request,c.env)))return json({error:"Unauthorized"},401);
- if(!c.env.XUYI_DB)return json({error:"XUYI_DB unavailable"},503);
+ if(!c.env.LEYA_DB)return json({error:"LEYA_DB unavailable"},503);
  return null;
 }
 async function knownModel(db,model){
@@ -19,7 +19,7 @@ async function knownModel(db,model){
 }
 export async function onRequestGet(c){
  const denied=await authorized(c);if(denied)return denied;
- const db=c.env.XUYI_DB;await ensureProductReviews(db);
+ const db=c.env.LEYA_DB;await ensureProductReviews(db);
  const [rows,products]=await Promise.all([
   db.prepare("SELECT id,model,rating,author,review_date,content,status,updated_at FROM xuyi_product_reviews ORDER BY updated_at DESC,id LIMIT 2000").all(),
   db.prepare("SELECT model,content_json,publication_status FROM xuyi_product_content WHERE publication_status='published' ORDER BY model").all()
@@ -31,7 +31,7 @@ export async function onRequestGet(c){
 export async function onRequestPost(c){
  const denied=await authorized(c);if(denied)return denied;
  let input;try{input=await c.request.json()}catch{return json({error:"Invalid JSON"},400)}
- const db=c.env.XUYI_DB;await ensureProductReviews(db);
+ const db=c.env.LEYA_DB;await ensureProductReviews(db);
  const action=String(input?.action||"");
  if(action==="delete"){
   const id=String(input?.id||"");

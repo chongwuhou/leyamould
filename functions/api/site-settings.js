@@ -9,8 +9,8 @@ import {
 } from "../_shared/site-settings.js";
 
 export async function onRequestGet(context) {
-  const db = context.env.XUYI_DB;
-  if (!db) return Response.json({ error: "XUYI_DB binding missing" }, { status: 503 });
+  const db = context.env.LEYA_DB;
+  if (!db) return Response.json({ error: "LEYA_DB binding missing" }, { status: 503 });
   try {
     const brand = { config: {} };
     const languageRaw = await loadSiteSetting(db, "language_config", defaultLanguageConfig());

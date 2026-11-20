@@ -10,9 +10,9 @@ export async function onRequestGet(context){
   if(!(await authorizedBuildRequest(context.request,context.env))){
     return response({error:"Unauthorized"},401);
   }
-  if(!context.env.XUYI_DB)return response({error:"XUYI_DB binding missing"},503);
+  if(!context.env.LEYA_DB)return response({error:"LEYA_DB binding missing"},503);
   try{
-    const rows=await context.env.XUYI_DB.prepare(
+    const rows=await context.env.LEYA_DB.prepare(
       "SELECT key,value FROM site_state WHERE key IN ('publish_revision','publish_requested_at')"
     ).all();
     const state=Object.fromEntries((rows.results||[]).map(r=>[r.key,r.value]));

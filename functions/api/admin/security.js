@@ -26,13 +26,13 @@ async function bumpPublishRevision(db) {
 async function guard(context) {
   if (!clean(context.env.ADMIN_TOKEN)) return response({ error: "ADMIN_TOKEN is not configured" }, 503);
   if (!(await authorizeAdminRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  if (!context.env.XUYI_DB) return response({ error: "XUYI_DB binding missing" }, 503);
+  if (!context.env.LEYA_DB) return response({ error: "LEYA_DB binding missing" }, 503);
   return null;
 }
 
 export async function onRequestGet(context) {
   const denied = await guard(context); if (denied) return denied;
-  const security = await loadAdminSecurityConfig(context.env.XUYI_DB);
+  const security = await loadAdminSecurityConfig(context.env.LEYA_DB);
   return response({
     adminPath: security.adminPath,
     passwordConfigured: Boolean(security.password?.hash),
@@ -47,7 +47,7 @@ export async function onRequestPost(context) {
   let payload;
   try { payload = await context.request.json(); }
   catch { return response({ error: "Invalid JSON" }, 400); }
-  const db = context.env.XUYI_DB;
+  const db = context.env.LEYA_DB;
   const security = await loadAdminSecurityConfig(db);
   try {
     if (payload.action === "set_password") {

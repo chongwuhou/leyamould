@@ -40,7 +40,7 @@ function normalizePayload(payload) {
 }
 
 export async function onRequestPost(context) {
-  const db = context.env.XUYI_DB;
+  const db = context.env.LEYA_DB;
   if (!db) return response({ error: "Form storage is unavailable" }, 503);
   const contentLength = Number(context.request.headers.get("content-length") || 0);
   if (contentLength > 65536) return response({ error: "Form payload is too large" }, 413);

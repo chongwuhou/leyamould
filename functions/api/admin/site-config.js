@@ -181,7 +181,7 @@ function response(data, status = 200) {
 async function requireAdmin(context) {
   if (!clean(context.env.ADMIN_TOKEN)) return response({ error: "ADMIN_TOKEN is not configured" }, 503);
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  if (!context.env.XUYI_DB) return response({ error: "XUYI_DB binding missing" }, 503);
+  if (!context.env.LEYA_DB) return response({ error: "LEYA_DB binding missing" }, 503);
   return null;
 }
 
@@ -294,14 +294,14 @@ async function load(db) {
 export async function onRequestGet(context) {
   const denied = await requireAdmin(context);
   if (denied) return denied;
-  await ensureSchema(context.env.XUYI_DB);
-  return response(await load(context.env.XUYI_DB));
+  await ensureSchema(context.env.LEYA_DB);
+  return response(await load(context.env.LEYA_DB));
 }
 
 export async function onRequestPost(context) {
   const denied = await requireAdmin(context);
   if (denied) return denied;
-  const db = context.env.XUYI_DB;
+  const db = context.env.LEYA_DB;
   await ensureSchema(db);
   let payload;
   try { payload = await context.request.json(); }

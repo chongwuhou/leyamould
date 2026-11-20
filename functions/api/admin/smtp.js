@@ -8,16 +8,16 @@ function response(data, status = 200) {
 }
 
 async function guard(context) {
-  if (!context.env.XUYI_DB) return response({ error: "XUYI_DB binding missing" }, 503);
+  if (!context.env.LEYA_DB) return response({ error: "LEYA_DB binding missing" }, 503);
   if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401);
-  await ensureFormSchema(context.env.XUYI_DB);
+  await ensureFormSchema(context.env.LEYA_DB);
   return null;
 }
 
 export async function onRequestGet(context) {
   const denied = await guard(context);
   if (denied) return denied;
-  return response({ settings: await loadSmtpSettings(context.env.XUYI_DB, context.env, false) });
+  return response({ settings: await loadSmtpSettings(context.env.LEYA_DB, context.env, false) });
 }
 
 export async function onRequestPost(context) {
@@ -26,7 +26,7 @@ export async function onRequestPost(context) {
   let payload;
   try { payload = await context.request.json(); }
   catch { return response({ error: "Invalid JSON" }, 400); }
-  const db = context.env.XUYI_DB;
+  const db = context.env.LEYA_DB;
   try {
     if (payload.action === "save") {
       const existing = await loadSmtpSettings(db, context.env, false);
@@ -58,10 +58,10 @@ export async function onRequestPost(context) {
         name: "SMTP Test",
         email: settings.fromEmail,
         phone: "",
-        company: "XUYI Bottles",
-        brand: "XUYI Bottles",
+        company: "LEYA MOULD",
+        brand: "LEYA MOULD",
         reference: "SMTP-TEST",
-        requirements: "This is an XUYI Bottles SMTP verification message.",
+        requirements: "This is an LEYA MOULD SMTP verification message.",
         equipment: ""
       });
       if (!result.sent) return response({ error: "SMTP test did not send a message" }, 502);

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "description": "Default XUYI category and submenu structure; D1 site_navigation manages published labels/order/extra links",
+  "description": "Default LEYA MOULD category and submenu structure; D1 site_navigation manages published labels/order/extra links. Replace the inherited bottle taxonomy only after mould routes and source content are ready.",
   "productColumns": [
     {
       "heading": "Drinkware Collections",
