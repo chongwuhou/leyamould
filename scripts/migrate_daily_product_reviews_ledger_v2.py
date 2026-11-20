@@ -13,7 +13,7 @@ import json
 import os
 import sys
 
-ORIGIN = "https://xuyibottles.com"
+ORIGIN = "https://leyamould.com"
 REVIEW_API = ORIGIN + "/api/admin/daily-product-reviews"
 PUBLISH_STATE_API = ORIGIN + "/api/publish-state"
 EXPECTED_MINIMUM_LEGACY_ROWS = 42
@@ -39,7 +39,7 @@ def main():
     if not token:
         raise RuntimeError("Cloudflare credential missing")
     if os.environ.get("GITHUB_ACTIONS") != "true" or \
-       os.environ.get("GITHUB_REPOSITORY") != "chongwuhou/xuyi-drinkware-site" or \
+       os.environ.get("GITHUB_REPOSITORY") != "chongwuhou/leyamould" or \
        os.environ.get("GITHUB_REF") != "refs/heads/main":
         raise RuntimeError("Migration is allowed only from the canonical XUYI GitHub main")
 
