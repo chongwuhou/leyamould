@@ -52,7 +52,7 @@ for legacy,clean in ALIASES.items():
         assert f.is_file(),(lang["code"],clean,"no canonical product page")
         assert not (DIST/prefix/"products"/legacy/"index.html").exists()
         markup=f.read_text(encoding="utf8")
-        canonical="https://xuyibottles.com"+("/"+prefix if prefix else "")+"/products/"+clean+"/"
+        canonical="https://leyamould.com"+("/"+prefix if prefix else "")+"/products/"+clean+"/"
         assert '<link rel="canonical" href="'+canonical+'">' in markup
         assert "<h1" in markup
         assert ('?model='+legacy) not in markup
@@ -68,7 +68,7 @@ for legacy,clean in ALIASES.items():
     assert "/products/"+legacy+"/" not in sitemap
     for l in locales:
         prefix=("/"+l["pathPrefix"] if l["pathPrefix"] else "")
-        assert '<loc>https://xuyibottles.com'+prefix+'/products/'+clean+'/</loc>' in sitemap
+        assert '<loc>https://leyamould.com'+prefix+'/products/'+clean+'/</loc>' in sitemap
 
 ppt_rows=[row for row in state.get("products",[])
            if isinstance(row,dict) and isinstance(row.get("content"),dict)
