@@ -37,7 +37,7 @@ def models_from(path: Path, key: str | None = None) -> set[str]:
 
 
 def main() -> None:
-    assert MANIFEST["site"] == "xuyi-drinkware-site"
+    assert MANIFEST["site"] == "leyamould"
     assert MANIFEST["recordCount"] == 58
     assert len(MANIFEST["models"]) == 58
     assert len(BUNDLE["records"]) == 58
