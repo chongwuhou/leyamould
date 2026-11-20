@@ -23,7 +23,7 @@ export function defaultLanguageConfig() {
       nativeName,
       pathPrefix,
       enabled: true,
-      publishReady: code === "en",
+      publishReady: true,
       sortOrder,
       uiText: {}
     }))
@@ -249,4 +249,5 @@ export async function bumpPublishRevision(db) {
 }
 
 export { emailRe, bcp47Re, e164Re };
+
 
