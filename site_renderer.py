@@ -196,8 +196,8 @@ def photo(src,alt,loading='lazy',aspect_ratio=None):
  from product_source_identity import GENERIC_ALT
  if src in GENERIC_ALT:alt=GENERIC_ALT[src]
  # Reserve card geometry in the shared renderer, not in generated HTML.
- allowed={'4/3':'4 / 3','3/2':'3 / 2','16/9':'16 / 9'}
- sizing=(' style="aspect-ratio:'+allowed[aspect_ratio]+';"' if aspect_ratio in allowed else '')
+ allowed={'4/3':('4 / 3','1200','900'),'3/2':('3 / 2','1200','800'),'16/9':('16 / 9','1200','675')}
+ sizing=(' style="aspect-ratio:'+allowed[aspect_ratio][0]+';" width="'+allowed[aspect_ratio][1]+'" height="'+allowed[aspect_ratio][2]+'"' if aspect_ratio in allowed else '')
  return f'<img src="{e(src)}" alt="{e(alt)}" loading="{loading}" decoding="async"{sizing}>' 
 def write(path,content):
  out=ROOT/BUILD_OUTPUT_DIR/path;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding="utf-8")
@@ -731,3 +731,4 @@ for _d1_post in BUILD_STATE.get("blogPosts",[]):
  if _slug in BLOG_POSTS and isinstance(_d1_post.get("sections"),list) and len(_d1_post["sections"])>=2:
   BLOG_POSTS[_slug]={**BLOG_POSTS[_slug],**_d1_post}
 ARTICLES=[(post["slug"],post["title"],post["description"]) for post in reversed(list(BLOG_POSTS.values()))]
+

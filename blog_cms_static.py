@@ -145,7 +145,7 @@ def render(post, known_slugs=()):
     published = _date(post.get("published_at")) or _date(post.get("updated")) or _date(post.get("updated_at"))
     modified = _date(post.get("updated")) or _date(post.get("updated_at")) or published
     body = '<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Buying Guide</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>' + esc(title) + '</h1><p>' + esc(description) + '</p></div></section>'
-    body += '<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="' + esc(cover) + '" alt="' + esc(post.get("coverAlt") or title) + '" loading="eager" decoding="async"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">'
+    body += '<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="' + esc(cover) + '" alt="' + esc(post.get("coverAlt") or title) + '" width="1200" height="800" loading="eager" decoding="async"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">'
     for index, section in enumerate(sections):
         body += '<a href="#article-section-' + str(index) + '">' + esc(section["heading"]) + '</a>'
     body += '</nav><a class="blog-toc__quote" href="/contact/#inquiry">Discuss your project →</a></div></aside><article class="article blog-editorial__body"><div class="blog-meta"><span>' + esc(post.get("group") or "BUYER RESOURCES") + '</span><span>'
@@ -233,3 +233,4 @@ def enrich(document, post, origin="https://xuyibottles.com"):
         scripts += '<script type="application/ld+json">' + json.dumps(
             faq, ensure_ascii=False, separators=(",", ":")).replace("<", r"\u003c") + '</script>'
     return document.replace("</head>", metadata + scripts + "</head>", 1)
+

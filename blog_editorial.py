@@ -187,7 +187,7 @@ def ensure_related_guides(route, body):
     h = '<section class="section section--soft blog-related"><div class="shell"><div class="section__head"><div><span class="eyebrow">CONTINUE READING</span><h2 class="section__title">Related Buying Guides</h2></div></div>'
     h += '<div class="blog-related__grid">'
     for item in related:
-        h += '<article class="blog-related__item"><a href="/blog/' + e(item["slug"]) + '/">' + photo(cover_path(item["slug"]), item["title"]) + '<strong>' + e(item["title"]) + '</strong></a><p>' + e(item["description"]) + '</p></article>'
+        h += '<article class="blog-related__item"><a href="/blog/' + e(item["slug"]) + '/">' + photo(cover_path(item["slug"]), item["title"], aspect_ratio="3/2") + '<strong>' + e(item["title"]) + '</strong></a><p>' + e(item["description"]) + '</p></article>'
     h += '</div><p class="blog-related__all"><a href="/blog/">View all XUYI buyer guides →</a></p></div></section>'
     return body[:pos] + h + body[pos:]
 
@@ -196,7 +196,7 @@ def render_article(slug):
     related=[GUIDES[s] for s in post["related"]]
     h=intro("Blog / Buying Guide",post["title"],post["description"])
     h+='<section class="section blog-editorial"><div class="shell">'
-    h+='<div class="blog-detail__cover">'+photo(cover_path(slug),post["title"]+" | XUYI plastic drinkware buyer guide")+'</div>'
+    h+='<div class="blog-detail__cover">'+photo(cover_path(slug),post["title"]+" | XUYI plastic drinkware buyer guide",loading="eager",aspect_ratio="3/2")+'</div>'
     h+='<div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">'
     for item in post["sections"]:
         h+='<a href="#'+anchor(item["heading"])+'">'+e(item["heading"])+'</a>'
@@ -242,7 +242,7 @@ def render_article(slug):
     h+='<section class="section section--soft blog-related"><div class="shell"><div class="section__head"><div><span class="eyebrow">CONTINUE READING</span><h2 class="section__title">Related Buying Guides</h2></div></div>'
     h+='<div class="blog-related__grid">'
     for item in related:
-        h+='<article class="blog-related__item"><a href="/blog/'+e(item["slug"])+'/">'+photo(cover_path(item["slug"]),item["title"])+'<strong>'+e(item["title"])+'</strong></a><p>'+e(item["description"])+'</p></article>'
+        h+='<article class="blog-related__item"><a href="/blog/'+e(item["slug"])+'/">'+photo(cover_path(item["slug"]),item["title"],aspect_ratio="3/2")+'<strong>'+e(item["title"])+'</strong></a><p>'+e(item["description"])+'</p></article>'
     h+='</div><p class="blog-related__all"><a href="/blog/">View all XUYI buyer guides →</a></p></div></section></article></div></div></section>'
     return h
 
@@ -270,3 +270,4 @@ def enrich_article_html(document, slug):
     metadata+='<meta property="og:image" content="'+e(SITE_ORIGIN+cover_path(slug))+'">'
     metadata+='<script type="application/ld+json">'+json.dumps(graph,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+'</script>'
     return document.replace("</head>",metadata+"</head>",1)
+
