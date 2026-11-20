@@ -118,13 +118,16 @@ function compatibleReviewedShapeRepair(existingText, incomingPost) {
   try { existing = JSON.parse(existingText); } catch { return false; }
   if (!existing || typeof existing !== "object" || Array.isArray(existing)) return false;
   const repaired = { ...existing };
-  if (Array.isArray(repaired.faqs) && repaired.faqs.every(item => Array.isArray(item) && item.length === 2)) {
+  const legacyFaqTuples = Array.isArray(repaired.faqs) && repaired.faqs.length === 4 && repaired.faqs.every(item => Array.isArray(item) && item.length === 2);
+  if (legacyFaqTuples) {
     repaired.faqs = repaired.faqs.map(([question, answer]) => ({ question, answer }));
   }
+  let legacyProductNotes = false;
   if (Array.isArray(repaired.product_notes) && Array.isArray(incomingPost.product_notes)) {
     repaired.product_notes = repaired.product_notes.map(note => {
       const reference = incomingPost.product_notes.find(item => String(item?.section) === String(note?.section) && String(item?.sku) === String(note?.sku));
       if (!reference) return note;
+      if (!note?.label?.en || !note?.text?.en) legacyProductNotes = true;
       return {
         ...note,
         label: { ...(note.label || {}), en: note?.label?.en || reference?.label?.en },
@@ -132,7 +135,12 @@ function compatibleReviewedShapeRepair(existingText, incomingPost) {
       };
     });
   }
-  return JSON.stringify(canonicalJson(repaired)) === JSON.stringify(canonicalJson(incomingPost));
+  if (!legacyFaqTuples && !legacyProductNotes) return false;
+  // Compare every content-bearing field, but ignore only the two known legacy
+  // shape differences above. This keeps owner edits protected while allowing
+  // the just-published batch to finish its schema migration.
+  const protectedKeys = ["slug", "title", "description", "intro", "category", "cover", "coverAlt", "updated", "sections", "checklist", "faqs", "related", "product_notes", "buyerDecisionTable", "evidence"];
+  return protectedKeys.every(key => JSON.stringify(canonicalJson(repaired[key])) === JSON.stringify(canonicalJson(incomingPost[key])));
 }
 
 export async function onRequestPost(context) {
