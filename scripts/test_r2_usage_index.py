@@ -9,7 +9,7 @@ dist=root/"dist"
 file=dist/"r2-usage-index.json"
 assert file.exists(),"Build must emit the release media usage index"
 data=json.loads(file.read_text(encoding="utf8"))
-assert data["site"]=="xuyi-drinkware-site" and data["schemaVersion"]==1
+assert data["site"]=="leyamould" and data["schemaVersion"]==1
 assert data["publishRevision"]>=0 and data["references"]
 refs=data["references"]
 assert "/media/ppt/slide-059.webp" in refs,"Older images used by source pages are protected"
