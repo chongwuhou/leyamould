@@ -16,7 +16,7 @@ class MemoryD1{
  async batch(stmts){return Promise.all(stmts.map(x=>x.run()));}
 }
 const db=new MemoryD1(),env={ADMIN_TOKEN:"review-test-secret",XUYI_DB:db};
-const ctx=(body,secret="review-test-secret")=>({env,request:new Request("https://xuyibottles.com/api/admin/product-reviews",{method:body?"POST":"GET",headers:{authorization:"Bearer "+secret,"content-type":"application/json"},body:body?JSON.stringify(body):undefined})});
+const ctx=(body,secret="review-test-secret")=>({env,request:new Request("https://leyamould.com/api/admin/product-reviews",{method:body?"POST":"GET",headers:{authorization:"Bearer "+secret,"content-type":"application/json"},body:body?JSON.stringify(body):undefined})});
 assert.equal((await onRequestGet(ctx(undefined,"wrong"))).status,401);
 let r=await onRequestPost(ctx({action:"save",...sample,confirmedAuthentic:false}));assert.equal(r.status,400);assert.equal(db.rows.size,0);
 r=await onRequestPost(ctx({action:"save",...sample,status:"draft",confirmedAuthentic:false}));assert.equal(r.status,200);
