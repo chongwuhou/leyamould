@@ -10,7 +10,7 @@ import re
 import html
 
 ROOT = Path(__file__).resolve().parent.parent
-ORIGIN = "https://xuyibottles.com"
+ORIGIN = "https://leyamould.com"
 
 
 def apply(dist):
