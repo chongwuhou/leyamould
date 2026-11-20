@@ -41,7 +41,7 @@ def main():
     if os.environ.get("GITHUB_ACTIONS") != "true" or \
        os.environ.get("GITHUB_REPOSITORY") != "chongwuhou/xuyi-drinkware-site" or \
        os.environ.get("GITHUB_REF") != "refs/heads/main":
-        raise RuntimeError("Migration is allowed only from XUYI private GitHub main")
+        raise RuntimeError("Migration is allowed only from the canonical XUYI GitHub main")
 
     today = datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat()
     revision_before = get_json(PUBLISH_STATE_API, token)
@@ -92,3 +92,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

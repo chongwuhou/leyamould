@@ -32,7 +32,7 @@ def main():
  token=os.environ.get("CLOUDFLARE_API_TOKEN","")
  if not token:raise RuntimeError("Cloudflare credential missing")
  if os.environ.get("GITHUB_ACTIONS")!="true" or os.environ.get("GITHUB_REPOSITORY")!="chongwuhou/xuyi-drinkware-site" or os.environ.get("GITHUB_REF")!="refs/heads/main":
-  raise RuntimeError("Scheduler is allowed only from XUYI private GitHub main")
+  raise RuntimeError("Scheduler is allowed only from the canonical XUYI GitHub main")
  claim=call(token,RUNNER_API,{"action":"claim"})
  reviews=claim.get("claimed",[])
  blog=claim.get("blog",[])
@@ -73,3 +73,4 @@ def main():
     raise
  if changed:dispatch_site_build()
 if __name__=="__main__":main()
+

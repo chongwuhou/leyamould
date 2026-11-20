@@ -10,7 +10,7 @@
 
 实际已经具备的四件事：
 
-1. **有私有 GitHub 仓库**：[`chongwuhou/xuyi-drinkware-site`](https://github.com/chongwuhou/xuyi-drinkware-site)，正式分支是 `main`。
+1. **有 XUYI GitHub 仓库**：[`chongwuhou/xuyi-drinkware-site`](https://github.com/chongwuhou/xuyi-drinkware-site)，当前为公开仓库，正式分支是 `main`。
 2. **在 ChatGPT 中连接/授权了 GitHub 和 localGPT**：AI 因此能访问已获许可的仓库，以及已连接电脑上的 WebCodex 本地项目。两者用途不同，**不一定每个任务都需要本地电脑**。
 3. **你把发布流程配置在 GitHub Actions**：仓库内有 `.github/workflows/publish-xuyi.yml`；构建通过后部署到 Cloudflare Pages 项目 `xuyi-drinkware-site`，域名是 https://xuyibottles.com/。与 Cloudflare 交互所需的 `CLOUDFLARE_API_TOKEN` 已由仓库的 Actions Secret 提供，**不用给 AI、同事或新电脑复制明文**。
 4. **网站已经连接 Cloudflare D1/CMS**：正式博客、翻译、评价由有权限的后台与受限发布接口管理，页面由共享模板重新生成；产品图片等已有资源也有独立存储。**改 GitHub 文件不等于任何内容都能任意写入 D1**，必须走现有审核入口。
@@ -63,7 +63,7 @@
 **通常不需要重新部署 Cloudflare、不需要 SSH、不需要搬运 API 密钥。**
 
 1. 新电脑登录**同一个 ChatGPT 账号**。
-2. 进入 ChatGPT 的**设置 → Plugins（插件/连接的应用）**，确认 GitHub 连接已授权并可访问上述私有仓库；如有提示，重新连接/授权 GitHub。
+2. 进入 ChatGPT 的**设置 → Plugins（插件/连接的应用）**，确认 GitHub 连接已授权并可访问上述仓库；如有提示，重新连接/授权 GitHub。
 3. 新开聊天，告诉 AI 仓库名，并要求先阅读 `AGENTS.md`、`PROJECT_CHANGE_POLICY.md` 和本文档。
 4. **先做只读验证**：让 AI 读取仓库最近的提交、GitHub Actions 运行情况；确认访问的正是 XUYI 仓库。
 5. 然后再下达具体编辑/发布命令，并检查运行记录和网站实际变化。
@@ -72,7 +72,7 @@
 
 ## 3. 别的同事用他自己的 ChatGPT 账号（安全做法）
 
-**你这个仓库是 private（私有）。别人不知道密码，也不会自动继承你的 AI 权限。**
+**仓库源代码当前公开，但 D1、R2 和 GitHub Actions Secret 仍由受控权限保护；公开仓库不等于公开生产数据或密钥。**
 
 1. **你先在 GitHub 授权仓库访问**：仓库 `Settings → Collaborators / Manage access`（界面名称可能变化）邀请其自己的 GitHub 账号；根据实际需要只给 **Read**（查阅）或 **Write**（允许提交）权限。不要把你的 GitHub / ChatGPT 登录信息交给同事。
 2. **同事自己连接 GitHub**：在他自己的 ChatGPT 账号中连接 GitHub，并授权访问 `chongwuhou/xuyi-drinkware-site`；连接是否有写权限必须以实际工具及 GitHub 授权为准。
@@ -86,7 +86,7 @@
 
 ### 第一句：只读连接测试
 
-> 请连接我的 GitHub 私有仓库 `chongwuhou/xuyi-drinkware-site`，先阅读 `AGENTS.md`、`PROJECT_CHANGE_POLICY.md`、`docs/AI_COLLABORATION_QUICKSTART_ZH.md`。列出当前 `main` 最新提交与最近一次发布结果。**只读取，不修改、不发布**。如果没有权限，请说明缺少哪种连接或权限。
+> 请连接我的 GitHub 仓库 `chongwuhou/xuyi-drinkware-site`，先阅读 `AGENTS.md`、`PROJECT_CHANGE_POLICY.md`、`docs/AI_COLLABORATION_QUICKSTART_ZH.md`。列出当前 `main` 最新提交与最近一次发布结果。**只读取，不修改、不发布**。如果没有权限，请说明缺少哪种连接或权限。
 
 ### 更新博客（必须经发布授权）
 
@@ -115,7 +115,7 @@
 
 | 情况 | 最常见原因 / 怎么办 |
 | --- | --- |
-| AI 看不到私有仓库 | GitHub 账号没被邀请，或 ChatGPT 的 GitHub 连接没授予该仓库访问权。 |
+| AI 看不到仓库或不能写入 | GitHub 连接未授权，或实际写入权限不足；公开可读不代表有提交权限。 |
 | AI 能读，不能提交 | GitHub 仓库权限、连接的写入能力或分支规则不允许；请仓库所有者核对。 |
 | AI 找不到本地项目 | localGPT/WebCodex 电脑关机、运行器未连接，或新电脑尚未注册本地项目；不涉及本地文件时可先使用 GitHub 连接。 |
 | GitHub Actions 没启动 | 本次改动可能只涉及文档，或没有命中工作流的触发路径；查看对应工作流 `on.push.paths`。 |
@@ -133,3 +133,4 @@
 ---
 
 **这份文档对应的是当前已搭好的 XUYI 环境。** 对新电脑和新同事，最快的起点是确认 GitHub 可读、权限准确；除非需要本地文件操作，否则无需先装一套服务器，也无需迁移 D1 或图片。
+

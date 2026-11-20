@@ -12,7 +12,9 @@ permissions:
   actions: write
 jobs:
   scheduler:
-    if: github.event.repository.private == true
+    # The repository is intentionally public. Keep execution pinned to the
+    # canonical XUYI repository and main branch; secrets remain GitHub-managed.
+    if: github.repository == 'chongwuhou/xuyi-drinkware-site' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
@@ -25,10 +27,11 @@ jobs:
           python-version: "3.11"
       - name: Verify D1 scheduler daily quota calculations
         run: node scripts/test_publish_scheduler.mjs
-      - name: Validate private review source and scheduler code
+      - name: Validate review source and scheduler code
         if: github.event_name == 'workflow_dispatch'
         run: |
           python scripts/test_daily_product_reviews.py
           python -m py_compile scripts/publish_daily_product_reviews.py scripts/run_publish_scheduler.py
       - name: Run due D1-configured publishing tasks
         run: python scripts/run_publish_scheduler.py
+

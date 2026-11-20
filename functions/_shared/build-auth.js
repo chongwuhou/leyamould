@@ -135,7 +135,7 @@ export async function authorizedProductSeoPromotionRequest(request, env){
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
 
-// Narrow scheduler heartbeat/claim endpoint for the private XUYI GitHub runner.
+// Narrow scheduler heartbeat/claim endpoint for the canonical XUYI GitHub runner.
 export async function authorizedSchedulerRunnerRequest(request, env){
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/scheduler-runner")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
@@ -151,4 +151,5 @@ export async function authorizedReviewedFactoryCatalogCommitRequest(request, env
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-20261103")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
+
 

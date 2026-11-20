@@ -81,7 +81,7 @@ def main():
  token=os.environ.get("CLOUDFLARE_API_TOKEN","")
  if not token:raise RuntimeError("Cloudflare credential missing")
  if os.environ.get("GITHUB_ACTIONS")!="true" or os.environ.get("GITHUB_REPOSITORY")!="chongwuhou/xuyi-drinkware-site" or os.environ.get("GITHUB_REF")!="refs/heads/main":
-  raise RuntimeError("Review publishing is allowed only from XUYI private GitHub main")
+  raise RuntimeError("Review publishing is allowed only from the canonical XUYI GitHub main")
  today=datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat()
  state=request(token)
  if state.get("today")!=today:raise RuntimeError("GitHub and D1 Beijing dates disagree")
@@ -98,3 +98,4 @@ def main():
  print("PUBLISHED_TO_D1",len(batch),"MODELS",[x["model"] for x in batch],"TODAY",result["todayCount"],"TOTAL",len(result["recorded"]),"PUBLISH_REVISION",result.get("revision"))
 
 if __name__=="__main__":main()
+
