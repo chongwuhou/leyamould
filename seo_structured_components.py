@@ -8,7 +8,7 @@ from html import unescape,escape as html_escape
 import json
 import re
 
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 DETAIL=re.compile(r"<details\b[^>]*>\s*<summary>(.*?)</summary>\s*<p>(.*?)</p>\s*</details>",re.I|re.S)
 FAQ_LIST=re.compile(r'<div\b[^>]*class="[^"]*\bfaq-list\b[^"]*"[^>]*>(.*?)</div>',re.I|re.S)
 BLOG_FAQ_SECTION=re.compile(r'<section\b[^>]*class="[^"]*\bblog-faq\b[^"]*"[^>]*>(.*?)</section>',re.I|re.S)
