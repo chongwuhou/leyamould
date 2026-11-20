@@ -78,8 +78,8 @@ for lang in langs:
         assert 'href="'+url+'"' in listing,(lang,model,"missing product card")
         for langcode in langs:
             translated=("" if langcode=="en" else "/"+langcode)+"/products/"+slug+"/"
-            assert 'hreflang="'+langcode+'" href="https://xuyibottles.com'+translated+'"' in head,(lang,model,langcode)
-        assert "https://xuyibottles.com"+url in head,(model,lang,"canonical")
+            assert 'hreflang="'+langcode+'" href="https://leyamould.com'+translated+'"' in head,(lang,model,langcode)
+        assert "https://leyamould.com"+url in head,(model,lang,"canonical")
         for im in product["images"]:
             assert doc.count(im)>=1
         links_seen.add(url)
