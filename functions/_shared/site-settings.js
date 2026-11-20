@@ -105,7 +105,7 @@ export function defaultContactConfig(brandConfig = {}) {
       id: "default-sales",
       name: "Sales Team",
       title: "International Sales",
-      email: clean(contact.email, 320) || "Janey@xuyibottles.com",
+      email: clean(contact.email, 320) || "Janey@leyamould.com",
       phoneDisplay: clean(contact.phoneDisplay, 80),
       phoneE164: clean(contact.phoneE164, 40) || "+8615395897937",
       whatsappUrl: clean(contact.whatsappShortUrl || contact.whatsappUrl, 1000) || "https://wa.me/8615395897937",
