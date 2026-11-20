@@ -3,18 +3,18 @@
   "localizationFrameworkVersion": 2,
   "site": {
     "brand": "XUYI Bottles",
-    "origin": "https://xuyibottles.com",
+    "origin": "https://leyamould.com",
     "defaultLocale": "en",
     "indexingApproved": true
   },
   "cloudflare": {
-    "pagesProjectName": "xuyi-drinkware-site",
+    "pagesProjectName": "leyamould",
     "productionBranch": "main",
-    "d1Database": "xuyi-drinkware-d1",
+    "d1Database": "leyamould-d1",
     "d1Binding": "XUYI_DB",
-    "r2Bucket": "xuyi-drinkware-r2",
+    "r2Bucket": "leyamould-r2",
     "r2Binding": "XUYI_ASSETS",
-    "r2OverflowBucket": "xuyi-drinkware-model-pages",
+    "r2OverflowBucket": "leyamould-model-pages",
     "r2OverflowBinding": "XUYI_MODEL_PAGES"
   },
   "build": {
