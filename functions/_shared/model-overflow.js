@@ -26,7 +26,7 @@ export async function serveModelOverflow(context){
   let bundle;
   try{bundle=JSON.parse(await object.text())}
   catch{return reply({error:"Invalid XUYI overflow bundle"},502)}
-  if(bundle?.site!=="xuyi-drinkware-site"||bundle?.schemaVersion!==1)return reply({error:"Invalid overflow identity"},502);
+  if(bundle?.site!=="leyamould"||bundle?.schemaVersion!==1)return reply({error:"Invalid overflow identity"},502);
   const canonical=url.pathname.endsWith("/")?url.pathname:url.pathname+"/";
   // Exact URL must exist in the approved immutable R2 manifest. Accepting a
   // syntactically valid new locale prefix does not publish phantom translations.
@@ -47,7 +47,7 @@ export async function overflowHealth(env){
   if(!raw)return {ready:false,binding:true,manifest:false,error:"R2 overflow manifest missing"};
   try{
     const manifest=JSON.parse(await raw.text());
-    if(manifest.site!=="xuyi-drinkware-site"||manifest.bucket!=="xuyi-drinkware-model-pages")throw Error("Wrong XUYI bucket manifest");
+    if(manifest.site!=="leyamould"||manifest.bucket!=="leyamould-model-pages")throw Error("Wrong XUYI bucket manifest");
     return {ready:true,binding:true,manifest:true,mode:manifest.mode,
       modelCount:Number(manifest.modelCount||0),localizedPageCount:Number(manifest.localizedPageCount||0),
       objectCount:manifest.objects?.length||0};
