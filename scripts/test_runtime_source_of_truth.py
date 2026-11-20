@@ -17,7 +17,7 @@ CHECKS = {
     ],
     "functions/_shared/blog-cms.js": [
         ("(?:en|es|pt|ru|tr)", "Blog card locale regex"),
-        ("https://xuyibottles.com", "Blog canonical origin"),
+        ("https://leyamould.com", "Blog canonical origin"),
     ],
     "functions/api/admin/page-translations.js": [
         ("[a-z]{2}", "translation route locale regex"),
@@ -40,7 +40,7 @@ CHECKS = {
     ],
     "blog_media_source.py": [
         ("locale not in ('en','es','pt','ru','tr')", "Blog media locale tuple"),
-        ("https://xuyibottles.com", "Blog media origin"),
+        ("https://leyamould.com", "Blog media origin"),
     ],
     "blog_editorial_inline.py": [
         ('LANGS=("en","es","pt","ru","tr")', "Blog editorial locale tuple"),
@@ -59,13 +59,13 @@ CHECKS = {
     ],
     "scripts/render_locales.py": [
         ("BLOG_DATE_LABELS={", "Blog date labels in code"),
-        ("https://xuyibottles.com", "renderer origin"),
+        ("https://leyamould.com", "renderer origin"),
         ('{"es":"Botella deportiva"', "gallery locale titles in code"),
     ],
     "site_renderer.py": [
         ("if i<76", "catalog image row cutoff"),
         ("len(SERIES)>=85", "frozen catalog count"),
-        ('SITE_ORIGIN="https://xuyibottles.com"', "renderer origin"),
+        ('SITE_ORIGIN="https://leyamould.com"', "renderer origin"),
     ],
     "locale_registry.py": [
         ('baseline.get("es"', "fixed locale baseline"),
