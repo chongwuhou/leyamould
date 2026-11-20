@@ -21,7 +21,7 @@ def approved_shaker_image_aliases():
     """
     path=Path(__file__).parent/"data/gpt-reviewed-shaker-hd-20261013.json"
     data=json.loads(path.read_text(encoding="utf8"))
-    if data.get("site")!="xuyi-drinkware-site" or data.get("schemaVersion")!=1:
+    if data.get("site")!="leyamould" or data.get("schemaVersion")!=1:
         raise ValueError("Unrecognized reviewed image source")
     return {v["old"]:v["new"] for v in data["approved"]}
 
@@ -39,7 +39,7 @@ class _ProductMainPhoto(HTMLParser):
         attributes=dict(attrs)
         if attributes.get("id")=="main-photo":self.found=attributes.get("src")
 
-def image_path(value,origin="https://xuyibottles.com"):
+def image_path(value,origin="https://leyamould.com"):
     """Public path only. Same-origin URLs prevent CDN host churn."""
     if not isinstance(value,str) or not value or value!=value.strip():return None
     parts=urlsplit(value)
@@ -56,7 +56,7 @@ def image_path(value,origin="https://xuyibottles.com"):
     # so sitemap URLs exactly equal the actual page main image.
     return approved_shaker_image_aliases().get(path,path)
 
-def source_main_photo(row,translated_body=None,origin="https://xuyibottles.com"):
+def source_main_photo(row,translated_body=None,origin="https://leyamould.com"):
     """A D1 translated body wins. If the editor removes a photo, omit XML entry."""
     if translated_body is not None:
         parser=_ProductMainPhoto()
@@ -69,7 +69,7 @@ def source_main_photo(row,translated_body=None,origin="https://xuyibottles.com")
     images=real_product_images(row)
     return image_path(images[0],origin) if images else None
 
-def image_for_product_route(route,series,localized_body=None,origin="https://xuyibottles.com"):
+def image_for_product_route(route,series,localized_body=None,origin="https://leyamould.com"):
     """Tolerates new verified models, locale pages, and CMS image replacements."""
     if not re.fullmatch(r"/products/[a-zA-Z0-9_-]+/",route):return None
     slug=route.split("/")[2]
@@ -77,7 +77,7 @@ def image_for_product_route(route,series,localized_body=None,origin="https://xuy
     if row is None:return None
     return source_main_photo(row,localized_body,origin)
 
-def xml_image_for_product(route,series,localized_body=None,origin="https://xuyibottles.com"):
+def xml_image_for_product(route,series,localized_body=None,origin="https://leyamould.com"):
     path=image_for_product_route(route,series,localized_body,origin)
     if path is None:return ""
     # The only required Google image-sitemap element: image:loc. No deprecated
