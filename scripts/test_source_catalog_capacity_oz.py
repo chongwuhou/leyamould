@@ -31,7 +31,7 @@ from scripts.source_catalog_capacity_oz import (
 DIST=ROOT/"dist"
 original=snapshot()
 data=original
-assert original and original["site"]=="xuyi-drinkware-site"
+assert original and original["site"]=="leyamould"
 assert abs(MILLILITERS_PER_US_FL_OZ-29.5735295625)<1e-10
 assert format_oz(500)=="16.9 oz class"
 assert format_oz(750)=="24 oz class"
