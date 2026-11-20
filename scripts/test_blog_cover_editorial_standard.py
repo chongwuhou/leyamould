@@ -130,7 +130,7 @@ def negative_tests(posts, records):
 
 def main():
     document = json.loads(APPROVALS.read_text(encoding="utf-8"))
-    require(document.get("site") == "xuyi-drinkware-site" and document.get("schemaVersion") == 1, "wrong approval authority")
+    require(document.get("site") == "leyamould" and document.get("schemaVersion") == 1, "wrong approval authority")
     records = document.get("records")
     require(isinstance(records, list), "missing approved photo records")
     mapping = {}
