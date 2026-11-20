@@ -48,7 +48,7 @@ const custom={...base,buyerDecisionTable:false};
 assert.equal(renderBuyerDecisionTable(custom),"");
 const normalized=normalizeBlogPost({...base,sections:[...base.sections,{heading:"Secondary model check",paragraph:"A buyer must record an approved carton and a second physical sample before releasing a purchase order."}],checklist:[],related:[],buyerDecisionTable:false});
 assert.equal(normalized.buyerDecisionTable,false,"CMS saves must retain editorial opt-out");
-const template='<html><head><title>Existing Blog</title><link rel="canonical" href="https://xuyibottles.com/blog/"></head><body><main id="main-content">Old</main></body></html>';
+const template='<html><head><title>Existing Blog</title><link rel="canonical" href="https://leyamould.com/blog/"></head><body><main id="main-content">Old</main></body></html>';
 const page=composePage(template,blogHtml(base),base,"/blog/tritan-vs-pp-petg-pc/");
 const graphs=[...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
   .map(m=>JSON.parse(m[1]));
