@@ -28,7 +28,7 @@ with tempfile.TemporaryDirectory(prefix="xuyi-future-locale-test-") as folder:
     languages={"sourceLocale":"en","defaultLocale":"en","languages":[
         {"code":"en","pathPrefix":"","enabled":True,"publishReady":True,"nativeName":"English","sortOrder":10},
         {"code":SOURCE,"pathPrefix":SOURCE,"enabled":True,"publishReady":True,"nativeName":"Français","sortOrder":20}]}
-    state={"site":"xuyi-drinkware-site","languages":languages}
+    state={"site":"leyamould","languages":languages}
     original_root=registry.ROOT
     registry.ROOT=temp
     try:
@@ -74,9 +74,9 @@ with tempfile.TemporaryDirectory(prefix="xuyi-future-locale-test-") as folder:
             target.write_text(source,encoding="utf-8")
         (dist/"sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n'+
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
-            '<url><loc>https://xuyibottles.com/</loc></url>'+
-            '<url><loc>https://xuyibottles.com/about/</loc></url>'+
-            '<url><loc>https://xuyibottles.com/contact/</loc></url></urlset>',encoding="utf-8")
+            '<url><loc>https://leyamould.com/</loc></url>'+
+            '<url><loc>https://leyamould.com/about/</loc></url>'+
+            '<url><loc>https://leyamould.com/contact/</loc></url></urlset>',encoding="utf-8")
         fixture=temp/"reviewed-snapshot.json"
         fixture.write_text(json.dumps(state,ensure_ascii=False),encoding="utf-8")
         renderer.DIST=dist
@@ -95,20 +95,20 @@ with tempfile.TemporaryDirectory(prefix="xuyi-future-locale-test-") as folder:
         assert manifest["routes"][SOURCE]==["/","/about/"]
         english=(dist/"about/index.html").read_text(encoding="utf-8")
         localized=(dist/SOURCE/"about/index.html").read_text(encoding="utf-8")
-        assert 'hreflang="fr" href="https://xuyibottles.com/fr/about/"' in english
-        assert 'hreflang="x-default" href="https://xuyibottles.com/about/"' in localized
-        assert '<link rel="canonical" href="https://xuyibottles.com/fr/about/">' in localized
+        assert 'hreflang="fr" href="https://leyamould.com/fr/about/"' in english
+        assert 'hreflang="x-default" href="https://leyamould.com/about/"' in localized
+        assert '<link rel="canonical" href="https://leyamould.com/fr/about/">' in localized
         assert '"inLanguage":"fr"' in localized
         assert 'property="og:title" content="QA Locale /about/ | XUYI"' in localized
-        assert '<loc>https://xuyibottles.com/fr/about/</loc>' in (dist/"sitemap.xml").read_text(encoding="utf-8")
+        assert '<loc>https://leyamould.com/fr/about/</loc>' in (dist/"sitemap.xml").read_text(encoding="utf-8")
         assert not (dist/SOURCE/"contact/index.html").exists()
         english_only=(dist/"contact/index.html").read_text(encoding="utf-8")
-        assert 'hreflang="en" href="https://xuyibottles.com/contact/"' in english_only
-        assert 'hreflang="x-default" href="https://xuyibottles.com/contact/"' in english_only
-        assert 'hreflang="fr" href="https://xuyibottles.com/fr/contact/"' not in english_only
+        assert 'hreflang="en" href="https://leyamould.com/contact/"' in english_only
+        assert 'hreflang="x-default" href="https://leyamould.com/contact/"' in english_only
+        assert 'hreflang="fr" href="https://leyamould.com/fr/contact/"' not in english_only
         renderer.main()
         assert (dist/"contact/index.html").read_text(encoding="utf-8").count(
-            'hreflang="en" href="https://xuyibottles.com/contact/"')==1
+            'hreflang="en" href="https://leyamould.com/contact/"')==1
         assert "fr" not in [x["code"] for x in registry.approved_locales({
             **state,"languages":{**languages,"languages":[languages["languages"][0],
                 {**languages["languages"][1],"publishReady":False}]}})]
