@@ -46,7 +46,7 @@ No source workbook, derived review payload, or private customer data is copied t
 - The runner uses the existing CLOUDFLARE_API_TOKEN secret. The dedicated /api/admin/scheduler-runner endpoint accepts only POST and verifies that token against this exact Cloudflare Pages project.
 - The regular /api/admin/scheduler CRUD API remains protected by the normal website admin session.
 - D1 task claims are idempotent: review tasks claim once per task/date; Blog tasks claim once per five-minute local-time bucket. The GitHub workflow has a concurrency group to prevent overlapping scheduler runs.
-- On a successful D1 publication, the runner dispatches the existing publish-xuyi.yml workflow so the static pages rebuild promptly. The existing 30-minute revision poll remains a fallback.
+- On a successful D1 publication, the runner dispatches the existing publish-leyamould.yml workflow so the static pages rebuild promptly. The existing 30-minute revision poll remains a fallback.
 - The site build continues to fetch the authenticated D1 snapshot and deploy the static site. A scheduled article becomes visible on the static website after that build finishes.
 
 ## D1 tables
