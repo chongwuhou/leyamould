@@ -32,11 +32,17 @@ jobs:
   source-build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: Verify canonical human and AI operating runbook
         run: python scripts/test_operating_runbook.py
       - name: Fail fast on Pages Function syntax
@@ -57,6 +63,12 @@ jobs:
         run: |
           python scripts/build_release.py
           python scripts/test_mould_release.py
-      - name: Production deployment remains explicitly disabled
-        run: echo "Source build verified. Cloudflare Pages production remains unchanged until separately authorized."
+      - name: Deploy Leyamould production
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: npx --yes wrangler@4.148.0 pages deploy dist --project-name leyamould --branch main
+      - name: Verify production deployment authorization
+        if: env.CLOUDFLARE_API_TOKEN == ''
+        run: |
+          echo "::error::CLOUDFLARE_API_TOKEN is not configured; source build passed but production was not deployed."
+          exit 1
 
