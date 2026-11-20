@@ -43,7 +43,7 @@ for lang in LOCALES:
     assert '<meta property="og:image" content="'+kids_url+'">' in head,(lang,"kids OG")
     assert '<meta name="twitter:image" content="'+kids_url+'">' in head,(lang,"kids Twitter")
     assert "/media/excel/row-008.webp" not in head,(lang,"legacy spreadsheet preview")
-owner='<html><head><meta property="og:image" content="https://xuyibottles.com/media/product/owner-approved.webp"></head><body></body></html>'
+owner='<html><head><meta property="og:image" content="https://leyamould.com/media/product/owner-approved.webp"></head><body></body></html>'
 assert add_kids_collection_preview(owner,kids_route)==owner,"owner CMS OG must survive"
 shell='<html><head></head><body></body></html>'
 once=add_kids_collection_preview(shell,kids_route)
