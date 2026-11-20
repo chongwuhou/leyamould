@@ -10,7 +10,7 @@ snapshot=root/"_local_ops/build-snapshot.json"
 state=json.loads(snapshot.read_text(encoding="utf8")) if snapshot.is_file() else {}
 manifest=json.loads((dist/"locale-manifest.json").read_text(encoding="utf-8"))
 langs=manifest["locales"]
-assert state.get("site","xuyi-drinkware-site")=="xuyi-drinkware-site"
+assert state.get("site","leyamould")=="leyamould"
 assert len(DEFAULT["slides"])==3
 assert len(verified(DEFAULT)["slides"])==3
 for language in langs:
