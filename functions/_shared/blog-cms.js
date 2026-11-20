@@ -1,17 +1,17 @@
 // XUYI Blog CMS extends Demalong's D1-backed page-editor and revision approach.
 // Match the separately reviewed static Blog sources on D1-backed live routes.
-import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json" with {type:"json"};
-import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json" with {type:"json"};
-import BLOG_FEATURE_PATHWAYS from "../../data/blog-feature-pathways.json" with {type:"json"};
-import BUYER_MATRICES from "../../data/blog-buyer-decision-tables.json" with {type:"json"};
-import BLOG_DEPTH from "../../data/blog-depth-evidence-en.json" with {type:"json"};
-import DEEP_PART1 from "../../data/blog-deep-research-part1.json" with {type:"json"};
-import DEEP_PART2 from "../../data/blog-deep-research-part2.json" with {type:"json"};
-import DEEP_PART3 from "../../data/blog-deep-research-part3.json" with {type:"json"};
-import SOURCE_BLOG_GUIDES from "../../data/blog-guides.json" with {type:"json"};
-import INLINE_PART1 from "../../data/blog-inline-edits-reviewed-part1.json" with {type:"json"};
-import INLINE_PART2 from "../../data/blog-inline-edits-reviewed-part2.json" with {type:"json"};
-import SITE_CONFIG from "../../deployment/site.config.json" with {type:"json"};
+import EDITORIAL_EVIDENCE from "../../data/editorial-evidence.json";
+import BUYER_PATHWAYS from "../../data/blog-buyer-pathways.json";
+import BLOG_FEATURE_PATHWAYS from "../../data/blog-feature-pathways.json";
+import BUYER_MATRICES from "../../data/blog-buyer-decision-tables.json";
+import BLOG_DEPTH from "../../data/blog-depth-evidence-en.json";
+import DEEP_PART1 from "../../data/blog-deep-research-part1.json";
+import DEEP_PART2 from "../../data/blog-deep-research-part2.json";
+import DEEP_PART3 from "../../data/blog-deep-research-part3.json";
+import SOURCE_BLOG_GUIDES from "../../data/blog-guides.json";
+import INLINE_PART1 from "../../data/blog-inline-edits-reviewed-part1.json";
+import INLINE_PART2 from "../../data/blog-inline-edits-reviewed-part2.json";
+import SITE_CONFIG from "../../deployment/site.config.json";
 const REVIEWED_INLINE={...INLINE_PART1,...INLINE_PART2};
 const SITE_ORIGIN=SITE_CONFIG.site.origin;
 const SOURCE_GUIDE_BY_SLUG=Object.fromEntries(SOURCE_BLOG_GUIDES.map(p=>[p.slug,p]));
@@ -415,5 +415,6 @@ export function composePage(template,body,post,route){
  }
  return html;
 }
+
 
 
