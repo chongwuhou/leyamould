@@ -38,7 +38,7 @@ def main():
    capacity_source=r.get("capacity") or "",dimensions_source=r.get("dimensions") or "",
    material_source=r.get("material") or "",colors_source=r.get("colors") or "",
    image_reference=(r.get("images") or [""])[0],
-   detail_url="https://xuyibottles.com/products/"+sku+"/",decision=decision))
+   detail_url="https://leyamould.com/products/"+sku+"/",decision=decision))
  rows.sort(key=lambda r:(r["rank"],-r["nearest_main_jaccard"],r["category"],r["sku"]))
  assert len(rows)==len(SERIES)-len(PILOT)-len(PHASE2)
  target=ROOT/"_local_ops/phase2-remaining-sku-priority.csv"
