@@ -3,7 +3,7 @@
 The sales contact point is the existing public contact page, not an invented
 telephone or address. Never imply material certification or offer availability.
 """
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 
 SUBJECTS=[
     "plastic drinkware",
