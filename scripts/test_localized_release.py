@@ -4,7 +4,7 @@ from pathlib import Path
 import json,re,xml.etree.ElementTree as ET,os,sys
 
 ROOT=Path(__file__).resolve().parent.parent
-os.environ.setdefault("XUYI_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
+os.environ.setdefault("LEYA_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
 sys.path.insert(0,str(ROOT))
 from site_renderer import NEW_PRODUCT_COUNT
 DIST=ROOT/"dist"

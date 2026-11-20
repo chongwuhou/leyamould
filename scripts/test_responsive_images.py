@@ -52,7 +52,7 @@ def main():
         assert (DIST / src.lstrip("/")).is_file(), ("Missing derived image", src)
 
     # Simulate an owner updating a source image. Never reinstate stale metadata.
-    os.environ["XUYI_RESPONSIVE_MANIFEST"] = str(MANIFEST)
+    os.environ["LEYA_RESPONSIVE_MANIFEST"] = str(MANIFEST)
     sample = next((source for source,item in manifest.items() if item.get("variants")), next(iter(manifest)))
     markup = f'<img src="{sample}" alt="Owner ALT" loading="lazy">'
     enhanced = enhance_source_markup(markup)

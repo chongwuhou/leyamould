@@ -88,9 +88,9 @@ def create_manifest():
 
 def key_file():
     """Root key is valid only for an explicitly approved public release."""
-    key=os.environ.get("XUYI_INDEXNOW_KEY","").strip()
+    key=os.environ.get("LEYA_INDEXNOW_KEY","").strip()
     if not approved() or not key:return None
-    if not KEY_RE.fullmatch(key):raise ValueError("Invalid XUYI_INDEXNOW_KEY format")
+    if not KEY_RE.fullmatch(key):raise ValueError("Invalid LEYA_INDEXNOW_KEY format")
     (DIST/(key+".txt")).write_text(key,encoding="utf-8")
     return key
 
@@ -141,7 +141,7 @@ def main():
     if not approved():
         print("XUYI_SUBMISSION_BLOCKED_BY_NOINDEX_GATE")
         return
-    key=os.environ.get("XUYI_INDEXNOW_KEY","").strip()
+    key=os.environ.get("LEYA_INDEXNOW_KEY","").strip()
     if not KEY_RE.fullmatch(key):
         print("XUYI_INDEXNOW_NOT_CONFIGURED: set the project-specific GitHub secret")
         return

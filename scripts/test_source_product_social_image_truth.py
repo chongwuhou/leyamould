@@ -14,7 +14,7 @@ import os
 ROOT=Path(__file__).resolve().parent.parent
 snapshot=ROOT/"_local_ops"/"build-snapshot.json"
 if snapshot.is_file():
-    os.environ["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
+    os.environ["LEYA_BUILD_SNAPSHOT"]=str(snapshot)
 import xml.etree.ElementTree as ET
 
 ROOT=Path(__file__).resolve().parent.parent

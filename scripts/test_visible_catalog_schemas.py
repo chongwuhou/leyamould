@@ -9,7 +9,7 @@ from copy import deepcopy
 
 ROOT=Path(__file__).resolve().parent.parent
 SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
-if SNAPSHOT.is_file():os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
+if SNAPSHOT.is_file():os.environ["LEYA_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT))
 sys.path.insert(0,str(ROOT/"scripts"))
 

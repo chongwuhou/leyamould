@@ -12,7 +12,7 @@ import sys
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 sys.path.insert(0,str(ROOT/"scripts"))
-os.environ.setdefault("XUYI_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
+os.environ.setdefault("LEYA_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
 
 from cms_seo_curation_guard import snapshot
 from factory_catalog_locales import LABELS, _source_products, _card_title, catalog_cards as factory_catalog_cards

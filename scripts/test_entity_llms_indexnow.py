@@ -49,7 +49,7 @@ assert new_or_changed(end,end)==[]
 workflow=(ROOT/".github/workflows/publish-leyamould.yml").read_text(encoding="utf8")
 assert workflow.index("Verify XUYI live deployment")<workflow.index("Notify IndexNow of verified changed URLs")
 assert "python scripts/search_submission.py --submit" in workflow
-assert "XUYI_INDEXNOW_KEY" in workflow
+assert "LEYA_INDEXNOW_KEY" in workflow
 assert "Prepare stable IndexNow ownership key" in workflow
 assert "::add-mask::$derived" in workflow
 assert "hmac.new(" in workflow and "indexnow:xuyibottles.com:v2" in workflow

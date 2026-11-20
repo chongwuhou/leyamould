@@ -62,10 +62,10 @@ jobs:
     timeout-minutes: 20
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      XUYI_INDEXNOW_KEY: ${{ secrets.XUYI_INDEXNOW_KEY }}
+      LEYA_INDEXNOW_KEY: ${{ secrets.LEYA_INDEXNOW_KEY }}
       CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
       SITE_ORIGIN: https://leyamould.com
-      XUYI_PUBLISH_REVISION: "0"
+      LEYA_PUBLISH_REVISION: "0"
     steps:
       - uses: actions/checkout@v4
       - name: Verify canonical human and AI operating runbook
@@ -107,12 +107,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${XUYI_INDEXNOW_KEY}" ]; then
+          if [ -z "${LEYA_INDEXNOW_KEY}" ]; then
             derived="$(python -c 'import hashlib,hmac,os; print(hmac.new(os.environ["CLOUDFLARE_API_TOKEN"].encode(), b"indexnow:leyamould.com:v2", hashlib.sha256).hexdigest()[:32])')"
             # Keep the public ownership key out of CI step environment logs.
             echo "::add-mask::$derived"
-            echo "XUYI_INDEXNOW_KEY=$derived" >> "$GITHUB_ENV"
-            echo "XUYI IndexNow ownership key prepared from the protected Leyamould deployment credential."
+            echo "LEYA_INDEXNOW_KEY=$derived" >> "$GITHUB_ENV"
+            echo "LEYA IndexNow ownership key prepared from the protected Leyamould deployment credential."
           fi
       - name: Guard against competing Cloudflare Git auto deployments
         if: steps.credential.outputs.ready == 'true'
@@ -133,13 +133,13 @@ jobs:
           deployed="$(curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?ci_poll=${{ github.run_id }}" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let v=JSON.parse(s);process.stdout.write(String(Number(v.publishRevision||0)))})")"
           echo "revision=$current" >> "$GITHUB_OUTPUT"
           echo "deployed=$deployed" >> "$GITHUB_OUTPUT"
-          echo "XUYI_PUBLISH_REVISION=$current" >> "$GITHUB_ENV"
+          echo "LEYA_PUBLISH_REVISION=$current" >> "$GITHUB_ENV"
           if [ "${{ github.event_name }}" != "schedule" ] || [ "$current" -gt "$deployed" ]; then
             echo "needed=true" >> "$GITHUB_OUTPUT"
           else
             echo "needed=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Verify XUYI CMS APIs against D1 (read-only)
+      - name: Verify LEYA CMS APIs against D1 (read-only)
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         shell: bash
         run: |
@@ -162,7 +162,7 @@ jobs:
         run: python scripts/preindex_security_gate.py
       - name: Build from shared templates and source data
         if: github.event_name != 'schedule' || steps.revision.outputs.needed == 'true'
-        # The public site must run the authenticated XUYI snapshot endpoint.
+        # The public site must run the authenticated LEYA snapshot endpoint.
         # The revision and content are read from the same D1 snapshot.
         run: |
           python scripts/fetch_build_snapshot.py
@@ -225,20 +225,20 @@ jobs:
           python scripts/test_blog_pagination_source.py
           python scripts/test_blog_card_contract.py
           node scripts/test_blog_pagination_runtime.mjs
-          echo "XUYI_SECOND_CLEAN_GENERIC_REBUILD_PASSED"
+          echo "LEYA_SECOND_CLEAN_GENERIC_REBUILD_PASSED"
       - name: No changes in the Leyamould D1 publish revision
         if: github.event_name == 'schedule' && steps.revision.outputs.needed == 'false'
         run: echo "No changes; skipped build and deploy to preserve GitHub Actions usage."
       - name: Skip when controller is unconfigured
         if: steps.credential.outputs.ready != 'true'
-        run: echo "Build verified; production unchanged. Add the XUYI-only GitHub Actions secrets."
+        run: echo "Build verified; production unchanged. Add the LEYA-only GitHub Actions secrets."
       - name: Synchronize approved overflow model bundles to Leyamould R2
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         run: node scripts/sync_model_overflow.mjs
       - name: Deploy Leyamould production
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         run: npx --yes wrangler@4.148.0 pages deploy dist --project-name leyamould --branch main
-      - name: Verify XUYI live deployment
+      - name: Verify LEYA live deployment
         if: steps.credential.outputs.ready == 'true' && (github.event_name != 'schedule' || steps.revision.outputs.needed == 'true')
         shell: bash
         run: |
@@ -247,7 +247,7 @@ jobs:
           # Verify it here, after Pages deploy, with the existing authenticated build token.
           curl --fail --silent --show-error --retry 2 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$SITE_ORIGIN/api/admin/home-banners" -o /dev/null
           for n in 1 2 3 4 5 6; do
-            if curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?xuyi_check=$n&sha=$GITHUB_SHA" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.pagesProject==='leyamould'&&v.sourceRevision===process.env.GITHUB_SHA&&Number(v.publishRevision)>=Number(process.env.XUYI_PUBLISH_REVISION)?0:1)})"; then
+            if curl --fail --silent --show-error --retry 2 "$SITE_ORIGIN/build-meta.json?xuyi_check=$n&sha=$GITHUB_SHA" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);process.exit(v.pagesProject==='leyamould'&&v.sourceRevision===process.env.GITHUB_SHA&&Number(v.publishRevision)>=Number(process.env.LEYA_PUBLISH_REVISION)?0:1)})"; then
               echo "Leyamould production revision verified"
               exit 0
             fi
@@ -261,8 +261,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${XUYI_INDEXNOW_KEY}" ]; then
-            echo "::warning::IndexNow inactive: add XUYI_INDEXNOW_KEY repository secret."
+          if [ -z "${LEYA_INDEXNOW_KEY}" ]; then
+            echo "::warning::IndexNow inactive: add LEYA_INDEXNOW_KEY repository secret."
             exit 0
           fi
           python scripts/search_submission.py --submit

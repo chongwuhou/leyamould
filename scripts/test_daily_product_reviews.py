@@ -7,7 +7,7 @@ from random import Random
 ROOT=Path(__file__).resolve().parent.parent
 SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
 if SNAPSHOT.is_file():
- os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
+ os.environ["LEYA_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT));sys.path.insert(0,str(ROOT/"scripts"))
 from publish_daily_product_reviews import SOURCE_FILES,ALIASES,check_source,plan,EXCLUDED_SOURCE_ROWS
 

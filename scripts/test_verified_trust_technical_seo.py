@@ -21,7 +21,7 @@ from verified_trust_technical_seo import (
 
 DIST=ROOT/"dist"
 SNAPSHOT=ROOT/"_local_ops/build-snapshot.json"
-if SNAPSHOT.is_file():os.environ["XUYI_BUILD_SNAPSHOT"]=str(SNAPSHOT)
+if SNAPSHOT.is_file():os.environ["LEYA_BUILD_SNAPSHOT"]=str(SNAPSHOT)
 sys.path.insert(0,str(ROOT))
 from site_renderer import SERIES
 from product_reviews_source import published_reviews,schema_properties,owner_schema_reviews

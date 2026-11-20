@@ -8,9 +8,9 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 SNAPSHOT = ROOT / "_local_ops" / "build-snapshot.json"
 if SNAPSHOT.is_file():
-    os.environ["XUYI_BUILD_SNAPSHOT"] = str(SNAPSHOT)
+    os.environ["LEYA_BUILD_SNAPSHOT"] = str(SNAPSHOT)
     _snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
-    os.environ["XUYI_PUBLISH_REVISION"] = str(int(_snapshot.get("publishRevision", 0)))
+    os.environ["LEYA_PUBLISH_REVISION"] = str(int(_snapshot.get("publishRevision", 0)))
 sys.path.insert(0, str(ROOT))
 
 import site_renderer as site

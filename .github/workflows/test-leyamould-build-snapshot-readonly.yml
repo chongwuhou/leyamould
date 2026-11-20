@@ -21,4 +21,4 @@ jobs:
       - name: Read Leyamould public build snapshot from D1 (GET only)
         run: |
           python scripts/fetch_build_snapshot.py
-          python -c "import json; from pathlib import Path; p=json.loads(Path('_local_ops/build-snapshot.json').read_text(encoding='utf8')); print('XUYI_BUILD_SNAPSHOT_HEALTH_OK', 'revision', p.get('publishRevision'), 'pages', len(p.get('pages', [])), 'products', len(p.get('products', [])), 'reviews', len(p.get('productReviews', [])), 'translations', len(p.get('translations', [])))"
+          python -c "import json; from pathlib import Path; p=json.loads(Path('_local_ops/build-snapshot.json').read_text(encoding='utf8')); print('LEYA_BUILD_SNAPSHOT_HEALTH_OK', 'revision', p.get('publishRevision'), 'pages', len(p.get('pages', [])), 'products', len(p.get('products', [])), 'reviews', len(p.get('productReviews', [])), 'translations', len(p.get('translations', [])))"

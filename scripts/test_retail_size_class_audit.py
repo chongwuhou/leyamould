@@ -6,7 +6,7 @@ from pathlib import Path
 import json,re,sys,os
 
 ROOT=Path(__file__).resolve().parent.parent
-os.environ.setdefault("XUYI_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
+os.environ.setdefault("LEYA_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
 sys.path.insert(0,str(ROOT/"scripts"))
 from source_catalog_capacity_oz import (
     SERIES,LOCALES,MILLILITERS_PER_US_FL_OZ,RETAIL_SIZES,

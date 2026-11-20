@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""XUYI Pages release builder with a separate build/deploy process.
+"""LEYA Pages release builder with a separate build/deploy process.
 
 Run at repository root. No remote resources are written by this script.
 The build writes only to dist/, never edits the tracked site HTML snapshots.
@@ -22,8 +22,8 @@ _EARLY_SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
 if _EARLY_SNAPSHOT.is_file():
     _EARLY_STATE=json.loads(_EARLY_SNAPSHOT.read_text(encoding="utf-8"))
     if _EARLY_STATE.get("site")=="leyamould":
-        os.environ["XUYI_BUILD_SNAPSHOT"]=str(_EARLY_SNAPSHOT)
-        os.environ["XUYI_PUBLISH_REVISION"]=str(int(_EARLY_STATE.get("publishRevision",0)))
+        os.environ["LEYA_BUILD_SNAPSHOT"]=str(_EARLY_SNAPSHOT)
+        os.environ["LEYA_PUBLISH_REVISION"]=str(int(_EARLY_STATE.get("publishRevision",0)))
 
 from admin_route import admin_path as resolve_admin_path
 from plan_model_overflow import plan as plan_model_overflow
@@ -53,23 +53,23 @@ def main():
     if DIST.exists():
         shutil.rmtree(DIST)
     DIST.mkdir(parents=True)
-    env={**os.environ,"XUYI_OUTPUT_DIR":"dist","PYTHONDONTWRITEBYTECODE":"1"}
+    env={**os.environ,"LEYA_OUTPUT_DIR":"dist","PYTHONDONTWRITEBYTECODE":"1"}
     snapshot=ROOT/"_local_ops"/"build-snapshot.json"
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
         if state.get("site")!="leyamould":
-            fail("Refusing non-XUYI build snapshot")
-        env["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
-        env["XUYI_PUBLISH_REVISION"]=str(int(state.get("publishRevision",0)))
+            fail("Refusing non-LEYA build snapshot")
+        env["LEYA_BUILD_SNAPSHOT"]=str(snapshot)
+        env["LEYA_PUBLISH_REVISION"]=str(int(state.get("publishRevision",0)))
         # Post-build enrichers import site_renderer in this same process.
         # Keep them on the exact D1 snapshot used by build.py and render_locales.py.
-        os.environ["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
-        os.environ["XUYI_PUBLISH_REVISION"]=env["XUYI_PUBLISH_REVISION"]
+        os.environ["LEYA_BUILD_SNAPSHOT"]=str(snapshot)
+        os.environ["LEYA_PUBLISH_REVISION"]=env["LEYA_PUBLISH_REVISION"]
     # Generate display-only, content-addressed images from authoritative
     # sources. Originals in R2, asset files, and owner CMS selections remain.
     from prepare_responsive_images import prepare as prepare_responsive
     image_manifest,image_stage=prepare_responsive(snapshot)
-    env["XUYI_RESPONSIVE_MANIFEST"]=str(image_manifest)
+    env["LEYA_RESPONSIVE_MANIFEST"]=str(image_manifest)
     subprocess.run([sys.executable,"build.py"],cwd=ROOT,env=env,check=True)
     # Keep static artifacts and Functions separate; Wrangler bundles sibling
     # functions/ during Pages deploy. Never publish source, backups or secrets.
@@ -184,7 +184,7 @@ def main():
         "locales":"cloudflare-d1:reviewed-translations" if state.get("translations") else "not-published:no-reviewed-translations"
     }
     metadata={
-        "version":"XUYI source-templated static build v1",
+        "version":"LEYA source-templated static build v1",
         "localizationFrameworkVersion":CONFIG["localizationFrameworkVersion"],
         "publishedLocales":[l["code"] for l in json.loads(
            (DIST/"locale-manifest.json").read_text(encoding="utf-8"))["locales"]],
@@ -192,7 +192,7 @@ def main():
         "pagesProject":CONFIG["cloudflare"]["pagesProjectName"],
         "generatedAt":datetime.now(timezone.utc).isoformat(),
         "sourceRevision":os.environ.get("GITHUB_SHA","local"),
-        "publishRevision":int(env.get("XUYI_PUBLISH_REVISION","0")),
+        "publishRevision":int(env.get("LEYA_PUBLISH_REVISION","0")),
         "templateSet":"templates/site",
         "adminPath":admin_slug,
         "templateSha256":templates,
@@ -210,9 +210,9 @@ def main():
     }
     (DIST/"build-meta.json").write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     refs,uses=generate_r2_reference_index(DIST,overflow_dir)
-    print("XUYI_R2_REFERENCE_INDEX",refs,"images",uses,"uses")
+    print("LEYA_R2_REFERENCE_INDEX",refs,"images",uses,"uses")
     search_manifest=create_search_manifest()
-    print("XUYI_SEARCH_URLS_PREPARED",len(search_manifest["urls"]),
+    print("LEYA_SEARCH_URLS_PREPARED",len(search_manifest["urls"]),
           "indexingApproved",CONFIG["site"]["indexingApproved"],
           "indexNowKeyPublished",bool(indexnow_key))
     if total>=CONFIG["build"]["warningFiles"]:

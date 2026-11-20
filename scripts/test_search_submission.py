@@ -44,7 +44,7 @@ try:
 except ValueError:pass
 else:raise AssertionError("Cross-domain search submission allowed")
 with patch.object(module,"approved",return_value=False),patch.object(gate,"approved",return_value=False):
-    with patch.dict(os.environ,{"XUYI_INDEXNOW_KEY":"a"*32},clear=False):
+    with patch.dict(os.environ,{"LEYA_INDEXNOW_KEY":"a"*32},clear=False):
         assert module.key_file() is None
         assert not (dist/("a"*32+".txt")).exists()
         with patch("urllib.request.urlopen",side_effect=AssertionError("Attempted external search submission")):
@@ -79,7 +79,7 @@ with patch.object(gate,"approved",return_value=True), patch("urllib.request.urlo
     else:raise AssertionError("Public source file returned HTTP 200 without stopping indexing")
 with TemporaryDirectory() as temp:
     with patch.object(module,"approved",return_value=True),patch.object(module,"DIST",Path(temp)):
-        with patch.dict(os.environ,{"XUYI_INDEXNOW_KEY":"c"*32},clear=False):
+        with patch.dict(os.environ,{"LEYA_INDEXNOW_KEY":"c"*32},clear=False):
             assert module.key_file()=="c"*32
             assert (Path(temp)/("c"*32+".txt")).read_text(encoding="utf-8")=="c"*32
     with patch.object(module,"fetch",return_value=b"User-agent: *\nDisallow: /\n"):

@@ -14,7 +14,7 @@ ASSET_VERSION=_asset_version()
 INDEXING_APPROVED=(json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
                    .get("site",{}).get("indexingApproved") is True)
 BUILD_STATE={}
-_build_state_path=os.environ.get("LEYA_BUILD_SNAPSHOT") or os.environ.get("XUYI_BUILD_SNAPSHOT","")
+_build_state_path=os.environ.get("LEYA_BUILD_SNAPSHOT") or os.environ.get("LEYA_BUILD_SNAPSHOT","")
 if _build_state_path:
  _state_path=Path(_build_state_path).resolve()
  if not _state_path.is_file():raise RuntimeError("Missing XUYI build snapshot")
@@ -35,9 +35,9 @@ for _old,_new in LEGACY_PRODUCT_SLUGS.items():
  # the CMS route. A later explicit new-route edit always wins.
  if _old_route in PAGE_OVERRIDES:PAGE_OVERRIDES.setdefault(_new_route,PAGE_OVERRIDES[_old_route])
  if _old_route in BODY_OVERRIDES:BODY_OVERRIDES.setdefault(_new_route,BODY_OVERRIDES[_old_route])
-BUILD_OUTPUT_DIR=os.environ.get("LEYA_OUTPUT_DIR") or os.environ.get("XUYI_OUTPUT_DIR",".")
+BUILD_OUTPUT_DIR=os.environ.get("LEYA_OUTPUT_DIR") or os.environ.get("LEYA_OUTPUT_DIR",".")
 if BUILD_OUTPUT_DIR not in (".","dist"):
- raise ValueError("XUYI_OUTPUT_DIR must be . or dist")
+ raise ValueError("LEYA_OUTPUT_DIR must be . or dist")
 
 @lru_cache(maxsize=8)
 def read_template(name):

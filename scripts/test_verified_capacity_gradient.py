@@ -9,7 +9,7 @@ import sys
 import os
 
 ROOT=Path(__file__).resolve().parent.parent
-os.environ.setdefault("XUYI_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
+os.environ.setdefault("LEYA_BUILD_SNAPSHOT",str(ROOT/"_local_ops/build-snapshot.json"))
 sys.path.insert(0,str(ROOT/"scripts"))
 from cms_seo_curation_guard import snapshot
 from verified_capacity_gradient_en import (
