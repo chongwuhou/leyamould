@@ -21,7 +21,7 @@ ROOT=Path(__file__).resolve().parent.parent
 _EARLY_SNAPSHOT=ROOT/"_local_ops"/"build-snapshot.json"
 if _EARLY_SNAPSHOT.is_file():
     _EARLY_STATE=json.loads(_EARLY_SNAPSHOT.read_text(encoding="utf-8"))
-    if _EARLY_STATE.get("site")=="xuyi-drinkware-site":
+    if _EARLY_STATE.get("site")=="leyamould":
         os.environ["XUYI_BUILD_SNAPSHOT"]=str(_EARLY_SNAPSHOT)
         os.environ["XUYI_PUBLISH_REVISION"]=str(int(_EARLY_STATE.get("publishRevision",0)))
 
@@ -42,13 +42,13 @@ def file_hash(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def main():
-    if CONFIG["cloudflare"]["pagesProjectName"]!="xuyi-drinkware-site":
+    if CONFIG["cloudflare"]["pagesProjectName"]!="leyamould":
         fail("Refusing to target another Pages project")
-    if CONFIG["cloudflare"]["d1Database"]!="xuyi-drinkware-d1":
+    if CONFIG["cloudflare"]["d1Database"]!="leyamould-d1":
         fail("Refusing to use another company's D1")
-    if CONFIG["cloudflare"]["r2Bucket"]!="xuyi-drinkware-r2":
+    if CONFIG["cloudflare"]["r2Bucket"]!="leyamould-r2":
         fail("Refusing to use another company's R2")
-    if CONFIG["site"]["origin"]!="https://xuyibottles.com":
+    if CONFIG["site"]["origin"]!="https://leyamould.com":
         fail("Unexpected site origin")
     if DIST.exists():
         shutil.rmtree(DIST)
@@ -57,7 +57,7 @@ def main():
     snapshot=ROOT/"_local_ops"/"build-snapshot.json"
     if snapshot.is_file():
         state=json.loads(snapshot.read_text(encoding="utf-8"))
-        if state.get("site")!="xuyi-drinkware-site":
+        if state.get("site")!="leyamould":
             fail("Refusing non-XUYI build snapshot")
         env["XUYI_BUILD_SNAPSHOT"]=str(snapshot)
         env["XUYI_PUBLISH_REVISION"]=str(int(state.get("publishRevision",0)))
