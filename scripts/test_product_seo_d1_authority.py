@@ -27,7 +27,7 @@ def get_meta(html):
             find(r'<meta property="og:description" content="([^"]+)"'))
 
 owner=snapshot()
-assert owner and owner["site"]=="xuyi-drinkware-site"
+assert owner and owner["site"]=="leyamould"
 records=owner.get("productSeo",[])
 seen=set()
 checked=0
@@ -56,7 +56,7 @@ for loc in LOCALES:
                 assert description==expected["metaDescription"],(loc,slug,"owner D1 description overwritten")
             assert apply_d1_product_seo(html,slug,loc,owner)==html,(loc,slug,"not idempotent")
             seen.add((slug,loc))
-        assert '<link rel="canonical" href="https://xuyibottles.com/' in html
+        assert '<link rel="canonical" href="https://leyamould.com/' in html
         if is_new_factory and not expected:
             numbers=catalog_volume_numbers(model)
             allow_title=source_field_allowed(loc,model,"title",owner)
@@ -97,7 +97,7 @@ assert source_field_allowed("en",ppt_model,"description",edited_state)
 ppt_record["content"]["seoDescription"]="Owner-edited PPT product SEO description."
 assert not source_field_allowed("en",ppt_model,"description",edited_state)
 assert source_field_allowed("en",ppt_model,"title",edited_state)
-assert "href=\"https://xuyibottles.com/pt/products/2292/\"" in edited
+assert "href=\"https://leyamould.com/pt/products/2292/\"" in edited
 assert 'hreflang="pt"' in edited
 # Newly approved model/locale needs no historical 505-count allowlist:
 sample_new='<html><head><title>Old Title</title><meta name="description" content="Old summary"><meta property="og:title" content="Old Title"><meta property="og:description" content="Old summary"></head><body><h1>Factory SKU NEW-2027</h1></body></html>'
