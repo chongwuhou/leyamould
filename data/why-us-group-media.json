@@ -1,6 +1,6 @@
 {
   "usage": "Group-site process/reference imagery permitted by project owner; do not present metal-bottle examples as XUYI plastic production or claim certificates and tests without product matching evidence.",
-  "R2_bucket": "xuyi-drinkware-r2",
+  "R2_bucket": "leyamould-r2",
   "R2_prefix": "site-preview/group/",
   "source_inventory": {
     "oem-logo": {
