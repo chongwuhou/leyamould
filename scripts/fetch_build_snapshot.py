@@ -17,7 +17,7 @@ def main():
     token=os.environ.get("CLOUDFLARE_API_TOKEN","")
     if not token:raise SystemExit("XUYI build token unavailable")
     request=urllib.request.Request(
-        "https://xuyibottles.com/api/build-snapshot",
+        "https://leyamould.com/api/build-snapshot",
         headers={"Authorization":"Bearer "+token,"Cache-Control":"no-store",
                  "User-Agent":"XUYI-CI-Build/1.0"})
     # Transient Cloudflare D1/Pages 429/5xx can occur while publishing.
@@ -42,7 +42,7 @@ def main():
     # First rollout may read the old live Function revision before the new
     # build-snapshot endpoint is deployed. The follow-up build consumes D1 blogPosts.
     payload.setdefault("blogPosts",[])
-    if payload.get("site")!="xuyi-drinkware-site" or payload.get("schemaVersion")!=1:
+    if payload.get("site")!="leyamould" or payload.get("schemaVersion")!=1:
         raise RuntimeError("Build snapshot did not identify XUYI")
     if (not isinstance(payload.get("pages"),list)
             or not isinstance(payload.get("products"),list)
