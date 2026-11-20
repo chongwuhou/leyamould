@@ -3,7 +3,7 @@ import {readFile} from "node:fs/promises";
 import {join} from "node:path";
 import {onRequestGet} from "../functions/blog/[[path]].js";
 
-const ROOT=process.cwd(),ORIGIN="https://xuyibottles.com";
+const ROOT=process.cwd(),ORIGIN="https://leyamould.com";
 function requestContext(slug,{index=false}={}){
  const post={
   slug,title:"Plastic Bottle Buying Guide: Verified Materials",
