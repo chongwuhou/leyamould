@@ -41,7 +41,7 @@ for item in urls:
     children=item.findall(IMG+"image")
     for image in children:
         assert len(image)==1 and image[0].tag==IMG+"loc","No deprecated image fields"
-        assert urlsplit(image[0].text).netloc=="xuyibottles.com",image[0].text
+        assert urlsplit(image[0].text).netloc=="leyamould.com",image[0].text
         assert image_path(image[0].text)==image[0].text.removeprefix(SITE_ORIGIN)
     route=local_path
     for lang in ("es","pt","ru","tr"):
