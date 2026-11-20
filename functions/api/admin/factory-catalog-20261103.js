@@ -33,7 +33,7 @@ export async function onRequestPost(context){
   const languages=publicLanguages(await loadLanguageConfig(db)).map(item=>item.code);
   let payload;
   try{payload=await context.request.json()}catch{return json({error:"Invalid JSON"},400);}
-  if(payload?.site!=="xuyi-drinkware-site"||
+  if(payload?.site!=="leyamould"||
      payload?.sourceDocument!==manifest.sourceDocument||
      payload?.sourceSha256!==manifest.sourceSha256||
      !Array.isArray(payload?.records)||
