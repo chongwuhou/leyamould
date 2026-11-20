@@ -10,9 +10,9 @@
 
 实际已经具备的四件事：
 
-1. **有 XUYI GitHub 仓库**：[`chongwuhou/xuyi-drinkware-site`](https://github.com/chongwuhou/xuyi-drinkware-site)，当前为公开仓库，正式分支是 `main`。
+1. **有 XUYI GitHub 仓库**：[`chongwuhou/leyamould`](https://github.com/chongwuhou/leyamould)，当前为公开仓库，正式分支是 `main`。
 2. **在 ChatGPT 中连接/授权了 GitHub 和 localGPT**：AI 因此能访问已获许可的仓库，以及已连接电脑上的 WebCodex 本地项目。两者用途不同，**不一定每个任务都需要本地电脑**。
-3. **你把发布流程配置在 GitHub Actions**：仓库内有 `.github/workflows/publish-xuyi.yml`；构建通过后部署到 Cloudflare Pages 项目 `xuyi-drinkware-site`，域名是 https://xuyibottles.com/。与 Cloudflare 交互所需的 `CLOUDFLARE_API_TOKEN` 已由仓库的 Actions Secret 提供，**不用给 AI、同事或新电脑复制明文**。
+3. **你把发布流程配置在 GitHub Actions**：仓库内有 `.github/workflows/publish-leyamould.yml`；构建通过后部署到 Cloudflare Pages 项目 `leyamould`，域名是 https://leyamould.com/。与 Cloudflare 交互所需的 `CLOUDFLARE_API_TOKEN` 已由仓库的 Actions Secret 提供，**不用给 AI、同事或新电脑复制明文**。
 4. **网站已经连接 Cloudflare D1/CMS**：正式博客、翻译、评价由有权限的后台与受限发布接口管理，页面由共享模板重新生成；产品图片等已有资源也有独立存储。**改 GitHub 文件不等于任何内容都能任意写入 D1**，必须走现有审核入口。
 
 流程：**你发指令 → AI 核对规则和数据 → 改 GitHub 正式源 / 经授权的 D1 内容 → GitHub Actions 测试 → Cloudflare Pages → 线上核验**。
@@ -75,7 +75,7 @@
 **仓库源代码当前公开，但 D1、R2 和 GitHub Actions Secret 仍由受控权限保护；公开仓库不等于公开生产数据或密钥。**
 
 1. **你先在 GitHub 授权仓库访问**：仓库 `Settings → Collaborators / Manage access`（界面名称可能变化）邀请其自己的 GitHub 账号；根据实际需要只给 **Read**（查阅）或 **Write**（允许提交）权限。不要把你的 GitHub / ChatGPT 登录信息交给同事。
-2. **同事自己连接 GitHub**：在他自己的 ChatGPT 账号中连接 GitHub，并授权访问 `chongwuhou/xuyi-drinkware-site`；连接是否有写权限必须以实际工具及 GitHub 授权为准。
+2. **同事自己连接 GitHub**：在他自己的 ChatGPT 账号中连接 GitHub，并授权访问 `chongwuhou/leyamould`；连接是否有写权限必须以实际工具及 GitHub 授权为准。
 3. **让同事用只读任务测试**：读出最近一次成功的 Actions 记录、最新提交、`AGENTS.md` 与本文。
 4. **先用小任务试运行**：建议先只改本文档，提交到分支、通过 Pull Request 由你审阅，再合并；不要让新同事第一步就修改生产代码、D1 或 Cloudflare 配置。
 5. 审阅通过后，再明确授权他承担内容更新；由 AI 按站点规则操作并给出**文件差异、提交号、Actions 结果与线上链接**。
@@ -86,7 +86,7 @@
 
 ### 第一句：只读连接测试
 
-> 请连接我的 GitHub 仓库 `chongwuhou/xuyi-drinkware-site`，先阅读 `AGENTS.md`、`PROJECT_CHANGE_POLICY.md`、`docs/AI_COLLABORATION_QUICKSTART_ZH.md`。列出当前 `main` 最新提交与最近一次发布结果。**只读取，不修改、不发布**。如果没有权限，请说明缺少哪种连接或权限。
+> 请连接我的 GitHub 仓库 `chongwuhou/leyamould`，先阅读 `AGENTS.md`、`PROJECT_CHANGE_POLICY.md`、`docs/AI_COLLABORATION_QUICKSTART_ZH.md`。列出当前 `main` 最新提交与最近一次发布结果。**只读取，不修改、不发布**。如果没有权限，请说明缺少哪种连接或权限。
 
 ### 更新博客（必须经发布授权）
 
@@ -104,9 +104,9 @@
 
 不要只听到“完成了”三个字；至少检查：
 
-- **GitHub 提交**：改的是 `chongwuhou/xuyi-drinkware-site` 的正式源，能看到 commit 或 Pull Request，而不是仅写在 AI 对话里。
-- **CI 运行**：[Actions 发布记录](https://github.com/chongwuhou/xuyi-drinkware-site/actions/workflows/publish-xuyi.yml) 中的相关运行显示 **Success**；正式构建、测试、Cloudflare 发布和 live verification 成功。**仅修改 `docs/` / `README.md` 通常不会触发生产部署**，这是正常的。
-- **正式线上**：打开 https://xuyibottles.com/ 对应页面，并核对 `https://xuyibottles.com/build-meta.json` 的构建 SHA / 发布修订号是否和本次任务匹配。
+- **GitHub 提交**：改的是 `chongwuhou/leyamould` 的正式源，能看到 commit 或 Pull Request，而不是仅写在 AI 对话里。
+- **CI 运行**：[Actions 发布记录](https://github.com/chongwuhou/leyamould/actions/workflows/publish-leyamould.yml) 中的相关运行显示 **Success**；正式构建、测试、Cloudflare 发布和 live verification 成功。**仅修改 `docs/` / `README.md` 通常不会触发生产部署**，这是正常的。
+- **正式线上**：打开 https://leyamould.com/ 对应页面，并核对 `https://leyamould.com/build-meta.json` 的构建 SHA / 发布修订号是否和本次任务匹配。
 - **数据库数据**：博客核对 D1 实际插入的文章与翻译；评价核对发布流水、日期和型号，不能仅凭“随机选中”推断已发布。
 
 **注意**：这个站点对特定一次性博客批次使用专门的发布脚本和受限 D1 接口，有些写入还要求**精确的审核提交信息**。普通提交或只触发 Actions 并不一定会入库。让 AI 基于最新仓库检查现有机制，**不要复制过去某天的发布消息冒充今天发布**。
