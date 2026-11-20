@@ -14,7 +14,7 @@ ROOT=Path(__file__).resolve().parent
 def factory_catalog_seo_defaults():
  manifest=json.loads((ROOT/"data/factory-catalog-manifest-2026-11-03.json").read_text(encoding="utf-8"))
  bundle=json.loads((ROOT/"scripts/fixtures/factory-catalog-import-2026-11-03.json").read_text(encoding="utf-8"))
- if manifest.get("site")!="xuyi-drinkware-site" or manifest.get("recordCount")!=58:
+ if manifest.get("site")!="leyamould" or manifest.get("recordCount")!=58:
   raise ValueError("Factory catalog SEO baseline belongs to another site or batch")
  if bundle.get("sourceDocument")!=manifest.get("sourceDocument") or bundle.get("sourceSha256")!=manifest.get("sourceSha256"):
   raise ValueError("Factory catalog SEO baseline source fingerprint mismatch")
@@ -32,7 +32,7 @@ def factory_catalog_seo_defaults():
 @lru_cache(maxsize=1)
 def ppt_factory_catalog_manifest():
  manifest=json.loads((ROOT/"scripts/fixtures/ppt-new-95-source-models.json").read_text(encoding="utf-8"))
- if (manifest.get("site")!="xuyi-drinkware-site" or
+ if (manifest.get("site")!="leyamould" or
      manifest.get("sourceDocument")!="水杯最新产品.pptx" or manifest.get("modelCount")!=95 or
      not re.fullmatch(r"[0-9a-f]{64}",str(manifest.get("sourceSha256","")))):
   raise ValueError("PPT factory catalog source manifest is invalid")
