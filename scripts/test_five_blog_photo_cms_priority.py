@@ -36,17 +36,17 @@ for slug,entry in PHOTO_CORRECTIONS.items():
 from blog_media_source import article_social_image_from_cms_source
 import json as _json
 for locale in ('es','pt','ru','tr'):
-    page = ('<meta property="og:image" content="https://xuyibottles.com/assets/old.webp">'
-            '<meta name="twitter:image" content="https://xuyibottles.com/assets/old.webp">'
+    page = ('<meta property="og:image" content="https://leyamould.com/assets/old.webp">'
+            '<meta name="twitter:image" content="https://leyamould.com/assets/old.webp">'
             '<script type="application/ld+json">'
             +_json.dumps({"@context":"https://schema.org","@graph":[{"@type":"BlogPosting",
-              "image":["https://xuyibottles.com/assets/old.webp"]}]})
+              "image":["https://leyamould.com/assets/old.webp"]}]})
             +'</script><main><div class="blog-detail__cover"><img src="/assets/editor-selected.webp" alt="Owner"></div></main>')
     updated=article_social_image_from_cms_source(page,'/blog/owner-example/')
-    assert updated.count('https://xuyibottles.com/assets/editor-selected.webp')==3,(locale,updated)
+    assert updated.count('https://leyamould.com/assets/editor-selected.webp')==3,(locale,updated)
     assert article_social_image_from_cms_source(updated,'/blog/owner-example/')==updated
     owner_new=page.replace('/assets/editor-selected.webp','/media/editor-new.webp')
     updated_new=article_social_image_from_cms_source(owner_new,'/blog/owner-example/')
-    assert updated_new.count('https://xuyibottles.com/media/editor-new.webp')==3
+    assert updated_new.count('https://leyamould.com/media/editor-new.webp')==3
     assert article_social_image_from_cms_source(page,'/blog/')==page
 print('XUYI_FIVE_BLOG_PHOTOS_SOURCE_CMS_OWNER_PRIORITY_ALL_FIVE_LOCALES_PASSED')
