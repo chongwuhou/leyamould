@@ -19,10 +19,10 @@ function bearerToken(request) {
 
 async function verifyCloudflareProjectToken(token, env) {
   if (!token) return false;
-  const localPublishToken = clean(env.XUYI_PUBLISH_TOKEN || env.XUYILPUBLISH_TOKEN);
+  const localPublishToken = clean(env.LEYA_PUBLISH_TOKEN || env.XUYI_PUBLISH_TOKEN || env.XUYILPUBLISH_TOKEN);
   if (localPublishToken && constantTimeEqual(token, localPublishToken)) return true;
   // These two identifiers are public (not credentials), and pin the
-  // authorization check to XUYI even when Pages variables are absent.
+  // authorization check to LEYA MOULD even when Pages variables are absent.
   const accountId = "a4032d0251103d6ef680b2aaddce1afc";
   const projectName = "leyamould";
   // The Cloudflare GET below validates this exact project; Pages environment
@@ -135,14 +135,14 @@ export async function authorizedProductSeoPromotionRequest(request, env){
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
 
-// Narrow scheduler heartbeat/claim endpoint for the canonical XUYI GitHub runner.
+// Narrow scheduler heartbeat/claim endpoint for the canonical LEYA MOULD GitHub runner.
 export async function authorizedSchedulerRunnerRequest(request, env){
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/scheduler-runner")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
 
 // One-time reviewed 58-model factory catalog import. These two exact routes
-// are the only write paths admitted for the existing XUYI CI project token.
+// are the only write paths admitted for the existing LEYA MOULD CI project token.
 export async function authorizedReviewedFactoryCatalogImageUploadRequest(request, env){
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-images-20261103")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
