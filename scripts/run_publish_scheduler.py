@@ -20,7 +20,7 @@ def dispatch_site_build():
  if not token:
   print("WARNING: GITHUB_TOKEN missing; the existing 30-minute site rebuild remains the fallback")
   return
- url="https://api.github.com/repos/chongwuhou/xuyi-drinkware-site/actions/workflows/publish-xuyi.yml/dispatches"
+ url="https://api.github.com/repos/chongwuhou/leyamould/actions/workflows/publish-leyamould.yml/dispatches"
  body=json.dumps({"ref":"main"}).encode("utf8")
  req=Request(url,data=body,method="POST",headers={"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","Content-Type":"application/json","User-Agent":"XUYI-Scheduler/1.0"})
  try:
@@ -31,7 +31,7 @@ def dispatch_site_build():
 def main():
  token=os.environ.get("CLOUDFLARE_API_TOKEN","")
  if not token:raise RuntimeError("Cloudflare credential missing")
- if os.environ.get("GITHUB_ACTIONS")!="true" or os.environ.get("GITHUB_REPOSITORY")!="chongwuhou/xuyi-drinkware-site" or os.environ.get("GITHUB_REF")!="refs/heads/main":
+ if os.environ.get("GITHUB_ACTIONS")!="true" or os.environ.get("GITHUB_REPOSITORY")!="chongwuhou/leyamould" or os.environ.get("GITHUB_REF")!="refs/heads/main":
   raise RuntimeError("Scheduler is allowed only from the canonical XUYI GitHub main")
  claim=call(token,RUNNER_API,{"action":"claim"})
  reviews=claim.get("claimed",[])
