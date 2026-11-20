@@ -1,7 +1,7 @@
 import {authorizedReviewedFactoryCatalogImageUploadRequest} from "../../_shared/build-auth.js";
 import {checkedImage} from "../../_shared/media-image.js";
 import {imageKey} from "../../_shared/r2-usage.js";
-import manifest from "../../../data/factory-catalog-manifest-2026-11-03.json" with {type:"json"};
+import manifest from "../../../data/factory-catalog-manifest-2026-11-03.json";
 
 const json=(value,status=200)=>Response.json(value,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const sha=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",bytes))).map(value=>value.toString(16).padStart(2,"0")).join("");
@@ -62,3 +62,4 @@ export async function onRequestPost(context){
   }
   return json({saved:true,unchanged:Boolean(prior),model,sha256:actual,url:path,bytes:media.buffer.byteLength});
 }
+
