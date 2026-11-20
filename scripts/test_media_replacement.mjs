@@ -47,8 +47,8 @@ const bucket={
   .map(([key,obj])=>({key,size:obj.buffer.length,uploaded:obj.uploaded})),truncated:false})
 };
 const env={ADMIN_TOKEN:"test-admin",XUYI_ASSETS:bucket};
-const base="https://xuyibottles.com/api/admin/media-replace?kind=product&filename="+filename;
-const url=(kind,name)=>"https://xuyibottles.com/api/admin/media-replace?kind="+kind+"&filename="+name;
+const base="https://leyamould.com/api/admin/media-replace?kind=product&filename="+filename;
+const url=(kind,name)=>"https://leyamould.com/api/admin/media-replace?kind="+kind+"&filename="+name;
 const ctx=(request)=>({request,env});
 const headers={"x-test-admin":"yes"};
 async function put(image,etag,params={}){
