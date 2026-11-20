@@ -1,0 +1,37 @@
+name: Leyamould unified scheduled publishing
+on:
+  schedule:
+    # Five-minute heartbeat; D1 decides which configured tasks are due.
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+concurrency:
+  group: xuyi-drinkware-scheduler
+  cancel-in-progress: false
+permissions:
+  contents: read
+  actions: write
+jobs:
+  scheduler:
+    # The repository is intentionally public. Keep execution pinned to the
+    # canonical Leyamould repository and main branch; secrets remain GitHub-managed.
+    if: github.repository == 'chongwuhou/leyamould' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify D1 scheduler daily quota calculations
+        run: node scripts/test_publish_scheduler.mjs
+      - name: Validate review source and scheduler code
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          python scripts/test_daily_product_reviews.py
+          python -m py_compile scripts/publish_daily_product_reviews.py scripts/run_publish_scheduler.py
+      - name: Run due D1-configured publishing tasks
+        run: python scripts/run_publish_scheduler.py
+
