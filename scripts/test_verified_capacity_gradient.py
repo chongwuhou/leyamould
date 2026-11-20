@@ -21,7 +21,7 @@ from source_catalog_capacity_oz import catalog_volume_numbers,new_seo,source_bod
 
 DIST=ROOT/"dist"
 data=snapshot()
-assert data and data.get("site")=="xuyi-drinkware-site"
+assert data and data.get("site")=="leyamould"
 assert len(SOURCE_CAPACITY)==23
 assert sum(grad for _,grad in SOURCE_CAPACITY.values())==13
 checked=0
