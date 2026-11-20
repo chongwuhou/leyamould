@@ -9,7 +9,7 @@ from html import escape
 import re
 
 ROOT=Path(__file__).resolve().parent.parent
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 LOCALES=("en","es","pt","ru","tr")
 
 # Explicitly vetted against the English page's <main> illustrations and asset
