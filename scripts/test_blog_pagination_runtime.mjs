@@ -18,10 +18,10 @@ class Node {
 function boot(lang,length,path='/blog/',query=''){
   const grid=new Node('div'),shell=new Node('div');shell.appendChild(grid);
   for(let i=0;i<length;i++){let article=grid.appendChild(new Node('article'));article.appendChild(new Node('img'));}
-  let href='https://xuyibottles.com'+path+query;
+  let href='https://leyamould.com'+path+query;
   const document={documentElement:{lang},querySelector:sel=>sel==='.blog-listing__grid'?grid:null,createElement:tag=>new Node(tag)};
   const window={location:{get href(){return href;}},handlers:{},
-    history:{pushState(_state,_title,url){href=new URL(url,'https://xuyibottles.com').href;}},
+    history:{pushState(_state,_title,url){href=new URL(url,'https://leyamould.com').href;}},
     addEventListener(event,fn){this.handlers[event]=fn;}};
   vm.runInNewContext(source,{document,window,URL});
   return {grid,shell,window,links:()=>shell.children.at(-1)?.children||[],visible:()=>grid.children.filter(x=>!x.hidden).length,href:()=>href};
