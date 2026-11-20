@@ -13,8 +13,8 @@ OUT=ROOT/"dist"
 from admin_route import admin_path as resolve_admin_path
 meta=json.loads((OUT/"build-meta.json").read_text(encoding="utf-8"))
 ADMIN_PATH=resolve_admin_path(meta.get("adminPath","admin"))
-assert meta["pagesProject"]=="xuyi-drinkware-site"
-assert meta["siteOrigin"]=="https://xuyibottles.com"
+assert meta["pagesProject"]=="leyamould"
+assert meta["siteOrigin"]=="https://leyamould.com"
 assert meta["templateSet"]=="templates/site" and len(meta["templateSha256"])>=10
 CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
 INDEXABLE=CONFIG["site"].get("indexingApproved") is True
@@ -82,7 +82,7 @@ for page in pages:
         slug=rel.split("/")[1]
         if slug.isdigit() and value.count(slug)!=1:
             broken.append((rel,"product model repeats in "+label,slug))
-    expected="https://xuyibottles.com/"+rel[:-len("index.html")]
+    expected="https://leyamould.com/"+rel[:-len("index.html")]
     if not canon or canon.group(1)!=expected:broken.append((rel,"product canonical mismatch"))
 for route in ["index.html","blog/index.html",ADMIN_PATH+"/index.html",
               "products/2095/index.html","products/5340/index.html",
