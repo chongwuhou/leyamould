@@ -160,9 +160,9 @@ for f in DIST.rglob("index.html"):
 content=(DIST/"llms.txt").read_text(encoding="utf8")
 assert content.startswith("# XUYI Bottles")
 assert len(content.splitlines())>20
-assert "https://xuyibottles.com/blog/tritan-vs-pp-petg-pc/" in content
+assert "https://leyamould.com/blog/tritan-vs-pp-petg-pc/" in content
 assert "Prices, MOQ, materials" in content
-for label,url in re.findall(r'- \[([^\]]+)\]\((https://xuyibottles.com/[^\)]+)\)',content):
+for label,url in re.findall(r'- \[([^\]]+)\]\((https://leyamould.com/[^\)]+)\)',content):
     target=url[len(ORIGIN):]
     assert (DIST/target.lstrip("/")/"index.html").is_file(),(label,url)
 assert faq_count==5 and blog_count>=80 and product_count>=505,(faq_count,blog_count,product_count)
