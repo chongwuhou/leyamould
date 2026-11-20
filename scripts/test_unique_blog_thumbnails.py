@@ -64,11 +64,11 @@ for lang in LANGS:
             accepted.add(PENDING_COVER_MIGRATIONS[expected])
         accepted.update(PENDING_COVER_MIGRATIONS_BY_SLUG.get(slug,()))
         if slug in PENDING_COVER_MIGRATIONS_BY_SLUG:
-            accepted.update(re.findall(r'<meta property="og:image" content="https://xuyibottles.com([^"]+)"',article))
+            accepted.update(re.findall(r'<meta property="og:image" content="https://leyamould.com([^"]+)"',article))
             accepted.update(re.findall(r'<div class="blog-detail__cover"><img src="([^"]+)"',article))
-            accepted.update(re.findall(r'"image":\["https://xuyibottles.com([^"]+)"\]',article))
-        assert any('<meta property="og:image" content="https://xuyibottles.com'+cover+'"' in article for cover in accepted),(lang,slug,"OG")
-        assert any('"image":[\"https://xuyibottles.com'+cover+'"]' in article for cover in accepted),(lang,slug,"JSON-LD")
+            accepted.update(re.findall(r'"image":\["https://leyamould.com([^"]+)"\]',article))
+        assert any('<meta property="og:image" content="https://leyamould.com'+cover+'"' in article for cover in accepted),(lang,slug,"OG")
+        assert any('"image":[\"https://leyamould.com'+cover+'"]' in article for cover in accepted),(lang,slug,"JSON-LD")
         assert any('<div class="blog-detail__cover"><img src="'+cover+'"' in article for cover in accepted),(lang,slug,"article hero")
         if expected.startswith("/assets/"):
             f=DIST/expected.lstrip("/")
