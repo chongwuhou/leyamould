@@ -9,7 +9,7 @@ SNAPSHOT = ROOT / "_local_ops" / "build-snapshot.json"
 if not SNAPSHOT.is_file():
     raise SystemExit("Missing D1 build snapshot")
 state = json.loads(SNAPSHOT.read_text(encoding="utf8"))
-assert state.get("site") == "xuyi-drinkware-site" and state.get("schemaVersion") == 1
+assert state.get("site") == "leyamould" and state.get("schemaVersion") == 1
 
 sys.path.insert(0, str(ROOT))
 from blog_catalog_source import load_guides
