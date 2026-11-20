@@ -51,7 +51,7 @@ on:
     - cron: "7,37 * * * *"
 
 concurrency:
-  group: xuyi-drinkware-production
+  group: leyamould-production
   cancel-in-progress: true
 permissions:
   contents: read
@@ -108,7 +108,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${XUYI_INDEXNOW_KEY}" ]; then
-            derived="$(python -c 'import hashlib,hmac,os; print(hmac.new(os.environ["CLOUDFLARE_API_TOKEN"].encode(), b"indexnow:xuyibottles.com:v2", hashlib.sha256).hexdigest()[:32])')"
+            derived="$(python -c 'import hashlib,hmac,os; print(hmac.new(os.environ["CLOUDFLARE_API_TOKEN"].encode(), b"indexnow:leyamould.com:v2", hashlib.sha256).hexdigest()[:32])')"
             # Keep the public ownership key out of CI step environment logs.
             echo "::add-mask::$derived"
             echo "XUYI_INDEXNOW_KEY=$derived" >> "$GITHUB_ENV"
@@ -122,7 +122,7 @@ jobs:
           curl --fail-with-body --silent --show-error --retry 2 \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/leyamould" \
-            | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||j.result?.name!=='leyamould')throw new Error('XUYI project identity mismatch');const c=j.result?.source?.config||{};if(c.production_deployments_enabled!==false||c.preview_deployment_setting!=='none')throw new Error('Disable old Git auto deploy for XUYI before enabling the CI publisher');console.log('One controlled production publisher verified')})"
+            | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.success||j.result?.name!=='leyamould')throw new Error('Leyamould project identity mismatch');const c=j.result?.source?.config||{};if(c.production_deployments_enabled!==false||c.preview_deployment_setting!=='none')throw new Error('Disable competing Git auto deploy for Leyamould before enabling the CI publisher');console.log('One controlled production publisher verified')})"
       - name: Read Leyamould D1 publish revision
         if: steps.credential.outputs.ready == 'true' && github.event_name == 'schedule'
         id: revision
