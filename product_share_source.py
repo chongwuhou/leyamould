@@ -7,7 +7,7 @@ from __future__ import annotations
 from html import escape
 import re
 
-ORIGIN = "https://xuyibottles.com"
+ORIGIN = "https://leyamould.com"
 CATEGORY_PREVIEWS = {
     "Plastic Sports Water Bottles": "/assets/social/product-social-sports.webp",
     "Kids Plastic Water Bottles": "/assets/social/product-social-kids.webp",
