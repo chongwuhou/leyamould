@@ -34,7 +34,7 @@ export async function onRequestGet(context) {
   const stored = await loadBrandConfigFromD1(db);
   if (!stored) return response({ source:"xuyi-default",updatedAt:"",config:{
     identity:{legalName:"XUYI Bottles",displayName:"XUYI Bottles",textName:"XUYI",upperName:"XUYI",filterBrandName:"XUYI Bottles",acronym:"XY"},
-    contact:{email:"Janey@xuyibottles.com",phoneDisplay:"+86 153 9589 7937",phoneE164:"+8615395897937",whatsappUrl:"https://wa.me/8615395897937",address:"Taizhou, China"},
+    contact:{email:"Janey@leyamould.com",phoneDisplay:"+86 153 9589 7937",phoneE164:"+8615395897937",whatsappUrl:"https://wa.me/8615395897937",address:"Taizhou, China"},
     logos:{header:{src:"/favicon.svg",alt:"XUYI Bottles"},footer:{src:"/favicon.svg",alt:"XUYI Bottles"}},
     social:{},footer:{about:"Plastic drinkware and custom bottle sourcing.",contactHeading:"Contact XUYI",copyright:"XUYI Bottles"},
     seo:{home:{en:{title:"Custom Plastic Water Bottles | XUYI Bottles",description:"Wholesale custom plastic water bottles and private-label drinkware."}}}
