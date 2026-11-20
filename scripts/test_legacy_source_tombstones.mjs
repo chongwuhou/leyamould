@@ -12,7 +12,7 @@ const {onRequest}=await import(routerData);
 for(const path of ["/build.py","/site_renderer.py","/data/products.json"]){
   for(const suffix of ["","?bust=123"]){
     const result=await onRequest({
-      request:new Request("https://xuyibottles.com"+path+suffix),
+      request:new Request("https://leyamould.com"+path+suffix),
       env:{},
       next:async()=>{throw Error("Legacy file must never reach Pages assets")}
     });
@@ -24,7 +24,7 @@ for(const path of ["/build.py","/site_renderer.py","/data/products.json"]){
 }
 let forwarded=0;
 const other=await onRequest({
-  request:new Request("https://xuyibottles.com/products/2501/"),
+  request:new Request("https://leyamould.com/products/2501/"),
   env:{},
   next:async()=>{forwarded++;return new Response("OK",{status:200})}
 });
