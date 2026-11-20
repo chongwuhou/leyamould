@@ -11,7 +11,7 @@ snapshot=ROOT/"_local_ops/build-snapshot.json"
 assert snapshot.is_file(),"Synthetic SKU E2E requires a locally fetched approved D1 snapshot"
 original=snapshot.read_bytes()
 data=json.loads(original.decode("utf-8"))
-assert data.get("site")=="xuyi-drinkware-site"
+assert data.get("site")=="leyamould"
 model="bottle-qa-demo"
 assert all(x.get("model")!=model for x in data.get("products",[]))
 record={
@@ -37,7 +37,7 @@ try:
  build()
  html=(ROOT/"dist/products"/model/"index.html").read_text(encoding="utf-8")
  assert "Synthetic Test Bottle 750ml | XUYI Bottles" in html
- assert 'href="https://xuyibottles.com/products/'+model+'/"' in html
+ assert 'href="https://leyamould.com/products/'+model+'/"' in html
  cfg=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
  expected="index,follow" if cfg["site"]["indexingApproved"] else "noindex,nofollow"
  assert 'name="robots" content="'+expected+'"' in html
