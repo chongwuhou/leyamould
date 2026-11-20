@@ -1,0 +1,24 @@
+name: Leyamould read-only build snapshot health check
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/test-leyamould-build-snapshot-readonly.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  snapshot-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Read Leyamould public build snapshot from D1 (GET only)
+        run: |
+          python scripts/fetch_build_snapshot.py
+          python -c "import json; from pathlib import Path; p=json.loads(Path('_local_ops/build-snapshot.json').read_text(encoding='utf8')); print('XUYI_BUILD_SNAPSHOT_HEALTH_OK', 'revision', p.get('publishRevision'), 'pages', len(p.get('pages', [])), 'products', len(p.get('products', [])), 'reviews', len(p.get('productReviews', [])), 'translations', len(p.get('translations', [])))"
