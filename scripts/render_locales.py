@@ -541,7 +541,7 @@ def main():
 
     data=json.loads(SNAPSHOT.read_text(encoding="utf-8"))
 
-    if data.get("site")!="xuyi-drinkware-site":raise RuntimeError("Wrong locale source site")
+    if data.get("site")!="leyamould":raise RuntimeError("Wrong locale source site")
 
     languages=(data.get("languages") or {}).get("languages",[])
 
@@ -1267,7 +1267,7 @@ def main():
 
     # language pages must not become sitemap/hreflang entries.
 
-    manifest={"schemaVersion":1,"site":"xuyi-drinkware-site","sourceLocale":"en",
+    manifest={"schemaVersion":1,"site":"leyamould","sourceLocale":"en",
 
               "defaultLocale":"en","origin":ORIGIN,"locales":ready,
 
