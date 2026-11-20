@@ -14,7 +14,7 @@ ASSET_VERSION=_asset_version()
 INDEXING_APPROVED=(json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
                    .get("site",{}).get("indexingApproved") is True)
 BUILD_STATE={}
-_build_state_path=os.environ.get("XUYI_BUILD_SNAPSHOT","")
+_build_state_path=os.environ.get("LEYA_BUILD_SNAPSHOT") or os.environ.get("XUYI_BUILD_SNAPSHOT","")
 if _build_state_path:
  _state_path=Path(_build_state_path).resolve()
  if not _state_path.is_file():raise RuntimeError("Missing XUYI build snapshot")
@@ -35,7 +35,7 @@ for _old,_new in LEGACY_PRODUCT_SLUGS.items():
  # the CMS route. A later explicit new-route edit always wins.
  if _old_route in PAGE_OVERRIDES:PAGE_OVERRIDES.setdefault(_new_route,PAGE_OVERRIDES[_old_route])
  if _old_route in BODY_OVERRIDES:BODY_OVERRIDES.setdefault(_new_route,BODY_OVERRIDES[_old_route])
-BUILD_OUTPUT_DIR=os.environ.get("XUYI_OUTPUT_DIR",".")
+BUILD_OUTPUT_DIR=os.environ.get("LEYA_OUTPUT_DIR") or os.environ.get("XUYI_OUTPUT_DIR",".")
 if BUILD_OUTPUT_DIR not in (".","dist"):
  raise ValueError("XUYI_OUTPUT_DIR must be . or dist")
 
@@ -364,7 +364,7 @@ def build_url(path,title,content):
   page_desc=re.search(r'<meta name="description" content="([^"]*)"',content)
   graph={"@context":"https://schema.org","@graph":[
    {"@type":"Organization","@id":SITE_ORIGIN+"/#organization",
-    "name":"LEYA MOULD","legalName":"台州市旭一家居用品有限公司",
+    "name":"LEYA MOULD","legalName":"LEYA MOULD Co.,Ltd",
     "url":SITE_ORIGIN+"/","address":{"@type":"PostalAddress","addressLocality":"Taizhou","addressRegion":"Zhejiang","addressCountry":"CN"}},
    {"@type":"WebSite","@id":SITE_ORIGIN+"/#website","url":SITE_ORIGIN+"/",
     "name":"LEYA MOULD","publisher":{"@id":SITE_ORIGIN+"/#organization"},
@@ -469,7 +469,7 @@ ICONS={
 def category_links():
  nav={r.get("url"):r.get("label") for r in BUILD_STATE.get("navigation",[]) if isinstance(r,dict)}
  return [(nav.get("/collections/"+v[1]+"/") or v[0],"/collections/"+v[1]+"/") for v in CAT.values()]
-# Navigation mirrors the target's information architecture, while retaining XUYI-only products.
+# Navigation remains a temporary compatibility layer until the mould route set is published.
 # Both desktop and mobile reuse one category/menu data file.
 # D1 site_navigation remains the runtime business source for labels and order.
 MENU_DEFAULTS=json.loads((ROOT/"data/site-navigation-defaults.json").read_text(encoding="utf-8"))
@@ -519,7 +519,7 @@ def header():
    cols=[]
    for group,img,links in PRODUCT_COLUMNS:
     heading='<a class="mega__heading" href="'+e(links[0][1])+'">'+e(group)+'</a>'
-    pic='<a class="mega__image" href="'+e(links[0][1])+'">'+photo(img,"XUYI "+group+" catalog photo")+'</a>'
+    pic='<a class="mega__image" href="'+e(links[0][1])+'">'+photo(img,"LEYA MOULD "+group+" catalog photo")+'</a>'
     column='<div class="mega__column">'+heading+pic+'<div class="mega__links">'+''.join('<a href="'+e(uri)+'">'+e(by_url.get(uri,{}).get('label') or label)+'</a>' for label,uri in links)+'</div></div>'
     if group=="OEM & Wholesale":
      known_urls={u for _,_,items in PRODUCT_COLUMNS for _,u in items}
@@ -544,7 +544,7 @@ def header():
    markup=markup.replace(key+ICONS["chevron"],e(label)+ICONS["chevron"],1)
   else:markup=markup.replace(">"+key+"</a>",">"+e(label)+"</a>",1)
   navitems.append(markup)
- # All navigational targets are XUYI pages, no stainless steel or competitor-branded items.
+ # All navigational targets remain internal until the mould route set is published.
  mobile_parts={}
  mobile_parts["Home"]='<a href="/">'+e(labels["Home"])+'</a>'
  groups=[]
@@ -565,7 +565,7 @@ def header():
   mobile_parts[nav_name]='<a href="'+top_urls[nav_name]+'">'+e(labels[nav_name])+'</a>'
  mobile=''.join(mobile_parts[k] for k in sorted_names)
  # Let D1 append genuine, approved top-level links to both menus. The
- # existing four-column product group remains the XUYI design source.
+ # the inherited four-column group remains temporary source structure only.
  custom_top=sorted((r for r in nav_rows if isinstance(r,dict) and not r.get("parent_id")
      and r.get("url") not in top_urls.values()),
      key=lambda r:(int(r.get("sort_order",999)),str(r.get("id",""))))
@@ -710,7 +710,7 @@ FAQS=[
 ("What is your MOQ for wholesale orders?","Minimum order quantity depends on bottle model, stock availability and customization. Send us the products and estimated volume to get an accurate answer."),
 ("Do you offer samples before bulk production?","Sample availability, lead time and cost are confirmed according to the product and destination. Please include your model number and required custom work."),
 ("Which bottle materials can you supply?","PC, Tritan, PP and PETG options are available according to customer requirements. Ask about BPA-free options for a selected model and request documentation for your destination market."),
-("Do you have your own factory?","XUYI operates its own manufacturing facility and may coordinate production through selected partner facilities for some products. We confirm project requirements and applicable quality controls."),
+("Do you have your own factory?","LEYA MOULD project capability details will be published after the mould product, process and factory evidence are reviewed."),
 ("How long does production and shipping take?","Production and shipping timelines depend on model, order quantity, materials, custom artwork and destination. We provide an order-specific timeline after reviewing requirements."),
 ("Can I send a product drawing or a similar product sample?","Yes, you can describe the target design and send artwork or specifications. Our team can evaluate what can be supplied or customized and whether tooling is needed."),
 ("Can we mix colors or different models in one order?","Possible combinations depend on the bottle series, packing process and order quantity. Include your requested color and model breakdown when asking for a quote."),
