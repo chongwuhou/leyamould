@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "brand": "LEYA MOULD",
+  "categories": [
+    {
+      "slug": "pet-preform-moulds",
+      "title": "PET Preform Moulds",
+      "short": "PET preform tooling for beverage, edible oil and technical packaging projects.",
+      "detail": "A starting category for PET preform tooling. Neck finish, preform weight, cavity count, hot runner and cycle requirements are confirmed from the buyer drawing and approved sample.",
+      "image": "/assets/curated-hd/gradient-sports.webp",
+      "checks": ["Preform drawing and neck standard", "Target PET grade and preform weight", "Cavity plan, cycle target and machine interface", "Hot-runner, cooling and spare-parts requirements"]
+    },
+    {
+      "slug": "bottle-cap-moulds",
+      "title": "Bottle Cap Moulds",
+      "short": "Precision cap mould concepts for beverage, oil, food, personal-care and industrial closures.",
+      "detail": "Cap tooling is reviewed around the closure drawing, tamper-evident band, thread, hinge or liner design, material and production machine. Final technical data is supplied after project review.",
+      "image": "/assets/curated-hd/feature-flip-top.webp",
+      "checks": ["Closure drawing, thread and sealing surface", "PP or selected resin and shrinkage assumptions", "Cap style: screw, flip-top, tethered or custom", "Cavity balance, ejection and inspection plan"]
+    },
+    {
+      "slug": "bottle-moulds",
+      "title": "Bottle Moulds",
+      "short": "Bottle mould direction for blow-moulded and injection-related packaging applications.",
+      "detail": "Bottle mould projects start from the bottle drawing, target volume, resin, wall distribution, machine interface and surface finish. Approved product files will be added as they are received.",
+      "image": "/assets/curated-hd/outdoor-lifestyle.webp",
+      "checks": ["Bottle drawing, volume and critical dimensions", "Resin, preform or parison information", "Blow machine interface and mould cooling", "Texture, logo and surface-finish references"]
+    },
+    {
+      "slug": "knife-fork-moulds",
+      "title": "Knife & Fork Moulds",
+      "short": "Cutlery tooling category for disposable, reusable and custom packaging programs.",
+      "detail": "Knife and fork moulds are assessed from the part geometry, resin, gate location, cavity balance, ejection and food-contact documentation required for the target market.",
+      "image": "/assets/curated-hd/customizable-assortment.webp",
+      "checks": ["Part drawing and ergonomic requirements", "Target resin and food-contact documents", "Gate, runner, ejection and cavity balance", "Surface texture, flash control and inspection points"]
+    }
+  ],
+  "services": [
+    {"slug": "mould-design", "title": "Mould Design & Engineering", "text": "Review drawings, parting lines, cooling, ejection and the production machine interface before tooling is approved."},
+    {"slug": "precision-manufacturing", "title": "Precision Manufacturing", "text": "Coordinate machining, EDM, fitting and assembly against the approved tooling brief and inspection checkpoints."},
+    {"slug": "trial-sampling", "title": "Trial, Sampling & Optimisation", "text": "Plan trial shots, sample feedback, dimensional checks and controlled changes before production handover."}
+  ]
+}
+
