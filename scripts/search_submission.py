@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parent.parent
 DIST=ROOT/"dist"
 ORIGIN="https://leyamould.com"
-HOST="xuyibottles.com"
+HOST="leyamould.com"
 CONFIG=ROOT/"deployment/site.config.json"
 INDEXNOW="https://api.indexnow.org/indexnow"
 KEY_RE=re.compile(r"^[A-Za-z0-9-]{8,128}$")
