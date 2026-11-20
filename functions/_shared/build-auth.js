@@ -24,7 +24,7 @@ async function verifyCloudflareProjectToken(token, env) {
   // These two identifiers are public (not credentials), and pin the
   // authorization check to XUYI even when Pages variables are absent.
   const accountId = "a4032d0251103d6ef680b2aaddce1afc";
-  const projectName = "xuyi-drinkware-site";
+  const projectName = "leyamould";
   // The Cloudflare GET below validates this exact project; Pages environment
   // variables are not a second, potentially stale source of truth.
   try {
