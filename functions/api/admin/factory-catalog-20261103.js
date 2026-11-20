@@ -3,7 +3,7 @@ import {normalizeNewProduct} from "../../_shared/new-product.js";
 import {normalizeAltMap,ensureMediaAlt} from "../../_shared/media-alt.js";
 import {imageKey} from "../../_shared/r2-usage.js";
 import {bumpPublishRevision,loadLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";
-import manifest from "../../../data/factory-catalog-manifest-2026-11-03.json" with {type:"json"};
+import manifest from "../../../data/factory-catalog-manifest-2026-11-03.json";
 
 const json=(value,status=200)=>Response.json(value,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const byModel=new Map((manifest.models||[]).map(item=>[item.model,item]));
@@ -162,3 +162,4 @@ export async function onRequestPost(context){
       publishRevision:revision.revision});
   }catch(error){return json({error:String(error.message||error)},503);}
 }
+
