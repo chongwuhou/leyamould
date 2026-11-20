@@ -102,6 +102,39 @@ function contentForTranslation(item) {
   return JSON.stringify({ title: item.title, description: item.description, mainHtml: item.mainHtml });
 }
 
+// A reviewed batch may repair only the shape emitted by an earlier run of
+// this same publisher: FAQ tuples become the CMS's {question,answer} shape,
+// and the source article receives its reviewed English product annotations.
+// All other D1 content must remain byte-for-byte owner protected.
+function canonicalJson(value) {
+  if (Array.isArray(value)) return value.map(canonicalJson);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonicalJson(value[key])]));
+  }
+  return value;
+}
+function compatibleReviewedShapeRepair(existingText, incomingPost) {
+  let existing;
+  try { existing = JSON.parse(existingText); } catch { return false; }
+  if (!existing || typeof existing !== "object" || Array.isArray(existing)) return false;
+  const repaired = { ...existing };
+  if (Array.isArray(repaired.faqs) && repaired.faqs.every(item => Array.isArray(item) && item.length === 2)) {
+    repaired.faqs = repaired.faqs.map(([question, answer]) => ({ question, answer }));
+  }
+  if (Array.isArray(repaired.product_notes) && Array.isArray(incomingPost.product_notes)) {
+    repaired.product_notes = repaired.product_notes.map(note => {
+      const reference = incomingPost.product_notes.find(item => String(item?.section) === String(note?.section) && String(item?.sku) === String(note?.sku));
+      if (!reference) return note;
+      return {
+        ...note,
+        label: { ...(note.label || {}), en: note?.label?.en || reference?.label?.en },
+        text: { ...(note.text || {}), en: note?.text?.en || reference?.text?.en }
+      };
+    });
+  }
+  return JSON.stringify(canonicalJson(repaired)) === JSON.stringify(canonicalJson(incomingPost));
+}
+
 export async function onRequestPost(context) {
   if (!(await authorizedReviewedBlogBatchRequest(context.request, context.env))) return reply({ error: "Unauthorized reviewed batch request" }, 401);
   const db = context.env.XUYI_DB;
@@ -123,10 +156,16 @@ export async function onRequestPost(context) {
     for (const item of payload.posts) {
       const content = JSON.stringify(item.post);
       const existing = await db.prepare("SELECT status,content_json FROM xuyi_blog_posts WHERE slug=?").bind(item.slug).first();
-      if (existing && (existing.status !== "published" || existing.content_json !== content)) {
+      if (existing && existing.status !== "published") {
         return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
       }
       if (!existing) newPostStatements.push(db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,'published',?,?)").bind(item.slug, content, item.publishedAt || now));
+      else if (existing.content_json !== content) {
+        if (!compatibleReviewedShapeRepair(existing.content_json, item.post)) {
+          return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
+        }
+        newPostStatements.push(db.prepare("UPDATE xuyi_blog_posts SET content_json=?,updated_at=CURRENT_TIMESTAMP WHERE slug=? AND status='published' AND content_json=?").bind(content, item.slug, existing.content_json));
+      }
     }
 
     const newTranslationStatements = [];
@@ -183,3 +222,4 @@ export async function onRequestPost(context) {
     return reply({ error: "D1 batch operation failed: " + String(error?.message || "unknown error").slice(0, 240) }, 500);
   }
 }
+

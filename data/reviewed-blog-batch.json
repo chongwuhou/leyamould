@@ -69,22 +69,22 @@
         "Compare actual shipment charges with the estimate and record the reason for every material variance."
       ],
       "faqs": [
-        [
-          "Is the lowest factory price always the lowest landed cost?",
-          "No. A lower ex-factory number can be offset by weaker packing, a different carton count, higher freight cube, destination handling or buyer-side import costs. Compare the same approved configuration and delivery basis."
-        ],
-        [
-          "Which Incoterm should an importer choose?",
-          "There is no universal best term. Choose the term that matches the buyer's freight control, customs capability and destination process, then write the named place and included costs clearly in the quote."
-        ],
-        [
-          "Can a supplier confirm duty and taxes for every country?",
-          "Usually not without the exact destination, importer status, classification and local advice. Treat duty, VAT, broker fees and destination charges as buyer-to-confirm unless they are documented for the named route."
-        ],
-        [
-          "How should a buyer handle a provisional freight quote?",
-          "Keep it as a dated estimate, record the assumptions and calculate a sensitivity scenario. Do not present it as a fixed landed cost until the route, packing and carrier quotation are confirmed."
-        ]
+        {
+          "question": "Is the lowest factory price always the lowest landed cost?",
+          "answer": "No. A lower ex-factory number can be offset by weaker packing, a different carton count, higher freight cube, destination handling or buyer-side import costs. Compare the same approved configuration and delivery basis."
+        },
+        {
+          "question": "Which Incoterm should an importer choose?",
+          "answer": "There is no universal best term. Choose the term that matches the buyer's freight control, customs capability and destination process, then write the named place and included costs clearly in the quote."
+        },
+        {
+          "question": "Can a supplier confirm duty and taxes for every country?",
+          "answer": "Usually not without the exact destination, importer status, classification and local advice. Treat duty, VAT, broker fees and destination charges as buyer-to-confirm unless they are documented for the named route."
+        },
+        {
+          "question": "How should a buyer handle a provisional freight quote?",
+          "answer": "Keep it as a dated estimate, record the assumptions and calculate a sensitivity scenario. Do not present it as a fixed landed cost until the route, packing and carrier quotation are confirmed."
+        }
       ],
       "related": [
         "compare-oem-water-bottle-quotes-like-for-like",
@@ -96,12 +96,14 @@
           "section": 1,
           "sku": "2501",
           "label": {
+            "en": "550ml plastic sports water bottle model 2501",
             "es": "botella deportiva de plástico modelo 2501",
             "pt": "garrafa esportiva de plástico modelo 2501",
             "ru": "пластиковая спортивная бутылка модели 2501",
             "tr": "2501 model plastik spor şişesi"
           },
           "text": {
+            "en": "Use {product} as the starting row; confirm the SKU, lid, decoration and packing against the approved sample.",
             "es": "Use {product} como fila inicial; confirme SKU, tapa, decoración y empaque con la muestra aprobada.",
             "pt": "Use {product} como linha inicial; confirme SKU, tampa, decoração e embalagem com a amostra aprovada.",
             "ru": "Используйте {product} как исходную строку; подтвердите SKU, крышку, декор и упаковку по утвержденному образцу.",
@@ -112,12 +114,14 @@
           "section": 3,
           "sku": "2290",
           "label": {
+            "en": "1600ml large-capacity plastic water jug model 2290",
             "es": "jarra plástica de gran capacidad modelo 2290",
             "pt": "jarro plástico de grande capacidade modelo 2290",
             "ru": "пластиковый кувшин большой емкости модели 2290",
             "tr": "2290 model yüksek kapasiteli plastik sürahi"
           },
           "text": {
+            "en": "For carton-volume comparison, use {product} only as the published model reference and confirm the final packing.",
             "es": "Para comparar el volumen de cartón, use {product} solo como referencia del modelo publicado y confirme el embalaje final.",
             "pt": "Para comparar o volume da caixa, use {product} apenas como referência do modelo publicado e confirme a embalagem final.",
             "ru": "Для сравнения объема короба используйте {product} только как ссылку на опубликованную модель и подтвердите финальную упаковку.",
@@ -128,12 +132,14 @@
           "section": 5,
           "sku": "2514",
           "label": {
+            "en": "1000ml plastic sports water bottle model 2514",
             "es": "botella deportiva de plástico de 1000 ml modelo 2514",
             "pt": "garrafa esportiva de plástico de 1000 ml modelo 2514",
             "ru": "пластиковая спортивная бутылка 1000 мл модели 2514",
             "tr": "2514 model 1000 ml plastik spor şişesi"
           },
           "text": {
+            "en": "Use {product} to build a buying scenario; do not substitute it for the confirmed order specification.",
             "es": "Use {product} para montar un escenario de compra; no sustituya la especificación confirmada del pedido.",
             "pt": "Use {product} para montar um cenário de compra; não substitua a especificação confirmada do pedido.",
             "ru": "Используйте {product} для сценария закупки; не заменяйте им подтвержденную спецификацию заказа.",
@@ -896,22 +902,22 @@
         "Create a new revision for every change before bulk decoration."
       ],
       "faqs": [
-        [
-          "Can a digital proof replace a physical sample?",
-          "Usually not for curved bottles, decoration, color, coating, fit or cleaning claims. A digital proof approves layout; the sample tests the approved idea on the actual configuration."
-        ],
-        [
-          "Should a buyer approve the logo color by screen?",
-          "Use a defined color reference and confirm the result on the intended surface and decoration process. Screen color alone is not a reliable production standard."
-        ],
-        [
-          "Who is responsible for a material or dishwasher-safe claim?",
-          "The claim must have an evidence owner and scope tied to the exact material, component, process and market. Do not print a general claim without that review."
-        ],
-        [
-          "What happens if the artwork changes after sample approval?",
-          "Create a new revision, identify the change, review a new proof or sample as needed, and record the new approval before production."
-        ]
+        {
+          "question": "Can a digital proof replace a physical sample?",
+          "answer": "Usually not for curved bottles, decoration, color, coating, fit or cleaning claims. A digital proof approves layout; the sample tests the approved idea on the actual configuration."
+        },
+        {
+          "question": "Should a buyer approve the logo color by screen?",
+          "answer": "Use a defined color reference and confirm the result on the intended surface and decoration process. Screen color alone is not a reliable production standard."
+        },
+        {
+          "question": "Who is responsible for a material or dishwasher-safe claim?",
+          "answer": "The claim must have an evidence owner and scope tied to the exact material, component, process and market. Do not print a general claim without that review."
+        },
+        {
+          "question": "What happens if the artwork changes after sample approval?",
+          "answer": "Create a new revision, identify the change, review a new proof or sample as needed, and record the new approval before production."
+        }
       ],
       "related": [
         "custom-water-bottle-logo-printing-methods-bulk-order",
@@ -923,12 +929,14 @@
           "section": 1,
           "sku": "2501",
           "label": {
+            "en": "550ml plastic sports water bottle model 2501",
             "es": "botella deportiva de plástico modelo 2501",
             "pt": "garrafa esportiva de plástico modelo 2501",
             "ru": "пластиковая спортивная бутылка модели 2501",
             "tr": "2501 model plastik spor şişesi"
           },
           "text": {
+            "en": "Use {product} as a model reference; confirm the print area and tooling against the final sample.",
             "es": "Use {product} como referencia de modelo; confirme el área de impresión y las herramientas con la muestra final.",
             "pt": "Use {product} como referência de modelo; confirme a área de impressão e as ferramentas com a amostra final.",
             "ru": "Используйте {product} как ссылку на модель; подтвердите зону печати и оснастку по финальному образцу.",
@@ -939,12 +947,14 @@
           "section": 3,
           "sku": "2514",
           "label": {
+            "en": "1000ml plastic sports water bottle model 2514",
             "es": "botella deportiva plástica de 1000 ml modelo 2514",
             "pt": "garrafa esportiva plástica de 1000 ml modelo 2514",
             "ru": "пластиковая спортивная бутылка 1000 мл модели 2514",
             "tr": "2514 model 1000 ml plastik spor şişesi"
           },
           "text": {
+            "en": "Use {product} to discuss the surface and process; do not turn the reference into a universal material claim.",
             "es": "Use {product} para hablar de superficie y proceso; no convierta la referencia en una afirmación universal de material.",
             "pt": "Use {product} para discutir superfície e processo; não transforme a referência em uma afirmação universal de material.",
             "ru": "Используйте {product} для обсуждения поверхности и процесса; не превращайте ссылку в универсальное заявление о материале.",
@@ -955,12 +965,14 @@
           "section": 5,
           "sku": "2517",
           "label": {
+            "en": "1200ml plastic sports water bottle model 2517",
             "es": "botella deportiva plástica de 1200 ml modelo 2517",
             "pt": "garrafa esportiva plástica de 1200 ml modelo 2517",
             "ru": "пластиковая спортивная бутылка 1200 мл модели 2517",
             "tr": "2517 model 1200 ml plastik spor şişesi"
           },
           "text": {
+            "en": "With {product}, check cap orientation and visual scale on the larger surface before approval.",
             "es": "Con {product}, compruebe la orientación de la tapa y la escala visual en una superficie más grande antes de aprobar.",
             "pt": "Com {product}, confira a orientação da tampa e a escala visual em uma superfície maior antes de aprovar.",
             "ru": "На {product} проверьте ориентацию крышки и визуальный масштаб на большей поверхности до утверждения.",
@@ -1723,22 +1735,22 @@
         "Describe compatibility only for verified SKUs and conditions."
       ],
       "faqs": [
-        [
-          "Can one cap fit every bottle with the same capacity?",
-          "No. Capacity does not define the neck finish, thread, seal or opening. Verify the exact body-cap combination."
-        ],
-        [
-          "Is outside diameter enough to confirm a replacement lid?",
-          "No. Thread profile, pitch, sealing surface, gasket, cap skirt and clearance also matter. Use repeatable measurements and a physical sample."
-        ],
-        [
-          "How should a buyer make a cross-SKU compatibility claim?",
-          "List the exact verified SKUs, components and test conditions. Do not use a universal phrase when other combinations are untested."
-        ],
-        [
-          "What should happen when a supplier changes a cap or gasket?",
-          "Update the component revision, compare with the retained approved sample and require a new fit and leak review before reorder."
-        ]
+        {
+          "question": "Can one cap fit every bottle with the same capacity?",
+          "answer": "No. Capacity does not define the neck finish, thread, seal or opening. Verify the exact body-cap combination."
+        },
+        {
+          "question": "Is outside diameter enough to confirm a replacement lid?",
+          "answer": "No. Thread profile, pitch, sealing surface, gasket, cap skirt and clearance also matter. Use repeatable measurements and a physical sample."
+        },
+        {
+          "question": "How should a buyer make a cross-SKU compatibility claim?",
+          "answer": "List the exact verified SKUs, components and test conditions. Do not use a universal phrase when other combinations are untested."
+        },
+        {
+          "question": "What should happen when a supplier changes a cap or gasket?",
+          "answer": "Update the component revision, compare with the retained approved sample and require a new fit and leak review before reorder."
+        }
       ],
       "related": [
         "which-water-bottle-closure-type-best-wholesale-order",
@@ -1750,12 +1762,14 @@
           "section": 1,
           "sku": "2501",
           "label": {
+            "en": "550ml plastic sports water bottle model 2501",
             "es": "botella deportiva plástica modelo 2501",
             "pt": "garrafa esportiva plástica modelo 2501",
             "ru": "пластиковая спортивная бутылка модели 2501",
             "tr": "2501 model plastik spor şişesi"
           },
           "text": {
+            "en": "Use {product} as one map row; confirm the neck and cap with a sample, not capacity alone.",
             "es": "Use {product} como una fila de mapa; confirme cuello y tapa con la muestra, no solo con la capacidad.",
             "pt": "Use {product} como uma linha do mapa; confirme gargalo e tampa com a amostra, não apenas pela capacidade.",
             "ru": "Используйте {product} как строку карты; подтвердите горло и крышку по образцу, а не только по объему.",
@@ -1766,12 +1780,14 @@
           "section": 4,
           "sku": "2514",
           "label": {
+            "en": "1000ml plastic sports water bottle model 2514",
             "es": "botella deportiva plástica de 1000 ml modelo 2514",
             "pt": "garrafa esportiva plástica de 1000 ml modelo 2514",
             "ru": "пластиковая спортивная бутылка 1000 мл модели 2514",
             "tr": "2514 model 1000 ml plastik spor şişesi"
           },
           "text": {
+            "en": "Test {product} as one specific combination; do not infer compatibility for other SKUs without physical samples.",
             "es": "Pruebe {product} como una combinación concreta; no infiera compatibilidad para otros SKU sin muestras físicas.",
             "pt": "Teste {product} como uma combinação específica; não infira compatibilidade para outros SKUs sem amostras físicas.",
             "ru": "Проверяйте {product} как конкретную комбинацию; не переносите совместимость на другие SKU без образцов.",
@@ -1782,12 +1798,14 @@
           "section": 5,
           "sku": "2517",
           "label": {
+            "en": "1200ml plastic sports water bottle model 2517",
             "es": "botella deportiva plástica de 1200 ml modelo 2517",
             "pt": "garrafa esportiva plástica de 1200 ml modelo 2517",
             "ru": "пластиковая спортивная бутылка 1200 мл модели 2517",
             "tr": "2517 model 1200 ml plastik spor şişesi"
           },
           "text": {
+            "en": "Record {product} with the approved cap, gasket and tooling versions for a controlled reorder.",
             "es": "Registre {product} con la versión de tapa, junta y herramienta aprobadas para una reposición controlada.",
             "pt": "Registre {product} com a versão aprovada de tampa, vedação e ferramenta para uma reposição controlada.",
             "ru": "Зафиксируйте {product} с утвержденными версиями крышки, уплотнителя и оснастки для повторной закупки.",

@@ -234,7 +234,7 @@ function reviewedProductNotes(post,sectionIndex){
 }
 export function blogHtml(post){
  let body='<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Buying Guide</div><span class="eyebrow">XUYI · PLASTIC DRINKWARE</span><h1>'+esc(post.title)+'</h1><p>'+esc(post.description)+'</p></div></section>';
- body+='<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" loading="eager"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">';
+ body+='<section class="section blog-editorial"><div class="shell"><div class="blog-detail__cover"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" width="1200" height="800" loading="eager"></div><div class="blog-editorial__layout"><aside class="blog-editorial__aside"><div class="blog-toc"><span class="eyebrow">IN THIS GUIDE</span><nav aria-label="Article sections">';
  for(let i=0;i<post.sections.length;i++)body+='<a href="#article-section-'+i+'">'+esc(post.sections[i].heading)+'</a>';
  const published=actualPublishedDate(post),modified=contentModifiedDate(post);
  const timeline=(published?'<time datetime="'+esc(published)+'">Published '+esc(published)+'</time>':'')+
@@ -371,7 +371,7 @@ export function sortLocalizedBlogIndexByD1Order(currentHtml,d1OrderedSlugs,repla
 
 export function blogCard(post){
  const url='/blog/'+post.slug+'/';
- return '<article class="news-card"><a href="'+url+'" class="news-card__image"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+esc((post.group||'Buyer Resources').toUpperCase())+'</span><h3><a href="'+url+'">'+esc(post.title)+'</a></h3><p>'+esc(post.description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>';
+ return '<article class="news-card"><a href="'+url+'" class="news-card__image"><img src="'+esc(post.cover)+'" alt="'+esc(post.coverAlt||post.title)+'" width="1200" height="800" loading="lazy"></a><div class="news-card__info"><span class="news-card__category">'+esc((post.group||'Buyer Resources').toUpperCase())+'</span><h3><a href="'+url+'">'+esc(post.title)+'</a></h3><p>'+esc(post.description)+'</p><a class="news-card__read" href="'+url+'">Read Article →</a></div></article>';
 }
 export function composePage(template,body,post,route){
  if(!template.includes('<main id="main-content">'))throw Error('Blog page template missing');
@@ -415,4 +415,5 @@ export function composePage(template,body,post,route){
  }
  return html;
 }
+
 
