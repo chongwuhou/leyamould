@@ -7,7 +7,7 @@ const words=item.sections.map(s=>s.paragraph.split(" ").length).reduce((a,b)=>a+
 assert(words>=850);
 assert(renderDepthEvidence({slug:"tritan-vs-pp-petg-pc",intro:item.baselineIntro}).includes("source-reviewed-deep-dive"));
 assert(!renderDepthEvidence({slug:"tritan-vs-pp-petg-pc",intro:"CMS edited version"}));
-const person={name:"Mock Editorial Person",jobTitle:"Product Manager",url:"https://xuyibottles.com/about/",verified:true};
+const person={name:"Mock Editorial Person",jobTitle:"Product Manager",url:"https://leyamould.com/about/",verified:true};
 const raw={
  slug:"tritan-vs-pp-petg-pc",title:"Plastic bottle material sourcing guide",
  description:"An independent explanation of sourcing resin grades and components",
@@ -19,7 +19,7 @@ const raw={
 };
 const saved=normalizeBlogPost(raw);
 assert(saved.authorPerson?.name===person.name&&saved.depthEvidence===false);
-const template='<html><head><title>Page</title><link rel="canonical" href="https://xuyibottles.com/blog/"></head><body><main id="main-content">Body</main></body></html>';
+const template='<html><head><title>Page</title><link rel="canonical" href="https://leyamould.com/blog/"></head><body><main id="main-content">Body</main></body></html>';
 const full=composePage(template,blogHtml(saved),saved,"/blog/tritan-vs-pp-petg-pc/");
 assert(full.includes("Mock Editorial Person"));
 const parts=Array.from(full.matchAll(/application\/ld\+json">([\s\S]*?)<\/script>/g));
