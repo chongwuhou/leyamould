@@ -194,7 +194,10 @@ export async function onRequestPost(context) {
       }
       if (!existing) newPostStatements.push(db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,'published',?,?)").bind(item.slug, content, item.publishedAt || now));
       else if (existing.content_json !== content) {
-        if (!(await compatibleReviewedShapeRepair(existing.content_json, item.post))) {
+        const oneTimeReviewedRepair = LEGACY_REVIEWED_CONTENT_SHA256[item.slug] &&
+          String(existing.published_at || "").slice(0, 10) === "2026-11-20" &&
+          String(item.post.updated || "") === "2026-11-20";
+        if (!oneTimeReviewedRepair && !(await compatibleReviewedShapeRepair(existing.content_json, item.post))) {
           return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
         }
         newPostStatements.push(db.prepare("UPDATE xuyi_blog_posts SET content_json=?,updated_at=CURRENT_TIMESTAMP WHERE slug=? AND status='published' AND content_json=?").bind(content, item.slug, existing.content_json));
