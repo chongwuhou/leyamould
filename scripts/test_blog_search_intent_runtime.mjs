@@ -22,7 +22,7 @@ assert.equal(customDesc.description,"OWNER ALTERNATE DESCRIPTION");
 assert.equal(customDesc.title,source.title);
 assert.deepEqual(withInformationalIntent({...source,slug:"another-post"}),{...source,slug:"another-post"});
 assert.deepEqual(withInformationalIntent(revised),revised);
-const shell='<html><head><title>Old</title><meta name="description" content="Old"><link rel="canonical" href="https://xuyibottles.com/blog/sports-water-bottle-customization/"></head><body><main id="main-content">Old</main></body></html>';
+const shell='<html><head><title>Old</title><meta name="description" content="Old"><link rel="canonical" href="https://leyamould.com/blog/sports-water-bottle-customization/"></head><body><main id="main-content">Old</main></body></html>';
 const html=composePage(shell,blogHtml(revised),revised,"/blog/sports-water-bottle-customization/");
 assert(html.includes("<title>"+role.preferred.title+"</title>"));
 assert(html.includes("<h1>"+role.preferred.title+"</h1>"));
