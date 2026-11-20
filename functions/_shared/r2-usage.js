@@ -24,7 +24,7 @@ export async function readUsageIndex(env,url){
   const response=await env.ASSETS.fetch(new Request(indexUrl,{headers:{"cache-control":"no-store"}}));
   if(!response.ok)throw Error("R2 reference index not deployed");
   const data=await response.json();
-  if(data?.site!=="xuyi-drinkware-site"||data.schemaVersion!==1||
+  if(data?.site!=="leyamould"||data.schemaVersion!==1||
      !Number.isInteger(data.publishRevision)||
      !data.references||typeof data.references!=="object")throw Error("Invalid R2 reference index");
   return data;
