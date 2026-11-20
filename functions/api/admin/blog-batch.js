@@ -160,7 +160,11 @@ async function compatibleReviewedShapeRepair(existingText, incomingPost) {
   // Compare every content-bearing field, but ignore only the two known legacy
   // shape differences above. This keeps owner edits protected while allowing
   // the just-published batch to finish its schema migration.
-  const protectedKeys = ["slug", "title", "description", "intro", "category", "cover", "coverAlt", "updated", "sections", "checklist", "faqs", "related", "product_notes", "buyerDecisionTable", "evidence"];
+  const protectedKeys = ["slug", "title", "description", "intro", "category", "cover", "coverAlt", "updated", "sections", "checklist", "faqs", "related", "product_notes"];
+  // The exact SHA pair above is the strongest guard. The field comparison is
+  // the fallback for the same just-published rows when the first write was
+  // serialized by an older Worker runtime; only FAQ/product-note shape may
+  // differ, while every article field is still compared after repair.
   return protectedKeys.every(key => JSON.stringify(canonicalJson(repaired[key])) === JSON.stringify(canonicalJson(incomingPost[key])));
 }
 
