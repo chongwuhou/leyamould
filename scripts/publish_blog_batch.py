@@ -16,7 +16,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ORIGIN = os.environ.get("XUYI_SITE_ORIGIN", "https://xuyibottles.com").rstrip("/")
+ORIGIN = os.environ.get("XUYI_SITE_ORIGIN", "https://leyamould.com").rstrip("/")
 INTENT = "explicit-owner-approval"
 
 
