@@ -1,4 +1,4 @@
-name: XUYI product review regression tests
+name: Leyamould product review regression tests
 on:
   pull_request:
     branches: [main]
