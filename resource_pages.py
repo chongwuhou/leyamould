@@ -31,12 +31,12 @@ def product_grid():
 def question_groups(groups):
  return ''.join('<section class="rs-faq__group" id="'+cat["id"]+'" data-faq-group><header class="rs-faq__group-head"><span class="rs-faq__index">'+cat["icon"]+'</span><div><h2>'+e(cat["name"])+'</h2><p>'+e(cat["summary"])+'</p></div></header><div class="rs-faq__items">'+''.join('<details data-faq-item><summary>'+e(q)+'</summary><div class="rs-faq__answer"><p>'+e(a)+'</p><a href="'+e(link)+'">Related guide or service ↗</a></div></details>' for q,a,link in cat['questions'])+'</div></section>' for cat in groups)
 def schema_add(html,key,description,faq_groups=None):
- url='https://xuyibottles.com/'+key+'/'
- org='https://xuyibottles.com/#organization'
+ url='https://leyamould.com/'+key+'/'
+ org='https://leyamould.com/#organization'
  pages=[
-  {'@type':'Organization','@id':org,'name':'XUYI Bottles','legalName':'台州市旭一家居用品有限公司','alternateName':'Taizhou Xuyi Household Goods Co., Ltd.','url':'https://xuyibottles.com/','address':{'@type':'PostalAddress','addressLocality':'Taizhou','addressRegion':'Zhejiang','addressCountry':'CN'}},
+  {'@type':'Organization','@id':org,'name':'XUYI Bottles','legalName':'台州市旭一家居用品有限公司','alternateName':'Taizhou Xuyi Household Goods Co., Ltd.','url':'https://leyamould.com/','address':{'@type':'PostalAddress','addressLocality':'Taizhou','addressRegion':'Zhejiang','addressCountry':'CN'}},
   {'@type':'WebPage','@id':url+'#webpage','url':url,'name':key.replace('-',' ').title()+' | XUYI Bottles','description':description,'inLanguage':'en','about':{'@id':org}},
-  {'@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'Home','item':'https://xuyibottles.com/'},{'@type':'ListItem','position':2,'name':key.replace('-',' ').title(),'item':url}]}
+  {'@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'Home','item':'https://leyamould.com/'},{'@type':'ListItem','position':2,'name':key.replace('-',' ').title(),'item':url}]}
  ]
  if faq_groups:
   allq=[(q,a) for c in faq_groups for q,a,_ in c['questions']]
