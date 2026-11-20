@@ -32,7 +32,7 @@ def inventory(root:Path, overflow:Path|None=None):
 def generate(root:Path,overflow:Path|None=None):
     refs=inventory(root,overflow)
     meta=json.loads((root/"build-meta.json").read_text(encoding="utf-8"))
-    payload={"schemaVersion":1,"site":"xuyi-drinkware-site","publishRevision":meta["publishRevision"],
+    payload={"schemaVersion":1,"site":"leyamould","publishRevision":meta["publishRevision"],
              "sourceRevision":meta["sourceRevision"],"references":refs}
     (root/"r2-usage-index.json").write_text(json.dumps(payload,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     return len(refs),sum(map(len,refs.values()))
