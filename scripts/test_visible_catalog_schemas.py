@@ -22,9 +22,9 @@ from site_renderer import SERIES,CAT
 from cms_seo_curation_guard import snapshot
 
 D=ROOT/"dist"
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 owner=snapshot()
-assert owner and owner["site"]=="xuyi-drinkware-site"
+assert owner and owner["site"]=="leyamould"
 countfaq=countlists=countproducts=countmaterials=0
 
 def schema_nodes(page):
