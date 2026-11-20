@@ -2,7 +2,7 @@
 from __future__ import annotations
 import re
 
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 PRODUCT_ROUTE=re.compile(r"/products/([a-z0-9_-]+)/",re.I)
 ALT=re.compile(r'<link\s+rel="alternate"\s+hreflang="[^"]+"\s+href="[^"]*"\s*/?>',re.I)
 
