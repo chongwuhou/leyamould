@@ -55,7 +55,7 @@ export async function onRequestGet(context){
       }catch{return [];}
     });
     return json({
-      site:"xuyi-drinkware-site",schemaVersion:1,
+      site:"leyamould",schemaVersion:1,
       adminPath,
       publishRevision:Number(config.publish_revision||0),
        brand:parseJson(config.brand_config,null),
