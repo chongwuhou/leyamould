@@ -5,7 +5,7 @@ import urllib.request
 import urllib.error
 from time import time_ns
 
-BASE="https://xuyibottles.com"
+BASE="https://leyamould.com"
 cases={
  "/":200,
  "/blog/":200,
@@ -49,7 +49,7 @@ for path,expected in cases.items():
      failed.append((path,"duplicate legacy Blog heading on live site"))
    if path=="/build-meta.json":
     meta=json.load(resp)
-    if meta.get("pagesProject")!="xuyi-drinkware-site" or meta.get("templateSet")!="templates/site":
+    if meta.get("pagesProject")!="leyamould" or meta.get("templateSet")!="templates/site":
      failed.append((path,"wrong release identity"))
  except urllib.error.HTTPError as exc:status=exc.code
  except Exception as exc:
