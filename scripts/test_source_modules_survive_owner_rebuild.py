@@ -42,7 +42,7 @@ with TemporaryDirectory(prefix="xuyi-owner-source-rebuild-") as temporary:
     # A custom CMS social preview is already present. Retain it, even if
     # it differs from the JSON-LD product photo.
     own_product = stage / "es/products/501/index.html"
-    owner_image = "https://xuyibottles.com/assets/sku-hd/owner-approved-501.webp"
+    owner_image = "https://leyamould.com/assets/sku-hd/owner-approved-501.webp"
     contents = own_product.read_text(encoding="utf8")
     changed, count = re.subn(
         r'(<meta property="og:image" content=")[^"]+(")',
