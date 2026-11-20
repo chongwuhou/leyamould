@@ -18,7 +18,7 @@ for group,num in facts["questionRefs"]:
     q,a,url=entry
     assert "**Q: "+q+"**" in text
     assert a.split(". ")[0]+"." in text
-assert "https://xuyibottles.com/faq/" in text
+assert "https://leyamould.com/faq/" in text
 
 for lang in ("","es/","pt/","ru/","tr/"):
  for route in ("","about/","faq/"):
@@ -29,7 +29,7 @@ for lang in ("","es/","pt/","ru/","tr/"):
     org=organizations[0]
     assert org["legalName"]==facts["legalName"],(lang,route)
     assert org["contactPoint"]["contactType"]=="sales",(lang,route)
-    assert org["contactPoint"]["url"]=="https://xuyibottles.com/contact/",(lang,route)
+    assert org["contactPoint"]["url"]=="https://leyamould.com/contact/",(lang,route)
     assert set(SUBJECTS)<=set(org["knowsAbout"]),(lang,route)
 # The source helper must never replace owner-supplied verified contact points.
 edited={"@type":"Organization","contactPoint":{"@type":"ContactPoint","contactType":"sales","email":"owner-verified@example.com"},"knowsAbout":["owner approved polymer"]}
@@ -42,11 +42,11 @@ assert updated==enrich_organization(updated)
 site=(D/"index.html").read_text(encoding="utf8")
 assert "SearchAction" not in site
 # The notifications are a subset of changed canonical URLs, never images.
-start={"site":"xuyi-drinkware-site","urls":{"https://xuyibottles.com/":"a","https://xuyibottles.com/products/2095/":"a"}}
-end={"site":"xuyi-drinkware-site","urls":{"https://xuyibottles.com/":"a","https://xuyibottles.com/products/2095/":"b","https://xuyibottles.com/products/new/":"c"}}
-assert new_or_changed(start,end)==["https://xuyibottles.com/products/2095/","https://xuyibottles.com/products/new/"]
+start={"site":"leyamould","urls":{"https://leyamould.com/":"a","https://leyamould.com/products/2095/":"a"}}
+end={"site":"leyamould","urls":{"https://leyamould.com/":"a","https://leyamould.com/products/2095/":"b","https://leyamould.com/products/new/":"c"}}
+assert new_or_changed(start,end)==["https://leyamould.com/products/2095/","https://leyamould.com/products/new/"]
 assert new_or_changed(end,end)==[]
-workflow=(ROOT/".github/workflows/publish-xuyi.yml").read_text(encoding="utf8")
+workflow=(ROOT/".github/workflows/publish-leyamould.yml").read_text(encoding="utf8")
 assert workflow.index("Verify XUYI live deployment")<workflow.index("Notify IndexNow of verified changed URLs")
 assert "python scripts/search_submission.py --submit" in workflow
 assert "XUYI_INDEXNOW_KEY" in workflow
