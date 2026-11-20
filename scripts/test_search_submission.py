@@ -14,7 +14,7 @@ import search_submission as module
 import preindex_security_gate as gate
 
 site=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
-assert site["cloudflare"]["pagesProjectName"]=="xuyi-drinkware-site"
+assert site["cloudflare"]["pagesProjectName"]=="leyamould"
 assert module.approved() is site["site"]["indexingApproved"]
 dist=ROOT/"dist"
 manifest=module.create_manifest()
