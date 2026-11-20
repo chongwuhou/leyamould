@@ -26,12 +26,15 @@ This repository reuses the verified static-site framework and Pages Functions fr
 - Address: 4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China
 - Mobile / WhatsApp: +86 136 0672 7715
 - Email: amyhu@leyamould.com
+- Public languages: English, Spanish, Portuguese, Russian and Turkish
 
 ## Reference direction
 
 The mould website front-end will follow the information architecture and visual direction of cap-molds.com, with mould categories and technical content cross-checked against hmould.com. Reference-site images are treated as replaceable source material and are not the project's business-data source.
 
 ## Checks
+
+Daily changes follow `docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md`; GitHub source, D1/CMS and R2 ownership rules in that runbook remain mandatory for this mould project.
 
 ```powershell
 python scripts/preflight.py
@@ -40,3 +43,4 @@ python scripts/test_release.py
 ```
 
 Do not deploy until DNS, independent bindings, CI credentials and a successful clean build are verified.
+
