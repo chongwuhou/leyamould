@@ -126,7 +126,7 @@ for row in models:
             assert "Tritan" in material_panel.group(0) and "BPA" in material_panel.group(0),(lang,slug,"plastic material inquiry missing")
         assert page.count('class="product-custom-material-options"')==1,(lang,slug)
         canonical=re.search(r'<link rel="canonical" href="([^"]+)"',head)
-        assert canonical and canonical.group(1)=="https://xuyibottles.com/"+pfx+"products/"+slug+"/",(lang,slug)
+        assert canonical and canonical.group(1)=="https://leyamould.com/"+pfx+"products/"+slug+"/",(lang,slug)
         if title_source_allowed:assert title.count("XUYI")>=1,(lang,slug)
         if numbers:
             with_sizes+=1
