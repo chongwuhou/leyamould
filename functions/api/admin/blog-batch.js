@@ -188,7 +188,7 @@ export async function onRequestPost(context) {
     const newPostStatements = [];
     for (const item of payload.posts) {
       const content = JSON.stringify(item.post);
-      const existing = await db.prepare("SELECT status,content_json FROM xuyi_blog_posts WHERE slug=?").bind(item.slug).first();
+      const existing = await db.prepare("SELECT status,content_json,published_at FROM xuyi_blog_posts WHERE slug=?").bind(item.slug).first();
       if (existing && existing.status !== "published") {
         return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
       }
