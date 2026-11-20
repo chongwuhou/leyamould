@@ -51,7 +51,7 @@ for language in published:
    main=html.split('<main id="main-content">',1)[1].split('</main>',1)[0]
    assert len(re.findall('[\u0400-\u04ff]',main))>=150,"Cyrillic product copy missing"
   if route.endswith("/contact/"):
-   assert 'href="mailto:Janey@xuyibottles.com"' in html,"Localized contact email must work"
+   assert 'href="mailto:amyhu@leyamould.com"' in html,"Localized contact email must work"
    assert html.count('id="inquiry"')==1,(locale,"contact form must match English")
    assert 'data-site-email' in html and 'data-site-whatsapp' in html,(locale,"D1 contacts missing")
    for required in ('company','email','model','quantity','country','type','material','requirements','consent','website'):
