@@ -15,7 +15,7 @@ from gallery_catalog import GALLERY,UI_LABELS,LABELS
 from lo_catalog import LO_PRODUCTS
 from scripts.render_locales import BLOG_DATE_LABELS
 DIST=ROOT/"dist"
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 LOCALES=["en","es","pt","ru","tr"]
 CATALOG_SLUGS=(
     "sports-water-bottles","large-capacity-water-jugs","kids-water-bottles",
