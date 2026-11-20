@@ -13,7 +13,7 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 STAGE = ROOT / "_local_ops" / "responsive-stage"
 MANIFEST = ROOT / "_local_ops" / "responsive-image-manifest.json"
-ORIGIN = "https://xuyibottles.com"
+ORIGIN = "https://leyamould.com"
 MEDIA = re.compile(r"/media/(?:excel|ppt|gallery|product|page|shared|blog|group|capability)/[a-zA-Z0-9._-]+\.(?:webp|jpg|png)")
 
 
