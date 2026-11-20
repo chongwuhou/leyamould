@@ -1,8 +1,9 @@
 import { ensureBlogSchema, listBlogPosts, findBlogPost, esc, blogCard, blogHtml, composePage } from "../_shared/blog-cms.js";
 import {englishAltFor} from "../_shared/media-alt.js";
-import COVER_OVERRIDES from "../../data/blog-cover-overrides.json" with {type:"json"};
-import PHOTO_CORRECTIONS from "../../data/blog-photo-corrections.json" with {type:"json"};import SHAKER_IMAGES from "../../data/gpt-reviewed-shaker-hd-20261013.json" with {type:"json"};
-import SEARCH_ROLES from "../../data/search-intent-three-landing-roles.json" with {type:"json"};
+import COVER_OVERRIDES from "../../data/blog-cover-overrides.json";
+import PHOTO_CORRECTIONS from "../../data/blog-photo-corrections.json";
+import SHAKER_IMAGES from "../../data/gpt-reviewed-shaker-hd-20261013.json";
+import SEARCH_ROLES from "../../data/search-intent-three-landing-roles.json";
 
 // D1 text is authoritative. Only the original reviewed article headline and
 // description acquire the new informational search intent.
@@ -104,3 +105,4 @@ export async function onRequestGet(context){
   return context.next();
  }
 }
+
