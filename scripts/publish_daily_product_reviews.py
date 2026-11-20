@@ -16,7 +16,7 @@ SOURCE_FILES=(
  (ROOT/"review_import_private"/"101_additional_verified_buyer_reviews.json","101-additional-reviews-only.xlsx","ebd5f045fc476d429dcf2c6c68f6fb49c3983b145701fe4587e2e9936b771aa8"),
 )
 EXCLUDED_SOURCE_ROWS={("101-additional-reviews-only.xlsx",59)}
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 API="/api/admin/daily-product-reviews"
 ALIASES={"2400-transparent":"2400透明款","2401-transparent":"2401透明款","2306-transparent":"2306透明款","2307-transparent":"2307透明款","2308-transparent":"2308透明款"}
 
@@ -80,7 +80,7 @@ def main():
   return
  token=os.environ.get("CLOUDFLARE_API_TOKEN","")
  if not token:raise RuntimeError("Cloudflare credential missing")
- if os.environ.get("GITHUB_ACTIONS")!="true" or os.environ.get("GITHUB_REPOSITORY")!="chongwuhou/xuyi-drinkware-site" or os.environ.get("GITHUB_REF")!="refs/heads/main":
+ if os.environ.get("GITHUB_ACTIONS")!="true" or os.environ.get("GITHUB_REPOSITORY")!="chongwuhou/leyamould" or os.environ.get("GITHUB_REF")!="refs/heads/main":
   raise RuntimeError("Review publishing is allowed only from the canonical XUYI GitHub main")
  today=datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat()
  state=request(token)
