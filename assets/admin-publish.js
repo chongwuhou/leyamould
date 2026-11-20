@@ -19,7 +19,7 @@
     getJson("/api/publish-state",{authorization:"Bearer "+token()}),
     getJson("/build-meta.json?admin_status="+Date.now())
    ]);
-   if(live.pagesProject!=="xuyi-drinkware-site")throw Error("生产版本身份不匹配");
+   if(live.pagesProject!=="leyamould")throw Error("生产版本身份不匹配");
    const expected=Number(desired.publishRevision||0);
    const deployed=Number(live.publishRevision||0);
    const sha=String(live.sourceRevision||"").slice(0,12);
