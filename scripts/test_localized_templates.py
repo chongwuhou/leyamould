@@ -30,7 +30,7 @@ with tempfile.TemporaryDirectory(prefix="xuyi-locale-qa-") as workspace:
         '<a href="/contact/#inquiry">Pida una muestra</a>'
         '</div></section>'
     )
-    snapshot = {"site":"xuyi-drinkware-site",
+    snapshot = {"site":"leyamould",
         "languages":{"languages":[{"code":"en","enabled":True,"publishReady":True},
           {"code":"es","enabled":True,"publishReady":True,"pathPrefix":"es"}]},
         "translations":[
@@ -51,20 +51,20 @@ with tempfile.TemporaryDirectory(prefix="xuyi-locale-qa-") as workspace:
     english=(dist/"index.html").read_text(encoding="utf-8")
     sitemap=(dist/"sitemap.xml").read_text(encoding="utf-8")
     assert '<html lang="es">' in home
-    assert '<link rel="canonical" href="https://xuyibottles.com/es/">' in home
+    assert '<link rel="canonical" href="https://leyamould.com/es/">' in home
     assert 'href="/es/about/' in home and 'href="/es/about/' in about
     assert 'href="/contact/#inquiry"' in home, "Missing localized pages must safely stay English"
     assert "/es/contact/" not in home
     config=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8"))
     expected="index,follow" if config["site"]["indexingApproved"] else "noindex,nofollow"
     assert '<meta name="robots" content="'+expected+'">' in home
-    assert '<link rel="alternate" hreflang="es" href="https://xuyibottles.com/es/">' in english
-    assert '<link rel="alternate" hreflang="en" href="https://xuyibottles.com/about/">' in about
-    assert "<loc>https://xuyibottles.com/es/</loc>" in sitemap
-    assert "<loc>https://xuyibottles.com/es/about/</loc>" in sitemap
-    assert "<loc>https://xuyibottles.com/es/contact/</loc>" not in sitemap
+    assert '<link rel="alternate" hreflang="es" href="https://leyamould.com/es/">' in english
+    assert '<link rel="alternate" hreflang="en" href="https://leyamould.com/about/">' in about
+    assert "<loc>https://leyamould.com/es/</loc>" in sitemap
+    assert "<loc>https://leyamould.com/es/about/</loc>" in sitemap
+    assert "<loc>https://leyamould.com/es/contact/</loc>" not in sitemap
     assert not (dist/"es/contact/index.html").exists()
     locale.main()
     again=(dist/"sitemap.xml").read_text(encoding="utf-8")
-    assert again.count("<loc>https://xuyibottles.com/es/about/</loc>")==1
+    assert again.count("<loc>https://leyamould.com/es/about/</loc>")==1
     print("XUYI_LOCALIZED_TEMPLATE_REGRESSION_PASSED 13 checks, temporary fixture only")
