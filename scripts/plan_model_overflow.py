@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent.parent
 VALID_SLUG=re.compile(r"[a-z0-9][a-z0-9_-]{0,78}",re.I)
-PLANNED_BUCKET="xuyi-drinkware-model-pages"
+PLANNED_BUCKET="leyamould-model-pages"
 # Tombstone three historical source URLs using Pages Functions, even when
 # using static-mode product pages. This does not consume dynamic requests for
 # unrelated public pages.
@@ -20,7 +20,7 @@ def approved_prefixes(dist:Path):
     manifest=dist/"locale-manifest.json"
     if manifest.is_file():
         data=json.loads(manifest.read_text(encoding="utf-8"))
-        if data.get("site")!="xuyi-drinkware-site":
+        if data.get("site")!="leyamould":
             raise ValueError("Refusing overflow from another site")
         return tuple(x["pathPrefix"] for x in data["locales"] if x["pathPrefix"])
     # Isolated test fixture or legacy local build with no registry artifact:
@@ -54,7 +54,7 @@ def plan(dist:Path,output:Path,*,switch_at:int=16000,target:int=15500,hard_stop:
         for slug in sorted(groups,reverse=True):
             if current<=target:break
             pages=groups[slug]
-            payload={"schemaVersion":1,"site":"xuyi-drinkware-site","model":slug,
+            payload={"schemaVersion":1,"site":"leyamould","model":slug,
                      "routes":{route:file.read_text(encoding="utf8") for route,file in sorted(pages.items())}}
             key=f"models/{slug}.json"
             raw=(json.dumps(payload,ensure_ascii=False,separators=(",",":"))+"\n").encode("utf8")
@@ -72,7 +72,7 @@ def plan(dist:Path,output:Path,*,switch_at:int=16000,target:int=15500,hard_stop:
     if overflow:
         route_includes+=["/products/*"]+[f"/{loc}/products/*" for loc in prefixes]
     (dist/"_routes.json").write_text(json.dumps({"version":1,"include":route_includes,"exclude":[]},indent=2)+"\n",encoding="utf8")
-    manifest={"schemaVersion":1,"site":"xuyi-drinkware-site","bucket":PLANNED_BUCKET,
+    manifest={"schemaVersion":1,"site":"leyamould","bucket":PLANNED_BUCKET,
               "mode":"hybrid" if overflow else "static",
               "projectedStaticFileCountBeforeOverflow":before,
               "staticFileCountAfterOverflow":current+1,
