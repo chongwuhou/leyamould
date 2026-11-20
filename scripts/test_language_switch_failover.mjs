@@ -25,7 +25,7 @@ function fakeSelect(){
 }
 async function runCase({apiError=false,apiLanguages=[]}){
   const select=fakeSelect(),redirects=[];
-  const prefix="https://xuyibottles.com";
+  const prefix="https://leyamould.com";
   const alternate=STATIC.map(([hreflang])=>({
     hreflang,href:prefix+(hreflang==="en"?"/":"/"+hreflang+"/")
   }));
