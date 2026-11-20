@@ -35,7 +35,7 @@ with tempfile.TemporaryDirectory(prefix="xuyi-overflow-") as folder:
  for item in changed["objects"]:
   file=root/"out2"/item["key"]
   bundle=json.loads(file.read_text(encoding="utf8"))
-  assert bundle["site"]=="xuyi-drinkware-site"
+  assert bundle["site"]=="leyamould"
   assert len(bundle["routes"])==5
   for route in bundle["routes"]:
    assert not (d/route.lstrip("/")/"index.html").exists()
