@@ -52,6 +52,6 @@ assert "python scripts/search_submission.py --submit" in workflow
 assert "LEYA_INDEXNOW_KEY" in workflow
 assert "Prepare stable IndexNow ownership key" in workflow
 assert "::add-mask::$derived" in workflow
-assert "hmac.new(" in workflow and "indexnow:xuyibottles.com:v2" in workflow
+assert "hmac.new(" in workflow and "indexnow:leyamould.com:v2" in workflow
 assert workflow.index("Prepare stable IndexNow ownership key")<workflow.index("Build from shared templates and source data")
 print("XUYI_ENTITY_LLM_GUIDE_INDEXNOW_GUARDS_PASSED",len(facts["questionRefs"]),"FAQs",15,"page schemas")
