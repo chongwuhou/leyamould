@@ -85,7 +85,7 @@ def main():
             for image in IMG.findall(body):
                 assert attr(image,"width") and attr(image,"height"),(code,slug,"image geometry")
                 image_count+=1
-            url="https://xuyibottles.com/"+(prefix+"/" if prefix else "")+"blog/"+slug+"/"
+            url="https://leyamould.com/"+(prefix+"/" if prefix else "")+"blog/"+slug+"/"
             item=sitemap_rows.get(url)
             assert item is not None and item.find(NS+"lastmod") is not None,(code,slug,"sitemap lastmod")
             checked+=1
