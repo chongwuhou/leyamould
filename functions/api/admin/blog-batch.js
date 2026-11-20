@@ -113,7 +113,28 @@ function canonicalJson(value) {
   }
   return value;
 }
-function compatibleReviewedShapeRepair(existingText, incomingPost) {
+const LEGACY_REVIEWED_CONTENT_SHA256 = Object.freeze({
+  "custom-water-bottle-landed-cost-checklist-importers": {
+    legacy: "123deacb5f157cd4aaa3d88ce6a490d510dc361ba27009fe6c535f86f3594e29",
+    current: "4f1d6043bfe190439348fe1d02c89c15dba1b0b8ad9c00f2c2a871ce52c021ea"
+  },
+  "wholesale-water-bottle-artwork-proof-approval-checklist": {
+    legacy: "8079e334613b377360f4c6b1d3c8572660337bbe0b1bfb194e7c7d895a7341b7",
+    current: "7aa8940644c659e80e5245b968576226431b0d48a7d9090e82f51ed99bf39b74"
+  },
+  "multi-size-water-bottle-cap-compatibility-buyer-guide": {
+    legacy: "3a394c262a9dc74d4b458cc636daaf85c6f5c0692d8ef68383cdeaf466dc6b10",
+    current: "c332d07a0ec6fe0587d4931960ff2cbc6eba9842100de7a00990b7ce41c8cdc6"
+  }
+});
+async function sha256(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, "0")).join("");
+}
+async function compatibleReviewedShapeRepair(existingText, incomingPost) {
+  const known = LEGACY_REVIEWED_CONTENT_SHA256[incomingPost?.slug];
+  if (known && await sha256(existingText) === known.legacy && await sha256(JSON.stringify(incomingPost)) === known.current) return true;
   let existing;
   try { existing = JSON.parse(existingText); } catch { return false; }
   if (!existing || typeof existing !== "object" || Array.isArray(existing)) return false;
@@ -169,7 +190,7 @@ export async function onRequestPost(context) {
       }
       if (!existing) newPostStatements.push(db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,'published',?,?)").bind(item.slug, content, item.publishedAt || now));
       else if (existing.content_json !== content) {
-        if (!compatibleReviewedShapeRepair(existing.content_json, item.post)) {
+        if (!(await compatibleReviewedShapeRepair(existing.content_json, item.post))) {
           return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
         }
         newPostStatements.push(db.prepare("UPDATE xuyi_blog_posts SET content_json=?,updated_at=CURRENT_TIMESTAMP WHERE slug=? AND status='published' AND content_json=?").bind(content, item.slug, existing.content_json));
