@@ -1,180 +1,34 @@
 {
   "schemaVersion": 1,
-  "description": "Default LEYA MOULD category and submenu structure; D1 site_navigation manages published labels/order/extra links. Replace the inherited bottle taxonomy only after mould routes and source content are ready.",
+  "description": "Default LEYA MOULD product and capability navigation. D1 site_navigation remains authoritative for approved labels and order.",
   "productColumns": [
-    {
-      "heading": "Drinkware Collections",
-      "image": "/assets/curated-hd/gradient-sports.webp",
-      "links": [
-        {
-          "label": "Sports Water Bottles",
-          "url": "/collections/sports-water-bottles/"
-        },
-        {
-          "label": "Large Capacity Jugs",
-          "url": "/collections/large-capacity-water-jugs/"
-        },
-        {
-          "label": "Kids Water Bottles",
-          "url": "/collections/kids-water-bottles/"
-        },
-        {
-          "label": "Protein Shaker Bottles",
-          "url": "/collections/plastic-shaker-bottles/"
-        },
-        {
-          "label": "Spray Water Bottles",
-          "url": "/collections/spray-water-bottles/"
-        },
-        {
-          "label": "Two-Way Drinking Cups",
-          "url": "/collections/two-way-drinking-cups/"
-        },
-        {
-          "label": "Titanium Vacuum Cups",
-          "url": "/collections/titanium-vacuum-cups/"
-        },
-        {
-          "label": "All Drinkware Models",
-          "url": "/products/"
-        }
-      ]
-    },
-    {
-      "heading": "Bottle By Feature",
-      "image": "/assets/curated-hd/feature-flip-top.webp",
-      "links": [
-        {
-          "label": "Straw Lid Bottles",
-          "url": "/features/straw-lid/"
-        },
-        {
-          "label": "Flip Top Bottles",
-          "url": "/features/flip-top/"
-        },
-        {
-          "label": "Carry Handle Bottles",
-          "url": "/features/carry-handle/"
-        },
-        {
-          "label": "Large Capacity",
-          "url": "/features/large-capacity/"
-        },
-        {
-          "label": "Gradient Colors",
-          "url": "/features/gradient-colors/"
-        },
-        {
-          "label": "Custom Logo",
-          "url": "/capabilities/custom-logo/"
-        }
-      ]
-    },
-    {
-      "heading": "Bottle By Use",
-      "image": "/assets/curated-hd/outdoor-lifestyle.webp",
-      "links": [
-        {
-          "label": "Gym & Sports",
-          "url": "/applications/gym-sports/"
-        },
-        {
-          "label": "Outdoor & Travel",
-          "url": "/applications/outdoor-travel/"
-        },
-        {
-          "label": "Kids & School",
-          "url": "/applications/kids-school/"
-        },
-        {
-          "label": "Everyday Hydration",
-          "url": "/applications/everyday-hydration/"
-        },
-        {
-          "label": "Promotional Gifts",
-          "url": "/applications/promotional-gifts/"
-        },
-        {
-          "label": "Protein Shakers",
-          "url": "/collections/plastic-shaker-bottles/"
-        }
-      ]
-    },
-    {
-      "heading": "OEM & Wholesale",
-      "image": "/assets/curated-hd/customizable-assortment.webp",
-      "links": [
-        {
-          "label": "Custom Water Bottles",
-          "url": "/capabilities/custom-water-bottle/"
-        },
-        {
-          "label": "Custom Graphics",
-          "url": "/capabilities/custom-graphics/"
-        },
-        {
-          "label": "Custom Packaging",
-          "url": "/capabilities/custom-packaging/"
-        },
-        {
-          "label": "OEM & ODM",
-          "url": "/capabilities/oem-odm/"
-        },
-        {
-          "label": "Request a Sample",
-          "url": "/request-sample/"
-        },
-        {
-          "label": "Wholesale Buyer Guide",
-          "url": "/blog/wholesale-plastic-water-bottle-buying-guide/"
-        }
-      ]
-    }
+    {"heading":"Packaging Tooling","image":"/assets/curated-hd/gradient-sports.webp","links":[
+      {"label":"PET Preform Moulds","url":"/collections/pet-preform-moulds/"},
+      {"label":"Bottle Cap Moulds","url":"/collections/bottle-cap-moulds/"},
+      {"label":"Bottle Moulds","url":"/collections/bottle-moulds/"},
+      {"label":"All Product Categories","url":"/products/"}]},
+    {"heading":"Product Tooling","image":"/assets/curated-hd/feature-flip-top.webp","links":[
+      {"label":"Knife & Fork Moulds","url":"/collections/knife-fork-moulds/"},
+      {"label":"Custom Product Moulds","url":"/capabilities/mould-design/"},
+      {"label":"Project Resources","url":"/blog/"}]},
+    {"heading":"Engineering","image":"/assets/curated-hd/outdoor-lifestyle.webp","links":[
+      {"label":"Mould Design & Engineering","url":"/capabilities/mould-design/"},
+      {"label":"Precision Manufacturing","url":"/capabilities/precision-manufacturing/"},
+      {"label":"Trial & Sampling","url":"/capabilities/trial-sampling/"}]},
+    {"heading":"Buyer Support","image":"/assets/curated-hd/customizable-assortment.webp","links":[
+      {"label":"Quality & Inspection","url":"/quality-control/"},
+      {"label":"How We Work","url":"/manufacturing/"},
+      {"label":"Request a Quote","url":"/contact/#inquiry"}]}
   ],
   "miniMenus": {
-    "Capabilities": [
-      {
-        "label": "Custom Water Bottle",
-        "url": "/capabilities/custom-water-bottle/"
-      },
-      {
-        "label": "Custom Logo",
-        "url": "/capabilities/custom-logo/"
-      },
-      {
-        "label": "Custom Graphics",
-        "url": "/capabilities/custom-graphics/"
-      },
-      {
-        "label": "Custom Molding",
-        "url": "/capabilities/custom-molding/"
-      },
-      {
-        "label": "Custom Manufacturing",
-        "url": "/capabilities/custom-manufacturing/"
-      },
-      {
-        "label": "Custom Packaging",
-        "url": "/capabilities/custom-packaging/"
-      }
-    ],
-    "Why Us": [
-      {
-        "label": "OEM / ODM Support",
-        "url": "/capabilities/oem-odm/"
-      },
-      {
-        "label": "Manufacturing Process",
-        "url": "/manufacturing/"
-      },
-      {
-        "label": "Quality Assurance",
-        "url": "/quality-control/"
-      },
-      {
-        "label": "Shipping & Logistics",
-        "url": "/shipping-logistics/"
-      }
-    ]
+    "Capabilities":[
+      {"label":"Mould Design & Engineering","url":"/capabilities/mould-design/"},
+      {"label":"Precision Manufacturing","url":"/capabilities/precision-manufacturing/"},
+      {"label":"Trial, Sampling & Optimisation","url":"/capabilities/trial-sampling/"}],
+    "Why Us":[
+      {"label":"How We Work","url":"/manufacturing/"},
+      {"label":"Quality & Inspection","url":"/quality-control/"},
+      {"label":"Contact LEYA MOULD","url":"/contact/"}]
   }
 }
+
