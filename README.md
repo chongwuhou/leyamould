@@ -39,7 +39,7 @@ Daily changes follow `docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md`; GitHub source, D1/CM
 ```powershell
 python scripts/preflight.py
 python scripts/build_release.py
-python scripts/test_release.py
+python scripts/test_mould_release.py
 ```
 
 Do not deploy until DNS, independent bindings, CI credentials and a successful clean build are verified.
