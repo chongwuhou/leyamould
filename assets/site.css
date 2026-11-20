@@ -1179,3 +1179,4 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
  main > .page-intro + .blog-listing {padding-top:30px}
  main > .page-intro + .blog-listing .section__head {margin-bottom:23px}
 }
+/* LEYA MOULD page-intro watermark override. */.page-intro:after{content:"LEYA"!important}.mould-category-grid .category__photo{aspect-ratio:4/3}.mould-category-grid .category__body{min-height:190px}.mould-checklist{margin:22px 0;padding-left:20px;color:#555;line-height:1.9}.mould-checklist li{margin:4px 0}
