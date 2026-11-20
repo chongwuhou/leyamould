@@ -13,9 +13,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT))
 DIST=ROOT/"dist"
-ORIGIN="https://xuyibottles.com"
+ORIGIN="https://leyamould.com"
 manifest=json.loads((DIST/"locale-manifest.json").read_text(encoding="utf-8"))
-assert manifest["site"]=="xuyi-drinkware-site" and manifest["sourceLocale"]=="en"
+assert manifest["site"]=="leyamould" and manifest["sourceLocale"]=="en"
 LOCALES=tuple(lang["code"] for lang in manifest["locales"])
 PREFIX={lang["code"]:lang["pathPrefix"] for lang in manifest["locales"]}
 PREFIX_TO_CODE={prefix:code for code,prefix in PREFIX.items() if prefix}
@@ -41,10 +41,10 @@ def all_published_documents():
     manifest_file=source/"manifest.json"
     if not manifest_file.is_file():return
     storage=json.loads(manifest_file.read_text(encoding="utf-8"))
-    if storage.get("site")!="xuyi-drinkware-site":raise RuntimeError("Wrong R2 overflow identity")
+    if storage.get("site")!="leyamould":raise RuntimeError("Wrong R2 overflow identity")
     for item in storage.get("objects",[]):
         bundle=json.loads((source/item["key"]).read_text(encoding="utf-8"))
-        if bundle.get("site")!="xuyi-drinkware-site":raise RuntimeError("Wrong R2 HTML bundle")
+        if bundle.get("site")!="leyamould":raise RuntimeError("Wrong R2 HTML bundle")
         for route,document in bundle["routes"].items():
             rel=route.lstrip("/")+"index.html"
             if rel in seen:raise RuntimeError("Static and overflow page duplicated: "+rel)
