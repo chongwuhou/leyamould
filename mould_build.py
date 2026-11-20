@@ -1,0 +1,256 @@
+"""Source renderer for the LEYA MOULD product site.
+
+The water-cup project supplied the backend contracts, admin routes and Pages
+Functions.  This module deliberately owns only the new mould site's public
+source pages.  It never reads or writes the water-cup repository or its data.
+"""
+from __future__ import annotations
+
+import html
+import json
+import os
+import re
+from pathlib import Path
+
+from locale_registry import approved_locales
+
+ROOT = Path(__file__).resolve().parent
+CONFIG = json.loads((ROOT / "deployment/site.config.json").read_text(encoding="utf-8"))
+ORIGIN = CONFIG["site"]["origin"]
+INDEXING_APPROVED = CONFIG["site"].get("indexingApproved") is True
+OUTPUT = ROOT / (os.environ.get("LEYA_OUTPUT_DIR") or ".")
+CATALOG = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
+ADDRESS = "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China"
+EMAIL = "amyhu@leyamould.com"
+WHATSAPP = "+8613606727715"
+WA_URL = "https://wa.me/8613606727715"
+CATEGORY_LABELS = {
+    "es": {"pet-preform-moulds": "Moldes de preformas PET", "bottle-cap-moulds": "Moldes de tapones", "bottle-moulds": "Moldes de botellas", "knife-fork-moulds": "Moldes de cuchillos y tenedores"},
+    "pt": {"pet-preform-moulds": "Moldes de pré-formas PET", "bottle-cap-moulds": "Moldes de tampas", "bottle-moulds": "Moldes de garrafas", "knife-fork-moulds": "Moldes de facas e garfos"},
+    "ru": {"pet-preform-moulds": "Пресс-формы для ПЭТ-преформ", "bottle-cap-moulds": "Пресс-формы для крышек", "bottle-moulds": "Пресс-формы для бутылок", "knife-fork-moulds": "Пресс-формы для ножей и вилок"},
+    "tr": {"pet-preform-moulds": "PET Preform Kalıpları", "bottle-cap-moulds": "Şişe Kapak Kalıpları", "bottle-moulds": "Şişe Kalıpları", "knife-fork-moulds": "Bıçak ve Çatal Kalıpları"},
+}
+
+SNAPSHOT = ROOT / "_local_ops/build-snapshot.json"
+STATE = {}
+if SNAPSHOT.is_file():
+    candidate = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+    if candidate.get("site") == "leyamould":
+        STATE = candidate
+
+LOCALES = approved_locales(STATE, require_resources=False)
+if not LOCALES:
+    LOCALES = [{"code": "en", "pathPrefix": "", "nativeName": "English", "sortOrder": 10}]
+
+TEXT = {
+    "en": {
+        "home": "Home", "about": "About us", "products": "Products", "capabilities": "Capabilities",
+        "process": "How We Work", "news": "News", "contact": "Contact", "quote": "Request a Quote",
+        "hero_eyebrow": "PRECISION MOULDING · ENGINEERING · SUPPORT",
+        "hero_title": "Moulds built for your next production run.",
+        "hero_text": "LEYA MOULD supports bottle preform, cap, bottle and cutlery tooling projects from design review through trial and technical handover.",
+        "hero_primary": "Explore Mould Categories →", "hero_secondary": "Tell Us About Your Project",
+        "hero_note": "LEYA MOULD · Huangyan, Taizhou, Zhejiang, China",
+        "categories_eyebrow": "MOULD CATEGORIES", "categories_title": "Tooling directions for packaging and product makers.",
+        "categories_text": "Start with a product family. We will confirm the drawing, material, cavity plan, machine interface and evidence required for a responsible quotation.",
+        "why_eyebrow": "WHY LEYA MOULD", "why_title": "A practical engineering conversation before steel is cut.",
+        "why_text": "A mould project is easier to control when the product drawing, resin, machine, quality points and sample plan are discussed together. LEYA MOULD keeps the workflow clear and project-specific.",
+        "advantages": [("Design review", "Part geometry, parting line, cooling and ejection are checked against the intended process."), ("Project matching", "The tooling brief records the mould family, material, machine interface and target output information supplied by the buyer."), ("Sample-led decisions", "Trial parts and agreed inspection points guide optimisation before production handover."), ("Clear communication", "Drawings, PDFs, photos and revision notes stay attached to the enquiry." )],
+        "process_eyebrow": "HOW WE WORK", "process_title": "From drawing to a controlled tooling handover.",
+        "process_steps": [("01", "Share the brief", "Send a drawing, sample, PDF or reference photo with target resin and market."), ("02", "Review feasibility", "Confirm tooling family, cavity plan, machine interface and open technical questions."), ("03", "Approve the design", "Align the mould structure, cooling, ejection, materials and inspection points."), ("04", "Trial and refine", "Review sample results and document any agreed change before production."), ("05", "Handover", "Keep the approved files, spare-parts notes and quality checkpoints together.")],
+        "technical_eyebrow": "TECHNICAL CONTENT", "technical_title": "Built around evidence, not generic promises.",
+        "technical_text": "Product drawings, high-resolution images and PDFs will be added to the relevant category as they are approved. Until then, category pages clearly show which information is still to be confirmed.",
+        "technical_cta": "Send a Drawing or PDF →", "resources_title": "Mould project resources", "resources_text": "Share the part drawing, target resin, expected cavities, machine model, sample or PDF. We will return with the questions needed for a useful quotation.",
+        "footer_tagline": "Bottle, cap, preform and custom product mould support for international buyers.", "footer_products": "Products", "footer_capabilities": "Capabilities", "footer_contact": "Contact Us", "footer_design": "Mould Design & Engineering", "footer_manufacturing": "Precision Manufacturing", "footer_quality": "Quality & Inspection", "footer_support": "Trial & Technical Support", "footer_quote": "Request a Quote →", "footer_faq": "FAQs", "footer_privacy": "Privacy Policy", "footer_sticky": "Mould Project Enquiries", "footer_cta_title": "Ready to discuss your mould project?", "footer_cta_text": "Send your drawing, sample or PDF and tell us the production target.", "footer_eyebrow": "LEYA MOULD · ENGINEERING · MANUFACTURING", "form_required": "Company name, work email and project requirements are required. Technical drawings, samples and documents can be attached later by email or WhatsApp.", "form_company": "Company Name", "form_email": "Work Email", "form_category": "Mould Category", "form_quantity": "Estimated Quantity", "form_country": "Destination Country", "form_type": "Inquiry Type", "form_quote": "Request a Quote", "form_new": "New Mould Design", "form_review": "Existing Mould Review", "form_tech": "Technical Consultation", "form_material": "Target Material", "form_advise": "Please advise", "form_other": "Other / to be confirmed", "form_requirements": "Your Requirements", "form_consent": "I agree to the", "form_privacy": "privacy policy", "form_submit": "Send Project Enquiry →", "form_aria": "Mould project enquiry form", "back": "Back to Home →", "learn": "Learn More →", "view": "View Category →", "category_note": "Technical specifications, images and PDF references are added after project review.", "contact_title": "Tell us about your mould project.", "contact_intro": "Send the part drawing, sample, target material, cavity plan, machine information and delivery market. We will reply with the next technical questions.", "faq_title": "Mould project questions", "faq_intro": "A short starting point for buyers preparing a tooling enquiry.", "about_title": "About LEYA MOULD", "about_text": "LEYA MOULD Co.,Ltd is a mould-project brand based in Huangyan, Taizhou, Zhejiang Province, China. The site is being prepared around an evidence-led catalogue for packaging and product tooling.", "privacy_title": "Privacy & enquiry data", "privacy_text": "We use the information you submit to respond to mould project enquiries, technical questions and quotation requests. Contact amyhu@leyamould.com for data questions.", "blog_title": "Mould project resources", "blog_text": "Technical articles and approved project resources will be added as the mould catalogue is reviewed.",
+    },
+    "es": {}, "pt": {}, "ru": {}, "tr": {}
+}
+TEXT["es"] = {**TEXT["en"], "home":"Inicio", "about":"Sobre nosotros", "products":"Productos", "capabilities":"Capacidades", "process":"Cómo trabajamos", "news":"Recursos", "contact":"Contacto", "quote":"Solicitar cotización", "hero_eyebrow":"MOLDES DE PRECISIÓN · INGENIERÍA · SOPORTE", "hero_title":"Moldes preparados para su próxima producción.", "hero_text":"LEYA MOULD acompaña proyectos de moldes para preformas, tapones, botellas y cubiertos desde la revisión del diseño hasta las pruebas.", "hero_primary":"Explorar categorías →", "hero_secondary":"Cuéntenos su proyecto", "categories_eyebrow":"CATEGORÍAS DE MOLDES", "categories_title":"Direcciones de utillaje para fabricantes de envases y productos.", "categories_text":"Comience con una familia de productos. Confirmaremos el plano, material, cavidades, máquina y evidencias necesarias.", "why_eyebrow":"POR QUÉ LEYA MOULD", "why_title":"Una conversación técnica antes de fabricar el acero.", "why_text":"Un proyecto de moldes se controla mejor cuando se revisan juntos el plano, la resina, la máquina, los puntos de calidad y el plan de muestras.", "technical_eyebrow":"CONTENIDO TÉCNICO", "technical_title":"Basado en evidencias, no en promesas genéricas.", "technical_text":"Las imágenes de alta resolución y los PDF aprobados se añadirán a cada categoría cuando estén disponibles.", "technical_cta":"Enviar plano o PDF →", "resources_title":"Recursos del proyecto", "resources_text":"Comparta el plano, resina, cavidades, máquina, muestra o PDF. Responderemos con las preguntas necesarias.", "footer_tagline":"Soporte para moldes de botellas, tapones, preformas y productos a medida.", "footer_products":"Productos", "footer_capabilities":"Capacidades", "footer_contact":"Contacto", "footer_design":"Diseño e ingeniería", "footer_manufacturing":"Fabricación de precisión", "footer_quality":"Calidad e inspección", "footer_support":"Pruebas y soporte técnico", "footer_quote":"Solicitar cotización →", "footer_faq":"Preguntas frecuentes", "footer_privacy":"Privacidad", "footer_sticky":"Consultas de moldes", "footer_cta_title":"¿Hablamos de su proyecto?", "footer_cta_text":"Envíe su plano, muestra o PDF y el objetivo de producción.", "footer_eyebrow":"LEYA MOULD · INGENIERÍA · FABRICACIÓN", "contact_title":"Cuéntenos su proyecto de moldes.", "contact_intro":"Envíe el plano, muestra, material, cavidades, máquina y mercado de destino.", "faq_title":"Preguntas sobre moldes", "faq_intro":"Puntos iniciales para preparar una consulta técnica.", "about_title":"Sobre LEYA MOULD", "about_text":"LEYA MOULD Co.,Ltd es una marca de proyectos de moldes con sede en Huangyan, Taizhou, Zhejiang, China.", "privacy_title":"Privacidad y consultas", "privacy_text":"Usamos los datos enviados para responder consultas técnicas y solicitudes de cotización. Contacte con amyhu@leyamould.com.", "blog_title":"Recursos de moldes", "blog_text":"Los artículos técnicos y recursos aprobados se añadirán al revisar el catálogo."}
+TEXT["pt"] = {**TEXT["en"], "home":"Início", "about":"Sobre nós", "products":"Produtos", "capabilities":"Capacidades", "process":"Como trabalhamos", "news":"Recursos", "contact":"Contato", "quote":"Solicitar cotação", "hero_eyebrow":"MOLDES DE PRECISÃO · ENGENHARIA · SUPORTE", "hero_title":"Moldes preparados para a sua próxima produção.", "hero_text":"A LEYA MOULD apoia projetos de moldes para pré-formas, tampas, garrafas e talheres desde a revisão do desenho até os testes.", "hero_primary":"Explorar categorias →", "hero_secondary":"Fale sobre o seu projeto", "categories_eyebrow":"CATEGORIAS DE MOLDES", "categories_title":"Soluções de ferramentaria para fabricantes de embalagens e produtos.", "categories_text":"Comece por uma família de produtos. Confirmaremos desenho, material, cavidades, máquina e evidências necessárias.", "why_eyebrow":"POR QUE LEYA MOULD", "why_title":"Uma conversa de engenharia antes de cortar o aço.", "why_text":"Um projeto de moldes é mais controlável quando desenho, resina, máquina, qualidade e amostras são analisados juntos.", "technical_eyebrow":"CONTEÚDO TÉCNICO", "technical_title":"Construído com evidências, não promessas genéricas.", "technical_text":"Imagens em alta resolução e PDFs aprovados serão adicionados a cada categoria quando disponíveis.", "technical_cta":"Enviar desenho ou PDF →", "resources_title":"Recursos do projeto", "resources_text":"Envie desenho, resina, cavidades, máquina, amostra ou PDF. Retornaremos com as perguntas técnicas necessárias.", "footer_tagline":"Suporte para moldes de garrafas, tampas, pré-formas e produtos personalizados.", "footer_products":"Produtos", "footer_capabilities":"Capacidades", "footer_contact":"Contato", "footer_design":"Projeto e engenharia", "footer_manufacturing":"Fabricação de precisão", "footer_quality":"Qualidade e inspeção", "footer_support":"Testes e suporte técnico", "footer_quote":"Solicitar cotação →", "footer_faq":"Perguntas frequentes", "footer_privacy":"Privacidade", "footer_sticky":"Consultas de moldes", "footer_cta_title":"Vamos conversar sobre o seu projeto?", "footer_cta_text":"Envie desenho, amostra ou PDF e a meta de produção.", "footer_eyebrow":"LEYA MOULD · ENGENHARIA · FABRICAÇÃO", "contact_title":"Fale sobre o seu projeto de moldes.", "contact_intro":"Envie desenho, amostra, material, cavidades, máquina e mercado de destino.", "faq_title":"Perguntas sobre moldes", "faq_intro":"Pontos iniciais para preparar uma consulta técnica.", "about_title":"Sobre a LEYA MOULD", "about_text":"A LEYA MOULD Co.,Ltd é uma marca de projetos de moldes sediada em Huangyan, Taizhou, Zhejiang, China.", "privacy_title":"Privacidade e consultas", "privacy_text":"Usamos os dados enviados para responder consultas técnicas e pedidos de cotação. Contacte amyhu@leyamould.com.", "blog_title":"Recursos de moldes", "blog_text":"Artigos técnicos e recursos aprovados serão adicionados após a revisão do catálogo."}
+TEXT["ru"] = {**TEXT["en"], "home":"Главная", "about":"О компании", "products":"Продукция", "capabilities":"Возможности", "process":"Как мы работаем", "news":"Ресурсы", "contact":"Контакты", "quote":"Запросить расчёт", "hero_eyebrow":"ПРЕЦИЗИОННЫЕ ПРЕСС-ФОРМЫ · ИНЖИНИРИНГ · ПОДДЕРЖКА", "hero_title":"Пресс-формы для вашего следующего производства.", "hero_text":"LEYA MOULD сопровождает проекты пресс-форм для преформ, крышек, бутылок и столовых приборов от проверки чертежа до испытаний.", "hero_primary":"Категории пресс-форм →", "hero_secondary":"Обсудить проект", "categories_eyebrow":"КАТЕГОРИИ ПРЕСС-ФОРМ", "categories_title":"Оснастка для производителей упаковки и изделий.", "categories_text":"Выберите семейство изделий. Мы уточним чертёж, материал, число гнёзд, машину и необходимые подтверждения.", "why_eyebrow":"ПОЧЕМУ LEYA MOULD", "why_title":"Практический инженерный диалог до изготовления стали.", "why_text":"Проект проще контролировать, когда чертёж, полимер, машина, контроль качества и образцы рассматриваются вместе.", "technical_eyebrow":"ТЕХНИЧЕСКИЕ МАТЕРИАЛЫ", "technical_title":"Опора на подтверждённые данные, а не общие обещания.", "technical_text":"Одобренные изображения высокого разрешения и PDF будут добавлены к категориям после проверки.", "technical_cta":"Отправить чертёж или PDF →", "resources_title":"Материалы проекта", "resources_text":"Отправьте чертёж, полимер, число гнёзд, данные машины, образец или PDF. Мы вернёмся с необходимыми вопросами.", "footer_tagline":"Пресс-формы для бутылок, крышек, преформ и изделий по индивидуальному проекту.", "footer_products":"Продукция", "footer_capabilities":"Возможности", "footer_contact":"Контакты", "footer_design":"Проектирование и инжиниринг", "footer_manufacturing":"Прецизионное производство", "footer_quality":"Качество и контроль", "footer_support":"Испытания и техническая поддержка", "footer_quote":"Запросить расчёт →", "footer_faq":"Вопросы", "footer_privacy":"Конфиденциальность", "footer_sticky":"Запрос по пресс-форме", "footer_cta_title":"Обсудим ваш проект пресс-формы?", "footer_cta_text":"Отправьте чертёж, образец или PDF и цель производства.", "footer_eyebrow":"LEYA MOULD · ИНЖИНИРИНГ · ПРОИЗВОДСТВО", "contact_title":"Расскажите о проекте пресс-формы.", "contact_intro":"Отправьте чертёж, образец, материал, число гнёзд, данные машины и рынок.", "faq_title":"Вопросы о пресс-формах", "faq_intro":"Краткая основа для подготовки технического запроса.", "about_title":"О компании LEYA MOULD", "about_text":"LEYA MOULD Co.,Ltd — бренд проектов пресс-форм из Хуанъяня, Тайчжоу, провинция Чжэцзян, Китай.", "privacy_title":"Конфиденциальность и запросы", "privacy_text":"Мы используем отправленные данные для ответа на технические запросы и расчёты. Свяжитесь с amyhu@leyamould.com.", "blog_title":"Ресурсы по пресс-формам", "blog_text":"Технические статьи и одобренные материалы будут добавлены после проверки каталога."}
+TEXT["tr"] = {**TEXT["en"], "home":"Ana Sayfa", "about":"Hakkımızda", "products":"Ürünler", "capabilities":"Yetenekler", "process":"Nasıl Çalışıyoruz", "news":"Kaynaklar", "contact":"İletişim", "quote":"Teklif İste", "hero_eyebrow":"HASSAS KALIPLAMA · MÜHENDİSLİK · DESTEK", "hero_title":"Bir sonraki üretiminiz için kalıplar.", "hero_text":"LEYA MOULD; preform, kapak, şişe ve çatal-bıçak kalıp projelerine tasarım incelemesinden denemeye kadar destek verir.", "hero_primary":"Kalıp Kategorilerini Gör →", "hero_secondary":"Projenizi Anlatın", "categories_eyebrow":"KALIP KATEGORİLERİ", "categories_title":"Ambalaj ve ürün üreticileri için kalıp yönleri.", "categories_text":"Bir ürün ailesi seçin. Çizim, malzeme, göz sayısı, makine ve gerekli kanıtları birlikte netleştirelim.", "why_eyebrow":"NEDEN LEYA MOULD", "why_title":"Çelik işlenmeden önce pratik mühendislik görüşmesi.", "why_text":"Çizim, reçine, makine, kalite noktaları ve numune planı birlikte incelendiğinde proje daha iyi kontrol edilir.", "technical_eyebrow":"TEKNİK İÇERİK", "technical_title":"Genel vaatler yerine kanıta dayalı çalışma.", "technical_text":"Onaylanan yüksek çözünürlüklü görseller ve PDF'ler inceleme sonrasında ilgili kategoriye eklenir.", "technical_cta":"Çizim veya PDF Gönder →", "resources_title":"Proje kaynakları", "resources_text":"Çizim, reçine, göz sayısı, makine, numune veya PDF gönderin. Gerekli teknik sorularla geri dönelim.", "footer_tagline":"Şişe, kapak, preform ve özel ürün kalıpları için uluslararası proje desteği.", "footer_products":"Ürünler", "footer_capabilities":"Yetenekler", "footer_contact":"İletişim", "footer_design":"Kalıp tasarımı ve mühendislik", "footer_manufacturing":"Hassas üretim", "footer_quality":"Kalite ve kontrol", "footer_support":"Deneme ve teknik destek", "footer_quote":"Teklif İste →", "footer_faq":"SSS", "footer_privacy":"Gizlilik", "footer_sticky":"Kalıp proje talepleri", "footer_cta_title":"Kalıp projenizi görüşelim mi?", "footer_cta_text":"Çiziminizi, numunenizi veya PDF'inizi ve üretim hedefinizi gönderin.", "footer_eyebrow":"LEYA MOULD · MÜHENDİSLİK · ÜRETİM", "contact_title":"Kalıp projenizi anlatın.", "contact_intro":"Parça çizimini, numuneyi, malzemeyi, göz sayısını, makineyi ve hedef pazarı gönderin.", "faq_title":"Kalıp projesi soruları", "faq_intro":"Teknik bir talep hazırlayan alıcılar için kısa başlangıç bilgileri.", "about_title":"LEYA MOULD Hakkında", "about_text":"LEYA MOULD Co.,Ltd, Huangyan, Taizhou, Zhejiang, Çin merkezli bir kalıp proje markasıdır.", "privacy_title":"Gizlilik ve talepler", "privacy_text":"Gönderdiğiniz bilgileri teknik sorulara ve teklif taleplerine yanıt vermek için kullanırız. amyhu@leyamould.com adresinden ulaşabilirsiniz.", "blog_title":"Kalıp proje kaynakları", "blog_text":"Teknik makaleler ve onaylı proje kaynakları katalog incelendikçe eklenecektir."}
+
+def esc(value: object) -> str:
+    return html.escape(str(value or ""), quote=True)
+
+def text(locale: str, key: str) -> str:
+    return str(TEXT.get(locale, TEXT["en"]).get(key, TEXT["en"].get(key, key)))
+
+def data(locale: str, key: str):
+    return TEXT.get(locale, TEXT["en"]).get(key, TEXT["en"].get(key, []))
+
+def category_title(locale: str, category: dict) -> str:
+    return CATEGORY_LABELS.get(locale, {}).get(category["slug"], category["title"])
+
+def route_for(locale: str, route: str) -> str:
+    prefix = next((row["pathPrefix"] for row in LOCALES if row["code"] == locale), "")
+    return route if not prefix else "/" + prefix + route
+
+def local_link(locale: str, route: str) -> str:
+    return route_for(locale, route)
+
+def localized_href(locale: str, route: str) -> str:
+    return local_link(locale, route)
+
+def image(path: str, alt: str, loading: str = "lazy") -> str:
+    return '<img src="' + esc(path) + '" alt="' + esc(alt) + '" loading="' + loading + '" decoding="async">'
+
+def render_template(name: str, **values: str) -> str:
+    content = (ROOT / "templates/site" / (name + ".html")).read_text(encoding="utf-8").rstrip("\n")
+    for key, value in values.items():
+        content = content.replace("{{" + key + "}}", str(value))
+    if "{{" in content:
+        raise ValueError("Unfilled mould template placeholder: " + name)
+    return content
+
+def header(locale: str, route: str) -> str:
+    cats = CATALOG["categories"]
+    nav = []
+    nav.append('<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>')
+    product_links = ''.join('<a href="' + localized_href(locale, "/collections/" + c["slug"] + "/") + '">' + esc(category_title(locale, c)) + '</a>' for c in cats)
+    product_menu = '<div class="nav__drop nav__drop--mini"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-products" aria-expanded="false">' + esc(text(locale, "products")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-products">' + product_links + '<a href="' + localized_href(locale, "/products/") + '">' + esc(text(locale, "products")) + ' →</a></div></div>'
+    nav.append(product_menu)
+    nav.append('<a class="nav__link" href="' + localized_href(locale, "/about/") + '">' + esc(text(locale, "about")) + '</a>')
+    nav.append('<a class="nav__link" href="' + localized_href(locale, "/manufacturing/") + '">' + esc(text(locale, "process")) + '</a>')
+    nav.append('<a class="nav__link" href="' + localized_href(locale, "/contact/") + '">' + esc(text(locale, "contact")) + '</a>')
+    mobile = ''.join('<a href="' + localized_href(locale, "/" if key == "home" else "/" + key + "/") + '">' + esc(text(locale, key)) + '</a>' for key in ("home", "about", "contact"))
+    mobile += '<details><summary>' + esc(text(locale, "products")) + '</summary>' + product_links + '</details>'
+    options = ''.join('<option value="' + esc(lang["code"]) + '">' + esc(lang["nativeName"]) + '</option>' for lang in LOCALES)
+    logo = '<a href="' + local_link(locale, "/") + '" class="logo" aria-label="LEYA MOULD home">LEYA<small>MOULD</small></a>'
+    actions = '<div class="header__actions"><select class="language-switch" data-language-switch aria-label="Choose language">' + options + '</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><a class="button header__quote" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + '</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="menu-label">Menu</span></button></div>'
+    search = '<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="' + localized_href(locale, "/products/") + '" method="get"><input type="search" name="q" placeholder="Search mould category or application…" aria-label="Search mould category or application"><button class="button" type="submit">Search →</button></form></div>'
+    top = '<div class="topbar"><div class="shell topbar__inner"><a href="mailto:' + EMAIL + '">' + EMAIL + '</a><a href="' + WA_URL + '" target="_blank" rel="noopener noreferrer">WhatsApp ' + WHATSAPP + '</a></div></div>'
+    return render_template("header", TOPBAR=top, LOGO=logo, NAV_DESKTOP=''.join(nav), ACTIONS=actions, SEARCH=search, NAV_MOBILE=mobile)
+
+def footer(locale: str) -> str:
+    links = ''.join('<p><a href="' + localized_href(locale, "/collections/" + c["slug"] + "/") + '">' + esc(category_title(locale, c)) + '</a></p>' for c in CATALOG["categories"])
+    vals = {"PRODUCT_LINKS": links, "WHATSAPP_NUMBER": esc(WHATSAPP), "FOOTER_EYEBROW": esc(text(locale, "footer_eyebrow")), "FOOTER_CTA_TITLE": esc(text(locale, "footer_cta_title")), "FOOTER_CTA_TEXT": esc(text(locale, "footer_cta_text")), "FOOTER_CTA_BUTTON": esc(text(locale, "quote")), "FOOTER_TAGLINE": esc(text(locale, "footer_tagline")), "FOOTER_ADDRESS": esc(ADDRESS), "FOOTER_PRODUCTS_TITLE": esc(text(locale, "footer_products")), "FOOTER_CAPABILITIES_TITLE": esc(text(locale, "footer_capabilities")), "FOOTER_DESIGN": esc(text(locale, "footer_design")), "FOOTER_MANUFACTURING": esc(text(locale, "footer_manufacturing")), "FOOTER_QUALITY": esc(text(locale, "footer_quality")), "FOOTER_SUPPORT": esc(text(locale, "footer_support")), "FOOTER_CONTACT_TITLE": esc(text(locale, "footer_contact")), "FOOTER_QUOTE": esc(text(locale, "footer_quote")), "FOOTER_FAQ": esc(text(locale, "footer_faq")), "FOOTER_PRIVACY": esc(text(locale, "footer_privacy")), "FOOTER_STICKY": esc(text(locale, "footer_sticky"))}
+    return render_template("footer", **vals)
+
+def head(locale: str, title: str, description: str, route: str) -> str:
+    robots = "index,follow" if INDEXING_APPROVED else "noindex,nofollow"
+    canonical = ORIGIN + route_for(locale, route)
+    alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v1")
+    base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
+    return base.replace('</head>', '<link rel="canonical" href="' + esc(canonical) + '">' + alternates + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '"></head>', 1)
+
+def rail(locale: str) -> str:
+    return '<aside class="rail" aria-label="Quick contact"><a href="' + localized_href(locale, "/contact/#inquiry") + '" aria-label="Inquiry">✉</a><a href="mailto:' + EMAIL + '" aria-label="Email">@</a><a href="' + WA_URL + '" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">◉</a><a href="#" aria-label="Back to top" onclick="scrollTo({top:0,behavior:\'smooth\'});return false">↑</a></aside>'
+
+def shell(locale: str, title: str, description: str, route: str, body: str) -> str:
+    return render_template("shell", HEAD=head(locale, title, description, route), HEADER=header(locale, route), SIDEBAR=rail(locale), BODY=body, FOOTER=footer(locale))
+
+def intro(locale: str, title: str, subtitle: str, route: str) -> str:
+    crumb = text(locale, "home") + " / " + title
+    return '<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a> / ' + esc(title) + '</div><span class="eyebrow">LEYA MOULD · PRECISION TOOLING</span><h1>' + esc(title) + '</h1><p>' + esc(subtitle) + '</p></div></section>'
+
+def section_heading(locale: str, eyebrow: str, title: str, description: str = "") -> str:
+    return '<div class="section__head"><div><span class="eyebrow">' + esc(eyebrow) + '</span><h2 class="section__title">' + esc(title) + '</h2>' + (('<p class="copy-muted">' + esc(description) + '</p>') if description else '') + '</div></div>'
+
+def category_card(locale: str, category: dict) -> str:
+    href = localized_href(locale, "/collections/" + category["slug"] + "/")
+    title = category_title(locale, category)
+    return '<a class="category" href="' + href + '"><div class="category__photo">' + image(category["image"], title + " temporary reference image") + '</div><div class="category__body"><h3>' + esc(title) + '</h3><p class="copy-muted">' + esc(category["short"]) + '</p><span>' + esc(text(locale, "view")) + '</span></div></a>'
+
+def home(locale: str) -> str:
+    cats = CATALOG["categories"]
+    hero = '<section class="hero" aria-label="LEYA MOULD"><div class="hero__watermark" aria-hidden="true">LEYA</div><div class="hero__inner"><div class="hero__copy"><span class="eyebrow">' + esc(text(locale, "hero_eyebrow")) + '</span><h1>' + esc(text(locale, "hero_title")) + '</h1><p>' + esc(text(locale, "hero_text")) + '</p><div class="actions"><a class="button button--round" href="' + localized_href(locale, "/products/") + '">' + esc(text(locale, "hero_primary")) + '</a><a class="button button--outline button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "hero_secondary")) + '</a></div><p class="hero__note">' + esc(text(locale, "hero_note")) + '</p></div><div class="hero__art"><img src="/assets/curated-hd/customizable-assortment.webp" alt="LEYA MOULD temporary tooling reference image" loading="eager" decoding="async"></div></div></section>'
+    categories = '<section class="section"><div class="shell">' + section_heading(locale, text(locale, "categories_eyebrow"), text(locale, "categories_title"), text(locale, "categories_text")) + '<div class="grid grid--4 mould-category-grid">' + ''.join(category_card(locale, c) for c in cats) + '</div></div></section>'
+    advantages = ''.join('<article class="benefit"><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for title, desc in data(locale, "advantages"))
+    why = '<section class="section section--soft"><div class="shell"><div class="split"><div>' + image('/assets/curated-hd/feature-flip-top.webp', 'Temporary LEYA MOULD tooling reference image', 'lazy') + '</div><div><span class="eyebrow">' + esc(text(locale, "why_eyebrow")) + '</span><h2 class="section__title">' + esc(text(locale, "why_title")) + '</h2><p class="copy-muted">' + esc(text(locale, "why_text")) + '</p><div class="why-bullets">' + advantages + '</div></div></div></div></section>'
+    steps = ''.join('<article class="step"><strong>' + esc(num) + '</strong><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for num, title, desc in data(locale, "process_steps"))
+    process = '<section class="section"><div class="shell">' + section_heading(locale, text(locale, "process_eyebrow"), text(locale, "process_title")) + '<div class="steps">' + steps + '</div></div></section>'
+    technical = '<section class="section section--dark"><div class="shell"><div class="split"><div><span class="eyebrow">' + esc(text(locale, "technical_eyebrow")) + '</span><h2 class="section__title">' + esc(text(locale, "technical_title")) + '</h2><p class="copy-muted">' + esc(text(locale, "technical_text")) + '</p><a class="button button--white" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "technical_cta")) + '</a></div><div class="split__placeholder"><div><strong>' + esc(text(locale, "resources_title")) + '</strong><p>' + esc(text(locale, "resources_text")) + '</p></div></div></div></div></section>'
+    return hero + categories + why + process + technical
+
+def products_page(locale: str) -> str:
+    cards = ''.join(category_card(locale, c) for c in CATALOG["categories"])
+    return intro(locale, text(locale, "products"), text(locale, "categories_text"), "/products/") + '<section class="section"><div class="shell"><div class="grid grid--4 mould-category-grid">' + cards + '</div><p class="notice">' + esc(text(locale, "category_note")) + '</p></div></section>'
+
+def category_page(locale: str, category: dict) -> str:
+    checks = ''.join('<li>' + esc(x) + '</li>' for x in category["checks"])
+    title = category_title(locale, category)
+    body = intro(locale, title, category["short"], "/collections/" + category["slug"] + "/")
+    body += '<section class="section"><div class="shell"><div class="split"><div>' + image(category["image"], title + " temporary reference image", "eager") + '</div><div><span class="eyebrow">' + esc(text(locale, "categories_eyebrow")) + '</span><h2 class="section__title">' + esc(title) + '</h2><p class="copy-muted">' + esc(category["detail"]) + '</p><ul class="mould-checklist">' + checks + '</ul><p class="notice">' + esc(text(locale, "category_note")) + '</p><a class="button" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a></div></div></div></section>'
+    body += '<section class="section section--soft"><div class="shell">' + section_heading(locale, text(locale, "technical_eyebrow"), text(locale, "resources_title"), text(locale, "resources_text")) + '<div class="split__placeholder"><strong>HIGH-RESOLUTION IMAGES / PDF</strong><p>' + esc(text(locale, "category_note")) + '</p></div></div></section>'
+    return body
+
+def about_page(locale: str) -> str:
+    body = intro(locale, text(locale, "about_title"), text(locale, "about_text"), "/about/")
+    body += '<section class="section"><div class="shell"><div class="article"><p>' + esc(text(locale, "about_text")) + '</p><h2>LEYA MOULD Co.,Ltd</h2><p>' + esc(ADDRESS) + '<br><a href="mailto:' + EMAIL + '">' + EMAIL + '</a><br><a href="' + WA_URL + '">WhatsApp: ' + esc(WHATSAPP) + '</a></p><h2>' + esc(text(locale, "why_title")) + '</h2><p>' + esc(text(locale, "why_text")) + '</p></div></div></section>'
+    return body
+
+def capabilities_page(locale: str) -> str:
+    cards = ''.join('<a class="category" href="' + localized_href(locale, "/capabilities/" + s["slug"] + "/") + '"><div class="category__body"><h3>' + esc(s["title"]) + '</h3><p class="copy-muted">' + esc(s["text"]) + '</p><span>' + esc(text(locale, "learn")) + '</span></div></a>' for s in CATALOG["services"])
+    return intro(locale, text(locale, "capabilities"), text(locale, "technical_text"), "/capabilities/") + '<section class="section"><div class="shell"><div class="grid grid--3">' + cards + '</div></div></section>'
+
+def service_page(locale: str, service: dict) -> str:
+    body = intro(locale, service["title"], service["text"], "/capabilities/" + service["slug"] + "/")
+    body += '<section class="section"><div class="shell"><div class="split"><div><h2 class="section__title">' + esc(service["title"]) + '</h2><p class="copy-muted">' + esc(service["text"]) + '</p><p class="copy-muted">' + esc(text(locale, "technical_text")) + '</p></div><div class="split__placeholder"><strong>PROJECT FILES TO BE REVIEWED</strong><p>Drawing · sample · PDF · revision notes</p></div></div><p style="margin-top:28px"><a class="button" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a></p></div></section>'
+    return body
+
+def contact_page(locale: str) -> str:
+    labels = {"FORM_ARIA": text(locale, "form_aria"), "FORM_REQUIRED_NOTE": text(locale, "form_required"), "FORM_COMPANY": text(locale, "form_company"), "FORM_COMPANY_PLACEHOLDER": "Your company" if locale == "en" else text(locale, "form_company"), "FORM_EMAIL": text(locale, "form_email"), "FORM_CATEGORY": text(locale, "form_category"), "FORM_CATEGORY_PLACEHOLDER": "e.g. PET preform, bottle cap", "FORM_QUANTITY": text(locale, "form_quantity"), "FORM_QUANTITY_PLACEHOLDER": "e.g. annual volume or cavities", "FORM_COUNTRY": text(locale, "form_country"), "FORM_COUNTRY_PLACEHOLDER": "Country", "FORM_TYPE": text(locale, "form_type"), "FORM_TYPE_QUOTE": text(locale, "form_quote"), "FORM_TYPE_NEW": text(locale, "form_new"), "FORM_TYPE_REVIEW": text(locale, "form_review"), "FORM_TYPE_TECH": text(locale, "form_tech"), "FORM_MATERIAL": text(locale, "form_material"), "FORM_ADVISE": text(locale, "form_advise"), "FORM_OTHER": text(locale, "form_other"), "FORM_REQUIREMENTS": text(locale, "form_requirements"), "FORM_REQUIREMENTS_PLACEHOLDER": "Part drawing, target resin, cavities, cycle goals, sample or PDF reference", "FORM_CONSENT": text(locale, "form_consent"), "FORM_PRIVACY": text(locale, "form_privacy"), "FORM_SUBMIT": text(locale, "form_submit")}
+    form = render_template("contact-form", **{key: esc(value) for key, value in labels.items()})
+    body = intro(locale, text(locale, "contact_title"), text(locale, "contact_intro"), "/contact/")
+    body += '<section class="section"><div class="shell"><div class="contact-layout"><div><span class="eyebrow">LEYA MOULD Co.,Ltd</span><h2 class="section__title">' + esc(text(locale, "contact_title")) + '</h2><p class="copy-muted">' + esc(text(locale, "contact_intro")) + '</p><div class="benefit"><h3>' + esc(ADDRESS) + '</h3><p><a href="mailto:' + EMAIL + '">' + EMAIL + '</a><br><a href="' + WA_URL + '">WhatsApp: ' + esc(WHATSAPP) + '</a></p></div></div>' + form + '</div></div></section>'
+    return body
+
+def faq_page(locale: str) -> str:
+    pairs = [("What should I send first?", "A drawing, physical sample, PDF or clear reference photo plus the target resin and market."), ("Can you review an existing mould?", "Yes. Share the current mould information, sample results, problem description and any available inspection records."), ("Will the product pages contain PDFs and high-resolution photos?", "Yes. Approved preform, bottle, cap and knife-and-fork media will be added to the relevant category when supplied."), ("How do I request a quotation?", "Use the enquiry form or email amyhu@leyamould.com with the project brief." )]
+    if locale != "en":
+        pairs = [(text(locale, "faq_title"), text(locale, "faq_intro"))] + pairs[1:]
+    rows = ''.join('<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>' for q, a in pairs)
+    return intro(locale, text(locale, "faq_title"), text(locale, "faq_intro"), "/faq/") + '<section class="section"><div class="shell"><div class="faq-list">' + rows + '</div></div></section>'
+
+def simple_page(locale: str, route: str, title: str, description: str, body: str) -> str:
+    return intro(locale, title, description, route) + '<section class="section"><div class="shell"><div class="article">' + body + '</div></div></section>'
+
+def write(path: str, content: str) -> None:
+    target = OUTPUT / path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(content, encoding="utf-8")
+
+def generate() -> dict:
+    routes: dict[str, str] = {}
+    def add(locale: str, route: str, title: str, description: str, body: str) -> None:
+        localized = route_for(locale, route)
+        file_path = localized.strip("/") + "/index.html" if localized != "/" else "index.html"
+        write(file_path, shell(locale, title + " | LEYA MOULD" if route != "/" else title + " | LEYA MOULD", description, route, body))
+        routes[localized] = title
+    for locale in LOCALES:
+        code = locale["code"]
+        add(code, "/", text(code, "hero_title"), text(code, "hero_text"), home(code))
+        add(code, "/products/", text(code, "products"), text(code, "categories_text"), products_page(code))
+        for category in CATALOG["categories"]:
+            add(code, "/collections/" + category["slug"] + "/", category_title(code, category), category["short"], category_page(code, category))
+            # A stable category detail route keeps future PDF/image imports compatible.
+            add(code, "/products/" + category["slug"] + "/", category_title(code, category) + " Project", category["detail"], category_page(code, category))
+        add(code, "/about/", text(code, "about_title"), text(code, "about_text"), about_page(code))
+        add(code, "/capabilities/", text(code, "capabilities"), text(code, "technical_text"), capabilities_page(code))
+        for service in CATALOG["services"]:
+            add(code, "/capabilities/" + service["slug"] + "/", service["title"], service["text"], service_page(code, service))
+        add(code, "/manufacturing/", text(code, "process"), text(code, "process_title"), simple_page(code, "/manufacturing/", text(code, "process"), text(code, "process_title"), '<p>' + esc(text(code, "process_title")) + '</p><p>' + esc(text(code, "technical_text")) + '</p>'))
+        add(code, "/quality-control/", text(code, "footer_quality"), text(code, "technical_text"), simple_page(code, "/quality-control/", text(code, "footer_quality"), text(code, "technical_text"), '<p>' + esc(text(code, "technical_text")) + '</p>'))
+        add(code, "/request-sample/", text(code, "quote"), text(code, "resources_text"), contact_page(code))
+        add(code, "/contact/", text(code, "contact"), text(code, "contact_intro"), contact_page(code))
+        add(code, "/faq/", text(code, "faq_title"), text(code, "faq_intro"), faq_page(code))
+        add(code, "/blog/", text(code, "blog_title"), text(code, "blog_text"), simple_page(code, "/blog/", text(code, "blog_title"), text(code, "blog_text"), '<p>' + esc(text(code, "blog_text")) + '</p><p><a class="button" href="' + localized_href(code, "/contact/#inquiry") + '">' + esc(text(code, "quote")) + ' →</a></p>'))
+        add(code, "/privacy-policy/", text(code, "privacy_title"), text(code, "privacy_text"), simple_page(code, "/privacy-policy/", text(code, "privacy_title"), text(code, "privacy_text"), '<p>' + esc(text(code, "privacy_text")) + '</p>'))
+    not_found = shell("en", "Page Not Found | LEYA MOULD", "The requested page could not be found.", "/404.html", intro("en", "Page Not Found", "The requested page could not be found.", "/404.html") + '<section class="section"><div class="shell"><a class="button" href="/">Back to Home →</a></div></section>')
+    write("404.html", not_found)
+    write("robots.txt", "User-agent: *\n" + ("Allow: /\nSitemap: " + ORIGIN + "/sitemap.xml\n" if INDEXING_APPROVED else "Disallow: /\n"))
+    sitemap = ['<?xml version="1.0" encoding="utf-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for route in sorted(routes):
+        sitemap.append("  <url><loc>" + esc(ORIGIN + route) + "</loc></url>")
+    sitemap.append("</urlset>")
+    write("sitemap.xml", "\n".join(sitemap) + "\n")
+    manifest = {"schemaVersion": 1, "locales": [{**row, "enabled": True, "publishReady": True} for row in LOCALES], "routes": sorted(routes)}
+    write("locale-manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    return {"routes": routes, "locales": LOCALES}
+
+if __name__ == "__main__":
+    result = generate()
+    print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
+
