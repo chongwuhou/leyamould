@@ -78,7 +78,7 @@ def checked_image_size(path):
 def image_dimensions(url):
     """Only use dimensions of original, local image files, no guessed CDN/R2 sizes."""
     u=urlsplit(html.unescape(url))
-    if (u.scheme,u.netloc)!=("https","xuyibottles.com"):return None
+    if (u.scheme,u.netloc)!=("https","leyamould.com"):return None
     if not u.path.startswith("/assets/"):return None
     sub=unquote(u.path).lstrip("/")
     if ".." in Path(sub).parts:return None
