@@ -10,7 +10,7 @@ from cms_seo_curation_guard import snapshot,baseline,may_curate,current_field
 from catalog_extensions import factory_catalog_seo_defaults
 
 current=snapshot()
-assert current is not None and current.get("site")=="xuyi-drinkware-site"
+assert current is not None and current.get("site")=="leyamould"
 old=baseline()
 assert len(old)>=380
 cases=[
@@ -45,7 +45,7 @@ assert not may_curate("en","/about/","title",edited,baseline_data={})
 factory_rows,factory_manifest=factory_catalog_seo_defaults()
 factory_model="cp01001"
 factory_snapshot={
-    "site":"xuyi-drinkware-site",
+    "site":"leyamould",
     "pages":[{"route":"/products/cp01001/","seo_title":"400ml (approx. 14 oz) Protein Shaker CP01001 | XUYI"}],
     "products":[{"model":factory_model,"content":{
         "newProduct":True,
