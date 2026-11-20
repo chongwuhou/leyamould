@@ -30,7 +30,7 @@ for language in published:
  for f in files:
   html=f.read_text(encoding="utf8")
   route="/"+f.relative_to(DIST).as_posix().removesuffix("index.html")
-  url="https://xuyibottles.com"+route
+  url="https://leyamould.com"+route
   assert '<html lang="'+locale+'">' in html,(locale,route)
   assert '<link rel="canonical" href="'+url+'">' in html,(locale,route)
   assert '<meta name="robots" content="'+("index,follow" if indexable else "noindex,nofollow")+'">' in html,(locale,route)
@@ -77,7 +77,7 @@ for language in published:
 snapshot=ROOT/"_local_ops/build-snapshot.json"
 if snapshot.is_file():
  data=json.loads(snapshot.read_text(encoding="utf8"))
- if data.get("site")=="xuyi-drinkware-site":
+ if data.get("site")=="leyamould":
   for locale in result:
    expected=sum(1 for row in data.get("translations",[]) if
      row.get("locale")==locale and str(row.get("resourceId","")).startswith("page:"))
