@@ -34,5 +34,5 @@ for prefix, label in locale_roots:
         assert page.count('class="blog-listing__grid"')==1
         assert page.count('class="news-card"')>=12
         canonical_prefix=re.escape(prefix+"/" if prefix else "")
-        assert re.search(r'<link rel="canonical" href="https://xuyibottles.com/'+canonical_prefix+r'blog/">',page)
+        assert re.search(r'<link rel="canonical" href="https://leyamould.com/'+canonical_prefix+r'blog/">',page)
 print('XUYI_BLOG_LOCALE_SOURCE_PAGER_AND_CMS_GROWTH_PASSED')
