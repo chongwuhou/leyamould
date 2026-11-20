@@ -27,7 +27,7 @@ from product_locale_seo import TRANSPARENT
 
 MILLILITERS_PER_US_FL_OZ=29.5735295625
 RETAIL_CONFIG=json.loads((ROOT/"data/retail-oz-size-classes.json").read_text(encoding="utf8"))
-if RETAIL_CONFIG.get("site")!="xuyi-drinkware-site" or RETAIL_CONFIG.get("schemaVersion")!=1:
+if RETAIL_CONFIG.get("site")!="leyamould" or RETAIL_CONFIG.get("schemaVersion")!=1:
     raise RuntimeError("Wrong website or retail-size lookup schema")
 RETAIL_SIZES={float(k):v for k,v in RETAIL_CONFIG["classes"].items()}
 MARKET_CLASS_MAX_DIFFERENCE=float(RETAIL_CONFIG["maxRelativeDifference"])
