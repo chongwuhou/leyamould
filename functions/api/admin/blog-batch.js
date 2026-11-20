@@ -102,72 +102,6 @@ function contentForTranslation(item) {
   return JSON.stringify({ title: item.title, description: item.description, mainHtml: item.mainHtml });
 }
 
-// A reviewed batch may repair only the shape emitted by an earlier run of
-// this same publisher: FAQ tuples become the CMS's {question,answer} shape,
-// and the source article receives its reviewed English product annotations.
-// All other D1 content must remain byte-for-byte owner protected.
-function canonicalJson(value) {
-  if (Array.isArray(value)) return value.map(canonicalJson);
-  if (value && typeof value === "object") {
-    return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonicalJson(value[key])]));
-  }
-  return value;
-}
-const LEGACY_REVIEWED_CONTENT_SHA256 = Object.freeze({
-  "custom-water-bottle-landed-cost-checklist-importers": {
-    legacy: "123deacb5f157cd4aaa3d88ce6a490d510dc361ba27009fe6c535f86f3594e29",
-    current: "4f1d6043bfe190439348fe1d02c89c15dba1b0b8ad9c00f2c2a871ce52c021ea"
-  },
-  "wholesale-water-bottle-artwork-proof-approval-checklist": {
-    legacy: "8079e334613b377360f4c6b1d3c8572660337bbe0b1bfb194e7c7d895a7341b7",
-    current: "7aa8940644c659e80e5245b968576226431b0d48a7d9090e82f51ed99bf39b74"
-  },
-  "multi-size-water-bottle-cap-compatibility-buyer-guide": {
-    legacy: "3a394c262a9dc74d4b458cc636daaf85c6f5c0692d8ef68383cdeaf466dc6b10",
-    current: "c332d07a0ec6fe0587d4931960ff2cbc6eba9842100de7a00990b7ce41c8cdc6"
-  }
-});
-async function sha256(value) {
-  const bytes = new TextEncoder().encode(value);
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, "0")).join("");
-}
-async function compatibleReviewedShapeRepair(existingText, incomingPost) {
-  const known = LEGACY_REVIEWED_CONTENT_SHA256[incomingPost?.slug];
-  if (known && await sha256(existingText) === known.legacy && await sha256(JSON.stringify(incomingPost)) === known.current) return true;
-  let existing;
-  try { existing = JSON.parse(existingText); } catch { return false; }
-  if (!existing || typeof existing !== "object" || Array.isArray(existing)) return false;
-  const repaired = { ...existing };
-  const legacyFaqTuples = Array.isArray(repaired.faqs) && repaired.faqs.length === 4 && repaired.faqs.every(item => Array.isArray(item) && item.length === 2);
-  if (legacyFaqTuples) {
-    repaired.faqs = repaired.faqs.map(([question, answer]) => ({ question, answer }));
-  }
-  let legacyProductNotes = false;
-  if (Array.isArray(repaired.product_notes) && Array.isArray(incomingPost.product_notes)) {
-    repaired.product_notes = repaired.product_notes.map(note => {
-      const reference = incomingPost.product_notes.find(item => String(item?.section) === String(note?.section) && String(item?.sku) === String(note?.sku));
-      if (!reference) return note;
-      if (!note?.label?.en || !note?.text?.en) legacyProductNotes = true;
-      return {
-        ...note,
-        label: { ...(note.label || {}), en: note?.label?.en || reference?.label?.en },
-        text: { ...(note.text || {}), en: note?.text?.en || reference?.text?.en }
-      };
-    });
-  }
-  if (!legacyFaqTuples && !legacyProductNotes) return false;
-  // Compare every content-bearing field, but ignore only the two known legacy
-  // shape differences above. This keeps owner edits protected while allowing
-  // the just-published batch to finish its schema migration.
-  const protectedKeys = ["slug", "title", "description", "intro", "category", "cover", "coverAlt", "updated", "sections", "checklist", "faqs", "related", "product_notes"];
-  // The exact SHA pair above is the strongest guard. The field comparison is
-  // the fallback for the same just-published rows when the first write was
-  // serialized by an older Worker runtime; only FAQ/product-note shape may
-  // differ, while every article field is still compared after repair.
-  return protectedKeys.every(key => JSON.stringify(canonicalJson(repaired[key])) === JSON.stringify(canonicalJson(incomingPost[key])));
-}
-
 export async function onRequestPost(context) {
   if (!(await authorizedReviewedBlogBatchRequest(context.request, context.env))) return reply({ error: "Unauthorized reviewed batch request" }, 401);
   const db = context.env.XUYI_DB;
@@ -188,19 +122,12 @@ export async function onRequestPost(context) {
     const newPostStatements = [];
     for (const item of payload.posts) {
       const content = JSON.stringify(item.post);
-      const existing = await db.prepare("SELECT status,content_json,published_at FROM xuyi_blog_posts WHERE slug=?").bind(item.slug).first();
+      const existing = await db.prepare("SELECT status,content_json FROM xuyi_blog_posts WHERE slug=?").bind(item.slug).first();
       if (existing && existing.status !== "published") {
         return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
       }
       if (!existing) newPostStatements.push(db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,'published',?,?)").bind(item.slug, content, item.publishedAt || now));
-      else if (existing.content_json !== content) {
-        const oneTimeReviewedRepair = LEGACY_REVIEWED_CONTENT_SHA256[item.slug] &&
-          String(item.post.updated || "") === "2026-11-20";
-        if (!oneTimeReviewedRepair && !(await compatibleReviewedShapeRepair(existing.content_json, item.post))) {
-          return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
-        }
-        newPostStatements.push(db.prepare("UPDATE xuyi_blog_posts SET content_json=?,updated_at=CURRENT_TIMESTAMP WHERE slug=? AND status='published' AND content_json=?").bind(content, item.slug, existing.content_json));
-      }
+      else if (existing.content_json !== content) return reply({ error: "Existing D1 article was changed; batch preserved the owner edit: " + item.slug }, 409);
     }
 
     const newTranslationStatements = [];
