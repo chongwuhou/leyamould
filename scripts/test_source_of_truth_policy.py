@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parent.parent
 agents=(ROOT/"AGENTS.md").read_text(encoding="utf8")
 policy=(ROOT/"PROJECT_CHANGE_POLICY.md").read_text(encoding="utf8")
 readme=(ROOT/"README.md").read_text(encoding="utf8")
-workflow=(ROOT/".github/workflows/publish-xuyi.yml").read_text(encoding="utf8")
+workflow=(ROOT/".github/workflows/publish-leyamould.yml").read_text(encoding="utf8")
 standard=(ROOT/"项目圣经/统一内容发布与翻译审计标准.md").read_text(encoding="utf8")
 ignore=(ROOT/".gitignore").read_text(encoding="utf8").splitlines()
 
