@@ -5,8 +5,8 @@ import {fileURLToPath} from "node:url";
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
 const output=path.join(root,"_local_ops","model-overflow");
 const manifest=JSON.parse(readFileSync(path.join(output,"manifest.json"),"utf8"));
-const bucket="xuyi-drinkware-model-pages";
-if(manifest.site!=="xuyi-drinkware-site"||manifest.bucket!==bucket)throw Error("XUYI overflow manifest identity mismatch");
+const bucket="leyamould-model-pages";
+if(manifest.site!=="leyamould"||manifest.bucket!==bucket)throw Error("XUYI overflow manifest identity mismatch");
 if(manifest.mode==="static"){console.log("XUYI_R2_SYNC_SKIPPED_STATIC no overflow model pages");process.exit(0)}
 if(manifest.mode!=="hybrid"||!manifest.objects?.length)throw Error("Invalid XUYI hybrid manifest");
 function wrangler(args,{optional=false}={}){
@@ -21,7 +21,7 @@ function wrangler(args,{optional=false}={}){
 const remoteFile=path.join(output,"remote-manifest.json");
 wrangler(["r2","object","get",bucket+"/__system/manifest.json","--file",remoteFile,"--remote"],{optional:true});
 let remote={objects:[]};if(existsSync(remoteFile))try{remote=JSON.parse(readFileSync(remoteFile,"utf8"))}catch{}
-if(remote.site&&remote.site!=="xuyi-drinkware-site")throw Error("Wrong existing R2 manifest");
+if(remote.site&&remote.site!=="leyamould")throw Error("Wrong existing R2 manifest");
 const was=new Map((remote.objects||[]).map(x=>[x.key,x.sha256]));
 const incoming=new Set();
 let uploaded=0;
