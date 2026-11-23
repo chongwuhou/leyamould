@@ -1308,3 +1308,7 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 
 /* Keep the LEYA CTA on one line inside the reference 205px pill. */
 .mould-site .hero.hero-slider #hero-cta{white-space:nowrap;padding-inline:20px;}
+
+
+/* Match the reference product landing hero's measured desktop height. */
+.mould-site .catalog-hero{min-height:593px;}
