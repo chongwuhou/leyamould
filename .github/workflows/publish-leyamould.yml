@@ -1,4 +1,5 @@
 name: Leyamould mould-site source build
+# The source workflow is the only deployment path; D1 content is fetched before each clean build.
 
 on:
   push:
