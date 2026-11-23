@@ -1,4 +1,3 @@
-Warning: fs was declared with const; use let for reassignable variables.
 """Source renderer for the LEYA MOULD product site.
 
 The water-cup project supplied the backend contracts, admin routes and Pages
