@@ -42,6 +42,7 @@ jobs:
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
+      LEYA_RELEASE_SHA: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -88,6 +89,9 @@ jobs:
       - name: Deploy Leyamould production
         if: env.CLOUDFLARE_API_TOKEN != ''
         run: npx --yes wrangler@4.148.0 pages deploy dist --project-name leyamould --branch main
+      - name: Verify deployed build metadata and R2 reference index
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: python scripts/verify_production_release.py
       - name: Verify production deployment authorization
         if: env.CLOUDFLARE_API_TOKEN == ''
         run: |
