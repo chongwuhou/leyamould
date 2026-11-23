@@ -37,6 +37,12 @@ export async function onRequestPost(context){
     if(!(await authorizeAdminRequest(context.request,context.env)))return respond({error:"Admin authorization required"},401);
     const model=clean(p.model,80);
     const status=p.status==="published"?"published":"draft";
+    // The frozen public renderer currently exposes only the registered mould
+    // categories. A new D1 row may be prepared as a draft, but claiming it is
+    // published before its route/detail specification is registered would
+    // leave a successful CMS write with no public page.
+    if(status==="published"&&!MANAGED_MODELS.has(model))
+      return respond({error:"This mould category is draft-only until its LEYA route and detail template are registered"},409);
     let content;
     try{content=normalizeNewProduct(model,p.content,status)}
     catch(error){return respond({error:String(error.message||error)},400)}
