@@ -3,10 +3,9 @@
 // or other private tables; responses are no-store and not indexable.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
 import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from "../_shared/site-settings.js";
+import { MOULD_MODELS, MOULD_ROUTES, mouldModelFromRoute } from "../_shared/mould-routes.js";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
-const MOULD_MODELS=new Set(["mineral-water-closure-cap-molds","oil-bottle-cap-mould","flip-top-caps-mould","engine-oil-cap-mould","food-packaging-cap-mould","medical-cap-mould","personal-care-cap-mould","functional-cap-mould","plastic-handle-cap-mould"]);
-const MOULD_ROUTES=new Set(["/","/about/","/products/","/Plastic-cap-mold.html","/capabilities/","/capabilities/mould-design/","/capabilities/precision-manufacturing/","/capabilities/trial-sampling/","/manufacturing/","/quality-control/","/request-sample/","/contact/","/samples/","/news/","/news/Bottle-cap-molds.html","/Bottle-Cap-Machine/Bottle-Cap-Machine.html","/video/","/faq/","/blog/","/privacy-policy/",...Array.from(MOULD_MODELS,model=>"/product/"+model+".html")]);
 async function list(db,sql){
   try{return (await db.prepare(sql).all()).results||[]}catch(error){
     // Tables are initialized by their respective admin modules on first save.
@@ -67,18 +66,18 @@ export async function onRequestGet(context){
        languages:languageConfig,
        pages:onlyRoutes,navigation:onlyNavigation,redirects,
        banners:parseJson(config.home_banner_config,null),
-      pageBodies:pageBodies.filter(r=>typeof r.route==="string"&&typeof r.main_html==="string")
+      pageBodies:pageBodies.filter(r=>MOULD_ROUTES.has(String(r.route||""))&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
        products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
       blogPosts:onlyBlogPosts,
-       productSeo:productSeo.filter(r=>/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.slug)
+       productSeo:productSeo.filter(r=>MOULD_MODELS.has(String(r.slug||""))
          && publicLocaleCodes.has(r.locale)
         && typeof r.seo_title==="string"&&r.seo_title.length<=90
         && typeof r.meta_description==="string"&&r.meta_description.length<=240)
         .map(r=>({slug:r.slug,locale:r.locale,seoTitle:r.seo_title,
           metaDescription:r.meta_description,updatedAt:r.updated_at})),
-      productReviews:productReviews
-        .filter(r=>/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(r.model)
+       productReviews:productReviews
+         .filter(r=>MOULD_MODELS.has(String(r.model||""))
           && Number.isInteger(r.rating)&&r.rating>=1&&r.rating<=5
           && typeof r.author==="string"&&r.author.length>=2&&r.author.length<100
           && /^\d{4}-\d{2}-\d{2}$/.test(r.review_date)
@@ -87,11 +86,14 @@ export async function onRequestGet(context){
           reviewDate:r.review_date,content:r.content,status:"published"})),
        mediaAlts:mediaAlts.filter(r=>/^\/media\/(?:product|page|shared|ppt|excel|group|capability|gallery|blog)\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(r.path))
          .map(r=>({path:r.path,translations:parseJson(r.alt_json,{})})),
-       translations:translations.map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})})),
+       translations:translations.filter(r=>{
+         const resource=String(r.resource_id||"");
+         if(!resource.startsWith("page:"))return false;
+         return MOULD_ROUTES.has(resource.slice(5));
+       }).map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})})),
        youtubeVideos:youtubeVideos.filter(r=>/^[A-Za-z0-9_-]{11}$/.test(String(r.video_id||"")))
         .map(r=>({id:r.id,videoId:r.video_id,youtubeUrl:r.youtube_url,title:r.title||"",titleEn:r.title_en||r.title||"",titleEs:r.title_es||"",description:r.description||"",publishedAt:r.published_at||"",sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
     });
   }catch(error){return json({error:"LEYA build snapshot unavailable"},503)}
 }
-
 

@@ -2,7 +2,7 @@
 // this module owns reviewed route metadata and publish revisions.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { ensureProductSeo, canonicalProductSlug } from "../../_shared/product-seo.js";
-import { MOULD_ROUTES } from "../../_shared/mould-routes.js";
+import { MOULD_ROUTES, MOULD_PUBLIC_ROUTES } from "../../_shared/mould-routes.js";
 
 const clean = value => String(value ?? "").trim();
 const ROBOTS = new Set(["index,follow", "noindex,follow", "noindex,nofollow"]);
@@ -12,7 +12,7 @@ const PAGE_LABELS = new Map([
   ["/manufacturing/", "How We Work"], ["/quality-control/", "Quality Control"], ["/request-sample/", "Request a Sample"], ["/contact/", "Contact Us"], ["/samples/", "Plastic Cap Samples"], ["/news/", "News"],
   ["/news/Bottle-cap-molds.html", "Bottle Cap Mould News"], ["/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine"], ["/video/", "Video"], ["/faq/", "FAQ"], ["/blog/", "Blog"], ["/privacy-policy/", "Privacy Policy"]
 ]);
-for (const route of MOULD_ROUTES) if (route.startsWith("/product/")) PAGE_LABELS.set(route, route.split("/").pop().replace(/\.html$/, ""));
+for (const [model,route] of MOULD_PUBLIC_ROUTES) PAGE_LABELS.set(route, route.split("/").pop().replace(/\.html$/, ""));
 const DEFAULT_PAGES = [...PAGE_LABELS].map(([route, label]) => ({ route, label, seoTitle: "", metaDescription: "", robots: "noindex,nofollow", sitemapEnabled: false }));
 const KNOWN_ROUTES = new Set(DEFAULT_PAGES.map(page => page.route));
 const SCHEMA = [
@@ -66,4 +66,3 @@ export async function onRequestPost(context) {
     await db.batch(statements); return response({ saved: true, count: pages.length, ...(await queuePublish(db)) });
   } catch (error) { return response({ error: clean(error?.message || error) }, 400); }
 }
-

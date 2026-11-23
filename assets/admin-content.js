@@ -1,4 +1,4 @@
-/* XUYI D1 content console. Reuses Demalong's authenticated admin endpoints. */
+ /* LEYA MOULD D1 content console. Reuses the shared authenticated admin endpoints. */
 (()=>{"use strict";
  const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
  const $=id=>document.getElementById(id);
@@ -20,7 +20,7 @@
   :'<input data-cms-field="'+esc(key)+'" value="'+esc(value)+'">')+'</label>';
  const button=(label,action)=>'<button class="btn primary" data-cms-action="'+action+'" type="button">'+label+'</button>';
  async function load(){
-  say("正在读取旭一 D1 …");
+   say("正在读取 LEYA MOULD D1 …");
   try{
    const endpoints=[["brand-config","brand"],["site-config","site"],["site-settings","settings"],["pages","pages"],
     ["product-content","products"],["page-translations","locales"],["page-content","pageBodies"],
@@ -95,7 +95,7 @@
     button("保存 3 张 Banner 并等待发布","banners");
   }
   if(tab==="navigation"){
-   html='<h3>导航与跳转管理</h3><p>数组字段与德玛隆 site-config CMS 一致。仅允许网站实际路径或经核准的外链，编辑前请核对目标 URL。</p>'+
+   html='<h3>导航与跳转管理</h3><p>数组字段与 LEYA MOULD site-config CMS 一致。仅允许网站实际路径或经核准的外链，编辑前请核对目标 URL。</p>'+
     field("navigation",JSON.stringify(state.site.navigation||[],null,2),"导航 JSON：id / parentId / label / url / sortOrder",16)+
     field("redirects",JSON.stringify(state.site.redirects||[],null,2),"301/302 跳转规则 JSON",7)+
     button("保存导航","navigation")+' '+button("保存跳转规则","redirects");
@@ -110,16 +110,18 @@
    button("保存所选页面 SEO","pages");
   }
   if(tab==="products"){
-   html='<h3>产品结构化商详与 SEO</h3><p>可输入完整型号或部分型号（例如 008、LO-008、2095），选择后读取官网现有商详及已保存的 D1 修改。保存草稿不会覆盖原始网站内容。</p>'+
-   '<label class="block-label">搜索已有商品型号 <input type="search" id="cms-product-search" placeholder="输入 008 查找 LO-008" autocomplete="off" aria-label="搜索已有商品型号"></label>'+
-   '<select id="cms-product-matches" size="6" aria-label="已有商品型号匹配结果" style="width:100%;margin:8px 0 12px"></select>'+
+    html='<h3>模具类别内容与 SEO</h3><p>选择九个已配置的模具类别，编辑标题、说明、技术要点和 SEO。保存草稿不会改变前端样式，只会在下一次完整构建时更新数据内容。</p>'+
+    '<label class="block-label">搜索模具类别 <input type="search" id="cms-product-search" placeholder="输入 cap、oil 或 handle" autocomplete="off" aria-label="搜索模具类别"></label>'+
+    '<select id="cms-product-matches" size="6" aria-label="模具类别匹配结果" style="width:100%;margin:8px 0 12px"></select>'+
    '<p id="cms-product-current" role="status" aria-live="polite"></p>'+
-   field("model","","当前选中型号（从上方选择）")+
-   field("name","","英文产品名称")+
-   field("material","","材质/部件材料（必须真实核实）")+
-   field("capacity","","容量")+
-   field("image","","产品主图路径（媒体库上传后复制 /media/product/...）")+
-   field("description","","英文产品描述",4)+
+    field("model","","当前类别 slug（从上方选择）")+
+    field("title","","英文类别标题")+
+    field("navTitle","","导航显示名称")+
+    field("short","","类别简述",3)+
+    field("detail","","类别详细说明",4)+
+    field("meta","","规格标签（例如 48 Cavity · Hot Runner）")+
+    field("image","","类别主图路径（媒体库上传后复制 /media/...）")+
+    field("checks","","技术核对要点 JSON 数组，例如 [\"Drawing review\",\"Cavity plan\"]",4)+
    field("seoTitle","","SEO Title")+
    field("seoDescription","","Meta Description",3)+
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
@@ -161,7 +163,7 @@
     field("seoTitle","","SEO Title（最多 90 字符）")+
     field("seoDescription","","Meta Description（最多 240 字符）",3)+
     '<label class="block-label">保存状态 <select data-cms-field="status"><option value="draft">只存草稿，不生成页面</option><option value="published">资料核实完成，进入自动发布队列</option></select></label>'+
-    '<p>页面路径：/products/型号/。新产品复用现有列表、详情、图片、SEO 与 R2 模板。</p>'+
+    '<p>页面路径：/product/类别-slug.html。新增类别需先经过模具目录审核，再复用现有详情、图片、SEO 与 R2 模板。</p>'+
     button("保存单个新商品","new-product");
   }
   if(tab==="page-body"){
@@ -192,7 +194,7 @@
      const file=container.querySelector('[data-banner-upload="'+i+'"]')?.files?.[0];
      if(!file){say("请先选择第 "+(i+1)+" 张新图片");return}
      if(file.size>6*1024*1024){say("单张图片不能超过 6MB");return}
-     const uploadButton=event.currentTarget;uploadButton.disabled=true;say("正在上传 Banner "+(i+1)+" 到旭一 R2…");
+     const uploadButton=event.currentTarget;uploadButton.disabled=true;say("正在上传 Banner "+(i+1)+" 到 LEYA MOULD R2…");
      try{
       const body=new FormData();body.set("kind","shared");body.set("image",file);
       const sourceAlt=String(state.bannerDraft.slides[i].alt||"").trim();
@@ -240,17 +242,17 @@
    const known=[...new Set([...(state.products.catalogModels||[]),
      ...(state.products.items||[]).filter(x=>!x.content?.newProduct).map(x=>x.model)])].sort();
    let requestNumber=0;
-   const sourceFields=["name","material","capacity","image","description","seoTitle","seoDescription"];
+    const sourceFields=["title","navTitle","short","detail","meta","image","checks","seoTitle","seoDescription"];
    const resetFields=()=>{for(const key of sourceFields){
      const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value="";
    }container.querySelector('[data-cms-field="status"]').value="draft";};
    async function selectProduct(id){
     if(!known.includes(id))return;
     const request=++requestNumber;
-    model.value=id;resetFields();notice.textContent="正在读取 "+id+" 的当前商品页面和 D1 商详…";
-    const entry=(state.products.items||[]).find(x=>x.model===id&&!x.content?.newProduct);
-    const route="/products/"+(/^(?:LO|G)-/.test(id)?id.toLowerCase():encodeURIComponent(id))+"/";
-    let original={},sourceAvailable=false;
+     model.value=id;resetFields();notice.textContent="正在读取 "+id+" 的当前类别页面和 D1 内容…";
+     const entry=(state.products.items||[]).find(x=>x.model===id&&!x.content?.newProduct);
+     const route=(state.products.modelRoutes||{})[id]||"/product/"+encodeURIComponent(id)+".html";
+     let original={},sourceAvailable=false;
     try{
      const response=await fetch(route,{cache:"no-store"});
      if(!response.ok)throw Error("HTTP "+response.status);
@@ -260,25 +262,27 @@
        value:(tr.querySelector("td")?.textContent||"").trim()
      }));
      const valueFor=(pattern)=>spec.find(r=>pattern.test(r.label))?.value||"";
-     original={
-      name:(doc.querySelector(".product-detail h1")?.textContent||"").trim(),
-      capacity:valueFor(/capacity|容量/),
-      material:valueFor(/material|材质/),
-      image:doc.querySelector(".product-detail__main img")?.getAttribute("src")||"",
-      description:(doc.querySelector(".product-detail > div:last-child > p.copy-muted")?.textContent||"").trim(),
+      original={
+       title:(doc.querySelector("main h1,h1")?.textContent||"").trim(),
+       navTitle:(doc.querySelector("main h1,h1")?.textContent||"").trim(),
+       short:(doc.querySelector(".mould-hero-subtitle")?.textContent||"").trim(),
+       detail:(doc.querySelector(".mould-detail-page .mould-section-heading p")?.textContent||"").trim(),
+       image:doc.querySelector("main img,.mould-detail-page img")?.getAttribute("src")||"",
       seoTitle:doc.title,
       seoDescription:doc.querySelector('meta[name="description"]')?.getAttribute("content")||""
      };
-     sourceAvailable=Boolean(original.name);
+      sourceAvailable=Boolean(original.title);
     }catch(error){if(request===requestNumber)notice.textContent="已选中 "+id+"，但暂无法读取官网当前商品信息："+error.message;}
     if(request!==requestNumber)return;
-    for(const [key,val] of Object.entries({...original,...(entry?.content||{})})){
-     const el=container.querySelector('[data-cms-field="'+key+'"]');
-     if(el&&typeof val==="string")el.value=val;
+     for(const [key,val] of Object.entries({...original,...(entry?.content||{})})){
+      const el=container.querySelector('[data-cms-field="'+key+'"]');
+      if(!el)continue;
+      if(key==="checks"&&Array.isArray(val))el.value=JSON.stringify(val,null,2);
+      else if(typeof val==="string")el.value=val;
     }
     container.querySelector('[data-cms-field="status"]').value=entry?.status||"draft";
     const label=entry?"已有 D1 "+(entry.status==="published"?"正式发布":"草稿")+"记录":"当前为官网原始商品，尚无单独 D1 修改记录";
-    notice.innerHTML=esc(id)+" · "+esc(label)+"。 <a href=\""+esc(route)+"\" target=\"_blank\" rel=\"noopener\">查看当前商品页 ↗</a>"+
+     notice.innerHTML=esc(id)+" · "+esc(label)+"。 <a href=\""+esc(route)+"\" target=\"_blank\" rel=\"noopener\">查看当前类别页 ↗</a>"+
       (sourceAvailable?"":"（未能自动读取全部字段，请先核对再保存）");
    }
    function filterProducts(){
@@ -322,7 +326,7 @@
    const pages=[...(state.pages.pages||[])];
    for(const entry of state.products?.items||[]){
     if(entry.content?.newProduct&&entry.status==="published"){
-     const route="/products/"+entry.model+"/";
+      const route=(state.products.modelRoutes||{})[entry.model]||"/product/"+entry.model+".html";
      if(!pages.some(p=>p.route===route))pages.push({route,label:entry.content.name||entry.model});
     }
    }
@@ -355,7 +359,7 @@
  }
  const value=(name)=>document.querySelector('#content-form [data-cms-field="'+name+'"]')?.value?.trim()||"";
  async function save(action){
-  say("正在验证并保存到 XUYI D1 …");
+     say("正在验证并保存到 LEYA MOULD D1 …");
   try{
    let result;
    if(action==="banners"){
@@ -460,12 +464,13 @@
     const details=failed.slice(0,12).map(item=>item.model+": "+item.error).join("；");
     say("目录导入完成：新建 "+created.length+" 款；跳过 "+skipped.length+" 款；失败 "+failed.length+" 款。"+(details?"失败明细："+details:"")+" 已有商品未覆盖。");
     return;
-   }else if(action==="product"){
-    if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
-      throw Error("请先从已有商品型号列表中选择产品");
-    result=await api("product-content",{action:"save_product",model:value("model"),
-     status:value("status"),content:{name:value("name"),material:value("material"),capacity:value("capacity"),
-       description:value("description"),image:value("image"),seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
+    }else if(action==="product"){
+     if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
+       throw Error("请先从已配置的模具类别列表中选择类别");
+     let checks=[];try{checks=JSON.parse(value("checks")||"[]")}catch{throw Error("技术核对要点必须是 JSON 数组")}
+     result=await api("product-content",{action:"save_product",model:value("model"),
+      status:value("status"),content:{title:value("title"),navTitle:value("navTitle"),short:value("short"),detail:value("detail"),meta:value("meta"),
+        image:value("image"),checks,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
    }else if(action==="page-body-source"){
     const route=$("cms-page-body-route").value;
     const response=await fetch(route,{cache:"no-store"});

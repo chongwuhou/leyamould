@@ -1,5 +1,6 @@
 import { authorizeAdminRequest } from "../../_shared/admin-security.js";
 import { ensureYoutubeVideos, normalizeYoutubeUrl } from "../../_shared/youtube-videos.js";
+import { bumpPublishRevision } from "../../_shared/site-settings.js";
 
 const json = (body, status = 200) => Response.json(body, {
   status,
@@ -44,7 +45,7 @@ export async function onRequestPost(context) {
       if (!id || id.length > 80) return json({ error: "Invalid video ID" }, 400);
       const result = await db.prepare("DELETE FROM leya_youtube_videos WHERE id=?").bind(id).run();
       if (!result.meta?.changes) return json({ error: "Video not found" }, 404);
-      return json({ deleted: true, id });
+      return json({ deleted: true, id, ...(await bumpPublishRevision(db)) });
     }
     if (action !== "save") return json({ error: "Unknown action" }, 400);
     const existingId = String(input?.id || "").trim();
@@ -69,13 +70,13 @@ export async function onRequestPost(context) {
         WHERE id=?`).bind(normalized.id, normalized.url, title, titleEn, titleEs, description,
         publishedAt || new Date().toISOString(), order, existingId).run();
       const updated = await db.prepare("SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,created_at,updated_at FROM leya_youtube_videos WHERE id=?").bind(existingId).first();
-      return json({ saved: true, updated: true, item: mapRow(updated) });
+      return json({ saved: true, updated: true, item: mapRow(updated), ...(await bumpPublishRevision(db)) });
     }
     const id = crypto.randomUUID();
     await db.prepare(`INSERT INTO leya_youtube_videos
       (id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order)
       VALUES(?,?,?,?,?,?,?,?,?)`).bind(id, normalized.id, normalized.url, title, titleEn, titleEs, description, publishedAt || new Date().toISOString(), order).run();
-    return json({ saved: true, item: mapRow(await db.prepare("SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,created_at,updated_at FROM leya_youtube_videos WHERE id=?").bind(id).first()) });
+    return json({ saved: true, item: mapRow(await db.prepare("SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,created_at,updated_at FROM leya_youtube_videos WHERE id=?").bind(id).first()), ...(await bumpPublishRevision(db)) });
   } catch (error) {
     if (/UNIQUE|constraint/i.test(String(error?.message || ""))) return json({ error: "这个 YouTube 视频已经存在" }, 409);
     return json({ error: "Unable to save YouTube video" }, 503);

@@ -1,8 +1,8 @@
-// Reviewed full-page HTML translations, stored in XUYI's existing translation
+// Reviewed full-page HTML translations, stored in LEYA MOULD's translation
 // override table. Translation drafts must be reviewed before publication.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision,loadSiteSetting,defaultLanguageConfig,normalizeLanguageConfig } from "../../_shared/site-settings.js";
-import { MANAGED_ROUTES } from "../../_shared/xuyi-routes.js";
+import { MANAGED_ROUTES, mouldModelFromRoute } from "../../_shared/xuyi-routes.js";
 import {ensureProductSeo,canonicalProductSlug} from "../../_shared/product-seo.js";
 import {blogCard,esc,listBlogPosts,sortLocalizedBlogIndexByD1Order} from "../../_shared/blog-cms.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -79,14 +79,14 @@ export async function onRequestPost(c){
   // Publication is gated separately by publishReady and the build registry.
   if(locale===languageConfig.sourceLocale||
      !languageConfig.languages.some(lang=>lang.code===locale))
-    return respond({error:"Locale must exist in the XUYI language registry and differ from the source language"},400);
+    return respond({error:"Locale must exist in the LEYA MOULD language registry and differ from the source language"},400);
   if(!title||!description||html.length<120||!/<(?:section|article|div|h1)\b/i.test(html))
     return respond({error:"Full translated title, description and main HTML required"},400);
   if(/<\s*(?:script|iframe|object|embed|form|style|link|base|meta|svg|math|template)\b|\bon[a-z-]+\s*=|\bsrcdoc\s*=|(?:javascript|vbscript|data)\s*:/i.test(html))
     return respond({error:"Unsafe HTML in translated content"},400);
   const configured=new Set(await configuredRoutes(db));
   const blogMatch=/^\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(route);
-  const productMatch=/^\/product\/([a-z0-9][a-z0-9-]{1,80})\.html$/.exec(route);
+  const productMatch=/^\/product\/([A-Za-z0-9][A-Za-z0-9-]{1,80})\.html$/.exec(route);
   if(blogMatch){
     let blogRow;
     try{blogRow=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?")
@@ -97,8 +97,8 @@ export async function onRequestPost(c){
   }else if(productMatch){
     // Product eligibility comes from D1. The static route manifest is only a
     // compatibility index and cannot authorize a product translation.
-    const rawSlug=productMatch[1];
-    const aliases=[rawSlug];
+    const rawSlug=productMatch[1],model=mouldModelFromRoute(route)||rawSlug.toLowerCase();
+    const aliases=[model];
     const marks=aliases.map(()=>"?").join(",");
     let record;
     try{record=await db.prepare("SELECT publication_status FROM xuyi_product_content WHERE model IN ("+marks+") LIMIT 1")
@@ -107,7 +107,7 @@ export async function onRequestPost(c){
     if(record?.publication_status!=="published")
       return respond({error:"Product must be published in English before translating"},409);
   }else if(!MANAGED_ROUTES.has(route)&&!configured.has(route)){
-    return respond({error:"Unknown XUYI route"},400);
+    return respond({error:"Unknown LEYA MOULD route"},400);
   }
   const translatedJson=JSON.stringify({title,description,mainHtml:html});
   let indexStatement=null;
@@ -164,4 +164,3 @@ export async function onRequestPost(c){
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,reviewed:true,route,locale,...revision});
 }
-

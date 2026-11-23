@@ -1,7 +1,7 @@
 // LEYA MOULD category copy/SEO CMS. Only the allow-listed mould categories are editable.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision,loadLanguageConfig } from "../../_shared/site-settings.js";
-import { MANAGED_MODELS } from "../../_shared/xuyi-routes.js";
+import { MANAGED_MODELS, MOULD_PUBLIC_ROUTES, mouldRoute } from "../../_shared/xuyi-routes.js";
 import { authorizeAdminRequest } from "../../_shared/admin-security.js";
 import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";
 import { imageKey } from "../../_shared/r2-usage.js";
@@ -26,7 +26,8 @@ export async function onRequestGet(context){
   const rows=(await db.prepare("SELECT model,content_json,publication_status,updated_at FROM xuyi_product_content ORDER BY model LIMIT 1000").all()).results||[];
   // D1 stores reviewed category overrides, not the checked-in catalogue.
   return respond({categories:CATEGORY_OPTIONS,catalogModels:[...MANAGED_MODELS].sort(),
-    items:rows.map(r=>({model:r.model,content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
+    modelRoutes:Object.fromEntries(MOULD_PUBLIC_ROUTES),
+    items:rows.map(r=>({model:r.model,route:mouldRoute(r.model),content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
 }
 export async function onRequestPost(context){
   const denied=await auth(context);if(denied)return denied;
@@ -106,7 +107,6 @@ export async function onRequestPost(context){
     ON CONFLICT(model) DO UPDATE SET content_json=excluded.content_json,publication_status=excluded.publication_status,updated_at=CURRENT_TIMESTAMP`)
     .bind(model,JSON.stringify(content),status).run();
   const revision=await bumpPublishRevision(db);
-  return respond({saved:true,model,status,...revision});
+  return respond({saved:true,model,status,route:mouldRoute(model),...revision});
 }
-
 

@@ -40,9 +40,12 @@ NAVIGATION = [row for row in STATE.get("navigation", []) if isinstance(row, dict
 PAGE_OVERRIDES = {str(row.get("route")): row for row in STATE.get("pages", []) if isinstance(row, dict) and row.get("route")}
 for _seo in STATE.get("productSeo", []):
     if isinstance(_seo, dict) and _seo.get("slug") and _seo.get("locale", "en") == "en":
-        PAGE_OVERRIDES.setdefault("/product/" + str(_seo["slug"]) + ".html", {
-            "seoTitle": _seo.get("seoTitle", ""), "metaDescription": _seo.get("metaDescription", "")
-        })
+        _seo_override = {"seoTitle": _seo.get("seoTitle", ""), "metaDescription": _seo.get("metaDescription", "")}
+        _seo_slug = str(_seo["slug"])
+        PAGE_OVERRIDES.setdefault("/product/" + _seo_slug + ".html", _seo_override)
+        for _catalog_item in CATALOG.get("categories", []):
+            if str(_catalog_item.get("slug")) == _seo_slug and _catalog_item.get("route"):
+                PAGE_OVERRIDES.setdefault(str(_catalog_item["route"]), _seo_override)
 BODY_OVERRIDES = {str(row.get("route")): str(row.get("mainHtml", "")) for row in STATE.get("pageBodies", []) if isinstance(row, dict) and row.get("route")}
 TRANSLATION_OVERRIDES = {(str(row.get("resourceId")), str(row.get("locale"))): row.get("content") for row in STATE.get("translations", []) if isinstance(row, dict)}
 BANNER_CONFIG = STATE.get("banners") if isinstance(STATE.get("banners"), dict) else {}
@@ -859,6 +862,5 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
-
 
 
