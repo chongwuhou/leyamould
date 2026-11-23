@@ -1,7 +1,7 @@
 // LEYA MOULD category copy/SEO CMS. Only the allow-listed mould categories are editable.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision,loadLanguageConfig } from "../../_shared/site-settings.js";
-import { MANAGED_MODELS, MOULD_PUBLIC_ROUTES, mouldRoute } from "../../_shared/xuyi-routes.js";
+import { MANAGED_MODELS, MOULD_PUBLIC_ROUTES, mouldRoute } from "../../_shared/mould-routes.js";
 import { authorizeAdminRequest } from "../../_shared/admin-security.js";
 import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";
 import { imageKey } from "../../_shared/r2-usage.js";
