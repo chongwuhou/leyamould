@@ -33,6 +33,8 @@ assert '"publishRevision":meta["publishRevision"]' in index_script
 workflow = source(".github/workflows/publish-leyamould.yml")
 assert "python scripts/r2_usage_index.py" in workflow
 assert "python scripts/test_r2_usage_index.py" in workflow
+assert "LEYA_RELEASE_SHA: ${{ github.sha }}" in workflow
+assert "python scripts/verify_production_release.py" in workflow
 assert "configured locales" in workflow
 
 print("LEYA_MOULD_MEDIA_PUBLISH_CONTRACT_PASSED")
