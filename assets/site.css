@@ -1264,3 +1264,6 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 .mould-site .catalog-stats strong{font-size:2rem;line-height:1;color:#f0883e;font-weight:800}
 .mould-site .catalog-stats span{font-size:.75rem;color:#fff;letter-spacing:.04em}
 @media(max-width:700px){.mould-site .catalog-hero{min-height:500px;padding:60px 0}.mould-site .catalog-stats{grid-template-columns:repeat(2,1fr);gap:26px}.mould-site .catalog-hero p{font-size:.95rem}}
+
+.mould-site .reference-banner--compact img{height:380px;max-height:none;object-fit:cover}.mould-site .reference-banner--contact img{height:357px;max-height:none;object-fit:cover}
+@media(max-width:700px){.mould-site .reference-banner--compact img{height:300px}.mould-site .reference-banner--contact img{height:260px}}
