@@ -27,7 +27,8 @@ def features():
 
 
 def contact():
-    return '<section class="section"><div class="shell"><div class="contact-layout"><div><h2 class="section__title">Tell us about your mould project.</h2><p class="copy-muted">Share a drawing, sample or PDF and the target material.</p></div>' + render_template("contact-form", **{key: value for key, value in {"FORM_ARIA": "Mould project enquiry form", "FORM_REQUIRED_NOTE": "Company name, work email and project requirements are required.", "FORM_COMPANY": "Company Name", "FORM_COMPANY_PLACEHOLDER": "Your company", "FORM_EMAIL": "Work Email", "FORM_CATEGORY": "Mould Category", "FORM_CATEGORY_PLACEHOLDER": "e.g. PET preform, bottle cap", "FORM_QUANTITY": "Estimated Quantity", "FORM_QUANTITY_PLACEHOLDER": "e.g. annual volume or cavities", "FORM_COUNTRY": "Destination Country", "FORM_COUNTRY_PLACEHOLDER": "Country", "FORM_TYPE": "Inquiry Type", "FORM_TYPE_QUOTE": "Request a Quote", "FORM_TYPE_NEW": "New Mould Design", "FORM_TYPE_REVIEW": "Existing Mould Review", "FORM_TYPE_TECH": "Technical Consultation", "FORM_MATERIAL": "Target Material", "FORM_ADVISE": "Please advise", "FORM_OTHER": "Other / to be confirmed", "FORM_REQUIREMENTS": "Your Requirements", "FORM_REQUIREMENTS_PLACEHOLDER": "Part drawing, target resin, cavities, sample or PDF reference", "FORM_CONSENT": "I agree to the", "FORM_PRIVACY": "privacy policy", "FORM_SUBMIT": "Send Project Enquiry →"}.items()}) + '</div></div></section>'
+    labels = {"FORM_ARIA": "Mould project enquiry form", "FORM_NAME": "Full Name", "FORM_PHONE": "Phone / WhatsApp", "FORM_COMPANY": "Company Name", "FORM_EMAIL": "Work Email", "FORM_CATEGORY": "Mould Category", "FORM_CATEGORY_PLACEHOLDER": "e.g. PET preform, bottle cap", "FORM_REQUIREMENTS": "Your Requirements", "FORM_PRIVACY_NOTE": "Your information is secure.", "FORM_PRIVACY": "privacy policy", "FORM_SUBMIT": "Send Project Enquiry →"}
+    return '<section class="section"><div class="shell"><div class="contact-layout"><div><h2 class="section__title">Tell us about your mould project.</h2><p class="copy-muted">Share a drawing, sample or PDF and the target material.</p></div>' + render_template("contact-form", **labels) + '</div></div></section>'
 
 
 def generate_site():
@@ -36,4 +37,5 @@ def generate_site():
 
 if __name__ == "__main__":
     generate_site()
+
 
