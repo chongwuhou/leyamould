@@ -19,7 +19,8 @@
 <button type="button" class="admin-module-btn" data-admin-target="reviews">07 客户评价 ★</button>
 <button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品 SEO · D1</button>
 <button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
-<button type="button" class="admin-module-btn" data-admin-target="scheduler">10 自动发布与定时任务</button>
+<button type="button" class="admin-module-btn" data-admin-target="videos">10 YouTube 视频</button>
+<button type="button" class="admin-module-btn" data-admin-target="scheduler">11 自动发布与定时任务</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">所有正式内容、语种配置和发布状态均以 D1/CMS 为准。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">LEYA MOULD</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
@@ -117,6 +118,15 @@
  <div id="media-files" style="display:flex;flex-wrap:wrap;gap:14px"></div>
  <button type="button" class="btn ghost" id="media-more" hidden>加载更多</button>
  </section>
+<section class="panel" id="youtube-admin-panel" data-admin-module="videos">
+ <div class="panel-head"><div><div class="eyebrow">VIDEO GALLERY · YOUTUBE LINKS</div><h2>YouTube 视频链接</h2>
+ <p>这里只保存 YouTube 视频地址。新增或删除后，视频列表页会直接读取 D1 数据并更新；不调用 YouTube Data API。</p></div></div>
+ <form id="youtube-video-form" class="blog-admin-editor" autocomplete="off">
+  <label class="blog-admin-wide">YouTube 视频地址<input id="youtube-video-url" type="url" required maxlength="500" placeholder="https://www.youtube.com/watch?v=xxxxxxxxxxx"></label>
+  <div class="row-actions"><button type="submit" class="btn primary" id="youtube-video-save">+ 增加视频</button><button type="button" class="btn ghost" id="youtube-video-refresh">刷新列表</button><span id="youtube-video-status" class="muted" role="status" aria-live="polite"></span></div>
+ </form>
+ <div id="youtube-video-list"></div>
+</section>
       <section class="panel" id="blog-admin-panel" data-admin-module="blog">
 <div class="panel-head"><div><div class="eyebrow">BLOG CONTENT MANAGEMENT · D1</div><h2>Blog 内容管理 / 文章发布</h2>
 <p>复用德玛隆后台的保存草稿、正式发布与修订流程。旭一博客按文章而不是滤芯型号管理，保存草稿不会公开。</p></div></div>
@@ -295,6 +305,7 @@
 <script src="/assets/admin-blog.js" defer></script>
 <script src="/assets/admin-media.js" defer></script>
 <script src="/assets/admin-media-replace.js" defer></script>
+<script src="/assets/admin-youtube-videos.js" defer></script>
 <script src="/assets/admin-security.js" defer></script>
 <script src="/assets/admin-site-settings.js" defer></script>
 <script src="/assets/admin-content.js" defer></script>
@@ -303,5 +314,6 @@
 <script src="/assets/admin-product-seo.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>
 </body></html>
+
 
 
