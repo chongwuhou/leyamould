@@ -577,7 +577,7 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     structured_data = _json_ld(locale, title, description, route, canonical, image_url)
     # Bump the asset version whenever shared header/topbar CSS changes so live
     # browsers do not keep an older cached stylesheet during visual acceptance.
-    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v47")
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v48")
     if route.startswith("/product/"):
         base = base.replace('</head>', '<link rel="stylesheet" href="/assets/mould-category.css?v=mould-detail-7"></head>', 1)
     seo = ('<link rel="canonical" href="' + esc(canonical) + '">' + alternates +
