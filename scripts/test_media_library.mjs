@@ -27,9 +27,9 @@ const storage={
 };
 let staticRefs={},liveRefs=new Set(),mediaAlts=new Map();
 globalThis.__testMediaRevision={value:8};
-const env={ADMIN_TOKEN:"a-test-admin",XUYI_ASSETS:storage,
+const env={ADMIN_TOKEN:"a-test-admin",LEYA_ASSETS:storage,
  ASSETS:{fetch:async()=>Response.json({site:"leyamould",schemaVersion:1,publishRevision:8,references:staticRefs})},
- XUYI_DB:{prepare:sql=>{
+ LEYA_DB:{prepare:sql=>{
    let args=[];
    const q={
      bind:(...params)=>{args=params;return q},
@@ -122,4 +122,5 @@ const savedAssets=env.ASSETS;delete env.ASSETS;
 assert.equal((await onRequestDelete(deleteRequest())).status,503,"missing released reference index must fail closed");
 env.ASSETS=savedAssets;
 console.log("XUYI_R2_SHARED_MEDIA_REGRESSION_PASSED",14,"assertions, no remote writes");
+
 
