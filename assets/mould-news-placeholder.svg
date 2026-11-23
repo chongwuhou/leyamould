@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">LEYA MOULD technical reference</title>
+  <desc id="desc">A blue engineering reference card used when an article has no approved photograph yet.</desc>
+  <rect width="1200" height="800" fill="#102a43"/>
+  <path d="M0 650 390 300l230 210 170-170L1200 650V800H0Z" fill="#174a73"/>
+  <path d="M0 700 360 410l210 165 210-210 420 335H0Z" fill="#0d3555" opacity=".9"/>
+  <g fill="none" stroke="#f28c3c" stroke-width="7" opacity=".9">
+    <rect x="90" y="105" width="330" height="230" rx="12"/>
+    <path d="M150 170h210M150 220h150M150 270h180"/>
+    <circle cx="1010" cy="190" r="92"/><path d="M950 190h120M1010 130v120"/>
+  </g>
+  <text x="90" y="470" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="54" font-weight="700" letter-spacing="4">LEYA MOULD</text>
+  <text x="94" y="525" fill="#f7b37b" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="700" letter-spacing="3">TECHNICAL REFERENCE</text>
+  <text x="94" y="575" fill="#d8e7f3" font-family="Arial,Helvetica,sans-serif" font-size="23">Approved photography will be added after project review.</text>
+</svg>
+
