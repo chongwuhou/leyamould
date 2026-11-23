@@ -110,6 +110,8 @@ def render_template(name: str, **values: str) -> str:
         raise ValueError("Unfilled mould template placeholder: " + name)
     return content
 
+TEXT["en"].update({"contact_title": "Contact LEYA MOULD", "contact_intro": "Your trusted partner for high-quality plastic cap moulds. Send your project details and we will reply promptly."})
+
 def header(locale: str, route: str) -> str:
     # Keep the desktop navigation labels and dropdown groups aligned with the cap-molds reference.
     product_items = [
@@ -157,7 +159,7 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     robots = "index,follow" if INDEXING_APPROVED else "noindex,nofollow"
     canonical = ORIGIN + route_for(locale, route)
     alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
-    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v27")
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v28")
     base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
     return base.replace('</head>', '<link rel="canonical" href="' + esc(canonical) + '">' + alternates + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '"></head>', 1)
 
@@ -181,6 +183,9 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     banner = banner_map.get(route, "/upload/Banner/Plastic-flip-top-mold.jpg")
     banner_mod = " reference-banner--contact" if route == "/contact/" else (" reference-banner--compact" if route in {"/capabilities/", "/news/", "/video/", "/faq/"} else "")
     cap = "https://www.cap-molds.com"
+    if route == "/contact/":
+        crumb = '<nav class="reference-breadcrumb reference-breadcrumb--overlay" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav>'
+        return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async">' + crumb + '</section><header class="reference-page-header"><span class="eyebrow">LEYA MOULD · PRECISION TOOLING</span><h1>' + esc(title) + '</h1><p>' + esc(subtitle) + '</p></header>'
     return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async"></section><nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav><header class="reference-page-header"><span class="eyebrow">LEYA MOULD · PRECISION TOOLING</span><h1>' + esc(title) + '</h1><p>' + esc(subtitle) + '</p></header>'
 def section_heading(locale: str, eyebrow: str, title: str, description: str = "") -> str:
     return '<div class="section__head"><div><span class="eyebrow">' + esc(eyebrow) + '</span><h2 class="section__title">' + esc(title) + '</h2>' + (('<p class="copy-muted">' + esc(description) + '</p>') if description else '') + '</div></div>'
@@ -268,10 +273,11 @@ def service_page(locale: str, service: dict) -> str:
     return body
 
 def contact_page(locale: str) -> str:
-    labels = {"FORM_ARIA": text(locale, "form_aria"), "FORM_REQUIRED_NOTE": text(locale, "form_required"), "FORM_COMPANY": text(locale, "form_company"), "FORM_COMPANY_PLACEHOLDER": "Your company" if locale == "en" else text(locale, "form_company"), "FORM_EMAIL": text(locale, "form_email"), "FORM_CATEGORY": text(locale, "form_category"), "FORM_CATEGORY_PLACEHOLDER": "e.g. PET preform, bottle cap", "FORM_QUANTITY": text(locale, "form_quantity"), "FORM_QUANTITY_PLACEHOLDER": "e.g. annual volume or cavities", "FORM_COUNTRY": text(locale, "form_country"), "FORM_COUNTRY_PLACEHOLDER": "Country", "FORM_TYPE": text(locale, "form_type"), "FORM_TYPE_QUOTE": text(locale, "form_quote"), "FORM_TYPE_NEW": text(locale, "form_new"), "FORM_TYPE_REVIEW": text(locale, "form_review"), "FORM_TYPE_TECH": text(locale, "form_tech"), "FORM_MATERIAL": text(locale, "form_material"), "FORM_ADVISE": text(locale, "form_advise"), "FORM_OTHER": text(locale, "form_other"), "FORM_REQUIREMENTS": text(locale, "form_requirements"), "FORM_REQUIREMENTS_PLACEHOLDER": "Part drawing, target resin, cavities, cycle goals, sample or PDF reference", "FORM_CONSENT": text(locale, "form_consent"), "FORM_PRIVACY": text(locale, "form_privacy"), "FORM_SUBMIT": text(locale, "form_submit")}
+    labels = {"FORM_ARIA": text(locale, "form_aria"), "FORM_NAME": "Full Name" if locale == "en" else "Nombre completo", "FORM_PHONE": "Phone / WhatsApp" if locale == "en" else "Teléfono / WhatsApp", "FORM_COMPANY": text(locale, "form_company"), "FORM_EMAIL": text(locale, "form_email"), "FORM_CATEGORY": "Cap Mould Type" if locale == "en" else "Tipo de molde de tapa", "FORM_CATEGORY_PLACEHOLDER": "— Select cap mould type —" if locale == "en" else "— Seleccione el tipo de molde —", "FORM_REQUIREMENTS": "Your Message" if locale == "en" else "Su mensaje", "FORM_PRIVACY_NOTE": "Your information is secure." if locale == "en" else "Su información está protegida.", "FORM_PRIVACY": text(locale, "form_privacy"), "FORM_SUBMIT": "Send Inquiry Now" if locale == "en" else "Enviar consulta"}
     form = render_template("contact-form", **{key: esc(value) for key, value in labels.items()})
     body = intro(locale, text(locale, "contact_title"), text(locale, "contact_intro"), "/contact/")
-    body += '<section class="section"><div class="shell"><div class="contact-layout"><div><span class="eyebrow">LEYA MOULD Co.,Ltd</span><h2 class="section__title">' + esc(text(locale, "contact_title")) + '</h2><p class="copy-muted">' + esc(text(locale, "contact_intro")) + '</p><div class="benefit"><h3>' + esc(ADDRESS) + '</h3><p><a href="mailto:' + EMAIL + '">' + EMAIL + '</a><br><a href="' + WA_URL + '">WhatsApp: ' + esc(WHATSAPP) + '</a></p></div></div>' + form + '</div></div></section>'
+    info = '<div class="contact-info-card"><div class="contact-info-block"><span class="contact-info-icon">⌖</span><h3>Factory Address</h3><strong>LEYA MOULD Co.,Ltd</strong><p>' + esc(ADDRESS) + '</p></div><div class="contact-info-block"><h3>Contact Methods</h3><dl class="contact-methods"><div><dt>PHONE / WHATSAPP</dt><dd><a href="tel:+8613606727715">+86 136 0672 7715</a></dd></div><div><dt>EMAIL</dt><dd><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></dd></div><div><dt>WEBSITE</dt><dd><a href="https://leyamould.com/">leyamould.com</a></dd></div></dl></div></div>'
+    body += '<section class="section contact-section"><div class="shell"><div class="contact-layout">' + info + '<div class="contact-form-panel"><h2>Send Us Your Inquiry</h2><p>Fill out the form and we will reply as soon as possible.</p>' + form + '</div></div></div></section>'
     return body
 
 def faq_page(locale: str) -> str:
