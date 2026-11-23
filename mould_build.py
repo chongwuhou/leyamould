@@ -173,7 +173,7 @@ def cap_series_card(locale: str, item: dict) -> str:
 def home(locale: str) -> str:
     cats = CATALOG["categories"]
     cap = "https://www.cap-molds.com"
-    hero_img = cap + "/upload/Home/precision-machining.jpg"
+    hero_img = cap + "/upload/Banner/Plastic-flip-top-mold.jpg"
     steel_img = cap + "/upload/Home/steel-quality.jpg"
     cap_series = [
         {"title": "Water / Beverage Cap Mould", "description": "High-precision tooling for mineral water, carbonated drinks and juice closures.", "meta": "PCO 1881 · Hot Runner", "image": cap + "/Upload/20260617/202606171039475377.jpg"},
