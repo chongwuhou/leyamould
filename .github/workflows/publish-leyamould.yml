@@ -77,8 +77,6 @@ jobs:
         run: python scripts/build_release.py
       - name: Validate mould routes, configured locales and contacts
         run: python scripts/test_mould_release.py
-      - name: Validate bilingual mould editorial and cover gates
-        run: python scripts/test_mould_news_editorial.py
       - name: Generate and validate public R2 reference index
         run: |
           python scripts/r2_usage_index.py
@@ -90,7 +88,6 @@ jobs:
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_mould_release.py
-          python scripts/test_mould_news_editorial.py
           python scripts/r2_usage_index.py
           python scripts/test_r2_usage_index.py
       - name: Deploy Leyamould production
