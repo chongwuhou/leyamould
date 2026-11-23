@@ -14,23 +14,36 @@ import urllib.request
 
 ORIGIN = os.environ.get("LEYA_SITE_ORIGIN", "https://leyamould.com").rstrip("/")
 EXPECTED_SHA = os.environ.get("LEYA_RELEASE_SHA") or os.environ.get("GITHUB_SHA", "")
+RETRY_DELAYS = (0, 2, 4, 8, 12)
 
 
 def read_json(path: str) -> dict:
-    request = urllib.request.Request(
-        ORIGIN + path + ("&" if "?" in path else "?") + "release_audit=" + str(time.time_ns()),
-        headers={"Cache-Control": "no-store", "User-Agent": "LEYA-Release-Audit/1.0"},
-    )
-    try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            if response.status != 200:
-                raise RuntimeError(f"{path} returned HTTP {response.status}")
-            value = json.load(response)
-    except (urllib.error.URLError, TimeoutError) as error:
-        raise RuntimeError(f"{path} is not readable: {error}") from error
-    if not isinstance(value, dict):
-        raise RuntimeError(f"{path} did not return a JSON object")
-    return value
+    last_error: Exception | None = None
+    for attempt, delay in enumerate(RETRY_DELAYS, start=1):
+        if delay:
+            time.sleep(delay)
+        request = urllib.request.Request(
+            ORIGIN + path + ("&" if "?" in path else "?") + "release_audit=" + str(time.time_ns()),
+            headers={"Cache-Control": "no-store", "User-Agent": "LEYA-Release-Audit/1.0"},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                if response.status != 200:
+                    raise RuntimeError(f"{path} returned HTTP {response.status}")
+                value = json.load(response)
+            if not isinstance(value, dict):
+                raise RuntimeError(f"{path} did not return a JSON object")
+            return value
+        except urllib.error.HTTPError as error:
+            last_error = error
+            # Pages custom domains can briefly serve the previous deployment (or
+            # a 404) while the new deployment propagates. Retry only transient
+            # responses; a 4xx/5xx that persists will still fail the job.
+            if error.code not in {404, 408, 429} and not 500 <= error.code < 600:
+                break
+        except (urllib.error.URLError, TimeoutError, RuntimeError, ValueError) as error:
+            last_error = error
+    raise RuntimeError(f"{path} is not readable after {len(RETRY_DELAYS)} attempts: {last_error}") from last_error
 
 
 meta = read_json("/build-meta.json")
