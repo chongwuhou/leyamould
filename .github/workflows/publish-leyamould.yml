@@ -11,11 +11,14 @@ on:
       - "templates/**"
       - "assets/**"
       - "data/mould-catalog.json"
+      - "data/mould-news-editorial.json"
+      - "data/mould-news-image-manifest.json"
       - "data/site-navigation-defaults.json"
       - "locale_registry.py"
       - "deployment/site.config.json"
       - "scripts/build_release.py"
       - "scripts/test_mould_release.py"
+      - "scripts/test_mould_news_editorial.py"
       - "scripts/r2_usage_index.py"
       - "scripts/test_r2_usage_index.py"
       - "scripts/test_mould_backend_contract.py"
@@ -74,6 +77,8 @@ jobs:
         run: python scripts/build_release.py
       - name: Validate mould routes, configured locales and contacts
         run: python scripts/test_mould_release.py
+      - name: Validate bilingual mould editorial and cover gates
+        run: python scripts/test_mould_news_editorial.py
       - name: Generate and validate public R2 reference index
         run: |
           python scripts/r2_usage_index.py
@@ -85,6 +90,7 @@ jobs:
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_mould_release.py
+          python scripts/test_mould_news_editorial.py
           python scripts/r2_usage_index.py
           python scripts/test_r2_usage_index.py
       - name: Deploy Leyamould production
@@ -98,5 +104,4 @@ jobs:
         run: |
           echo "::error::CLOUDFLARE_API_TOKEN is not configured; source build passed but production was not deployed."
           exit 1
-
 
