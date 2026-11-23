@@ -1,4 +1,4 @@
-"""Single build-time source of truth for XUYI's *published* locales.
+"""Single build-time source of truth for LEYA MOULD's *published* locales.
 
 The saved D1 language configuration defines codes and path prefixes. New
 languages do NOT become public just because an option exists in the CMS:
@@ -41,9 +41,6 @@ def approved_locales(state,require_resources=True):
     all_rows=config.get("languages") or [
        {"code":"en","pathPrefix":"","enabled":True,"publishReady":True,"nativeName":"English","sortOrder":10},
        {"code":"es","pathPrefix":"es","enabled":True,"publishReady":True,"nativeName":"Español","sortOrder":20},
-       {"code":"pt","pathPrefix":"pt","enabled":True,"publishReady":True,"nativeName":"Português","sortOrder":30},
-       {"code":"ru","pathPrefix":"ru","enabled":True,"publishReady":True,"nativeName":"Русский","sortOrder":40},
-       {"code":"tr","pathPrefix":"tr","enabled":True,"publishReady":True,"nativeName":"Türkçe","sortOrder":50},
     ]
     seen_codes=set()
     seen_prefix=set()
@@ -99,4 +96,5 @@ def local_url(lang,route):
     if not(route.startswith("/") and route.endswith("/")):raise ValueError("Invalid canonical route")
     prefix=lang["pathPrefix"]
     return ORIGIN+("/"+prefix+route if prefix else route)
+
 
