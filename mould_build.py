@@ -229,7 +229,7 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     robots = "index,follow" if INDEXING_APPROVED else "noindex,nofollow"
     canonical = ORIGIN + route_for(locale, route)
     alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
-    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v43")
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v44")
     if route.startswith("/product/"):
         base = base.replace('</head>', '<link rel="stylesheet" href="/assets/mould-category.css?v=mould-detail-7"></head>', 1)
     base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
@@ -428,11 +428,79 @@ def contact_page(locale: str) -> str:
     return body
 
 def faq_page(locale: str) -> str:
-    pairs = [("What should I send first?", "A drawing, physical sample, PDF or clear reference photo plus the target resin and market."), ("Can you review an existing mould?", "Yes. Share the current mould information, sample results, problem description and any available inspection records."), ("Will the product pages contain PDFs and high-resolution photos?", "Yes. Approved preform, bottle, cap and knife-and-fork media will be added to the relevant category when supplied."), ("How do I request a quotation?", "Use the enquiry form or email amyhu@leyamould.com with the project brief." )]
-    if locale != "en":
-        pairs = [(text(locale, "faq_title"), text(locale, "faq_intro"))] + pairs[1:]
-    rows = ''.join('<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>' for q, a in pairs)
-    return intro(locale, text(locale, "faq_title"), text(locale, "faq_intro"), "/faq/") + '<section class="section"><div class="shell"><div class="faq-list">' + rows + '</div></div></section>'
+    cap = "https://www.cap-molds.com"
+    if locale == "es":
+        page_eyebrow = "CENTRO DE AYUDA"
+        page_title = "Preguntas <span class=\"reference-title-accent\">frecuentes</span>"
+        page_subtitle = "Encuentre respuestas rápidas sobre nuestros moldes de tapas, máquinas auxiliares, proceso de pedido y soporte técnico. Si no encuentra lo que busca, contacte con nosotros directamente."
+        groups = [
+            ("Productos y capacidades", [
+                ("¿Qué tipos de moldes para tapas de plástico fabrica LEYA MOULD?", "Fabricamos moldes para tapas de agua y bebidas, tapas hot-fill, aceite comestible, salsas y condimentos, tapas médicas, cosméticas, flip-top, precintos, deportivas, bicomponente, boca ancha, aceite de motor, garrafas y diseños de cierre personalizados."),
+                ("¿También suministran máquinas auxiliares para tapas?", "Sí. Podemos coordinar máquinas de lining, plegado, corte, impresión, wadding y soluciones combinadas para completar una célula de producción integrada."),
+                ("¿Pueden diseñar un molde personalizado para mi cierre?", "Sí. Envíe un plano 2D/3D o una muestra y revisaremos la geometría, el material, las cavidades, la máquina y las necesidades de prueba antes de confirmar el diseño.")
+            ]),
+            ("Pedidos y entrega", [
+                ("¿Qué información necesito para recibir una cotización?", "Necesitamos el tipo de tapa, planos 2D/3D, material, número de cavidades, especificaciones de la máquina, volumen previsto y requisitos especiales como precinto o hot runner."),
+                ("¿Cuál es el plazo habitual para un molde nuevo?", "Depende de la complejidad y de las cavidades. Los moldes de muestra sencillos suelen requerir 15–25 días y los moldes de producción multicavidad normalmente 35–55 días. El calendario se confirma con la cotización."),
+                ("¿Realizan pruebas y validación de muestras antes del envío?", "Sí. Realizamos pruebas, comprobaciones dimensionales y revisión de muestras antes del envío, y mantenemos conectados el informe de prueba y las revisiones aprobadas."),
+                ("¿Qué condiciones de pago aceptan?", "Las condiciones se confirman en la cotización según el proyecto, el alcance y la relación comercial. Nuestro equipo puede revisar una estructura adecuada para cada pedido.")
+            ]),
+            ("Técnica y soporte", [
+                ("¿Qué materiales utilizan para los moldes?", "Seleccionamos aceros de molde de calidad, como S136, NAK80, H13 y equivalentes, según la resina, el ciclo, la cavidad y la vida útil esperada."),
+                ("¿Qué garantía ofrecen para los moldes?", "La garantía y el alcance de soporte se definen en la oferta del proyecto. También mantenemos disponibles los registros técnicos para facilitar el mantenimiento posterior."),
+                ("¿Realizan envíos internacionales?", "Sí. Coordinamos embalaje y transporte internacional según el destino y el calendario del comprador, con documentación del proyecto para la entrega."),
+                ("¿Cómo comienzo un proyecto con LEYA MOULD?", "Envíe el plano, muestra, material, cavidades, máquina y mercado de destino por correo electrónico o WhatsApp. Responderemos con las siguientes preguntas técnicas.")
+            ])
+        ]
+        contact_title, contact_text = "¿Todavía tiene preguntas?", "Nuestro equipo está listo para ayudarle. Escríbanos y responderemos en un plazo de 24 horas."
+        labels = ("Teléfono", "Correo electrónico", "WhatsApp", "WeChat")
+        values = ("+86 136 0672 7715", EMAIL, "Chat con LEYA MOULD", "Consulte por WeChat")
+    else:
+        page_eyebrow = "HELP CENTER"
+        page_title = "Frequently Asked <span class=\"reference-title-accent\">Questions</span>"
+        page_subtitle = "Find quick answers to common questions about our plastic cap molds, auxiliary machines, ordering process, and more. Can't find what you're looking for? Contact us directly."
+        groups = [
+            ("Products & Capabilities", [
+                ("What types of plastic cap molds does LEYA MOULD manufacture?", "We specialize in water and beverage cap molds, hot fill caps, edible oil caps, soy sauce and condiment closures, medical and cosmetic caps, flip-top, tamper-evident, sports, two-color, wide-mouth, motor oil, 5-gallon, pull-ring and fully custom closure molds."),
+                ("Do you provide auxiliary machines along with cap molds?", "Yes. We can coordinate cap lining, folding, slitting, pad printing, wadding and combined folding and slitting machines to complete an integrated production cell."),
+                ("Can you design a custom cap mold for my unique closure design?", "Absolutely. Provide your 2D/3D drawings or a sample cap and our engineering team will review the geometry, material, cavity plan, machine interface and trial requirements before confirming the design.")
+            ]),
+            ("Ordering & Delivery", [
+                ("What information do I need to provide to get a mold quotation?", "To prepare an accurate quotation, we typically need the cap type, 2D/3D design drawings, material, cavity number, injection machine specifications, target production volume and any special requirements such as tamper-evident features or hot runner preferences."),
+                ("What is the typical lead time for a new cap mold?", "Lead times depend on mold complexity and cavity count. A standard sample mold often requires 15–25 days, while multi-cavity production molds typically require 35–55 days. A detailed timeline is confirmed with your quotation."),
+                ("Do you offer mold trials and sample testing before shipment?", "Yes. Every project includes trial planning, dimensional checks and sample review before shipment. Approved trial results and revision notes remain connected to the tooling handover."),
+                ("What payment terms do you accept?", "Payment terms are confirmed in the project quotation according to scope, schedule and commercial requirements. Our team can discuss a practical structure for each order.")
+            ]),
+            ("Technical & Support", [
+                ("What materials are used for your cap molds?", "We select quality mold steels such as S136, NAK80, H13 and equivalent grades according to the resin, cycle target, cavity plan and expected service life."),
+                ("What is the warranty on your cap molds?", "Warranty scope and support terms are defined in the project quotation. We also keep technical records available to make maintenance and future support practical."),
+                ("Do you ship molds internationally?", "Yes. We coordinate export packing and international shipping according to the destination and schedule, with the approved project documentation prepared for handover."),
+                ("How do I start a project with LEYA MOULD?", "Contact us by email or WhatsApp with the drawing, sample, material, cavity plan, machine information and destination market. We will reply with the next technical questions.")
+            ])
+        ]
+        contact_title, contact_text = "Still Have Questions?", "Our team is ready to help. Reach out and we'll respond within 24 hours."
+        labels = ("Phone", "Email", "WhatsApp", "WeChat")
+        values = ("+86 136 0672 7715", EMAIL, "Chat with LEYA MOULD", "Ask about WeChat")
+
+    prefix = '<section class="reference-banner reference-banner--compact"><img src="' + cap + '/upload/Banner/pheader-faq.jpg" alt="LEYA MOULD FAQ" loading="eager" decoding="async"></section>'
+    prefix += '<nav class="reference-breadcrumb faq-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc("FAQs" if locale == "en" else "Preguntas frecuentes") + '</span></div></nav>'
+    header_html = '<header class="page-header"><span class="badge">' + esc(page_eyebrow) + '</span><h1>' + page_title + '</h1><p class="subtitle">' + esc(page_subtitle) + '</p></header>'
+    item_index = 0
+    groups_html = []
+    for group_title, pairs in groups:
+        rows = []
+        for question, answer in pairs:
+            item_index += 1
+            answer_id = "faq-answer-" + str(item_index)
+            rows.append('<div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="' + answer_id + '">' + esc(question) + '<span class="icon" aria-hidden="true">+</span></button><div class="faq-answer" id="' + answer_id + '"><p>' + esc(answer) + '</p></div></div>')
+        groups_html.append('<section class="faq-group"><h2 class="faq-group-title">' + esc(group_title) + '</h2><div class="faq-list">' + ''.join(rows) + '</div></section>')
+    phone_svg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 0 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 0-.24 1.02z"></path></svg>'
+    mail_svg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"></path></svg>'
+    chat_svg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.2a8.4 8.4 0 0 1-12.4 7.4L4 20l1.4-4A8.4 8.4 0 1 1 20.5 11.2Z"></path></svg>'
+    contact_cards = ''.join('<a class="contact-card" href="' + href + '"><span class="icon-circle' + (' whatsapp' if index == 2 else (' wechat' if index == 3 else '')) + '">' + icon + '</span><div class="info"><span class="label">' + esc(label) + '</span><span class="value">' + esc(value) + '</span></div></a>' for index, (label, value, href, icon) in enumerate(((labels[0], values[0], "tel:+8613606727715", phone_svg), (labels[1], values[1], "mailto:" + EMAIL, mail_svg), (labels[2], values[2], WA_URL, chat_svg), (labels[3], values[3], localized_href(locale, "/contact/"), chat_svg))))
+    contact_html = '<section class="faq-contact-section"><h2>' + esc(contact_title) + '</h2><p class="section-subtitle">' + esc(contact_text) + '</p><div class="contact-cards">' + contact_cards + '</div></section>'
+    script = '<script>(()=>{const root=document.querySelector("[data-faq-page]");if(!root)return;const items=[...root.querySelectorAll(".faq-item")];items.forEach(item=>{const button=item.querySelector(".faq-question");button.addEventListener("click",()=>{const active=item.classList.contains("active");items.forEach(other=>{other.classList.remove("active");const b=other.querySelector(".faq-question");if(b)b.setAttribute("aria-expanded","false")});if(!active){item.classList.add("active");button.setAttribute("aria-expanded","true")}})});})();</script>'
+    return '<div class="faq-route">' + prefix + '<div class="faq-page" data-faq-page>' + header_html + ''.join(groups_html) + contact_html + '</div>' + script + '</div>'
 
 def samples_page(locale: str) -> str:
     cap = "https://www.cap-molds.com"
