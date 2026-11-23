@@ -14,7 +14,18 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav__drop'))documen
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.nav__drop.open').forEach(d=>{d.classList.remove('open');d.querySelector('[data-mega-toggle]')?.setAttribute('aria-expanded','false')});if(nav){nav.classList.remove('open');menu?.setAttribute('aria-expanded','false')}}});
 const search=document.getElementById('search-panel');const st=document.getElementById('search-toggle');if(search&&st){st.addEventListener('click',()=>{let open=!search.classList.contains('open');search.classList.toggle('open',open);st.setAttribute('aria-expanded',String(open));if(open)search.querySelector('input')?.focus()})}
 const languageSwitch=document.querySelector('[data-language-switch]');
-if(languageSwitch){languageSwitch.addEventListener('change',()=>{const target=languageSwitch.value;if(target&&target.startsWith('/'))window.location.assign(target)})}
+if(languageSwitch){languageSwitch.addEventListener('change',()=>{
+ const target=languageSwitch.value;
+ if(!target)return;
+ if(target.startsWith('/')){window.location.assign(target);return;}
+ // Older generated pages store the locale code (en/es) rather than the full route.
+ // Keep those pages functional while newer builds use canonical route values.
+ const currentLocale=(document.documentElement.lang||'en').toLowerCase();
+ let basePath=window.location.pathname||'/';
+ if(currentLocale!=='en'&&(basePath===`/${currentLocale}`||basePath.startsWith(`/${currentLocale}/`))){basePath=basePath.slice(currentLocale.length+1)||'/';}
+ const destination=target==='en'?basePath:`/${target}${basePath==='/'?'':basePath}`;
+ window.location.assign(destination);
+})}
 
 // Buyer brief preview. This controls only locally displayed reference photos and inquiry link;
 // it does not claim a specific customization is actually available.
