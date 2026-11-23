@@ -13,6 +13,8 @@ document.querySelectorAll('[data-mega-toggle]').forEach(b=>{b.addEventListener('
 document.addEventListener('click',e=>{if(!e.target.closest('.nav__drop'))document.querySelectorAll('.nav__drop.open').forEach(d=>{d.classList.remove('open');d.querySelector('[data-mega-toggle]')?.setAttribute('aria-expanded','false')})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.nav__drop.open').forEach(d=>{d.classList.remove('open');d.querySelector('[data-mega-toggle]')?.setAttribute('aria-expanded','false')});if(nav){nav.classList.remove('open');menu?.setAttribute('aria-expanded','false')}}});
 const search=document.getElementById('search-panel');const st=document.getElementById('search-toggle');if(search&&st){st.addEventListener('click',()=>{let open=!search.classList.contains('open');search.classList.toggle('open',open);st.setAttribute('aria-expanded',String(open));if(open)search.querySelector('input')?.focus()})}
+const languageSwitch=document.querySelector('[data-language-switch]');
+if(languageSwitch){languageSwitch.addEventListener('change',()=>{const target=languageSwitch.value;if(target&&target.startsWith('/'))window.location.assign(target)})}
 
 // Buyer brief preview. This controls only locally displayed reference photos and inquiry link;
 // it does not claim a specific customization is actually available.
