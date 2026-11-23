@@ -1297,3 +1297,10 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 }
 
 .mould-site .hero.hero-slider .button{text-transform:none}
+
+
+/* Final Hero geometry match: use the reference slide-content metrics. */
+.mould-site .hero.hero-slider h1{font-size:57.6px;line-height:1.7;width:100%;}
+.mould-site .hero.hero-slider .actions{margin:0;}
+.mould-site .hero.hero-slider #hero-cta{width:205px;}
+@media(max-width:700px){.mould-site .hero.hero-slider h1{font-size:clamp(34px,9vw,48px);line-height:1.2}.mould-site .hero.hero-slider #hero-cta{width:min(280px,100%)}}
