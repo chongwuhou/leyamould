@@ -45,6 +45,10 @@ assert "EDITABLE_PAGE_ROUTES" in page_content
 for required in ("/contact/", "/request-sample/", "/privacy-policy/"):
     assert required in page_content, required
 
+product_content = source("functions/api/admin/product-content.js")
+assert 'status==="published"&&!MANAGED_MODELS.has(model)' in product_content
+assert "draft-only until its LEYA route and detail template are registered" in product_content
+
 reviews = source("functions/api/admin/daily-product-reviews.js")
 assert "LEYA_DAILY_REVIEW_IMPORT_ENABLED=false" in reviews
 for legacy_source in ("101-zhenshipingjia.xlsx", "101-additional-reviews-only.xlsx", "2306-transparent"):
