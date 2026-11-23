@@ -8,6 +8,7 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
+DIST = ROOT / "dist"
 DATA = json.loads((ROOT / "data" / "mould-news-editorial.json").read_text(encoding="utf-8"))
 MANIFEST = json.loads((ROOT / "data" / "mould-news-image-manifest.json").read_text(encoding="utf-8"))
 
@@ -40,7 +41,7 @@ for item in items:
 
 def check_page(prefix: str, item: dict) -> None:
     category = "news" if item["category"] == "news" else "Bottle-Cap-Machine"
-    path = ROOT / prefix / category / f"{item['slug']}.html" if prefix else ROOT / category / f"{item['slug']}.html"
+    path = DIST / prefix / category / f"{item['slug']}.html" if prefix else DIST / category / f"{item['slug']}.html"
     html = path.read_text(encoding="utf-8")
     body = html.split('<article class="blog-editorial__body">', 1)[1].split('</article>', 1)[0]
     for marker in ("blog-editorial__body", "blog-editorial__product-link", "blog-related__item", "blog-buyer-matrix", "primary-sources"):
