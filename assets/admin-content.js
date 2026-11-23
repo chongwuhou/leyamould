@@ -172,7 +172,7 @@
     button("保存单个新商品","new-product");
   }
   if(tab==="page-body"){
-   html='<h3>普通页面正文管理</h3><p>管理 About、Why Us、Capabilities 等页面；Blog 与产品详情各用其自身编辑器。草稿不影响前台，审核后发布才会覆盖现有页面主内容。</p>'+
+   html='<h3>普通页面正文管理</h3><p>管理 About、Capabilities、Manufacturing、Quality Control、Contact 等页面；Blog 与产品详情各用其自身编辑器。草稿不影响前台，审核后发布才会覆盖现有页面主内容。</p>'+
     '<label class="block-label">英文原始页面 <select id="cms-page-body-route"></select></label>'+
     field("pageBodyHtml","","主内容完整 HTML（保留类名、图片、链接及页面结构）",20)+
     '<label class="block-label">状态 <select data-cms-field="pageBodyStatus"><option value="draft">草稿</option><option value="published">审核发布</option></select></label>'+
@@ -447,7 +447,7 @@
         if(hash!==row.imageSha256.toLowerCase())throw Error("产品图片 SHA-256 校验失败");
         const imageFile=new File([bytes],row.model+".webp",{type:"image/webp"});
         const form=new FormData();form.set("kind","product");form.set("image",imageFile);
-        form.set("altByLocale",JSON.stringify(row.imageAlt||{[sourceLocale()]:(row.content.factoryModel||row.model)+" "+(row.content.name||"drinkware")+" factory catalog product image"}));
+        form.set("altByLocale",JSON.stringify(row.imageAlt||{[sourceLocale()]:(row.content.factoryModel||row.model)+" "+(row.content.name||"mould")+" factory catalog product image"}));
         const upload=await fetch("/api/admin/media",{method:"POST",headers:{authorization:"Bearer "+token()},body:form,cache:"no-store"});
         const media=await upload.json().catch(()=>({}));
         if(!upload.ok||!media.path)throw Error(media.error||"R2 图片上传失败");
