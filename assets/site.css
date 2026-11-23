@@ -1321,3 +1321,9 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 .mould-site .rail .rail-float--wechat{color:#07c160;}
 .mould-site .rail .rail-float--phone{color:#f0883e;}
 @media(max-width:750px){.mould-site .rail{top:auto;right:14px;bottom:78px;}}
+
+
+/* Ensure reference contact icon colors win over the generic anchor rule. */
+.mould-site .rail a.rail-float.rail-float--whatsapp{color:#25d366;}
+.mould-site .rail a.rail-float.rail-float--wechat{color:#07c160;}
+.mould-site .rail a.rail-float.rail-float--phone{color:#f0883e;}
