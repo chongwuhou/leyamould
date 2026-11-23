@@ -44,7 +44,7 @@ export async function onRequestGet(c){
   const rows=(await db.prepare(
     "SELECT route,main_html,publication_status,updated_at FROM xuyi_page_content ORDER BY route LIMIT 200"
   ).all()).results||[];
-  const knownRoutes=new Set([...MANAGED_ROUTES,...await configuredRoutes(db)]);
+  const knownRoutes=new Set([...MOULD_ROUTES,...await configuredRoutes(db)]);
   return respond({editableRoutes:[...knownRoutes].filter(route=>allowedRoute(route,knownRoutes)).sort(),
     items:rows.map(r=>({route:r.route,mainHtml:r.main_html,status:r.publication_status,updatedAt:r.updated_at}))});
 }
@@ -55,7 +55,7 @@ export async function onRequestPost(c){
   const route=clean(payload.route,250);
   const mainHtml=clean(payload.mainHtml,180000);
   const status=payload.status==="published"?"published":"draft";
-  const knownRoutes=new Set([...MANAGED_ROUTES,...await configuredRoutes(c.env.LEYA_DB)]);
+  const knownRoutes=new Set([...MOULD_ROUTES,...await configuredRoutes(c.env.LEYA_DB)]);
   if(!allowedRoute(route,knownRoutes))return respond({error:"Route is not an editable configured page"},400);
   if(mainHtml.length<100||!/<(?:section|article|div|h1)\b/i.test(mainHtml))
     return respond({error:"Complete page-body HTML is required"},400);
