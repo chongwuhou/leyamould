@@ -70,8 +70,8 @@ export async function onRequestPost(c){
   if(p?.action==="bulk-update")return saveBlogTranslationBatch(c,p.items);
   const route=clean(p.route,250),locale=clean(p.locale,12).toLowerCase();
   const title=clean(p.title,180),description=clean(p.description,450),html=clean(p.mainHtml,250000);
-  if(!(route==="/"||/^\/(?:[a-z0-9_-]+\/)+$/.test(route)))
-    return respond({error:"Invalid XUYI route"},400);
+  if(!(route==="/"||/^\/(?:[A-Za-z0-9_-]+\/)+$/.test(route)||/^\/[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*\.html$/.test(route)))
+    return respond({error:"Invalid LEYA route"},400);
   const db=c.env.LEYA_DB;
   const languageRow=await loadSiteSetting(db,"language_config",defaultLanguageConfig());
   const languageConfig=normalizeLanguageConfig(languageRow.value);
@@ -86,7 +86,7 @@ export async function onRequestPost(c){
     return respond({error:"Unsafe HTML in translated content"},400);
   const configured=new Set(await configuredRoutes(db));
   const blogMatch=/^\/blog\/([a-z0-9][a-z0-9-]{1,119})\/$/.exec(route);
-  const productMatch=/^\/products\/([a-z0-9][a-z0-9-]{1,63})\/$/.exec(route);
+  const productMatch=/^\/product\/([a-z0-9][a-z0-9-]{1,80})\.html$/.exec(route);
   if(blogMatch){
     let blogRow;
     try{blogRow=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?")
@@ -98,7 +98,7 @@ export async function onRequestPost(c){
     // Product eligibility comes from D1. The static route manifest is only a
     // compatibility index and cannot authorize a product translation.
     const rawSlug=productMatch[1];
-    const aliases=[rawSlug,rawSlug.replace(/-transparent$/,"透明款"),rawSlug.replace(/---$/,"透明款")];
+    const aliases=[rawSlug];
     const marks=aliases.map(()=>"?").join(",");
     let record;
     try{record=await db.prepare("SELECT publication_status FROM xuyi_product_content WHERE model IN ("+marks+") LIMIT 1")
@@ -151,9 +151,9 @@ export async function onRequestPost(c){
     indexStatement=db.prepare("UPDATE xuyi_translation_overrides SET translated_json=?,reviewed_at=CURRENT_TIMESTAMP WHERE resource_id='page:/blog/' AND locale=? AND translated_json=?").bind(nextIndexJson,locale,indexRow.translated_json);
     statements.push(indexStatement);
   }
-  if(route.startsWith("/products/")){
+  if(route.startsWith("/product/")){
     await ensureProductSeo(db);
-    const slug=canonicalProductSlug(route.split("/")[2].replace(/---$/,"透明款"));
+    const slug=canonicalProductSlug(route.split("/")[2].replace(/\.html$/,""));
     statements.push(db.prepare("INSERT INTO xuyi_product_seo(slug,locale,seo_title,meta_description,updated_at) VALUES(?,?,?,?,CURRENT_TIMESTAMP) "+
       "ON CONFLICT(slug,locale) DO UPDATE SET seo_title=excluded.seo_title,meta_description=excluded.meta_description,updated_at=CURRENT_TIMESTAMP")
       .bind(slug,locale,title,description));
@@ -164,3 +164,4 @@ export async function onRequestPost(c){
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,reviewed:true,route,locale,...revision});
 }
+

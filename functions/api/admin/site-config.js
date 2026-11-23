@@ -4,7 +4,7 @@ const clean = (value) => String(value ?? "").trim();
 
 const DEFAULT_REDIRECTS = [["/about", "/about/"], ["/blog", "/blog/"], ["/contact", "/contact/"], ["/products", "/products/"]].map(([sourcePath,targetPath])=>({sourcePath,targetPath,statusCode:301}));
 
-const DEFAULT_NAVIGATION = [
+const LEGACY_DEFAULT_NAVIGATION = [
   {
     "id": "home",
     "parentId": "",
@@ -141,6 +141,26 @@ const DEFAULT_NAVIGATION = [
     "sortOrder": 70,
     "newWindow": false
   }
+];
+
+const DEFAULT_NAVIGATION = [
+  {id:"home",parentId:"",label:"Home",url:"/",sortOrder:10,newWindow:false},
+  {id:"about",parentId:"",label:"About Us",url:"/about/",sortOrder:20,newWindow:false},
+  {id:"products",parentId:"",label:"Cap Mould",url:"/Plastic-cap-mold.html",sortOrder:30,newWindow:false},
+  {id:"product-water",parentId:"products",label:"Mineral Water Cap Mould",url:"/product/Mineral-Water-Closure-cap-Molds.html",sortOrder:10,newWindow:false},
+  {id:"product-oil",parentId:"products",label:"Edible Oil Cap Mould",url:"/product/Oil-bottle-cap-mould.html",sortOrder:20,newWindow:false},
+  {id:"product-flip",parentId:"products",label:"Flip top caps mould",url:"/product/Flip-top-caps-mould.html",sortOrder:30,newWindow:false},
+  {id:"product-engine",parentId:"products",label:"Engine Oil Cap Mould",url:"/product/Engine-Oil-Cap-Mould.html",sortOrder:40,newWindow:false},
+  {id:"product-food",parentId:"products",label:"Food Packaging Cap Mould",url:"/product/Food-Packaging-Cap-Mould.html",sortOrder:50,newWindow:false},
+  {id:"product-medical",parentId:"products",label:"Medical Cap Mould",url:"/product/Medical-Cap-Mould.html",sortOrder:60,newWindow:false},
+  {id:"product-personal",parentId:"products",label:"Personal Care Cap Mould",url:"/product/Personal-Care-Cap-Mould.html",sortOrder:70,newWindow:false},
+  {id:"product-functional",parentId:"products",label:"Functional Cap Mould (Combination)",url:"/product/Functional-Cap-Mould.html",sortOrder:80,newWindow:false},
+  {id:"product-handle",parentId:"products",label:"Plastic Handle mould",url:"/product/Plastic-Handle-Cap-mould.html",sortOrder:90,newWindow:false},
+  {id:"machine",parentId:"",label:"Machine",url:"/Bottle-Cap-Machine/Bottle-Cap-Machine.html",sortOrder:40,newWindow:false},
+  {id:"samples",parentId:"",label:"Samples",url:"/samples/",sortOrder:50,newWindow:false},
+  {id:"news",parentId:"",label:"News",url:"/news/",sortOrder:60,newWindow:false},
+  {id:"video",parentId:"",label:"Video",url:"/video/",sortOrder:70,newWindow:false},
+  {id:"contact",parentId:"",label:"Contact Us",url:"/contact/",sortOrder:80,newWindow:false}
 ];
 
 const SCHEMA = [
@@ -336,3 +356,4 @@ export async function onRequestPost(context) {
     return response({ error: clean(error?.message || error) }, 400);
   }
 }
+

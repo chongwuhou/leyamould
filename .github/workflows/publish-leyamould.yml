@@ -19,6 +19,7 @@ on:
       - "admin/**"
       - "AGENTS.md"
       - "PROJECT_CHANGE_POLICY.md"
+      - "项目圣经/**"
   workflow_dispatch:
 
 concurrency:
@@ -53,6 +54,8 @@ jobs:
         run: python scripts/preflight.py
       - name: Verify D1-driven language and publish guards
         run: python scripts/test_dynamic_language_and_publish_guards.py
+      - name: Fetch reviewed LEYA D1 build snapshot
+        run: python scripts/fetch_build_snapshot.py
       - name: Build mould source release
         run: python scripts/build_release.py
       - name: Validate mould routes, five locales and contacts
@@ -61,6 +64,7 @@ jobs:
         run: python scripts/test_shared_templates.py
       - name: Verify second clean source rebuild
         run: |
+          python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_mould_release.py
       - name: Deploy Leyamould production
@@ -71,4 +75,5 @@ jobs:
         run: |
           echo "::error::CLOUDFLARE_API_TOKEN is not configured; source build passed but production was not deployed."
           exit 1
+
 

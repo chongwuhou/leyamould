@@ -22,16 +22,106 @@ ORIGIN = CONFIG["site"]["origin"]
 INDEXING_APPROVED = CONFIG["site"].get("indexingApproved") is True
 OUTPUT = ROOT / (os.environ.get("LEYA_OUTPUT_DIR") or ".")
 CATALOG = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
-ADDRESS = "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China"
-EMAIL = "amyhu@leyamould.com"
-WHATSAPP = "+8613606727715"
-WA_URL = "https://wa.me/8613606727715"
 SNAPSHOT = ROOT / "_local_ops/build-snapshot.json"
 STATE = {}
 if SNAPSHOT.is_file():
     candidate = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     if candidate.get("site") == "leyamould":
         STATE = candidate
+
+# The static renderer remains the visual source of truth.  These small
+# adapters make its business inputs data-driven in the same way as the
+# water-cup project: a reviewed D1 snapshot can override content, while a
+# clean checkout still has an auditable source fallback.  No CSS or layout is
+# selected from D1, so a CMS edit cannot silently redesign the public site.
+BRAND_CONFIG = STATE.get("brand") if isinstance(STATE.get("brand"), dict) else {}
+CONTACT_CONFIG = STATE.get("contacts") if isinstance(STATE.get("contacts"), dict) else {}
+NAVIGATION = [row for row in STATE.get("navigation", []) if isinstance(row, dict)]
+PAGE_OVERRIDES = {str(row.get("route")): row for row in STATE.get("pages", []) if isinstance(row, dict) and row.get("route")}
+for _seo in STATE.get("productSeo", []):
+    if isinstance(_seo, dict) and _seo.get("slug") and _seo.get("locale", "en") == "en":
+        PAGE_OVERRIDES.setdefault("/product/" + str(_seo["slug"]) + ".html", {
+            "seoTitle": _seo.get("seoTitle", ""), "metaDescription": _seo.get("metaDescription", "")
+        })
+BODY_OVERRIDES = {str(row.get("route")): str(row.get("mainHtml", "")) for row in STATE.get("pageBodies", []) if isinstance(row, dict) and row.get("route")}
+TRANSLATION_OVERRIDES = {(str(row.get("resourceId")), str(row.get("locale"))): row.get("content") for row in STATE.get("translations", []) if isinstance(row, dict)}
+BANNER_CONFIG = STATE.get("banners") if isinstance(STATE.get("banners"), dict) else {}
+
+def _first_contact() -> dict:
+    contacts = CONTACT_CONFIG.get("contacts", []) if isinstance(CONTACT_CONFIG, dict) else []
+    return next((row for row in contacts if isinstance(row, dict) and row.get("enabled", True) and row.get("isDefault")), None) or next((row for row in contacts if isinstance(row, dict) and row.get("enabled", True)), {})
+
+_brand_identity = BRAND_CONFIG.get("identity", {}) if isinstance(BRAND_CONFIG, dict) else {}
+_brand_contact = BRAND_CONFIG.get("contact", {}) if isinstance(BRAND_CONFIG, dict) else {}
+_default_contact = _first_contact()
+ADDRESS = str(_brand_contact.get("address") or "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China")
+EMAIL = str(_brand_contact.get("email") or _default_contact.get("email") or "amyhu@leyamould.com")
+WHATSAPP = str(_brand_contact.get("phoneDisplay") or _brand_contact.get("phoneE164") or _default_contact.get("phoneDisplay") or _default_contact.get("phoneE164") or "+8613606727715")
+_wa_candidate = str(_brand_contact.get("whatsappShortUrl") or _brand_contact.get("whatsappUrl") or _default_contact.get("whatsappUrl") or "https://wa.me/8613606727715")
+WA_URL = _wa_candidate if _wa_candidate.startswith(("https://", "http://")) else "https://wa.me/8613606727715"
+BRAND_DISPLAY = str(_brand_identity.get("displayName") or "LEYA MOULD")
+BRAND_LEGAL = str(_brand_identity.get("legalName") or "LEYA MOULD Co.,Ltd")
+
+def _published_content(row: object) -> dict:
+    if not isinstance(row, dict):
+        return {}
+    content = row.get("content")
+    return content if isinstance(content, dict) else {}
+
+def _catalog_from_state() -> list[dict]:
+    """Overlay only mould category records; never import water-cup models."""
+    rows = json.loads(json.dumps(CATALOG.get("categories", [])))
+    by_slug = {str(item.get("slug")): item for item in rows}
+    for row in STATE.get("products", []):
+        if not isinstance(row, dict):
+            continue
+        model = str(row.get("model") or "")
+        content = _published_content(row)
+        item = by_slug.get(model)
+        if item is None:
+            item = by_slug.get(str(content.get("slug") or ""))
+        if item is None or not content:
+            continue
+        for field in ("title", "navTitle", "description", "short", "detail", "meta", "image", "route"):
+            if isinstance(content.get(field), str) and content[field].strip():
+                item[field] = content[field].strip()
+        if isinstance(content.get("checks"), list):
+            item["checks"] = [str(value).strip() for value in content["checks"] if str(value).strip()][:12]
+    return rows
+
+CATALOG["categories"] = _catalog_from_state()
+_header_logo = (BRAND_CONFIG.get("logos", {}).get("header", {}) if isinstance(BRAND_CONFIG, dict) else {})
+LOGO_SRC = str(_header_logo.get("src") or "/assets/leyamould-logo.svg?v=logo1")
+if not (LOGO_SRC.startswith("/") or LOGO_SRC.startswith("https://")):
+    LOGO_SRC = "/assets/leyamould-logo.svg?v=logo1"
+LOGO_ALT = str(_header_logo.get("alt") or BRAND_DISPLAY)
+
+def navigation_label(url: str, fallback: str) -> str:
+    """Use D1's reviewed label without changing the frozen menu structure."""
+    rows = [row for row in NAVIGATION if str(row.get("url") or "") == url]
+    rows.sort(key=lambda row: (int(row.get("sort_order", row.get("sortOrder", 999)) or 999), str(row.get("id", ""))))
+    return str(rows[0].get("label") or fallback) if rows else fallback
+
+def localized_override(locale: str, route: str) -> dict:
+    value = TRANSLATION_OVERRIDES.get(("page:" + route, locale))
+    return value if isinstance(value, dict) else {}
+
+def effective_banners(locale: str) -> list[dict]:
+    slides = BANNER_CONFIG.get("slides", []) if isinstance(BANNER_CONFIG, dict) else []
+    if not isinstance(slides, list) or len(slides) != 3:
+        return []
+    result = []
+    for slide in slides:
+        if not isinstance(slide, dict):
+            return []
+        value = dict(slide)
+        translated = slide.get("translations", {}).get(locale, {}) if isinstance(slide.get("translations"), dict) else {}
+        if isinstance(translated, dict):
+            value.update({key: translated[key] for key in ("title", "highlight", "description", "alt", "cta") if isinstance(translated.get(key), str) and translated[key].strip()})
+        if not all(isinstance(value.get(key), str) and value[key].strip() for key in ("img", "link", "title", "highlight", "description", "alt", "cta")):
+            return []
+        result.append({key: value[key] for key in ("img", "link", "title", "highlight", "description", "alt", "cta")})
+    return result
 
 LOCALES = approved_locales(STATE, require_resources=False)
 if not LOCALES:
@@ -196,7 +286,7 @@ CAP_MOULD_SERIES = sorted(CATALOG["categories"], key=lambda item: CAP_MOULD_ORDE
 def header(locale: str, route: str) -> str:
     # Keep the desktop navigation aligned with the reference: the Cap mold
     # label opens the aggregate page, while the caret exposes all nine routes.
-    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(item.get("navTitle", item["title"])) + '</a>' for item in CAP_MOULD_SERIES)
+    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], item.get("navTitle", item["title"]))) + '</a>' for item in CAP_MOULD_SERIES)
     nav = ['<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>']
     about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">About us</a><a href="' + localized_href(locale, "/faq/") + '">FAQs</a></div></div>'
     cap_nav_label = "Cap mold" if locale == "en" else text(locale, "cap_mould")
@@ -213,16 +303,18 @@ def header(locale: str, route: str) -> str:
     mobile = '<a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><a href="' + localized_href(locale, "/about/") + '">' + esc(text(locale, "about")) + '</a><a href="' + localized_href(locale, "/capabilities/") + '">' + esc(text(locale, "machine")) + '</a><a href="' + localized_href(locale, "/samples/") + '">' + esc(sample_label) + '</a><a href="' + localized_href(locale, "/video/") + '">' + esc(text(locale, "video")) + '</a><a href="' + localized_href(locale, "/contact/") + '">' + esc(text(locale, "contact_us")) + '</a>'
     mobile += '<details><summary>' + esc(text(locale, "cap_mould")) + '</summary>' + product_links + '</details><a href="' + localized_href(locale, "/news/") + '">' + esc(text(locale, "news")) + '</a><details><summary>' + esc(text(locale, "news")) + ' categories</summary><a href="' + localized_href(locale, "/news/Bottle-cap-molds.html") + '">Bottle cap molds</a><a href="' + localized_href(locale, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html") + '">Bottle Cap Machine</a></details>'
     options = ''.join('<option value="' + esc(route_for(lang["code"], route)) + '"' + (' selected' if lang["code"] == locale else '') + '>' + esc(lang["nativeName"]) + '</option>' for lang in LOCALES)
-    logo = '<a href="' + local_link(locale, "/") + '" class="logo" aria-label="LEYA MOULD home"><img class="logo__image" src="/assets/leyamould-logo.svg?v=logo1" alt="LEYA MOULD" width="260" height="51" decoding="async"></a>'
-    actions = '<div class="header__actions"><a class="nav-phone-desktop" href="tel:+8613606727715"><span class="phone-text">+86 136 0672 7715</span><span class="phone-icon-wrap"><svg class="phone-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z" fill="currentColor"></path></svg></span></a><select class="language-switch" data-language-switch aria-label="Choose language">' + options + '</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><a class="button header__quote" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + '</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="menu-label">Menu</span></button></div>'
+    phone_digits = re.sub(r"[^0-9+]", "", WHATSAPP)
+    logo = '<a href="' + local_link(locale, "/") + '" class="logo" aria-label="' + esc(BRAND_DISPLAY) + ' home"><img class="logo__image" src="' + esc(LOGO_SRC) + '" alt="' + esc(LOGO_ALT) + '" width="260" height="51" decoding="async"></a>'
+    actions = '<div class="header__actions"><a class="nav-phone-desktop" href="tel:' + esc(phone_digits) + '"><span class="phone-text">' + esc(WHATSAPP) + '</span><span class="phone-icon-wrap"><svg class="phone-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z" fill="currentColor"></path></svg></span></a><select class="language-switch" data-language-switch aria-label="Choose language">' + options + '</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><a class="button header__quote" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + '</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="menu-label">Menu</span></button></div>'
     search = '<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="' + localized_href(locale, "/products/") + '" method="get"><input type="search" name="q" placeholder="Search mould category or application…" aria-label="Search mould category or application"><button class="button" type="submit">Search →</button></form></div>'
-    top = '<div class="topbar top-bar"><div class="shell topbar__inner top-bar-inner"><div class="top-bar-left"><a href="mailto:' + EMAIL + '">✉ ' + EMAIL + '</a><a href="tel:+8613606727715">☎ +86 136 0672 7715</a><span>⌖ ' + esc(ADDRESS) + '</span></div><div class="top-bar-right"><a href="' + WA_URL + '" target="_blank" rel="noopener noreferrer">WhatsApp +8613606727715</a><a href="/video/">Video</a><a href="/contact/">Contact</a></div></div></div>'
+    top = '<div class="topbar top-bar"><div class="shell topbar__inner top-bar-inner"><div class="top-bar-left"><a href="mailto:' + esc(EMAIL) + '">✉ ' + esc(EMAIL) + '</a><a href="tel:' + esc(phone_digits) + '">☎ ' + esc(WHATSAPP) + '</a><span>⌖ ' + esc(ADDRESS) + '</span></div><div class="top-bar-right"><a href="' + esc(WA_URL) + '" target="_blank" rel="noopener noreferrer">WhatsApp ' + esc(WHATSAPP) + '</a><a href="' + localized_href(locale, "/video/") + '">Video</a><a href="' + localized_href(locale, "/contact/") + '">Contact</a></div></div></div>'
     return render_template("header", TOPBAR=top, LOGO=logo, NAV_DESKTOP=''.join(nav), ACTIONS=actions, SEARCH=search, NAV_MOBILE=mobile)
 
 def footer(locale: str) -> str:
-    links = ''.join('<p><a href="' + localized_href(locale, item["route"]) + '">' + esc(item["title"]) + '</a></p>' for item in CAP_MOULD_SERIES)
+    links = ''.join('<p><a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], item["title"])) + '</a></p>' for item in CAP_MOULD_SERIES)
     quick = ''.join('<p><a href="' + localized_href(locale, route) + '">' + esc(label) + '</a></p>' for label, route in ((text(locale, "about"), "/about/"), (text(locale, "samples"), "/samples/"), (text(locale, "video"), "/video/"), (text(locale, "news"), "/news/"), (text(locale, "faq_title"), "/faq/"), (text(locale, "contact_us"), "/contact/")))
-    vals = {"PRODUCT_LINKS": links, "QUICK_LINKS": quick, "WHATSAPP_NUMBER": esc(WHATSAPP), "FOOTER_EYEBROW": esc(text(locale, "footer_eyebrow")), "FOOTER_CTA_TITLE": esc(text(locale, "footer_cta_title")), "FOOTER_CTA_TEXT": esc(text(locale, "footer_cta_text")), "FOOTER_CTA_BUTTON": esc(text(locale, "quote")), "FOOTER_TAGLINE": esc(text(locale, "footer_tagline")), "FOOTER_ADDRESS": esc(ADDRESS), "FOOTER_PRODUCTS_TITLE": esc(text(locale, "footer_products")), "FOOTER_CONTACT_TITLE": esc(text(locale, "footer_contact")), "FOOTER_QUOTE": esc(text(locale, "footer_quote")), "FOOTER_PRIVACY": esc(text(locale, "footer_privacy")), "FOOTER_STICKY": esc(text(locale, "footer_sticky"))}
+    footer_config = BRAND_CONFIG.get("footer", {}) if isinstance(BRAND_CONFIG, dict) else {}
+    vals = {"PRODUCT_LINKS": links, "QUICK_LINKS": quick, "WHATSAPP_NUMBER": esc(WHATSAPP), "FOOTER_EYEBROW": esc(text(locale, "footer_eyebrow")), "FOOTER_CTA_TITLE": esc(text(locale, "footer_cta_title")), "FOOTER_CTA_TEXT": esc(text(locale, "footer_cta_text")), "FOOTER_CTA_BUTTON": esc(text(locale, "quote")), "FOOTER_TAGLINE": esc(footer_config.get("about") or text(locale, "footer_tagline")), "FOOTER_ADDRESS": esc(ADDRESS), "FOOTER_PRODUCTS_TITLE": esc(text(locale, "footer_products")), "FOOTER_CONTACT_TITLE": esc(footer_config.get("contactHeading") or text(locale, "footer_contact")), "FOOTER_QUOTE": esc(text(locale, "footer_quote")), "FOOTER_PRIVACY": esc(text(locale, "footer_privacy")), "FOOTER_STICKY": esc(text(locale, "footer_sticky"))}
     return render_template("footer", **vals)
 
 def head(locale: str, title: str, description: str, route: str) -> str:
@@ -236,7 +328,8 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     return base.replace('</head>', '<link rel="canonical" href="' + esc(canonical) + '">' + alternates + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '"></head>', 1)
 
 def rail(locale: str) -> str:
-    phone = '<a href="tel:+8613606727715" class="rail-float rail-float--phone" title="Call us" aria-label="Call us"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 4.5 9.7 4c.5-.1 1 .2 1.2.7l1.2 2.8c.2.4.1.9-.2 1.2l-1.4 1.4a13.4 13.4 0 0 0 3.4 3.4l1.4-1.4c.3-.3.8-.4 1.2-.2l2.8 1.2c.5.2.8.7.7 1.2l-.5 2.6c-.1.5-.5.8-1 .8C11.8 17.7 6.3 12.2 6.3 5.5c0-.5.3-.9.8-1Z"/></svg><span class="floating-tooltip">Call</span></a>'
+    phone_digits = re.sub(r"[^0-9+]", "", WHATSAPP)
+    phone = '<a href="tel:' + esc(phone_digits) + '" class="rail-float rail-float--phone" title="Call us" aria-label="Call us"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 4.5 9.7 4c.5-.1 1 .2 1.2.7l1.2 2.8c.2.4.1.9-.2 1.2l-1.4 1.4a13.4 13.4 0 0 0 3.4 3.4l1.4-1.4c.3-.3.8-.4 1.2-.2l2.8 1.2c.5.2.8.7.7 1.2l-.5 2.6c-.1.5-.5.8-1 .8C11.8 17.7 6.3 12.2 6.3 5.5c0-.5.3-.9.8-1Z"/></svg><span class="floating-tooltip">Call</span></a>'
     whatsapp = '<a href="' + WA_URL + '" target="_blank" rel="noopener noreferrer" class="rail-float rail-float--whatsapp" title="Chat on WhatsApp" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.2a8.4 8.4 0 0 1-12.4 7.4L4 20l1.4-4A8.4 8.4 0 1 1 20.5 11.2Z"/><path d="M9.2 8.8c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.6 1.4c.1.2.1.4-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.4.6c.3.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.1.4-1.7.2-2.1-.6-4.7-3.2-5.3-5.3-.2-.6-.1-1.2.1-1.8Z"/></svg><span class="floating-tooltip">WhatsApp</span></a>'
     wechat = '<a href="' + localized_href(locale, "/contact/") + '" class="rail-float rail-float--wechat" title="WeChat contact" aria-label="WeChat contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 6.3C6.9 6.3 4 8.5 4 11.2c0 1.6 1 3 2.5 3.9L6 17l2.2-1.1c.7.2 1.5.3 2.3.3 3.6 0 6.5-2.2 6.5-4.9S14.1 6.3 10.5 6.3Z"/><path d="M14.2 10.1c3.2 0 5.8 1.9 5.8 4.4 0 1.3-.7 2.5-1.9 3.3l.4 1.5-1.8-.9c-.6.2-1.3.3-2 .3-3.2 0-5.8-1.8-5.8-4.2"/></svg><span class="floating-tooltip">WeChat</span></a>'
     return '<aside class="rail" role="complementary" aria-label="Quick contact">' + phone + whatsapp + wechat + '</aside>'
@@ -286,10 +379,22 @@ def cap_series_card(locale: str, item: dict) -> str:
 
 def home(locale: str) -> str:
     cap = "https://www.cap-molds.com"
-    hero_img = cap + "/upload/Banner/Plastic-flip-top-mold.jpg"
+    managed_banners = effective_banners(locale)
+    first_banner = managed_banners[0] if managed_banners else {
+        "img": cap + "/upload/Banner/Plastic-flip-top-mold.jpg",
+        "link": localized_href(locale, "/products/"),
+        "title": "Your Trusted", "highlight": "Plastic Cap Mould",
+        "description": text(locale, "hero_text"), "alt": "LEYA MOULD precision machining reference",
+        "cta": text(locale, "hero_primary")
+    }
+    hero_img = first_banner["img"]
     steel_img = cap + "/upload/Home/steel-quality.jpg"
     samples = ["water-cap", "csd-cap", "hotfill-cap", "oil-cap", "soysauce-cap", "pharma-cap", "disc-top-cap", "flip-top-cap", "tamper-evident-cap", "push-pull-cap", "pull-ring-cap", "two-shot-cap", "custom-cap", "wide-mouth-cap", "squeeze-sports-cap", "motor-oil-cap", "5-gallon-cap", "bottle-handle"]
-    hero = '<section class="hero hero-slider" data-hero tabindex="0" aria-label="LEYA MOULD"><div class="hero__backdrop"></div><div class="hero__inner shell"><div class="hero__copy"><span class="eyebrow">' + esc(text(locale, "hero_eyebrow")) + '</span><h1 id="hero-title">Your Trusted <span>Plastic Cap Mould</span> Manufacturer</h1><p id="hero-description">' + esc(text(locale, "hero_text")) + '</p><div class="actions"><a id="hero-cta" class="button button--round" href="' + localized_href(locale, "/products/") + '">' + esc(text(locale, "hero_primary")) + '</a><a class="button button--outline button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "hero_secondary")) + '</a></div><p class="hero__note">' + esc(text(locale, "hero_note")) + '</p></div><div class="hero__art"><a class="hero__art-link" href="' + localized_href(locale, "/products/") + '" aria-label="Explore mould categories"><img id="hero-image" src="' + hero_img + '" alt="LEYA MOULD precision machining reference" loading="eager" decoding="async"></a></div></div><button class="hero__arrow hero__arrow--prev" type="button" data-hero-nav="-1" aria-label="Previous slide">‹</button><button class="hero__arrow hero__arrow--next" type="button" data-hero-nav="1" aria-label="Next slide">›</button><div class="hero__controls"><button class="hero__dot active" data-hero-go="0" aria-pressed="true" type="button">01</button><button class="hero__dot" data-hero-go="1" aria-pressed="false" type="button">02</button><button class="hero__dot" data-hero-go="2" aria-pressed="false" type="button">03</button><span id="hero-status" class="sr-only" aria-live="polite">Slide 1 of 3</span></div></section>'
+    hero_tail = "" if managed_banners else " Manufacturer"
+    hero = '<section class="hero hero-slider" data-hero tabindex="0" aria-label="' + esc(BRAND_DISPLAY) + '"><div class="hero__backdrop"></div><div class="hero__inner shell"><div class="hero__copy"><span class="eyebrow">' + esc(text(locale, "hero_eyebrow")) + '</span><h1 id="hero-title">' + esc(first_banner["title"]) + ' <span>' + esc(first_banner["highlight"]) + '</span>' + esc(hero_tail) + '</h1><p id="hero-description">' + esc(first_banner["description"]) + '</p><div class="actions"><a id="hero-cta" class="button button--round" href="' + esc(first_banner["link"]) + '">' + esc(first_banner["cta"]) + '</a><a class="button button--outline button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "hero_secondary")) + '</a></div><p class="hero__note">' + esc(text(locale, "hero_note")) + '</p></div><div class="hero__art"><a class="hero__art-link" href="' + esc(first_banner["link"]) + '" aria-label="' + esc(first_banner["alt"]) + '"><img id="hero-image" src="' + esc(hero_img) + '" alt="' + esc(first_banner["alt"]) + '" loading="eager" decoding="async"></a></div></div><button class="hero__arrow hero__arrow--prev" type="button" data-hero-nav="-1" aria-label="Previous slide">‹</button><button class="hero__arrow hero__arrow--next" type="button" data-hero-nav="1" aria-label="Next slide">›</button><div class="hero__controls"><button class="hero__dot active" data-hero-go="0" aria-pressed="true" type="button">01</button><button class="hero__dot" data-hero-go="1" aria-pressed="false" type="button">02</button><button class="hero__dot" data-hero-go="2" aria-pressed="false" type="button">03</button><span id="hero-status" class="sr-only" aria-live="polite">Slide 1 of 3</span></div></section>'
+    if managed_banners:
+        managed_json = json.dumps(managed_banners, ensure_ascii=False).replace("</", "<\\/")
+        hero += '<script type="application/json" id="xuyi-home-banners">' + managed_json + '</script>'
     advantages = ''.join('<article class="advantage-card"><span class="advantage-card__number">0' + str(i + 1) + '</span><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for i, (title, desc) in enumerate(data(locale, "advantages")))
     advantages_section = '<section class="section section--advantages"><div class="shell">' + section_heading(locale, "WHY CHOOSE US", "Core Advantages of LEYA MOULD", "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control.") + '<div class="advantage-grid">' + advantages + '</div></div></section>'
     cap_products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Cap Mould Series", "Explore nine specialized plastic cap mould categories engineered for high-volume production, dimensional accuracy and long service life.") + '<div class="cap-series-grid">' + ''.join(cap_series_card(locale, item) for item in CAP_MOULD_SERIES) + '</div></div></section>'
@@ -605,10 +710,14 @@ def video_page(locale: str) -> str:
     title = "Video Gallery" if locale == "en" else "Galería de vídeos"
     subtitle = ("Watch our latest mould demonstrations, factory tours, and technical insights. See LEYA MOULD in action."
                 if locale == "en" else "Vea nuestras demostraciones de moldes, recorridos de fábrica y conocimientos técnicos. Descubra LEYA MOULD en acción.")
-    cards = ''.join(video_card(item, locale) for item in VIDEO_SEED)
+    videos = STATE.get("youtubeVideos") if isinstance(STATE.get("youtubeVideos"), list) else []
+    videos = [item for item in videos if isinstance(item, dict) and re.fullmatch(r"[A-Za-z0-9_-]{11}", str(item.get("videoId") or ""))]
+    if not videos:
+        videos = VIDEO_SEED
+    cards = ''.join(video_card(item, locale) for item in videos)
     empty = "No videos found yet." if locale == "en" else "Todavía no hay vídeos."
     labels = {"close": "Close video" if locale == "en" else "Cerrar vídeo", "play": "Play video" if locale == "en" else "Reproducir vídeo"}
-    payload = json.dumps(VIDEO_SEED, ensure_ascii=False).replace("</", "<\\/")
+    payload = json.dumps(videos, ensure_ascii=False).replace("</", "<\\/")
     body = ('<section class="video-gallery-page" data-video-gallery data-public-api="/api/youtube-videos">'
         '<div class="video-grid" id="videoGrid">' + cards + '</div>'
         '<p class="video-empty" id="videoEmpty" hidden>' + empty + '</p>'
@@ -623,6 +732,29 @@ def localized_item_text(item: dict, locale: str, field: str) -> str:
     if locale == "es":
         return item.get(field + "Es") or item.get(field, "")
     return item.get(field, "")
+
+def effective_news_items() -> list[dict]:
+    """Project the reviewed Blog table into the frozen news-card component."""
+    rows = STATE.get("blogPosts") if isinstance(STATE.get("blogPosts"), list) else []
+    mapped = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        slug = str(row.get("slug") or "")
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
+            continue
+        title = str(row.get("title") or "").strip()
+        summary = str(row.get("summary") or row.get("description") or "").strip()
+        if not title or not summary:
+            continue
+        date = str(row.get("date") or row.get("published_at") or row.get("updated_at") or "")[:10].replace("-", "/")
+        image_src = str(row.get("image") or "/assets/mould-news-placeholder.svg")
+        mapped.append({
+            "slug": slug, "title": title, "titleEs": str(row.get("titleEs") or row.get("title_es") or ""),
+            "date": date, "image": image_src, "summary": summary,
+            "summaryEs": str(row.get("summaryEs") or row.get("summary_es") or "")
+        })
+    return mapped or NEWS_ITEMS
 
 def news_card(locale: str, item: dict, detail_prefix: str, category_label: str) -> str:
     detail_route = detail_prefix + item["slug"] + ".html"
@@ -666,6 +798,7 @@ def write(path: str, content: str) -> None:
 
 def generate() -> dict:
     routes: dict[str, str] = {}
+    news_items = effective_news_items()
     def add(locale: str, route: str, title: str, description: str, body: str) -> None:
         localized = route_for(locale, route)
         if localized == "/":
@@ -674,7 +807,12 @@ def generate() -> dict:
             file_path = localized.strip("/")
         else:
             file_path = localized.strip("/") + "/index.html"
-        write(file_path, shell(locale, title + " | LEYA MOULD" if route != "/" else title + " | LEYA MOULD", description, route, body))
+        page_override = PAGE_OVERRIDES.get(route, {})
+        translated = localized_override(locale, route)
+        final_title = str(translated.get("title") or page_override.get("seoTitle") or title)
+        final_description = str(translated.get("description") or page_override.get("metaDescription") or description)
+        final_body = str(translated.get("mainHtml") or BODY_OVERRIDES.get(route) or body)
+        write(file_path, shell(locale, final_title + " | " + BRAND_DISPLAY if route != "/" else final_title + " | " + BRAND_DISPLAY, final_description, route, final_body))
         routes[localized] = title
     for locale in LOCALES:
         code = locale["code"]
@@ -693,10 +831,10 @@ def generate() -> dict:
         add(code, "/request-sample/", text(code, "quote"), text(code, "resources_text"), contact_page(code))
         add(code, "/contact/", text(code, "contact"), text(code, "contact_intro"), contact_page(code))
         add(code, "/samples/", "Plastic Cap Samples" if code == "en" else ("Muestras de tapas de plástico" if code == "es" else text(code, "samples")), "Explore plastic bottle cap samples manufactured with precision moulds.", samples_page(code))
-        add(code, "/news/", "News & Updates" if code == "en" else "Noticias y novedades", "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." if code == "en" else "Conozca las novedades técnicas y los proyectos de LEYA MOULD.", news_listing_page(code, "/news/", "News & Updates" if code == "en" else "Noticias y novedades", "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." if code == "en" else "Conozca las novedades técnicas y los proyectos de LEYA MOULD.", NEWS_ITEMS, "/news/", "NEWS & INSIGHTS"))
-        add(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_listing_page(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", NEWS_ITEMS, "/news/", "BOTTLE CAP MOULDS"))
+        add(code, "/news/", "News & Updates" if code == "en" else "Noticias y novedades", "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." if code == "en" else "Conozca las novedades técnicas y los proyectos de LEYA MOULD.", news_listing_page(code, "/news/", "News & Updates" if code == "en" else "Noticias y novedades", "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." if code == "en" else "Conozca las novedades técnicas y los proyectos de LEYA MOULD.", news_items, "/news/", "NEWS & INSIGHTS"))
+        add(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_listing_page(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_items, "/news/", "BOTTLE CAP MOULDS"))
         add(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", news_listing_page(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", MACHINE_NEWS_ITEMS, "/Bottle-Cap-Machine/", "BOTTLE CAP MACHINE"))
-        for item in NEWS_ITEMS:
+        for item in news_items:
             detail_route = "/news/" + item["slug"] + ".html"
             add(code, detail_route, localized_item_text(item, code, "title"), localized_item_text(item, code, "summary"), news_detail_page(code, detail_route, item, "/news/Bottle-cap-molds.html", "BOTTLE CAP MOULDS"))
         for item in MACHINE_NEWS_ITEMS:
@@ -721,5 +859,6 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
+
 
 

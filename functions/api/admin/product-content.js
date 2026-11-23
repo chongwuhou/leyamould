@@ -1,4 +1,4 @@
-// XUYI product copy/SEO CMS. Do not mutate the source-import 151 draft rows.
+// LEYA MOULD category copy/SEO CMS. Only the allow-listed mould categories are editable.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision,loadLanguageConfig } from "../../_shared/site-settings.js";
 import { MANAGED_MODELS } from "../../_shared/xuyi-routes.js";
@@ -24,9 +24,7 @@ export async function onRequestGet(context){
   const denied=await auth(context);if(denied)return denied;
   const db=context.env.LEYA_DB;await ensure(db);
   const rows=(await db.prepare("SELECT model,content_json,publication_status,updated_at FROM xuyi_product_content ORDER BY model LIMIT 1000").all()).results||[];
-  // D1 stores content overrides, not the original 93 product records.
-  // Expose the allowlisted source models to the authenticated CMS picker,
-  // including all eight LO models without writing synthetic D1 rows.
+  // D1 stores reviewed category overrides, not the checked-in catalogue.
   return respond({categories:CATEGORY_OPTIONS,catalogModels:[...MANAGED_MODELS].sort(),
     items:rows.map(r=>({model:r.model,content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
 }
@@ -71,21 +69,25 @@ export async function onRequestPost(context){
     if(p.createOnly===true&&Number(saved?.meta?.changes??0)!==1)
       return respond({error:"Model already exists; create-only import will not overwrite"},409);
     const revision=await bumpPublishRevision(db);
-    return respond({saved:true,model,status,newProduct:true,route:"/products/"+model+"/",
+    return respond({saved:true,model,status,newProduct:true,route:"/product/"+model+".html",
        locales:"Source language only until each translation is reviewed",...revision});
   }
   if(p?.action!=="save_product")return respond({error:"Unknown action"},400);
   const model=clean(p.model,80),v=p.content||{},status=p.status==="published"?"published":"draft";
-  if(!/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(model))return respond({error:"Invalid model identifier"},400);
-  if(!MANAGED_MODELS.has(model))return respond({error:"Model not found in the current XUYI catalog"},400);
+  if(!/^[a-z0-9][a-z0-9-]{1,80}$/.test(model))return respond({error:"Invalid mould category slug"},400);
+  if(!MANAGED_MODELS.has(model))return respond({error:"Mould category not found in the current LEYA catalog"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
-  const allowed=["name","description","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription"];
+  const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription"];
   const content={};
   for(const key of allowed)if(Object.hasOwn(v,key)){
+    if(key==="checks"){
+      if(!Array.isArray(v[key])||v[key].length>12||v[key].some(item=>typeof item!=="string"||item.length>240))return respond({error:"Invalid checks"},400);
+      content[key]=v[key].map(item=>item.trim()).filter(Boolean); continue;
+    }
     if(typeof v[key]!=="string"||v[key].length>3000)return respond({error:"Invalid "+key},400);
     content[key]=v[key].trim();
   }
-  if(status==="published"&&(!content.name||!content.material))return respond({error:"Published product requires name and material"},400);
+  if(status==="published"&&(!content.title&&!content.name||!content.description))return respond({error:"Published mould category requires title and description"},400);
   const db=context.env.LEYA_DB;await ensure(db);
   if(content.seoTitle||content.seoDescription){
     await ensureProductSeo(db);
@@ -106,4 +108,5 @@ export async function onRequestPost(context){
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,model,status,...revision});
 }
+
 

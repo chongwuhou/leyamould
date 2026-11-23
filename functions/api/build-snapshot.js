@@ -1,10 +1,12 @@
-// Build-time public-content snapshot (Demalong's D1 truth model, XUYI data).
-// Requires a verified XUYI build/admin token. Never exposes submissions, secrets
+// Build-time public-content snapshot for LEYA MOULD's D1 truth model.
+// Requires a verified LEYA build/admin token. Never exposes submissions, secrets
 // or other private tables; responses are no-store and not indexable.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
 import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from "../_shared/site-settings.js";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
+const MOULD_MODELS=new Set(["mineral-water-closure-cap-molds","oil-bottle-cap-mould","flip-top-caps-mould","engine-oil-cap-mould","food-packaging-cap-mould","medical-cap-mould","personal-care-cap-mould","functional-cap-mould","plastic-handle-cap-mould"]);
+const MOULD_ROUTES=new Set(["/","/about/","/products/","/Plastic-cap-mold.html","/capabilities/","/capabilities/mould-design/","/capabilities/precision-manufacturing/","/capabilities/trial-sampling/","/manufacturing/","/quality-control/","/request-sample/","/contact/","/samples/","/news/","/news/Bottle-cap-molds.html","/Bottle-Cap-Machine/Bottle-Cap-Machine.html","/video/","/faq/","/blog/","/privacy-policy/",...Array.from(MOULD_MODELS,model=>"/product/"+model+".html")]);
 async function list(db,sql){
   try{return (await db.prepare(sql).all()).results||[]}catch(error){
     // Tables are initialized by their respective admin modules on first save.
@@ -20,7 +22,7 @@ export async function onRequestGet(context){
   const db=context.env.LEYA_DB;
   if(!db)return json({error:"LEYA_DB binding missing"},503);
   try{
-    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts]=await Promise.all([
+    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
@@ -34,7 +36,8 @@ export async function onRequestGet(context){
       // Keep the build snapshot in the same deterministic order as the live
       // English Blog route. Localized static indexes are rendered from this
       // D1 order so every language presents the same article sequence.
-      list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC")
+      list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC"),
+      list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,updated_at FROM leya_youtube_videos ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500")
     ]);
       const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
       const languageConfig=normalizeLanguageConfig(parseJson(config.language_config,defaultLanguageConfig()));
@@ -42,9 +45,10 @@ export async function onRequestGet(context){
      const security=parseJson(config.admin_security_config,{});
     const adminPath=security.adminPath||"admin";
     if(typeof adminPath!=="string"||!/^[a-z0-9][a-z0-9-]{2,47}$/.test(adminPath))
-      throw new Error("Invalid XUYI admin route");
-    const onlyRoutes=pages.filter(r=>(r.route==="/"||/^\/(?:[a-z0-9_-]+\/)+$/.test(r.route))&&r.route.length<=300);
-    const onlyProducts=products.filter(r=>/^[a-zA-Z0-9_\-\u4e00-\u9fff]{1,80}$/.test(r.model));
+      throw new Error("Invalid LEYA admin route");
+    const onlyRoutes=pages.filter(r=>MOULD_ROUTES.has(String(r.route||""))&&r.route.length<=300);
+    const onlyNavigation=navigation.filter(r=>MOULD_ROUTES.has(String(r.url||"")));
+    const onlyProducts=products.filter(r=>MOULD_MODELS.has(String(r.model||"")));
     const onlyBlogPosts=blogPosts.flatMap(r=>{
       if(typeof r.slug!=="string"||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.slug)
          ||r.status!=="published"||typeof r.content_json!=="string"||r.content_json.length>100000)return [];
@@ -61,7 +65,7 @@ export async function onRequestGet(context){
        brand:parseJson(config.brand_config,null),
        contacts:parseJson(config.contact_config,null),
        languages:languageConfig,
-      pages:onlyRoutes,navigation,redirects,
+       pages:onlyRoutes,navigation:onlyNavigation,redirects,
        banners:parseJson(config.home_banner_config,null),
       pageBodies:pageBodies.filter(r=>typeof r.route==="string"&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
@@ -83,8 +87,11 @@ export async function onRequestGet(context){
           reviewDate:r.review_date,content:r.content,status:"published"})),
        mediaAlts:mediaAlts.filter(r=>/^\/media\/(?:product|page|shared|ppt|excel|group|capability|gallery|blog)\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(r.path))
          .map(r=>({path:r.path,translations:parseJson(r.alt_json,{})})),
-       translations:translations.map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})}))
+       translations:translations.map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})})),
+       youtubeVideos:youtubeVideos.filter(r=>/^[A-Za-z0-9_-]{11}$/.test(String(r.video_id||"")))
+        .map(r=>({id:r.id,videoId:r.video_id,youtubeUrl:r.youtube_url,title:r.title||"",titleEn:r.title_en||r.title||"",titleEs:r.title_es||"",description:r.description||"",publishedAt:r.published_at||"",sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
     });
-  }catch(error){return json({error:"XUYI build snapshot unavailable"},503)}
+  }catch(error){return json({error:"LEYA build snapshot unavailable"},503)}
 }
+
 

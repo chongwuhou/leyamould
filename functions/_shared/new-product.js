@@ -1,10 +1,10 @@
-// XUYI product editor and create-only factory-catalog importer.
+// LEYA MOULD category editor and create-only category importer.
 import {MANAGED_MODELS} from "./xuyi-routes.js";
 import {imageKey} from "./r2-usage.js";
 export const CATEGORY_OPTIONS=[
- "Plastic Sports Water Bottles","Large Capacity Water Jugs",
- "Kids Plastic Water Bottles","Plastic Shaker Bottles",
- "Spray Water Bottles","Two-Way Drinking Cups","Titanium Vacuum Cups"
+ "Water / Beverage Cap Mould","Edible Oil Cap Mould","Flip Top Caps Mould",
+ "Engine Oil Cap Mould","Food Packaging Cap Mould","Medical Cap Mould",
+ "Personal Care Cap Mould","Functional Cap Mould","Plastic Handle Mould"
 ];
 export const NEW_MODEL=/^[a-z0-9][a-z0-9-]{1,63}$/;
 export function normalizeNewProduct(model,content,status="draft",options={}){
@@ -33,7 +33,7 @@ export function normalizeNewProduct(model,content,status="draft",options={}){
   seoTitle:clean("seoTitle",90),seoDescription:clean("seoDescription",240)
  };
  const categories=Array.isArray(options.categories)&&options.categories.length?options.categories:CATEGORY_OPTIONS;
- if(!categories.includes(data.category))throw Error("Choose a valid configured drinkware category");
+ if(data.category&&!categories.includes(data.category))throw Error("Choose a valid configured mould category");
  for(const [key,max] of [
   ["factoryModel",80],["name",180],["material",200],["capacity",120],["description",1300],
   ["colors",300],["packing",300],["dimensions",160],["unit_weight",120],["temperature_range",120],
@@ -53,8 +53,9 @@ export function normalizeNewProduct(model,content,status="draft",options={}){
   }
   if(status==="published"){
    if(/pending/i.test(data.imageReviewStatus))throw Error("Review the replacement product image before publishing");
-   for(const key of ["name","material","capacity","description","image"])
+   for(const key of ["name","description","image"])
     if(data[key].length<2)throw Error("To publish, complete "+key+" with source-backed product details");
   }
  return data;
 }
+
