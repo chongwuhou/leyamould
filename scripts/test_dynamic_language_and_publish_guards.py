@@ -8,6 +8,7 @@ def read(path):
     return (ROOT / path).read_text(encoding="utf-8")
 
 settings = read("functions/_shared/site-settings.js")
+locale_registry = read("locale_registry.py")
 scheduler = read("functions/_shared/publish-scheduler.js")
 batch = read("functions/api/admin/blog-batch.js")
 auth = read("functions/_shared/build-auth.js")
@@ -19,6 +20,11 @@ product_seo_admin = read("assets/admin-product-seo.js")
 
 assert "export async function loadLanguageConfig" in settings
 assert "export async function publishableLanguageCodes" in settings
+assert '["en", "English", "English", "", 10]' in settings
+assert '["es", "Spanish", "Español", "es", 20]' in settings
+assert '"code":"pt"' not in locale_registry
+assert '"code":"ru"' not in locale_registry
+assert '"code":"tr"' not in locale_registry
 assert "publicLanguages(languageConfig)" in snapshot
 assert "configuredLocales(languageConfig)" in batch
 assert "loadLanguageConfig(db)" in batch
@@ -40,4 +46,5 @@ assert "已配置语种的图片 ALT" in content_admin
 assert 'models.includes("2292")' not in product_seo_admin
 
 print("XUYI_DYNAMIC_LANGUAGE_AND_SINGLE_BLOG_PUBLISH_GUARDS_PASS")
+
 
