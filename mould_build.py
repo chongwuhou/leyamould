@@ -135,6 +135,15 @@ SAMPLE_ITEMS = [
     {"image": "custom-cap.jpg", "alt": "Custom cap sample", "name": "Custom Closure — Your Design, Our Mold", "description": "This sample represents our ability to produce entirely custom caps based on unique client specifications. Whether you need a proprietary thread profile, a child-proof mechanism, a dispensing valve, or a multi-material assembly, our engineering team will design and manufacture the precise mold to bring your concept to life.", "mold": "Manufactured with: Fully Custom Mold (cavitation & features according to your design)", "applications": ["Proprietary closures", "Multi-functional caps", "Any shape or function", "Small & large volumes"]},
 ]
 
+AUXILIARY_MACHINES = [
+    {"image": "202105282235237950.jpg", "alt": "Automated Assembly Machine for Wine Bottle Cap", "name": "Automated Assembly Machine for Wine Bottle Cap", "description": "LEYA MOULD supplies automated cap cutting and assembly equipment for stable, repeatable post-moulding production.", "model": "machine802"},
+    {"image": "202105282229313184.jpg", "alt": "Automated Assembly Machine for Wine Bottle Cap", "name": "Automated Assembly Machine for Wine Bottle Cap", "description": "A cost-effective automated assembly solution for high output. The machine can replace the manual work of several operators while keeping the process consistent.", "model": "machine801"},
+    {"image": "202105282218332662.jpg", "alt": "Cap Assembling Machine", "name": "Cap Assembling Machine", "description": "Automatically inserts gaskets into bottle caps, improving work efficiency, seating accuracy, product safety and production consistency.", "model": "machine800"},
+    {"image": "202105282203156019.jpg", "alt": "Cap lining machine", "name": "Cap Lining Machine", "description": "A precision-built automatic wad inserting and cap lining machine on a sturdy enclosed stainless-steel frame for reliable servicing and operation.", "model": "machine799"},
+    {"image": "202105282144214354.jpg", "alt": "Cap Assembling Machine", "name": "Cap Assembling Machine", "description": "Three-part plastic sport-cap assembly equipment for bottle, gasket, pharmaceutical, food, daily chemical and oil production lines.", "model": "machine798"},
+    {"image": "202105282109294423.jpg", "alt": "5 Gallon Cap Labeling Machine", "name": "5 Gallon Cap Labeling Machine", "description": "A non-spill five-gallon water-cap labeling and sealing solution for stable, clean and efficient cap production.", "model": "machine797"},
+]
+
 def header(locale: str, route: str) -> str:
     # Keep the desktop navigation labels and dropdown groups aligned with the cap-molds reference.
     product_items = [
@@ -182,7 +191,7 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     robots = "index,follow" if INDEXING_APPROVED else "noindex,nofollow"
     canonical = ORIGIN + route_for(locale, route)
     alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
-    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v29")
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v30")
     base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
     return base.replace('</head>', '<link rel="canonical" href="' + esc(canonical) + '">' + alternates + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '"></head>', 1)
 
@@ -207,10 +216,12 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     banner_mod = " reference-banner--contact" if route == "/contact/" else (" reference-banner--compact" if route in {"/capabilities/", "/news/", "/video/", "/faq/"} else "")
     cap = "https://www.cap-molds.com"
     page_header_mod = " reference-page-header--samples" if route == "/samples/" else ""
+    page_eyebrow = "AUXILIARY EQUIPMENT" if route == "/capabilities/" else "LEYA MOULD · PRECISION TOOLING"
+    page_title = "Cap <span class=\"reference-title-accent\">Auxiliary Machines</span>" if route == "/capabilities/" else esc(title)
     if route == "/contact/":
         crumb = '<nav class="reference-breadcrumb reference-breadcrumb--overlay" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav>'
-        return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async">' + crumb + '</section><header class="reference-page-header"><span class="eyebrow">LEYA MOULD · PRECISION TOOLING</span><h1>' + esc(title) + '</h1><p>' + esc(subtitle) + '</p></header>'
-    return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async"></section><nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav><header class="reference-page-header' + page_header_mod + '"><span class="eyebrow">LEYA MOULD · PRECISION TOOLING</span><h1>' + esc(title) + '</h1><p>' + esc(subtitle) + '</p></header>'
+        return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async">' + crumb + '</section><header class="reference-page-header"><span class="eyebrow">' + page_eyebrow + '</span><h1>' + page_title + '</h1><p>' + esc(subtitle) + '</p></header>'
+    return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async"></section><nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav><header class="reference-page-header' + page_header_mod + '"><span class="eyebrow">' + page_eyebrow + '</span><h1>' + page_title + '</h1><p>' + esc(subtitle) + '</p></header>'
 def section_heading(locale: str, eyebrow: str, title: str, description: str = "") -> str:
     return '<div class="section__head"><div><span class="eyebrow">' + esc(eyebrow) + '</span><h2 class="section__title">' + esc(title) + '</h2>' + (('<p class="copy-muted">' + esc(description) + '</p>') if description else '') + '</div></div>'
 
@@ -288,8 +299,34 @@ def about_page(locale: str) -> str:
     return body
 
 def capabilities_page(locale: str) -> str:
-    cards = ''.join('<a class="category" href="' + localized_href(locale, "/capabilities/" + s["slug"] + "/") + '"><div class="category__body"><h3>' + esc(s["title"]) + '</h3><p class="copy-muted">' + esc(s["text"]) + '</p><span>' + esc(text(locale, "learn")) + '</span></div></a>' for s in CATALOG["services"])
-    return intro(locale, text(locale, "capabilities"), text(locale, "technical_text"), "/capabilities/") + '<section class="section"><div class="shell"><div class="grid grid--3">' + cards + '</div></div></section>'
+    title = "Cap Auxiliary Machines" if locale == "en" else ("Máquinas auxiliares para tapas" if locale == "es" else text(locale, "capabilities"))
+    subtitle = "Complete your cap production line with our specialized auxiliary machines. Designed to work seamlessly with our plastic cap molds, these machines handle critical post-molding operations such as lining, folding, slitting, printing, and wadding."
+    intro_image = "https://www.cap-molds.com/images/plastic-bottle-caps.jpg"
+    intro_copy = (
+        "<p>While injection molds produce the basic cap shape, many modern closures require additional processing to achieve full functionality. "
+        "Tamper-evident bands must be precisely folded or slit to break cleanly upon opening. Induction seal liners need to be inserted accurately "
+        "to create leak-proof containers. Brand logos and date codes are often printed on the cap surface for traceability and marketing. "
+        "These operations demand dedicated auxiliary machines that ensure every cap meets strict quality standards.</p>"
+        "<p>At LEYA MOULD, we not only manufacture the molds that shape your caps but also offer a comprehensive range of auxiliary machines "
+        "to complete your production. By providing both mold and post-molding equipment, we help you build a fully integrated manufacturing cell "
+        "with consistent quality, faster changeovers, and simplified after-sales support. Below are six popular cap auxiliary machines.</p>"
+    )
+    machine_cards = ''.join(
+        '<article class="machine-card"><img class="machine-card-image" src="https://www.cap-molds.com/upload/product/month_2105/' + esc(item["image"]) + '" alt="' + esc(item["alt"]) + '" loading="lazy" decoding="async">'
+        '<div class="machine-card-body"><h2 class="machine-card-name">' + esc(item["name"]) + '</h2><p class="machine-card-desc">' + esc(item["description"]) + '</p>'
+        '<a href="' + localized_href(locale, "/contact/?model=" + item["model"] + "#inquiry") + '" class="machine-link">Learn More <span aria-hidden="true">→</span></a></div></article>'
+        for item in AUXILIARY_MACHINES
+    )
+    contact = (
+        '<section class="contact-section"><h2>Need Auxiliary Equipment for Your Cap Line?</h2>'
+        '<p class="section-subtitle">Contact LEYA MOULD to discuss your cap size, production volume and the auxiliary operations you require. We will recommend a practical machine setup for your factory.</p>'
+        '<div class="contact-cards"><a href="tel:+8613606727715" class="contact-card"><span class="icon-circle">☎</span><div class="info"><span class="label">Phone</span><span class="value">+86 136 0672 7715</span></div></a>'
+        '<a href="mailto:amyhu@leyamould.com" class="contact-card"><span class="icon-circle">✉</span><div class="info"><span class="label">Email</span><span class="value">amyhu@leyamould.com</span></div></a>'
+        '<a href="' + localized_href(locale, "/contact/#inquiry") + '" class="contact-card"><span class="icon-circle whatsapp">↗</span><div class="info"><span class="label">Project Enquiry</span><span class="value">Tell us about your line</span></div></a></div></section>'
+    )
+    body = intro(locale, title, subtitle, "/capabilities/")
+    body += '<section class="aux-page"><section class="intro-section"><div class="intro-image"><img src="' + intro_image + '" alt="Various plastic bottle caps produced by LEYA MOULD" loading="lazy" decoding="async"></div><div class="intro-content"><h2>Why Cap Auxiliary Machines Are Essential</h2>' + intro_copy + '</div></section><div class="machine-grid">' + machine_cards + '</div>' + contact + '</section>'
+    return body
 
 def service_page(locale: str, service: dict) -> str:
     body = intro(locale, service["title"], service["text"], "/capabilities/" + service["slug"] + "/")
