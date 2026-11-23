@@ -6,10 +6,7 @@ const e164Re = /^\+[1-9]\d{6,15}$/;
 
 const BUILTIN_LANGUAGES = [
   ["en", "English", "English", "", 10],
-  ["es", "Spanish", "Español", "es", 20],
-  ["pt", "Portuguese", "Português", "pt", 30],
-  ["ru", "Russian", "Русский", "ru", 40],
-  ["tr", "Turkish", "Türkçe", "tr", 50]
+  ["es", "Spanish", "Español", "es", 20]
 ];
 
 export function defaultLanguageConfig() {
@@ -249,5 +246,6 @@ export async function bumpPublishRevision(db) {
 }
 
 export { emailRe, bcp47Re, e164Re };
+
 
 
