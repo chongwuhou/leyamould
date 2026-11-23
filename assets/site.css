@@ -1192,3 +1192,10 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 @media(max-width:1050px){.mould-site .nav-phone-desktop{display:none}}
 
 .mould-site .logo__image{width:200px}
+
+/* Exact cap-molds hero treatment: one centered CTA, no extra eyebrow/arrows, and restrained heading scale. */
+.mould-site .hero .eyebrow,.mould-site .hero__note,.mould-site .hero .button--outline,.mould-site .hero__arrow{display:none}
+.mould-site .hero h1{font-size:clamp(2.2rem,4vw,3.6rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin:0 0 16px;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+.mould-site .hero p{font-size:1.1rem;line-height:1.7;margin:0 0 24px;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.3)}
+.mould-site .hero .button{padding:14px 32px;border-radius:30px;font-size:1rem;font-weight:600;min-height:0}
+.mould-site .hero .actions{justify-content:center}
