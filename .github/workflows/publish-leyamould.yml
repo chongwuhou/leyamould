@@ -16,6 +16,7 @@ on:
       - "deployment/site.config.json"
       - "scripts/build_release.py"
       - "scripts/test_mould_release.py"
+      - "scripts/test_mould_backend_contract.py"
       - "functions/**"
       - "admin/**"
       - "AGENTS.md"
