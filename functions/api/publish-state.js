@@ -1,5 +1,5 @@
-// XUYI authenticated revision endpoint.
-// XUYI-specific bindings; no access to unrelated data.
+// LEYA MOULD authenticated revision endpoint.
+// LEYA-specific bindings; no access to unrelated data.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
 
 const response=(data,status=200)=>Response.json(data,{status,headers:{
@@ -22,3 +22,4 @@ export async function onRequestGet(context){
     });
   }catch(err){return response({error:"Publishing state unavailable"},503)}
 }
+
