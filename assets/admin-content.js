@@ -106,12 +106,13 @@
     button("保存导航","navigation")+' '+button("保存跳转规则","redirects");
   }
   if(tab==="pages"){
-   html='<h3>逐页 SEO 设置</h3><p>生产站暂保持 noindex。标题和描述修改将进入 D1 并参与下一次完整构建；所有原有 URL 保留。</p>'+
+   html='<h3>逐页 SEO 设置</h3><p>网站尚未正式上线时请保持 noindex。正式上线后可按页面独立控制 robots 和 sitemap；标题、描述及这些开关都会进入 D1 并参与下一次完整构建。</p>'+ 
    '<label>选择页面 <input type="search" id="cms-route-filter" placeholder="搜索 URL / 标题" aria-label="搜索页面"></label>'+
    '<select id="cms-route" size="9" style="width:100%;margin:10px 0"></select>'+
    field("seoTitle","","SEO Title（最多 90 字符）")+
    field("seoDescription","","Meta Description（最多 240 字符）")+
-   '<p>页面 Robots：<strong>noindex,nofollow</strong>（索引权限由独立上线审批控制）</p>'+
+   '<label class="block-label">页面 Robots <select data-cms-field="robots"><option value="noindex,nofollow">noindex,nofollow</option><option value="noindex,follow">noindex,follow</option><option value="index,follow">index,follow</option></select></label>'+ 
+   '<label class="block-label"><input type="checkbox" data-cms-field="sitemapEnabled"> 加入 sitemap.xml</label>'+ 
    button("保存所选页面 SEO","pages");
   }
   if(tab==="products"){
@@ -236,8 +237,8 @@
     sel.innerHTML=(state.pages.pages||[]).filter(x=>(x.route+" "+x.label).toLowerCase().includes(q))
       .map(x=>'<option value="'+esc(x.route)+'">'+esc(x.route+" · "+x.label)+'</option>').join("");sel.selectedIndex=0;selectPage()};
    const selectPage=()=>{const row=(state.pages.pages||[]).find(x=>x.route===sel.value);
-    const t=container.querySelector('[data-cms-field="seoTitle"]'),d=container.querySelector('[data-cms-field="seoDescription"]');
-    if(t)t.value=row?.seoTitle||"";if(d)d.value=row?.metaDescription||"";};
+    const t=container.querySelector('[data-cms-field="seoTitle"]'),d=container.querySelector('[data-cms-field="seoDescription"]'),r=container.querySelector('[data-cms-field="robots"]'),s=container.querySelector('[data-cms-field="sitemapEnabled"]');
+    if(t)t.value=row?.seoTitle||"";if(d)d.value=row?.metaDescription||"";if(r)r.value=row?.robots||"noindex,nofollow";if(s)s.checked=row?.sitemapEnabled===true;};
    input.oninput=fill;sel.onchange=selectPage;fill();
   }
   if(tab==="products"){
@@ -383,9 +384,12 @@
     result=await api("site-config",{action:action==="navigation"?"save_navigation":"save_redirects",[action]:rows});
    }else if(action==="pages"){
     const selected=$("cms-route").value;
-    const rows=state.pages.pages.map(row=>({...row,robots:"noindex,nofollow",sitemapEnabled:false}));
+    const robots=container.querySelector('[data-cms-field="robots"]')?.value||"noindex,nofollow";
+    const sitemapEnabled=Boolean(container.querySelector('[data-cms-field="sitemapEnabled"]')?.checked);
+    const rows=state.pages.pages.map(row=>({...row}));
     const target=rows.find(x=>x.route===selected);if(!target)throw Error("请先选择页面");
     target.seoTitle=value("seoTitle");target.metaDescription=value("seoDescription");
+    target.robots=robots;target.sitemapEnabled=sitemapEnabled;
     result=await api("pages",{action:"save_pages",pages:rows});
     }else if(action==="new-product"){
      const selectedExisting=$("cms-new-existing")?.value||"";

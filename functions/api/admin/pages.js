@@ -17,7 +17,7 @@ const DEFAULT_PAGES = [...PAGE_LABELS].map(([route, label]) => ({ route, label, 
 const KNOWN_ROUTES = new Set(DEFAULT_PAGES.map(page => page.route));
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS site_state (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
-  `CREATE TABLE IF NOT EXISTS site_pages (route TEXT PRIMARY KEY, label TEXT NOT NULL, seo_title TEXT NOT NULL DEFAULT '', meta_description TEXT NOT NULL DEFAULT '', robots TEXT NOT NULL DEFAULT 'index,follow' CHECK (robots IN ('index,follow','noindex,follow','noindex,nofollow')), sitemap_enabled INTEGER NOT NULL DEFAULT 1 CHECK (sitemap_enabled IN (0,1)), updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`
+  `CREATE TABLE IF NOT EXISTS site_pages (route TEXT PRIMARY KEY, label TEXT NOT NULL, seo_title TEXT NOT NULL DEFAULT '', meta_description TEXT NOT NULL DEFAULT '', robots TEXT NOT NULL DEFAULT 'noindex,nofollow' CHECK (robots IN ('index,follow','noindex,follow','noindex,nofollow')), sitemap_enabled INTEGER NOT NULL DEFAULT 0 CHECK (sitemap_enabled IN (0,1)), updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`
 ];
 const response = (data, status = 200) => Response.json(data, { status, headers: { "cache-control": "no-store", "x-robots-tag": "noindex, nofollow, noarchive" } });
 async function requireAdmin(context) { if (!clean(context.env.ADMIN_TOKEN)) return response({ error: "ADMIN_TOKEN is not configured" }, 503); if (!(await authorizedBuildRequest(context.request, context.env))) return response({ error: "Unauthorized" }, 401); if (!context.env.LEYA_DB) return response({ error: "LEYA_DB binding missing" }, 503); return null; }

@@ -45,15 +45,70 @@ if SNAPSHOT.is_file():
 BRAND_CONFIG = STATE.get("brand") if isinstance(STATE.get("brand"), dict) else {}
 CONTACT_CONFIG = STATE.get("contacts") if isinstance(STATE.get("contacts"), dict) else {}
 NAVIGATION = [row for row in STATE.get("navigation", []) if isinstance(row, dict)]
-PAGE_OVERRIDES = {str(row.get("route")): row for row in STATE.get("pages", []) if isinstance(row, dict) and row.get("route")}
+def _normalise_page_row(row: dict) -> dict:
+    """Accept the D1 snapshot's snake_case fields and the admin API's camelCase.
+
+    The build snapshot is deliberately a thin D1 export, so it currently carries
+    ``seo_title``/``meta_description``/``sitemap_enabled``.  Normalising here
+    keeps the renderer independent from the storage naming convention and makes
+    the page SEO controls authoritative at build time.
+    """
+    value = dict(row)
+    def boolish(raw):
+        if isinstance(raw, str):
+            return raw.strip().lower() not in {"", "0", "false", "no", "off"}
+        return bool(raw)
+    value["seoTitle"] = str(row.get("seoTitle") or row.get("seo_title") or "")
+    value["metaDescription"] = str(row.get("metaDescription") or row.get("meta_description") or "")
+    value["robots"] = str(row.get("robots") or "")
+    if "sitemapEnabled" in row:
+        value["sitemapEnabled"] = boolish(row.get("sitemapEnabled"))
+    elif "sitemap_enabled" in row:
+        value["sitemapEnabled"] = boolish(row.get("sitemap_enabled"))
+    else:
+        value["sitemapEnabled"] = None
+    return value
+
+
+PAGE_OVERRIDES = {
+    str(row.get("route")): _normalise_page_row(row)
+    for row in STATE.get("pages", [])
+    if isinstance(row, dict) and row.get("route")
+}
+PRODUCT_SEO_OVERRIDES = {}
 for _seo in STATE.get("productSeo", []):
-    if isinstance(_seo, dict) and _seo.get("slug") and _seo.get("locale", "en") == "en":
-        _seo_override = {"seoTitle": _seo.get("seoTitle", ""), "metaDescription": _seo.get("metaDescription", "")}
-        _seo_slug = str(_seo["slug"])
-        PAGE_OVERRIDES.setdefault("/product/" + _seo_slug + ".html", _seo_override)
-        for _catalog_item in CATALOG.get("categories", []):
-            if str(_catalog_item.get("slug")) == _seo_slug and _catalog_item.get("route"):
-                PAGE_OVERRIDES.setdefault(str(_catalog_item["route"]), _seo_override)
+    if not isinstance(_seo, dict) or not _seo.get("slug"):
+        continue
+    _slug = str(_seo.get("slug")).strip().lower()
+    _locale = str(_seo.get("locale") or "en").strip().lower()
+    _title = str(_seo.get("seoTitle") or _seo.get("seo_title") or "").strip()
+    _description = str(_seo.get("metaDescription") or _seo.get("meta_description") or "").strip()
+    if _title or _description:
+        PRODUCT_SEO_OVERRIDES[(_slug, _locale)] = {
+            "seoTitle": _title,
+            "metaDescription": _description,
+        }
+
+# Reviewed source fallback for the two currently published locales. D1 rows
+# remain authoritative and replace these values as soon as an editor saves a
+# locale-specific product SEO record.
+PRODUCT_FALLBACK_SEO = {
+    "mineral-water-closure-cap-molds": {"seoTitle": "Molde de tapón para agua y bebidas", "metaDescription": "Moldes de alta precisión para cierres de agua mineral, bebidas carbonatadas y zumos."},
+    "oil-bottle-cap-mould": {"seoTitle": "Molde de tapón para aceite comestible", "metaDescription": "Soluciones de molde para cierres con anilla y evidencia de manipulación en envases de aceite."},
+    "flip-top-caps-mould": {"seoTitle": "Molde de tapón cosmético flip-top", "metaDescription": "Moldes con bisagra viva para envases de champú, acondicionador y cuidado personal."},
+    "engine-oil-cap-mould": {"seoTitle": "Molde de tapón para aceite de motor", "metaDescription": "Moldes resistentes para cierres de lubricantes de automoción y envases industriales."},
+    "food-packaging-cap-mould": {"seoTitle": "Molde de tapón para envases alimentarios", "metaDescription": "Moldes para cierres roscados y a presión de salsas, lácteos y alimentos secos."},
+    "medical-cap-mould": {"seoTitle": "Molde de tapón médico", "metaDescription": "Moldes de precisión para frascos farmacéuticos, jarabes y envases de diagnóstico."},
+    "personal-care-cap-mould": {"seoTitle": "Molde de tapón para cuidado personal", "metaDescription": "Moldes para cierres disc-top, tubos y lociones con opciones de orificio personalizado."},
+    "functional-cap-mould": {"seoTitle": "Molde de tapón funcional combinado", "metaDescription": "Moldes para mecanismos de seguridad infantil, apertura fácil y evidencia de manipulación."},
+    "plastic-handle-cap-mould": {"seoTitle": "Molde de asa de plástico", "metaDescription": "Moldes de asas ergonómicas para botellas PET de 5 a 20 litros, aceite y bidones químicos."},
+}
+
+CANONICAL_ALIASES = {
+    "/about/about_us.html", "/about/ABOUT_US.html", "/machine/Cap-Auxiliary-Machines.html",
+    "/contact/contact_us.html", "/cap-samples/Sample.html", "/news/news.html",
+    "/videolist/Cap-Mold-Video.html", "/about/FAQs.html",
+}
 BODY_OVERRIDES = {str(row.get("route")): str(row.get("mainHtml", "")) for row in STATE.get("pageBodies", []) if isinstance(row, dict) and row.get("route")}
 TRANSLATION_OVERRIDES = {(str(row.get("resourceId")), str(row.get("locale"))): row.get("content") for row in STATE.get("translations", []) if isinstance(row, dict)}
 BANNER_CONFIG = STATE.get("banners") if isinstance(STATE.get("banners"), dict) else {}
@@ -137,6 +192,62 @@ def navigation_label(url: str, fallback: str) -> str:
 def localized_override(locale: str, route: str) -> dict:
     value = TRANSLATION_OVERRIDES.get(("page:" + route, locale))
     return value if isinstance(value, dict) else {}
+
+
+def product_slug_for_route(route: str) -> str:
+    """Resolve a public product route to the catalogue's canonical slug."""
+    for item in CATALOG.get("categories", []):
+        if not isinstance(item, dict):
+            continue
+        if str(item.get("route") or "") == route:
+            return str(item.get("slug") or "").strip().lower()
+    match = re.fullmatch(r"/product/([^/]+)\.html", route)
+    return match.group(1).strip().lower() if match else ""
+
+
+def page_override_for(locale: str, route: str) -> dict:
+    """Return route metadata, preferring the product SEO row for this locale."""
+    value = dict(PAGE_OVERRIDES.get(route, {}))
+    slug = product_slug_for_route(route)
+    if slug:
+        product = PRODUCT_SEO_OVERRIDES.get((slug, locale)) or PRODUCT_SEO_OVERRIDES.get((slug, "en"))
+        if not product and locale == "es":
+            product = PRODUCT_FALLBACK_SEO.get(slug)
+        if product:
+            value.update(product)
+    return value
+
+
+def effective_robots(route: str) -> str:
+    """Keep the entire site blocked until launch approval, then honour D1."""
+    if not INDEXING_APPROVED:
+        return "noindex,nofollow"
+    if route in CANONICAL_ALIASES:
+        return "noindex,follow"
+    value = str(PAGE_OVERRIDES.get(route, {}).get("robots") or "index,follow")
+    return value if value in {"index,follow", "noindex,follow", "noindex,nofollow"} else "index,follow"
+
+
+def sitemap_enabled(route: str) -> bool:
+    """Use the page registry when present; generated routes default to included."""
+    if not INDEXING_APPROVED:
+        return False
+    if route in CANONICAL_ALIASES:
+        return False
+    row = PAGE_OVERRIDES.get(route)
+    if isinstance(row, dict) and row.get("sitemapEnabled") is not None:
+        return bool(row.get("sitemapEnabled"))
+    return True
+
+
+def canonical_route_from_localized(route: str) -> str:
+    """Strip a configured locale prefix from a generated public URL."""
+    value = str(route or "")
+    for lang in LOCALES:
+        prefix = str(lang.get("pathPrefix") or "").strip("/")
+        if prefix and value.startswith("/" + prefix + "/"):
+            return value[len(prefix) + 1 :]
+    return value
 
 def effective_banners(locale: str) -> list[dict]:
     slides = BANNER_CONFIG.get("slides", []) if isinstance(BANNER_CONFIG, dict) else []
@@ -351,17 +462,99 @@ def footer(locale: str) -> str:
     vals = {"PRODUCT_LINKS": links, "QUICK_LINKS": quick, "WHATSAPP_NUMBER": esc(WHATSAPP), "FOOTER_EYEBROW": esc(text(locale, "footer_eyebrow")), "FOOTER_CTA_TITLE": esc(text(locale, "footer_cta_title")), "FOOTER_CTA_TEXT": esc(text(locale, "footer_cta_text")), "FOOTER_CTA_BUTTON": esc(text(locale, "quote")), "FOOTER_TAGLINE": esc(footer_config.get("about") or text(locale, "footer_tagline")), "FOOTER_ADDRESS": esc(ADDRESS), "FOOTER_PRODUCTS_TITLE": esc(text(locale, "footer_products")), "FOOTER_CONTACT_TITLE": esc(footer_config.get("contactHeading") or text(locale, "footer_contact")), "FOOTER_QUOTE": esc(text(locale, "footer_quote")), "FOOTER_PRIVACY": esc(text(locale, "footer_privacy")), "FOOTER_STICKY": esc(text(locale, "footer_sticky"))}
     return render_template("footer", **vals)
 
+def _absolute_social_image(route: str) -> str:
+    row = page_override_for("en", route)
+    candidate = str(row.get("ogImage") or row.get("og_image") or "").strip()
+    if candidate.startswith("https://"):
+        return candidate
+    if candidate.startswith("/"):
+        return ORIGIN + candidate
+    # A stable, compressed LEYA-specific image is preferable to a remote
+    # reference-site asset and is available on every generated locale route.
+    return ORIGIN + "/assets/about/about-hero-generated.webp"
+
+
+def _json_ld(locale: str, title: str, description: str, route: str, canonical: str, image_url: str) -> str:
+    organization_id = ORIGIN + "/#organization"
+    graph = [
+        {
+            "@type": "Organization",
+            "@id": organization_id,
+            "name": BRAND_LEGAL,
+            "alternateName": BRAND_DISPLAY,
+            "url": ORIGIN + "/",
+            "email": EMAIL,
+            "telephone": WHATSAPP,
+            "logo": {"@type": "ImageObject", "url": ORIGIN + LOGO_SRC.split("?", 1)[0]},
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": ADDRESS,
+                "addressLocality": "Taizhou",
+                "addressRegion": "Zhejiang",
+                "addressCountry": "CN",
+            },
+        },
+        {
+            "@type": "WebSite",
+            "@id": ORIGIN + "/#website",
+            "url": ORIGIN + "/",
+            "name": BRAND_DISPLAY,
+            "publisher": {"@id": organization_id},
+            "inLanguage": locale,
+        },
+    ]
+    page_type = "CollectionPage" if route in {"/products/", "/Plastic-cap-mold.html", "/news/", "/video/"} else "WebPage"
+    page = {
+        "@type": page_type,
+        "@id": canonical + "#webpage",
+        "url": canonical,
+        "name": title,
+        "description": description,
+        "inLanguage": locale,
+        "isPartOf": {"@id": ORIGIN + "/#website"},
+        "about": {"@id": organization_id},
+        "primaryImageOfPage": {"@type": "ImageObject", "url": image_url},
+    }
+    if route.startswith("/product/"):
+        page["mainEntity"] = {
+            "@type": "Product",
+            "name": title,
+            "description": description,
+            "image": [image_url],
+            "brand": {"@type": "Brand", "name": BRAND_DISPLAY},
+            "category": "Plastic mould tooling",
+        }
+    graph.append(page)
+    crumbs = [{"@type": "ListItem", "position": 1, "name": "Home", "item": ORIGIN + route_for(locale, "/")}]
+    if route != "/":
+        crumbs.append({"@type": "ListItem", "position": 2, "name": title, "item": canonical})
+        graph.append({"@type": "BreadcrumbList", "@id": canonical + "#breadcrumb", "itemListElement": crumbs})
+    payload = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, separators=(",", ":"))
+    return payload.replace("</", "<\\/")
+
+
 def head(locale: str, title: str, description: str, route: str) -> str:
-    robots = "index,follow" if INDEXING_APPROVED else "noindex,nofollow"
+    robots = effective_robots(route)
     canonical = ORIGIN + route_for(locale, route)
     alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
-    # Bump the shared asset version whenever header/topbar CSS changes so
-    # browsers do not retain an older cached stylesheet during acceptance.
-    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v46")
+    default_locale = next((lang for lang in LOCALES if lang["code"] == CONFIG["site"].get("defaultLocale", "en")), LOCALES[0])
+    alternates += '<link rel="alternate" hreflang="x-default" href="' + esc(ORIGIN + route_for(default_locale["code"], route)) + '">'
+    image_url = _absolute_social_image(route)
+    structured_data = _json_ld(locale, title, description, route, canonical, image_url)
+    # Bump the asset version whenever shared header/topbar CSS changes so live
+    # browsers do not keep an older cached stylesheet during visual acceptance.
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v47")
     if route.startswith("/product/"):
         base = base.replace('</head>', '<link rel="stylesheet" href="/assets/mould-category.css?v=mould-detail-7"></head>', 1)
+    seo = ('<link rel="canonical" href="' + esc(canonical) + '">' + alternates +
+           '<meta property="og:type" content="website"><meta property="og:url" content="' + esc(canonical) + '">' +
+           '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '">' +
+           '<meta property="og:image" content="' + esc(image_url) + '"><meta property="og:image:alt" content="' + esc(BRAND_DISPLAY) + '">' +
+           '<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="' + esc(title) + '">' +
+           '<meta name="twitter:description" content="' + esc(description) + '"><meta name="twitter:image" content="' + esc(image_url) + '">' +
+           '<script type="application/ld+json">' + structured_data + '</script>')
     base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
-    return base.replace('</head>', '<link rel="canonical" href="' + esc(canonical) + '">' + alternates + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '"></head>', 1)
+    return base.replace('</head>', seo + '</head>', 1)
 
 def rail(locale: str) -> str:
     phone_digits = re.sub(r"[^0-9+]", "", WHATSAPP)
@@ -864,7 +1057,7 @@ def generate() -> dict:
             file_path = localized.strip("/")
         else:
             file_path = localized.strip("/") + "/index.html"
-        page_override = PAGE_OVERRIDES.get(route, {})
+        page_override = page_override_for(locale, route)
         translated = localized_override(locale, route)
         final_title = str(translated.get("title") or page_override.get("seoTitle") or title)
         final_description = str(translated.get("description") or page_override.get("metaDescription") or description)
@@ -925,7 +1118,11 @@ def generate() -> dict:
     write("robots.txt", "User-agent: *\n" + ("Allow: /\nSitemap: " + ORIGIN + "/sitemap.xml\n" if INDEXING_APPROVED else "Disallow: /\n"))
     sitemap = ['<?xml version="1.0" encoding="utf-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for route in sorted(routes):
-        sitemap.append("  <url><loc>" + esc(ORIGIN + route) + "</loc></url>")
+        # A pre-launch build intentionally emits an empty sitemap. Once
+        # indexing is approved, only routes enabled in the page registry (or
+        # generated routes without an explicit registry row) are listed.
+        if INDEXING_APPROVED and sitemap_enabled(canonical_route_from_localized(route)):
+            sitemap.append("  <url><loc>" + esc(ORIGIN + route) + "</loc></url>")
     sitemap.append("</urlset>")
     write("sitemap.xml", "\n".join(sitemap) + "\n")
     manifest = {"schemaVersion": 1, "locales": [{**row, "enabled": True, "publishReady": True} for row in LOCALES], "routes": sorted(routes)}

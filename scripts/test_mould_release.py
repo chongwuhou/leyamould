@@ -41,6 +41,12 @@ class Refs(HTMLParser):
                 self.images.append(value)
 
 
+def head_value(document: str, pattern: str) -> str:
+    match = re.search(pattern, document, re.I)
+    assert match, pattern
+    return match.group(1)
+
+
 manifest = json.loads((DIST / "locale-manifest.json").read_text(encoding="utf-8"))
 assert [row["code"] for row in manifest["locales"]] == LOCALES, manifest
 assert (DIST / "build-meta.json").is_file()
@@ -71,6 +77,15 @@ for locale in LOCALES:
         assert "LEYA MOULD" in html and "amyhu@leyamould.com" in html and "8613606727715" in html
         assert "XUYI" not in html and "drinkware" not in html.lower()
         assert '<meta name="robots" content="noindex,nofollow">' in html
+        assert '<link rel="canonical" href="' in html
+        assert 'hreflang="en"' in html and 'hreflang="es"' in html and 'hreflang="x-default"' in html
+        assert '<meta property="og:type" content="website">' in html
+        assert '<meta property="og:url" content="' in html
+        assert '<meta property="og:image" content="https://leyamould.com/' in html
+        assert '<meta name="twitter:card" content="summary_large_image">' in html
+        assert '<script type="application/ld+json">' in html
+        assert head_value(html, r'<title>([^<]+)</title>').strip()
+        assert head_value(html, r'<meta name="description" content="([^"]*)"').strip()
         parser = Refs()
         parser.feed(html)
         for ref in parser.links + parser.images:
@@ -118,6 +133,10 @@ for route in CAP_PRODUCT_ROUTES:
     assert html.count("mould-advantage-card") == 6
     assert "mould-samples-grid" in html and "mould-quality-list" in html
     assert "HIGH-RESOLUTION IMAGES / PDF" not in html
+es_product = (DIST / "es" / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
+en_product = (DIST / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
+assert head_value(es_product, r'<meta name="description" content="([^"]*)"') != head_value(en_product, r'<meta name="description" content="([^"]*)"')
+assert "Molde de tapón" in head_value(es_product, r"<title>([^<]+)</title>")
 machine_en = (DIST / "Bottle-Cap-Machine" / "Bottle-Cap-Machine.html").read_text(encoding="utf-8")
 machine_es = (DIST / "es" / "Bottle-Cap-Machine" / "Bottle-Cap-Machine.html").read_text(encoding="utf-8")
 assert "nopic.gif" not in machine_en and "/assets/mould-news-placeholder.svg" in machine_en
