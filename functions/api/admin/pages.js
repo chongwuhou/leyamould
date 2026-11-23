@@ -66,3 +66,4 @@ export async function onRequestPost(context) {
     await db.batch(statements); return response({ saved: true, count: pages.length, ...(await queuePublish(db)) });
   } catch (error) { return response({ error: clean(error?.message || error) }, 400); }
 }
+

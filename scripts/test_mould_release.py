@@ -51,6 +51,11 @@ assert meta["templateSet"] == "templates/site"
 
 routes = ["/", "/products/", "/Plastic-cap-mold.html", "/about/", "/manufacturing/", "/quality-control/", "/contact/", "/faq/", "/blog/", "/privacy-policy/"]
 routes += CAP_PRODUCT_ROUTES
+routes += [
+    "/about/about_us.html", "/about/ABOUT_US.html", "/about/FAQs.html",
+    "/machine/Cap-Auxiliary-Machines.html", "/cap-samples/Sample.html",
+    "/news/news.html", "/videolist/Cap-Mold-Video.html", "/contact/contact_us.html",
+]
 for locale in LOCALES:
     prefix = "" if locale == "en" else locale
     for route in routes:

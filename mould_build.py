@@ -23,6 +23,16 @@ INDEXING_APPROVED = CONFIG["site"].get("indexingApproved") is True
 OUTPUT = ROOT / (os.environ.get("LEYA_OUTPUT_DIR") or ".")
 CATALOG = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
 SNAPSHOT = ROOT / "_local_ops/build-snapshot.json"
+
+# Fresh LEYA MOULD media generated for the About page. The public template
+# remains frozen; these local assets replace reference-site photographs.
+ABOUT_MEDIA = {
+    "banner": "/assets/about/about-hero-generated.png",
+    "team": "/assets/about/about-team-generated.png",
+    "inspection": "/assets/about/about-inspection-generated.png",
+    "showroom": "/assets/about/about-showroom-generated.png",
+    "assembly": "/assets/about/about-assembly-generated.png",
+}
 STATE = {}
 if SNAPSHOT.is_file():
     candidate = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
@@ -342,7 +352,7 @@ def shell(locale: str, title: str, description: str, route: str, body: str) -> s
 
 def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     banner_map = {
-        "/about/": "/upload/Banner/pheader-About.jpg",
+        "/about/": ABOUT_MEDIA["banner"],
         "/products/": "/upload/Banner/Plastic-flip-top-mold.jpg",
         "/capabilities/": "/upload/Banner/machine.jpg",
         "/samples/": "/upload/Banner/Cap-Samples.jpg",
@@ -356,6 +366,7 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
         banner = "/upload/Banner/pheader-news.jpg"
     banner_mod = " reference-banner--contact" if route == "/contact/" else (" reference-banner--compact" if route in {"/capabilities/", "/news/", "/video/", "/faq/"} or route.startswith("/news/") or route.startswith("/Bottle-Cap-Machine/") else "")
     cap = "https://www.cap-molds.com"
+    banner_src = banner if banner.startswith("/assets/") else cap + banner
     page_header_mod = " reference-page-header--samples" if route == "/samples/" else ""
     if route == "/capabilities/":
         page_eyebrow = "AUXILIARY EQUIPMENT"
@@ -371,8 +382,8 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
         page_title = esc(title)
     if route == "/contact/":
         crumb = '<nav class="reference-breadcrumb reference-breadcrumb--overlay" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav>'
-        return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async">' + crumb + '</section><header class="reference-page-header"><span class="eyebrow">' + page_eyebrow + '</span><h1>' + page_title + '</h1><p>' + esc(subtitle) + '</p></header>'
-    return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async"></section><nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav><header class="reference-page-header' + page_header_mod + '"><span class="eyebrow">' + page_eyebrow + '</span><h1>' + page_title + '</h1><p>' + esc(subtitle) + '</p></header>'
+        return '<section class="reference-banner' + banner_mod + '"><img src="' + esc(banner_src) + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async">' + crumb + '</section><header class="reference-page-header"><span class="eyebrow">' + page_eyebrow + '</span><h1>' + page_title + '</h1><p>' + esc(subtitle) + '</p></header>'
+    return '<section class="reference-banner' + banner_mod + '"><img src="' + esc(banner_src) + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async"></section><nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav><header class="reference-page-header' + page_header_mod + '"><span class="eyebrow">' + page_eyebrow + '</span><h1>' + page_title + '</h1><p>' + esc(subtitle) + '</p></header>'
 def section_heading(locale: str, eyebrow: str, title: str, description: str = "") -> str:
     return '<div class="section__head"><div><span class="eyebrow">' + esc(eyebrow) + '</span><h2 class="section__title">' + esc(title) + '</h2>' + (('<p class="copy-muted">' + esc(description) + '</p>') if description else '') + '</div></div>'
 
@@ -467,21 +478,21 @@ def about_page(locale: str) -> str:
     equipment = ["5-Axis CNC Machining Centers", "High-Speed EDM Machines", "Wire-Cut EDM Machines", "Precision Grinding Machines", "CNC Lathes & Milling Machines", "Injection Molding Trial Machines", "3D Coordinate Measuring Machines (CMM)", "Hardness Testers & Spectrometers"]
     certifications = ["ISO 9001:2015 Quality System", "CE-ready machine documentation", "Food-contact material review", "Medical mould quality records"]
     facility_images = [
-        ("CNC-machining-workshop.jpg", "CNC machining workshop"), ("EDM-machine-area.jpg", "EDM machine area"),
-        ("Quality-inspection-room.jpg", "Quality inspection room"), ("Mold-assembly-area.jpg", "Mould assembly area"),
-        ("Injection-trial-machine.jpg", "Injection trial machine"), ("Warehouse-and-shipping-area.jpg", "Warehouse and shipping area"),
-        ("5-axis-machining-center.jpg", "5-axis machining center"), ("Engineering-design-office.jpg", "Engineering design office"),
-        ("Showroom01.jpg", "Showroom 01"), ("Showroom02.jpg", "Showroom 02"), ("Showroom03.jpg", "Showroom 03"),
-        ("Showroom04.jpg", "Showroom 04"), ("Showroom05.jpg", "Showroom 05"), ("Showroom06.jpg", "Showroom 06"),
-        ("Showroom07.jpg", "Showroom 07"), ("Showroom08.jpg", "Showroom 08")
+        (ABOUT_MEDIA["assembly"], "CNC machining workshop"), (ABOUT_MEDIA["assembly"], "EDM machine area"),
+        (ABOUT_MEDIA["inspection"], "Quality inspection room"), (ABOUT_MEDIA["assembly"], "Mould assembly area"),
+        (ABOUT_MEDIA["banner"], "Injection trial machine"), (ABOUT_MEDIA["showroom"], "Warehouse and shipping area"),
+        (ABOUT_MEDIA["assembly"], "5-axis machining center"), (ABOUT_MEDIA["team"], "Engineering design office"),
+        (ABOUT_MEDIA["showroom"], "Showroom 01"), (ABOUT_MEDIA["showroom"], "Showroom 02"), (ABOUT_MEDIA["showroom"], "Showroom 03"),
+        (ABOUT_MEDIA["showroom"], "Showroom 04"), (ABOUT_MEDIA["showroom"], "Showroom 05"), (ABOUT_MEDIA["showroom"], "Showroom 06"),
+        (ABOUT_MEDIA["showroom"], "Showroom 07"), (ABOUT_MEDIA["showroom"], "Showroom 08")
     ]
     intro_body = intro(locale, title, subtitle, "/about/")
-    overview = '<section class="mould-about-block"><div class="mould-about-overview"><div class="mould-about-overview-image"><img src="https://www.cap-molds.com/images/Shuanghao-Mould-manufacturing-facility.jpg" alt="LEYA MOULD manufacturing facility" loading="eager" decoding="async"></div><div><h2>' + esc(who) + '</h2>' + ''.join('<p>' + esc(p) + '</p>' for p in who_paras) + '</div></div><div class="mould-about-stats">' + ''.join('<div class="mould-about-stat"><span class="number">' + n + '</span><span class="label">' + esc(label) + '</span></div>' for n, label in [("15+", "Years of Experience"), ("60+", "Countries Served"), ("500+", "Moulds Delivered"), ("80+", "Skilled Team Members")]) + '</div></section>'
+    overview = '<section class="mould-about-block"><div class="mould-about-overview"><div class="mould-about-overview-image"><img src="' + ABOUT_MEDIA["team"] + '" alt="LEYA MOULD engineering team reviewing a mould project" loading="eager" decoding="async"></div><div><h2>' + esc(who) + '</h2>' + ''.join('<p>' + esc(p) + '</p>' for p in who_paras) + '</div></div><div class="mould-about-stats">' + ''.join('<div class="mould-about-stat"><span class="number">' + n + '</span><span class="label">' + esc(label) + '</span></div>' for n, label in [("15+", "Years of Experience"), ("60+", "Countries Served"), ("500+", "Moulds Delivered"), ("80+", "Skilled Team Members")]) + '</div></section>'
     journey_html = '<section class="mould-about-block"><h2>' + esc(journey) + '</h2><div class="mould-about-timeline">' + ''.join('<div class="mould-about-timeline-item"><span class="year">' + esc(year) + '</span><div><h3>' + esc(head) + '</h3><p>' + esc(desc) + '</p></div></div>' for year, head, desc in timeline) + '</div></section>'
     advantages_html = '<section class="mould-about-block"><h2>' + esc(why) + '</h2><div class="mould-about-advantages">' + ''.join('<article><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg></div><h3>' + esc(head) + '</h3><p>' + esc(desc) + '</p></article>' for head, desc, icon in advantages) + '</div></section>'
     equipment_html = '<section class="mould-about-block"><h2>' + esc(facility) + '</h2><p>Our manufacturing references use modern machining, inspection and trial equipment so every tooling decision can be checked against the production brief.</p><ul class="mould-about-equipment">' + ''.join('<li><span>✓</span>' + esc(item) + '</li>' for item in equipment) + '</ul></section>'
     cert_html = '<section class="mould-about-block"><h2>' + esc(certs) + '</h2><p>Quality evidence is kept with the project and reviewed before shipment. The final documentation follows the confirmed buyer requirements.</p><div class="mould-about-certifications">' + ''.join('<span>' + esc(item) + '</span>' for item in certifications) + '</div></section>'
-    facilities_html = '<section class="mould-about-block"><h2>' + esc(production) + '</h2><p>Reference workshop, inspection and showroom images can be replaced with LEYA MOULD originals as they are approved.</p><div class="mould-about-facilities">' + ''.join('<figure><img src="https://www.cap-molds.com/images/' + esc(file_name) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async"></figure>' for file_name, alt in facility_images) + '</div></section>'
+    facilities_html = '<section class="mould-about-block"><h2>' + esc(production) + '</h2><p>LEYA MOULD production references show the engineering, inspection and sample-review work behind each tooling project.</p><div class="mould-about-facilities">' + ''.join('<figure><img src="' + esc(file_name) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async"></figure>' for file_name, alt in facility_images) + '</div></section>'
     contact_html = '<section class="mould-about-contact"><h2>' + esc(together) + '</h2><p>' + esc(together_text) + '</p><div class="mould-about-contact-cards"><a href="tel:+8613606727715"><span class="icon">☎</span><span><strong>Phone / WhatsApp</strong><small>+86 136 0672 7715</small></span></a><a href="mailto:' + EMAIL + '"><span class="icon">✉</span><span><strong>Email</strong><small>' + EMAIL + '</small></span></a><a href="' + WA_URL + '" target="_blank" rel="noopener"><span class="icon">↗</span><span><strong>WhatsApp</strong><small>Chat with LEYA MOULD</small></span></a></div></section>'
     return '<div class="mould-about-page">' + intro_body + overview + journey_html + advantages_html + equipment_html + cert_html + facilities_html + contact_html + '</div>'
 
@@ -799,6 +810,16 @@ def write(path: str, content: str) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(content, encoding="utf-8")
 
+def add_alias_page(locale: str, alias_route: str, canonical_route: str, title: str, description: str, body: str, routes: dict[str, str]) -> None:
+    """Emit a reference-site URL alias while keeping the clean route canonical."""
+    localized_alias = route_for(locale, alias_route)
+    if localized_alias.endswith(".html"):
+        file_path = localized_alias.strip("/")
+    else:
+        file_path = localized_alias.strip("/") + "/index.html"
+    write(file_path, shell(locale, title + " | " + BRAND_DISPLAY, description, canonical_route, body))
+    routes[localized_alias] = title
+
 def generate() -> dict:
     routes: dict[str, str] = {}
     news_items = effective_news_items()
@@ -825,16 +846,30 @@ def generate() -> dict:
         add(code, "/Plastic-cap-mold.html", text(code, "products"), text(code, "categories_text"), products_page(code))
         for cap_item in CAP_MOULD_SERIES:
             add(code, cap_item["route"], cap_item["title"], cap_item["description"], cap_product_page(code, cap_item))
-        add(code, "/about/", text(code, "about_title"), text(code, "about_text"), about_page(code))
+        about_body = about_page(code)
+        add(code, "/about/", text(code, "about_title"), text(code, "about_text"), about_body)
+        add_alias_page(code, "/about/about_us.html", "/about/", text(code, "about_title"), text(code, "about_text"), about_body, routes)
+        add_alias_page(code, "/about/ABOUT_US.html", "/about/", text(code, "about_title"), text(code, "about_text"), about_body, routes)
         add(code, "/capabilities/", text(code, "capabilities"), text(code, "technical_text"), capabilities_page(code))
+        capabilities_body = capabilities_page(code)
+        add_alias_page(code, "/machine/Cap-Auxiliary-Machines.html", "/capabilities/", "Cap Auxiliary Machines" if code == "en" else text(code, "capabilities"), text(code, "technical_text"), capabilities_body, routes)
         for service in CATALOG["services"]:
             add(code, "/capabilities/" + service["slug"] + "/", service["title"], service["text"], service_page(code, service))
         add(code, "/manufacturing/", text(code, "process"), text(code, "process_title"), simple_page(code, "/manufacturing/", text(code, "process"), text(code, "process_title"), '<p>' + esc(text(code, "process_title")) + '</p><p>' + esc(text(code, "technical_text")) + '</p>'))
         add(code, "/quality-control/", text(code, "footer_quality"), text(code, "technical_text"), simple_page(code, "/quality-control/", text(code, "footer_quality"), text(code, "technical_text"), '<p>' + esc(text(code, "technical_text")) + '</p>'))
         add(code, "/request-sample/", text(code, "quote"), text(code, "resources_text"), contact_page(code))
-        add(code, "/contact/", text(code, "contact"), text(code, "contact_intro"), contact_page(code))
-        add(code, "/samples/", "Plastic Cap Samples" if code == "en" else ("Muestras de tapas de plástico" if code == "es" else text(code, "samples")), "Explore plastic bottle cap samples manufactured with precision moulds.", samples_page(code))
-        add(code, "/news/", "News & Updates" if code == "en" else "Noticias y novedades", "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." if code == "en" else "Conozca las novedades técnicas y los proyectos de LEYA MOULD.", news_listing_page(code, "/news/", "News & Updates" if code == "en" else "Noticias y novedades", "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." if code == "en" else "Conozca las novedades técnicas y los proyectos de LEYA MOULD.", news_items, "/news/", "NEWS & INSIGHTS"))
+        contact_body = contact_page(code)
+        add(code, "/contact/", text(code, "contact"), text(code, "contact_intro"), contact_body)
+        add_alias_page(code, "/contact/contact_us.html", "/contact/", text(code, "contact"), text(code, "contact_intro"), contact_body, routes)
+        samples_title = "Plastic Cap Samples" if code == "en" else ("Muestras de tapas de plástico" if code == "es" else text(code, "samples"))
+        samples_body = samples_page(code)
+        add(code, "/samples/", samples_title, "Explore plastic bottle cap samples manufactured with precision moulds.", samples_body)
+        add_alias_page(code, "/cap-samples/Sample.html", "/samples/", samples_title, "Explore plastic bottle cap samples manufactured with precision moulds.", samples_body, routes)
+        news_title = "News & Updates" if code == "en" else "Noticias y novedades"
+        news_description = "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." if code == "en" else "Conozca las novedades técnicas y los proyectos de LEYA MOULD."
+        news_body = news_listing_page(code, "/news/", news_title, news_description, news_items, "/news/", "NEWS & INSIGHTS")
+        add(code, "/news/", news_title, news_description, news_body)
+        add_alias_page(code, "/news/news.html", "/news/", news_title, news_description, news_body, routes)
         add(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_listing_page(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_items, "/news/", "BOTTLE CAP MOULDS"))
         add(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", news_listing_page(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", MACHINE_NEWS_ITEMS, "/Bottle-Cap-Machine/", "BOTTLE CAP MACHINE"))
         for item in news_items:
@@ -843,8 +878,13 @@ def generate() -> dict:
         for item in MACHINE_NEWS_ITEMS:
             detail_route = "/Bottle-Cap-Machine/" + item["slug"] + ".html"
             add(code, detail_route, localized_item_text(item, code, "title"), localized_item_text(item, code, "summary"), news_detail_page(code, detail_route, item, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "BOTTLE CAP MACHINE"))
-        add(code, "/video/", "Video Gallery" if code == "en" else "Galería de vídeos", "Watch our latest mould demonstrations, factory tours, and technical insights." if code == "en" else "Vea nuestras demostraciones de moldes y conocimientos técnicos.", video_page(code))
+        video_title = "Video Gallery" if code == "en" else "Galería de vídeos"
+        video_description = "Watch our latest mould demonstrations, factory tours, and technical insights." if code == "en" else "Vea nuestras demostraciones de moldes y conocimientos técnicos."
+        video_body = video_page(code)
+        add(code, "/video/", video_title, video_description, video_body)
+        add_alias_page(code, "/videolist/Cap-Mold-Video.html", "/video/", video_title, video_description, video_body, routes)
         add(code, "/faq/", text(code, "faq_title"), text(code, "faq_intro"), faq_page(code))
+        add_alias_page(code, "/about/FAQs.html", "/faq/", text(code, "faq_title"), text(code, "faq_intro"), faq_page(code), routes)
         add(code, "/blog/", text(code, "blog_title"), text(code, "blog_text"), simple_page(code, "/blog/", text(code, "blog_title"), text(code, "blog_text"), '<p>' + esc(text(code, "blog_text")) + '</p><p><a class="button" href="' + localized_href(code, "/contact/#inquiry") + '">' + esc(text(code, "quote")) + ' →</a></p>'))
         add(code, "/privacy-policy/", text(code, "privacy_title"), text(code, "privacy_text"), simple_page(code, "/privacy-policy/", text(code, "privacy_title"), text(code, "privacy_text"), '<p>' + esc(text(code, "privacy_text")) + '</p>'))
     not_found = shell("en", "Page Not Found | LEYA MOULD", "The requested page could not be found.", "/404.html", intro("en", "Page Not Found", "The requested page could not be found.", "/404.html") + '<section class="section"><div class="shell"><a class="button" href="/">Back to Home →</a></div></section>')
@@ -862,5 +902,6 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
+
 
 
