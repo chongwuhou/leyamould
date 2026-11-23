@@ -12,6 +12,21 @@ from __future__ import annotations
 
 REFERENCE_ORIGIN = "https://www.cap-molds.com"
 
+# The reference catalogue uses a dedicated, short hero sentence on each
+# category page. Keeping these strings in the page data preserves the target
+# line rhythm without changing the shared header/footer renderer.
+REFERENCE_HERO_DESCRIPTIONS = {
+    "mineral-water-closure-cap-molds": "High‑precision cap moulds for mineral water, carbonated drinks, hot‑fill, sports, tamper‑evident, and lightweight closures. PCO 1881, 30/25, and custom neck finishes.",
+    "oil-bottle-cap-mould": "High‑precision moulds for olive oil, sunflower oil, canola oil, and cooking oil bottles. Leak‑proof design, food‑grade compliance, multi‑cavity up to 72 cavities.",
+    "engine-oil-cap-mould": "Heavy‑duty injection moulds engineered for motor oil, lubricant, ATF, and hydraulic fluid bottles. Superior chemical resistance, high‑torque seal integrity, and lifetime durability up to 5 million cycles.",
+    "food-packaging-cap-mould": "Precision injection moulds for yogurt cups, sauce bottles, jam jars, and ready‑meal containers. FDA & EU compliant, leak‑proof, tamper‑evident, and built for high‑output lines.",
+    "medical-cap-mould": "Precision injection moulds for pharmaceutical, diagnostic, and medical device caps. Cleanroom‑compatible, FDA & ISO 13485 compliant, and engineered for high‑purity production.",
+    "flip-top-caps-mould": "High‑cycle flip‑top cap moulds engineered for smooth action, 50,000+ cycles tested, tailored for shampoo, lotion, and cosmetic packaging.",
+    "personal-care-cap-mould": "Precision injection moulds for flip‑top, disc‑top, and pump caps used on shampoo, lotion, body wash, and cosmetic bottles. Soft‑touch, leak‑proof, and built for high‑speed filling lines.",
+    "functional-cap-mould": "Precision injection moulds for sport caps, push‑pull closures, and complex combination caps. Leak‑proof, durable, and designed for high‑output assembly lines.",
+    "plastic-handle-cap-mould": "Heavy‑duty injection moulds for plastic handles used on bottles, jerry cans, and containers. Engineered for high strength, wear resistance, and multi‑cavity production.",
+}
+
 
 def _asset(path: str) -> str:
     if path.startswith(("http://", "https://", "/assets/")):
@@ -180,6 +195,7 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     hero = '<section class="mould-detail-hero" style="--mould-hero:url(\'' + esc(_asset(details["hero_image"])) + '\')"><div class="mould-detail-container"><h1>' + hero_title + '</h1><p class="mould-hero-subtitle">' + esc(item["description"]) + ' ' + esc(item["detail"]) + '</p><a href="#contact" class="mould-hero-cta">' + esc(_lang(locale, "quote")) + ' →</a><div class="mould-hero-stats">' + ''.join('<div class="mould-hero-stat"><div class="number">' + esc(number) + '</div><div class="label">' + esc(label) + '</div></div>' for number, label in details["stats"]) + '</div></div></section>'
     # Keep the hero copy to the same concise rhythm as the reference page.
     hero = hero.replace(esc(item["description"]) + ' ' + esc(item["detail"]), esc(item["description"]))
+    hero = hero.replace(esc(item["description"]), esc(REFERENCE_HERO_DESCRIPTIONS.get(item["slug"], item["description"])))
     crumb = '<nav class="mould-breadcrumb" aria-label="Breadcrumb"><div class="mould-detail-container"><a href="' + href(locale, "/") + '">' + esc(_lang(locale, "home")) + '</a><span>/</span><a href="' + href(locale, "/Plastic-cap-mold.html") + '">' + esc(_lang(locale, "cap_mould")) + '</a><span>/</span><span>' + esc(title) + '</span></div></nav>'
 
     products = '<section class="mould-products" id="products"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "our_products")) + '</span><h2>' + esc(details["hero_title"] + " " + details["hero_accent"]) + ' Types</h2><p>' + esc(item["detail"]) + '</p><i></i></div><div class="mould-products-grid">'
