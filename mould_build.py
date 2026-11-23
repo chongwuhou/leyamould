@@ -22,6 +22,8 @@ ORIGIN = CONFIG["site"]["origin"]
 INDEXING_APPROVED = CONFIG["site"].get("indexingApproved") is True
 OUTPUT = ROOT / (os.environ.get("LEYA_OUTPUT_DIR") or ".")
 CATALOG = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
+EDITORIAL_DATA = json.loads((ROOT / "data/mould-news-editorial.json").read_text(encoding="utf-8")) if (ROOT / "data/mould-news-editorial.json").is_file() else {"items": []}
+EDITORIAL_BY_SLUG = {str(row.get("slug")): row for row in EDITORIAL_DATA.get("items", []) if isinstance(row, dict) and row.get("slug")}
 SNAPSHOT = ROOT / "_local_ops/build-snapshot.json"
 
 # Only images that contain identifiable people are replaced with compressed
@@ -410,6 +412,25 @@ MACHINE_NEWS_ITEMS = [
     {"slug": "zero-defect-cap-sealing-surfaces", "title": "Achieving Zero-Defect Cap Sealing Surfaces", "titleEs": "Cómo lograr superficies de sellado de tapas sin defectos", "date": "2026/05/01", "image": "https://www.cap-molds.com/Upload/20260501/202605010148488510.jpg", "summary": "A practical inspection sequence for threads, plugs and sealing lips.", "summaryEs": "Secuencia práctica de inspección para roscas, tapones y labios de sellado."},
 ]
 
+def editorial_news_items(category: str) -> list[dict]:
+    """Flatten the reviewed bilingual registry for the existing card component."""
+    result = []
+    for row in EDITORIAL_DATA.get("items", []):
+        if not isinstance(row, dict) or row.get("category") != category:
+            continue
+        title = row.get("title") if isinstance(row.get("title"), dict) else {}
+        description = row.get("description") if isinstance(row.get("description"), dict) else {}
+        alt = row.get("alt") if isinstance(row.get("alt"), dict) else {}
+        result.append({
+            "slug": str(row.get("slug")), "title": str(title.get("en") or ""), "titleEs": str(title.get("es") or ""),
+            "date": str(row.get("date") or "").replace("-", "/"), "image": str(row.get("cover") or "/assets/mould-news-placeholder.svg"),
+            "summary": str(description.get("en") or ""), "summaryEs": str(description.get("es") or ""),
+            "alt": str(alt.get("en") or title.get("en") or "LEYA MOULD technical reference"),
+            "altEs": str(alt.get("es") or title.get("es") or "Referencia técnica de LEYA MOULD"),
+            "editorial": row,
+        })
+    return result
+
 # One canonical list in data/mould-catalog.json drives the aggregate page,
 # home cards, navigation, footer and every dedicated product route.  The
 # explicit order mirrors the reference site's nine-item Cap mold menu.
@@ -463,6 +484,11 @@ def footer(locale: str) -> str:
     return render_template("footer", **vals)
 
 def _absolute_social_image(route: str) -> str:
+    detail = re.fullmatch(r"/(?:news|Bottle-Cap-Machine)/([a-z0-9-]+)\.html", str(route or ""))
+    if detail and detail.group(1) in EDITORIAL_BY_SLUG:
+        cover = str(EDITORIAL_BY_SLUG[detail.group(1)].get("cover") or "")
+        if cover.startswith("/"):
+            return ORIGIN + cover
     row = page_override_for("en", route)
     candidate = str(row.get("ogImage") or row.get("og_image") or "").strip()
     if candidate.startswith("https://"):
@@ -503,7 +529,8 @@ def _json_ld(locale: str, title: str, description: str, route: str, canonical: s
             "inLanguage": locale,
         },
     ]
-    page_type = "CollectionPage" if route in {"/products/", "/Plastic-cap-mold.html", "/news/", "/video/"} else "WebPage"
+    detail = re.fullmatch(r"/(?:news|Bottle-Cap-Machine)/([a-z0-9-]+)\.html", str(route or ""))
+    page_type = "Article" if detail and detail.group(1) in EDITORIAL_BY_SLUG else ("CollectionPage" if route in {"/products/", "/Plastic-cap-mold.html", "/news/", "/video/"} else "WebPage")
     page = {
         "@type": page_type,
         "@id": canonical + "#webpage",
@@ -524,6 +551,13 @@ def _json_ld(locale: str, title: str, description: str, route: str, canonical: s
             "brand": {"@type": "Brand", "name": BRAND_DISPLAY},
             "category": "Plastic mould tooling",
         }
+    elif detail and detail.group(1) in EDITORIAL_BY_SLUG:
+        editorial = EDITORIAL_BY_SLUG[detail.group(1)]
+        page["author"] = {"@type": "Organization", "name": BRAND_DISPLAY}
+        page["datePublished"] = str(editorial.get("date") or "").replace("/", "-")
+        page["dateModified"] = editorial.get("lastReviewed")
+        page["headline"] = title
+        page["image"] = [image_url]
     graph.append(page)
     crumbs = [{"@type": "ListItem", "position": 1, "name": "Home", "item": ORIGIN + route_for(locale, "/")}]
     if route != "/":
@@ -973,8 +1007,14 @@ def localized_item_text(item: dict, locale: str, field: str) -> str:
         return item.get(field + "Es") or item.get(field, "")
     return item.get(field, "")
 
-def effective_news_items() -> list[dict]:
-    """Project the reviewed Blog table into the frozen news-card component."""
+def effective_news_items(category: str = "news") -> list[dict]:
+    """Project reviewed mould editorial (or a matching D1 row) into cards.
+
+    The registry is the auditable source fallback for this site. A D1 row only
+    replaces it when it carries the same reviewed rich article payload; an
+    unrelated water-cup Blog snapshot must never erase mould news.
+    """
+    reviewed = editorial_news_items(category)
     rows = STATE.get("blogPosts") if isinstance(STATE.get("blogPosts"), list) else []
     mapped = []
     for row in rows:
@@ -989,20 +1029,25 @@ def effective_news_items() -> list[dict]:
             continue
         date = str(row.get("date") or row.get("published_at") or row.get("updated_at") or "")[:10].replace("-", "/")
         image_src = str(row.get("image") or "/assets/mould-news-placeholder.svg")
+        if slug not in EDITORIAL_BY_SLUG:
+            continue
         mapped.append({
             "slug": slug, "title": title, "titleEs": str(row.get("titleEs") or row.get("title_es") or ""),
             "date": date, "image": image_src, "summary": summary,
-            "summaryEs": str(row.get("summaryEs") or row.get("summary_es") or "")
+            "summaryEs": str(row.get("summaryEs") or row.get("summary_es") or ""),
+            "alt": str(row.get("alt") or title), "altEs": str(row.get("altEs") or row.get("alt_es") or title),
+            "editorial": EDITORIAL_BY_SLUG.get(slug),
         })
-    return mapped or NEWS_ITEMS
+    return mapped or reviewed or (NEWS_ITEMS if category == "news" else MACHINE_NEWS_ITEMS)
 
 def news_card(locale: str, item: dict, detail_prefix: str, category_label: str) -> str:
     detail_route = detail_prefix + item["slug"] + ".html"
     read_more = "Read More" if locale == "en" else "Leer más"
     title = localized_item_text(item, locale, "title")
     summary = localized_item_text(item, locale, "summary")
+    alt = item.get("altEs" if locale == "es" else "alt") or title
     return ('<article class="news-card">'
-        '<a class="news-card__media" href="' + localized_href(locale, detail_route) + '"><img src="' + esc(item["image"]) + '" alt="' + esc(title) + '" loading="lazy" decoding="async"></a>'
+        '<a class="news-card__media" href="' + localized_href(locale, detail_route) + '"><img src="' + esc(item["image"]) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async"></a>'
         '<div class="news-card__content"><span class="eyebrow">' + esc(category_label) + '</span><time datetime="' + esc(item["date"]) + '">' + esc(item["date"]) + '</time>'
         '<h2><a href="' + localized_href(locale, detail_route) + '">' + esc(title) + '</a></h2><p>' + esc(summary) + '</p>'
         '<a class="news-card__link" href="' + localized_href(locale, detail_route) + '">' + esc(read_more) + ' →</a></div></article>')
@@ -1011,19 +1056,70 @@ def news_listing_page(locale: str, route: str, title: str, subtitle: str, items:
     cards = ''.join(news_card(locale, item, detail_prefix, category_label) for item in items)
     return intro(locale, title, subtitle, route) + '<section class="section news-listing-page"><div class="shell"><div class="blog-listing__grid">' + cards + '</div></div></section>'
 
-def news_detail_page(locale: str, route: str, item: dict, category_route: str, category_label: str) -> str:
-    back = "Back to News" if locale == "en" else "Volver a noticias"
-    cta = "Discuss this topic with LEYA MOULD" if locale == "en" else "Comentar este tema con LEYA MOULD"
+def _editorial_route(slug: str) -> str:
+    row = EDITORIAL_BY_SLUG.get(slug) or {}
+    return "/news/" if row.get("category") == "news" else "/Bottle-Cap-Machine/"
+
+def rich_news_body(locale: str, item: dict, category_label: str) -> str:
+    """Render the seven-part GEO article without changing the shared shell."""
+    editorial = item.get("editorial") if isinstance(item.get("editorial"), dict) else {}
+    lang = "es" if locale == "es" else "en"
     title = localized_item_text(item, locale, "title")
     summary = localized_item_text(item, locale, "summary")
-    detail_text = ("Share the relevant drawing, material, cavity plan and machine information with our engineering team. We will review the project details and return with the next practical questions."
-                   if locale == "en" else "Comparta con nuestro equipo de ingeniería el plano, el material, el número de cavidades y los datos de la máquina. Revisaremos el proyecto y volveremos con las siguientes preguntas prácticas.")
+    cover_alt = item.get("altEs" if lang == "es" else "alt") or title
+    sections = (editorial.get("sections") or {}).get(lang, [])
+    checklist = (editorial.get("checklist") or {}).get(lang, [])
+    faqs = (editorial.get("faqs") or {}).get(lang, [])
+    matrix = editorial.get("matrix") or {}
+    products = editorial.get("products") or []
+    related_slugs = editorial.get("related") or []
+    if not sections:
+        return '<p>' + esc(summary) + '</p>'
+    section_html = []
+    for number, section in enumerate(sections, 1):
+        section_html.append('<section class="blog-section"><h2><span class="blog-section__number">0' + str(number) + '</span>' + esc(section.get("heading") or "") + '</h2><p>' + esc(section.get("paragraph") or "") + '</p></section>')
+    checklist_title = "Buyer checklist" if lang == "en" else "Lista de comprobación del comprador"
+    checklist_html = '<section class="blog-checklist"><h2>' + checklist_title + '</h2><ol>' + ''.join('<li>' + esc(value) + '</li>' for value in checklist) + '</ol></section>'
+    matrix_title = "Decision matrix" if lang == "en" else "Matriz de decisión"
+    headers = (matrix.get("headers") or {}).get(lang, [])
+    rows = matrix.get("rows") or []
+    matrix_html = '<section class="blog-buyer-matrix"><h2>' + matrix_title + '</h2><div class="blog-buyer-matrix__scroll"><table><thead><tr>' + ''.join('<th>' + esc(value) + '</th>' for value in headers) + '</tr></thead><tbody>'
+    for row in rows:
+        cells = (row or {}).get(lang, [])
+        matrix_html += '<tr>' + ''.join('<td>' + esc(value) + '</td>' for value in cells) + '</tr>'
+    matrix_html += '</tbody></table></div></section>'
+    faq_title = "Frequently asked questions" if lang == "en" else "Preguntas frecuentes"
+    faq_html = '<section class="blog-faq"><h2>' + faq_title + '</h2>' + ''.join('<details><summary>' + esc(faq.get("question") or "") + '</summary><p>' + esc(faq.get("answer") or "") + '</p></details>' for faq in faqs) + '</section>'
+    product_title = "Relevant mould categories" if lang == "en" else "Categorías de moldes relacionadas"
+    product_html = '<section class="blog-products"><h2>' + product_title + '</h2><div class="blog-product-links">' + ''.join('<a class="blog-editorial__product-link" href="' + localized_href(locale, product.get("route") or "/products/") + '"><strong>' + esc((product.get("label") or {}).get(lang) or "") + '</strong><span>' + esc((product.get("reason") or {}).get(lang) or "") + '</span></a>' for product in products[:3]) + '</div></section>'
+    related_title = "Related reading" if lang == "en" else "Lecturas relacionadas"
+    related_cards = []
+    for slug in related_slugs[:3]:
+        related = EDITORIAL_BY_SLUG.get(str(slug))
+        if not related:
+            continue
+        rtitle = (related.get("title") or {}).get(lang) or (related.get("title") or {}).get("en")
+        rsummary = (related.get("description") or {}).get(lang) or (related.get("description") or {}).get("en")
+        related_cards.append('<a class="blog-related__item" href="' + localized_href(locale, _editorial_route(str(slug)) + str(slug) + ".html") + '"><img src="' + esc(str(related.get("cover") or "/assets/mould-news-placeholder.svg")) + '" alt="' + esc(rtitle) + '" loading="lazy" decoding="async"><span><strong>' + esc(rtitle) + '</strong><small>' + esc(rsummary) + '</small></span></a>')
+    related_html = '<section class="blog-related"><h2>' + related_title + '</h2><div class="blog-related__grid">' + ''.join(related_cards) + '</div></section>'
+    sources_title = "Sources and disclosure" if lang == "en" else "Fuentes y transparencia"
+    sources = editorial.get("evidenceSources") or []
+    disclosure = (editorial.get("imageDisclosure") or {}).get(lang) or ""
+    sources_html = '<section id="primary-sources" class="blog-sources"><h2>' + sources_title + '</h2><ul>' + ''.join('<li>' + esc(value) + '</li>' for value in sources) + '</ul><p>' + esc(disclosure) + '</p></section>'
+    cta = (editorial.get("cta") or {}).get(lang) or ("Send your project brief" if lang == "en" else "Envíe su brief de proyecto")
+    schema = {"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": title, "description": summary, "datePublished": item.get("date", "").replace("/", "-"), "dateModified": editorial.get("lastReviewed"), "inLanguage": lang, "image": [ORIGIN + str(item.get("image") or "")], "mainEntityOfPage": ORIGIN + localized_href(locale, ("/news/" if editorial.get("category") == "news" else "/Bottle-Cap-Machine/") + str(item.get("slug")) + ".html")}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": faq.get("question"), "acceptedAnswer": {"@type": "Answer", "text": faq.get("answer")}} for faq in faqs]}]}
+    schema_html = '<script type="application/ld+json">' + json.dumps(schema, ensure_ascii=False).replace("</", "<\\/") + '</script>'
+    return ('<article class="blog-editorial__body">' + '<p class="blog-editorial__intro">' + esc(editorial.get("intro", {}).get(lang) or summary) + '</p>' + ''.join(section_html) + checklist_html + matrix_html + faq_html + product_html + related_html + sources_html + '<p class="blog-editorial__cta"><a class="button" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(cta) + ' →</a></p>' + schema_html + '</article>')
+
+def news_detail_page(locale: str, route: str, item: dict, category_route: str, category_label: str) -> str:
+    back = "Back to News" if locale == "en" else "Volver a noticias"
+    title = localized_item_text(item, locale, "title")
+    summary = localized_item_text(item, locale, "summary")
+    editorial_body = rich_news_body(locale, item, category_label)
     body = ('<section class="section news-detail-page"><div class="shell"><article class="article">'
-        '<img class="news-detail-image" src="' + esc(item["image"]) + '" alt="' + esc(title) + '" loading="eager" decoding="async">'
+        '<img class="news-detail-image" src="' + esc(item["image"]) + '" alt="' + esc(item.get("altEs" if locale == "es" else "alt") or title) + '" loading="eager" decoding="async">'
         '<div class="news-detail-meta"><span class="eyebrow">' + esc(category_label) + '</span><time datetime="' + esc(item["date"]) + '">' + esc(item["date"]) + '</time></div>'
-        '<h2>' + esc(title) + '</h2><p>' + esc(summary) + '</p>'
-        '<p>' + esc(detail_text) + '</p>'
-        '<p><a class="button" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(cta) + ' →</a></p>'
+        '<h1>' + esc(title) + '</h1><p class="news-detail-summary">' + esc(summary) + '</p>' + editorial_body +
         '<p><a class="text-link" href="' + localized_href(locale, category_route) + '">← ' + esc(back) + '</a></p>'
         '</article></div></section>')
     return intro(locale, title, summary, route) + body
@@ -1048,7 +1144,8 @@ def add_alias_page(locale: str, alias_route: str, canonical_route: str, title: s
 
 def generate() -> dict:
     routes: dict[str, str] = {}
-    news_items = effective_news_items()
+    news_items = effective_news_items("news")
+    machine_news_items = effective_news_items("machine")
     def add(locale: str, route: str, title: str, description: str, body: str) -> None:
         localized = route_for(locale, route)
         if localized == "/":
@@ -1097,11 +1194,11 @@ def generate() -> dict:
         add(code, "/news/", news_title, news_description, news_body)
         add_alias_page(code, "/news/news.html", "/news/", news_title, news_description, news_body, routes)
         add(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_listing_page(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_items, "/news/", "BOTTLE CAP MOULDS"))
-        add(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", news_listing_page(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", MACHINE_NEWS_ITEMS, "/Bottle-Cap-Machine/", "BOTTLE CAP MACHINE"))
+        add(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", news_listing_page(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", machine_news_items, "/Bottle-Cap-Machine/", "BOTTLE CAP MACHINE"))
         for item in news_items:
             detail_route = "/news/" + item["slug"] + ".html"
             add(code, detail_route, localized_item_text(item, code, "title"), localized_item_text(item, code, "summary"), news_detail_page(code, detail_route, item, "/news/Bottle-cap-molds.html", "BOTTLE CAP MOULDS"))
-        for item in MACHINE_NEWS_ITEMS:
+        for item in machine_news_items:
             detail_route = "/Bottle-Cap-Machine/" + item["slug"] + ".html"
             add(code, detail_route, localized_item_text(item, code, "title"), localized_item_text(item, code, "summary"), news_detail_page(code, detail_route, item, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "BOTTLE CAP MACHINE"))
         video_title = "Video Gallery" if code == "en" else "Galería de vídeos"
@@ -1132,6 +1229,5 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
-
 
 

@@ -139,14 +139,15 @@ assert head_value(es_product, r'<meta name="description" content="([^"]*)"') != 
 assert "Molde de tapón" in head_value(es_product, r"<title>([^<]+)</title>")
 machine_en = (DIST / "Bottle-Cap-Machine" / "Bottle-Cap-Machine.html").read_text(encoding="utf-8")
 machine_es = (DIST / "es" / "Bottle-Cap-Machine" / "Bottle-Cap-Machine.html").read_text(encoding="utf-8")
-assert "nopic.gif" not in machine_en and "/assets/mould-news-placeholder.svg" in machine_en
-assert "The Role of Cooling Water" in machine_en
-assert "El papel de la calidad del agua" in machine_es and "The Role of Cooling Water" not in machine_es
+assert "nopic.gif" not in machine_en and "/assets/news/cooling-water-quality-cap-mold-performance.webp" in machine_en
+assert "How does cooling-water quality affect cap mould stability?" in machine_en
+assert "¿Cómo afecta la calidad del agua de refrigeración" in machine_es and "How does cooling-water quality" not in machine_es
 detail_es = (DIST / "es" / "Bottle-Cap-Machine" / "cap-ejection-pin-placement.html").read_text(encoding="utf-8")
-assert "Comparta con nuestro equipo de ingeniería" in detail_es
+assert "¿Dónde deben colocarse los pasadores de expulsión" in detail_es
+assert detail_es.count('class="blog-section"') == 7
+assert detail_es.count('class="blog-editorial__product-link"') == 3
 assert (DIST / "admin" / "index.html").is_file()
 assert "LEYA MOULD" in (DIST / "admin" / "index.html").read_text(encoding="utf-8")
 print("LEYA_MOULD_RELEASE_PASSED", len(routes), "routes x", len(LOCALES), "locales")
-
 
 

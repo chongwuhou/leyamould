@@ -1,0 +1,558 @@
+{
+  "schemaVersion": 1,
+  "standard": "XUYI_B2B_COVER_1200x800_WEBP",
+  "items": [
+    {
+      "slug": "case-study-cap-line-expansion-southeast-asia",
+      "path": "/assets/news/case-study-cap-line-expansion-southeast-asia.webp",
+      "source": "https://www.cap-molds.com/Upload/20261121/202611210157599346.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 101548,
+      "sha256": "6410757e570858088be48a3b154b146334ffa940b08c3690c418aa928087018d",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "cap-mold-demand-growth-global-markets",
+      "path": "/assets/news/cap-mold-demand-growth-global-markets.webp",
+      "source": "https://www.cap-molds.com/Upload/20261120/202611200131467551.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 124478,
+      "sha256": "c7a8d6a5de8d398a01da6b80965ba08eb6f97d050c9cf575ec9b5587c09de171",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "global-bottle-cap-mould-market-outlook",
+      "path": "/assets/news/global-bottle-cap-mould-market-outlook.webp",
+      "source": "https://www.cap-molds.com/Upload/20261120/202611200049441288.png",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 46886,
+      "sha256": "a3733e26ea7cbd43866c020e7cd34fcabc1cf37cf348ad366f7a5edac64cab4e",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "reducing-cap-weight-seal-performance",
+      "path": "/assets/news/reducing-cap-weight-seal-performance.webp",
+      "source": "https://www.cap-molds.com/Upload/20261114/202611140248174335.png",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 108424,
+      "sha256": "78b457813b606d5a3231f8d2b9a7605896802a334b91508cfa007e4a05011e55",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "micro-conformal-cooling-lightweight-caps",
+      "path": "/assets/news/micro-conformal-cooling-lightweight-caps.webp",
+      "source": "https://www.cap-molds.com/Upload/20261113/202611130229253875.png",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 43442,
+      "sha256": "039815b5b85bc2f8d3c83d47edb76d516a6825986a4f60ed5396a23c1e8e1079",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "ultra-thin-wall-cap-molding",
+      "path": "/assets/news/ultra-thin-wall-cap-molding.webp",
+      "source": "https://www.cap-molds.com/Upload/20261112/202611120102046095.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 118164,
+      "sha256": "2a5c72ff971641fd8762cbf2860c5fddb1aa5048df73e68bea8c8ddc3e6a7651",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "cap-mold-service-life-maintenance",
+      "path": "/assets/news/cap-mold-service-life-maintenance.webp",
+      "source": "https://www.cap-molds.com/Upload/20261107/202611070255255345.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 37840,
+      "sha256": "61bccf754b951473614bcab861cc7eed8abf077ff9f6396875b2bb1d9ff1e89e",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "wear-part-management-high-cavity-caps",
+      "path": "/assets/news/wear-part-management-high-cavity-caps.webp",
+      "source": "https://www.cap-molds.com/Upload/20261106/202611060127336688.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 74724,
+      "sha256": "9a417055ae4971637b571d6fe1972d6c152c41a7cfd77dfe1a42026baa3181eb",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "snap-in-bushing-replacement-design",
+      "path": "/assets/news/snap-in-bushing-replacement-design.webp",
+      "source": "https://www.cap-molds.com/Upload/20261105/202611050142583314.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 47828,
+      "sha256": "7d5f54b9ea7e95d4119f724927361e2fb23fca1cfb42242c9b97c6128c3c1c56",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "running-pcr-content-cap-molds",
+      "path": "/assets/news/running-pcr-content-cap-molds.webp",
+      "source": "https://www.cap-molds.com/Upload/20261031/202610311025284403.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 49706,
+      "sha256": "3716e0751b63c740bacf425389f70b785f45215ba5112ea067fde7c08714dd57",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "larger-runners-recycled-plastics",
+      "path": "/assets/news/larger-runners-recycled-plastics.webp",
+      "source": "https://www.cap-molds.com/Upload/20261029/202610292147119624.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 61754,
+      "sha256": "bfeda10a27f63e24c9c25ffd41f66cf23e694ed2500c1b45446fcff6b010c6bb",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "processing-pcr-hdpe-pp-cap-molds",
+      "path": "/assets/news/processing-pcr-hdpe-pp-cap-molds.webp",
+      "source": "https://www.cap-molds.com/Upload/20261028/202610282257247265.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 106792,
+      "sha256": "e495de589f36d14a6a123af0c867c5a2cb4ec0f85c83237e0d03fde031f11b08",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "cooling-water-quality-cap-mold-performance",
+      "path": "/assets/news/cooling-water-quality-cap-mold-performance.webp",
+      "source": "https://www.cap-molds.com/Upload/20260709/202607092228540366.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 30678,
+      "sha256": "5b078efe6c34e145c5cb707f187a1491c4888d1c70265b820bd54261019e6abb",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "mold-temperature-cap-mechanical-properties",
+      "path": "/assets/news/mold-temperature-cap-mechanical-properties.webp",
+      "source": "https://www.cap-molds.com/Upload/20260708/202607081642531107.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 86800,
+      "sha256": "163149fa0bdf65ecdbddd99b919e7243b6afe74c24449dc39e860b7d86eb332d",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "controlling-cap-sink-marks",
+      "path": "/assets/news/controlling-cap-sink-marks.webp",
+      "source": "https://www.cap-molds.com/Upload/20260703/202607032047427871.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 38984,
+      "sha256": "610d1f583edd268d4bf6e429e2ed36b95fc7756ae163338535af34214f82389d",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "injection-speed-cap-quality-cycle-time",
+      "path": "/assets/news/injection-speed-cap-quality-cycle-time.webp",
+      "source": "https://www.cap-molds.com/Upload/20260627/202606270247389305.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 45090,
+      "sha256": "8476f5240c696ee4d3e56abe9156a22460bb710dfcf45d7b44eacac3b681d570",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "integrated-liner-cap-solutions",
+      "path": "/assets/news/integrated-liner-cap-solutions.webp",
+      "source": "https://www.cap-molds.com/Upload/20260604/202606042146375936.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 33618,
+      "sha256": "5c49030b473c79d42f181c2fcc5a069b6f40a1c64bc4c71c4f36e44ccc322d7f",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "preventing-cap-short-shots",
+      "path": "/assets/news/preventing-cap-short-shots.webp",
+      "source": "https://www.cap-molds.com/Upload/20260530/202605300010394598.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 36672,
+      "sha256": "452a4d3754aaf727a06943a02b15727dad487657bfddf9f2b63496c26ad8c1ba",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "multi-start-thread-cap-design",
+      "path": "/assets/news/multi-start-thread-cap-design.webp",
+      "source": "https://www.cap-molds.com/Upload/20260527/202605272130057637.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 82882,
+      "sha256": "5c21becb4989e76f83e7164478c85b8bcb77d2ddcbeb5d14900d8fd43c49d81a",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "linerless-vs-liner-based-sealing",
+      "path": "/assets/news/linerless-vs-liner-based-sealing.webp",
+      "source": "https://www.cap-molds.com/Upload/20260522/202605220110087521.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 43268,
+      "sha256": "21736548bcafa4c19a87b95c82988a6109ab22f9a6ff73086e8aa53185b86ba6",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "zero-defect-cap-production-quality-system",
+      "path": "/assets/news/zero-defect-cap-production-quality-system.webp",
+      "source": "https://www.cap-molds.com/Upload/20260515/202605150027085266.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 31762,
+      "sha256": "b4dfa355fb11b922ca90177984dc2de00c07a1d3f8955fe813fc54b196460f8f",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "zero-defect-cap-sealing-surfaces",
+      "path": "/assets/news/zero-defect-cap-sealing-surfaces.webp",
+      "source": "https://www.cap-molds.com/Upload/20260501/202605010148488510.jpg",
+      "sourceType": "authorized reference-site asset",
+      "scene": "cap-mould technical reference image; use as an illustrative editorial cover, not as a customer case or production proof",
+      "visibleSubject": "plastic closure/mould component or tooling detail visible in the source photograph",
+      "fitReason": "The image is retained for the matching technical topic and disclosed as an illustrative reference image.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 51114,
+      "sha256": "ce5c831b294650de0c94a17353c81000c3e29395cdeb38ba579924d3b28a4b33",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "cap-ejection-pin-placement",
+      "path": "/assets/news/cap-ejection-pin-placement.webp",
+      "source": "LEYA MOULD editorial team",
+      "sourceType": "original in-house engineering illustration",
+      "scene": "technical engineering illustration for buyer education",
+      "visibleSubject": "Original LEYA MOULD engineering illustration: balanced ejection layout",
+      "fitReason": "Original diagram directly explains the article's decision point; it is explicitly not a production drawing.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 35480,
+      "sha256": "6606154508d1f638d60b3583e9ff981fcbd0c3115086125451ce963a78d777a2",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    },
+    {
+      "slug": "managing-cap-shrinkage",
+      "path": "/assets/news/managing-cap-shrinkage.webp",
+      "source": "LEYA MOULD editorial team",
+      "sourceType": "original in-house engineering illustration",
+      "scene": "technical engineering illustration for buyer education",
+      "visibleSubject": "Original LEYA MOULD engineering illustration: shrinkage measurement loop",
+      "fitReason": "Original diagram directly explains the article's decision point; it is explicitly not a production drawing.",
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "bytes": 32354,
+      "sha256": "e40c080f728d68fb51e411b0336f933dd6f942c1d12ed843b3ebd47a64e29a2f",
+      "review": {
+        "industryMatch": 4,
+        "buyerUse": 4,
+        "commercialRealism": 4,
+        "truthAndRights": 5,
+        "composition": 4,
+        "status": "reviewed"
+      }
+    }
+  ]
+}
