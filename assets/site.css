@@ -1407,7 +1407,7 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
   font-size:16.5px;
   line-height:1.7;
 }
-
+/* News keeps a real link for the summary page while retaining a compact category caret. */.mould-site .nav__drop--resources{gap:0;}.mould-site .nav__drop--resources .nav__link--direct{padding-right:5px;}.mould-site .nav__drop--resources .nav__toggle--caret{padding-left:5px;padding-right:10px;}
 /* Match the reference header distribution and desktop phone control. */
 .mould-site .main-nav{padding:0 20px;justify-content:space-between;gap:0;}
 .mould-site .nav-menu-list{margin-left:0;}

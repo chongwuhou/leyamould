@@ -38,7 +38,7 @@ def main() -> None:
     subprocess.run([sys.executable, "build.py"], cwd=ROOT, env=env, check=True)
     copy_tree(ROOT / "assets", DIST / "assets", ignore=shutil.ignore_patterns("*.md"))
     copy_tree(ROOT / "admin", DIST / "admin")
-    for name in ("favicon.svg", "favicon.ico", "favicon-16.png", "favicon-32.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest", "_headers"):
+    for name in ("favicon.svg", "favicon.ico", "favicon-192.png", "favicon-16.png", "favicon-32.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest", "_headers"):
         source = ROOT / name
         if source.is_file():
             shutil.copy2(source, DIST / name)
@@ -93,4 +93,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
