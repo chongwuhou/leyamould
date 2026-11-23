@@ -27,7 +27,7 @@ for endpoint in (
     '"home-banners"',
 ):
     assert endpoint in content, endpoint
-for stale in ("Why Us", "drinkware", '"/products/"'):
+for stale in ("Why Us", "drinkware", '"/products/"', "旭一", "XUYI Bottles Website"):
     assert stale not in content, stale
 
 page_content = source("functions/api/admin/page-content.js")
@@ -41,6 +41,10 @@ assert "autoTranslate" in settings and "requireHumanReview" in settings
 forms = source("assets/admin-forms.js")
 assert "LEYA MOULD Website" in forms
 assert "XUYI Bottles Website" not in forms
+
+for rel in ("assets/admin-blog.js", "assets/admin-media.js", "assets/admin-security.js", "assets/admin-publish.js"):
+    text = source(rel)
+    assert "旭一" not in text and "XUYI" not in text, rel
 
 print("LEYA_MOULD_ADMIN_CONTRACT_PASSED")
 
