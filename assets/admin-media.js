@@ -1,4 +1,4 @@
-// XUYI R2 files: show deployed references and check live D1 before safe deletion.
+// LEYA MOULD R2 files: show deployed references and check live D1 before safe deletion.
 (()=>{"use strict";
 const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
 const $=id=>document.getElementById(id);
@@ -157,4 +157,5 @@ $("media-more")?.addEventListener("click",()=>list($("media-more").dataset.curso
 $("media-upload-btn")?.addEventListener("click",upload);
 document.querySelector('[data-admin-target="media"]')?.addEventListener("click",()=>list().catch(err=>say("读取失败："+err.message)));
 })();
+
 
