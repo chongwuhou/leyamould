@@ -1,14 +1,23 @@
-// D1-managed, reviewed English page bodies for XUYI static pages.
+// D1-managed, reviewed English page bodies for LEYA MOULD static pages.
 // Uses the shared admin auth/revision pattern; does not touch Blog or catalog sources.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
-import { MANAGED_ROUTES } from "../../_shared/xuyi-routes.js";
+import { MOULD_ROUTES } from "../../_shared/mould-routes.js";
 
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(value,limit)=>String(value??"").trim().slice(0,limit);
-const allowedRoute=(route,knownRoutes=MANAGED_ROUTES)=>knownRoutes.has(route)
-  && (route==="/"||!/^\/(?:products|collections|blog|contact)(?:\/|$)/.test(route))
-  && !["/privacy-policy/","/request-sample/"].includes(route);
+// Product, blog, and translation data have their own modules.  The page-body
+// editor owns only the shared LEYA informational/contact pages.
+const EDITABLE_PAGE_ROUTES=new Set([
+  "/", "/about/", "/capabilities/", "/capabilities/mould-design/",
+  "/capabilities/precision-manufacturing/", "/capabilities/trial-sampling/",
+  "/manufacturing/", "/quality-control/", "/request-sample/", "/contact/",
+  "/samples/", "/news/", "/news/Bottle-cap-molds.html",
+  "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "/video/", "/faq/",
+  "/privacy-policy/"
+]);
+const allowedRoute=(route,knownRoutes=MOULD_ROUTES)=>knownRoutes.has(route)
+  && EDITABLE_PAGE_ROUTES.has(route);
 
 async function configuredRoutes(db){
  try{return ((await db.prepare("SELECT route FROM site_pages ORDER BY route LIMIT 500").all()).results||[])
@@ -62,3 +71,4 @@ export async function onRequestPost(c){
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,route,status,...revision});
 }
+
