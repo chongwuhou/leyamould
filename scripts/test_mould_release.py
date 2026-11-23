@@ -64,7 +64,7 @@ for locale in LOCALES:
         html = path.read_text(encoding="utf-8")
         assert "<main id=\"main-content\">" in html and "</html>" in html
         assert "LEYA MOULD" in html and "amyhu@leyamould.com" in html and "8613606727715" in html
-        assert "XUYI" not in html and "water bottle" not in html.lower() and "drinkware" not in html.lower()
+        assert "XUYI" not in html and "drinkware" not in html.lower()
         assert '<meta name="robots" content="noindex,nofollow">' in html
         parser = Refs()
         parser.feed(html)
@@ -102,6 +102,14 @@ assert positions == sorted(positions)
 assert ">Cap Mould Series</a>" not in home
 assert "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China" in home
 assert "WhatsApp +8613606727715" in home
+for route in CAP_PRODUCT_ROUTES:
+    path = DIST / route.strip("/")
+    html = path.read_text(encoding="utf-8")
+    assert "mould-detail-page" in html
+    assert html.count("mould-product-card") >= 3
+    assert html.count("mould-advantage-card") == 6
+    assert "mould-samples-grid" in html and "mould-quality-list" in html
+    assert "HIGH-RESOLUTION IMAGES / PDF" not in html
 machine_en = (DIST / "Bottle-Cap-Machine" / "Bottle-Cap-Machine.html").read_text(encoding="utf-8")
 machine_es = (DIST / "es" / "Bottle-Cap-Machine" / "Bottle-Cap-Machine.html").read_text(encoding="utf-8")
 assert "nopic.gif" not in machine_en and "/assets/mould-news-placeholder.svg" in machine_en

@@ -13,6 +13,7 @@ import re
 from pathlib import Path
 
 from locale_registry import approved_locales
+from mould_category_pages import render_category_page
 
 ROOT = Path(__file__).resolve().parent
 # The supplied logo is kept as a source asset so the published header can scale it without stretching.
@@ -229,6 +230,8 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     canonical = ORIGIN + route_for(locale, route)
     alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
     base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v39")
+    if route.startswith("/product/"):
+        base = base.replace('</head>', '<link rel="stylesheet" href="/assets/mould-category.css?v=mould-detail-1"></head>', 1)
     base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
     return base.replace('</head>', '<link rel="canonical" href="' + esc(canonical) + '">' + alternates + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '"></head>', 1)
 
@@ -305,19 +308,8 @@ def products_page(locale: str) -> str:
     return hero + crumb + products
 
 def cap_product_page(locale: str, item: dict) -> str:
-    """Render one dedicated cap-mould category without inventing SKU specs."""
-    title = item["title"]
-    checks = [
-        "Product drawing and closure geometry review",
-        "Target resin, shrinkage and sealing assumptions",
-        "Cavity plan, cycle goal and machine interface",
-        "Trial samples, inspection points and handover evidence",
-    ]
-    checklist = ''.join('<li>' + esc(check) + '</li>' for check in checks)
-    body = intro(locale, title, item["description"], item["route"])
-    body += '<section class="section"><div class="shell"><div class="split"><div>' + image(item["image"], title + " reference image", "eager") + '</div><div><span class="eyebrow">' + esc(text(locale, "categories_eyebrow")) + '</span><h2 class="section__title">' + esc(title) + '</h2><p class="copy-muted">' + esc(item["description"]) + '</p><p class="copy-muted"><strong>' + esc(item["meta"]) + '</strong></p><ul class="mould-checklist">' + checklist + '</ul><p class="notice">' + esc(text(locale, "category_note")) + '</p><a class="button" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a></div></div></div></section>'
-    body += '<section class="section section--soft"><div class="shell">' + section_heading(locale, text(locale, "technical_eyebrow"), text(locale, "resources_title"), text(locale, "resources_text")) + '<div class="split__placeholder"><strong>HIGH-RESOLUTION IMAGES / PDF</strong><p>' + esc(text(locale, "category_note")) + '</p></div><p><a class="text-link" href="' + localized_href(locale, "/Plastic-cap-mold.html") + '">← ' + esc(text(locale, "products")) + '</a></p></div></section>'
-    return body
+    helpers = {"esc": esc, "image": image, "localized_href": localized_href}
+    return render_category_page(locale, item, helpers)
 
 def about_page(locale: str) -> str:
     body = intro(locale, text(locale, "about_title"), text(locale, "about_text"), "/about/")
