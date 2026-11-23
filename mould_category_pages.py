@@ -196,6 +196,7 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     # Keep the hero copy to the same concise rhythm as the reference page.
     hero = hero.replace(esc(item["description"]) + ' ' + esc(item["detail"]), esc(item["description"]))
     hero = hero.replace(esc(item["description"]), esc(REFERENCE_HERO_DESCRIPTIONS.get(item["slug"], item["description"])))
+    hero = hero.replace('class="mould-detail-hero"', 'class="mould-detail-hero mould-detail-hero--' + item["slug"] + '"', 1)
     crumb = '<nav class="mould-breadcrumb" aria-label="Breadcrumb"><div class="mould-detail-container"><a href="' + href(locale, "/") + '">' + esc(_lang(locale, "home")) + '</a><span>/</span><a href="' + href(locale, "/Plastic-cap-mold.html") + '">' + esc(_lang(locale, "cap_mould")) + '</a><span>/</span><span>' + esc(title) + '</span></div></nav>'
 
     products = '<section class="mould-products" id="products"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "our_products")) + '</span><h2>' + esc(details["hero_title"] + " " + details["hero_accent"]) + ' Types</h2><p>' + esc(item["detail"]) + '</p><i></i></div><div class="mould-products-grid">'
