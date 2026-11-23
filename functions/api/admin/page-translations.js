@@ -2,7 +2,7 @@
 // override table. Translation drafts must be reviewed before publication.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision,loadSiteSetting,defaultLanguageConfig,normalizeLanguageConfig } from "../../_shared/site-settings.js";
-import { MANAGED_ROUTES, mouldModelFromRoute } from "../../_shared/xuyi-routes.js";
+import { MOULD_ROUTES, mouldModelFromRoute } from "../../_shared/mould-routes.js";
 import {ensureProductSeo,canonicalProductSlug} from "../../_shared/product-seo.js";
 import {blogCard,esc,listBlogPosts,sortLocalizedBlogIndexByD1Order} from "../../_shared/blog-cms.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -106,7 +106,7 @@ export async function onRequestPost(c){
     catch{return respond({error:"Unable to validate D1 product route"},503)}
     if(record?.publication_status!=="published")
       return respond({error:"Product must be published in English before translating"},409);
-  }else if(!MANAGED_ROUTES.has(route)&&!configured.has(route)){
+  }else if(!MOULD_ROUTES.has(route)&&!configured.has(route)){
     return respond({error:"Unknown LEYA MOULD route"},400);
   }
   const translatedJson=JSON.stringify({title,description,mainHtml:html});
