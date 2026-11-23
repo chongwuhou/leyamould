@@ -1233,3 +1233,20 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 .mould-site .samples-scroll--prev{left:-24px}
 .mould-site .samples-scroll--next{right:-24px}
 .mould-site .rail{box-shadow:none;background:transparent}
+
+
+/* Inner pages use the reference site's full-width banner, breadcrumb and
+   centered page heading before their content sections. */
+.mould-site .reference-banner{width:100%;overflow:hidden;margin:0 0 32px;background:#f1f3f5}
+.mould-site .reference-banner img{display:block;width:100%;height:auto;max-height:580px;object-fit:cover}
+.mould-site .reference-breadcrumb{max-width:1650px;margin:0 auto 20px;padding:0 20px;font-size:.9rem;color:#64748b}
+.mould-site .reference-breadcrumb .shell{width:100%;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0;padding:0}
+.mould-site .reference-breadcrumb a{color:#353a8e;font-weight:500;text-decoration:none}
+.mould-site .reference-breadcrumb a:hover{color:#da251d;text-decoration:underline}
+.mould-site .reference-breadcrumb span:first-of-type{color:#c0c7cf;font-size:.7rem}
+.mould-site .reference-breadcrumb span:last-of-type{color:#1a1a1a;font-weight:600}
+.mould-site .reference-page-header{max-width:1650px;margin:0 auto 40px;padding:0 20px;text-align:center}
+.mould-site .reference-page-header .eyebrow{display:inline-block;background:rgba(240,136,62,.08);color:#f0883e;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 16px;border-radius:50px;margin-bottom:14px}
+.mould-site .reference-page-header h1{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:800;color:#353a8e;margin:0 0 10px;letter-spacing:-.02em}
+.mould-site .reference-page-header p{font-size:1.05rem;color:#475569;max-width:650px;margin:0 auto;line-height:1.7}
+@media(max-width:700px){.mould-site .reference-banner{margin-bottom:20px}.mould-site .reference-banner img{max-height:300px}.mould-site .reference-breadcrumb{padding:0 20px}.mould-site .reference-page-header{padding:0 20px;margin-bottom:28px}}
