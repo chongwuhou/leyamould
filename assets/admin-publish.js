@@ -34,7 +34,7 @@
   finally{if(check)check.disabled=false}
  }
  queue.addEventListener("click",async()=>{
-  if(!window.confirm("确认将旭一全站重建请求排入 D1？GitHub Actions 未运行前不会立即上线。"))return;
+  if(!window.confirm("确认将 LEYA MOULD 全站重建请求排入 D1？GitHub Actions 未运行前不会立即上线。"))return;
   const session=token();
   if(!session){status.textContent="请先登录后台。";return}
   queue.disabled=true;status.textContent="正在向 D1 写入发布修订…";
@@ -50,3 +50,4 @@
  });
  if(check)check.addEventListener("click",checkStatus);
 })();
+
