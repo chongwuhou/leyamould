@@ -1457,3 +1457,6 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
   gap:0;
 }
 .mould-site .nav-phone-desktop::after{content:none!important;display:none!important;}
+
+/* The supplied LEYA phone string is longer than the reference; reserve the same 259px text box. */
+.mould-site .phone-text{width:259px;}
