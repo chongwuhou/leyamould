@@ -14,7 +14,9 @@ src=src.replace('import {authorizeAdminRequest} from "../../_shared/admin-securi
  .replace('import {KINDS,imageKey} from "../../_shared/r2-usage.js";',
   'import {KINDS,imageKey} from "'+uri(usage)+'";')
  .replace('import {imageDimensions,mimeOfName} from "../../_shared/image-dimensions.js";',
-  'import {imageDimensions,mimeOfName} from "'+uri(readFileSync(file("functions/_shared/image-dimensions.js"),"utf8"))+'";');
+  'import {imageDimensions,mimeOfName} from "'+uri(readFileSync(file("functions/_shared/image-dimensions.js"),"utf8"))+'";')
+ .replace('import {bumpPublishRevision} from "../../_shared/site-settings.js";',
+  'const bumpPublishRevision=async()=>({revision:++globalThis.__testRevision.value});');
 const api=await import(uri(src));
 function png(width,height){
  const x=Buffer.alloc(260,0);
@@ -29,6 +31,7 @@ assert.deepEqual(dims.imageDimensions(pngOld,"image/png"),{width:420,height:420}
 const realWebp=readFileSync(file("assets/curated-hd/gradient-sports.webp"));
 assert.deepEqual(dims.imageDimensions(realWebp,"image/webp"),{width:1500,height:1500});
 let faults={backup:false};
+globalThis.__testRevision={value:30};
 const objects=new Map();
 const digest=b=>createHash("sha1").update(b).digest("hex");
 const store=(key,body)=>objects.set(key,{buffer:Buffer.from(body),etag:digest(Buffer.from(body)),uploaded:new Date()});
@@ -46,7 +49,7 @@ const bucket={
  list:async ({prefix})=>({objects:[...objects].filter(([k])=>k.startsWith(prefix))
   .map(([key,obj])=>({key,size:obj.buffer.length,uploaded:obj.uploaded})),truncated:false})
 };
-const env={ADMIN_TOKEN:"test-admin",XUYI_ASSETS:bucket};
+const env={ADMIN_TOKEN:"test-admin",LEYA_ASSETS:bucket,LEYA_DB:{}};
 const base="https://leyamould.com/api/admin/media-replace?kind=product&filename="+filename;
 const url=(kind,name)=>"https://leyamould.com/api/admin/media-replace?kind="+kind+"&filename="+name;
 const ctx=(request)=>({request,env});
@@ -104,3 +107,4 @@ assert.equal(response.status,200,"Legacy R2 images are replaceable with an appro
 assert.equal((await api.onRequestPut(ctx(new Request(url("shared","invalid.png"),{method:"PUT",headers,body:form})))).status,400);
 assert.equal((await api.onRequestPut(ctx(new Request(url("ppt","slide-059.webp"),{method:"PUT",headers,body:new FormData()})))).status,400);
 console.log("XUYI_R2_REPLACE_AND_ROLLBACK_TESTS_PASSED",19,"assertions; mock R2 only");
+
