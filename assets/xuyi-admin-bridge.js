@@ -1,4 +1,4 @@
-/* Thin XUYI integration layer for the existing admin forms and site-settings modules. */
+/* Shared authenticated integration layer for the LEYA MOULD admin modules. */
 (()=>{'use strict';const KEY='xuyiAdminToken';const $=(q)=>document.querySelector(q);const $$=(q)=>[...document.querySelectorAll(q)];let active='leads';
 function showPanel(name){active=name;$$('[data-admin-target]').forEach(el=>el.classList.toggle('active',el.dataset.adminTarget===name));$$('[data-admin-module]').forEach(el=>{const section=el.dataset.adminModule;const visible=name==='all'||section===name||(name==='settings'&&section==='settings');el.hidden=!visible;});}
 function setAuthenticated(ok){$('#admin-app')?.classList.toggle('hidden',!ok);$('#admin-lock')?.classList.toggle('hidden',ok);if(ok)showPanel(active);}
@@ -13,10 +13,11 @@ async function checkSetup(){
   const state=await response.json();
   if(!state.configured){
    const error=$('#lock-error');
-   if(error)error.textContent='后台尚未初始化：请先在 XUYI Cloudflare Pages Production 中设置 ADMIN_TOKEN Secret。';
+   if(error)error.textContent='后台尚未初始化：请先在 LEYA MOULD Cloudflare Pages Production 中设置 ADMIN_TOKEN Secret。';
   }
  }catch{/* Login requests will still report their own errors. */}
 }
 checkSetup();
 verify();
 })();
+
