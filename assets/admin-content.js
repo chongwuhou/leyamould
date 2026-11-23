@@ -167,8 +167,8 @@
     field("description","","英文产品说明（保留全部已知信息及待确认事项）",5)+
     field("seoTitle","","SEO Title（最多 90 字符）")+
     field("seoDescription","","Meta Description（最多 240 字符）",3)+
-    '<label class="block-label">保存状态 <select data-cms-field="status"><option value="draft">只存草稿，不生成页面</option><option value="published">资料核实完成，进入自动发布队列</option></select></label>'+
-    '<p>页面路径：/product/类别-slug.html。新增类别需先经过模具目录审核，再复用现有详情、图片、SEO 与 R2 模板。</p>'+
+    '<label class="block-label">保存状态 <select data-cms-field="status"><option value="draft">只存草稿，不生成页面</option><option value="published">发布（仅已注册的模具类别）</option></select></label>'+
+    '<p>页面路径：/product/类别-slug.html。新增类别先保存草稿；完成模具目录、公开路由和详情模板注册后，才允许发布。</p>'+
     button("保存单个新商品","new-product");
   }
   if(tab==="page-body"){
