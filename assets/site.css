@@ -1408,3 +1408,41 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
   font-size:16.5px;
   line-height:1.7;
 }
+
+/* Match the reference header distribution and desktop phone control. */
+.mould-site .main-nav{padding:0 20px;justify-content:space-between;gap:0;}
+.mould-site .nav-menu-list{margin-left:0;}
+.mould-site .header__actions{margin-left:0;gap:14px;}
+.mould-site .logo__image{width:191px;}
+.mould-site .nav-phone-desktop{
+  display:flex;
+  align-items:center;
+  color:#1a1a1a;
+  font-size:30px;
+  line-height:51px;
+  font-weight:700;
+  letter-spacing:.4px;
+  white-space:nowrap;
+}
+.mould-site .phone-text{
+  display:inline-block;
+  transform:scaleX(.65);
+  transform-origin:right center;
+  margin-right:.25em;
+}
+.mould-site .phone-icon-wrap{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  background:#e0e0e0;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.mould-site .phone-icon-svg{width:28px;height:28px;fill:currentColor;display:block;}
+@media(max-width:1200px){
+  .mould-site .logo__image{width:220px;}
+  .mould-site .nav-phone-desktop{display:none;}
+}
+@media(max-width:750px){.mould-site .logo__image{width:190px;}}
