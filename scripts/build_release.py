@@ -26,6 +26,26 @@ def copy_tree(source: Path, target: Path, ignore=None) -> None:
         shutil.copytree(source, target, dirs_exist_ok=True, ignore=ignore)
 
 
+def source_revision() -> str:
+    """Return the real source revision in GitHub, Pages, or local builds."""
+    for name in ("LEYA_RELEASE_SHA", "GITHUB_SHA", "CF_PAGES_COMMIT_SHA", "CF_PAGES_COMMIT_HASH", "COMMIT_SHA"):
+        value = str(os.environ.get(name) or "").strip()
+        if value and value.lower() != "local":
+            return value
+    try:
+        value = subprocess.check_output(
+            ["git", "rev-parse", "--verify", "HEAD"],
+            cwd=ROOT,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+        if value:
+            return value
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    return "local"
+
+
 def main() -> None:
     if CONFIG["cloudflare"]["pagesProjectName"] != "leyamould":
         raise SystemExit("Refusing to target another Pages project")
@@ -76,10 +96,10 @@ def main() -> None:
         "siteOrigin": CONFIG["site"]["origin"],
         "pagesProject": CONFIG["cloudflare"]["pagesProjectName"],
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        # GitHub Actions passes the explicit release SHA; keeping GITHUB_SHA as
-        # a fallback also makes local/other CI builds auditable without
-        # pretending they are a production commit.
-        "sourceRevision": os.environ.get("LEYA_RELEASE_SHA") or os.environ.get("GITHUB_SHA", "local"),
+        # GitHub Actions and Cloudflare Pages both expose a commit SHA.  The
+        # git fallback keeps direct/local builds auditable instead of silently
+        # labelling a checked-out source tree as "local".
+        "sourceRevision": source_revision(),
         "publishRevision": int(state.get("publishRevision", 0) or 0),
         "templateSet": "templates/site",
         "adminPath": "admin",
@@ -91,7 +111,20 @@ def main() -> None:
         "noindex": not CONFIG["site"]["indexingApproved"],
     }
     (DIST / "build-meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("DIST_BUILD_OK", f"files={len(static_files)+1}", f"locales={','.join(meta['publishedLocales'])}", f"output={DIST}")
+    # Keep the standalone Pages build entry point equivalent to the canonical
+    # workflow: a Git-integrated build must also publish the protected-media
+    # reference index, not just the HTML assets.
+    from r2_usage_index import generate as generate_r2_usage_index
+    media_references, media_locations = generate_r2_usage_index(DIST, ROOT / "_local_ops/model-overflow")
+    final_files = [path for path in DIST.rglob("*") if path.is_file()]
+    final_breakdown = {}
+    for path in final_files:
+        group = path.relative_to(DIST).parts[0]
+        final_breakdown[group] = final_breakdown.get(group, 0) + 1
+    meta["fileCount"] = len(final_files)
+    meta["fileBreakdown"] = final_breakdown
+    (DIST / "build-meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print("DIST_BUILD_OK", f"files={len(final_files)}", f"locales={','.join(meta['publishedLocales'])}", f"mediaReferences={media_references}", f"mediaLocations={media_locations}", f"output={DIST}")
 
 
 if __name__ == "__main__":
