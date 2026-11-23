@@ -20,6 +20,7 @@ on:
       - "scripts/test_r2_usage_index.py"
       - "scripts/test_mould_backend_contract.py"
       - "scripts/test_mould_admin_contract.py"
+      - "scripts/test_mould_media_publish_contract.py"
       - "functions/**"
       - "admin/**"
       - "AGENTS.md"
