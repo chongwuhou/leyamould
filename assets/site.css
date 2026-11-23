@@ -1304,3 +1304,7 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 .mould-site .hero.hero-slider .actions{margin:0;}
 .mould-site .hero.hero-slider #hero-cta{width:205px;}
 @media(max-width:700px){.mould-site .hero.hero-slider h1{font-size:clamp(34px,9vw,48px);line-height:1.2}.mould-site .hero.hero-slider #hero-cta{width:min(280px,100%)}}
+
+
+/* Keep the LEYA CTA on one line inside the reference 205px pill. */
+.mould-site .hero.hero-slider #hero-cta{white-space:nowrap;padding-inline:20px;}
