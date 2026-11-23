@@ -1,5 +1,5 @@
 import {authorizedDailyProductReviewRequest} from "../../_shared/build-auth.js";
-import {MANAGED_MODELS} from "../../_shared/xuyi-routes.js";
+import {MANAGED_MODELS} from "../../_shared/mould-routes.js";
 import {ensureProductReviews} from "../../_shared/product-reviews.js";
 import {bumpPublishRevision} from "../../_shared/site-settings.js";
 import {ensurePublishScheduler} from "../../_shared/publish-scheduler.js";
@@ -19,8 +19,10 @@ const LEDGER_V2_SQL=[
  "published_date TEXT NOT NULL, recorded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,",
  "UNIQUE(source_file,source_row))"
 ].join(" ");
-const SOURCE_FILES=new Set(["101-zhenshipingjia.xlsx","101-additional-reviews-only.xlsx"]);
-const TRANSPARENT={"2306-transparent":"2306透明款","2307-transparent":"2307透明款","2308-transparent":"2308透明款","2400-transparent":"2400透明款","2401-transparent":"2401透明款"};
+// This importer is intentionally fail-closed for LEYA MOULD.  The old
+// water-cup workbook registry is not part of this site's source of truth.
+// A future mould review source must be explicitly registered before enabling.
+const LEYA_DAILY_REVIEW_IMPORT_ENABLED=false;
 
 export function beijingDate(now=new Date()){
  const p=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now).map(x=>[x.type,x.value]));
@@ -43,6 +45,8 @@ async function requireDb(c){
  if(!c.env.ADMIN_TOKEN)return {error:json({error:"Admin not configured"},503)};
  if(!(await authorizedDailyProductReviewRequest(c.request,c.env)))return {error:json({error:"Unauthorized"},401)};
  if(!c.env.LEYA_DB)return {error:json({error:"Database unavailable"},503)};
+ if(!LEYA_DAILY_REVIEW_IMPORT_ENABLED)
+   return {error:json({error:"LEYA MOULD daily review import is not configured; use the reviewed product-reviews module"},409)};
  const db=c.env.LEYA_DB;
   try{await ensureProductReviews(db);await ensureLedger(db);await ensurePublishScheduler(db);}
   catch{return {error:json({error:"Review ledger migration failed; no publication was attempted"},503)};} return {db};
@@ -67,13 +71,14 @@ export async function validateDailyInput(input,today=beijingDate()){
  if(!Array.isArray(input.items)||input.items.length<1||input.items.length>20)throw Error("每批只允许 1–20 条客户评价"); const rows=new Set(),fingerprints=new Set();
  for(const r of input.items){
   if(!r||typeof r!=="object")throw Error("Invalid review");
-  if(!SOURCE_FILES.has(r.sourceFile))throw Error("评价必须来自已确认的两个 Excel 源文件");
-  if(!Number.isInteger(r.sourceRow)||r.sourceRow<2||r.sourceRow>102)throw Error("源表行号无效");
+  if(typeof r.sourceFile!=="string"||!/^[A-Za-z0-9._-]{1,120}$/.test(r.sourceFile))throw Error("评价来源文件标识无效");
+  if(!Number.isInteger(r.sourceRow)||r.sourceRow<1||r.sourceRow>100000)throw Error("源表行号无效");
   const key=r.sourceFile+"\n"+r.sourceRow;
   if(rows.has(key))throw Error("同一源文件的行号不能重复");
   rows.add(key);
   if(!MANAGED_MODELS.has(r.model))throw Error("产品型号不存在");
-  if((TRANSPARENT[r.sourceModel]||r.sourceModel)!==r.model)throw Error("源表产品型号不对应官网正式型号");
+  if(typeof r.sourceModel!=="string"||r.sourceModel.trim()!==r.sourceModel||r.sourceModel.length<1||r.sourceModel.length>120)
+    throw Error("源表产品型号标识无效");
   if(!Number.isInteger(r.rating)||r.rating<1||r.rating>5)throw Error("星级无效");
   if(typeof r.author!=="string"||r.author.trim()!==r.author||r.author.length<2||r.author.length>99)throw Error("客户姓名无效");
   if(typeof r.content!=="string"||r.content.trim()!==r.content||r.content.length<12||r.content.length>3000)throw Error("客户评价原文无效");
@@ -113,3 +118,4 @@ export async function onRequestPost(c){
  return json({success:true,date:today,inserted:candidates.length,skipped:records.length-candidates.length,
   todayCount:finalState.ledger.filter(x=>x.published_date===today).length,recorded:finalState.ledger,...revision});
 }
+
