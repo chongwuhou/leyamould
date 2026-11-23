@@ -1388,3 +1388,14 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 .mould-site .mini-menu a:hover::before{
   transform:translateY(-50%) scaleY(1);
 }
+
+/* Match the reference nav item box so dropdowns anchor under the text, not the full header. */
+.mould-site .nav-menu-list{gap:0;}
+.mould-site .nav__drop{height:auto;align-self:center;}
+.mould-site .nav__toggle{
+  height:auto;
+  min-height:0;
+  padding:10px 20px;
+  font-size:16.5px;
+  line-height:1.7;
+}
