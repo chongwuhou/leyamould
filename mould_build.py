@@ -214,8 +214,23 @@ def home(locale: str) -> str:
     return hero + advantages_section + cap_products + samples_section + technology + testimonials + process + resources
 
 def products_page(locale: str) -> str:
-    cards = ''.join(category_card(locale, c) for c in CATALOG["categories"])
-    return intro(locale, text(locale, "products"), text(locale, "categories_text"), "/products/") + '<section class="section"><div class="shell"><div class="grid grid--4 mould-category-grid">' + cards + '</div><p class="notice">' + esc(text(locale, "category_note")) + '</p></div></section>'
+    cap = "https://www.cap-molds.com"
+    cap_series = [
+        {"title": "Water / Beverage Cap Mould", "description": "High-precision tooling for mineral water, carbonated drinks and juice closures.", "meta": "PCO 1881 · Hot Runner", "image": cap + "/Upload/20260617/202606171039475377.jpg"},
+        {"title": "Edible Oil Cap Mould", "description": "Pull-ring and tamper-evident solutions for olive, sunflower and cooking oils.", "meta": "Pull Ring · Tamper-Evident", "image": cap + "/Upload/20260617/202606171650511166.jpg"},
+        {"title": "Engine Oil Cap Mould", "description": "Heavy-duty closures for automotive lubricant containers and industrial packaging.", "meta": "High Temp · Heavy Duty", "image": cap + "/upload/Engine-Oil-Cap/PCO38-engine-oil-cap-mould.jpg"},
+        {"title": "Food Packaging Cap Mould", "description": "Food-grade screw and snap-on tooling for sauces, dairy and dry food containers.", "meta": "Food Grade · Airtight", "image": cap + "/upload/Food-Packaging-Cap/jar-cap-mould.jpg"},
+        {"title": "Medical Cap Mould", "description": "Precision closures for pharmaceutical bottles, syrups and diagnostic packaging.", "meta": "Controlled · Burr-Free", "image": cap + "/upload/Medical-Cap/child-resistant-cap-mould.png"},
+        {"title": "Cosmetic Cap Mould (Flip-Top)", "description": "Living-hinge tooling for shampoo, conditioner and skincare packaging.", "meta": "Living Hinge · Flip-Top", "image": cap + "/upload/Personal-Care-Cap/flip-top-cap-mould.jpg"},
+        {"title": "Personal Care Cap Mould", "description": "Disc-top, tube-cap and lotion closure tooling with custom orifice options.", "meta": "Disc Top · Custom Orifice", "image": cap + "/upload/Personal-Care-Cap/flip-top-cap-mould.jpg"},
+        {"title": "Functional Cap Mould (Combination)", "description": "Child-resistant, easy-open and tamper-evident mechanisms in one closure family.", "meta": "Child-Resistant · Easy-Open", "image": cap + "/upload/Functional-Cap/Functional-Cap-Mould.jpg"},
+        {"title": "Handle Mould", "description": "Ergonomic handles for 5L–20L PET bottles, oil containers and chemical jerry cans.", "meta": "High Load · Ergonomic", "image": cap + "/upload/product/month_2105/202105262010194667.jpg"},
+    ]
+    hero = '<section class="catalog-hero"><div class="shell"><h1>Precision <span>CAP MOULD</span><br>Across 9 Key Categories</h1><p>Professional plastic cap mould manufacturer with 15+ years of experience. From beverage caps to medical closures, we deliver high-precision, long-life mould solutions.</p><a class="button button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a><div class="catalog-stats"><div><strong>15+</strong><span>YEARS EXPERIENCE</span></div><div><strong>9</strong><span>CAP CATEGORIES</span></div><div><strong>40+</strong><span>COUNTRIES SERVED</span></div><div><strong>2000+</strong><span>MOULDS DELIVERED</span></div></div></div></section>'
+    crumb = '<nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(text(locale, "products")) + '</span></div></nav>'
+    cards = ''.join(cap_series_card(locale, c) for c in cap_series)
+    products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Cap Mould Series", "Explore our comprehensive range of 9 specialized plastic cap mould categories. Each mould is engineered for high-volume production, dimensional accuracy and extended service life.") + '<div class="cap-series-grid">' + cards + '</div></div></section>'
+    return hero + crumb + products
 
 def category_page(locale: str, category: dict) -> str:
     checks = ''.join('<li>' + esc(x) + '</li>' for x in category["checks"])
