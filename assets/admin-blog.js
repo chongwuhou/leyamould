@@ -112,9 +112,10 @@ $('#blog-upload')?.addEventListener('change',async(ev)=>{
   const data=await response.json();
   if(!response.ok)throw Error(data.error||'Upload failed');
   $('#blog-cover').value=data.path;$('#blog-cover-preview').src=data.path;
-  result.textContent='图片已上传到旭一 R2，可用于当前文章。';
+  result.textContent='图片已上传到 LEYA MOULD R2，可用于当前文章。';
  }catch(error){result.textContent='上传失败：'+error.message}
 });
 document.querySelectorAll('[data-admin-target="blog"]').forEach(btn=>btn.addEventListener('click',()=>{if(token())list()}));
 if(token()&&!loaded)list();
 })();
+
