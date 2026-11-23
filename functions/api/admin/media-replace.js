@@ -1,9 +1,10 @@
-// Authenticated in-place R2 picture replacement, including legacy XUYI assets.
+// Authenticated in-place R2 picture replacement, including protected legacy assets.
 // Requires a conscious model/content confirmation; no file path/HTML rewrite.
 import {authorizeAdminRequest} from "../../_shared/admin-security.js";
 import {checkedImage} from "../../_shared/media-image.js";
 import {KINDS,imageKey} from "../../_shared/r2-usage.js";
 import {imageDimensions,mimeOfName} from "../../_shared/image-dimensions.js";
+import {bumpPublishRevision} from "../../_shared/site-settings.js";
 const MAX=6*1024*1024;
 const HISTORY_ROOT="site-image-versions/";
 const response=(obj,status=200)=>Response.json(obj,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -11,6 +12,10 @@ async function guard(c){
  if(!c.env.ADMIN_TOKEN)return response({error:"Admin unavailable"},503);
  if(!(await authorizeAdminRequest(c.request,c.env)))return response({error:"Unauthorized"},401);
  if(!c.env.LEYA_ASSETS)return response({error:"LEYA_ASSETS missing"},503);
+ return null;
+}
+function requireRevisionDb(c){
+ if(!c.env.LEYA_DB)return response({error:"LEYA_DB missing; media revision cannot be recorded"},503);
  return null;
 }
 const reference=c=>{
@@ -76,6 +81,7 @@ export async function onRequestGet(c){
 }
 export async function onRequestPut(c){
  const denied=await guard(c);if(denied)return denied;
+ const revisionDenied=requireRevisionDb(c);if(revisionDenied)return revisionDenied;
  const x=reference(c);if(!x)return response({error:"Unsupported R2 image path"},400);
  if(Number(c.request.headers.get("content-length")||0)>MAX+1_048_576)
   return response({error:"New image exceeds upload size limit"},413);
@@ -100,21 +106,27 @@ export async function onRequestPut(c){
   if(dimensions.width<oldSize.width||dimensions.height<oldSize.height)
    return response({error:"New image resolution is lower than original",oldSize,dimensions},409);
   await quota(bucket,x,file.buffer.byteLength,original.size);
+  // Record the media revision before touching the live object. If the R2 write
+  // later fails, the harmless extra revision still makes the next build/index
+  // cycle explicit instead of leaving an untracked mutation.
+  const revision=await bumpPublishRevision(c.env.LEYA_DB);
   // Backup and HEAD verification precede any modification to live path.
   const backup=await previous(bucket,x,original,originalBytes);
   await bucket.put(x.key,file.buffer,{httpMetadata:{contentType:file.type},customMetadata:{
-    source:"xuyi-admin-replace",backupVersion:backup.version,
+    source:"leya-admin-replace",backupVersion:backup.version,
     newPixelSize:dimensions.width+"x"+dimensions.height}});
   const written=await bucket.head(x.key);
   if(!written||written.size!==file.buffer.byteLength)
    return response({error:"Replacement write could not be verified; previous version is safe in history",backupVersion:backup.version},503);
   return response({replaced:true,path:x.path,oldSize,newSize:dimensions,
     backupVersion:backup.version,oldBytes:original.size,newBytes:written.size,
+    ...revision,
     cacheNote:"Unversioned image URLs may remain cached for up to one hour."});
  }catch(error){return response({error:"Replacement failed: "+String(error.message||error)},503)}
 }
 export async function onRequestPost(c){
  const denied=await guard(c);if(denied)return denied;
+ const revisionDenied=requireRevisionDb(c);if(revisionDenied)return revisionDenied;
  const x=reference(c);if(!x)return response({error:"Unsupported R2 image path"},400);
  let data;try{data=await c.request.json()}catch{return response({error:"Invalid JSON"},400)}
  if(data?.action!=="restore"||!validVersion(data?.version)||data.confirm!=="restore")
@@ -132,11 +144,13 @@ export async function onRequestPost(c){
   try{imageDimensions(buffer,mimeOfName(x.filename))}
   catch{return response({error:"Backup image invalid; restoration blocked"},409)}
   await quota(bucket,x,buffer.byteLength,current.size);
+  const revision=await bumpPublishRevision(c.env.LEYA_DB);
   // Save the current image as a new version before restoring an older one.
   const undo=await previous(bucket,x,current);
   await bucket.put(x.key,buffer,{httpMetadata:{contentType:mimeOfName(x.filename)},
-    customMetadata:{source:"xuyi-admin-restore",restoredFrom:data.version}});
+    customMetadata:{source:"leya-admin-restore",restoredFrom:data.version}});
   return response({restored:true,path:x.path,undoVersion:undo.version,
-    cacheNote:"Current viewers may see a cached version for up to one hour."});
+    ...revision,cacheNote:"Current viewers may see a cached version for up to one hour."});
  }catch(error){return response({error:"Restore failed: "+String(error.message||error)},503)}
 }
+
