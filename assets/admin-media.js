@@ -45,7 +45,7 @@ async function list(cursor=""){
   const card=document.createElement("div");card.className="media-library-item";
   card.style.cssText="display:flex;flex-direction:column;gap:8px;width:225px;padding:10px;border:1px solid #dedede;border-radius:8px;overflow-wrap:anywhere";
   const photo=document.createElement("img");
-  photo.src=row.path;photo.alt="旭一 R2 预览";photo.loading="lazy";
+  photo.src=row.path;photo.alt="LEYA MOULD R2 预览";photo.loading="lazy";
   photo.style.cssText="width:100%;height:140px;object-fit:contain;background:#f6f6f6;border-radius:7px";
   const pathLabel=document.createElement("code");pathLabel.textContent=row.path;
   pathLabel.style.cssText="font-size:11px;overflow-wrap:anywhere";
@@ -110,7 +110,7 @@ async function list(cursor=""){
    remove.disabled=true;
    try{
     await api("/api/admin/media?kind="+encodeURIComponent(selectedKind)+"&filename="+encodeURIComponent(row.path.split("/").pop()),{method:"DELETE"});
-    await list();say("已从旭一通用媒体桶删除："+row.path);
+    await list();say("已从 LEYA MOULD 通用媒体桶删除："+row.path);
    }catch(err){showState("unknown");say("删除被阻止："+err.message)}
   });
   const replace=document.createElement("button");replace.type="button";
@@ -138,7 +138,7 @@ async function upload(){
  const key=token();if(!key){say("请先登录后台");return}
  const english=$("media-upload-alt-en")?.value.trim()||"";
  if(!english){say("上传前请填写准确的英文 ALT：实际产品类型、可核实型号或容量");return}
- const button=$("media-upload-btn");button.disabled=true;say("正在上传旭一 R2…");
+ const button=$("media-upload-btn");button.disabled=true;say("正在上传 LEYA MOULD R2…");
  try{
   const values={[sourceLocale]:english};
   for(const input of $("media-upload-alt-locales")?.querySelectorAll("[data-alt-locale]")||[])
