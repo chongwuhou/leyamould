@@ -231,7 +231,7 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
     base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v39")
     if route.startswith("/product/"):
-        base = base.replace('</head>', '<link rel="stylesheet" href="/assets/mould-category.css?v=mould-detail-2"></head>', 1)
+        base = base.replace('</head>', '<link rel="stylesheet" href="/assets/mould-category.css?v=mould-detail-3"></head>', 1)
     base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
     return base.replace('</head>', '<link rel="canonical" href="' + esc(canonical) + '">' + alternates + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '"></head>', 1)
 
@@ -592,6 +592,5 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
-
 
 

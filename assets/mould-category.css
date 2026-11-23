@@ -19,3 +19,7 @@
 @media (max-width:900px){.mould-detail-container{padding:0 28px}.mould-products-grid{grid-template-columns:repeat(2,1fr)}.mould-advantages-grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:768px){.mould-detail-container{padding:0 20px}.mould-detail-hero{padding:54px 0 60px}.mould-hero-stats{gap:24px}.mould-tech-grid,.mould-faq-grid{grid-template-columns:1fr}.mould-tech-grid--reverse .mould-tech-copy,.mould-tech-grid--reverse .mould-tech-image{order:initial}.mould-videos-grid{grid-template-columns:1fr}.mould-products-grid,.mould-advantages-grid{grid-template-columns:1fr}.mould-card-img{height:260px}.mould-cta-box{padding:36px 22px}}
 
+/* Desktop calibration against the reference catalogue at 1440px. */
+.mould-detail-hero h1{max-width:1350px}
+@media (min-width:901px){.mould-card-img{height:380px}}
+@media (min-width:901px) and (max-width:1700px){.mould-detail-container{padding-left:32px;padding-right:32px}}
