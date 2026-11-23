@@ -5,7 +5,7 @@
     "brand": "LEYA MOULD",
     "origin": "https://leyamould.com",
     "defaultLocale": "en",
-    "publishedLocales": ["en", "es", "pt", "ru", "tr"],
+    "publishedLocales": ["en", "es"],
     "indexingApproved": false
   },
   "cloudflare": {
