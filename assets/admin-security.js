@@ -1,4 +1,4 @@
-// Thin UI around the existing XUYI admin security API.
+// Thin UI around the existing LEYA MOULD admin security API.
 (()=>{"use strict";
 const $=id=>document.getElementById(id);
 const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
@@ -61,3 +61,4 @@ $("save-admin-password")?.addEventListener("click",changePassword);
 $("save-admin-path")?.addEventListener("click",changePath);
 document.querySelector('[data-admin-target="settings"]')?.addEventListener("click",load);
 })();
+
