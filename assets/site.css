@@ -1250,3 +1250,17 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 .mould-site .reference-page-header h1{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:800;color:#353a8e;margin:0 0 10px;letter-spacing:-.02em}
 .mould-site .reference-page-header p{font-size:1.05rem;color:#475569;max-width:650px;margin:0 auto;line-height:1.7}
 @media(max-width:700px){.mould-site .reference-banner{margin-bottom:20px}.mould-site .reference-banner img{max-height:300px}.mould-site .reference-breadcrumb{padding:0 20px}.mould-site .reference-page-header{padding:0 20px;margin-bottom:28px}}
+
+
+/* Cap-molds product landing hero: dark centered headline, quote button and stats. */
+.mould-site .catalog-hero{background:#444;min-height:590px;color:#fff;display:flex;align-items:center;text-align:center}
+.mould-site .catalog-hero .shell{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mould-site .catalog-hero h1{font-size:clamp(2.35rem,4.2vw,3.8rem);font-weight:800;line-height:1.12;letter-spacing:-.03em;margin:0 0 20px;color:#fff}
+.mould-site .catalog-hero h1 span{color:#f0883e}
+.mould-site .catalog-hero p{max-width:720px;color:#f8fafc;font-size:1.05rem;line-height:1.7;margin:0 0 28px}
+.mould-site .catalog-hero .button{background:#f0883e;border-color:#f0883e;box-shadow:0 8px 22px rgba(240,136,62,.3)}
+.mould-site .catalog-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:48px;margin-top:36px}
+.mould-site .catalog-stats div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.mould-site .catalog-stats strong{font-size:2rem;line-height:1;color:#f0883e;font-weight:800}
+.mould-site .catalog-stats span{font-size:.75rem;color:#fff;letter-spacing:.04em}
+@media(max-width:700px){.mould-site .catalog-hero{min-height:500px;padding:60px 0}.mould-site .catalog-stats{grid-template-columns:repeat(2,1fr);gap:26px}.mould-site .catalog-hero p{font-size:.95rem}}
