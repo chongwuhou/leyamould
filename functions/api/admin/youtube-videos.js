@@ -47,6 +47,8 @@ export async function onRequestPost(context) {
       return json({ deleted: true, id });
     }
     if (action !== "save") return json({ error: "Unknown action" }, 400);
+    const existingId = String(input?.id || "").trim();
+    if (existingId && existingId.length > 80) return json({ error: "Invalid video ID" }, 400);
     const normalized = normalizeYoutubeUrl(input?.youtubeUrl || input?.url);
     if (!normalized) return json({ error: "请输入有效的 YouTube 视频地址（watch、youtu.be、shorts、live 或 embed）" }, 400);
     const titleEn = String(input?.titleEn || input?.title || "").trim().slice(0, 180);
@@ -54,11 +56,22 @@ export async function onRequestPost(context) {
     if (!titleEn) return json({ error: "请填写英文标题" }, 400);
     const title = titleEn || titleEs || "LEYA MOULD video";
     const description = String(input?.description || "").trim().slice(0, 500);
-    const id = crypto.randomUUID();
-    const order = Number.isFinite(Number(input?.sortOrder)) ? Math.max(0, Math.min(9999, Number(input.sortOrder))) : 0;
     const publishedAt = String(input?.publishedAt || "").trim();
     if (publishedAt && !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:?\d{2})?$/.test(publishedAt))
       return json({ error: "发布时间格式不正确" }, 400);
+    let order = Number.isFinite(Number(input?.sortOrder)) ? Math.max(0, Math.min(9999, Number(input.sortOrder))) : 0;
+    if (existingId) {
+      const found = await db.prepare("SELECT id,sort_order FROM leya_youtube_videos WHERE id=?").bind(existingId).first();
+      if (!found) return json({ error: "Video not found" }, 404);
+      if (!Number.isFinite(Number(input?.sortOrder))) order = Number(found.sort_order || 0);
+      await db.prepare(`UPDATE leya_youtube_videos SET
+        video_id=?,youtube_url=?,title=?,title_en=?,title_es=?,description=?,published_at=?,sort_order=?,updated_at=CURRENT_TIMESTAMP
+        WHERE id=?`).bind(normalized.id, normalized.url, title, titleEn, titleEs, description,
+        publishedAt || new Date().toISOString(), order, existingId).run();
+      const updated = await db.prepare("SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,created_at,updated_at FROM leya_youtube_videos WHERE id=?").bind(existingId).first();
+      return json({ saved: true, updated: true, item: mapRow(updated) });
+    }
+    const id = crypto.randomUUID();
     await db.prepare(`INSERT INTO leya_youtube_videos
       (id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order)
       VALUES(?,?,?,?,?,?,?,?,?)`).bind(id, normalized.id, normalized.url, title, titleEn, titleEs, description, publishedAt || new Date().toISOString(), order).run();
