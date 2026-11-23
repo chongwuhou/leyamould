@@ -31,5 +31,6 @@
 .mould-detail-hero--engine-oil-cap-mould,.mould-detail-hero--medical-cap-mould{background-image:linear-gradient(rgba(0,0,0,.78),rgba(0,0,0,.78)),var(--mould-hero)}
 .mould-detail-hero--food-packaging-cap-mould,.mould-detail-hero--plastic-handle-cap-mould{background-image:linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.75)),var(--mould-hero)}
 .mould-detail-hero--mineral-water-closure-cap-molds,.mould-detail-hero--oil-bottle-cap-mould,.mould-detail-hero--flip-top-caps-mould,.mould-detail-hero--personal-care-cap-mould,.mould-detail-hero--functional-cap-mould{background-image:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.72)),var(--mould-hero)}
+.mould-detail-hero--flip-top-caps-mould .mould-hero-stat .number{line-height:1}
 @media (min-width:901px){.mould-card-img{height:380px}}
 @media (min-width:901px) and (max-width:1700px){.mould-detail-container{padding-left:32px;padding-right:32px}}
