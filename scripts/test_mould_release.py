@@ -12,7 +12,17 @@ ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 ORIGIN = "https://leyamould.com"
 LOCALES = ["en", "es"]
-CATEGORIES = ["pet-preform-moulds", "bottle-cap-moulds", "bottle-moulds", "knife-fork-moulds"]
+CAP_PRODUCT_ROUTES = [
+    "/product/Mineral-Water-Closure-cap-Molds.html",
+    "/product/Oil-bottle-cap-mould.html",
+    "/product/Engine-Oil-Cap-Mould.html",
+    "/product/Food-Packaging-Cap-Mould.html",
+    "/product/Medical-Cap-Mould.html",
+    "/product/Flip-top-caps-mould.html",
+    "/product/Personal-Care-Cap-Mould.html",
+    "/product/Functional-Cap-Mould.html",
+    "/product/Plastic-Handle-Cap-mould.html",
+]
 
 
 class Refs(HTMLParser):
@@ -39,12 +49,17 @@ assert meta["siteOrigin"] == ORIGIN
 assert meta["noindex"] is True
 assert meta["templateSet"] == "templates/site"
 
-routes = ["/", "/products/", "/about/", "/manufacturing/", "/quality-control/", "/contact/", "/faq/", "/blog/", "/privacy-policy/"]
-routes += ["/collections/" + slug + "/" for slug in CATEGORIES]
+routes = ["/", "/products/", "/Plastic-cap-mold.html", "/about/", "/manufacturing/", "/quality-control/", "/contact/", "/faq/", "/blog/", "/privacy-policy/"]
+routes += CAP_PRODUCT_ROUTES
 for locale in LOCALES:
     prefix = "" if locale == "en" else locale
     for route in routes:
-        path = DIST / prefix / route.strip("/") / "index.html" if route != "/" else DIST / prefix / "index.html"
+        if route == "/":
+            path = DIST / prefix / "index.html"
+        elif route.endswith(".html"):
+            path = DIST / prefix / route.strip("/")
+        else:
+            path = DIST / prefix / route.strip("/") / "index.html"
         assert path.is_file(), (locale, route, path)
         html = path.read_text(encoding="utf-8")
         assert "<main id=\"main-content\">" in html and "</html>" in html
@@ -67,10 +82,10 @@ for locale in LOCALES:
                 raise AssertionError((locale, route, "broken local ref", ref))
 
 home = (DIST / "index.html").read_text(encoding="utf-8")
-for slug in CATEGORIES:
-    assert "/collections/" + slug + "/" in home
-assert "PET Preform Moulds" in home and "Bottle Cap Moulds" in home
-assert "Knife &amp; Fork Moulds" in home
+assert home.count("/product/") >= len(CAP_PRODUCT_ROUTES)
+for route in CAP_PRODUCT_ROUTES:
+    assert route in home
+assert "/collections/" not in home
 assert "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China" in home
 assert "WhatsApp +8613606727715" in home
 machine_en = (DIST / "Bottle-Cap-Machine" / "Bottle-Cap-Machine.html").read_text(encoding="utf-8")
@@ -83,5 +98,6 @@ assert "Comparta con nuestro equipo de ingeniería" in detail_es
 assert (DIST / "admin" / "index.html").is_file()
 assert "LEYA MOULD" in (DIST / "admin" / "index.html").read_text(encoding="utf-8")
 print("LEYA_MOULD_RELEASE_PASSED", len(routes), "routes x", len(LOCALES), "locales")
+
 
 

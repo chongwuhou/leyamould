@@ -2,15 +2,19 @@
   "schemaVersion": 1,
   "description": "Default LEYA MOULD product and capability navigation. D1 site_navigation remains authoritative for approved labels and order.",
   "productColumns": [
-    {"heading":"Packaging Tooling","image":"/assets/curated-hd/gradient-sports.webp","links":[
-      {"label":"PET Preform Moulds","url":"/collections/pet-preform-moulds/"},
-      {"label":"Bottle Cap Moulds","url":"/collections/bottle-cap-moulds/"},
-      {"label":"Bottle Moulds","url":"/collections/bottle-moulds/"},
-      {"label":"All Product Categories","url":"/products/"}]},
-    {"heading":"Product Tooling","image":"/assets/curated-hd/feature-flip-top.webp","links":[
-      {"label":"Knife & Fork Moulds","url":"/collections/knife-fork-moulds/"},
-      {"label":"Custom Product Moulds","url":"/capabilities/mould-design/"},
-      {"label":"Project Resources","url":"/blog/"}]},
+    {"heading":"Cap Mould Series","image":"/assets/curated-hd/feature-flip-top.webp","links":[
+      {"label":"Cap Mould Series","url":"/Plastic-cap-mold.html"},
+      {"label":"Water / Beverage Cap Mould","url":"/product/Mineral-Water-Closure-cap-Molds.html"},
+      {"label":"Edible Oil Cap Mould","url":"/product/Oil-bottle-cap-mould.html"},
+      {"label":"Engine Oil Cap Mould","url":"/product/Engine-Oil-Cap-Mould.html"},
+      {"label":"Food Packaging Cap Mould","url":"/product/Food-Packaging-Cap-Mould.html"},
+      {"label":"Medical Cap Mould","url":"/product/Medical-Cap-Mould.html"}]},
+    {"heading":"Closure Applications","image":"/assets/curated-hd/gradient-sports.webp","links":[
+      {"label":"Cosmetic Cap Mould (Flip-Top)","url":"/product/Flip-top-caps-mould.html"},
+      {"label":"Personal Care Cap Mould","url":"/product/Personal-Care-Cap-Mould.html"},
+      {"label":"Functional Cap Mould (Combination)","url":"/product/Functional-Cap-Mould.html"},
+      {"label":"Handle Mould","url":"/product/Plastic-Handle-Cap-mould.html"},
+      {"label":"All Cap Mould Categories","url":"/Plastic-cap-mold.html"}]},
     {"heading":"Engineering","image":"/assets/curated-hd/outdoor-lifestyle.webp","links":[
       {"label":"Mould Design & Engineering","url":"/capabilities/mould-design/"},
       {"label":"Precision Manufacturing","url":"/capabilities/precision-manufacturing/"},
