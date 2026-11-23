@@ -1038,7 +1038,21 @@ def effective_news_items(category: str = "news") -> list[dict]:
             "alt": str(row.get("alt") or title), "altEs": str(row.get("altEs") or row.get("alt_es") or title),
             "editorial": EDITORIAL_BY_SLUG.get(slug),
         })
-    return mapped or reviewed or (NEWS_ITEMS if category == "news" else MACHINE_NEWS_ITEMS)
+    if reviewed:
+        # Keep the full 24-article registry in the archive. A partial D1
+        # snapshot may contain owner-edited rows for only some slugs; those
+        # rows override their own fields, while the remaining reviewed items
+        # must not silently disappear from the list or routes.
+        overrides = {row["slug"]: row for row in mapped}
+        merged = []
+        for base in reviewed:
+            value = dict(base)
+            if base["slug"] in overrides:
+                value.update({key: overrides[base["slug"]][key] for key in ("title", "titleEs", "date", "image", "summary", "summaryEs", "alt", "altEs") if overrides[base["slug"]].get(key)})
+                value["editorial"] = base.get("editorial")
+            merged.append(value)
+        return merged
+    return mapped or (NEWS_ITEMS if category == "news" else MACHINE_NEWS_ITEMS)
 
 def news_card(locale: str, item: dict, detail_prefix: str, category_label: str) -> str:
     detail_route = detail_prefix + item["slug"] + ".html"
