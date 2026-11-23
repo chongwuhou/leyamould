@@ -1,11 +1,15 @@
 import { authorizedBuildRequest, authorizedExplicitPublishRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema, normalizeBlogPost, listBlogPosts, findEditableBlogPost } from "../../_shared/blog-cms.js";
 import {scheduleBlogPost,cancelBlogSchedule,ensurePublishScheduler} from "../../_shared/publish-scheduler.js";
-import {MANAGED_MODELS} from "../../_shared/xuyi-routes.js";
+import {MANAGED_MODELS} from "../../_shared/mould-routes.js";
 import {canonicalProductSlug} from "../../_shared/product-seo.js";
 const clean=x=>String(x??'').trim();
 const reply=(x,status=200)=>Response.json(x,{status,headers:{"Cache-Control":"no-store","X-Robots-Tag":"noindex,nofollow"}});
-const productLinks=post=>[...new Set(post.sections.flatMap(section=>[...String(section.paragraph||"").matchAll(/\]\(\/products\/([A-Za-z0-9_-]+)\//g)].map(match=>String(match[1]).toLowerCase())))];
+// Blog editorial links use the LEYA public mould detail route.  The legacy
+// water-cup /products/<sku>/ syntax is deliberately not accepted for new posts.
+const productLinks=post=>[...new Set(post.sections.flatMap(section=>[
+  ...String(section.paragraph||"").matchAll(/\]\(\/product\/([A-Za-z0-9_-]+)\.html\)/g)
+].map(match=>String(match[1]).toLowerCase())))];
 async function publishedProductSlugs(db){
  const known=new Set([...MANAGED_MODELS].map(model=>canonicalProductSlug(model).toLowerCase()));
  try{
@@ -100,4 +104,5 @@ export async function onRequestPost(context){
  }
  return reply({error:"Unknown action"},400);
 }
+
 
