@@ -1,2 +1,30 @@
-<form class="form" id="inquiry" aria-label="{{FORM_ARIA}}"><p class="inquiry-required-note">{{FORM_REQUIRED_NOTE}}</p><div class="form__row"><label>{{FORM_COMPANY}}<input name="company" placeholder="{{FORM_COMPANY_PLACEHOLDER}}" autocomplete="organization" required></label><label>{{FORM_EMAIL}}<input name="email" type="email" placeholder="name@company.com" autocomplete="email" required></label></div><div class="form__row"><label>{{FORM_CATEGORY}}<input name="model" id="inquiry-model" placeholder="{{FORM_CATEGORY_PLACEHOLDER}}"></label><label>{{FORM_QUANTITY}}<input name="quantity" placeholder="{{FORM_QUANTITY_PLACEHOLDER}}"></label></div><div class="form__row"><label>{{FORM_COUNTRY}}<input name="country" placeholder="{{FORM_COUNTRY_PLACEHOLDER}}"></label><label>{{FORM_TYPE}}<select name="type"><option>{{FORM_TYPE_QUOTE}}</option><option>{{FORM_TYPE_NEW}}</option><option>{{FORM_TYPE_REVIEW}}</option><option>{{FORM_TYPE_TECH}}</option></select></label></div><label>{{FORM_MATERIAL}}<select name="material"><option value="">{{FORM_ADVISE}}</option><option>PET</option><option>PP</option><option>HDPE</option><option>{{FORM_OTHER}}</option></select></label><label>{{FORM_REQUIREMENTS}}<textarea name="requirements" rows="5" required placeholder="{{FORM_REQUIREMENTS_PLACEHOLDER}}"></textarea></label><label style="display:flex;align-items:start;gap:8px"><input type="checkbox" name="consent" style="width:auto;margin-top:3px" required> {{FORM_CONSENT}} <a href="/privacy-policy/">{{FORM_PRIVACY}}</a>.</label><label style="position:absolute;left:-9999px" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label><button class="button" type="submit">{{FORM_SUBMIT}}</button><p id="inquiry-status" role="status" aria-live="polite" style="font-size:13px;margin:0"></p></form>
+<form class="form contact-form-reference" id="inquiry" aria-label="{{FORM_ARIA}}">
+  <div class="form__row">
+    <label>{{FORM_NAME}}<input name="name" autocomplete="name" placeholder="John Smith" required></label>
+    <label>{{FORM_EMAIL}}<input name="email" type="email" autocomplete="email" placeholder="john@example.com" required></label>
+  </div>
+  <div class="form__row">
+    <label>{{FORM_PHONE}}<input name="phone" type="tel" autocomplete="tel" placeholder="+86 136 0672 7715" required></label>
+    <label>{{FORM_COMPANY}}<input name="company" autocomplete="organization" placeholder="Your company"></label>
+  </div>
+  <label>{{FORM_CATEGORY}}<select name="model" id="inquiry-model" required>
+    <option value="">{{FORM_CATEGORY_PLACEHOLDER}}</option>
+    <option>Water Bottle Cap Mould</option>
+    <option>Beverage Bottle Cap Mould</option>
+    <option>Edible Oil Bottle Cap Mould</option>
+    <option>Medical Bottle Cap Mould</option>
+    <option>Cosmetic Cap Mould</option>
+    <option>Flip Top Cap Mould</option>
+    <option>Tamper-Evident Cap Mould</option>
+    <option>Custom Closure Mould</option>
+    <option>Other / Not Sure</option>
+  </select></label>
+  <label>{{FORM_REQUIREMENTS}}<textarea name="requirements" rows="5" placeholder="Share cap design, material, cavity count and production volume." required></textarea></label>
+  <input type="hidden" name="consent" value="accepted">
+  <input type="hidden" name="website" value="">
+  <p class="contact-privacy-note">🔒 {{FORM_PRIVACY_NOTE}} <a href="/privacy-policy/">{{FORM_PRIVACY}}</a>.</p>
+  <button class="button" type="submit">{{FORM_SUBMIT}}</button>
+  <p id="inquiry-status" role="status" aria-live="polite"></p>
+</form>
+
 
