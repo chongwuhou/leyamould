@@ -1,6 +1,6 @@
 // D1 CRUD for authentic, SKU-associated testimonials. Existing admin login.
 import {authorizeAdminRequest} from "../../_shared/admin-security.js";
-import {MANAGED_MODELS} from "../../_shared/xuyi-routes.js";
+import {MANAGED_MODELS} from "../../_shared/mould-routes.js";
 import {bumpPublishRevision} from "../../_shared/site-settings.js";
 import {ensureProductReviews,normalizeProductReview} from "../../_shared/product-reviews.js";
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -43,7 +43,7 @@ export async function onRequestPost(c){
  }
  if(action!=="save")return json({error:"Unknown action"},400);
  let review;try{review=normalizeProductReview(input)}catch(e){return json({error:String(e.message||e)},400)}
- if(!(await knownModel(db,review.model)))return json({error:"型号必须属于已确认的旭一产品目录"},400);
+ if(!(await knownModel(db,review.model)))return json({error:"型号必须属于已确认的 LEYA MOULD 模具目录"},400);
  const id=input?.id?String(input.id):crypto.randomUUID();
  if(!/^[0-9a-f-]{36}$/i.test(id))return json({error:"Invalid review ID"},400);
  if(input.id&&!await db.prepare("SELECT id FROM xuyi_product_reviews WHERE id=?").bind(id).first())
@@ -60,3 +60,4 @@ export async function onRequestPost(c){
  const revision=await bumpPublishRevision(db);
  return json({saved:true,id,model:review.model,status:review.status,...revision});
 }
+
