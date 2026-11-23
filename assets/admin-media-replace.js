@@ -1,4 +1,4 @@
-// Replace a XUYI R2 photo in place, with side-by-side review and undo history.
+// Replace a LEYA MOULD R2 photo in place, with side-by-side review and undo history.
 (()=>{"use strict";
  const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
  const text=(node,str)=>{node.textContent=str};
@@ -146,3 +146,4 @@
  $("close").addEventListener("click",()=>root.close());
  root.addEventListener("close",()=>{revoke();$("old").removeAttribute("src");$("new").removeAttribute("src");selection=null;current=null});
 })();
+
