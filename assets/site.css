@@ -1312,3 +1312,12 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 
 /* Match the reference product landing hero's measured desktop height. */
 .mould-site .catalog-hero{min-height:593px;}
+
+
+/* Match cap-molds floating contact rail geometry and icon colors. */
+.mould-site .rail{top:auto;right:20px;bottom:90px;height:auto;min-height:0;align-items:center;}
+.mould-site .rail a.rail-float{color:#1a1a1a;}
+.mould-site .rail .rail-float--whatsapp{color:#25d366;}
+.mould-site .rail .rail-float--wechat{color:#07c160;}
+.mould-site .rail .rail-float--phone{color:#f0883e;}
+@media(max-width:750px){.mould-site .rail{top:auto;right:14px;bottom:78px;}}
