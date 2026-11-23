@@ -88,7 +88,7 @@ DETAILS = {
         [("O81wopvbPrY", "Edible oil cap mould trial"), ("1wfR93CVe3s", "China flip-top caps mould manufacturers")],
     ),
     "flip-top-caps-mould": _spec(
-        "Flip Top Cap Mould", "Living Hinge", "Precision",
+        "Flip Top Cap Mould –", "Living Hinge", "Precision",
         "/upload/Banner/20210524213222103.jpg",
         [("50k+", "Hinge Cycles Tested"), ("±0.01mm", "Precision"), ("72", "Max Cavities"), ("5M+", "Mould Life")],
         [("Shampoo Flip-Top", "/images/Design/Flip-Top-Cap-Mold.png", "Living-hinge tooling for shampoo and conditioner bottles."), ("Lotion Disc Top", "/images/Design/Lotion-Disc-Top.jpg", "Smooth dispensing with a durable snap-fit closure."), ("Dual-Color Cap", "/images/Design/Dual‑Color-Cap.jpg", "Two-material visual differentiation for branded packaging."), ("Detergent Cap", "/images/Design/Detergent-Cap.jpg", "High-strength flip-top tooling for household liquids."), ("Travel Size Cap", "/images/Design/Travel-Size-Cap.jpg", "Compact closure geometry for personal-care packs."), ("Flip-Top with Tear Band", "/images/Design/Flip‑Top-with-Tear-Band.jpg", "Tamper-evident opening with controlled bridge breakage.")],
