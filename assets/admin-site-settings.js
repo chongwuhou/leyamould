@@ -64,7 +64,10 @@
     $("#translation-provider").value=s.provider||"manual";
     $("#translation-source-locale").innerHTML=langs.map(x=>`<option value="${esc(x.code)}" ${x.code===s.sourceLocale?"selected":""}>${esc(x.nativeName||x.displayName||x.code)} (${esc(x.code)})</option>`).join("");
     $("#translation-model").value=s.model||""; $("#translation-endpoint").value=s.endpoint||""; $("#translation-auto-queue").checked=s.autoQueue!==false;
-    const mode=s.mode||(s.autoTranslate?(s.requireHumanReview===false?"publish":"review"):"off"); $("#translation-mode").value=mode;
+    const autoRun=$("#translation-auto-run");
+    if(autoRun)autoRun.checked=Boolean(s.autoTranslate);
+    const review=$("#translation-review");
+    if(review)review.checked=s.requireHumanReview!==false;
     const x=translations.secretStatus||{}; $("#translation-secret-status").textContent=`Secret 状态：Google ${x.googleCloudTranslation?"✓":"未配置"} · DeepL ${x.deepl?"✓":"未配置"} · OpenAI-Compatible ${x.openaiCompatible?"✓":"未配置"}。Key 不显示、不写入 D1。`;
   }
   function payload(id){const t=$(`.translation-json[data-id="${CSS.escape(id)}"]`);try{return JSON.parse(t.value)}catch{throw new Error("译文 JSON 格式错误")}}
@@ -78,7 +81,7 @@
   async function loadTranslations(){translations=await api(TRANSLATIONS);renderTranslationSettings();renderJobs();}
   async function saveLanguages(){const e=$("#language-settings-status");try{const d=await api(SETTINGS,"POST",{action:"save_languages",config:collectLanguages()});settings.languages=d.config;renderLanguages();e.textContent="已保存；发布版本 "+d.revision+" 已排队。";await loadTranslations();}catch(x){e.textContent="保存失败："+x.message}}
   async function saveContacts(){const e=$("#contact-settings-status");try{const d=await api(SETTINGS,"POST",{action:"save_contacts",config:collectContacts()});settings.contacts=d.config;renderContacts();e.textContent="已保存；发布版本 "+d.revision+" 已排队。";}catch(x){e.textContent="保存失败："+x.message}}
-  async function saveTranslation(){const e=$("#translation-settings-status");try{const cfg={schemaVersion:1,mode:$("#translation-mode").value,provider:$("#translation-provider").value,sourceLocale:$("#translation-source-locale").value,autoQueue:$("#translation-auto-queue").checked,model:$("#translation-model").value.trim(),endpoint:$("#translation-endpoint").value.trim()};await api(SETTINGS,"POST",{action:"save_translation",config:cfg});e.textContent="翻译设置已保存。Provider API Key 仍只存在 Pages Secret。";await loadTranslations();}catch(x){e.textContent="保存失败："+x.message}}
+  async function saveTranslation(){const e=$("#translation-settings-status");try{const cfg={schemaVersion:1,provider:$("#translation-provider").value,sourceLocale:$("#translation-source-locale").value,autoQueue:$("#translation-auto-queue").checked,autoTranslate:$("#translation-auto-run")?.checked===true,requireHumanReview:$("#translation-review")?.checked!==false,model:$("#translation-model").value.trim(),endpoint:$("#translation-endpoint").value.trim()};await api(SETTINGS,"POST",{action:"save_translation",config:cfg});e.textContent="翻译设置已保存。Provider API Key 仍只存在 Pages Secret。";await loadTranslations();}catch(x){e.textContent="保存失败："+x.message}}
   async function enqueue(){const id=$("#translation-model-id").value.trim(),e=$("#translation-settings-status");if(!id)return;try{const d=await api(TRANSLATIONS,"POST",{action:"enqueue_model",modelId:id,force:true});e.textContent="已生成/刷新 "+Number(d.queued||0)+" 个产品翻译任务。";await loadTranslations();}catch(x){e.textContent="排队失败："+x.message}}
   async function enqueueBlog(){const slug=$("#translation-blog-slug").value.trim(),e=$("#translation-settings-status");if(!slug)return;try{const d=await api(TRANSLATIONS,"POST",{action:"enqueue_blog",slug,force:true});e.textContent="已生成/刷新 "+Number(d.queued||0)+" 个 Blog 翻译任务。";await loadTranslations();}catch(x){e.textContent="Blog 排队失败："+x.message}}
   async function job(action,id,withPayload=false){const e=$("#translation-settings-status");try{const body={action,id};if(withPayload)body.translated=payload(id);const d=await api(TRANSLATIONS,"POST",body);e.textContent=action==="approve_job"?"译文已审核入库；发布版本 "+d.revision+" 已排队。":"翻译任务已更新。";await loadTranslations();}catch(x){e.textContent="任务失败："+x.message}}
@@ -101,3 +104,4 @@
   }
   bind(); setInterval(tick,500); tick();
 })();
+
