@@ -1399,3 +1399,12 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
   font-size:16.5px;
   line-height:1.7;
 }
+
+/* Reference nav links use the same 10px 20px item box as dropdown triggers. */
+.mould-site .nav__link{
+  height:auto;
+  min-height:0;
+  padding:10px 20px;
+  font-size:16.5px;
+  line-height:1.7;
+}
