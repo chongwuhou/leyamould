@@ -1446,3 +1446,14 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
   .mould-site .nav-phone-desktop{display:none;}
 }
 @media(max-width:750px){.mould-site .logo__image{width:190px;}}
+
+/* Use the reference font metrics and remove the legacy phone pseudo-icon. */
+.mould-site .nav__link,.mould-site .nav__toggle{
+  font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  letter-spacing:.3px;
+}
+.mould-site .nav-phone-desktop{
+  font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  gap:0;
+}
+.mould-site .nav-phone-desktop::after{content:none!important;display:none!important;}
