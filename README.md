@@ -26,7 +26,7 @@ This repository reuses the verified static-site framework and Pages Functions fr
 - Address: 4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China
 - Mobile / WhatsApp: +86 136 0672 7715
 - Email: amyhu@leyamould.com
-- Public languages: English, Spanish, Portuguese, Russian and Turkish
+- Public languages: English and Spanish
 
 ## Reference direction
 
