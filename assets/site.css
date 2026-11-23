@@ -1295,3 +1295,5 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
  .mould-site .hero.hero-slider .actions{flex-direction:column;width:100%}
  .mould-site .hero.hero-slider .button{width:min(280px,100%)}
 }
+
+.mould-site .hero.hero-slider .button{text-transform:none}
