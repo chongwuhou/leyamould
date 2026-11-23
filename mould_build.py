@@ -27,11 +27,11 @@ SNAPSHOT = ROOT / "_local_ops/build-snapshot.json"
 # Fresh LEYA MOULD media generated for the About page. The public template
 # remains frozen; these local assets replace reference-site photographs.
 ABOUT_MEDIA = {
-    "banner": "/assets/about/about-hero-generated.png",
-    "team": "/assets/about/about-team-generated.png",
-    "inspection": "/assets/about/about-inspection-generated.png",
-    "showroom": "/assets/about/about-showroom-generated.png",
-    "assembly": "/assets/about/about-assembly-generated.png",
+    "banner": "/assets/about/about-hero-generated.webp",
+    "team": "/assets/about/about-team-generated.webp",
+    "inspection": "/assets/about/about-inspection-generated.webp",
+    "showroom": "/assets/about/about-showroom-generated.webp",
+    "assembly": "/assets/about/about-assembly-generated.webp",
 }
 STATE = {}
 if SNAPSHOT.is_file():
