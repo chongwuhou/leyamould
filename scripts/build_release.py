@@ -76,7 +76,10 @@ def main() -> None:
         "siteOrigin": CONFIG["site"]["origin"],
         "pagesProject": CONFIG["cloudflare"]["pagesProjectName"],
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "sourceRevision": os.environ.get("GITHUB_SHA", "local"),
+        # GitHub Actions passes the explicit release SHA; keeping GITHUB_SHA as
+        # a fallback also makes local/other CI builds auditable without
+        # pretending they are a production commit.
+        "sourceRevision": os.environ.get("LEYA_RELEASE_SHA") or os.environ.get("GITHUB_SHA", "local"),
         "publishRevision": int(state.get("publishRevision", 0) or 0),
         "templateSet": "templates/site",
         "adminPath": "admin",
@@ -93,5 +96,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
