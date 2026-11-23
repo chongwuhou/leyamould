@@ -33,9 +33,14 @@ export async function findMediaUsage(env,path,index){
   if(!env.LEYA_DB)throw Error("D1 usage verification unavailable");
   const state=await env.LEYA_DB.prepare("SELECT value FROM site_state WHERE key=?")
     .bind("publish_revision").first();
-  if(!state||!Number.isFinite(Number(state.value))||
-     Number(state.value)<Number(index.publishRevision))
-    throw Error("D1 publish revision cannot be verified against live Pages");
+  const d1Revision=Number(state?.value);
+  const liveRevision=Number(index.publishRevision);
+  // The deployed index must describe exactly the same D1 revision. Allowing
+  // either side to be newer would race a stale Pages deployment or unpublished
+  // D1 references, so both cases fail closed.
+  if(!state||!Number.isInteger(d1Revision)||!Number.isInteger(liveRevision)||
+     d1Revision!==liveRevision)
+    throw Error("D1 publish revision does not match the live Pages media index");
 
   const locations=new Set(index.references[path]||[]);
   for(const [description,sql] of SQL){
@@ -50,7 +55,7 @@ export async function findMediaUsage(env,path,index){
   }
   const all=[...locations];
   return {usageStatus:all.length?"used":"unused",used:all.length>0,referenceCount:all.length,
-    references:all.slice(0,20),truncated:all.length>20};
+    references:all.slice(0,20),truncated:all.length>20,publishRevision:d1Revision};
 }
 export const imageKey=(kind,filename)=>{
   if(!Object.hasOwn(KINDS,kind))return null;
@@ -58,3 +63,4 @@ export const imageKey=(kind,filename)=>{
   if(!/^[a-zA-Z0-9._-]{3,140}$/.test(filename)||filename.includes(".."))return null;
   return KINDS[kind].prefix+filename;
 };
+
