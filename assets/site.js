@@ -173,9 +173,9 @@ if(cards.length){
 const hero=document.querySelector('[data-hero]');
 if(hero){
  let slides=[
- {title:'Your Trusted <span>Plastic Mould</span> Manufacturer',description:'LEYA MOULD supports bottle preform, cap, bottle and cutlery tooling projects from design review through trial and technical handover.',img:'https://www.cap-molds.com/upload/Home/precision-machining.jpg',alt:'Precision mould machining reference',link:'/products/',cta:'Explore Mould Categories →'},
- {title:'60+ Countries <span>Served Through Clear Engineering.</span>',description:'Share your drawing, sample or PDF and keep the tooling brief connected from the first review to production handover.',img:'https://www.cap-molds.com/upload/Home/steel-quality.jpg',alt:'Mould steel quality reference',link:'/contact/#inquiry',cta:'Get in Touch →'},
- {title:'Four Mould <span>Families, One Practical Workflow.</span>',description:'Start with PET preform, bottle cap, bottle or knife-and-fork moulds and confirm the technical evidence your project needs.',img:'https://www.cap-molds.com/Upload/20260617/202606171650511166.jpg',alt:'Bottle cap mould reference',link:'/samples/',cta:'Explore Samples →'}
+ {title:'Your Trusted <span>Plastic Cap Mould</span> Manufacturer',description:'15+ years of precision moulding experience for global packaging projects, with clear engineering review from design through trial and handover.',img:'https://www.cap-molds.com/upload/Home/precision-machining.jpg',alt:'Precision mould machining reference',link:'/products/',cta:'Request a Quote →'},
+ {title:'60+ Countries <span>Served</span>',description:'Trusted by packaging teams worldwide for consistent quality, clear communication and on-time tooling delivery.',img:'https://www.cap-molds.com/upload/Home/steel-quality.jpg',alt:'Mould steel quality reference',link:'/contact/#inquiry',cta:'Get in Touch →'},
+ {title:'09 Cap Mould <span>Series</span>',description:'Water, oil, food, medical, cosmetic and functional closures from one reliable mould project partner.',img:'https://www.cap-molds.com/Upload/20260617/202606171650511166.jpg',alt:'Bottle cap mould reference',link:'/samples/',cta:'Explore Categories →'}
  ];
  if(Array.isArray(runtimeUI.slides)&&runtimeUI.slides.length===slides.length){slides=slides.map((slide,i)=>({...slide,...runtimeUI.slides[i]}))}
  // D1 reviewed banner settings are baked into this page at release time.
