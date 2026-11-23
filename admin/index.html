@@ -123,6 +123,11 @@
  <p>这里只保存 YouTube 视频地址。新增或删除后，视频列表页会直接读取 D1 数据并更新；不调用 YouTube Data API。</p></div></div>
  <form id="youtube-video-form" class="blog-admin-editor" autocomplete="off">
   <label class="blog-admin-wide">YouTube 视频地址<input id="youtube-video-url" type="url" required maxlength="500" placeholder="https://www.youtube.com/watch?v=xxxxxxxxxxx"></label>
+  <div class="blog-admin-form-grid">
+   <label>英文标题<input id="youtube-video-title-en" required maxlength="180" placeholder="Bottle cap mould trial"></label>
+   <label>西班牙语标题（可留空，自动回退英文）<input id="youtube-video-title-es" maxlength="180" placeholder="Prueba del molde de tapas"></label>
+   <label>前台发布时间<input id="youtube-video-published-at" type="datetime-local" required></label>
+  </div>
   <div class="row-actions"><button type="submit" class="btn primary" id="youtube-video-save">+ 增加视频</button><button type="button" class="btn ghost" id="youtube-video-refresh">刷新列表</button><span id="youtube-video-status" class="muted" role="status" aria-live="polite"></span></div>
  </form>
  <div id="youtube-video-list"></div>
