@@ -1,147 +1,18 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
+import { MOULD_ROUTES } from "../../_shared/mould-routes.js";
 
 const clean = (value) => String(value ?? "").trim();
 
-const DEFAULT_REDIRECTS = [["/about", "/about/"], ["/blog", "/blog/"], ["/contact", "/contact/"], ["/products", "/products/"]].map(([sourcePath,targetPath])=>({sourcePath,targetPath,statusCode:301}));
-
-const LEGACY_DEFAULT_NAVIGATION = [
-  {
-    "id": "home",
-    "parentId": "",
-    "label": "Home",
-    "url": "/",
-    "sortOrder": 10,
-    "newWindow": false
-  },
-  {
-    "id": "products",
-    "parentId": "",
-    "label": "Products",
-    "url": "/products/",
-    "sortOrder": 20,
-    "newWindow": false
-  },
-  {
-    "id": "category-sports-water-bottles",
-    "parentId": "products",
-    "label": "Plastic Sports Water Bottles",
-    "url": "/collections/sports-water-bottles/",
-    "sortOrder": 10,
-    "newWindow": false
-  },
-  {
-    "id": "category-large-capacity-water-jugs",
-    "parentId": "products",
-    "label": "Large Capacity Water Jugs",
-    "url": "/collections/large-capacity-water-jugs/",
-    "sortOrder": 20,
-    "newWindow": false
-  },
-  {
-    "id": "category-kids-water-bottles",
-    "parentId": "products",
-    "label": "Kids Plastic Water Bottles",
-    "url": "/collections/kids-water-bottles/",
-    "sortOrder": 30,
-    "newWindow": false
-  },
-  {
-    "id": "category-plastic-shaker-bottles",
-    "parentId": "products",
-    "label": "Plastic Shaker Bottles",
-    "url": "/collections/plastic-shaker-bottles/",
-    "sortOrder": 40,
-    "newWindow": false
-  },
-  {
-    "id": "capabilities",
-    "parentId": "",
-    "label": "Capabilities",
-    "url": "/capabilities/",
-    "sortOrder": 30,
-    "newWindow": false
-  },
-  {
-    "id": "cap-custom-water-bottle",
-    "parentId": "capabilities",
-    "label": "Custom Water Bottle",
-    "url": "/capabilities/custom-water-bottle/",
-    "sortOrder": 10,
-    "newWindow": false
-  },
-  {
-    "id": "cap-custom-molding",
-    "parentId": "capabilities",
-    "label": "Custom Molding",
-    "url": "/capabilities/custom-molding/",
-    "sortOrder": 20,
-    "newWindow": false
-  },
-  {
-    "id": "cap-custom-logo",
-    "parentId": "capabilities",
-    "label": "Custom Logo",
-    "url": "/capabilities/custom-logo/",
-    "sortOrder": 30,
-    "newWindow": false
-  },
-  {
-    "id": "cap-custom-graphics",
-    "parentId": "capabilities",
-    "label": "Custom Graphics",
-    "url": "/capabilities/custom-graphics/",
-    "sortOrder": 40,
-    "newWindow": false
-  },
-  {
-    "id": "cap-custom-manufacturing",
-    "parentId": "capabilities",
-    "label": "Custom Manufacturing",
-    "url": "/capabilities/custom-manufacturing/",
-    "sortOrder": 50,
-    "newWindow": false
-  },
-  {
-    "id": "cap-custom-packaging",
-    "parentId": "capabilities",
-    "label": "Custom Packaging",
-    "url": "/capabilities/custom-packaging/",
-    "sortOrder": 60,
-    "newWindow": false
-  },
-  {
-    "id": "about",
-    "parentId": "",
-    "label": "About",
-    "url": "/about/",
-    "sortOrder": 40,
-    "newWindow": false
-  },
-  {
-    "id": "why-us",
-    "parentId": "",
-    "label": "Why Us",
-    "url": "/why-us/",
-    "sortOrder": 50,
-    "newWindow": false
-  },
-  {
-    "id": "blog",
-    "parentId": "",
-    "label": "Blog",
-    "url": "/blog/",
-    "sortOrder": 60,
-    "newWindow": false
-  },
-  {
-    "id": "contact",
-    "parentId": "",
-    "label": "Contact Us",
-    "url": "/contact/",
-    "sortOrder": 70,
-    "newWindow": false
-  }
-];
+// Legacy water-cup navigation is deliberately not carried into LEYA MOULD.
+// Existing owner rows remain authoritative; these are only empty-D1 defaults.
+const DEFAULT_REDIRECTS = [
+  ["/about", "/about/"], ["/blog", "/blog/"], ["/contact", "/contact/"],
+  ["/news", "/news/"], ["/video", "/video/"], ["/samples", "/samples/"],
+  ["/faq", "/faq/"], ["/products", "/Plastic-cap-mold.html"],
+  ["/cap-samples/Sample.html", "/samples/"],
+  ["/videolist/Cap-Mold-Video.html", "/video/"],
+  ["/news/news.html", "/news/"], ["/contact/contact_us.html", "/contact/"]
+].map(([sourcePath,targetPath])=>({sourcePath,targetPath,statusCode:301}));
 
 const DEFAULT_NAVIGATION = [
   {id:"home",parentId:"",label:"Home",url:"/",sortOrder:10,newWindow:false},
@@ -259,6 +130,8 @@ function validateNavigation(input) {
     if (ids.has(id)) throw new Error("Duplicate navigation id: " + id);
     if (!label || label.length > 80) throw new Error("Invalid navigation label for " + id);
     if (!validNavUrl(url)) throw new Error("Invalid navigation URL for " + id);
+    if (url.startsWith("/") && !MOULD_ROUTES.has(url))
+      throw new Error("Navigation URL is not a configured LEYA MOULD route: " + url);
     ids.add(id);
     return { id, parentId, label, url, sortOrder, newWindow: Boolean(row?.newWindow) };
   });
