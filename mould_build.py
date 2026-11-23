@@ -219,8 +219,15 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     banner_mod = " reference-banner--contact" if route == "/contact/" else (" reference-banner--compact" if route in {"/capabilities/", "/news/", "/video/", "/faq/"} else "")
     cap = "https://www.cap-molds.com"
     page_header_mod = " reference-page-header--samples" if route == "/samples/" else ""
-    page_eyebrow = "AUXILIARY EQUIPMENT" if route == "/capabilities/" else "LEYA MOULD · PRECISION TOOLING"
-    page_title = "Cap <span class=\"reference-title-accent\">Auxiliary Machines</span>" if route == "/capabilities/" else esc(title)
+    if route == "/capabilities/":
+        page_eyebrow = "AUXILIARY EQUIPMENT"
+        page_title = "Cap <span class=\"reference-title-accent\">Auxiliary Machines</span>"
+    elif route == "/video/":
+        page_eyebrow = "EXPLORE OUR WORK"
+        page_title = "Video <span class=\"reference-title-accent\">Gallery</span>" if locale == "en" else "Galería de <span class=\"reference-title-accent\">vídeos</span>"
+    else:
+        page_eyebrow = "LEYA MOULD · PRECISION TOOLING"
+        page_title = esc(title)
     if route == "/contact/":
         crumb = '<nav class="reference-breadcrumb reference-breadcrumb--overlay" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav>'
         return '<section class="reference-banner' + banner_mod + '"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async">' + crumb + '</section><header class="reference-page-header"><span class="eyebrow">' + page_eyebrow + '</span><h1>' + page_title + '</h1><p>' + esc(subtitle) + '</p></header>'
@@ -384,6 +391,58 @@ def samples_page(locale: str) -> str:
     )
     return intro(locale, title, subtitle, "/samples/") + '<section class="samples-page"><div class="sample-list">' + ''.join(cards) + '</div>' + contact + '</section>'
 
+VIDEO_SEED = [
+    {"videoId": "elkadaPoBHc", "title": "Video of 5 gallon cap trial mold", "description": "", "publishedAt": "2021-10-07T00:57:36Z"},
+    {"videoId": "wMPqPOKdnf4", "title": "8cavity flip top cap mold with cold runner", "description": "", "publishedAt": "2021-10-07T00:58:46Z"},
+    {"videoId": "E0M3IwYBsGw", "title": "16cavity cap mold with slitting machine and cold runner", "description": "", "publishedAt": "2021-10-07T00:59:24Z"},
+    {"videoId": "y1NrJ4GUOO4", "title": "28mm high speed cap mould", "description": "", "publishedAt": "2021-10-07T00:59:54Z"},
+    {"videoId": "YLNnJWATMB4", "title": "28 drops plastic cover (24 cavity)", "description": "", "publishedAt": "2021-10-09T07:30:01Z"},
+    {"videoId": "t-I5OczexGc", "title": "32-cavity cap mold", "description": "", "publishedAt": "2021-10-09T07:32:51Z"},
+    {"videoId": "1VO69jVYxgY", "title": "32-cavity bottle cap injection molding (hot runner)", "description": "", "publishedAt": "2021-10-12T03:05:54Z"},
+    {"videoId": "03FybMF9qCE", "title": "48-cavity cap mold", "description": "", "publishedAt": "2021-10-12T03:06:30Z"},
+    {"videoId": "LpWp3_8S2c0", "title": "48 cavity cap mold", "description": "", "publishedAt": "2021-10-13T10:20:32Z"},
+    {"videoId": "eJCq4OYiR68", "title": "48mm cap mold", "description": "", "publishedAt": "2021-10-13T10:21:23Z"},
+    {"videoId": "2AnfOabyI10", "title": "cap molds flip top cap mould", "description": "", "publishedAt": "2021-10-13T10:22:15Z"},
+    {"videoId": "5AaCsTX7W2s", "title": "Bottle Cap Mould-Oil Cap Trial Video", "description": "", "publishedAt": "2021-10-19T00:36:22Z"}
+]
+
+def video_card(item: dict, locale: str) -> str:
+    title = esc(item.get("title", "LEYA MOULD video"))
+    description = esc(item.get("description", ""))
+    video_id = esc(item.get("videoId", ""))
+    published = esc(item.get("publishedAt", ""))
+    date_text = "" if not item.get("publishedAt") else item["publishedAt"][:10]
+    if locale == "es" and date_text:
+        try:
+            year, month, day = date_text.split("-")
+            date_text = f"{day}/{month}/{year}"
+        except ValueError:
+            pass
+    return ('<article class="video-card" data-video-id="' + video_id + '">'
+        '<div class="video-thumb" data-video-id="' + video_id + '" role="button" tabindex="0" aria-label="Play ' + title + '">'
+        '<img src="https://i.ytimg.com/vi/' + video_id + '/mqdefault.jpg" alt="' + title + '" loading="lazy" decoding="async">'
+        '<span class="play-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></span></div>'
+        '<div class="video-body"><time class="video-date" datetime="' + published + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-.75-1.23-4.5-2.67V7z"></path></svg>' + esc(date_text) + '</time>'
+        '<h2 class="video-title"><button type="button" class="video-title-link" data-video-id="' + video_id + '">' + title + '</button></h2>'
+        '<p class="video-desc">' + description + '</p></div></article>')
+
+def video_page(locale: str) -> str:
+    title = "Video Gallery" if locale == "en" else "Galería de vídeos"
+    subtitle = ("Watch our latest mould demonstrations, factory tours, and technical insights. See LEYA MOULD in action."
+                if locale == "en" else "Vea nuestras demostraciones de moldes, recorridos de fábrica y conocimientos técnicos. Descubra LEYA MOULD en acción.")
+    cards = ''.join(video_card(item, locale) for item in VIDEO_SEED)
+    empty = "No videos found yet." if locale == "en" else "Todavía no hay vídeos."
+    labels = {"close": "Close video" if locale == "en" else "Cerrar vídeo", "play": "Play video" if locale == "en" else "Reproducir vídeo"}
+    payload = json.dumps(VIDEO_SEED, ensure_ascii=False).replace("</", "<\\/")
+    body = ('<section class="video-gallery-page" data-video-gallery data-public-api="/api/youtube-videos">'
+        '<div class="video-grid" id="videoGrid">' + cards + '</div>'
+        '<p class="video-empty" id="videoEmpty" hidden>' + empty + '</p>'
+        '<div class="video-modal" id="videoModal" aria-hidden="true"><div class="video-modal-inner" role="dialog" aria-modal="true" aria-label="' + esc(title) + '">'
+        '<button type="button" class="close-modal" id="closeVideoModal" aria-label="' + esc(labels["close"]) + '">×</button><iframe id="videoIframe" title="' + esc(labels["play"]) + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div></div>'
+        '<script type="application/json" id="videoSeed">' + payload + '</script>'
+        '<script>(()=>{const root=document.querySelector("[data-video-gallery]");if(!root)return;const grid=document.getElementById("videoGrid"),empty=document.getElementById("videoEmpty"),modal=document.getElementById("videoModal"),frame=document.getElementById("videoIframe"),close=document.getElementById("closeVideoModal");const esc=v=>String(v??"").replace(/[&<>"\']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",\"":"&quot;","\'":"&#39;"}[c]));const date=v=>{try{return new Intl.DateTimeFormat(document.documentElement.lang||"en",{year:"numeric",month:"long",day:"numeric"}).format(new Date(v))}catch{return v||""}};const card=v=>{const id=esc(v.videoId||"");if(!/^[A-Za-z0-9_-]{11}$/.test(id))return "";return `<article class="video-card" data-video-id="${id}"><div class="video-thumb" data-video-id="${id}" role="button" tabindex="0" aria-label="Play video"><img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="${esc(v.title||"LEYA MOULD video")}" loading="lazy" decoding="async"><span class="play-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></span></div><div class="video-body"><time class="video-date" datetime="${esc(v.publishedAt||"")}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-.75-1.23-4.5-2.67V7z"></path></svg>${date(v.publishedAt)}</time><h2 class="video-title"><button type="button" class="video-title-link" data-video-id="${id}">${esc(v.title||"LEYA MOULD video")}</button></h2><p class="video-desc">${esc(v.description||"")}</p></div></article>`};const render=items=>{grid.innerHTML=(items||[]).map(card).join("");empty.hidden=Boolean(items&&items.length);};const play=id=>{if(!/^[A-Za-z0-9_-]{11}$/.test(id))return;frame.src="https://www.youtube.com/embed/"+id+"?autoplay=1&rel=0";modal.classList.add("active");modal.setAttribute("aria-hidden","false");};const stop=()=>{modal.classList.remove("active");modal.setAttribute("aria-hidden","true");frame.src="";};grid.addEventListener("click",e=>{const t=e.target.closest("[data-video-id]");if(t)play(t.dataset.videoId)});grid.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.closest("[data-video-id]")){e.preventDefault();play(e.target.closest("[data-video-id]").dataset.videoId)}});close.addEventListener("click",stop);modal.addEventListener("click",e=>{if(e.target===modal)stop()});document.addEventListener("keydown",e=>{if(e.key==="Escape")stop()});fetch(root.dataset.publicApi,{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(d=>render(d.items||[])).catch(()=>{});})();</script></section>')
+    return intro(locale, title, subtitle, "/video/") + body
+
 def simple_page(locale: str, route: str, title: str, description: str, body: str) -> str:
     return intro(locale, title, description, route) + '<section class="section"><div class="shell"><div class="article">' + body + '</div></div></section>'
 
@@ -417,7 +476,7 @@ def generate() -> dict:
         add(code, "/contact/", text(code, "contact"), text(code, "contact_intro"), contact_page(code))
         add(code, "/samples/", "Plastic Cap Samples" if code == "en" else ("Muestras de tapas de plástico" if code == "es" else text(code, "samples")), "Explore plastic bottle cap samples manufactured with precision moulds.", samples_page(code))
         add(code, "/news/", text(code, "news"), text(code, "blog_text"), simple_page(code, "/news/", text(code, "news"), text(code, "blog_text"), '<div class="resource-grid"><a class="resource-card" href="' + localized_href(code, "/faq/") + '"><span class="eyebrow">FAQ</span><h3>' + esc(text(code, "faq_title")) + '</h3><p>' + esc(text(code, "faq_intro")) + '</p></a><a class="resource-card" href="' + localized_href(code, "/capabilities/") + '"><span class="eyebrow">ENGINEERING</span><h3>' + esc(text(code, "capabilities")) + '</h3><p>' + esc(text(code, "technical_text")) + '</p></a><a class="resource-card" href="' + localized_href(code, "/contact/#inquiry") + '"><span class="eyebrow">PROJECT</span><h3>' + esc(text(code, "quote")) + '</h3><p>' + esc(text(code, "resources_text")) + '</p></a></div>'))
-        add(code, "/video/", text(code, "video"), text(code, "technical_text"), simple_page(code, "/video/", text(code, "video"), text(code, "technical_text"), '<div class="video-placeholder"><span class="eyebrow">LEYA MOULD</span><h2>Production and mould review videos</h2><p>' + esc(text(code, "technical_text")) + '</p><a class="button" href="' + localized_href(code, "/contact/#inquiry") + '">' + esc(text(code, "quote")) + ' →</a></div>'))
+        add(code, "/video/", "Video Gallery" if code == "en" else "Galería de vídeos", "Watch our latest mould demonstrations, factory tours, and technical insights." if code == "en" else "Vea nuestras demostraciones de moldes y conocimientos técnicos.", video_page(code))
         add(code, "/faq/", text(code, "faq_title"), text(code, "faq_intro"), faq_page(code))
         add(code, "/blog/", text(code, "blog_title"), text(code, "blog_text"), simple_page(code, "/blog/", text(code, "blog_title"), text(code, "blog_text"), '<p>' + esc(text(code, "blog_text")) + '</p><p><a class="button" href="' + localized_href(code, "/contact/#inquiry") + '">' + esc(text(code, "quote")) + ' →</a></p>'))
         add(code, "/privacy-policy/", text(code, "privacy_title"), text(code, "privacy_text"), simple_page(code, "/privacy-policy/", text(code, "privacy_title"), text(code, "privacy_text"), '<p>' + esc(text(code, "privacy_text")) + '</p>'))
