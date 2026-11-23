@@ -1390,10 +1390,9 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 }
 
 /* Match the reference nav item box so dropdowns anchor under the text, not the full header. */
-.mould-site .nav-menu-list{gap:0;}
-.mould-site .nav__drop{height:auto;align-self:center;}
+.mould-site .nav-menu-list{height:auto;gap:0;}.mould-site .nav__drop{height:auto;align-self:center;}
 .mould-site .nav__toggle{
-  height:auto;
+  display:inline-flex;  align-items:center;  gap:12px;  height:auto;
   min-height:0;
   padding:10px 20px;
   font-size:16.5px;
@@ -1460,3 +1459,4 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 
 /* The supplied LEYA phone string is longer than the reference; reserve the same 259px text box. */
 .mould-site .phone-text{width:259px;}
+
