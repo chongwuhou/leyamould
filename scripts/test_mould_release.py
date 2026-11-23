@@ -86,6 +86,20 @@ assert home.count("/product/") >= len(CAP_PRODUCT_ROUTES)
 for route in CAP_PRODUCT_ROUTES:
     assert route in home
 assert "/collections/" not in home
+expected_nav = [
+    "Mineral Water Cap Mould",
+    "Edible Oil Cap Mould",
+    "Flip top caps mould",
+    "Engine Oil Cap Mould",
+    "Food Packaging Cap Mould",
+    "Medical Cap Mould",
+    "Personal Care Cap Mould",
+    "Functional Cap Mould(Combination)",
+    "Plastic Handle mould",
+]
+positions = [home.index(">" + label + "</a>") for label in expected_nav]
+assert positions == sorted(positions)
+assert ">Cap Mould Series</a>" not in home
 assert "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China" in home
 assert "WhatsApp +8613606727715" in home
 machine_en = (DIST / "Bottle-Cap-Machine" / "Bottle-Cap-Machine.html").read_text(encoding="utf-8")

@@ -177,13 +177,25 @@ MACHINE_NEWS_ITEMS = [
 ]
 
 # One canonical list in data/mould-catalog.json drives the aggregate page,
-# home cards, navigation, footer and every dedicated product route.
-CAP_MOULD_SERIES = CATALOG["categories"]
+# home cards, navigation, footer and every dedicated product route.  The
+# explicit order mirrors the reference site's nine-item Cap mold menu.
+CAP_MOULD_ORDER = [
+    "mineral-water-closure-cap-molds",
+    "oil-bottle-cap-mould",
+    "flip-top-caps-mould",
+    "engine-oil-cap-mould",
+    "food-packaging-cap-mould",
+    "medical-cap-mould",
+    "personal-care-cap-mould",
+    "functional-cap-mould",
+    "plastic-handle-cap-mould",
+]
+CAP_MOULD_SERIES = sorted(CATALOG["categories"], key=lambda item: CAP_MOULD_ORDER.index(item["slug"]))
 
 def header(locale: str, route: str) -> str:
     # Keep the desktop navigation aligned with the reference: the Cap mold
     # label opens the aggregate page, while the caret exposes all nine routes.
-    product_links = '<a href="' + localized_href(locale, "/Plastic-cap-mold.html") + '">Cap Mould Series</a>' + ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(item["title"]) + '</a>' for item in CAP_MOULD_SERIES)
+    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(item.get("navTitle", item["title"])) + '</a>' for item in CAP_MOULD_SERIES)
     nav = ['<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>']
     about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">About us</a><a href="' + localized_href(locale, "/faq/") + '">FAQs</a></div></div>'
     cap_nav_label = "Cap mold" if locale == "en" else text(locale, "cap_mould")

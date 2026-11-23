@@ -3,7 +3,6 @@
   "description": "Default LEYA MOULD product and capability navigation. D1 site_navigation remains authoritative for approved labels and order.",
   "productColumns": [
     {"heading":"Cap Mould Series","image":"/assets/curated-hd/feature-flip-top.webp","links":[
-      {"label":"Cap Mould Series","url":"/Plastic-cap-mold.html"},
       {"label":"Water / Beverage Cap Mould","url":"/product/Mineral-Water-Closure-cap-Molds.html"},
       {"label":"Edible Oil Cap Mould","url":"/product/Oil-bottle-cap-mould.html"},
       {"label":"Engine Oil Cap Mould","url":"/product/Engine-Oil-Cap-Mould.html"},
@@ -13,8 +12,7 @@
       {"label":"Cosmetic Cap Mould (Flip-Top)","url":"/product/Flip-top-caps-mould.html"},
       {"label":"Personal Care Cap Mould","url":"/product/Personal-Care-Cap-Mould.html"},
       {"label":"Functional Cap Mould (Combination)","url":"/product/Functional-Cap-Mould.html"},
-      {"label":"Handle Mould","url":"/product/Plastic-Handle-Cap-mould.html"},
-      {"label":"All Cap Mould Categories","url":"/Plastic-cap-mold.html"}]},
+      {"label":"Handle Mould","url":"/product/Plastic-Handle-Cap-mould.html"}]},
     {"heading":"Engineering","image":"/assets/curated-hd/outdoor-lifestyle.webp","links":[
       {"label":"Mould Design & Engineering","url":"/capabilities/mould-design/"},
       {"label":"Precision Manufacturing","url":"/capabilities/precision-manufacturing/"},
