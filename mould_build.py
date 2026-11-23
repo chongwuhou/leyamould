@@ -155,8 +155,19 @@ def shell(locale: str, title: str, description: str, route: str, body: str) -> s
     return render_template("shell", HEAD=head(locale, title, description, route), HEADER=header(locale, route), SIDEBAR=rail(locale), BODY=body, FOOTER=footer(locale))
 
 def intro(locale: str, title: str, subtitle: str, route: str) -> str:
-    crumb = text(locale, "home") + " / " + title
-    return '<section class="page-intro"><div class="shell"><div class="breadcrumb"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a> / ' + esc(title) + '</div><span class="eyebrow">LEYA MOULD · PRECISION TOOLING</span><h1>' + esc(title) + '</h1><p>' + esc(subtitle) + '</p></div></section>'
+    banner_map = {
+        "/about/": "/upload/Banner/pheader-About.jpg",
+        "/products/": "/upload/Banner/Plastic-flip-top-mold.jpg",
+        "/capabilities/": "/upload/Banner/machine.jpg",
+        "/samples/": "/upload/Banner/Cap-Samples.jpg",
+        "/news/": "/upload/Banner/pheader-news.jpg",
+        "/video/": "/upload/Banner/pheader-news.jpg",
+        "/contact/": "/upload/Banner/pheader-contact.jpg",
+        "/faq/": "/upload/Banner/pheader-faq.jpg",
+    }
+    banner = banner_map.get(route, "/upload/Banner/Plastic-flip-top-mold.jpg")
+    cap = "https://www.cap-molds.com"
+    return '<section class="reference-banner"><img src="' + cap + banner + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async"></section><nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav><header class="reference-page-header"><span class="eyebrow">LEYA MOULD · PRECISION TOOLING</span><h1>' + esc(title) + '</h1><p>' + esc(subtitle) + '</p></header>'
 
 def section_heading(locale: str, eyebrow: str, title: str, description: str = "") -> str:
     return '<div class="section__head"><div><span class="eyebrow">' + esc(eyebrow) + '</span><h2 class="section__title">' + esc(title) + '</h2>' + (('<p class="copy-muted">' + esc(description) + '</p>') if description else '') + '</div></div>'
