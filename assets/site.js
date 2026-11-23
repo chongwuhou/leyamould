@@ -173,9 +173,9 @@ if(cards.length){
 const hero=document.querySelector('[data-hero]');
 if(hero){
  let slides=[
- {title:'Custom Water Bottles <span>Built for Your Brand.</span>',description:'Explore sports, kids, large capacity and shaker bottles with factory-backed supply and project-specific branding options.',img:'/assets/curated-hd/gradient-sports.webp',alt:'Colorful gradient plastic sports bottle collection',link:'/products/',cta:'Explore Our Products →'},
- {title:'Plastic Sports Bottles <span>For Every Collection.</span>',description:'Compare carry-handle styles, colorful bottle shapes and source catalog models for wholesale buyers.',img:'/assets/curated-hd/outdoor-lifestyle.webp',alt:'Colorful sports bottles arranged for outdoor activities',link:'/collections/sports-water-bottles/',cta:'See Sports Bottles →'},
- {title:'Custom Drinkware <span>Designed Around You.</span>',description:'Discuss logo artwork, packaging, models and sample requirements for your next B2B plastic bottle project.',img:'/assets/curated-hd/customizable-assortment.webp',alt:'Plastic water bottle color and lid variants for customization',link:'/capabilities/',cta:'View Customization →'}
+ {title:'Your Trusted <span>Plastic Mould</span> Manufacturer',description:'LEYA MOULD supports bottle preform, cap, bottle and cutlery tooling projects from design review through trial and technical handover.',img:'https://www.cap-molds.com/upload/Home/precision-machining.jpg',alt:'Precision mould machining reference',link:'/products/',cta:'Explore Mould Categories →'},
+ {title:'60+ Countries <span>Served Through Clear Engineering.</span>',description:'Share your drawing, sample or PDF and keep the tooling brief connected from the first review to production handover.',img:'https://www.cap-molds.com/upload/Home/steel-quality.jpg',alt:'Mould steel quality reference',link:'/contact/#inquiry',cta:'Get in Touch →'},
+ {title:'Four Mould <span>Families, One Practical Workflow.</span>',description:'Start with PET preform, bottle cap, bottle or knife-and-fork moulds and confirm the technical evidence your project needs.',img:'https://www.cap-molds.com/Upload/20260617/202606171650511166.jpg',alt:'Bottle cap mould reference',link:'/samples/',cta:'Explore Samples →'}
  ];
  if(Array.isArray(runtimeUI.slides)&&runtimeUI.slides.length===slides.length){slides=slides.map((slide,i)=>({...slide,...runtimeUI.slides[i]}))}
  // D1 reviewed banner settings are baked into this page at release time.
@@ -294,6 +294,10 @@ if(hero){
  slides.slice(1).forEach(slide=>{const preload=new Image();preload.src=slide.img});
  schedule();
 }
+document.querySelectorAll('[data-samples-scroll]').forEach(button=>button.addEventListener('click',()=>{
+ const track=document.querySelector('[data-samples-track]');
+ if(track)track.scrollBy({left:Number(button.dataset.samplesScroll||1)*Math.min(track.clientWidth*.82,760),behavior:'smooth'});
+}));
 const bottleTabs=[...document.querySelectorAll('.bottle-tab[role="tab"]')];
 function selectTab(i){bottleTabs.forEach((t,j)=>{const active=i===j;t.classList.toggle('active',active);t.setAttribute('aria-selected',String(active));const panel=document.getElementById(t.getAttribute('aria-controls'));if(panel)panel.hidden=!active})}
 bottleTabs.forEach((t,i)=>{t.addEventListener('click',()=>selectTab(i));t.addEventListener('keydown',ev=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(ev.key)){ev.preventDefault();const n=ev.key==='Home'?0:ev.key==='End'?bottleTabs.length-1:(i+(ev.key==='ArrowLeft'?-1:1)+bottleTabs.length)%bottleTabs.length;selectTab(n);bottleTabs[n].focus()}})});
@@ -341,3 +345,4 @@ if(newsSlider){
 }
 
 })();
+
