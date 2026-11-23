@@ -72,6 +72,27 @@ _wa_candidate = str(_brand_contact.get("whatsappShortUrl") or _brand_contact.get
 WA_URL = _wa_candidate if _wa_candidate.startswith(("https://", "http://")) else "https://wa.me/8613606727715"
 BRAND_DISPLAY = str(_brand_identity.get("displayName") or "LEYA MOULD")
 BRAND_LEGAL = str(_brand_identity.get("legalName") or "LEYA MOULD Co.,Ltd")
+_social_config = BRAND_CONFIG.get("social", {}) if isinstance(BRAND_CONFIG, dict) else {}
+SOCIAL_URLS = {
+    "tiktok": str(_social_config.get("tiktok") or "https://www.tiktok.com/"),
+    "youtube": str(_social_config.get("youtube") or "https://www.youtube.com/"),
+    "facebook": str(_social_config.get("facebook") or "https://www.facebook.com/"),
+}
+for _social_key, _social_value in list(SOCIAL_URLS.items()):
+    if not _social_value.startswith(("https://", "http://")):
+        SOCIAL_URLS[_social_key] = "https://www." + _social_key + ".com/"
+
+TOPBAR_ICONS = {
+    "email": "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z",
+    "phone": "M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z",
+    "pin": "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z",
+    "tiktok": "M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z",
+    "youtube": "M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z",
+    "facebook": "M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z",
+}
+
+def topbar_icon(name: str) -> str:
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + TOPBAR_ICONS[name] + '" fill="currentColor"></path></svg>'
 
 def _published_content(row: object) -> dict:
     if not isinstance(row, dict):
@@ -318,7 +339,9 @@ def header(locale: str, route: str) -> str:
     logo = '<a href="' + local_link(locale, "/") + '" class="logo" aria-label="' + esc(BRAND_DISPLAY) + ' home"><img class="logo__image" src="' + esc(LOGO_SRC) + '" alt="' + esc(LOGO_ALT) + '" width="260" height="51" decoding="async"></a>'
     actions = '<div class="header__actions"><a class="nav-phone-desktop" href="tel:' + esc(phone_digits) + '"><span class="phone-text">' + esc(WHATSAPP) + '</span><span class="phone-icon-wrap"><svg class="phone-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z" fill="currentColor"></path></svg></span></a><select class="language-switch" data-language-switch aria-label="Choose language">' + options + '</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><a class="button header__quote" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + '</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="menu-label">Menu</span></button></div>'
     search = '<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="' + localized_href(locale, "/products/") + '" method="get"><input type="search" name="q" placeholder="Search mould category or application…" aria-label="Search mould category or application"><button class="button" type="submit">Search →</button></form></div>'
-    top = '<div class="topbar top-bar"><div class="shell topbar__inner top-bar-inner"><div class="top-bar-left"><a href="mailto:' + esc(EMAIL) + '">✉ ' + esc(EMAIL) + '</a><a href="tel:' + esc(phone_digits) + '">☎ ' + esc(WHATSAPP) + '</a><span>⌖ ' + esc(ADDRESS) + '</span></div><div class="top-bar-right"><a href="' + esc(WA_URL) + '" target="_blank" rel="noopener noreferrer">WhatsApp ' + esc(WHATSAPP) + '</a><a href="' + localized_href(locale, "/video/") + '">Video</a><a href="' + localized_href(locale, "/contact/") + '">Contact</a></div></div></div>'
+    top_left = '<div class="top-bar-left"><a href="mailto:' + esc(EMAIL) + '" class="info-item" title="Email us"><span class="info-icon">' + topbar_icon("email") + '</span><span>' + esc(EMAIL) + '</span></a><span class="info-separator"></span><a href="tel:' + esc(phone_digits) + '" class="info-item" title="Call us"><span class="info-icon">' + topbar_icon("phone") + '</span><span>' + esc(WHATSAPP) + '</span></a><span class="info-separator"></span><span class="info-item" title="Our address"><span class="info-icon">' + topbar_icon("pin") + '</span><span>' + esc(ADDRESS) + '</span></span></div>'
+    top_right = '<div class="top-bar-right"><a href="' + esc(SOCIAL_URLS["tiktok"]) + '" target="_blank" rel="noopener noreferrer" class="social-link tiktok" title="TikTok" aria-label="TikTok">' + topbar_icon("tiktok") + '</a><a href="' + esc(SOCIAL_URLS["youtube"]) + '" target="_blank" rel="noopener noreferrer" class="social-link youtube" title="YouTube" aria-label="YouTube">' + topbar_icon("youtube") + '</a><a href="' + esc(SOCIAL_URLS["facebook"]) + '" target="_blank" rel="noopener noreferrer" class="social-link facebook" title="Facebook" aria-label="Facebook">' + topbar_icon("facebook") + '</a></div>'
+    top = '<div class="topbar top-bar" id="topBar"><div class="shell topbar__inner top-bar-inner">' + top_left + top_right + '</div></div>'
     return render_template("header", TOPBAR=top, LOGO=logo, NAV_DESKTOP=''.join(nav), ACTIONS=actions, SEARCH=search, NAV_MOBILE=mobile)
 
 def footer(locale: str) -> str:

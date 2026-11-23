@@ -81,6 +81,7 @@ export function normalizeBrandConfig(input) {
       footer: { src: pathOrUrl(footerLogo.src), alt: clean(footerLogo.alt, 180) || displayName }
     },
     social: {
+      tiktok: social.tiktok ? httpUrl(social.tiktok) : "",
       facebook: social.facebook ? httpUrl(social.facebook) : "",
       instagram: social.instagram ? httpUrl(social.instagram) : "",
       linkedin: social.linkedin ? httpUrl(social.linkedin) : "",
@@ -127,3 +128,4 @@ export function brandPublicPayload(config, updatedAt = "") {
     config: normalizeBrandConfig(config)
   };
 }
+

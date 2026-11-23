@@ -106,7 +106,10 @@ positions = [home.index(">" + label + "</a>") for label in expected_nav]
 assert positions == sorted(positions)
 assert ">Cap Mould Series</a>" not in home
 assert "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China" in home
-assert "WhatsApp +8613606727715" in home
+assert 'class="info-item"' in home
+assert 'class="social-link tiktok"' in home
+assert 'class="social-link youtube"' in home
+assert 'class="social-link facebook"' in home
 for route in CAP_PRODUCT_ROUTES:
     path = DIST / route.strip("/")
     html = path.read_text(encoding="utf-8")

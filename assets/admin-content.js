@@ -56,12 +56,17 @@
   if(!state[requiredData[tab]]){container.innerHTML="<p>当前栏目数据尚未读取成功，请点击「读取线上 D1 内容」重试；其他栏目可继续编辑。</p>";return}
   let html="";
   if(tab==="brand"){
-   const b=state.brand.config||{},c=b.contact||{},id=b.identity||{},footer=b.footer||{};
+   const b=state.brand.config||{},c=b.contact||{},id=b.identity||{},footer=b.footer||{},social=b.social||{};
    html='<h3>品牌与全站联系信息</h3><p>邮箱、WhatsApp 同时要核对联系设置模块，避免表单与模板不一致。</p>'+
     field("displayName",id.displayName,"品牌显示名称")+
     field("legalName",id.legalName,"公司名称（请核实实际注册主体）")+
     field("email",c.email,"业务邮箱")+
     field("phoneE164",c.phoneE164,"WhatsApp 号码（国际格式 +86…）")+
+    field("address",c.address,"公司地址")+
+    '<h4 style="margin:18px 0 6px">顶部信息栏社交链接</h4><p class="muted">顶部栏按源站显示 TikTok、YouTube、Facebook 图标；留空时使用平台首页，可在这里替换为公司账号。</p>'+
+    field("socialTiktok",social.tiktok,"TikTok 链接")+
+    field("socialYoutube",social.youtube,"YouTube 链接")+
+    field("socialFacebook",social.facebook,"Facebook 链接")+
     field("footerAbout",footer.about,"页脚介绍",3)+
     button("保存品牌并排队发布","brand");
   }
@@ -369,7 +374,8 @@
    }else if(action==="brand"){
     const b=structuredClone(state.brand.config);
     b.identity={...(b.identity||{}),displayName:value("displayName"),legalName:value("legalName")};
-    b.contact={...(b.contact||{}),email:value("email"),phoneE164:value("phoneE164"),whatsappUrl:"https://wa.me/"+value("phoneE164").replace(/\D/g,"")};
+    b.contact={...(b.contact||{}),email:value("email"),phoneE164:value("phoneE164"),address:value("address"),whatsappUrl:"https://wa.me/"+value("phoneE164").replace(/\D/g,"")};
+    b.social={...(b.social||{}),tiktok:value("socialTiktok"),youtube:value("socialYoutube"),facebook:value("socialFacebook")};
     b.footer={...(b.footer||{}),about:value("footerAbout")};
     result=await api("brand-config",{config:b});
    }else if(action==="navigation"||action==="redirects"){
