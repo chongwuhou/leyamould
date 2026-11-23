@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Public-asset reference inventory for XUYI's protected R2 media manager.
+"""Public-asset reference inventory for LEYA MOULD's protected R2 media manager.
 
 This is a static *deployed release* index, not an assertion that unpublished
 D1 drafts do not reference a file; live D1 is also checked before deletion.
@@ -38,4 +38,5 @@ def generate(root:Path,overflow:Path|None=None):
     return len(refs),sum(map(len,refs.values()))
 if __name__=="__main__":
     root=Path(__file__).resolve().parent.parent
-    print("XUYI_R2_REFERENCE_INDEX",*generate(root/"dist",root/"_local_ops/model-overflow"))
+    print("LEYA_R2_REFERENCE_INDEX",*generate(root/"dist",root/"_local_ops/model-overflow"))
+
