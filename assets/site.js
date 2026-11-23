@@ -203,7 +203,7 @@ if(hero){
   img.parentNode.insertBefore(artLink,img);
   artLink.append(img);
  }
- const DELAY=5500;
+ const DELAY=5000;
  let idx=0,timer=null,inView=true,hoveringControls=false,focusWithin=false,touchStart=null;
  function stop(){
   if(timer!==null){clearTimeout(timer);timer=null}
