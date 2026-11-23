@@ -1225,3 +1225,11 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 .mould-site .workflow-section .step{flex:1;min-width:120px;max-width:180px;text-align:center;padding:16px 8px;position:relative}
 .mould-site .workflow-section .step:not(:last-child)::after{content:'→';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:#f0883e;font-size:1.8rem;font-weight:700}
 @media(max-width:800px){.mould-site .tech-grid{grid-template-columns:1fr}.mould-site .workflow-section .step:not(:last-child)::after{display:none}}
+
+
+/* Samples carousel and quick-contact rail follow cap-molds' floating controls. */
+.mould-site .samples-scroll{top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:#fff;color:#0f172a;border:2px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,.08);font-size:1.3rem;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .25s cubic-bezier(.4,0,.2,1)}
+.mould-site .samples-scroll:hover{background:#f0883e;color:#fff;border-color:#f0883e;box-shadow:0 8px 20px rgba(240,136,62,.24)}
+.mould-site .samples-scroll--prev{left:-24px}
+.mould-site .samples-scroll--next{right:-24px}
+.mould-site .rail{box-shadow:none;background:transparent}
