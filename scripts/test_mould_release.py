@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 ORIGIN = "https://leyamould.com"
-LOCALES = ["en", "es", "pt", "ru", "tr"]
+LOCALES = ["en", "es"]
 CATEGORIES = ["pet-preform-moulds", "bottle-cap-moulds", "bottle-moulds", "knife-fork-moulds"]
 
 
