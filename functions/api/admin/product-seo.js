@@ -1,7 +1,7 @@
 // Unified, owner-editable SEO title/description records in the existing D1
 // CMS. Each product × locale is an independent authoritative row.
 import {authorizeAdminRequest} from "../../_shared/admin-security.js";
-import {MANAGED_MODELS} from "../../_shared/xuyi-routes.js";
+import {MANAGED_MODELS} from "../../_shared/mould-routes.js";
 import {bumpPublishRevision,loadLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";
 import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo} from "../../_shared/product-seo.js";
 
@@ -38,9 +38,10 @@ export async function onRequestPost(c){
  let input;try{input=await c.request.json()}catch{return respond({error:"Invalid JSON"},400)}
  if(input?.action!=="save")return respond({error:"Unknown action"},400);
  let value;try{value=normalizeProductSeo(input,new Set(publicLanguages(await loadLanguageConfig(db)).map(item=>item.code)))}catch(e){return respond({error:e.message},400)}
- if(!await hasProduct(db,value.slug))return respond({error:"产品型号不属于已发布的 XUYI 目录"},400);
+ if(!await hasProduct(db,value.slug))return respond({error:"产品型号不属于已发布的 LEYA MOULD 模具目录"},400);
  await upsertProductSeo(db,{slug:value.slug,locale:value.locale,seoTitle:value.title,metaDescription:value.description});
  const revision=await bumpPublishRevision(db);
  return respond({saved:true,slug:value.slug,locale:value.locale,...revision});
 }
+
 
