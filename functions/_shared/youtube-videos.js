@@ -30,6 +30,9 @@ export const YOUTUBE_TABLE_SQL = `CREATE TABLE IF NOT EXISTS leya_youtube_videos
 export async function ensureYoutubeVideos(db) {
   await db.prepare(YOUTUBE_TABLE_SQL).run();
   await db.prepare("CREATE INDEX IF NOT EXISTS idx_leya_youtube_videos_order ON leya_youtube_videos(sort_order,created_at DESC)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS leya_youtube_video_meta (key TEXT PRIMARY KEY,value TEXT NOT NULL DEFAULT '')").run();
+  const seeded = await db.prepare("SELECT value FROM leya_youtube_video_meta WHERE key='seeded'").first();
+  if (seeded?.value === "1") return;
   for (let i = 0; i < VIDEO_SEED.length; i += 1) {
     const item = VIDEO_SEED[i];
     await db.prepare(`INSERT OR IGNORE INTO leya_youtube_videos
@@ -39,6 +42,7 @@ export async function ensureYoutubeVideos(db) {
         item.title, item.description || "", item.publishedAt, i)
       .run();
   }
+  await db.prepare("INSERT INTO leya_youtube_video_meta(key,value) VALUES('seeded','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
 }
 
 export function extractYoutubeId(value) {
