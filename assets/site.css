@@ -1184,3 +1184,9 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 /* Match cap-molds floating contact rail: white outlined circular actions. */
 .mould-site .rail a.rail-float{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff!important;border:1.5px solid #cbd5e1;box-shadow:0 6px 18px rgba(0,0,0,.08);position:relative;text-decoration:none;transition:all .25s cubic-bezier(.4,0,.2,1);color:inherit}
 .mould-site .rail a.rail-float:hover{background:#fff!important}
+
+/* Match cap-molds header actions: keep the phone contact only on desktop. */
+.mould-site .language-switch,.mould-site #search-toggle,.mould-site .header__quote{display:none}
+.mould-site .nav-phone-desktop{display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:800;white-space:nowrap;color:#1f2933}
+.mould-site .nav-phone-desktop::after{content:'☎';display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#f1f1f1;color:#4b5563;font-size:18px;font-weight:500}
+@media(max-width:1050px){.mould-site .nav-phone-desktop{display:none}}
