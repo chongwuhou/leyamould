@@ -24,13 +24,11 @@ OUTPUT = ROOT / (os.environ.get("LEYA_OUTPUT_DIR") or ".")
 CATALOG = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
 SNAPSHOT = ROOT / "_local_ops/build-snapshot.json"
 
-# Fresh LEYA MOULD media generated for the About page. The public template
-# remains frozen; these local assets replace reference-site photographs.
+# Only images that contain identifiable people are replaced with compressed
+# LEYA-specific assets. All other About-page media continues to use the
+# reference site's non-portrait images, preserving the approved page design.
 ABOUT_MEDIA = {
-    "banner": "/assets/about/about-hero-generated.webp",
     "team": "/assets/about/about-team-generated.webp",
-    "inspection": "/assets/about/about-inspection-generated.webp",
-    "showroom": "/assets/about/about-showroom-generated.webp",
     "assembly": "/assets/about/about-assembly-generated.webp",
 }
 STATE = {}
@@ -352,7 +350,7 @@ def shell(locale: str, title: str, description: str, route: str, body: str) -> s
 
 def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     banner_map = {
-        "/about/": ABOUT_MEDIA["banner"],
+        "/about/": "/upload/Banner/pheader-About.jpg",
         "/products/": "/upload/Banner/Plastic-flip-top-mold.jpg",
         "/capabilities/": "/upload/Banner/machine.jpg",
         "/samples/": "/upload/Banner/Cap-Samples.jpg",
@@ -477,14 +475,24 @@ def about_page(locale: str) -> str:
     ]
     equipment = ["5-Axis CNC Machining Centers", "High-Speed EDM Machines", "Wire-Cut EDM Machines", "Precision Grinding Machines", "CNC Lathes & Milling Machines", "Injection Molding Trial Machines", "3D Coordinate Measuring Machines (CMM)", "Hardness Testers & Spectrometers"]
     certifications = ["ISO 9001:2015 Quality System", "CE-ready machine documentation", "Food-contact material review", "Medical mould quality records"]
+    reference_images = "https://www.cap-molds.com/images/"
     facility_images = [
-        (ABOUT_MEDIA["assembly"], "CNC machining workshop"), (ABOUT_MEDIA["assembly"], "EDM machine area"),
-        (ABOUT_MEDIA["inspection"], "Quality inspection room"), (ABOUT_MEDIA["assembly"], "Mould assembly area"),
-        (ABOUT_MEDIA["banner"], "Injection trial machine"), (ABOUT_MEDIA["showroom"], "Warehouse and shipping area"),
-        (ABOUT_MEDIA["assembly"], "5-axis machining center"), (ABOUT_MEDIA["team"], "Engineering design office"),
-        (ABOUT_MEDIA["showroom"], "Showroom 01"), (ABOUT_MEDIA["showroom"], "Showroom 02"), (ABOUT_MEDIA["showroom"], "Showroom 03"),
-        (ABOUT_MEDIA["showroom"], "Showroom 04"), (ABOUT_MEDIA["showroom"], "Showroom 05"), (ABOUT_MEDIA["showroom"], "Showroom 06"),
-        (ABOUT_MEDIA["showroom"], "Showroom 07"), (ABOUT_MEDIA["showroom"], "Showroom 08")
+        (reference_images + "CNC-machining-workshop.jpg", "CNC machining workshop"),
+        (ABOUT_MEDIA["assembly"], "EDM machine area"),
+        (reference_images + "Quality-inspection-room.jpg", "Quality inspection room"),
+        (ABOUT_MEDIA["assembly"], "Mould assembly area"),
+        (reference_images + "Injection-trial-machine.jpg", "Injection trial machine"),
+        (reference_images + "Warehouse-and-shipping-area.jpg", "Warehouse and shipping area"),
+        (ABOUT_MEDIA["assembly"], "5-axis machining center"),
+        (reference_images + "Engineering-design-office.jpg", "Engineering design office"),
+        (reference_images + "Showroom01.jpg", "Showroom 01"),
+        (reference_images + "Showroom02.jpg", "Showroom 02"),
+        (reference_images + "Showroom03.jpg", "Showroom 03"),
+        (reference_images + "Showroom04.jpg", "Showroom 04"),
+        (reference_images + "Showroom01.jpg", "Showroom 05"),
+        (reference_images + "Showroom02.jpg", "Showroom 06"),
+        (reference_images + "Showroom03.jpg", "Showroom 07"),
+        (reference_images + "Showroom04.jpg", "Showroom 08"),
     ]
     intro_body = intro(locale, title, subtitle, "/about/")
     overview = '<section class="mould-about-block"><div class="mould-about-overview"><div class="mould-about-overview-image"><img src="' + ABOUT_MEDIA["team"] + '" alt="LEYA MOULD engineering team reviewing a mould project" loading="eager" decoding="async"></div><div><h2>' + esc(who) + '</h2>' + ''.join('<p>' + esc(p) + '</p>' for p in who_paras) + '</div></div><div class="mould-about-stats">' + ''.join('<div class="mould-about-stat"><span class="number">' + n + '</span><span class="label">' + esc(label) + '</span></div>' for n, label in [("15+", "Years of Experience"), ("60+", "Countries Served"), ("500+", "Moulds Delivered"), ("80+", "Skilled Team Members")]) + '</div></section>'
