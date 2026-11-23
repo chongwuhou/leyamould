@@ -489,10 +489,10 @@ def about_page(locale: str) -> str:
         (reference_images + "Showroom02.jpg", "Showroom 02"),
         (reference_images + "Showroom03.jpg", "Showroom 03"),
         (reference_images + "Showroom04.jpg", "Showroom 04"),
-        (reference_images + "Showroom01.jpg", "Showroom 05"),
-        (reference_images + "Showroom02.jpg", "Showroom 06"),
-        (reference_images + "Showroom03.jpg", "Showroom 07"),
-        (reference_images + "Showroom04.jpg", "Showroom 08"),
+        (reference_images + "Showroom05.jpg", "Showroom 05"),
+        (reference_images + "Showroom06.jpg", "Showroom 06"),
+        (reference_images + "Showroom07.jpg", "Showroom 07"),
+        (reference_images + "Showroom08.jpg", "Showroom 08"),
     ]
     intro_body = intro(locale, title, subtitle, "/about/")
     overview = '<section class="mould-about-block"><div class="mould-about-overview"><div class="mould-about-overview-image"><img src="' + ABOUT_MEDIA["team"] + '" alt="LEYA MOULD engineering team reviewing a mould project" loading="eager" decoding="async"></div><div><h2>' + esc(who) + '</h2>' + ''.join('<p>' + esc(p) + '</p>' for p in who_paras) + '</div></div><div class="mould-about-stats">' + ''.join('<div class="mould-about-stat"><span class="number">' + n + '</span><span class="label">' + esc(label) + '</span></div>' for n, label in [("15+", "Years of Experience"), ("60+", "Countries Served"), ("500+", "Moulds Delivered"), ("80+", "Skilled Team Members")]) + '</div></section>'
