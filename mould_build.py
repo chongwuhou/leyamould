@@ -111,21 +111,33 @@ def render_template(name: str, **values: str) -> str:
     return content
 
 def header(locale: str, route: str) -> str:
-    cats = CATALOG["categories"]
+    # Keep the desktop navigation labels and dropdown groups aligned with the cap-molds reference.
+    product_items = [
+        ("Mineral Water Cap Mould", "/collections/bottle-cap-moulds/"),
+        ("Edible Oil Cap Mould", "/collections/bottle-cap-moulds/"),
+        ("Flip top caps mould", "/collections/bottle-cap-moulds/"),
+        ("Engine Oil Cap Mould", "/collections/bottle-cap-moulds/"),
+        ("Food Packaging Cap Mould", "/collections/bottle-cap-moulds/"),
+        ("Medical Cap Mould", "/collections/bottle-cap-moulds/"),
+        ("Personal Care Cap Mould", "/collections/bottle-cap-moulds/"),
+        ("Functional Cap Mould(Combination)", "/collections/bottle-cap-moulds/"),
+        ("Plastic Handle mould", "/collections/bottle-moulds/"),
+    ]
+    product_links = ''.join('<a href="' + localized_href(locale, href) + '">' + esc(label) + '</a>' for label, href in product_items)
     nav = ['<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>']
-    product_links = ''.join('<a href="' + localized_href(locale, "/collections/" + c["slug"] + "/") + '">' + esc(category_title(locale, c)) + '</a>' for c in cats)
-    product_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-products" aria-expanded="false">' + esc(text(locale, "cap_mould")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-products"><a href="' + localized_href(locale, "/products/") + '"><strong>' + esc(text(locale, "products")) + '</strong></a>' + product_links + '</div></div>'
-    about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">' + esc(text(locale, "about")) + '</a><a href="' + localized_href(locale, "/capabilities/") + '">' + esc(text(locale, "capabilities")) + '</a><a href="' + localized_href(locale, "/manufacturing/") + '">' + esc(text(locale, "process")) + '</a><a href="' + localized_href(locale, "/quality-control/") + '">' + esc(text(locale, "footer_quality")) + '</a></div></div>'
+    about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">About us</a><a href="' + localized_href(locale, "/faq/") + '">FAQs</a></div></div>'
+    product_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-products" aria-expanded="false">' + esc(text(locale, "cap_mould")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-products">' + product_links + '</div></div>'
     nav.append(about_menu)
     nav.append(product_menu)
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/capabilities/") + '">' + esc(text(locale, "machine")) + '</a>')
-    nav.append('<a class="nav__link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + '</a>')
-    resources_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-resources" aria-expanded="false">' + esc(text(locale, "news")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-resources"><a href="' + localized_href(locale, "/news/") + '">' + esc(text(locale, "news")) + '</a><a href="' + localized_href(locale, "/faq/") + '">' + esc(text(locale, "faq_title")) + '</a></div></div>'
+    sample_label = "Sample" if locale == "en" else text(locale, "samples")
+    nav.append('<a class="nav__link" href="' + localized_href(locale, "/samples/") + '">' + esc(sample_label) + '</a>')
+    resources_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-resources" aria-expanded="false">' + esc(text(locale, "news")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-resources"><a href="' + localized_href(locale, "/news/") + '">Bottle cap molds</a><a href="' + localized_href(locale, "/capabilities/") + '">Bottle Cap Machine</a></div></div>'
     nav.append(resources_menu)
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/video/") + '">' + esc(text(locale, "video")) + '</a>')
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/contact/") + '">' + esc(text(locale, "contact_us")) + '</a>')
-    mobile = '<a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><a href="' + localized_href(locale, "/about/") + '">' + esc(text(locale, "about")) + '</a><a href="' + localized_href(locale, "/capabilities/") + '">' + esc(text(locale, "machine")) + '</a><a href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + '</a><a href="' + localized_href(locale, "/video/") + '">' + esc(text(locale, "video")) + '</a><a href="' + localized_href(locale, "/contact/") + '">' + esc(text(locale, "contact_us")) + '</a>'
-    mobile += '<details><summary>' + esc(text(locale, "cap_mould")) + '</summary><a href="' + localized_href(locale, "/products/") + '">' + esc(text(locale, "products")) + '</a>' + product_links + '</details><details><summary>' + esc(text(locale, "news")) + '</summary><a href="' + localized_href(locale, "/news/") + '">' + esc(text(locale, "news")) + '</a><a href="' + localized_href(locale, "/faq/") + '">' + esc(text(locale, "faq_title")) + '</a></details>'
+    mobile = '<a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><a href="' + localized_href(locale, "/about/") + '">' + esc(text(locale, "about")) + '</a><a href="' + localized_href(locale, "/capabilities/") + '">' + esc(text(locale, "machine")) + '</a><a href="' + localized_href(locale, "/samples/") + '">' + esc(sample_label) + '</a><a href="' + localized_href(locale, "/video/") + '">' + esc(text(locale, "video")) + '</a><a href="' + localized_href(locale, "/contact/") + '">' + esc(text(locale, "contact_us")) + '</a>'
+    mobile += '<details><summary>' + esc(text(locale, "cap_mould")) + '</summary>' + product_links + '</details><details><summary>' + esc(text(locale, "news")) + '</summary><a href="' + localized_href(locale, "/news/") + '">Bottle cap molds</a><a href="' + localized_href(locale, "/capabilities/") + '">Bottle Cap Machine</a></details>'
     options = ''.join('<option value="' + esc(lang["code"]) + '">' + esc(lang["nativeName"]) + '</option>' for lang in LOCALES)
     logo = '<a href="' + local_link(locale, "/") + '" class="logo" aria-label="LEYA MOULD home"><img class="logo__image" src="/assets/leyamould-logo.svg?v=logo1" alt="LEYA MOULD" width="260" height="51" decoding="async"></a>'
     actions = '<div class="header__actions"><a class="nav-phone-desktop" href="tel:+8613606727715">+86 136 0672 7715</a><select class="language-switch" data-language-switch aria-label="Choose language">' + options + '</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><a class="button header__quote" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + '</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="menu-label">Menu</span></button></div>'
@@ -144,7 +156,7 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     robots = "index,follow" if INDEXING_APPROVED else "noindex,nofollow"
     canonical = ORIGIN + route_for(locale, route)
     alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
-    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v20")
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v21")
     base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
     return base.replace('</head>', '<link rel="canonical" href="' + esc(canonical) + '">' + alternates + '<meta property="og:title" content="' + esc(title) + '"><meta property="og:description" content="' + esc(description) + '"></head>', 1)
 
