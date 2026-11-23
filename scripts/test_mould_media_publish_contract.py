@@ -30,6 +30,11 @@ index_script = source("scripts/r2_usage_index.py")
 assert '"site":"leyamould"' in index_script
 assert '"publishRevision":meta["publishRevision"]' in index_script
 
+build_script = source("scripts/build_release.py")
+assert "def source_revision()" in build_script
+assert "CF_PAGES_COMMIT_SHA" in build_script
+assert "generate_r2_usage_index(DIST" in build_script
+
 workflow = source(".github/workflows/publish-leyamould.yml")
 assert "python scripts/r2_usage_index.py" in workflow
 assert "python scripts/test_r2_usage_index.py" in workflow
