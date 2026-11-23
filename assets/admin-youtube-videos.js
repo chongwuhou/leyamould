@@ -19,7 +19,7 @@
     const root = $("youtube-video-list");
     if (!root) return;
     root.innerHTML = items.length ? items.map(item =>
-      '<article class="blog-admin-row"><div><strong>' + esc(item.title || "LEYA MOULD video") + '</strong><small>' + esc(item.youtubeUrl) + ' · ' + esc(item.publishedAt || item.createdAt || "") + '</small></div><button type="button" class="btn ghost" data-youtube-delete="' + esc(item.id) + '">删除</button></article>'
+      '<article class="blog-admin-row"><div><strong>' + esc(item.titleEn || item.title || "LEYA MOULD video") + '</strong><small>ES: ' + esc(item.titleEs || "回退英文") + ' · ' + esc(item.youtubeUrl) + ' · ' + esc(item.publishedAt || item.createdAt || "") + '</small></div><button type="button" class="btn ghost" data-youtube-delete="' + esc(item.id) + '">删除</button></article>'
     ).join("") : '<p class="muted">暂无视频链接。</p>';
   }
   async function load() {
@@ -30,11 +30,14 @@
   $("youtube-video-form")?.addEventListener("submit", async event => {
     event.preventDefault();
     const input = $("youtube-video-url");
+    const titleEn = $("youtube-video-title-en");
+    const titleEs = $("youtube-video-title-es");
+    const publishedAt = $("youtube-video-published-at");
     const button = $("youtube-video-save");
     const url = input.value.trim();
-    if (!url) return;
+    if (!url || !titleEn.value.trim() || !publishedAt.value) { status("请填写 YouTube 地址、英文标题和发布时间。"); return; }
     button.disabled = true;
-    try { await call({ action: "save", youtubeUrl: url }); input.value = ""; await load(); status("视频链接已增加。"); }
+    try { await call({ action: "save", youtubeUrl: url, titleEn: titleEn.value.trim(), titleEs: titleEs.value.trim(), publishedAt: publishedAt.value }); input.value = ""; titleEn.value = ""; titleEs.value = ""; publishedAt.value = ""; await load(); status("视频链接已增加。"); }
     catch (error) { status("保存失败：" + error.message); }
     finally { button.disabled = false; }
   });
