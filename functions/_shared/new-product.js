@@ -1,5 +1,5 @@
 // LEYA MOULD category editor and create-only category importer.
-import {MANAGED_MODELS} from "./xuyi-routes.js";
+import {MANAGED_MODELS} from "./mould-routes.js";
 import {imageKey} from "./r2-usage.js";
 export const CATEGORY_OPTIONS=[
  "Water / Beverage Cap Mould","Edible Oil Cap Mould","Flip Top Caps Mould",
