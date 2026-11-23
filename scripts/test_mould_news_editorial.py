@@ -47,9 +47,9 @@ def check_page(prefix: str, item: dict) -> None:
     # that case this source fallback must not fail the deployment; the registry
     # and cover gates above still remain mandatory. When the mould registry is
     # the active source fallback, enforce the complete seven-part contract.
-    if '<article class="blog-editorial__body">' not in html:
+    if 'data-editorial-source="mould-registry"' not in html:
         return
-    body = html.split('<article class="blog-editorial__body">', 1)[1].split('</article>', 1)[0]
+    body = html.split('<article class="blog-editorial__body"', 1)[1].split('</article>', 1)[0]
     for marker in ("blog-editorial__body", "blog-editorial__product-link", "blog-related__item", "blog-buyer-matrix", "primary-sources"):
         assert marker in html, (path, marker)
     assert body.count('class="blog-section"') == 7
