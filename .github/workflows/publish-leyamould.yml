@@ -16,6 +16,8 @@ on:
       - "deployment/site.config.json"
       - "scripts/build_release.py"
       - "scripts/test_mould_release.py"
+      - "scripts/r2_usage_index.py"
+      - "scripts/test_r2_usage_index.py"
       - "scripts/test_mould_backend_contract.py"
       - "scripts/test_mould_admin_contract.py"
       - "functions/**"
@@ -57,6 +59,8 @@ jobs:
         run: python scripts/test_mould_backend_contract.py
       - name: Verify LEYA MOULD admin UI/API contract
         run: python scripts/test_mould_admin_contract.py
+      - name: Verify LEYA media and publish revision contract
+        run: python scripts/test_mould_media_publish_contract.py
       - name: Validate site isolation
         run: python scripts/preflight.py
       - name: Verify D1-driven language and publish guards
@@ -65,8 +69,12 @@ jobs:
         run: python scripts/fetch_build_snapshot.py
       - name: Build mould source release
         run: python scripts/build_release.py
-      - name: Validate mould routes, five locales and contacts
+      - name: Validate mould routes, configured locales and contacts
         run: python scripts/test_mould_release.py
+      - name: Generate and validate public R2 reference index
+        run: |
+          python scripts/r2_usage_index.py
+          python scripts/test_r2_usage_index.py
       - name: Verify shared templates
         run: python scripts/test_shared_templates.py
       - name: Verify second clean source rebuild
@@ -74,6 +82,8 @@ jobs:
           python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_mould_release.py
+          python scripts/r2_usage_index.py
+          python scripts/test_r2_usage_index.py
       - name: Deploy Leyamould production
         if: env.CLOUDFLARE_API_TOKEN != ''
         run: npx --yes wrangler@4.148.0 pages deploy dist --project-name leyamould --branch main
