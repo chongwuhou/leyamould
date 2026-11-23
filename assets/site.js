@@ -104,10 +104,10 @@ if(inquiryForm){inquiryForm.addEventListener('submit',async event=>{
  if(!fields.get('consent')){status.textContent=t('Please accept the privacy policy.');return;}
  button.disabled=true;status.textContent=t('Submitting your enquiry…');
  try{
-  const payload={source:'xuyi-contact-form',consent:true,pageUrl:location.href,locale:document.documentElement.lang||'en',
-   region:fields.get('country')||'',company:fields.get('company')||'',email:fields.get('email')||'',
+  const payload={source:'leyamould-contact-form',consent:true,pageUrl:location.href,locale:document.documentElement.lang||'en',
+   name:fields.get('name')||'',phone:fields.get('phone')||'',region:'',company:fields.get('company')||'',email:fields.get('email')||'',
    reference:fields.get('model')||'',requirements:fields.get('requirements')||'',
-   website:fields.get('website')||'',fields:{material:fields.get('material')||'',quantity:fields.get('quantity')||'',inquiry_type:fields.get('type')||''}};
+   website:fields.get('website')||'',fields:{cap_type:fields.get('model')||''}};
   const response=await fetch('/api/form-submit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
   const result=await response.json().catch(()=>({}));
   if(!response.ok||!result.saved)throw Error(result.error||t('The enquiry could not be received. Please use our email or WhatsApp contact instead.'));
@@ -345,4 +345,5 @@ if(newsSlider){
 }
 
 })();
+
 
