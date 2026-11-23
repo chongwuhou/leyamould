@@ -173,9 +173,9 @@ if(cards.length){
 const hero=document.querySelector('[data-hero]');
 if(hero){
  let slides=[
- {title:'Your Trusted <span>Plastic Cap Mould</span> Manufacturer',description:'15+ years of precision moulding experience for global packaging projects, with clear engineering review from design through trial and handover.',img:'https://www.cap-molds.com/upload/Home/precision-machining.jpg',alt:'Precision mould machining reference',link:'/products/',cta:'Request a Quote →'},
- {title:'60+ Countries <span>Served</span>',description:'Trusted by packaging teams worldwide for consistent quality, clear communication and on-time tooling delivery.',img:'https://www.cap-molds.com/upload/Home/steel-quality.jpg',alt:'Mould steel quality reference',link:'/contact/#inquiry',cta:'Get in Touch →'},
- {title:'09 Cap Mould <span>Series</span>',description:'Water, oil, food, medical, cosmetic and functional closures from one reliable mould project partner.',img:'https://www.cap-molds.com/Upload/20260617/202606171650511166.jpg',alt:'Bottle cap mould reference',link:'/samples/',cta:'Explore Categories →'}
+ {title:'Your Trusted <span>Plastic Cap Mould</span> Manufacturer',description:'15+ years of expertise in high-precision cap moulds for global packaging brands.',img:'https://www.cap-molds.com/upload/Banner/Plastic-flip-top-mold.jpg',alt:'Plastic flip-top mould reference',link:'/products/',cta:'Request a Quote →'},
+ {title:'<span>60+ Countries</span> Served',description:'Trusted by packaging leaders worldwide for consistent quality and on-time delivery.',img:'https://www.cap-molds.com/upload/Banner/Mold-Workshop.jpg',alt:'Mould workshop reference',link:'/contact/#inquiry',cta:'Get in Touch →'},
+ {title:'<span>09 Cap Mould</span> Series',description:'Water, oil, food, medical, cosmetic and more — all from a single reliable partner.',img:'https://www.cap-molds.com/upload/Banner/Plastic-Cap-Samples.jpg',alt:'Plastic cap samples reference',link:'/samples/',cta:'Explore Categories →'}
  ];
  if(Array.isArray(runtimeUI.slides)&&runtimeUI.slides.length===slides.length){slides=slides.map((slide,i)=>({...slide,...runtimeUI.slides[i]}))}
  // D1 reviewed banner settings are baked into this page at release time.
