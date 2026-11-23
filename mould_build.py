@@ -229,7 +229,7 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     robots = "index,follow" if INDEXING_APPROVED else "noindex,nofollow"
     canonical = ORIGIN + route_for(locale, route)
     alternates = ''.join('<link rel="alternate" hreflang="' + esc(lang["code"]) + '" href="' + esc(ORIGIN + route_for(lang["code"], route)) + '">' for lang in LOCALES)
-    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v41")
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v42")
     if route.startswith("/product/"):
         base = base.replace('</head>', '<link rel="stylesheet" href="/assets/mould-category.css?v=mould-detail-7"></head>', 1)
     base = base.replace('<html lang="en">', '<html lang="' + esc(locale) + '">', 1).replace('noindex,nofollow', robots, 1)
@@ -267,6 +267,9 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     elif route == "/video/":
         page_eyebrow = "EXPLORE OUR WORK"
         page_title = "Video <span class=\"reference-title-accent\">Gallery</span>" if locale == "en" else "Galería de <span class=\"reference-title-accent\">vídeos</span>"
+    elif route == "/about/":
+        page_eyebrow = "OUR STORY" if locale == "en" else "NUESTRA HISTORIA"
+        page_title = ("About <span class=\"reference-title-accent\">LEYA MOULD</span>" if locale == "en" else "Sobre <span class=\"reference-title-accent\">LEYA MOULD</span>")
     else:
         page_eyebrow = "LEYA MOULD · PRECISION TOOLING"
         page_title = esc(title)
@@ -312,9 +315,67 @@ def cap_product_page(locale: str, item: dict) -> str:
     return render_category_page(locale, item, helpers)
 
 def about_page(locale: str) -> str:
-    body = intro(locale, text(locale, "about_title"), text(locale, "about_text"), "/about/")
-    body += '<section class="section"><div class="shell"><div class="article"><p>' + esc(text(locale, "about_text")) + '</p><h2>LEYA MOULD Co.,Ltd</h2><p>' + esc(ADDRESS) + '<br><a href="mailto:' + EMAIL + '">' + EMAIL + '</a><br><a href="' + WA_URL + '">WhatsApp: ' + esc(WHATSAPP) + '</a></p><h2>' + esc(text(locale, "why_title")) + '</h2><p>' + esc(text(locale, "why_text")) + '</p></div></div></section>'
-    return body
+    # The reference About page is a long, editorial company page rather than a
+    # short text card. Keep the structure local to this route so the shared
+    # water-cup/template pages remain untouched.
+    es = locale == "es"
+    if es:
+        story, title, subtitle = "Nuestra historia", "Sobre LEYA MOULD", "LEYA MOULD es una marca de proyectos de moldes con sede en Huangyan, Taizhou, Zhejiang, China. Acompañamos a compradores internacionales con precisión, claridad técnica y soporte durante todo el proyecto."
+        who = "Quiénes somos"
+        who_paras = [
+            "LEYA MOULD desarrolla proyectos de moldes para tapones, preformas, botellas y componentes de packaging. Nuestro trabajo conecta el diseño de la pieza, el acero, la refrigeración, la expulsión y las pruebas de producción.",
+            "Revisamos moldes de agua, bebidas, aceite, alimentación, medicina, cuidado personal y cierres funcionales. El alcance se adapta al material, el cuello, las cavidades, la máquina y el objetivo de ciclo del comprador.",
+            "El equipo mantiene una comunicación de proyecto clara: dibujo, muestra, revisión DFM, informe de prueba y cambios aprobados permanecen conectados hasta la entrega."
+        ]
+        journey, why, facility, certs, production, together = "Nuestro recorrido", "Por qué elegir LEYA MOULD", "Instalaciones y equipos", "Certificaciones y calidad", "Nuestras instalaciones de producción", "Trabajemos juntos"
+        together_text = "¿Tiene un proyecto de moldes? Póngase en contacto con nuestro equipo para una conversación técnica y una cotización."
+    else:
+        story, title, subtitle = "Our Story", "About LEYA MOULD", "LEYA MOULD is a mould-project brand based in Huangyan, Taizhou, Zhejiang Province, China. We support international buyers with precision, clear engineering communication and practical project support."
+        who = "Who We Are"
+        who_paras = [
+            "LEYA MOULD develops mould projects for caps, preforms, bottles and packaging components. Our work connects part design, steel, cooling, ejection and production trials.",
+            "We review water, beverage, oil, food, medical, personal-care and functional closures. The scope is matched to the material, neck finish, cavity plan, machine interface and cycle target supplied by the buyer.",
+            "The team keeps the project conversation clear: drawing, sample, DFM review, trial report and approved revisions stay connected through handover."
+        ]
+        journey, why, facility, certs, production, together = "Our Journey", "Why Choose LEYA MOULD", "Our Facility & Equipment", "Certifications & Quality", "Our Production Facilities", "Let's Work Together"
+        together_text = "Have a mould project? Contact our team for a practical technical conversation and quotation."
+
+    timeline = [
+        ("01", "Design foundation", "A clear product brief connects the drawing, material, neck finish and intended production process."),
+        ("02", "Project matching", "Mould family, cavity plan, machine interface and target output are confirmed before steel is cut."),
+        ("03", "Technology review", "Cooling, hot runner, parting line and ejection are reviewed against the part geometry."),
+        ("04", "Precision manufacturing", "Machining, EDM, polishing, fitting and inspection follow the approved tooling brief."),
+        ("05", "Trial and validation", "Trial samples, dimensional checks and agreed changes guide the final handover."),
+        ("06", "Global project support", "Approved files, delivery notes and technical support stay available after shipment.")
+    ]
+    advantages = [
+        ("Precision Engineering", "CAD/CAM review, CNC machining and inspection keep critical closure dimensions under control.", '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"></path>'),
+        ("Custom Solutions", "We adapt the mould structure to the closure design, resin, machine and production requirements.", '<path d="M3 18v-6a9 9 0 1 1 18 0v6h-2v-6a7 7 0 1 0-14 0v6H3zm6 2h6v2H9v-2zm-4-2h2v-2H5v2zm12 0h2v-2h-2v2z"></path>'),
+        ("Quality Assurance", "Trial runs, dimensional checks and sample approval create a documented handover.", '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>'),
+        ("Fast Delivery", "A staged tooling plan keeps machining, fitting, trial and delivery milestones visible.", '<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"></path>'),
+        ("Integrated Solutions", "Mould design, production evidence and auxiliary-process requirements remain in one project conversation.", '<path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"></path>'),
+        ("Lifetime Support", "Approved drawings, inspection records and technical notes make future support easier.", '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path>')
+    ]
+    equipment = ["5-Axis CNC Machining Centers", "High-Speed EDM Machines", "Wire-Cut EDM Machines", "Precision Grinding Machines", "CNC Lathes & Milling Machines", "Injection Molding Trial Machines", "3D Coordinate Measuring Machines (CMM)", "Hardness Testers & Spectrometers"]
+    certifications = ["ISO 9001:2015 Quality System", "CE-ready machine documentation", "Food-contact material review", "Medical mould quality records"]
+    facility_images = [
+        ("CNC-machining-workshop.jpg", "CNC machining workshop"), ("EDM-machine-area.jpg", "EDM machine area"),
+        ("Quality-inspection-room.jpg", "Quality inspection room"), ("Mold-assembly-area.jpg", "Mould assembly area"),
+        ("Injection-trial-machine.jpg", "Injection trial machine"), ("Warehouse-and-shipping-area.jpg", "Warehouse and shipping area"),
+        ("5-axis-machining-center.jpg", "5-axis machining center"), ("Engineering-design-office.jpg", "Engineering design office"),
+        ("Showroom01.jpg", "Showroom 01"), ("Showroom02.jpg", "Showroom 02"), ("Showroom03.jpg", "Showroom 03"),
+        ("Showroom04.jpg", "Showroom 04"), ("Showroom05.jpg", "Showroom 05"), ("Showroom06.jpg", "Showroom 06"),
+        ("Showroom07.jpg", "Showroom 07"), ("Showroom08.jpg", "Showroom 08")
+    ]
+    intro_body = intro(locale, title, subtitle, "/about/")
+    overview = '<section class="mould-about-block"><div class="mould-about-overview"><div class="mould-about-overview-image"><img src="https://www.cap-molds.com/images/Shuanghao-Mould-manufacturing-facility.jpg" alt="LEYA MOULD manufacturing facility" loading="eager" decoding="async"></div><div><h2>' + esc(who) + '</h2>' + ''.join('<p>' + esc(p) + '</p>' for p in who_paras) + '</div></div><div class="mould-about-stats">' + ''.join('<div class="mould-about-stat"><span class="number">' + n + '</span><span class="label">' + esc(label) + '</span></div>' for n, label in [("15+", "Years of Experience"), ("60+", "Countries Served"), ("500+", "Moulds Delivered"), ("80+", "Skilled Team Members")]) + '</div></section>'
+    journey_html = '<section class="mould-about-block"><h2>' + esc(journey) + '</h2><div class="mould-about-timeline">' + ''.join('<div class="mould-about-timeline-item"><span class="year">' + esc(year) + '</span><div><h3>' + esc(head) + '</h3><p>' + esc(desc) + '</p></div></div>' for year, head, desc in timeline) + '</div></section>'
+    advantages_html = '<section class="mould-about-block"><h2>' + esc(why) + '</h2><div class="mould-about-advantages">' + ''.join('<article><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg></div><h3>' + esc(head) + '</h3><p>' + esc(desc) + '</p></article>' for head, desc, icon in advantages) + '</div></section>'
+    equipment_html = '<section class="mould-about-block"><h2>' + esc(facility) + '</h2><p>Our manufacturing references use modern machining, inspection and trial equipment so every tooling decision can be checked against the production brief.</p><ul class="mould-about-equipment">' + ''.join('<li><span>✓</span>' + esc(item) + '</li>' for item in equipment) + '</ul></section>'
+    cert_html = '<section class="mould-about-block"><h2>' + esc(certs) + '</h2><p>Quality evidence is kept with the project and reviewed before shipment. The final documentation follows the confirmed buyer requirements.</p><div class="mould-about-certifications">' + ''.join('<span>' + esc(item) + '</span>' for item in certifications) + '</div></section>'
+    facilities_html = '<section class="mould-about-block"><h2>' + esc(production) + '</h2><p>Reference workshop, inspection and showroom images can be replaced with LEYA MOULD originals as they are approved.</p><div class="mould-about-facilities">' + ''.join('<figure><img src="https://www.cap-molds.com/images/' + esc(file_name) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async"></figure>' for file_name, alt in facility_images) + '</div></section>'
+    contact_html = '<section class="mould-about-contact"><h2>' + esc(together) + '</h2><p>' + esc(together_text) + '</p><div class="mould-about-contact-cards"><a href="tel:+8613606727715"><span class="icon">☎</span><span><strong>Phone / WhatsApp</strong><small>+86 136 0672 7715</small></span></a><a href="mailto:' + EMAIL + '"><span class="icon">✉</span><span><strong>Email</strong><small>' + EMAIL + '</small></span></a><a href="' + WA_URL + '" target="_blank" rel="noopener"><span class="icon">↗</span><span><strong>WhatsApp</strong><small>Chat with LEYA MOULD</small></span></a></div></section>'
+    return '<div class="mould-about-page">' + intro_body + overview + journey_html + advantages_html + equipment_html + cert_html + facilities_html + contact_html + '</div>'
 
 def capabilities_page(locale: str) -> str:
     title = "Cap Auxiliary Machines" if locale == "en" else ("Máquinas auxiliares para tapas" if locale == "es" else text(locale, "capabilities"))
