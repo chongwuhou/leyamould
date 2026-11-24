@@ -27,7 +27,8 @@
   if(!Array.isArray(value))return [];
   if(kind==="answers")return value.map(row=>({question:String(row?.question||""),answer:String(row?.answer||"")}));
   if(kind==="groups")return value.map(group=>({title:String(group?.title||""),items:Array.isArray(group?.items)?group.items.map(row=>({question:String(row?.question||""),answer:String(row?.answer||"")})):[]}));
-  return value.map(row=>({id:String(row?.id||"section"),eyebrow:String(row?.eyebrow||""),title:String(row?.title||""),body:String(row?.body||""),bullets:Array.isArray(row?.bullets)?row.bullets.join("\\n"):String(row?.bullets||"")}));
+  if(kind==="stats")return value.map(row=>({label:String(row?.label||""),title:String(row?.title||""),body:String(row?.body||"")}));
+  return value.map(row=>({id:String(row?.id||"section"),eyebrow:String(row?.eyebrow||""),title:String(row?.title||""),body:String(row?.body||""),bullets:Array.isArray(row?.bullets)?row.bullets.join("\\n"):String(row?.bullets||""),items:Array.isArray(row?.items)?row.items.map(item=>({label:String(item?.label||""),title:String(item?.title||""),body:String(item?.body||""),link:String(item?.link||"")})):[]}));
  }
  function mountArrayEditor(root,key,kind,initial=[]){
   const editor=root.querySelector('[data-array-editor="'+CSS.escape(key)+'"]');if(!editor)return;
@@ -38,18 +39,20 @@
    rowsRoot.innerHTML=rows.map((row,index)=>{
     if(kind==="answers")return '<div class="cms-array-row" data-row="'+index+'"><input data-part="question" placeholder="问题" value="'+esc(row.question)+'"><textarea data-part="answer" rows="3" placeholder="回答">'+esc(row.answer)+'</textarea><button type="button" class="btn danger cms-array-remove">删除</button></div>';
     if(kind==="groups")return '<div class="cms-array-row" data-row="'+index+'"><input data-part="title" placeholder="分组标题" value="'+esc(row.title)+'"><textarea data-part="items" rows="5" placeholder="每行：问题 | 回答">'+esc((row.items||[]).map(item=>item.question+" | "+item.answer).join("\\n"))+'</textarea><button type="button" class="btn danger cms-array-remove">删除分组</button></div>';
-    return '<div class="cms-array-row" data-row="'+index+'"><div class="cms-array-grid"><input data-part="id" placeholder="模块标识" value="'+esc(row.id)+'"><input data-part="eyebrow" placeholder="眉标题" value="'+esc(row.eyebrow)+'"><input data-part="title" placeholder="标题" value="'+esc(row.title)+'"></div><textarea data-part="body" rows="3" placeholder="正文">'+esc(row.body)+'</textarea><textarea data-part="bullets" rows="2" placeholder="要点，每行一条">'+esc(row.bullets)+'</textarea><button type="button" class="btn danger cms-array-remove">删除模块</button></div>';
+    if(kind==="stats")return '<div class="cms-array-row" data-row="'+index+'"><div class="cms-array-grid"><input data-part="label" placeholder="数字（如 15+）" value="'+esc(row.label)+'"><input data-part="title" placeholder="统计标题" value="'+esc(row.title)+'"><input data-part="body" placeholder="说明（可选）" value="'+esc(row.body)+'"></div><button type="button" class="btn danger cms-array-remove">删除统计</button></div>';
+    return '<div class="cms-array-row" data-row="'+index+'"><div class="cms-array-grid"><input data-part="id" placeholder="模块标识" value="'+esc(row.id)+'"><input data-part="eyebrow" placeholder="眉标题" value="'+esc(row.eyebrow)+'"><input data-part="title" placeholder="标题" value="'+esc(row.title)+'"></div><textarea data-part="body" rows="3" placeholder="正文">'+esc(row.body)+'</textarea><textarea data-part="bullets" rows="2" placeholder="要点，每行一条">'+esc(row.bullets)+'</textarea><textarea data-part="items" rows="4" placeholder="子项，每行：标题 | 内容">'+esc((row.items||[]).map(item=>(item.title||item.label)+" | "+item.body).join("\\n"))+'</textarea><button type="button" class="btn danger cms-array-remove">删除模块</button></div>';
    }).join("");
    rowsRoot.querySelectorAll(".cms-array-row").forEach((rowEl,index)=>rowEl.querySelectorAll("[data-part]").forEach(input=>input.addEventListener("input",()=>{
     const part=input.dataset.part;
     if(kind==="groups"&&part==="items")rows[index].items=String(input.value||"").split(/\\n+/).map(line=>line.split("|")).map(parts=>({question:String(parts.shift()||"").trim(),answer:parts.join("|").trim()})).filter(item=>item.question&&item.answer);
+    else if(kind==="sections"&&part==="items")rows[index].items=String(input.value||"").split(/\\n+/).map(line=>line.split("|")).map(parts=>({title:String(parts.shift()||"").trim(),body:parts.join("|").trim()})).filter(item=>item.title&&item.body);
     else rows[index][part]=input.value;
     sync();
    })));
    rowsRoot.querySelectorAll(".cms-array-remove").forEach((btn,index)=>btn.addEventListener("click",()=>{rows.splice(index,1);render();sync();}));
    sync();
   };
-  editor.querySelector(".cms-array-add")?.addEventListener("click",()=>{rows.push(kind==="answers"?{question:"",answer:""}:kind==="groups"?{title:"",items:[]}:{id:"section",eyebrow:"",title:"",body:"",bullets:""});render();});
+  editor.querySelector(".cms-array-add")?.addEventListener("click",()=>{rows.push(kind==="answers"?{question:"",answer:""}:kind==="groups"?{title:"",items:[]}:kind==="stats"?{label:"",title:"",body:""}:{id:"section",eyebrow:"",title:"",body:"",bullets:"",items:[]});render();});
   render();
   const api={set(value){rows=normalizeArrayRows(kind,value);render();},get(){return rows;}};arrayEditors.set(key,api);return api;
  }
@@ -186,6 +189,7 @@
     arrayEditor("quickAnswers","answers","Quick Answers（问题与回答）")+
     arrayEditor("groups","groups","FAQ 分组")+
     arrayEditor("sections","sections","结构化正文区块")+
+    arrayEditor("stats","stats","统计数字（如 15+ / 60+ / 500+ / 24h）")+
     '<textarea data-cms-field="structuredJson" hidden></textarea>'+ 
     button("保存结构化正文","structured-copy");
   }
@@ -293,8 +297,8 @@
    const fill=()=>{
     const data=state.structuredCopy?.pageCopy?.[locale?.value]?.[route?.value]||{};
     for(const [key,value] of [["structuredEyebrow",data.eyebrow||""],["structuredTitle",data.title||""],["structuredSubtitle",data.subtitle||""]]){const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=value;}
-    hydrateArrayEditor("quickAnswers",data.quickAnswers||[]);hydrateArrayEditor("groups",data.groups||[]);hydrateArrayEditor("sections",data.sections||[]);
-    if(target)target.value=JSON.stringify({eyebrow:data.eyebrow||"",title:data.title||"",subtitle:data.subtitle||"",quickAnswers:data.quickAnswers||[],groups:data.groups||[],sections:data.sections||[]},null,2);
+    hydrateArrayEditor("quickAnswers",data.quickAnswers||[]);hydrateArrayEditor("groups",data.groups||[]);hydrateArrayEditor("sections",data.sections||[]);hydrateArrayEditor("stats",data.stats||[]);
+    if(target)target.value=JSON.stringify({eyebrow:data.eyebrow||"",title:data.title||"",subtitle:data.subtitle||"",quickAnswers:data.quickAnswers||[],groups:data.groups||[],sections:data.sections||[],stats:data.stats||[]},null,2);
    };
    locale?.addEventListener("change",fill);route?.addEventListener("change",fill);fill();
   }
@@ -555,7 +559,7 @@
        status:value("status"),content:{title:value("title"),navTitle:value("navTitle"),short:value("short"),detail:value("detail"),meta:value("meta"),
          image:value("image"),checks,body:value("body"),sections,faqs,bodyEs:value("bodyEs"),sectionsEs,faqsEs,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
     }else if(action==="structured-copy"){
-     const content={eyebrow:value("structuredEyebrow"),title:value("structuredTitle"),subtitle:value("structuredSubtitle"),quickAnswers:arrayEditors.get("quickAnswers")?.get()||[],groups:arrayEditors.get("groups")?.get()||[],sections:arrayEditors.get("sections")?.get()||[]};
+     const content={eyebrow:value("structuredEyebrow"),title:value("structuredTitle"),subtitle:value("structuredSubtitle"),quickAnswers:arrayEditors.get("quickAnswers")?.get()||[],groups:arrayEditors.get("groups")?.get()||[],sections:arrayEditors.get("sections")?.get()||[],stats:arrayEditors.get("stats")?.get()||[]};
      const target=document.querySelector('[data-cms-field="structuredJson"]');if(target)target.value=JSON.stringify(content);
      result=await api("structured-copy",{action:"save_page_copy",locale:$('cms-structured-locale').value,route:$('cms-structured-route').value,content});
    }else if(action==="page-body-source"){
@@ -596,7 +600,6 @@
   if(!state.brand)load();
  });
 })();
-
 
 
 

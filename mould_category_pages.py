@@ -9,8 +9,16 @@ contracts.
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 
 REFERENCE_ORIGIN = "https://www.cap-molds.com"
+_MEDIA_MANIFEST = Path(__file__).resolve().parent / "data" / "mould-legacy-media-manifest.json"
+try:
+    _MEDIA_MAP = {str(row.get("source")): str(row.get("target")) for row in json.loads(_MEDIA_MANIFEST.read_text(encoding="utf-8")).get("items", []) if isinstance(row, dict) and row.get("source") and row.get("target")}
+except (OSError, ValueError):
+    _MEDIA_MAP = {}
 
 # The reference catalogue uses a dedicated, short hero sentence on each
 # category page. Keeping these strings in the page data preserves the target
@@ -37,8 +45,10 @@ REFERENCE_HERO_DESCRIPTIONS.update({
 
 def _asset(path: str) -> str:
     if path.startswith(("http://", "https://", "/assets/")):
-        return path
-    return REFERENCE_ORIGIN + path
+        full = path
+    else:
+        full = REFERENCE_ORIGIN + path
+    return _MEDIA_MAP.get(full, full)
 
 
 def _structured_text(item: dict, locale: str, key: str, fallback: str) -> str:

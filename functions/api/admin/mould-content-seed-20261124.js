@@ -9,6 +9,7 @@ import MOULD_CATALOG from "../../../data/mould-catalog.json";
 import PRODUCT_STRUCTURED from "../../../data/mould-product-structured.json";
 import PAGE_STRUCTURED_DATA from "../../../data/mould-page-structured.json";
 import PAGE_BODY_DATA from "../../../data/mould-page-bodies.json";
+import LEGACY_MEDIA_MANIFEST from "../../../data/mould-legacy-media-manifest.json";
 import { authorizedMouldContentSeedRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema } from "../../_shared/blog-cms.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
@@ -223,6 +224,15 @@ function seedPost(item) {
   };
 }
 
+const LEGACY_MEDIA_MAP = Object.fromEntries((Array.isArray(LEGACY_MEDIA_MANIFEST?.items) ? LEGACY_MEDIA_MANIFEST.items : [])
+  .filter(row => row && row.source && row.target)
+  .map(row => [String(row.source), String(row.target)]));
+function migrateLegacyMedia(value) {
+  let result = String(value || "");
+  for (const [source, target] of Object.entries(LEGACY_MEDIA_MAP)) result = result.split(source).join(target);
+  return result;
+}
+
 const PRODUCT_FIELDS = [
   "slug", "title", "titleEs", "navTitle", "navTitleEs", "description", "descriptionEs",
   "short", "shortEs", "detail", "detailEs", "meta", "metaEs", "route", "checks"
@@ -327,13 +337,22 @@ export async function onRequestPost(context) {
     // the fallback for Spanish until a reviewed page translation is present;
     // existing D1 owner edits are never overwritten.
     const bodyRows = Array.isArray(PAGE_BODY_DATA?.items) ? PAGE_BODY_DATA.items : [];
-    const existingBodies = new Set(((await db.prepare("SELECT route FROM xuyi_page_content").all()).results || []).map(row => String(row.route)));
+    const existingBodies = new Map(((await db.prepare("SELECT route,main_html FROM xuyi_page_content").all()).results || []).map(row => [String(row.route), String(row.main_html || "")]));
     for (const row of bodyRows) {
       const route = String(row?.route || "");
       const mainHtml = String(row?.mainHtml || "");
-      if (!MOULD_ROUTES.has(route) || !mainHtml || existingBodies.has(route)) { skipped.pageBodies += 1; continue; }
-      statements.push(db.prepare("INSERT INTO xuyi_page_content(route,main_html,publication_status,updated_at) VALUES(?,?, 'published', CURRENT_TIMESTAMP)").bind(route, mainHtml));
-      inserted.pageBodies += 1;
+      if (!MOULD_ROUTES.has(route) || !mainHtml) { skipped.pageBodies += 1; continue; }
+      if (!existingBodies.has(route)) {
+        statements.push(db.prepare("INSERT INTO xuyi_page_content(route,main_html,publication_status,updated_at) VALUES(?,?, 'published', CURRENT_TIMESTAMP)").bind(route, migrateLegacyMedia(mainHtml)));
+        inserted.pageBodies += 1;
+        continue;
+      }
+      const current = existingBodies.get(route) || "";
+      const migrated = migrateLegacyMedia(current);
+      if (migrated !== current) {
+        statements.push(db.prepare("UPDATE xuyi_page_content SET main_html=?,updated_at=CURRENT_TIMESTAMP WHERE route=?").bind(migrated, route));
+        updated.pageBodies += 1;
+      } else skipped.pageBodies += 1;
     }
 
     const existingProductRows = ((await db.prepare("SELECT model,content_json FROM xuyi_product_content").all()).results || []);

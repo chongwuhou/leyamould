@@ -1253,7 +1253,7 @@ main > .page-intro + .blog-listing .section__head {margin-bottom:30px}
 
 
 /* Cap-molds product landing hero: dark centered headline, quote button and stats. */
-.mould-site .catalog-hero{background-color:#444;background-image:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.72)),url('https://www.cap-molds.com/images/_MG_4326.JPG');background-size:cover;background-position:center;min-height:590px;color:#fff;display:flex;align-items:center;text-align:center}
+.mould-site .catalog-hero{background-color:#444;background-image:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.72)),url('/media/page/f2404da800073ac9cfbca348f5e16adb.webp');background-size:cover;background-position:center;min-height:590px;color:#fff;display:flex;align-items:center;text-align:center}
 .mould-site .catalog-hero .shell{display:flex;flex-direction:column;align-items:center;justify-content:center}
 .mould-site .catalog-hero h1{font-size:clamp(2.35rem,4.2vw,3.8rem);font-weight:800;line-height:1.12;letter-spacing:-.03em;margin:0 0 20px;color:#fff}
 .mould-site .catalog-hero h1 span{color:#f0883e}

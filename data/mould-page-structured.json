@@ -2,17 +2,31 @@
   "en": {
     "/": {
       "sections": [
-        {"id": "advantages", "eyebrow": "WHY CHOOSE US", "title": "Core Advantages of LEYA MOULD", "body": "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control."},
+        {"id": "advantages", "eyebrow": "WHY CHOOSE US", "title": "Core Advantages of LEYA MOULD", "body": "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control.", "items": [{"title": "Design review", "body": "Part geometry, parting line, cooling and ejection are checked against the intended process."}, {"title": "Project matching", "body": "The tooling brief records the mould family, material, machine interface and target output information supplied by the buyer."}, {"title": "Sample-led decisions", "body": "Trial parts and agreed inspection points guide optimisation before production handover."}, {"title": "Clear communication", "body": "Drawings, PDFs, photos and revision notes stay attached to the enquiry."}]},
         {"id": "products", "eyebrow": "OUR PRODUCTS", "title": "Mould Product Families", "body": "Explore 12 specialized mould product families engineered for high-volume production, dimensional accuracy and long service life."},
         {"id": "samples", "eyebrow": "SAMPLES GALLERY", "title": "Plastic Cap Samples", "body": "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection."},
         {"id": "technology", "eyebrow": "OUR TECHNOLOGY", "title": "Engineering Excellence Behind Every Mould", "body": "Precision manufacturing, premium steel and documented controls for repeatable production."},
         {"id": "testimonials", "eyebrow": "TESTIMONIALS", "title": "Trusted by Packaging Leaders Worldwide", "body": "Reviewed customer feedback will appear here after source and publication review."},
-        {"id": "process", "eyebrow": "HOW WE WORK", "title": "Your Cap Mould Journey", "body": "From your first drawing to delivery and technical support."},
-        {"id": "references", "eyebrow": "ENGINEERING REFERENCE", "title": "Built for repeatable production decisions.", "body": "Mould structure, steel selection, inspection evidence and trial feedback stay connected through the project."},
-        {"id": "resources", "eyebrow": "NEWS & INSIGHTS", "title": "Latest from LEYA MOULD", "body": "Project notes, tooling updates and practical engineering guidance."}
+        {"id": "process", "eyebrow": "HOW WE WORK", "title": "Your Cap Mould Journey", "body": "From your first drawing to delivery and technical support.", "items": [{"label": "01", "title": "Share Design", "body": "Send your drawing or sample for an initial technical review."}, {"label": "02", "title": "DFM Analysis", "body": "Review mould flow, parting, cooling and optimisation opportunities."}, {"label": "03", "title": "Manufacturing", "body": "Coordinate precision machining, EDM, fitting and heat treatment."}, {"label": "04", "title": "Trial & Inspection", "body": "Complete trial runs, dimensional checks and agreed inspection evidence."}, {"label": "05", "title": "Delivery & Support", "body": "Keep approved files, delivery notes and technical support connected."}]},
+        {"id": "references", "eyebrow": "ENGINEERING REFERENCE", "title": "Built for repeatable production decisions.", "body": "Mould structure, steel selection, inspection evidence and trial feedback stay connected through the project.", "items": [{"title": "Precision manufacturing", "body": "Machining, EDM, fitting and assembly follow the approved tooling brief."}, {"title": "Material & modular design", "body": "Material traceability and modular inserts keep future changes practical."}, {"title": "Trial & inspection", "body": "Sample results, dimensional checks and agreed revisions guide handover."}]},
+        {"id": "resources", "eyebrow": "NEWS & INSIGHTS", "title": "Latest from LEYA MOULD", "body": "Project notes, tooling updates and practical engineering guidance.", "items": [{"label": "NEWS", "title": "Cap mould project notes", "body": "Follow new category material, sample references and production lessons.", "link": "/news/"}, {"label": "ENGINEERING", "title": "Lightweight closure design", "body": "Review the design questions that influence sealing, cooling and cycle goals.", "link": "/news/"}, {"label": "QUALITY", "title": "Inspection evidence", "body": "Keep dimensions, trial results and approved revisions connected.", "link": "/news/"}, {"label": "FAQ", "title": "Prepare a useful tooling enquiry", "body": "See the drawing, resin, machine and sample information that helps a quotation move faster.", "link": "/faq/"}, {"label": "VIDEO", "title": "Mould trial and review", "body": "Use the video area for future machine, trial and inspection media.", "link": "/video/"}, {"label": "CONTACT", "title": "Send your project brief", "body": "Tell LEYA MOULD what you are making and where the tooling must run.", "link": "/contact/#inquiry"}]}
+      ]
+    },
+    "/about/": {
+      "stats": [
+        {"label": "15+", "title": "Years of Experience"},
+        {"label": "60+", "title": "Countries Served"},
+        {"label": "500+", "title": "Moulds Delivered"},
+        {"label": "80+", "title": "Skilled Team Members"}
       ]
     },
     "/contact/": {
+      "stats": [
+        {"label": "15+", "title": "Years Experience"},
+        {"label": "60+", "title": "Countries Served"},
+        {"label": "500+", "title": "Moulds Delivered"},
+        {"label": "24h", "title": "Quote Response"}
+      ],
       "quickAnswers": [
         {"question": "⏱️ How fast can I get a quote?", "answer": "We respond within 24 hours. Use WhatsApp or email for urgent requests."},
         {"question": "📐 What information do I need to provide?", "answer": "Share the cap design, material, cavity count and production volume."},
@@ -45,17 +59,31 @@
   "es": {
     "/": {
       "sections": [
-        {"id": "advantages", "eyebrow": "POR QUÉ ELEGIRNOS", "title": "Ventajas clave de LEYA MOULD", "body": "Desde el diseño hasta la prueba, aportamos valor con excelencia de ingeniería y control de calidad estricto."},
+        {"id": "advantages", "eyebrow": "POR QUÉ ELEGIRNOS", "title": "Ventajas clave de LEYA MOULD", "body": "Desde el diseño hasta la prueba, aportamos valor con excelencia de ingeniería y control de calidad estricto.", "items": [{"title": "Revisión del diseño", "body": "La geometría, línea de partición, refrigeración y expulsión se revisan según el proceso previsto."}, {"title": "Ajuste del proyecto", "body": "El informe registra la familia del molde, material, máquina y producción objetivo del comprador."}, {"title": "Decisiones con muestras", "body": "Las piezas de prueba y los puntos de inspección acordados guían la optimización."}, {"title": "Comunicación clara", "body": "Planos, PDF, fotos y revisiones permanecen ligados a la consulta."}]},
         {"id": "products", "eyebrow": "NUESTROS PRODUCTOS", "title": "Familias de moldes", "body": "Explore 12 familias especializadas de moldes para producción de alto volumen, precisión dimensional y larga vida útil."},
         {"id": "samples", "eyebrow": "GALERÍA DE MUESTRAS", "title": "Muestras de tapas de plástico", "body": "Una amplia variedad de muestras para bebidas, alimentos, farmacia, cuidado personal y cierres industriales."},
         {"id": "technology", "eyebrow": "NUESTRA TECNOLOGÍA", "title": "Excelencia de ingeniería detrás de cada molde", "body": "Fabricación de precisión, acero premium y controles documentados para una producción repetible."},
         {"id": "testimonials", "eyebrow": "TESTIMONIOS", "title": "La confianza de compradores de packaging", "body": "Los comentarios de clientes revisados aparecerán aquí después de la revisión de origen y publicación."},
-        {"id": "process", "eyebrow": "CÓMO TRABAJAMOS", "title": "Su proyecto de moldes paso a paso", "body": "Desde el primer plano hasta la entrega y el soporte técnico."},
-        {"id": "references", "eyebrow": "REFERENCIA DE INGENIERÍA", "title": "Decisiones preparadas para una producción repetible.", "body": "La estructura, el acero, la inspección y las pruebas permanecen conectados durante el proyecto."},
-        {"id": "resources", "eyebrow": "NOTICIAS Y GUÍAS", "title": "Lo último de LEYA MOULD", "body": "Notas de proyectos, novedades de utillaje y orientación práctica de ingeniería."}
+        {"id": "process", "eyebrow": "CÓMO TRABAJAMOS", "title": "Su proyecto de moldes paso a paso", "body": "Desde el primer plano hasta la entrega y el soporte técnico.", "items": [{"label": "01", "title": "Compartir diseño", "body": "Envíe el plano o la muestra para una revisión técnica inicial."}, {"label": "02", "title": "Análisis DFM", "body": "Revisamos flujo, partición, refrigeración y oportunidades de optimización."}, {"label": "03", "title": "Fabricación", "body": "Coordinamos mecanizado, EDM, ajuste y tratamiento térmico."}, {"label": "04", "title": "Prueba e inspección", "body": "Completamos pruebas, comprobaciones dimensionales y evidencias acordadas."}, {"label": "05", "title": "Entrega y soporte", "body": "Mantenemos conectados los archivos aprobados, la entrega y el soporte técnico."}]},
+        {"id": "references", "eyebrow": "REFERENCIA DE INGENIERÍA", "title": "Decisiones preparadas para una producción repetible.", "body": "La estructura, el acero, la inspección y las pruebas permanecen conectados durante el proyecto.", "items": [{"title": "Fabricación de precisión", "body": "El mecanizado, EDM, ajuste y montaje siguen el informe aprobado."}, {"title": "Material y diseño modular", "body": "La trazabilidad y los insertos modulares facilitan cambios futuros."}, {"title": "Prueba e inspección", "body": "Las muestras, comprobaciones y revisiones guían la entrega."}]},
+        {"id": "resources", "eyebrow": "NOTICIAS Y GUÍAS", "title": "Lo último de LEYA MOULD", "body": "Notas de proyectos, novedades de utillaje y orientación práctica de ingeniería.", "items": [{"label": "NOTICIAS", "title": "Notas de proyectos de moldes", "body": "Siga materiales, muestras y lecciones de producción.", "link": "/news/"}, {"label": "INGENIERÍA", "title": "Diseño de cierres ligeros", "body": "Revise las decisiones que influyen en sellado, refrigeración y ciclos.", "link": "/news/"}, {"label": "CALIDAD", "title": "Evidencias de inspección", "body": "Mantenga conectados los resultados, dimensiones y revisiones.", "link": "/news/"}, {"label": "FAQ", "title": "Prepare una consulta útil", "body": "Consulte la información que ayuda a acelerar una cotización.", "link": "/faq/"}, {"label": "VÍDEO", "title": "Prueba y revisión del molde", "body": "Vea demostraciones y revisiones técnicas.", "link": "/video/"}, {"label": "CONTACTO", "title": "Envíe su proyecto", "body": "Cuéntenos qué fabrica y dónde funcionará el molde.", "link": "/contact/#inquiry"}]}
+      ]
+    },
+    "/about/": {
+      "stats": [
+        {"label": "15+", "title": "Años de experiencia"},
+        {"label": "60+", "title": "Países atendidos"},
+        {"label": "500+", "title": "Moldes entregados"},
+        {"label": "80+", "title": "Profesionales especializados"}
       ]
     },
     "/contact/": {
+      "stats": [
+        {"label": "15+", "title": "Años de experiencia"},
+        {"label": "60+", "title": "Países atendidos"},
+        {"label": "500+", "title": "Moldes entregados"},
+        {"label": "24h", "title": "Respuesta de cotización"}
+      ],
       "quickAnswers": [
         {"question": "⏱️ ¿Cuánto tardan en enviar una cotización?", "answer": "Respondemos en 24 horas. Use WhatsApp o correo electrónico para solicitudes urgentes."},
         {"question": "📐 ¿Qué información debo proporcionar?", "answer": "Comparta el diseño de la tapa, material, número de cavidades y volumen de producción."},

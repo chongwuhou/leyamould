@@ -18,6 +18,7 @@ on:
       - "data/mould-product-structured.json"
       - "data/mould-page-structured.json"
       - "data/mould-page-bodies.json"
+      - "data/mould-legacy-media-manifest.json"
       - "data/site-navigation-defaults.json"
       - "locale_registry.py"
       - "deployment/site.config.json"
@@ -35,6 +36,8 @@ on:
       - "scripts/test_mould_release_authority.py"
       - "scripts/test_leya_state_contract.py"
       - "scripts/generate_mould_page_bodies.py"
+      - "scripts/upload_legacy_mould_media.py"
+      - "scripts/test_legacy_media_migration.py"
       - "scripts/prepare_model_reference_import.py"
       - "scripts/verify_production_release.py"
       - "functions/**"
@@ -54,7 +57,7 @@ permissions:
 jobs:
   source-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 35
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
@@ -80,6 +83,8 @@ jobs:
         run: python scripts/test_mould_admin_contract.py
       - name: Verify LEYA media and publish revision contract
         run: python scripts/test_mould_media_publish_contract.py
+      - name: Verify legacy media migration contract
+        run: python scripts/test_legacy_media_migration.py
       - name: Verify LEYA model-reference D1/R2 contract
         run: python scripts/test_mould_model_references.py
       - name: Verify LEYA D1 content-source authority
@@ -94,6 +99,12 @@ jobs:
         run: python scripts/test_leya_state_contract.py
       - name: Validate site isolation
         run: python scripts/preflight.py
+      - name: Upload legacy LEYA page media to R2
+        run: |
+          python -m pip install --disable-pip-version-check --quiet Pillow
+          python scripts/upload_legacy_mould_media.py
+      - name: Apply owner-approved LEYA content and media baseline
+        run: python scripts/migrate_mould_content.py
       - name: Verify D1-driven language and publish guards
         run: python scripts/test_dynamic_language_and_publish_guards.py
       - name: Fetch reviewed LEYA D1 build snapshot
@@ -126,5 +137,4 @@ jobs:
         run: |
           echo "::error::CLOUDFLARE_API_TOKEN is not configured; source build passed but production was not deployed."
           exit 1
-
 

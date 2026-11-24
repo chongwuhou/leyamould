@@ -6,7 +6,7 @@ import { MOULD_ROUTES } from "../../_shared/mould-routes.js";
 
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(value,limit)=>String(value??"").trim().slice(0,limit);
-const PAGE_KEYS=new Set(["eyebrow","title","subtitle","quickAnswers","groups","sections"]);
+const PAGE_KEYS=new Set(["eyebrow","title","subtitle","quickAnswers","groups","sections","stats"]);
 async function deny(c){
   if(!c.env.ADMIN_TOKEN)return respond({error:"Admin not configured"},503);
   if(!(await authorizedBuildRequest(c.request,c.env)))return respond({error:"Unauthorized"},401);
@@ -23,21 +23,30 @@ function groups(value){
   if(!Array.isArray(value)||value.length>8)throw Error("groups must contain 1–8 groups");
   return value.map(group=>{const title=clean(group?.title,180),items=Array.isArray(group?.items)?group.items:[];if(!title||!items.length||items.length>12)throw Error("Each FAQ group needs 1–12 items");return {title,items:items.map(row=>{const question=clean(row?.question,240),answer=clean(row?.answer,1800);if(!question||!answer)throw Error("Each FAQ item needs a question and answer");return {question,answer};})};});
 }
+function listItems(value){
+  if(!Array.isArray(value)||value.length>12)throw Error("section items must contain 1–12 items");
+  return value.map(row=>{
+    const id=clean(row?.id,80),label=clean(row?.label,180),title=clean(row?.title,240),body=clean(row?.body,1800),link=clean(row?.link,500);
+    if(!title&&!label)throw Error("Each section item needs a title or label");
+    return {id,label,title,body,link,bullets:Array.isArray(row?.bullets)?row.bullets.map(x=>clean(x,240)).filter(Boolean).slice(0,8):[]};
+  });
+}
 function validate(input){
   if(!input||typeof input!=="object"||Array.isArray(input))throw Error("Structured copy must be an object");
   const out={};
   for(const key of PAGE_KEYS){
     if(!Object.hasOwn(input,key))continue;
-    if(["quickAnswers","groups","sections"].includes(key)){
+    if(["quickAnswers","groups","sections","stats"].includes(key)){
       if(key==="quickAnswers")out[key]=answers(input[key]);
       else if(key==="groups")out[key]=groups(input[key]);
+      else if(key==="stats")out[key]=listItems(input[key]);
       else if(!Array.isArray(input[key])&&(!input[key]||typeof input[key]!=="object"||Array.isArray(input[key])))throw Error("sections must be an array or keyed object");
       if(key==="sections"){
         if(Array.isArray(input[key])){
           if(input[key].length>12)throw Error("sections must contain at most 12 items");
-          out[key]=input[key].map(row=>{const id=clean(row?.id,80),eyebrow=clean(row?.eyebrow,180),title=clean(row?.title,180),body=clean(row?.body,1800),bullets=Array.isArray(row?.bullets)?row.bullets.map(x=>clean(x,240)).filter(Boolean).slice(0,8):[];if(!id||!title||!body)throw Error("Each section needs id, title and body");return {id,eyebrow,title,body,bullets};});
+          out[key]=input[key].map(row=>{const id=clean(row?.id,80),eyebrow=clean(row?.eyebrow,180),title=clean(row?.title,180),body=clean(row?.body,1800),bullets=Array.isArray(row?.bullets)?row.bullets.map(x=>clean(x,240)).filter(Boolean).slice(0,8):[];if(!id||!title||!body)throw Error("Each section needs id, title and body");return {id,eyebrow,title,body,bullets,items:listItems(row?.items||[])};});
         }else{
-          const keyed={};for(const [id,row] of Object.entries(input[key]).slice(0,24)){const title=clean(row?.title,180),body=clean(row?.body,1800),eyebrow=clean(row?.eyebrow,180);if(!title)continue;keyed[clean(id,80)]={eyebrow,title,body,bullets:Array.isArray(row?.bullets)?row.bullets.map(x=>clean(x,240)).filter(Boolean).slice(0,8):[]};}if(!Object.keys(keyed).length)throw Error("sections object is empty");out[key]=keyed;
+          const keyed={};for(const [id,row] of Object.entries(input[key]).slice(0,24)){const title=clean(row?.title,180),body=clean(row?.body,1800),eyebrow=clean(row?.eyebrow,180);if(!title)continue;keyed[clean(id,80)]={eyebrow,title,body,bullets:Array.isArray(row?.bullets)?row.bullets.map(x=>clean(x,240)).filter(Boolean).slice(0,8):[],items:listItems(row?.items||[])};}if(!Object.keys(keyed).length)throw Error("sections object is empty");out[key]=keyed;
         }
       }
     }else{
