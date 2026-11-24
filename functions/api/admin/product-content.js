@@ -8,6 +8,18 @@ import { imageKey } from "../../_shared/r2-usage.js";
 import {ensureProductSeo,canonicalProductSlug,normalizeProductSeo,upsertProductSeo} from "../../_shared/product-seo.js";
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(v,n=500)=>String(v??"").trim().slice(0,n);
+function structuredSections(value){
+  if(!Array.isArray(value)||value.length>8||value.some(row=>!row||typeof row!=="object"||Array.isArray(row)))throw Error("Invalid structured sections");
+  return value.map(row=>{
+    const title=clean(row.title,180),body=clean(row.body,1800),bullets=Array.isArray(row.bullets)?row.bullets.map(x=>clean(x,240)).filter(Boolean).slice(0,8):[];
+    if(!title||!body)return null;
+    return {title,body,bullets};
+  }).filter(Boolean);
+}
+function structuredFaqs(value){
+  if(!Array.isArray(value)||value.length>12||value.some(row=>!row||typeof row!=="object"||Array.isArray(row)))throw Error("Invalid product FAQs");
+  return value.map(row=>{const question=clean(row.question,240),answer=clean(row.answer,1800);if(!question||!answer)return null;return {question,answer};}).filter(Boolean);
+}
 async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_product_content(
   model TEXT PRIMARY KEY,
   content_json TEXT NOT NULL DEFAULT '{}',
@@ -84,18 +96,22 @@ export async function onRequestPost(context){
   if(!/^[a-z0-9][a-z0-9-]{1,80}$/.test(model))return respond({error:"Invalid mould category slug"},400);
   if(!MANAGED_MODELS.has(model))return respond({error:"Mould category not found in the current LEYA catalog"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
-  const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription"];
-  const content={};
+  const db=c.env.LEYA_DB;await ensure(db);
+  const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","body","sections","faqs"];
+  let content={};
+  const previousRow=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
+  try{content=previousRow?.content_json?JSON.parse(previousRow.content_json):{};}catch{return respond({error:"Existing product JSON invalid"},409)}
   for(const key of allowed)if(Object.hasOwn(v,key)){
     if(key==="checks"){
       if(!Array.isArray(v[key])||v[key].length>12||v[key].some(item=>typeof item!=="string"||item.length>240))return respond({error:"Invalid checks"},400);
       content[key]=v[key].map(item=>item.trim()).filter(Boolean); continue;
     }
+    if(key==="sections"){try{content[key]=structuredSections(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
+    if(key==="faqs"){try{content[key]=structuredFaqs(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
     if(typeof v[key]!=="string"||v[key].length>3000)return respond({error:"Invalid "+key},400);
     content[key]=v[key].trim();
   }
   if(status==="published"&&(!content.title&&!content.name||!content.description))return respond({error:"Published mould category requires title and description"},400);
-  const db=context.env.LEYA_DB;await ensure(db);
   if(content.seoTitle||content.seoDescription){
     await ensureProductSeo(db);
     const slug=canonicalProductSlug(model);
@@ -115,5 +131,4 @@ export async function onRequestPost(context){
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,model,status,route:mouldRoute(model),...revision});
 }
-
 
