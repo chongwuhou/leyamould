@@ -78,6 +78,23 @@ BRAND_CONFIG = STATE.get("brand") if isinstance(STATE.get("brand"), dict) else {
 CONTACT_CONFIG = STATE.get("contacts") if isinstance(STATE.get("contacts"), dict) else {}
 NAVIGATION = [row for row in STATE.get("navigation", []) if isinstance(row, dict)]
 COMMON_COPY = STATE.get("commonCopy") if isinstance(STATE.get("commonCopy"), dict) else {}
+PAGE_COPY = STATE.get("pageCopy") if isinstance(STATE.get("pageCopy"), dict) else {}
+
+def structured_page_copy(locale: str, route: str) -> dict:
+    """Return the reviewed structured copy for one route and locale.
+
+    D1 owns the editable words, while this renderer continues to own the DOM,
+    spacing and responsive layout.  A missing locale/field falls back to the
+    source-language row and finally to the existing renderer baseline.
+    """
+    source = PAGE_COPY.get("en", {}) if isinstance(PAGE_COPY.get("en", {}), dict) else {}
+    localized = PAGE_COPY.get(locale, {}) if isinstance(PAGE_COPY.get(locale, {}), dict) else {}
+    row = localized.get(route) if isinstance(localized.get(route), dict) else source.get(route)
+    return row if isinstance(row, dict) else {}
+
+def structured_page_value(locale: str, route: str, key: str, fallback: str = "") -> str:
+    value = structured_page_copy(locale, route).get(key)
+    return str(value).strip() if isinstance(value, str) and value.strip() else fallback
 def _normalise_page_row(row: dict) -> dict:
     """Accept the D1 snapshot's snake_case fields and the admin API's camelCase.
 
@@ -688,6 +705,9 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     cap = "https://www.cap-molds.com"
     banner_src = banner if banner.startswith("/assets/") else cap + banner
     page_header_mod = " reference-page-header--samples" if route == "/samples/" else ""
+    structured_eyebrow = structured_page_value(locale, route, "eyebrow", "")
+    structured_title = structured_page_value(locale, route, "title", "")
+    structured_subtitle = structured_page_value(locale, route, "subtitle", "")
     if route == "/capabilities/":
         page_eyebrow = "AUXILIARY EQUIPMENT"
         page_title = "Cap <span class=\"reference-title-accent\">Auxiliary Machines</span>"
@@ -700,6 +720,12 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     else:
         page_eyebrow = "LEYA MOULD · PRECISION TOOLING"
         page_title = esc(title)
+    if structured_eyebrow:
+        page_eyebrow = structured_eyebrow
+    if structured_title:
+        page_title = esc(structured_title)
+    if structured_subtitle:
+        subtitle = structured_subtitle
     if route == "/contact/":
         crumb = '<nav class="reference-breadcrumb reference-breadcrumb--overlay" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(title) + '</span></div></nav>'
         return '<section class="reference-banner' + banner_mod + '"><img src="' + esc(banner_src) + '" alt="LEYA MOULD reference banner" loading="eager" decoding="async">' + crumb + '</section><header class="reference-page-header"><span class="eyebrow">' + page_eyebrow + '</span><h1>' + page_title + '</h1><p>' + esc(subtitle) + '</p></header>'
@@ -750,18 +776,27 @@ SHARED_CTA_COPY = {
 def shared_cta(locale: str, variant: str = "catalog", element_id: str = "", title_override: str = "", text_override: str = "") -> str:
     """Render the canonical contact CTA used at the bottom of public pages."""
     lang = "es" if locale == "es" else "en"
-    copy = SHARED_CTA_COPY.get(variant, SHARED_CTA_COPY["catalog"]).get(lang, SHARED_CTA_COPY["catalog"][lang])
+    fallback = SHARED_CTA_COPY.get(variant, SHARED_CTA_COPY["catalog"]).get(lang, SHARED_CTA_COPY["catalog"][lang])
+    d1_locale = COMMON_COPY.get(lang, {}) if isinstance(COMMON_COPY.get(lang, {}), dict) else {}
+    d1_ctas = d1_locale.get("shared_cta", {}) if isinstance(d1_locale.get("shared_cta", {}), dict) else {}
+    d1_copy = d1_ctas.get(variant) if isinstance(d1_ctas.get(variant), dict) else {}
+    copy = (
+        str(d1_copy.get("title") or fallback[0]),
+        str(d1_copy.get("description") or fallback[1]),
+        str(d1_copy.get("note") or fallback[2]),
+    )
     title = title_override or copy[0]
     description = text_override or copy[1]
     id_attr = ' id="' + esc(element_id) + '"' if element_id else ""
-    quote_label = "Solicitar cotización" if lang == "es" else "Request a Quote"
-    phone_label = "Teléfono / WhatsApp" if lang == "es" else "Phone / WhatsApp"
-    email_label = "Correo electrónico" if lang == "es" else "Email"
-    whatsapp_label = "WhatsApp"
+    quote_label = str(d1_copy.get("quoteLabel") or ("Solicitar cotización" if lang == "es" else "Request a Quote"))
+    phone_label = str(d1_copy.get("phoneLabel") or ("Teléfono / WhatsApp" if lang == "es" else "Phone / WhatsApp"))
+    email_label = str(d1_copy.get("emailLabel") or ("Correo electrónico" if lang == "es" else "Email"))
+    whatsapp_label = str(d1_copy.get("whatsappLabel") or "WhatsApp")
+    eyebrow = str(d1_copy.get("eyebrow") or ("LEYA MOULD · INGENIERÍA · SOPORTE" if lang == "es" else "LEYA MOULD · ENGINEERING · SUPPORT"))
     return (
         '<section' + id_attr + ' class="mould-shared-cta mould-shared-cta--' + esc(variant) + '">'
         '<div class="mould-shared-cta__inner">'
-        '<div class="mould-shared-cta__copy"><span class="mould-shared-cta__eyebrow">LEYA MOULD · ' + ("INGENIERÍA · SOPORTE" if lang == "es" else "ENGINEERING · SUPPORT") + '</span>'
+        '<div class="mould-shared-cta__copy"><span class="mould-shared-cta__eyebrow">' + esc(eyebrow) + '</span>'
         '<h2><span aria-hidden="true">✦</span> ' + esc(title) + '</h2><p>' + esc(description) + '</p></div>'
         '<div class="mould-shared-cta__actions">'
         '<a class="mould-shared-cta__item mould-shared-cta__item--phone" href="tel:+8613606727715"><span class="mould-shared-cta__icon" aria-hidden="true">☎</span><span><strong>' + phone_label + '</strong><small>+86 136 0672 7715</small></span></a>'
@@ -988,6 +1023,21 @@ def about_page(locale: str) -> str:
         journey, why, facility, certs, production, together = "Our Journey", "Why Choose LEYA MOULD", "Our Facility & Equipment", "Certifications & Quality", "Our Production Facilities", "Let's Work Together"
         together_text = "Have a mould project? Contact our team for a practical technical conversation and quotation."
 
+    structured = structured_page_copy(locale, "/about/")
+    structured_sections = structured.get("sections", {}) if isinstance(structured.get("sections", {}), dict) else {}
+    def section_title(key: str, fallback: str) -> str:
+        row = structured_sections.get(key, {})
+        return str(row.get("title") or fallback) if isinstance(row, dict) else fallback
+    story = structured_page_value(locale, "/about/", "story", story)
+    title = structured_page_value(locale, "/about/", "title", title)
+    subtitle = structured_page_value(locale, "/about/", "subtitle", subtitle)
+    who = section_title("overview", who)
+    journey = section_title("journey", journey)
+    why = section_title("advantages", why)
+    facility = section_title("facility", facility)
+    certs = section_title("quality", certs)
+    production = section_title("production", production)
+
     timeline = [
         ("01", "Design foundation", "A clear product brief connects the drawing, material, neck finish and intended production process."),
         ("02", "Project matching", "Mould family, cavity plan, machine interface and target output are confirmed before steel is cut."),
@@ -1133,6 +1183,14 @@ def faq_page(locale: str) -> str:
         contact_title, contact_text = "Still Have Questions?", "Our team is ready to help. Reach out and we'll respond within 24 hours."
         labels = ("Phone", "Email", "WhatsApp", "WeChat")
         values = ("+86 136 0672 7715", EMAIL, "Chat with LEYA MOULD", "Ask about WeChat")
+
+    structured = structured_page_copy(locale, "/faq/")
+    if structured.get("eyebrow"):
+        page_eyebrow = str(structured["eyebrow"])
+    if structured.get("title"):
+        page_title = esc(str(structured["title"]))
+    if structured.get("subtitle"):
+        page_subtitle = str(structured["subtitle"])
 
     prefix = '<section class="reference-banner reference-banner--compact"><img src="' + cap + '/upload/Banner/pheader-faq.jpg" alt="LEYA MOULD FAQ" loading="eager" decoding="async"></section>'
     prefix += '<nav class="reference-breadcrumb faq-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc("FAQs" if locale == "en" else "Preguntas frecuentes") + '</span></div></nav>'
