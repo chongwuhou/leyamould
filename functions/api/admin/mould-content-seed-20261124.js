@@ -62,11 +62,27 @@ const BRAND = {
 const COMMON_COPY = {
   en: {
     home: "Home", about: "About us", cap_mould: "Cap Mould", machine: "Machine", samples: "Sample", news: "News", video: "Video", contact_us: "Contact Us", contact: "Contact", quote: "Request a Quote", faq_title: "FAQs",
-    footer_eyebrow: "LEYA MOULD · ENGINEERING · MANUFACTURING", footer_cta_title: "Ready to discuss your mould project?", footer_cta_text: "Send your drawing, sample or PDF and tell us the production target.", footer_products: "Products", footer_capabilities: "Capabilities", footer_contact: "Contact Us", footer_quick_links: "Quick Links", footer_quote: "Request a Quote →", footer_privacy: "Privacy Policy", footer_sitemap: "Sitemap", footer_sticky: "Mould Project Enquiries", footer_tagline: "Bottle, cap, preform and custom product mould support for international buyers."
+    footer_eyebrow: "LEYA MOULD · ENGINEERING · MANUFACTURING", footer_cta_title: "Ready to discuss your mould project?", footer_cta_text: "Send your drawing, sample or PDF and tell us the production target.", footer_products: "Products", footer_capabilities: "Capabilities", footer_contact: "Contact Us", footer_quick_links: "Quick Links", footer_quote: "Request a Quote →", footer_privacy: "Privacy Policy", footer_sitemap: "Sitemap", footer_sticky: "Mould Project Enquiries", footer_tagline: "Bottle, cap, preform and custom product mould support for international buyers.",
+    shared_cta: {
+      catalog: { title: "Start Your Cap Mould Project", description: "Send your drawing, sample or production requirements. We will reply with the next technical questions and a clear path forward.", note: "Contact us for a quote and technical consultation — we will reply within 24 hours.", eyebrow: "LEYA MOULD · ENGINEERING · SUPPORT", quoteLabel: "Request a Quote", phoneLabel: "Phone / WhatsApp", emailLabel: "Email", whatsappLabel: "WhatsApp" },
+      samples: { title: "Want to See More Samples or Request a Quote?", description: "Contact LEYA MOULD today. We will send you the right samples and a practical proposal for your project.", note: "Tell us about your mould", eyebrow: "LEYA MOULD · ENGINEERING · SUPPORT", quoteLabel: "Request a Quote", phoneLabel: "Phone / WhatsApp", emailLabel: "Email", whatsappLabel: "WhatsApp" },
+      auxiliary: { title: "Need Auxiliary Equipment for Your Cap Line?", description: "Contact LEYA MOULD to discuss your cap size, production volume and the auxiliary operations you require. We will recommend a practical machine setup for your factory.", note: "Tell us about your line", eyebrow: "LEYA MOULD · ENGINEERING · SUPPORT", quoteLabel: "Request a Quote", phoneLabel: "Phone / WhatsApp", emailLabel: "Email", whatsappLabel: "WhatsApp" },
+      about: { title: "Let's Work Together", description: "Share your drawing, sample or production brief and we will help shape the next technical step.", note: "Chat with LEYA MOULD", eyebrow: "LEYA MOULD · ENGINEERING · SUPPORT", quoteLabel: "Request a Quote", phoneLabel: "Phone / WhatsApp", emailLabel: "Email", whatsappLabel: "WhatsApp" },
+      faq: { title: "Still Have Questions?", description: "Our team is ready to help. Reach out and we'll respond within 24 hours.", note: "Ask about your project", eyebrow: "LEYA MOULD · ENGINEERING · SUPPORT", quoteLabel: "Request a Quote", phoneLabel: "Phone / WhatsApp", emailLabel: "Email", whatsappLabel: "WhatsApp" },
+      category: { title: "Start Your Cap Mould Project", description: "Send us your drawing, sample, target material, cavity plan and delivery market. We will reply with the next technical questions.", note: "Tell us about your mould", eyebrow: "LEYA MOULD · ENGINEERING · SUPPORT", quoteLabel: "Request a Quote", phoneLabel: "Phone / WhatsApp", emailLabel: "Email", whatsappLabel: "WhatsApp" }
+    }
   },
   es: {
     home: "Inicio", about: "Sobre nosotros", cap_mould: "Moldes de tapones", machine: "Máquina", samples: "Muestras", news: "Noticias", video: "Vídeo", contact_us: "Contacto", contact: "Contacto", quote: "Solicitar cotización", faq_title: "Preguntas frecuentes",
-    footer_eyebrow: "LEYA MOULD · INGENIERÍA · FABRICACIÓN", footer_cta_title: "¿Hablamos de su proyecto?", footer_cta_text: "Envíe su plano, muestra o PDF y el objetivo de producción.", footer_products: "Productos", footer_capabilities: "Capacidades", footer_contact: "Contacto", footer_quick_links: "Enlaces rápidos", footer_quote: "Solicitar cotización →", footer_privacy: "Privacidad", footer_sitemap: "Mapa del sitio", footer_sticky: "Consultas de moldes", footer_tagline: "Soporte para moldes de botellas, tapones, preformas y productos a medida."
+    footer_eyebrow: "LEYA MOULD · INGENIERÍA · FABRICACIÓN", footer_cta_title: "¿Hablamos de su proyecto?", footer_cta_text: "Envíe su plano, muestra o PDF y el objetivo de producción.", footer_products: "Productos", footer_capabilities: "Capacidades", footer_contact: "Contacto", footer_quick_links: "Enlaces rápidos", footer_quote: "Solicitar cotización →", footer_privacy: "Privacidad", footer_sitemap: "Mapa del sitio", footer_sticky: "Consultas de moldes", footer_tagline: "Soporte para moldes de botellas, tapones, preformas y productos a medida.",
+    shared_cta: {
+      catalog: { title: "Empiece su proyecto de moldes", description: "Envíenos su dibujo, muestra o requisitos de producción. Responderemos con las siguientes preguntas técnicas y un camino claro.", note: "Contáctenos para una cotización y consulta técnica; responderemos en 24 horas.", eyebrow: "LEYA MOULD · INGENIERÍA · SOPORTE", quoteLabel: "Solicitar cotización", phoneLabel: "Teléfono / WhatsApp", emailLabel: "Correo electrónico", whatsappLabel: "WhatsApp" },
+      samples: { title: "¿Quiere ver más muestras o solicitar una cotización?", description: "Contacte hoy con LEYA MOULD. Le enviaremos las muestras adecuadas y una propuesta práctica para su proyecto.", note: "Cuéntenos sobre su molde", eyebrow: "LEYA MOULD · INGENIERÍA · SOPORTE", quoteLabel: "Solicitar cotización", phoneLabel: "Teléfono / WhatsApp", emailLabel: "Correo electrónico", whatsappLabel: "WhatsApp" },
+      auxiliary: { title: "¿Necesita equipos auxiliares para su línea de tapas?", description: "Contacte con LEYA MOULD para hablar del tamaño de la tapa, el volumen de producción y las operaciones auxiliares que necesita. Le recomendaremos una configuración práctica.", note: "Cuéntenos sobre su línea", eyebrow: "LEYA MOULD · INGENIERÍA · SOPORTE", quoteLabel: "Solicitar cotización", phoneLabel: "Teléfono / WhatsApp", emailLabel: "Correo electrónico", whatsappLabel: "WhatsApp" },
+      about: { title: "Trabajemos juntos", description: "Comparta su plano, muestra o requisitos de producción y le ayudaremos a definir el siguiente paso técnico.", note: "Hable con LEYA MOULD", eyebrow: "LEYA MOULD · INGENIERÍA · SOPORTE", quoteLabel: "Solicitar cotización", phoneLabel: "Teléfono / WhatsApp", emailLabel: "Correo electrónico", whatsappLabel: "WhatsApp" },
+      faq: { title: "¿Todavía tiene preguntas?", description: "Nuestro equipo está listo para ayudarle. Escríbanos y responderemos en un plazo de 24 horas.", note: "Consulte su proyecto", eyebrow: "LEYA MOULD · INGENIERÍA · SOPORTE", quoteLabel: "Solicitar cotización", phoneLabel: "Teléfono / WhatsApp", emailLabel: "Correo electrónico", whatsappLabel: "WhatsApp" },
+      category: { title: "Inicie su proyecto de moldes", description: "Envíenos el plano, la muestra, el material, las cavidades y el mercado de destino. Responderemos con las siguientes preguntas técnicas.", note: "Cuéntenos sobre su molde", eyebrow: "LEYA MOULD · INGENIERÍA · SOPORTE", quoteLabel: "Solicitar cotización", phoneLabel: "Teléfono / WhatsApp", emailLabel: "Correo electrónico", whatsappLabel: "WhatsApp" }
+    }
   }
 };
 
@@ -117,6 +133,41 @@ const PAGE_COPY = {
   "/privacy-policy/": ["Privacy Policy", "Privacy Policy | LEYA MOULD", "How LEYA MOULD handles project enquiry and contact information."]
 };
 
+// Structured public copy is separate from the SEO registry above.  It contains
+// editable page-intro fields and a small set of body section labels; the
+// renderer still owns the DOM and layout.  Missing fields are intentionally
+// filled from the checked-in source renderer, never from owner-edited HTML.
+const STRUCTURED_PAGE_COPY = {
+  en: {
+    "/about/": { eyebrow: "OUR STORY", title: "About LEYA MOULD", subtitle: "LEYA MOULD is a mould-project brand based in Huangyan, Taizhou, Zhejiang Province, China. We support international buyers with precision, clear engineering communication and practical project support.", sections: { overview: { title: "Who We Are" }, journey: { title: "Our Journey" }, advantages: { title: "Why Choose LEYA MOULD" }, facility: { title: "Our Facility & Equipment" }, quality: { title: "Certifications & Quality" }, production: { title: "Our Production Facilities" } } },
+    "/products/": { eyebrow: "LEYA MOULD · PRECISION TOOLING", title: "Mould Categories", subtitle: "Explore cap mould, bottle mould, preform mould and custom packaging tooling directions." },
+    "/Plastic-cap-mold.html": { eyebrow: "LEYA MOULD · PRECISION TOOLING", title: "Mould Categories", subtitle: "Review LEYA MOULD plastic cap mould families, applications and project information." },
+    "/capabilities/": { eyebrow: "AUXILIARY EQUIPMENT", title: "Cap Auxiliary Machines", subtitle: "Complete your cap production line with specialized auxiliary machines for lining, folding, slitting, printing and wadding." },
+    "/manufacturing/": { eyebrow: "HOW WE WORK", title: "Manufacturing Process", subtitle: "A clear path from drawing review and DFM to machining, trial, inspection and technical handover." },
+    "/quality-control/": { eyebrow: "QUALITY CONTROL", title: "Quality Control", subtitle: "Quality checks, inspection evidence and change control for plastic cap and packaging mould projects." },
+    "/request-sample/": { eyebrow: "REQUEST A SAMPLE", title: "Request a Sample", subtitle: "Share your drawing, sample and production target for a project-specific mould review." },
+    "/contact/": { eyebrow: "LEYA MOULD · PRECISION TOOLING", title: "Contact Us", subtitle: "Send LEYA MOULD your part drawing, material, cavity plan, machine information and target market." },
+    "/samples/": { eyebrow: "LEYA MOULD · PRECISION TOOLING", title: "Plastic Cap Samples", subtitle: "Explore a wide variety of plastic bottle caps manufactured with high-precision injection moulds." },
+    "/news/": { eyebrow: "LEYA MOULD · PRECISION TOOLING", title: "News & Updates", subtitle: "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." },
+    "/video/": { eyebrow: "EXPLORE OUR WORK", title: "Video Gallery", subtitle: "Watch our latest mould demonstrations, factory tours and technical insights." },
+    "/faq/": { eyebrow: "HELP CENTER", title: "Frequently Asked Questions", subtitle: "Find quick answers to common questions about our plastic cap moulds, auxiliary machines, ordering process and support." }
+  },
+  es: {
+    "/about/": { eyebrow: "NUESTRA HISTORIA", title: "Sobre LEYA MOULD", subtitle: "LEYA MOULD es una marca de proyectos de moldes con sede en Huangyan, Taizhou, Zhejiang, China. Acompañamos a compradores internacionales con precisión, comunicación técnica clara y soporte práctico.", sections: { overview: { title: "Quiénes somos" }, journey: { title: "Nuestro recorrido" }, advantages: { title: "Por qué elegir LEYA MOULD" }, facility: { title: "Instalaciones y equipos" }, quality: { title: "Certificaciones y calidad" }, production: { title: "Nuestras instalaciones de producción" } } },
+    "/products/": { eyebrow: "LEYA MOULD · UTILLAJE DE PRECISIÓN", title: "Categorías de moldes", subtitle: "Explore moldes de tapas, botellas, preformas y soluciones de utillaje para envases personalizados." },
+    "/Plastic-cap-mold.html": { eyebrow: "LEYA MOULD · UTILLAJE DE PRECISIÓN", title: "Categorías de moldes", subtitle: "Revise las familias de moldes de tapas de plástico, sus aplicaciones y la información del proyecto." },
+    "/capabilities/": { eyebrow: "EQUIPOS AUXILIARES", title: "Máquinas auxiliares para tapas", subtitle: "Complete su línea de producción con máquinas auxiliares para lining, plegado, corte, impresión y wadding." },
+    "/manufacturing/": { eyebrow: "CÓMO TRABAJAMOS", title: "Proceso de fabricación", subtitle: "Un camino claro desde la revisión del plano y DFM hasta el mecanizado, la prueba, la inspección y la entrega técnica." },
+    "/quality-control/": { eyebrow: "CONTROL DE CALIDAD", title: "Control de calidad", subtitle: "Comprobaciones de calidad, evidencias de inspección y control de cambios para proyectos de moldes de tapas y envases." },
+    "/request-sample/": { eyebrow: "SOLICITAR UNA MUESTRA", title: "Solicitar una muestra", subtitle: "Comparta su plano, muestra y objetivo de producción para una revisión de molde específica." },
+    "/contact/": { eyebrow: "LEYA MOULD · UTILLAJE DE PRECISIÓN", title: "Contacto", subtitle: "Envíe a LEYA MOULD el plano de la pieza, material, cavidades, información de máquina y mercado de destino." },
+    "/samples/": { eyebrow: "LEYA MOULD · UTILLAJE DE PRECISIÓN", title: "Muestras de tapas de plástico", subtitle: "Explore una amplia variedad de tapas de botellas fabricadas con moldes de inyección de alta precisión." },
+    "/news/": { eyebrow: "LEYA MOULD · UTILLAJE DE PRECISIÓN", title: "Noticias y novedades", subtitle: "Conozca las novedades técnicas, notas de proyectos y conocimientos de ingeniería de LEYA MOULD." },
+    "/video/": { eyebrow: "EXPLORE NUESTRO TRABAJO", title: "Galería de vídeos", subtitle: "Vea nuestras demostraciones de moldes, recorridos de fábrica y conocimientos técnicos." },
+    "/faq/": { eyebrow: "CENTRO DE AYUDA", title: "Preguntas frecuentes", subtitle: "Encuentre respuestas rápidas sobre nuestros moldes de tapas, máquinas auxiliares, proceso de pedido y soporte técnico." }
+  }
+};
+
 const PRODUCT_COPY = {
   "mineral-water-closure-cap-molds": ["Mineral Water Cap Mould", "Mineral Water Cap Mould Manufacturer | LEYA MOULD", "Plastic cap moulds for mineral water, beverage and PET closure applications."],
   "oil-bottle-cap-mould": ["Edible Oil Cap Mould", "Edible Oil Cap Mould Manufacturer | LEYA MOULD", "Tooling solutions for edible oil closures, pull-ring caps and pouring applications."],
@@ -135,6 +186,19 @@ const PRODUCT_COPY = {
 
 function isoDate(value) { return String(value || "").replaceAll("/", "-").slice(0, 10); }
 function json(value) { return JSON.stringify(value); }
+function mergeMissing(target, baseline) {
+  let changed = false;
+  if (!target || typeof target !== "object" || Array.isArray(target)) target = {};
+  for (const [key, value] of Object.entries(baseline || {})) {
+    if (!(key in target)) {
+      target[key] = value;
+      changed = true;
+    } else if (value && typeof value === "object" && !Array.isArray(value) && target[key] && typeof target[key] === "object" && !Array.isArray(target[key])) {
+      if (mergeMissing(target[key], value)) changed = true;
+    }
+  }
+  return changed ? target : null;
+}
 function seedPost(item) {
   const title = item.title || {};
   const description = item.description || {};
@@ -177,18 +241,38 @@ export async function onRequestPost(context) {
     await ensureSchema(db);
     await ensureBlogSchema(db);
     const inserted = { state: 0, navigation: 0, pages: 0, products: 0, posts: 0 };
+    const updated = { state: 0, navigation: 0, pages: 0, products: 0, posts: 0 };
     const skipped = { state: 0, navigation: 0, pages: 0, products: 0, posts: 0 };
     const statements = [];
     const stateRows = [
       ["brand_config", BRAND],
       ["contact_config", { schemaVersion: 1, contacts: [{ id: "default-sales", name: "Sales Team", title: "International Sales", email: BRAND.contact.email, phoneDisplay: BRAND.contact.phoneDisplay, phoneE164: BRAND.contact.phoneE164, whatsappUrl: BRAND.contact.whatsappUrl, avatarUrl: "", locales: [], regions: [], sortOrder: 10, enabled: true, isDefault: true }] }],
-      ["common_copy", COMMON_COPY]
+      ["common_copy", COMMON_COPY],
+      ["page_copy", STRUCTURED_PAGE_COPY]
     ];
-    const existingState = new Set(((await db.prepare("SELECT key FROM site_state WHERE key IN ('brand_config','contact_config','common_copy')").all()).results || []).map(row => String(row.key)));
+    const existingStateRows = ((await db.prepare("SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','common_copy','page_copy')").all()).results || []);
+    const existingState = new Map(existingStateRows.map(row => [String(row.key), row.value]));
     for (const [key, value] of stateRows) {
-      if (existingState.has(key)) { skipped.state += 1; continue; }
-      statements.push(db.prepare("INSERT INTO site_state(key,value,updated_at) VALUES(?,?,CURRENT_TIMESTAMP)").bind(key, json(value)));
-      inserted.state += 1;
+      if (!existingState.has(key)) {
+        statements.push(db.prepare("INSERT INTO site_state(key,value,updated_at) VALUES(?,?,CURRENT_TIMESTAMP)").bind(key, json(value)));
+        inserted.state += 1;
+        continue;
+      }
+      // Shared copy and structured page copy gain new baseline fields over
+      // time. Merge only missing keys; any owner-edited value remains intact.
+      if (key === "common_copy" || key === "page_copy") {
+        let current = {};
+        try { current = JSON.parse(String(existingState.get(key) || "{}")); } catch { current = {}; }
+        const merged = mergeMissing(current, value);
+        if (merged) {
+          statements.push(db.prepare("UPDATE site_state SET value=?,updated_at=CURRENT_TIMESTAMP WHERE key=?").bind(json(merged), key));
+          updated.state += 1;
+        } else {
+          skipped.state += 1;
+        }
+      } else {
+        skipped.state += 1;
+      }
     }
 
     const existingNavRows = ((await db.prepare("SELECT id,label,url,sort_order FROM site_navigation").all()).results || []);
@@ -242,9 +326,9 @@ export async function onRequestPost(context) {
       inserted.posts += 1;
     }
     if (statements.length) await db.batch(statements);
-    const changed = Object.values(inserted).reduce((sum, value) => sum + value, 0);
+    const changed = Object.values(inserted).reduce((sum, value) => sum + value, 0) + Object.values(updated).reduce((sum, value) => sum + value, 0);
     const revision = changed ? await bumpPublishRevision(db) : { revision: 0, requestedAt: "" };
-    return respond({ success: true, inserted, skipped, totalNews: posts.length, totalProducts: products.length, publishRevision: revision.revision, requestedAt: revision.requestedAt, ownerEditsPreserved: true, productImagesRemainTemplateBound: true });
+    return respond({ success: true, inserted, updated, skipped, totalNews: posts.length, totalProducts: products.length, structuredPageCopy: Object.keys(STRUCTURED_PAGE_COPY.en).length, sharedCtaVariants: Object.keys(COMMON_COPY.en.shared_cta).length, publishRevision: revision.revision, requestedAt: revision.requestedAt, ownerEditsPreserved: true, productImagesRemainTemplateBound: true });
   } catch (error) {
     return respond({ error: "D1 mould content seed failed: " + String(error?.message || error).slice(0, 240) }, 500);
   }
