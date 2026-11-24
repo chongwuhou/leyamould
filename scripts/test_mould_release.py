@@ -149,6 +149,21 @@ for page in (catalog_page, catalog_page_es):
     assert '/api/youtube-videos' in page
     assert page.count('class="video-card"') >= 5
     assert 'catalogVideoModal' in page and 'catalogVideoIframe' in page
+    # Aggregate catalogue parity: the reference page continues well beyond
+    # products and trials. Keep every major module present and in order so a
+    # future template change cannot silently truncate the page again.
+    required_sections = [
+        'catalog-advantages', 'catalog-samples', 'catalog-video-section',
+        'catalog-technology', 'catalog-quality', 'catalog-workflow',
+        'catalog-faq', 'catalog-testimonials', 'catalog-contact',
+    ]
+    offsets = [page.index(section) for section in required_sections]
+    assert offsets == sorted(offsets), offsets
+    labels = ('Core Advantages of LEYA MOULD', 'Plastic Cap Samples', 'Engineering Excellence Behind Every Mould', 'Your Cap Mould Journey', 'Common Questions', 'Client Feedback', 'Start Your Cap Mould Project') if page is catalog_page else ('Ventajas clave de LEYA MOULD', 'Muestras de tapas de plástico', 'Excelencia de ingeniería detrás de cada molde', 'Su recorrido de molde', 'Preguntas frecuentes', 'Opiniones de clientes', 'Empiece su proyecto de moldes')
+    for label in labels:
+        assert label in page, label
+    assert page.count('class="sample-card"') >= 18
+    assert page.count('class="video-card"') >= 5
 es_product = (DIST / "es" / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
 en_product = (DIST / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
 assert head_value(es_product, r'<meta name="description" content="([^"]*)"') != head_value(en_product, r'<meta name="description" content="([^"]*)"')
@@ -165,5 +180,6 @@ assert detail_es.count('class="blog-editorial__product-link"') == 3
 assert (DIST / "admin" / "index.html").is_file()
 assert "LEYA MOULD" in (DIST / "admin" / "index.html").read_text(encoding="utf-8")
 print("LEYA_MOULD_RELEASE_PASSED", len(routes), "routes x", len(LOCALES), "locales")
+
 
 

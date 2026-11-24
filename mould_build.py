@@ -693,13 +693,100 @@ def home(locale: str) -> str:
     resources = '<section class="section section--soft resource-section"><div class="shell">' + section_heading(locale, "NEWS & INSIGHTS", "Latest from LEYA MOULD", "Project notes, tooling updates and practical engineering guidance.") + '<div class="resource-grid"><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">NEWS</span><h3>Cap mould project notes</h3><p>Follow new category material, sample references and production lessons.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">ENGINEERING</span><h3>Lightweight closure design</h3><p>Review the design questions that influence sealing, cooling and cycle goals.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">QUALITY</span><h3>Inspection evidence</h3><p>Keep dimensions, trial results and approved revisions connected.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/faq/") + '"><span class="eyebrow">FAQ</span><h3>Prepare a useful tooling enquiry</h3><p>See the drawing, resin, machine and sample information that helps a quotation move faster.</p><span class="text-link">View FAQs →</span></a><a class="resource-card" href="' + localized_href(locale, "/video/") + '"><span class="eyebrow">VIDEO</span><h3>Mould trial and review</h3><p>Use the video area for future machine, trial and inspection media.</p><span class="text-link">View video →</span></a><a class="resource-card" href="' + localized_href(locale, "/contact/#inquiry") + '"><span class="eyebrow">CONTACT</span><h3>Send your project brief</h3><p>Tell LEYA MOULD what you are making and where the tooling must run.</p><span class="text-link">Start a conversation →</span></a></div></div></section>'
     return hero + advantages_section + cap_products + samples_section + technology + testimonials + process + resources
 
+def catalog_support_sections(locale: str) -> str:
+    """Render the supporting modules that exist on the reference catalogue page.
+
+    The catalogue route used to stop after the product cards and video strip.
+    Keep these modules in one renderer so the aggregate page stays complete,
+    while the individual routes and the shared shell remain untouched.
+    """
+    cap = "https://www.cap-molds.com"
+    es = locale == "es"
+    advantages_title = "Ventajas clave de LEYA MOULD" if es else "Core Advantages of LEYA MOULD"
+    advantages_desc = "Desde el diseño del molde hasta la prueba, entregamos valor con excelencia de ingeniería y control de calidad estricto." if es else "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control."
+    samples_title = "Muestras de tapas de plástico" if es else "Plastic Cap Samples"
+    samples_desc = "Una amplia variedad de muestras para bebidas, alimentos, farmacia, cuidado personal y cierres industriales. Use las flechas para explorar la colección." if es else "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection."
+    technology_title = "Excelencia de ingeniería detrás de cada molde" if es else "Engineering Excellence Behind Every Mould"
+    technology_desc = "Fabricación de precisión, acero premium y controles documentados para una producción repetible." if es else "Precision manufacturing, premium steel and documented controls for repeatable production."
+    quality_title = "Control de calidad e inspección" if es else "Quality Control & Inspection"
+    quality_desc = "Cada molde se revisa antes, durante y después de la prueba para que la entrega sea verificable." if es else "Every mould is reviewed before, during and after trial so the handover is measurable and traceable."
+    workflow_title = "Su recorrido de molde" if es else "Your Cap Mould Journey"
+    workflow_desc = "Desde su primer plano hasta la entrega y el soporte técnico." if es else "From your first drawing to delivery and technical support."
+    faq_title = "Preguntas frecuentes" if es else "Common Questions"
+    faq_desc = "Respuestas rápidas sobre diseño, pruebas, plazos y soporte." if es else "Quick answers about design, trials, lead times and support."
+    testimonial_title = "Opiniones de clientes" if es else "Client Feedback"
+    testimonial_desc = "Lo que compradores de packaging valoran en la calidad, precisión y soporte de LEYA MOULD." if es else "What packaging buyers value in LEYA MOULD quality, precision and support."
+
+    advantages = ''.join(
+        '<article class="advantage-card"><span class="advantage-card__number">0' + str(i + 1) + '</span><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>'
+        for i, (title, desc) in enumerate(data(locale, "advantages"))
+    )
+    advantages_section = '<section id="catalog-advantages" class="section section--advantages"><div class="shell">' + section_heading(locale, "WHY CHOOSE US" if not es else "POR QUÉ ELEGIRNOS", advantages_title, advantages_desc) + '<div class="advantage-grid">' + advantages + '</div></div></section>'
+
+    # Keep the reference gallery rhythm: horizontal cards with real sample
+    # imagery and the same previous/next controls used by the home page.
+    sample_names = [item["image"].rsplit(".", 1)[0] for item in SAMPLE_ITEMS]
+    sample_cards = ''.join(
+        '<a class="sample-card" href="' + localized_href(locale, "/samples/") + '"><img src="' + cap + '/images/samples/' + esc(name) + '.jpg" alt="' + esc(name.replace("-", " ").title() + " reference sample") + '" loading="lazy" decoding="async"><span>' + esc(name.replace("-", " ").title()) + '</span></a>'
+        for name in sample_names
+    )
+    samples_section = '<section id="catalog-samples" class="section samples-section"><div class="shell">' + section_heading(locale, "SAMPLES GALLERY" if not es else "GALERÍA DE MUESTRAS", samples_title, samples_desc) + '<div class="samples-track-wrap"><button class="samples-scroll samples-scroll--prev" type="button" data-samples-scroll="-1" aria-label="Previous samples">‹</button><div class="samples-track" data-samples-track>' + sample_cards + '</div><button class="samples-scroll samples-scroll--next" type="button" data-samples-scroll="1" aria-label="Next samples">›</button></div><div class="section__more"><a class="text-link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + ' →</a></div></div></section>'
+
+    technology = '<section id="catalog-technology" class="section technology-section"><div class="shell"><div class="section__head tech-section-head"><div><span class="eyebrow">' + ("NUESTRA TECNOLOGÍA" if es else "OUR TECHNOLOGY") + '</span><h2 class="section__title">' + esc(technology_title) + '</h2><p class="copy-muted">' + esc(technology_desc) + '</p><div class="section-line"></div></div></div><div class="tech-grid"><div class="tech-img">' + image(cap + "/upload/Home/precision-machining.jpg", "5-axis CNC machining", "lazy") + '</div><div class="tech-text"><h3>Precision Manufacturing &amp; Strict QC</h3><p>5-axis CNC and EDM achieve ±0.005mm tolerances. Every mould undergoes CMM inspection, trial runs, and leak tests with documented reports.</p><ul class="tech-list"><li>Moldflow simulation before manufacturing</li><li>100% CMM inspection per cavity</li></ul></div></div><div class="tech-grid tech-grid--second"><div class="tech-text"><h3>Premium Steel &amp; Modular Design</h3><p>ASSAB S136, NAK80, H13 steels with vacuum heat treatment (HRC 48–52). Modular inserts enable fast cavity expansion and quick product changeovers.</p><ul class="tech-list"><li>Full material traceability with mill certificates</li><li>Standard delivery in 30–45 days</li></ul></div><div class="tech-img">' + image(cap + "/upload/Home/steel-quality.jpg", "Premium mould steel", "lazy") + '</div></div></div></section>'
+
+    quality_items = [
+        ("01", "Steel inspection", "Material certificates and heat-treatment records are checked before machining."),
+        ("02", "In-process measurement", "Critical dimensions, cooling circuits and fitting points are measured during production."),
+        ("03", "Pre-shipment trial", "Trial parts, cycle notes and agreed inspection points are reviewed before handover."),
+        ("04", "Documented support", "Drawings, reports and approved revisions stay attached to the project for future service."),
+    ]
+    quality_cards = ''.join('<article><span>' + num + '</span><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for num, title, desc in quality_items)
+    quality = '<section id="catalog-quality" class="section reference-section"><div class="shell">' + section_heading(locale, "QUALITY" if not es else "CALIDAD", quality_title, quality_desc) + '<div class="reference-grid">' + quality_cards + '</div></div></section>'
+
+    steps = ''.join('<article class="step"><strong>' + esc(num) + '</strong><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for num, title, desc in data(locale, "process_steps"))
+    process = '<section id="catalog-workflow" class="section workflow-section"><div class="shell">' + section_heading(locale, "HOW WE WORK" if not es else "CÓMO TRABAJAMOS", workflow_title, workflow_desc) + '<div class="steps">' + steps + '</div></div></section>'
+
+    faq_pairs = [
+        ("What information should I send for a quotation?", "Please share the cap drawing or sample, material, cavity count, machine interface and target output."),
+        ("Can you make a custom cap mould?", "Yes. We review the part geometry, sealing surfaces, cooling, ejection and trial requirements before confirming the design."),
+        ("What is the normal lead time?", "A standard sample mould often takes 15–25 days; production tooling is normally 35–55 days depending on complexity."),
+        ("Do you test samples before shipment?", "Yes. Trial parts, dimensional checks and approved revision notes are kept with the handover package."),
+        ("Which steels are available?", "S136, NAK80, H13 and equivalent grades can be selected according to resin, cycle and service-life targets."),
+        ("Do you support international buyers?", "Yes. We coordinate export packing, documentation and delivery for international projects."),
+        ("Can you supply auxiliary machines?", "Yes. Lining, assembly, folding, slitting and other auxiliary equipment can be coordinated for a complete cell."),
+        ("How do I start a project?", "Send the drawing, sample, resin, cavities, machine information and destination market by email or WhatsApp."),
+    ]
+    if es:
+        faq_pairs = [
+            ("¿Qué información debo enviar para una cotización?", "Comparta el plano o muestra, material, número de cavidades, interfaz de máquina y producción prevista."),
+            ("¿Pueden fabricar un molde de tapa personalizado?", "Sí. Revisamos la geometría, las superficies de sellado, la refrigeración, la expulsión y las pruebas antes de confirmar el diseño."),
+            ("¿Cuál es el plazo normal?", "Un molde de muestra suele tardar 15–25 días; el molde de producción normalmente 35–55 días según la complejidad."),
+            ("¿Prueban las muestras antes del envío?", "Sí. Las piezas de prueba, comprobaciones dimensionales y revisiones aprobadas quedan en el paquete de entrega."),
+            ("¿Qué aceros están disponibles?", "Seleccionamos S136, NAK80, H13 y equivalentes según la resina, el ciclo y la vida útil prevista."),
+            ("¿Atienden a compradores internacionales?", "Sí. Coordinamos embalaje de exportación, documentación y entrega para proyectos internacionales."),
+            ("¿Pueden suministrar máquinas auxiliares?", "Sí. Podemos coordinar máquinas de lining, ensamblaje, plegado, corte y otras soluciones auxiliares."),
+            ("¿Cómo comienzo un proyecto?", "Envíe el plano, muestra, resina, cavidades, información de máquina y mercado por correo o WhatsApp."),
+        ]
+    faq_rows = ''.join('<details><summary>' + esc(question) + '</summary><p>' + esc(answer) + '</p></details>' for question, answer in faq_pairs)
+    faq = '<section id="catalog-faq" class="section catalog-faq-section"><div class="shell">' + section_heading(locale, "FAQ", faq_title, faq_desc) + '<div class="faq-list">' + faq_rows + '</div></div></section>'
+
+    testimonials = '<section id="catalog-testimonials" class="section testimonial-section"><div class="shell">' + section_heading(locale, "TESTIMONIALS" if not es else "TESTIMONIOS", testimonial_title, testimonial_desc) + '<div class="testimonial-grid"><article class="testimonial-card"><p>“LEYA MOULD\'s water cap mould has been running over 3 million shots with zero defects.”</p><div><img src="https://flagcdn.com/w40/in.png" alt="India reference"><span>Production Head · India</span></div></article><article class="testimonial-card"><p>“From DFM to delivery, consistent quality and on-time support.”</p><div><img src="https://flagcdn.com/w40/br.png" alt="Brazil reference"><span>Technical Manager · Brazil</span></div></article><article class="testimonial-card"><p>“The tooling is robust, maintainable and ready for repeatable production.”</p><div><img src="https://flagcdn.com/w40/de.png" alt="Germany reference"><span>Plant Director · Germany</span></div></article></div></div></section>'
+
+    cta_title = "Empiece su proyecto de moldes" if es else "Start Your Cap Mould Project"
+    cta_desc = "Envíenos su dibujo, muestra o requisitos de producción. Responderemos con las siguientes preguntas técnicas y un camino claro." if es else "Send your drawing, sample or production requirements. We will reply with the next technical questions and a clear path forward."
+    contact = '<section id="catalog-contact" class="section section--dark cta-panel"><div class="shell"><span class="eyebrow">LEYA MOULD · PRECISION TOOLING</span><h2>' + esc(cta_title) + '</h2><p>' + esc(cta_desc) + '</p><div class="actions"><a class="button button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a><a class="button button--outline button--round" href="mailto:' + EMAIL + '">' + esc(EMAIL) + '</a><a class="button button--outline button--round" href="tel:+8613606727715">+86 136 0672 7715</a></div></div></section>'
+
+    # Order follows the reference page: products → advantages → samples →
+    # trials → technology → quality → workflow → FAQ → testimonials → CTA.
+    return advantages_section + samples_section + catalog_video_section(locale) + technology + quality + process + faq + testimonials + contact
+
 def products_page(locale: str) -> str:
     catalog_count = len(CAP_MOULD_SERIES)
     hero = '<section class="catalog-hero"><div class="shell"><h1>Precision <span>MOULDING</span><br>Across ' + str(catalog_count) + ' Product Families</h1><p>Professional plastic mould manufacturer with 15+ years of experience. From closures and preforms to bottle tooling, we deliver high-precision, long-life mould solutions.</p><a class="button button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a><div class="catalog-stats"><div><strong>15+</strong><span>YEARS EXPERIENCE</span></div><div><strong>' + str(catalog_count) + '</strong><span>PRODUCT FAMILIES</span></div><div><strong>40+</strong><span>COUNTRIES SERVED</span></div><div><strong>2000+</strong><span>MOULDS DELIVERED</span></div></div></div></section>'
     crumb = '<nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(text(locale, "products")) + '</span></div></nav>'
     cards = ''.join(cap_series_card(locale, c) for c in CAP_MOULD_SERIES)
     products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Mould Product Families", "Explore our comprehensive range of " + str(len(CAP_MOULD_SERIES)) + " specialized mould product families. Each mould is engineered for high-volume production, dimensional accuracy and extended service life.") + '<div class="cap-series-grid">' + cards + '</div></div></section>'
-    return hero + crumb + products + catalog_video_section(locale)
+    return hero + crumb + products + catalog_support_sections(locale)
 
 def cap_product_page(locale: str, item: dict) -> str:
     helpers = {"esc": esc, "image": image, "localized_href": localized_href}
@@ -1292,5 +1379,6 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
+
 
 
