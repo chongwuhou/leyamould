@@ -22,7 +22,7 @@ export async function onRequestGet(context){
   if(!db)return json({error:"LEYA_DB binding missing"},503);
   try{
     const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos,modelReferences]=await Promise.all([
-      list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy')"),
+      list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy','page_copy')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
       list(db,"SELECT source_path,target_path,status_code FROM site_redirects WHERE enabled=1 ORDER BY source_path"),
@@ -70,6 +70,7 @@ export async function onRequestGet(context){
        pages:onlyRoutes,navigation:onlyNavigation,redirects,
        banners:parseJson(config.home_banner_config,null),
        commonCopy:parseJson(config.common_copy,null),
+       pageCopy:parseJson(config.page_copy,null),
       pageBodies:pageBodies.filter(r=>MOULD_ROUTES.has(String(r.route||""))&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
        products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
