@@ -34,7 +34,7 @@ The mould website front-end will follow the information architecture and visual 
 
 ## Checks
 
-Daily changes follow `docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md`; GitHub source, D1/CMS and R2 ownership rules in that runbook remain mandatory for this mould project.
+**READ BEFORE EVERY TASK:** `AGENTS.md`, `PROJECT_CHANGE_POLICY.md` and [`项目圣经/LEYA统一执行手册.md`](项目圣经/LEYA统一执行手册.md). The repository-level compatibility constraints in `docs/XUYI_OPERATIONAL_RUNBOOK_ZH.md` remain read-only mandatory rules for this mould project; LEYA-specific content, media and release decisions follow the project Bible.
 
 ```powershell
 python scripts/preflight.py
