@@ -141,6 +141,14 @@ for route in CAP_PRODUCT_ROUTES:
     assert html.count("mould-advantage-card") == 6
     assert "mould-samples-grid" in html and "mould-quality-list" in html
     assert "HIGH-RESOLUTION IMAGES / PDF" not in html
+catalog_page = (DIST / "Plastic-cap-mold.html").read_text(encoding="utf-8")
+catalog_page_es = (DIST / "es" / "Plastic-cap-mold.html").read_text(encoding="utf-8")
+for page in (catalog_page, catalog_page_es):
+    assert 'data-catalog-videos' in page
+    assert 'Cap Mould Trial Videos' in page or 'Vídeos de pruebas de moldes' in page
+    assert '/api/youtube-videos' in page
+    assert page.count('class="video-card"') >= 5
+    assert 'catalogVideoModal' in page and 'catalogVideoIframe' in page
 es_product = (DIST / "es" / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
 en_product = (DIST / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
 assert head_value(es_product, r'<meta name="description" content="([^"]*)"') != head_value(en_product, r'<meta name="description" content="([^"]*)"')
