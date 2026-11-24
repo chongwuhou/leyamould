@@ -46,8 +46,22 @@ def read_json(path: str) -> dict:
     raise RuntimeError(f"{path} is not readable after {len(RETRY_DELAYS)} attempts: {last_error}") from last_error
 
 
-meta = read_json("/build-meta.json")
-index = read_json("/r2-usage-index.json")
+meta = None
+index = None
+revision_error = None
+for attempt, delay in enumerate(RETRY_DELAYS, start=1):
+    if delay:
+        time.sleep(delay)
+    meta = read_json("/build-meta.json")
+    index = read_json("/r2-usage-index.json")
+    if not EXPECTED_SHA or meta.get("sourceRevision") == EXPECTED_SHA:
+        break
+    revision_error = RuntimeError(
+        "production source revision mismatch: expected " + EXPECTED_SHA +
+        ", got " + str(meta.get("sourceRevision"))
+    )
+else:
+    raise revision_error
 if meta.get("siteOrigin") != ORIGIN:
     raise RuntimeError("build-meta site origin mismatch")
 if meta.get("pagesProject") != "leyamould":
@@ -58,11 +72,6 @@ if index.get("site") != "leyamould" or index.get("schemaVersion") != 1:
     raise RuntimeError("R2 reference index identity/schema mismatch")
 if index.get("publishRevision") != meta.get("publishRevision"):
     raise RuntimeError("R2 reference index and build-meta revisions differ")
-if EXPECTED_SHA and meta.get("sourceRevision") != EXPECTED_SHA:
-    raise RuntimeError(
-        "production source revision mismatch: expected " + EXPECTED_SHA +
-        ", got " + str(meta.get("sourceRevision"))
-    )
 references = index.get("references")
 if not isinstance(references, dict):
     raise RuntimeError("R2 reference index is missing references")
