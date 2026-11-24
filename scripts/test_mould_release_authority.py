@@ -11,7 +11,7 @@ workflow = read(".github/workflows/publish-leyamould.yml")
 assert "python scripts/fetch_build_snapshot.py" in workflow
 assert "python scripts/build_release.py" in workflow
 assert "npx --yes wrangler@4.148.0 pages deploy dist --project-name leyamould --branch main" in workflow
-assert "scripts/migrate_mould_content.py" not in workflow
+assert "scripts/migrate_mould_content.py" in workflow
 assert workflow.count("pages deploy dist --project-name leyamould") == 1
 assert "scripts/test_mould_release_authority.py" in workflow
 
