@@ -89,6 +89,7 @@ def main() -> None:
         "pageSeo": "cloudflare-d1:site_pages" if state.get("pages") else "source-fallback:mould source renderer",
         "products": "cloudflare-d1:mould product content" if state.get("products") else "source-fallback:data/mould-catalog.json",
         "pageBodies": "cloudflare-d1:page content" if state.get("pageBodies") else "source-fallback:mould source renderer",
+        "pageCopy": "cloudflare-d1:site_state.page_copy" if state.get("pageCopy") else "source-fallback:mould structured page copy",
         "blogPosts": "cloudflare-d1:blog posts" if state.get("blogPosts") else "source-fallback:empty reviewed resources",
         "commonCopy": "cloudflare-d1:site_state.common_copy" if state.get("commonCopy") else "source-fallback:mould renderer copy",
         "modelReferences": "cloudflare-d1:leya_model_references" if model_reference_rows else "source-fallback:data/mould-models.json",
