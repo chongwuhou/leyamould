@@ -5,6 +5,7 @@
 // only missing D1 rows, so an owner edit already present in D1 is never
 // overwritten by a rebuild or by a rerun of this migration.
 import EDITORIAL_DATA from "../../../data/mould-news-editorial.json";
+import MOULD_CATALOG from "../../../data/mould-catalog.json";
 import { authorizedMouldContentSeedRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema } from "../../_shared/blog-cms.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
@@ -125,7 +126,11 @@ const PRODUCT_COPY = {
   "medical-cap-mould": ["Medical Cap Mould", "Medical Cap Mould Manufacturer | LEYA MOULD", "Precision moulding support for pharmaceutical, medical and diagnostic closures."],
   "personal-care-cap-mould": ["Personal Care Cap Mould", "Personal Care Cap Mould Manufacturer | LEYA MOULD", "Cap moulds for shampoo, lotion, disc-top and personal care packaging."],
   "functional-cap-mould": ["Functional Cap Mould", "Functional Cap Mould Manufacturer | LEYA MOULD", "Combination, dispensing and safety closure mould solutions for functional packaging."],
-  "plastic-handle-cap-mould": ["Plastic Handle Mould", "Plastic Handle Mould Manufacturer | LEYA MOULD", "Injection moulds for bottle handles, carry handles and large-container packaging."]
+  "plastic-handle-cap-mould": ["Plastic Handle Mould", "Plastic Handle Mould Manufacturer | LEYA MOULD", "Injection moulds for bottle handles, carry handles and large-container packaging."],
+  "five-gallon-water-cap-mould": ["5 Gallon Water Cap Mould", "5 Gallon Water Cap Mould Manufacturer | LEYA MOULD", "Mould solutions for large-format water closures, refill containers and 5 gallon packaging."],
+  "wine-cap-mould": ["Wine Cap Mould", "Wine Cap Mould Manufacturer | LEYA MOULD", "Plastic closure mould solutions for wine, spirits and specialty beverage packaging."],
+  "pet-preform-mould": ["PET Preform Mould", "PET Preform Mould Manufacturer | LEYA MOULD", "PET preform mould support for beverage, water, oil and custom bottle production."],
+  "blow-bottle-mould": ["Blow Bottle Mould", "Blow Bottle Mould Manufacturer | LEYA MOULD", "Bottle mould solutions for blow-moulded packaging, containers and custom bottle projects."]
 };
 
 function isoDate(value) { return String(value || "").replaceAll("/", "-").slice(0, 10); }
@@ -145,10 +150,23 @@ function seedPost(item) {
   };
 }
 
+const PRODUCT_FIELDS = [
+  "slug", "title", "titleEs", "navTitle", "navTitleEs", "description", "descriptionEs",
+  "short", "shortEs", "detail", "detailEs", "meta", "metaEs", "route", "checks"
+];
+function seedProduct(item) {
+  const content = { source: "leya-mould-catalog", schemaVersion: 1 };
+  for (const field of PRODUCT_FIELDS) {
+    if (Object.hasOwn(item || {}, field)) content[field] = item[field];
+  }
+  return content;
+}
+
 async function ensureSchema(db) {
   await db.prepare("CREATE TABLE IF NOT EXISTS site_state (key TEXT PRIMARY KEY,value TEXT NOT NULL DEFAULT '',updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS site_navigation (id TEXT PRIMARY KEY,parent_id TEXT,label TEXT NOT NULL,url TEXT NOT NULL,sort_order INTEGER NOT NULL DEFAULT 0,enabled INTEGER NOT NULL DEFAULT 1,new_window INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS site_pages (route TEXT PRIMARY KEY,label TEXT NOT NULL,seo_title TEXT NOT NULL DEFAULT '',meta_description TEXT NOT NULL DEFAULT '',robots TEXT NOT NULL DEFAULT 'noindex,nofollow',sitemap_enabled INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_product_content (model TEXT PRIMARY KEY,content_json TEXT NOT NULL DEFAULT '{}',publication_status TEXT NOT NULL DEFAULT 'draft' CHECK(publication_status IN ('draft','published')),updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
 }
 
 export async function onRequestPost(context) {
@@ -158,8 +176,8 @@ export async function onRequestPost(context) {
   try {
     await ensureSchema(db);
     await ensureBlogSchema(db);
-    const inserted = { state: 0, navigation: 0, pages: 0, posts: 0 };
-    const skipped = { state: 0, navigation: 0, pages: 0, posts: 0 };
+    const inserted = { state: 0, navigation: 0, pages: 0, products: 0, posts: 0 };
+    const skipped = { state: 0, navigation: 0, pages: 0, products: 0, posts: 0 };
     const statements = [];
     const stateRows = [
       ["brand_config", BRAND],
@@ -205,6 +223,15 @@ export async function onRequestPost(context) {
       inserted.pages += 1;
     }
 
+    const existingProducts = new Set(((await db.prepare("SELECT model FROM xuyi_product_content").all()).results || []).map(row => String(row.model)));
+    const products = Array.isArray(MOULD_CATALOG?.categories) ? MOULD_CATALOG.categories : [];
+    for (const item of products) {
+      const model = String(item?.slug || "");
+      if (!MOULD_PUBLIC_ROUTES.has(model) || existingProducts.has(model)) { skipped.products += 1; continue; }
+      statements.push(db.prepare("INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at) VALUES(?,?, 'published', CURRENT_TIMESTAMP)").bind(model, json(seedProduct(item))));
+      inserted.products += 1;
+    }
+
     const existingPosts = new Set(((await db.prepare("SELECT slug FROM xuyi_blog_posts").all()).results || []).map(row => String(row.slug)));
     const posts = Array.isArray(EDITORIAL_DATA?.items) ? EDITORIAL_DATA.items : [];
     for (const item of posts) {
@@ -217,7 +244,7 @@ export async function onRequestPost(context) {
     if (statements.length) await db.batch(statements);
     const changed = Object.values(inserted).reduce((sum, value) => sum + value, 0);
     const revision = changed ? await bumpPublishRevision(db) : { revision: 0, requestedAt: "" };
-    return respond({ success: true, inserted, skipped, totalNews: posts.length, publishRevision: revision.revision, requestedAt: revision.requestedAt, ownerEditsPreserved: true });
+    return respond({ success: true, inserted, skipped, totalNews: posts.length, totalProducts: products.length, publishRevision: revision.revision, requestedAt: revision.requestedAt, ownerEditsPreserved: true, productImagesRemainTemplateBound: true });
   } catch (error) {
     return respond({ error: "D1 mould content seed failed: " + String(error?.message || error).slice(0, 240) }, 500);
   }

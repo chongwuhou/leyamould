@@ -3,7 +3,8 @@
 export const MOULD_MODELS = new Set([
   "mineral-water-closure-cap-molds", "oil-bottle-cap-mould", "flip-top-caps-mould",
   "engine-oil-cap-mould", "food-packaging-cap-mould", "medical-cap-mould",
-  "personal-care-cap-mould", "functional-cap-mould", "plastic-handle-cap-mould"
+  "personal-care-cap-mould", "functional-cap-mould", "plastic-handle-cap-mould",
+  "five-gallon-water-cap-mould", "wine-cap-mould", "pet-preform-mould", "blow-bottle-mould"
 ]);
 // The checked-in catalogue keeps the reference site's public filename casing.
 // Admin/D1 records use the stable lowercase model slug; keep this mapping in
@@ -17,7 +18,11 @@ export const MOULD_PUBLIC_ROUTES = new Map([
   ["medical-cap-mould", "/product/Medical-Cap-Mould.html"],
   ["personal-care-cap-mould", "/product/Personal-Care-Cap-Mould.html"],
   ["functional-cap-mould", "/product/Functional-Cap-Mould.html"],
-  ["plastic-handle-cap-mould", "/product/Plastic-Handle-Cap-mould.html"]
+  ["plastic-handle-cap-mould", "/product/Plastic-Handle-Cap-mould.html"],
+  ["five-gallon-water-cap-mould", "/product/5-Gallon-Water-Cap-Mould.html"],
+  ["wine-cap-mould", "/product/Wine-Cap-Mould.html"],
+  ["pet-preform-mould", "/product/PET-Preform-Mould.html"],
+  ["blow-bottle-mould", "/product/Blow-Bottle-Mould.html"]
 ]);
 export function mouldRoute(model) { return MOULD_PUBLIC_ROUTES.get(String(model || "")) || "/product/" + String(model || "") + ".html"; }
 export function mouldModelFromRoute(route) {
@@ -39,3 +44,4 @@ export const MOULD_ROUTES = new Set([
 ]);
 export const MANAGED_MODELS = MOULD_MODELS;
 export const MANAGED_ROUTES = MOULD_ROUTES;
+
