@@ -97,7 +97,7 @@ export async function onRequestPost(context){
   if(!MANAGED_MODELS.has(model))return respond({error:"Mould category not found in the current LEYA catalog"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
   const db=c.env.LEYA_DB;await ensure(db);
-  const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","body","sections","faqs"];
+  const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","body","bodyEs","sections","sectionsEs","faqs","faqsEs"];
   let content={};
   const previousRow=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
   try{content=previousRow?.content_json?JSON.parse(previousRow.content_json):{};}catch{return respond({error:"Existing product JSON invalid"},409)}
@@ -106,8 +106,8 @@ export async function onRequestPost(context){
       if(!Array.isArray(v[key])||v[key].length>12||v[key].some(item=>typeof item!=="string"||item.length>240))return respond({error:"Invalid checks"},400);
       content[key]=v[key].map(item=>item.trim()).filter(Boolean); continue;
     }
-    if(key==="sections"){try{content[key]=structuredSections(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
-    if(key==="faqs"){try{content[key]=structuredFaqs(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
+    if(key==="sections"||key==="sectionsEs"){try{content[key]=structuredSections(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
+    if(key==="faqs"||key==="faqsEs"){try{content[key]=structuredFaqs(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
     if(typeof v[key]!=="string"||v[key].length>3000)return respond({error:"Invalid "+key},400);
     content[key]=v[key].trim();
   }
@@ -131,4 +131,6 @@ export async function onRequestPost(context){
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,model,status,route:mouldRoute(model),...revision});
 }
+
+
 
