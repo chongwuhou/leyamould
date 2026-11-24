@@ -30,7 +30,7 @@ assert "xuyi_product_content WHERE publication_status='published'" in snapshot
 assert "onlyProducts=products.filter" in snapshot
 
 seed = source("functions/api/admin/mould-content-seed-20261124.js")
-for marker in ("mould-catalog.json", "xuyi_product_content", "existingProducts", "productImagesRemainTemplateBound"):
+for marker in ("mould-catalog.json", "mould-product-structured.json", "xuyi_product_content", "existingProducts", "productImagesRemainTemplateBound"):
     assert marker in seed, marker
 
 catalog = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
@@ -39,7 +39,7 @@ assert len(categories) == 13
 assert len({item["slug"] for item in categories}) == 13
 
 renderer = source("mould_build.py")
-for field in ("titleEs", "navTitleEs", "descriptionEs", "shortEs", "detailEs", "metaEs"):
+for field in ("titleEs", "navTitleEs", "descriptionEs", "shortEs", "detailEs", "metaEs", "body", "sections", "faqs"):
     assert f'"{field}"' in renderer
 assert "_catalog_from_state" in renderer and "STATE.get(" in renderer
 
@@ -56,6 +56,8 @@ mould_build.STATE = {
             "title": "OWNER EDITED 5 GALLON MOULD",
             "titleEs": "Molde editado por el propietario",
             "description": "Owner-controlled product description.",
+            "body": "Owner-controlled structured product body.",
+            "faqs": [{"question": "Owner question?", "answer": "Owner answer."}],
         },
     }]
 }
@@ -63,6 +65,7 @@ edited = next(row for row in mould_build._catalog_from_state() if row.get("slug"
 assert edited["title"] == "OWNER EDITED 5 GALLON MOULD"
 assert edited["titleEs"] == "Molde editado por el propietario"
 assert edited["description"] == "Owner-controlled product description."
+assert edited["body"] == "Owner-controlled structured product body."
+assert edited["faqs"][0]["question"] == "Owner question?"
 
 print(f"LEYA_MOULD_PRODUCT_D1_CONTRACT_PASSED categories={len(categories)}")
-
