@@ -223,9 +223,12 @@ def _catalog_from_state() -> list[dict]:
             item = by_slug.get(str(content.get("slug") or ""))
         if item is None or not content:
             continue
-        for field in ("title", "titleEs", "navTitle", "navTitleEs", "description", "descriptionEs", "short", "shortEs", "detail", "detailEs", "meta", "metaEs", "image", "route"):
+        for field in ("title", "titleEs", "navTitle", "navTitleEs", "description", "descriptionEs", "short", "shortEs", "detail", "detailEs", "meta", "metaEs", "body", "bodyEs", "sections", "sectionsEs", "faqs", "faqsEs", "image", "route"):
             if isinstance(content.get(field), str) and content[field].strip():
                 item[field] = content[field].strip()
+        for field in ("sections", "sectionsEs", "faqs", "faqsEs"):
+            if isinstance(content.get(field), list):
+                item[field] = content[field]
         if isinstance(content.get("checks"), list):
             item["checks"] = [str(value).strip() for value in content["checks"] if str(value).strip()][:12]
     return rows
@@ -1124,6 +1127,18 @@ def contact_page(locale: str) -> str:
     quick_answers = [("⏱️ How fast can I get a quote?", "We respond within 24 hours. Use WhatsApp/WeChat for urgent requests."), ("📐 What info do I need to provide?", "Share cap design, material, cavity count, and production volume."), ("🌍 Do you ship internationally?", "Yes, we serve 60+ countries worldwide."), ("📱 How do I add you on WhatsApp/WeChat?", "Scan the QR codes on this page or click to enlarge them.")]
     if locale == "es":
         quick_answers = [("⏱️ ¿Cuánto tardan en enviar una cotización?", "Respondemos en 24 horas. Use WhatsApp/WeChat para solicitudes urgentes."), ("📐 ¿Qué información debo proporcionar?", "Comparta el diseño de la tapa, material, número de cavidades y volumen de producción."), ("🌍 ¿Realizan envíos internacionales?", "Sí, atendemos a más de 60 países."), ("📱 ¿Cómo puedo añadirles en WhatsApp/WeChat?", "Escanee los códigos QR de esta página o haga clic para ampliarlos.")]
+    structured_answers = structured_page_copy(locale, "/contact/").get("quickAnswers")
+    if isinstance(structured_answers, list) and structured_answers:
+        reviewed = []
+        for entry in structured_answers[:8]:
+            if not isinstance(entry, dict):
+                continue
+            question = str(entry.get("question") or "").strip()
+            answer = str(entry.get("answer") or "").strip()
+            if question and answer:
+                reviewed.append((question, answer))
+        if reviewed:
+            quick_answers = reviewed
     quick_title = "Quick Answers" if locale == "en" else "Respuestas rápidas"
     quick = '<section class="faq-teaser" aria-labelledby="quick-answers-title"><h2 id="quick-answers-title">' + quick_title + '</h2><div class="faq-list">' + ''.join('<div class="faq-item"><p class="faq-q">' + esc(question) + '</p><p class="faq-a">' + esc(answer) + '</p></div>' for question, answer in quick_answers) + '</div></section>'
     body += '<section class="section contact-section"><div class="shell"><div class="contact-layout">' + info + '<div class="contact-form-panel"><h2>Send Us Your Inquiry</h2><p>Fill out the form and we will reply as soon as possible.</p>' + form + '</div></div>' + quick + '</div></section>'
@@ -1185,6 +1200,25 @@ def faq_page(locale: str) -> str:
         values = ("+86 136 0672 7715", EMAIL, "Chat with LEYA MOULD", "Ask about WeChat")
 
     structured = structured_page_copy(locale, "/faq/")
+    structured_groups = structured.get("groups")
+    if isinstance(structured_groups, list) and structured_groups:
+        reviewed_groups = []
+        for group in structured_groups[:8]:
+            if not isinstance(group, dict):
+                continue
+            group_title = str(group.get("title") or "").strip()
+            pairs = []
+            for entry in (group.get("items") if isinstance(group.get("items"), list) else [])[:12]:
+                if not isinstance(entry, dict):
+                    continue
+                question = str(entry.get("question") or "").strip()
+                answer = str(entry.get("answer") or "").strip()
+                if question and answer:
+                    pairs.append((question, answer))
+            if group_title and pairs:
+                reviewed_groups.append((group_title, pairs))
+        if reviewed_groups:
+            groups = reviewed_groups
     if structured.get("eyebrow"):
         page_eyebrow = str(structured["eyebrow"])
     if structured.get("title"):
