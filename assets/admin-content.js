@@ -132,13 +132,16 @@
      field("body","","结构化正文导语（纯文本）",5)+
      field("sections","[]","正文区块 JSON：[{\"title\":\"...\",\"body\":\"...\",\"bullets\":[]}]",8)+
      field("faqs","[]","产品 FAQ JSON：[{\"question\":\"...\",\"answer\":\"...\"}]",8)+
+     field("bodyEs","","西班牙语结构化正文导语（纯文本）",5)+
+     field("sectionsEs","[]","西班牙语正文区块 JSON",8)+
+     field("faqsEs","[]","西班牙语产品 FAQ JSON",8)+
    field("seoTitle","","SEO Title")+
    field("seoDescription","","Meta Description",3)+
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
    button("保存产品到 D1","product");
   }
   if(tab==="structured-copy"){
-   const routes=["/contact/","/faq/"];
+   const routes=state.structuredCopy?.routes||["/","/contact/","/faq/"];
    html='<h3>结构化页面正文 · D1</h3><p>只维护可编辑文案和问答数组，不接触 HTML/CSS。保存后由完整构建生成页面；已有后台编辑会按当前语种和路径覆盖。</p>'+
     '<label class="block-label">语种 <select id="cms-structured-locale">'+(state.structuredCopy?.locales||["en","es"]).map(locale=>'<option value="'+esc(locale)+'">'+esc(locale)+"</option>").join("")+'</select></label>'+ 
     '<label class="block-label">页面 <select id="cms-structured-route">'+routes.map(route=>'<option value="'+esc(route)+'">'+esc(route)+"</option>").join("")+'</select></label>'+ 
@@ -232,11 +235,6 @@
      finally{uploadButton.disabled=false}
     });
    }
-   if(tab==="structured-copy"){
-    const locale=$('cms-structured-locale'),route=$('cms-structured-route'),target=container.querySelector('[data-cms-field="structuredJson"]');
-    const fill=()=>{let data=state.structuredCopy?.pageCopy?.[locale.value]?.[route.value]||{};if(target)target.value=JSON.stringify(data,null,2)};
-    locale?.addEventListener('change',fill);route?.addEventListener('change',fill);fill();
-   }
    $("cms-banner-language")?.addEventListener("change",event=>{
     collectBannerFields();
     bannerLocale=event.target.value;
@@ -245,6 +243,12 @@
    for(let i=0;i<3;i++)container.querySelector('[data-cms-field="b'+i+'-img"]')?.addEventListener("change",event=>{
     const row=state.bannerDraft?.slides?.[i];if(row)row.img=event.target.value.trim();
    });
+  }
+
+  if(tab==="structured-copy"){
+   const locale=$("cms-structured-locale"),route=$("cms-structured-route"),target=container.querySelector('[data-cms-field="structuredJson"]');
+   const fill=()=>{const data=state.structuredCopy?.pageCopy?.[locale?.value]?.[route?.value]||{};if(target)target.value=JSON.stringify(data,null,2)};
+   locale?.addEventListener("change",fill);route?.addEventListener("change",fill);fill();
   }
 
   container.querySelectorAll("[data-cms-action]").forEach(el=>el.addEventListener("click",()=>save(el.dataset.cmsAction)));
@@ -265,9 +269,9 @@
    const known=[...new Set([...(state.products.catalogModels||[]),
      ...(state.products.items||[]).filter(x=>!x.content?.newProduct).map(x=>x.model)])].sort();
    let requestNumber=0;
-     const sourceFields=["title","navTitle","short","detail","meta","image","checks","body","sections","faqs","seoTitle","seoDescription"];
+     const sourceFields=["title","navTitle","short","detail","meta","image","checks","body","sections","faqs","bodyEs","sectionsEs","faqsEs","seoTitle","seoDescription"];
      const resetFields=()=>{for(const key of sourceFields){
-      const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=(key==="sections"||key==="faqs"?"[]":"");
+      const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=((key.includes("sections")||key.includes("faqs"))?"[]":"");
    }container.querySelector('[data-cms-field="status"]').value="draft";};
    async function selectProduct(id){
     if(!known.includes(id))return;
@@ -300,7 +304,7 @@
      for(const [key,val] of Object.entries({...original,...(entry?.content||{})})){
       const el=container.querySelector('[data-cms-field="'+key+'"]');
       if(!el)continue;
-       if(["checks","sections","faqs"].includes(key)&&Array.isArray(val))el.value=JSON.stringify(val,null,2);
+       if(["checks","sections","faqs","sectionsEs","faqsEs"].includes(key)&&Array.isArray(val))el.value=JSON.stringify(val,null,2);
       else if(typeof val==="string")el.value=val;
     }
     container.querySelector('[data-cms-field="status"]').value=entry?.status||"draft";
@@ -495,10 +499,10 @@
      if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
        throw Error("请先从已配置的模具类别列表中选择类别");
      let checks=[];try{checks=JSON.parse(value("checks")||"[]")}catch{throw Error("技术核对要点必须是 JSON 数组")}
-      let sections=[],faqs=[];try{sections=JSON.parse(value("sections")||"[]");faqs=JSON.parse(value("faqs")||"[]")}catch{throw Error("结构化正文或 FAQ 必须是 JSON 数组")}
+      let sections=[],faqs=[],sectionsEs=[],faqsEs=[];try{sections=JSON.parse(value("sections")||"[]");faqs=JSON.parse(value("faqs")||"[]");sectionsEs=JSON.parse(value("sectionsEs")||"[]");faqsEs=JSON.parse(value("faqsEs")||"[]")}catch{throw Error("结构化正文或 FAQ 必须是 JSON 数组")}
       result=await api("product-content",{action:"save_product",model:value("model"),
        status:value("status"),content:{title:value("title"),navTitle:value("navTitle"),short:value("short"),detail:value("detail"),meta:value("meta"),
-         image:value("image"),checks,body:value("body"),sections,faqs,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
+         image:value("image"),checks,body:value("body"),sections,faqs,bodyEs:value("bodyEs"),sectionsEs,faqsEs,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
     }else if(action==="structured-copy"){
      let content;try{content=JSON.parse(value("structuredJson")||"{}")}catch{throw Error("结构化正文必须是 JSON 对象")}
      result=await api("structured-copy",{action:"save_page_copy",locale:$('cms-structured-locale').value,route:$('cms-structured-route').value,content});
@@ -540,4 +544,6 @@
   if(!state.brand)load();
  });
 })();
+
+
 
