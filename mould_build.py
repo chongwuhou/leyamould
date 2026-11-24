@@ -808,7 +808,7 @@ def catalog_support_sections(locale: str) -> str:
 
     # Order follows the reference page: products → advantages → samples →
     # trials → technology → quality → workflow → FAQ → testimonials → CTA.
-    return advantages_section + samples_section + catalog_video_section(locale) + technology + quality + process + faq + testimonials + contact
+    return advantages_section + samples_section + catalog_video_section(locale) + technology + quality + process + faq + contact
 
 def products_page(locale: str) -> str:
     catalog_count = len(CAP_MOULD_SERIES)

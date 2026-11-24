@@ -162,6 +162,12 @@ for page in (catalog_page, catalog_page_es):
     labels = ('Core Advantages of LEYA MOULD', 'Bottle Cap Sample Gallery', 'Technical Strength &amp; Process', 'Quality Control &amp; Inspection', 'Cooperation Process', 'Common Questions', 'Client Feedback', 'Start Your Cap Mould Project') if page is catalog_page else ('Ventajas clave de LEYA MOULD', 'Galería de muestras de tapas', 'Fortaleza técnica y proceso', 'Control de calidad e inspección', 'Proceso de cooperación', 'Preguntas frecuentes', 'Opiniones de clientes', 'Empiece su proyecto de moldes')
     for label in labels:
         assert label in page, label
+    if page is catalog_page:
+        assert page.count('id="catalog-testimonials"') == 1
+        assert page.count('Client Feedback') == 1
+    else:
+        assert page.count('id="catalog-testimonials"') == 1
+        assert page.count('Opiniones de clientes') == 1
     assert page.count('catalog-sample-item') >= 21
     assert page.count('class="video-card"') >= 5
 es_product = (DIST / "es" / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
