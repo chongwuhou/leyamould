@@ -41,6 +41,52 @@ def _asset(path: str) -> str:
     return REFERENCE_ORIGIN + path
 
 
+def _structured_text(item: dict, locale: str, key: str, fallback: str) -> str:
+    """Read an owner-edited structured product field with a safe locale fallback."""
+    localized = item.get(key + "Es") if locale == "es" else item.get(key)
+    if isinstance(localized, str) and localized.strip():
+        return localized.strip()
+    value = item.get(key)
+    return value.strip() if isinstance(value, str) and value.strip() else fallback
+
+
+def _structured_faqs(item: dict, locale: str, fallback: list[tuple[str, str]]) -> list[tuple[str, str]]:
+    raw = item.get("faqsEs") if locale == "es" else item.get("faqs")
+    if not isinstance(raw, list) or not raw:
+        raw = item.get("faqs") if isinstance(item.get("faqs"), list) else []
+    rows = []
+    for entry in raw[:12]:
+        if not isinstance(entry, dict):
+            continue
+        question = str(entry.get("question") or "").strip()
+        answer = str(entry.get("answer") or "").strip()
+        if question and answer:
+            rows.append((question, answer))
+    return rows or fallback
+
+
+def _structured_sections(item: dict, locale: str, fallback: list[tuple[str, str, str, list[str]]]) -> list[tuple[str, str, str, list[str]]]:
+    """Read editable product sections while retaining the catalogue media layout."""
+    raw = item.get("sectionsEs") if locale == "es" else item.get("sections")
+    if not isinstance(raw, list) or not raw:
+        raw = item.get("sections") if isinstance(item.get("sections"), list) else []
+    rows = []
+    for index, entry in enumerate(raw[:8]):
+        if not isinstance(entry, dict):
+            continue
+        title = str(entry.get("title") or "").strip()
+        body = str(entry.get("body") or "").strip()
+        if not title or not body:
+            continue
+        previous = fallback[min(index, len(fallback) - 1)] if fallback else (title, body, "", [])
+        bullets = entry.get("bullets")
+        if not isinstance(bullets, list):
+            bullets = previous[3] if len(previous) > 3 else []
+        bullets = [str(value).strip() for value in bullets[:8] if str(value).strip()]
+        rows.append((title, body, previous[2], bullets))
+    return rows or fallback
+
+
 def _spec(hero_title, accent, subtitle, image, stats, products, advantages,
           technology, samples, quality, faqs, testimonials, videos=None):
     return {
@@ -331,7 +377,7 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     details = DETAILS[item["slug"]]
     title = _catalog_text(item, locale, "title")
     description = _catalog_text(item, locale, "description")
-    detail = _catalog_text(item, locale, "detail")
+    detail = _structured_text(item, locale, "body", _catalog_text(item, locale, "detail"))
     hero_title = esc(details["hero_title"]) + ' <span class="highlight">' + esc(details["hero_accent"]) + '</span> ' + esc(details["hero_subtitle"])
     hero = '<section class="mould-detail-hero" style="--mould-hero:url(\'' + esc(_asset(details["hero_image"])) + '\')"><div class="mould-detail-container"><h1>' + hero_title + '</h1><p class="mould-hero-subtitle">' + esc(description) + ' ' + esc(detail) + '</p><a href="#contact" class="mould-hero-cta">' + esc(_lang(locale, "quote")) + ' →</a><div class="mould-hero-stats">' + ''.join('<div class="mould-hero-stat"><div class="number">' + esc(number) + '</div><div class="label">' + esc(label) + '</div></div>' for number, label in details["stats"]) + '</div></div></section>'
     # Keep the hero copy to the same concise rhythm as the reference page.
@@ -358,8 +404,9 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
         advantages += '<article class="mould-advantage-card"><div class="mould-adv-icon">✓</div><h4>' + esc(adv_title) + '</h4><p>' + esc(adv_text) + '</p></article>'
     advantages += '</div></div></section>'
 
+    structured_technology = _structured_sections(item, locale, details["technology"][1])
     tech = '<section class="mould-technology" id="technical"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "technology")) + '</span><h2>' + esc(details["technology"][0]) + '</h2><i></i></div>'
-    for index, (tech_title, tech_text, tech_image, bullets) in enumerate(details["technology"][1]):
+    for index, (tech_title, tech_text, tech_image, bullets) in enumerate(structured_technology):
         media = '<div class="mould-tech-image">' + helpers["image"](_asset(tech_image), tech_title) + '</div>'
         copy = '<div class="mould-tech-copy"><h3>' + esc(tech_title) + '</h3><p>' + esc(tech_text) + '</p><ul>' + ''.join('<li>✓ ' + esc(bullet) + '</li>' for bullet in bullets) + '</ul></div>'
         tech += '<div class="mould-tech-grid' + (' mould-tech-grid--reverse' if index % 2 else '') + '">' + (copy + media if index % 2 else media + copy) + '</div>'
@@ -379,7 +426,8 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
 
     quality = '<section class="mould-quality" id="quality"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "quality")) + '</span><h2>Quality Control &amp; Inspection</h2><p>Every mould passes a documented inspection path before shipment.</p><i></i></div><div class="mould-quality-list">' + ''.join('<article><b>✓</b><h4>' + esc(q) + '</h4><p>' + esc(a) + '</p></article>' for q, a in details["quality"]) + '</div></div></section>'
 
-    faq_rows = ''.join('<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>' for q, a in details["faqs"])
+    faq_pairs = _structured_faqs(item, locale, details["faqs"])
+    faq_rows = ''.join('<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>' for q, a in faq_pairs)
     feedback = ''.join('<article class="mould-testimonial"><p>“' + esc(quote) + '”</p><b>' + esc(author) + '</b><span>' + esc(country) + '</span></article>' for quote, author, country in details["testimonials"])
     faq = '<section class="mould-faq" id="faq"><div class="mould-detail-container"><div class="mould-faq-grid"><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "faq")) + '</span><h2>' + esc(title) + ' FAQ</h2><i></i></div><div class="mould-faq-list">' + faq_rows + '</div></div><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "feedback")) + '</span><h2>What Buyers Say</h2><i></i></div><div class="mould-testimonials">' + feedback + '</div></div></div></div></section>'
 
