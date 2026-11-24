@@ -51,4 +51,3 @@ assert "scripts/test_mould_release_authority.py" in workflow
 
 print("LEYA_MOULD_D1_SOURCE_AUTHORITY_PASSED")
 
-

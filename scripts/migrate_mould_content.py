@@ -9,7 +9,7 @@ import urllib.error
 import urllib.request
 
 ORIGIN = os.environ.get("XUYI_SITE_ORIGIN", "https://leyamould.com").rstrip("/")
-PATH = "/api/admin/mould-content-seed-20261124"
+PATH = "/api/admin/content-seed"
 
 
 def call(token: str) -> dict:
@@ -21,7 +21,7 @@ def call(token: str) -> dict:
             "Authorization": "Bearer " + token,
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "LEYA-MOULD-D1-CONTENT-SEED/20261124",
+            "User-Agent": "LEYA-MOULD-D1-CONTENT-SEED/v1",
             "x-xuyi-publish-intent": "explicit-owner-approval",
         },
     )
@@ -57,5 +57,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 

@@ -1,3 +1,5 @@
+import { ensureLeyaSystemSchema, recordContentAudit } from "./leya-system.js";
+
 const clean = (value, max = 4000) => String(value ?? "").replace(/\0/g, "").trim().slice(0, max);
 const emailRe = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 const bcp47Re = /^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/;
@@ -216,6 +218,7 @@ export function normalizeTranslationConfig(input, languageConfig = defaultLangua
 }
 
 export async function loadSiteSetting(db, key, fallback) {
+  await ensureLeyaSystemSchema(db);
   await db.prepare(`CREATE TABLE IF NOT EXISTS site_state (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL DEFAULT '',
@@ -227,12 +230,32 @@ export async function loadSiteSetting(db, key, fallback) {
   catch { return { value: fallback, updatedAt: row.updated_at || "" }; }
 }
 
-export async function saveSiteSetting(db, key, value) {
-  await db.prepare(`INSERT INTO site_state(key,value,updated_at) VALUES(?,?,CURRENT_TIMESTAMP)
-    ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=CURRENT_TIMESTAMP`).bind(key, JSON.stringify(value)).run();
+async function hashValue(value) {
+  const bytes = new TextEncoder().encode(String(value ?? ""));
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((item) => item.toString(16).padStart(2, "0")).join("");
 }
 
-export async function bumpPublishRevision(db) {
+export async function saveSiteSetting(db, key, value, options = {}) {
+  await ensureLeyaSystemSchema(db);
+  const previous = await db.prepare("SELECT value FROM site_state WHERE key=?").bind(key).first();
+  const before = String(previous?.value || "");
+  const next = JSON.stringify(value);
+  await db.prepare(`INSERT INTO site_state(key,value,updated_at) VALUES(?,?,CURRENT_TIMESTAMP)
+    ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=CURRENT_TIMESTAMP`).bind(key, next).run();
+  await recordContentAudit(db, {
+    actor: options.actor || "admin",
+    action: options.action || "save_setting",
+    resourceType: "site_state",
+    resourceId: key,
+    beforeHash: await hashValue(before),
+    afterHash: await hashValue(next),
+    metadata: options.metadata || {}
+  });
+}
+
+export async function bumpPublishRevision(db, options = {}) {
+  await ensureLeyaSystemSchema(db);
   const row = await db.prepare("SELECT value FROM site_state WHERE key='publish_revision'").first();
   const revision = Number(row?.value || 0) + 1;
   const now = new Date().toISOString();
@@ -242,6 +265,14 @@ export async function bumpPublishRevision(db) {
     db.prepare(`INSERT INTO site_state(key,value,updated_at) VALUES('publish_requested_at',?,CURRENT_TIMESTAMP)
       ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=CURRENT_TIMESTAMP`).bind(now)
   ]);
+  await recordContentAudit(db, {
+    actor: options.actor || "system",
+    action: options.action || "publish_requested",
+    resourceType: options.resourceType || "release",
+    resourceId: options.resourceId || "site",
+    publishRevision: revision,
+    metadata: options.metadata || {}
+  });
   return { revision, requestedAt: now };
 }
 

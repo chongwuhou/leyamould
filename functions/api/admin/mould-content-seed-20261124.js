@@ -8,6 +8,7 @@ import EDITORIAL_DATA from "../../../data/mould-news-editorial.json";
 import MOULD_CATALOG from "../../../data/mould-catalog.json";
 import PRODUCT_STRUCTURED from "../../../data/mould-product-structured.json";
 import PAGE_STRUCTURED_DATA from "../../../data/mould-page-structured.json";
+import PAGE_BODY_DATA from "../../../data/mould-page-bodies.json";
 import { authorizedMouldContentSeedRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema } from "../../_shared/blog-cms.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
@@ -244,6 +245,7 @@ async function ensureSchema(db) {
   await db.prepare("CREATE TABLE IF NOT EXISTS site_state (key TEXT PRIMARY KEY,value TEXT NOT NULL DEFAULT '',updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS site_navigation (id TEXT PRIMARY KEY,parent_id TEXT,label TEXT NOT NULL,url TEXT NOT NULL,sort_order INTEGER NOT NULL DEFAULT 0,enabled INTEGER NOT NULL DEFAULT 1,new_window INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS site_pages (route TEXT PRIMARY KEY,label TEXT NOT NULL,seo_title TEXT NOT NULL DEFAULT '',meta_description TEXT NOT NULL DEFAULT '',robots TEXT NOT NULL DEFAULT 'noindex,nofollow',sitemap_enabled INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_page_content(route TEXT PRIMARY KEY,main_html TEXT NOT NULL DEFAULT '',publication_status TEXT NOT NULL DEFAULT 'draft' CHECK(publication_status IN ('draft','published')),updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_product_content (model TEXT PRIMARY KEY,content_json TEXT NOT NULL DEFAULT '{}',publication_status TEXT NOT NULL DEFAULT 'draft' CHECK(publication_status IN ('draft','published')),updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
 }
 
@@ -254,9 +256,9 @@ export async function onRequestPost(context) {
   try {
     await ensureSchema(db);
     await ensureBlogSchema(db);
-    const inserted = { state: 0, navigation: 0, pages: 0, products: 0, posts: 0 };
-    const updated = { state: 0, navigation: 0, pages: 0, products: 0, posts: 0 };
-    const skipped = { state: 0, navigation: 0, pages: 0, products: 0, posts: 0 };
+    const inserted = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, posts: 0 };
+    const updated = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, posts: 0 };
+    const skipped = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, posts: 0 };
     const statements = [];
     const stateRows = [
       ["brand_config", BRAND],
@@ -321,6 +323,19 @@ export async function onRequestPost(context) {
       inserted.pages += 1;
     }
 
+    // Migrate only missing English page bodies. The source renderer remains
+    // the fallback for Spanish until a reviewed page translation is present;
+    // existing D1 owner edits are never overwritten.
+    const bodyRows = Array.isArray(PAGE_BODY_DATA?.items) ? PAGE_BODY_DATA.items : [];
+    const existingBodies = new Set(((await db.prepare("SELECT route FROM xuyi_page_content").all()).results || []).map(row => String(row.route)));
+    for (const row of bodyRows) {
+      const route = String(row?.route || "");
+      const mainHtml = String(row?.mainHtml || "");
+      if (!MOULD_ROUTES.has(route) || !mainHtml || existingBodies.has(route)) { skipped.pageBodies += 1; continue; }
+      statements.push(db.prepare("INSERT INTO xuyi_page_content(route,main_html,publication_status,updated_at) VALUES(?,?, 'published', CURRENT_TIMESTAMP)").bind(route, mainHtml));
+      inserted.pageBodies += 1;
+    }
+
     const existingProductRows = ((await db.prepare("SELECT model,content_json FROM xuyi_product_content").all()).results || []);
     const existingProducts = new Map(existingProductRows.map(row => [String(row.model), row.content_json]));
     const products = Array.isArray(MOULD_CATALOG?.categories) ? MOULD_CATALOG.categories : [];
@@ -356,8 +371,9 @@ export async function onRequestPost(context) {
     if (statements.length) await db.batch(statements);
     const changed = Object.values(inserted).reduce((sum, value) => sum + value, 0) + Object.values(updated).reduce((sum, value) => sum + value, 0);
     const revision = changed ? await bumpPublishRevision(db) : { revision: 0, requestedAt: "" };
-    return respond({ success: true, inserted, updated, skipped, totalNews: posts.length, totalProducts: products.length, structuredPageCopy: Object.keys(STRUCTURED_PAGE_COPY.en).length, sharedCtaVariants: Object.keys(COMMON_COPY.en.shared_cta).length, publishRevision: revision.revision, requestedAt: revision.requestedAt, ownerEditsPreserved: true, productImagesRemainTemplateBound: true });
+    return respond({ success: true, inserted, updated, skipped, totalNews: posts.length, totalProducts: products.length, pageBodyRoutes: bodyRows.length, structuredPageCopy: Object.keys(STRUCTURED_PAGE_COPY.en).length, sharedCtaVariants: Object.keys(COMMON_COPY.en.shared_cta).length, publishRevision: revision.revision, requestedAt: revision.requestedAt, ownerEditsPreserved: true, productImagesRemainTemplateBound: true });
   } catch (error) {
     return respond({ error: "D1 mould content seed failed: " + String(error?.message || error).slice(0, 240) }, 500);
   }
 }
+

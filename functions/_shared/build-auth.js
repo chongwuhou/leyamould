@@ -87,7 +87,14 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
 // reviewed repository manifests itself and never accepts arbitrary article,
 // navigation or SEO copy from the caller.
 export async function authorizedMouldContentSeedRequest(request, env) {
-  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/mould-content-seed-20261124") return false;
+  const pathname = new URL(request.url).pathname;
+  if (request.method !== "POST" || !new Set([
+    "/api/admin/content-seed",
+    "/api/admin/mould-content-seed-20261124"
+  ]).has(pathname)) return false;
+  // The dated path is retained only as a disabled compatibility alias. New
+  // owner-approved seeds use the stable generic route below.
+  if (pathname === "/api/admin/mould-content-seed-20261124" && String(env.LEYA_ALLOW_LEGACY_MIGRATIONS || "") !== "1") return false;
   return authorizedExplicitPublishRequest(request, env);
 }
 
@@ -159,6 +166,5 @@ export async function authorizedReviewedFactoryCatalogCommitRequest(request, env
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-20261103")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
-
 
 

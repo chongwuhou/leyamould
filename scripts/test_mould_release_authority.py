@@ -21,6 +21,8 @@ for marker in ("structured_section(locale, \"/\", \"advantages\"", "structured_s
 assert "3 million shots with zero defects" not in renderer
 assert "FDA validation effortlessly" not in renderer
 assert "ISO 9001:2015 Quality System" not in renderer
+assert "LEYA MOULD delivered our high-cavity water cap mould ahead of schedule" not in renderer
+assert "Technical Manager · Brazil" not in renderer
 
 structured = read("functions/api/admin/structured-copy.js")
 assert "loadLanguageConfig" in structured and "publicLanguages" in structured
@@ -37,4 +39,3 @@ assert "bodyEs" in admin and "sectionsEs" in admin and "faqsEs" in admin
 assert "if(tab===\"structured-copy\")" in admin
 
 print("LEYA_MOULD_RELEASE_AUTHORITY_GATE_PASSED")
-

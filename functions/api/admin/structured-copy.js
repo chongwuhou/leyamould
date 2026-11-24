@@ -62,4 +62,3 @@ export async function onRequestPost(c){
   await db.prepare("INSERT INTO site_state(key,value,updated_at) VALUES('page_copy',?,CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=CURRENT_TIMESTAMP").bind(JSON.stringify(state)).run();
   return respond({saved:true,locale,route,...(await bumpPublishRevision(db))});
 }
-

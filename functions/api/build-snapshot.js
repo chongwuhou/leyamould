@@ -3,6 +3,7 @@
 // or other private tables; responses are no-store and not indexable.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
 import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from "../_shared/site-settings.js";
+import { ensureLeyaSystemSchema } from "../_shared/leya-system.js";
 import { MOULD_MODELS, MOULD_ROUTES, mouldModelFromRoute } from "../_shared/mould-routes.js";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -21,6 +22,7 @@ export async function onRequestGet(context){
   const db=context.env.LEYA_DB;
   if(!db)return json({error:"LEYA_DB binding missing"},503);
   try{
+    await ensureLeyaSystemSchema(db);
     const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos,modelReferences]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy','page_copy')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
@@ -112,5 +114,4 @@ export async function onRequestGet(context){
     });
   }catch(error){return json({error:"LEYA build snapshot unavailable"},503)}
 }
-
 

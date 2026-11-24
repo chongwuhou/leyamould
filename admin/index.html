@@ -22,6 +22,7 @@
 <button type="button" class="admin-module-btn" data-admin-target="videos">10 YouTube 视频</button>
 <button type="button" class="admin-module-btn" data-admin-target="scheduler">11 自动发布与定时任务</button>
 <button type="button" class="admin-module-btn" data-admin-target="modelreferences">12 型号参考库 · D1/R2</button>
+<button type="button" class="admin-module-btn" data-admin-target="audit">13 内容与发布审计</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">所有正式内容、语种配置和发布状态均以 D1/CMS 为准。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">LEYA MOULD</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
@@ -328,6 +329,12 @@
         <div id="translation-jobs" class="batches"></div>
       </section>
 
+<section class="panel" id="audit-admin-panel" data-admin-module="audit">
+  <div class="panel-head"><div><div class="eyebrow">LEYA MOULD · D1 AUDIT</div><h2>内容与发布审计</h2><p>查看后台内容修改和发布请求的时间、模块、修订号与差异哈希。这里只读，不提供删除审计记录的入口。</p></div></div>
+  <div class="row-actions"><button type="button" class="btn ghost" id="audit-refresh">刷新审计记录</button><span id="audit-status" class="muted" role="status" aria-live="polite"></span></div>
+  <div class="table-wrap"><table class="pages-table"><thead><tr><th>时间</th><th>操作者</th><th>动作</th><th>资源</th><th>发布修订</th><th>前后摘要</th><th>备注</th></tr></thead><tbody id="audit-body"></tbody></table></div>
+</section>
+
 </main></div>
 <dialog id="submission-editor" aria-labelledby="submission-editor-title">
   <div class="editor-head">
@@ -351,7 +358,9 @@
 <script src="/assets/admin-product-seo.js" defer></script>
 <script src="/assets/admin-model-references.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>
+<script src="/assets/admin-audit.js" defer></script>
 </body></html>
+
 
 
 

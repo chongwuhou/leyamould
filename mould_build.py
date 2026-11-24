@@ -1018,7 +1018,15 @@ def catalog_support_sections(locale: str) -> str:
             ("¿Cómo comienzo un proyecto?", "Envíe el plano, muestra, resina, cavidades, información de máquina y mercado por correo o WhatsApp."),
         ]
     faq_rows = ''.join('<details' + (' open' if i == 0 else '') + '><summary>' + esc(question) + '</summary><p class="faq-answer">' + esc(answer) + '</p></details>' for i, (question, answer) in enumerate(faq_pairs))
-    testimonials = '<div id="catalog-testimonials" class="testimonials"><h3><span class="testimonial-star">★</span> ' + esc(testimonial_title) + '</h3><article class="testimonial-card"><div class="quote">"LEYA MOULD delivered our high-cavity water cap mould ahead of schedule. The precision and cycle time exceeded expectations."</div><div class="author">Production Head · India</div><div class="company">International Beverage Producer</div></article><article class="testimonial-card"><div class="quote">"The flip-top moulds run flawlessly on our injection lines. Excellent after-sales support."</div><div class="author">Technical Manager · Brazil</div><div class="company">Personal Care Packaging Group</div></article><article class="testimonial-card"><div class="quote">"The cooling design helped us increase output while keeping cap quality stable."</div><div class="author">Plant Director · Germany</div><div class="company">Industrial Packaging Company</div></article></div>'
+    # Never invent customer names, countries or performance claims. The
+    # catalogue may show only reviews explicitly approved in D1; otherwise it
+    # keeps the reference section compact and transparently empty.
+    catalog_reviews = _review_rows(locale)
+    if catalog_reviews:
+        review_cards = ''.join('<article class="testimonial-card"><div class="quote">&quot;' + esc(row["quote"]) + '&quot;</div><div class="author">' + esc(row["author"]) + '</div>' + ('<div class="company">' + esc(row["company"]) + '</div>' if row.get("company") else '') + '</article>' for row in catalog_reviews[:3])
+        testimonials = '<div id="catalog-testimonials" class="testimonials"><h3><span class="testimonial-star">★</span> ' + esc(testimonial_title) + '</h3>' + review_cards + '</div>'
+    else:
+        testimonials = '<div id="catalog-testimonials" class="testimonials testimonials--empty"><h3><span class="testimonial-star">★</span> ' + esc(testimonial_title) + '</h3><p>' + esc("Reviewed customer feedback will appear here after source and publication review." if not es else "Las opiniones verificadas aparecerán después de la revisión de la fuente y la publicación.") + '</p></div>'
     faq = '<section id="catalog-faq" class="faq-section"><div class="shell"><div class="faq-grid"><div class="faq-list"><h3 id="faq-heading"><span class="faq-star">?</span> ' + esc(faq_title) + '</h3>' + faq_rows + '</div>' + testimonials + '</div></div></section>'
 
     contact = shared_cta(locale, "catalog", element_id="catalog-contact")
@@ -1602,7 +1610,12 @@ def generate() -> dict:
         translated = localized_override(locale, route)
         final_title = str(translated.get("title") or page_override.get("seoTitle") or title)
         final_description = str(translated.get("description") or page_override.get("metaDescription") or description)
-        final_body = str(translated.get("mainHtml") or BODY_OVERRIDES.get(route) or body)
+        # xuyi_page_content stores the reviewed source-language body. A
+        # localized D1 override wins for that locale; otherwise Spanish keeps
+        # the renderer's translated baseline instead of silently showing an
+        # English body from the source-language CMS row.
+        source_body = BODY_OVERRIDES.get(route) if locale == "en" else ""
+        final_body = str(translated.get("mainHtml") or source_body or body)
         write(file_path, shell(locale, final_title + " | " + BRAND_DISPLAY if route != "/" else final_title + " | " + BRAND_DISPLAY, final_description, route, final_body))
         routes[localized] = title
     for locale in LOCALES:
@@ -1673,6 +1686,5 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
-
 
 

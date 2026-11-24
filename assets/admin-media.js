@@ -131,23 +131,43 @@ async function list(cursor=""){
     (data.readOnly?" 当前类别只读，源图库受保护。":" 管理素材只有在完整引用检查通过后才能删除。")+
     (!data.referenceIndexReady?" 注意：静态引用索引不可用，删除将自动拒绝。":""));
 }
+async function compressForUpload(file){
+ if(!file||!/^image\/(?:jpeg|png|webp)$/.test(file.type))throw Error("仅支持 JPEG、PNG 或 WebP 图片");
+ if(typeof createImageBitmap!=="function")throw Error("当前浏览器不支持图片压缩，请使用最新版 Edge 或 Chrome");
+ const bitmap=await createImageBitmap(file);
+ try{
+  const maxDimension=2400;
+  const scale=Math.min(1,maxDimension/bitmap.width,maxDimension/bitmap.height);
+  const width=Math.max(1,Math.round(bitmap.width*scale));
+  const height=Math.max(1,Math.round(bitmap.height*scale));
+  const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext("2d");if(!ctx)throw Error("浏览器无法创建图片压缩画布");
+  ctx.drawImage(bitmap,0,0,width,height);
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.88));
+  canvas.width=0;canvas.height=0;
+  if(!blob||blob.type!=="image/webp")throw Error("浏览器无法生成 WebP 压缩图");
+  if(blob.size<200||blob.size>6*1024*1024)throw Error("压缩后的图片大小不符合要求");
+  return {file:new File([blob],file.name.replace(/\.[^.]+$/i,"")+".webp",{type:"image/webp"}),width,height,originalBytes:file.size};
+ }finally{bitmap.close()}
+}
 async function upload(){
  if(!editable()){say("原始图库仅供查看，不接受在此上传或删除");return}
  const file=$("media-upload")?.files?.[0];if(!file){say("请选择 JPEG、PNG 或 WebP 图片");return}
- if(file.size>6*1024*1024){say("单张图片不能超过 6 MB");return}
  const key=token();if(!key){say("请先登录后台");return}
  const english=$("media-upload-alt-en")?.value.trim()||"";
  if(!english){say("上传前请填写准确的英文 ALT：实际产品类型、可核实型号或容量");return}
- const button=$("media-upload-btn");button.disabled=true;say("正在上传 LEYA MOULD R2…");
+ const button=$("media-upload-btn");button.disabled=true;say("正在压缩图片并上传 LEYA MOULD R2…");
  try{
+  const prepared=await compressForUpload(file);
   const values={[sourceLocale]:english};
   for(const input of $("media-upload-alt-locales")?.querySelectorAll("[data-alt-locale]")||[])
    if(input.value.trim())values[input.dataset.altLocale]=input.value.trim();
-  const body=new FormData();body.append("kind",kind());body.append("image",file);
+  const body=new FormData();body.append("kind",kind());body.append("image",prepared.file);
   body.append("altByLocale",JSON.stringify(values));
   const data=await api("/api/admin/media",{method:"POST",body});
   $("media-upload").value="";$("media-upload-alt-en").value="";await list();
-  say("已上传："+data.path+"，请复制地址并在内容 CMS 中引用。");
+  say("已压缩并上传："+data.path+"（"+(prepared.width||"?")+"×"+(prepared.height||"?")+"，"+
+   (prepared.originalBytes/1024).toFixed(1)+" KB → "+(prepared.file.size/1024).toFixed(1)+" KB），请复制地址并在内容 CMS 中引用。");
  }catch(err){say("上传失败："+err.message)}
  finally{button.disabled=!editable()}
 }

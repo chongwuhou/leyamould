@@ -79,6 +79,11 @@ def main() -> None:
         templates[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
     snapshot = ROOT / "_local_ops/build-snapshot.json"
     state = json.loads(snapshot.read_text(encoding="utf-8")) if snapshot.is_file() else {}
+    # CI/Pages builds must never silently publish a clean checkout with empty
+    # business data. Local visual work can still opt out by omitting the flag.
+    if str(os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT", "")).lower() in {"1", "true", "yes"}:
+        if not snapshot.is_file() or state.get("site") != "leyamould":
+            raise SystemExit("Refusing production build without an authenticated LEYA D1 snapshot")
     fallback_models = json.loads((ROOT / "data/mould-models.json").read_text(encoding="utf-8")) if (ROOT / "data/mould-models.json").is_file() else {"models": []}
     model_reference_rows = state.get("modelReferences") if isinstance(state.get("modelReferences"), list) else []
     model_reference_count = len(model_reference_rows) if model_reference_rows else len([row for row in fallback_models.get("models", []) if isinstance(row, dict)])
@@ -136,7 +141,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 
 
 

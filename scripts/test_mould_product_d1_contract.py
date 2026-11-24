@@ -72,4 +72,3 @@ assert edited["sections"][0]["title"] == "Owner technology section"
 assert edited["faqs"][0]["question"] == "Owner question?"
 
 print(f"LEYA_MOULD_PRODUCT_D1_CONTRACT_PASSED categories={len(categories)}")
-

@@ -104,15 +104,23 @@ $('#blog-cover')?.addEventListener('change',()=>{$('#blog-cover-preview').src=$(
 $('#blog-upload')?.addEventListener('change',async(ev)=>{
  const file=ev.target.files?.[0];if(!file)return;
  const result=$('#blog-upload-status');
- if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>6*1024*1024){result.textContent='仅支持 JPEG/PNG/WebP，最大 6MB';return}
- result.textContent='正在上传图片…';
- const body=new FormData();body.append('image',file);
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)){result.textContent='仅支持 JPEG/PNG/WebP 图片';return}
+ result.textContent='正在压缩并上传图片…';
  try{
+  if(typeof createImageBitmap!=='function')throw Error('当前浏览器不支持图片压缩，请使用最新版 Edge 或 Chrome');
+  const bitmap=await createImageBitmap(file);
+  const maxDimension=2400,scale=Math.min(1,maxDimension/bitmap.width,maxDimension/bitmap.height);
+  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  const ctx=canvas.getContext('2d');if(!ctx)throw Error('浏览器无法创建图片压缩画布');
+  ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.88));canvas.width=0;canvas.height=0;
+  if(!blob||blob.type!=='image/webp'||blob.size<200||blob.size>6*1024*1024)throw Error('压缩后的图片大小不符合要求');
+  const body=new FormData();body.append('image',new File([blob],file.name.replace(/\.[^.]+$/i,'')+'.webp',{type:'image/webp'}));
   const response=await fetch('/api/admin/blog-media',{method:'POST',headers:{authorization:'Bearer '+token()},body});
   const data=await response.json();
   if(!response.ok)throw Error(data.error||'Upload failed');
   $('#blog-cover').value=data.path;$('#blog-cover-preview').src=data.path;
-  result.textContent='图片已上传到 LEYA MOULD R2，可用于当前文章。';
+  result.textContent='图片已压缩并上传到 LEYA MOULD R2，可用于当前文章。';
  }catch(error){result.textContent='上传失败：'+error.message}
 });
 document.querySelectorAll('[data-admin-target="blog"]').forEach(btn=>btn.addEventListener('click',()=>{if(token())list()}));
