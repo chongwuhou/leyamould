@@ -717,20 +717,31 @@ def catalog_support_sections(locale: str) -> str:
     testimonial_title = "Opiniones de clientes" if es else "Client Feedback"
     testimonial_desc = "Lo que compradores de packaging valoran en la calidad, precisión y soporte de LEYA MOULD." if es else "What packaging buyers value in LEYA MOULD quality, precision and support."
 
-    advantages = ''.join(
-        '<article class="advantage-card"><span class="advantage-card__number">0' + str(i + 1) + '</span><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>'
-        for i, (title, desc) in enumerate(data(locale, "advantages"))
-    )
-    advantages_section = '<section id="catalog-advantages" class="section section--advantages"><div class="shell">' + section_heading(locale, "WHY CHOOSE US" if not es else "POR QUÉ ELEGIRNOS", advantages_title, advantages_desc) + '<div class="advantage-grid">' + advantages + '</div></div></section>'
+    advantage_items = [
+        ("Premium Steel", "ASSAB, DAIDO certified steel for millions of cycles."),
+        ("Micron Precision", "±0.01mm tolerances with high-speed CNC and EDM."),
+        ("Fast Cycles", "Conformal cooling reduces cycle time, boosting output."),
+        ("Custom Solutions", "Tailored designs from simple caps to complex combinations."),
+        ("Lifetime Support", "Remote guidance, maintenance tips, and spare parts service."),
+        ("On-Time Delivery", "Efficient project management to meet your deadlines."),
+    ]
+    if es:
+        advantage_items = [
+            ("Acero premium", "Acero certificado ASSAB y DAIDO para millones de ciclos."),
+            ("Precisión micrométrica", "Tolerancias de ±0,01 mm con CNC y EDM de alta velocidad."),
+            ("Ciclos rápidos", "La refrigeración conformada reduce el ciclo y aumenta la producción."),
+            ("Soluciones a medida", "Diseños adaptados desde tapas simples hasta combinaciones complejas."),
+            ("Soporte continuo", "Guía remota, mantenimiento y servicio de repuestos."),
+            ("Entrega a tiempo", "Gestión eficiente para cumplir sus fechas objetivo."),
+        ]
+    advantages = ''.join('<article class="advantage-card"><span class="advantage-card__number">0' + str(i + 1) + '</span><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for i, (title, desc) in enumerate(advantage_items))
+    advantages_section = '<section id="catalog-advantages" class="section section--advantages"><div class="shell">' + section_heading(locale, "WHY CHOOSE US" if not es else "POR QUÉ ELEGIRNOS", advantages_title, advantages_desc) + '<div class="advantage-grid catalog-advantage-grid">' + advantages + '</div></div></section>'
 
-    # Keep the reference gallery rhythm: horizontal cards with real sample
-    # imagery and the same previous/next controls used by the home page.
-    sample_names = [item["image"].rsplit(".", 1)[0] for item in SAMPLE_ITEMS]
-    sample_cards = ''.join(
-        '<a class="sample-card" href="' + localized_href(locale, "/samples/") + '"><img src="' + cap + '/images/samples/' + esc(name) + '.jpg" alt="' + esc(name.replace("-", " ").title() + " reference sample") + '" loading="lazy" decoding="async"><span>' + esc(name.replace("-", " ").title()) + '</span></a>'
-        for name in sample_names
-    )
-    samples_section = '<section id="catalog-samples" class="section samples-section"><div class="shell">' + section_heading(locale, "SAMPLES GALLERY" if not es else "GALERÍA DE MUESTRAS", samples_title, samples_desc) + '<div class="samples-track-wrap"><button class="samples-scroll samples-scroll--prev" type="button" data-samples-scroll="-1" aria-label="Previous samples">‹</button><div class="samples-track" data-samples-track>' + sample_cards + '</div><button class="samples-scroll samples-scroll--next" type="button" data-samples-scroll="1" aria-label="Next samples">›</button></div><div class="section__more"><a class="text-link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + ' →</a></div></div></section>'
+    # Match the source gallery: 21 images, a clean grid and a click-to-enlarge
+    # lightbox. These are the same compressed public sample assets used by the
+    # reference page, so no placeholder cards are silently introduced.
+    sample_cards = ''.join('<button class="catalog-sample-item" type="button" data-sample-img="' + cap + '/upload/caps/Bottle-cap-sample' + str(i).zfill(2) + '.jpg" aria-label="' + esc(("Ampliar muestra de tapa " if es else "Enlarge bottle cap sample ") + str(i)) + '"><img src="' + cap + '/upload/caps/Bottle-cap-sample' + str(i).zfill(2) + '.jpg" alt="' + esc(("Muestra de tapa " if es else "Bottle cap sample ") + str(i)) + '" loading="lazy" decoding="async"></button>' for i in range(1, 22))
+    samples_section = '<section id="catalog-samples" class="section samples-section"><div class="shell">' + section_heading(locale, "CAP SAMPLES" if not es else "MUESTRAS DE TAPAS", "Bottle Cap Sample Gallery" if not es else "Galería de muestras de tapas", "Click on any image to enlarge. All samples are produced from our moulds and represent the quality you can expect for your own production." if not es else "Haga clic en cualquier imagen para ampliarla. Todas las muestras se producen con nuestros moldes y representan la calidad que puede esperar.") + '<div class="catalog-sample-grid" id="catalogSampleGrid">' + sample_cards + '</div></div></section><div class="catalog-lightbox" id="catalogLightbox" aria-hidden="true"><button type="button" class="catalog-lightbox__close" data-sample-close aria-label="Close sample">×</button><img id="catalogLightboxImg" src="" alt=""></div><script>(()=>{const grid=document.getElementById("catalogSampleGrid"),box=document.getElementById("catalogLightbox"),img=document.getElementById("catalogLightboxImg");if(!grid||!box||!img)return;const close=()=>{box.classList.remove("is-open");box.setAttribute("aria-hidden","true");img.src=""};grid.addEventListener("click",e=>{const b=e.target.closest("[data-sample-img]");if(!b)return;img.src=b.dataset.sampleImg;box.classList.add("is-open");box.setAttribute("aria-hidden","false")});box.addEventListener("click",e=>{if(e.target===box||e.target.closest("[data-sample-close]"))close()});document.addEventListener("keydown",e=>{if(e.key==="Escape")close()})})();</script>'
 
     technology = '<section id="catalog-technology" class="section technology-section"><div class="shell"><div class="section__head tech-section-head"><div><span class="eyebrow">' + ("NUESTRA TECNOLOGÍA" if es else "OUR TECHNOLOGY") + '</span><h2 class="section__title">' + esc(technology_title) + '</h2><p class="copy-muted">' + esc(technology_desc) + '</p><div class="section-line"></div></div></div><div class="tech-grid"><div class="tech-img">' + image(cap + "/upload/Home/precision-machining.jpg", "5-axis CNC machining", "lazy") + '</div><div class="tech-text"><h3>Precision Manufacturing &amp; Strict QC</h3><p>5-axis CNC and EDM achieve ±0.005mm tolerances. Every mould undergoes CMM inspection, trial runs, and leak tests with documented reports.</p><ul class="tech-list"><li>Moldflow simulation before manufacturing</li><li>100% CMM inspection per cavity</li></ul></div></div><div class="tech-grid tech-grid--second"><div class="tech-text"><h3>Premium Steel &amp; Modular Design</h3><p>ASSAB S136, NAK80, H13 steels with vacuum heat treatment (HRC 48–52). Modular inserts enable fast cavity expansion and quick product changeovers.</p><ul class="tech-list"><li>Full material traceability with mill certificates</li><li>Standard delivery in 30–45 days</li></ul></div><div class="tech-img">' + image(cap + "/upload/Home/steel-quality.jpg", "Premium mould steel", "lazy") + '</div></div></div></section>'
 

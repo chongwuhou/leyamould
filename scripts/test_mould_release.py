@@ -159,10 +159,10 @@ for page in (catalog_page, catalog_page_es):
     ]
     offsets = [page.index(section) for section in required_sections]
     assert offsets == sorted(offsets), offsets
-    labels = ('Core Advantages of LEYA MOULD', 'Plastic Cap Samples', 'Engineering Excellence Behind Every Mould', 'Your Cap Mould Journey', 'Common Questions', 'Client Feedback', 'Start Your Cap Mould Project') if page is catalog_page else ('Ventajas clave de LEYA MOULD', 'Muestras de tapas de plástico', 'Excelencia de ingeniería detrás de cada molde', 'Su recorrido de molde', 'Preguntas frecuentes', 'Opiniones de clientes', 'Empiece su proyecto de moldes')
+    labels = ('Core Advantages of LEYA MOULD', 'Bottle Cap Sample Gallery', 'Engineering Excellence Behind Every Mould', 'Your Cap Mould Journey', 'Common Questions', 'Client Feedback', 'Start Your Cap Mould Project') if page is catalog_page else ('Ventajas clave de LEYA MOULD', 'Galería de muestras de tapas', 'Excelencia de ingeniería detrás de cada molde', 'Su recorrido de molde', 'Preguntas frecuentes', 'Opiniones de clientes', 'Empiece su proyecto de moldes')
     for label in labels:
         assert label in page, label
-    assert page.count('class="sample-card"') >= 18
+    assert page.count('catalog-sample-item') >= 21
     assert page.count('class="video-card"') >= 5
 es_product = (DIST / "es" / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
 en_product = (DIST / CAP_PRODUCT_ROUTES[0].strip("/")).read_text(encoding="utf-8")
