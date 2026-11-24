@@ -465,8 +465,10 @@ CAP_MOULD_ORDER = [
 CAP_MOULD_SERIES = sorted(CATALOG["categories"], key=lambda item: CAP_MOULD_ORDER.index(item["slug"]))
 
 def header(locale: str, route: str) -> str:
-    # Keep the desktop navigation aligned with the reference: the Cap mold
-    # label opens the aggregate page, while the caret exposes all nine routes.
+    # Keep the desktop navigation aligned with the reference: the Cap Mould
+    # label opens the aggregate page, while the caret exposes every item in
+    # the canonical 13-family catalogue (the same source used by the footer
+    # and the product grid).
     product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "navTitle") or catalog_text(locale, item, "title"))) + '</a>' for item in CAP_MOULD_SERIES)
     nav = ['<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>']
     about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">About us</a><a href="' + localized_href(locale, "/faq/") + '">FAQs</a></div></div>'
@@ -594,7 +596,7 @@ def head(locale: str, title: str, description: str, route: str) -> str:
     structured_data = _json_ld(locale, title, description, route, canonical, image_url)
     # Bump the asset version whenever shared header/topbar CSS changes so live
     # browsers do not keep an older cached stylesheet during visual acceptance.
-    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v49")
+    base = render_template("head", TITLE=esc(title), DESCRIPTION=esc(description)[:240], ASSET_VERSION="mould-v50")
     if route.startswith("/product/"):
         base = base.replace('</head>', '<link rel="stylesheet" href="/assets/mould-category.css?v=mould-detail-7"></head>', 1)
     seo = ('<link rel="canonical" href="' + esc(canonical) + '">' + alternates +
@@ -660,6 +662,63 @@ def cap_series_card(locale: str, item: dict) -> str:
     description = catalog_text(locale, item, "description")
     meta = catalog_text(locale, item, "meta")
     return '<a class="cap-series-card" href="' + href + '"><div class="cap-series-card__image">' + image(item["image"], title + " reference image") + '</div><div class="cap-series-card__body"><h3>' + esc(title) + '</h3><p>' + esc(description) + '</p><div class="cap-series-card__meta"><span>' + esc(meta) + '</span><strong>' + esc(text(locale, "view")) + '</strong></div></div></a>'
+
+
+# One shared CTA component is used by the catalogue, sample, machine, About,
+# FAQ and every dedicated product page.  The copy varies by page purpose, but
+# the DOM, contact actions and accessibility labels stay identical so a CMS
+# edit cannot make one route drift away from the others.
+SHARED_CTA_COPY = {
+    "catalog": {
+        "en": ("Start Your Cap Mould Project", "Send your drawing, sample or production requirements. We will reply with the next technical questions and a clear path forward.", "Contact us for a quote and technical consultation — we will reply within 24 hours."),
+        "es": ("Empiece su proyecto de moldes", "Envíenos su dibujo, muestra o requisitos de producción. Responderemos con las siguientes preguntas técnicas y un camino claro.", "Contáctenos para una cotización y consulta técnica; responderemos en 24 horas."),
+    },
+    "samples": {
+        "en": ("Want to See More Samples or Request a Quote?", "Contact LEYA MOULD today. We will send you the right samples and a practical proposal for your project.", "Tell us about your mould"),
+        "es": ("¿Quiere ver más muestras o solicitar una cotización?", "Contacte hoy con LEYA MOULD. Le enviaremos las muestras adecuadas y una propuesta práctica para su proyecto.", "Cuéntenos sobre su molde"),
+    },
+    "auxiliary": {
+        "en": ("Need Auxiliary Equipment for Your Cap Line?", "Contact LEYA MOULD to discuss your cap size, production volume and the auxiliary operations you require. We will recommend a practical machine setup for your factory.", "Tell us about your line"),
+        "es": ("¿Necesita equipos auxiliares para su línea de tapas?", "Contacte con LEYA MOULD para hablar del tamaño de la tapa, el volumen de producción y las operaciones auxiliares que necesita. Le recomendaremos una configuración práctica.", "Cuéntenos sobre su línea"),
+    },
+    "about": {
+        "en": ("Let's Work Together", "Share your drawing, sample or production brief and we will help shape the next technical step.", "Chat with LEYA MOULD"),
+        "es": ("Trabajemos juntos", "Comparta su plano, muestra o requisitos de producción y le ayudaremos a definir el siguiente paso técnico.", "Hable con LEYA MOULD"),
+    },
+    "faq": {
+        "en": ("Still Have Questions?", "Our team is ready to help. Reach out and we'll respond within 24 hours.", "Ask about your project"),
+        "es": ("¿Todavía tiene preguntas?", "Nuestro equipo está listo para ayudarle. Escríbanos y responderemos en un plazo de 24 horas.", "Consulte su proyecto"),
+    },
+    "category": {
+        "en": ("Start Your Cap Mould Project", "Send us your drawing, sample, target material, cavity plan and delivery market. We will reply with the next technical questions.", "Tell us about your mould"),
+        "es": ("Inicie su proyecto de moldes", "Envíenos el plano, la muestra, el material, las cavidades y el mercado de destino. Responderemos con las siguientes preguntas técnicas.", "Cuéntenos sobre su molde"),
+    },
+}
+
+
+def shared_cta(locale: str, variant: str = "catalog", element_id: str = "", title_override: str = "", text_override: str = "") -> str:
+    """Render the canonical contact CTA used at the bottom of public pages."""
+    lang = "es" if locale == "es" else "en"
+    copy = SHARED_CTA_COPY.get(variant, SHARED_CTA_COPY["catalog"]).get(lang, SHARED_CTA_COPY["catalog"][lang])
+    title = title_override or copy[0]
+    description = text_override or copy[1]
+    id_attr = ' id="' + esc(element_id) + '"' if element_id else ""
+    quote_label = "Solicitar cotización" if lang == "es" else "Request a Quote"
+    phone_label = "Teléfono / WhatsApp" if lang == "es" else "Phone / WhatsApp"
+    email_label = "Correo electrónico" if lang == "es" else "Email"
+    whatsapp_label = "WhatsApp"
+    return (
+        '<section' + id_attr + ' class="mould-shared-cta mould-shared-cta--' + esc(variant) + '">'
+        '<div class="mould-shared-cta__inner">'
+        '<div class="mould-shared-cta__copy"><span class="mould-shared-cta__eyebrow">LEYA MOULD · ' + ("INGENIERÍA · SOPORTE" if lang == "es" else "ENGINEERING · SUPPORT") + '</span>'
+        '<h2><span aria-hidden="true">✦</span> ' + esc(title) + '</h2><p>' + esc(description) + '</p></div>'
+        '<div class="mould-shared-cta__actions">'
+        '<a class="mould-shared-cta__item mould-shared-cta__item--phone" href="tel:+8613606727715"><span class="mould-shared-cta__icon" aria-hidden="true">☎</span><span><strong>' + phone_label + '</strong><small>+86 136 0672 7715</small></span></a>'
+        '<a class="mould-shared-cta__item" href="mailto:' + esc(EMAIL) + '"><span class="mould-shared-cta__icon" aria-hidden="true">✉</span><span><strong>' + email_label + '</strong><small>' + esc(EMAIL) + '</small></span></a>'
+        '<a class="mould-shared-cta__item mould-shared-cta__item--whatsapp" href="' + esc(WA_URL) + '" target="_blank" rel="noopener"><span class="mould-shared-cta__icon" aria-hidden="true">↗</span><span><strong>' + whatsapp_label + '</strong><small>' + esc(copy[2]) + '</small></span></a>'
+        '<a class="mould-shared-cta__button" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(quote_label) + ' <span aria-hidden="true">→</span></a>'
+        '</div></div></section>'
+    )
 
 def home(locale: str) -> str:
     cap = "https://www.cap-molds.com"
@@ -802,9 +861,7 @@ def catalog_support_sections(locale: str) -> str:
     testimonials = '<div id="catalog-testimonials" class="testimonials"><h3><span class="testimonial-star">★</span> ' + esc(testimonial_title) + '</h3><article class="testimonial-card"><div class="quote">"LEYA MOULD delivered our high-cavity water cap mould ahead of schedule. The precision and cycle time exceeded expectations."</div><div class="author">Production Head · India</div><div class="company">International Beverage Producer</div></article><article class="testimonial-card"><div class="quote">"The flip-top moulds run flawlessly on our injection lines. Excellent after-sales support."</div><div class="author">Technical Manager · Brazil</div><div class="company">Personal Care Packaging Group</div></article><article class="testimonial-card"><div class="quote">"The cooling design helped us increase output while keeping cap quality stable."</div><div class="author">Plant Director · Germany</div><div class="company">Industrial Packaging Company</div></article></div>'
     faq = '<section id="catalog-faq" class="faq-section"><div class="shell"><div class="faq-grid"><div class="faq-list"><h3 id="faq-heading"><span class="faq-star">?</span> ' + esc(faq_title) + '</h3>' + faq_rows + '</div>' + testimonials + '</div></div></section>'
 
-    cta_title = "Empiece su proyecto de moldes" if es else "Start Your Cap Mould Project"
-    cta_desc = "Envíenos su dibujo, muestra o requisitos de producción. Responderemos con las siguientes preguntas técnicas y un camino claro." if es else "Send your drawing, sample or production requirements. We will reply with the next technical questions and a clear path forward."
-    contact = '<section id="catalog-contact" class="cta-section"><div class="shell"><div class="cta-box"><h2><span class="cta-star">✦</span> ' + esc(cta_title) + '</h2><p>' + esc("Contact us for a quote and technical consultation — we will reply within 24 hours" if not es else "Contáctenos para una cotización y consulta técnica; responderemos en 24 horas.") + '</p><div class="cta-contact-row"><a href="tel:+8613606727715" class="cta-contact-item phone-link">☎ <span>+86 136 0672 7715</span></a><a href="mailto:' + EMAIL + '" class="cta-contact-item">✉ <span>' + EMAIL + '</span></a><a href="' + WA_URL + '" class="cta-contact-item whatsapp-link">◉ <span>WhatsApp</span></a></div></div></div></section>'
+    contact = shared_cta(locale, "catalog", element_id="catalog-contact")
 
     # Order follows the reference page: products → advantages → samples →
     # trials → technology → quality → workflow → FAQ → testimonials → CTA.
@@ -819,7 +876,7 @@ def products_page(locale: str) -> str:
     return hero + crumb + products + catalog_support_sections(locale)
 
 def cap_product_page(locale: str, item: dict) -> str:
-    helpers = {"esc": esc, "image": image, "localized_href": localized_href}
+    helpers = {"esc": esc, "image": image, "localized_href": localized_href, "shared_cta": shared_cta}
     return render_category_page(locale, item, helpers)
 
 def about_page(locale: str) -> str:
@@ -892,7 +949,7 @@ def about_page(locale: str) -> str:
     equipment_html = '<section class="mould-about-block"><h2>' + esc(facility) + '</h2><p>Our manufacturing references use modern machining, inspection and trial equipment so every tooling decision can be checked against the production brief.</p><ul class="mould-about-equipment">' + ''.join('<li><span>✓</span>' + esc(item) + '</li>' for item in equipment) + '</ul></section>'
     cert_html = '<section class="mould-about-block"><h2>' + esc(certs) + '</h2><p>Quality evidence is kept with the project and reviewed before shipment. The final documentation follows the confirmed buyer requirements.</p><div class="mould-about-certifications">' + ''.join('<span>' + esc(item) + '</span>' for item in certifications) + '</div></section>'
     facilities_html = '<section class="mould-about-block"><h2>' + esc(production) + '</h2><p>LEYA MOULD production references show the engineering, inspection and sample-review work behind each tooling project.</p><div class="mould-about-facilities">' + ''.join('<figure><img src="' + esc(file_name) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async"></figure>' for file_name, alt in facility_images) + '</div></section>'
-    contact_html = '<section class="mould-about-contact"><h2>' + esc(together) + '</h2><p>' + esc(together_text) + '</p><div class="mould-about-contact-cards"><a href="tel:+8613606727715"><span class="icon">☎</span><span><strong>Phone / WhatsApp</strong><small>+86 136 0672 7715</small></span></a><a href="mailto:' + EMAIL + '"><span class="icon">✉</span><span><strong>Email</strong><small>' + EMAIL + '</small></span></a><a href="' + WA_URL + '" target="_blank" rel="noopener"><span class="icon">↗</span><span><strong>WhatsApp</strong><small>Chat with LEYA MOULD</small></span></a></div></section>'
+    contact_html = shared_cta(locale, "about", title_override=together, text_override=together_text)
     return '<div class="mould-about-page">' + intro_body + overview + journey_html + advantages_html + equipment_html + cert_html + facilities_html + contact_html + '</div>'
 
 def capabilities_page(locale: str) -> str:
@@ -914,13 +971,7 @@ def capabilities_page(locale: str) -> str:
         '<a href="' + localized_href(locale, "/contact/?model=" + item["model"] + "#inquiry") + '" class="machine-link">Learn More <span aria-hidden="true">→</span></a></div></article>'
         for item in AUXILIARY_MACHINES
     )
-    contact = (
-        '<section class="contact-section"><h2>Need Auxiliary Equipment for Your Cap Line?</h2>'
-        '<p class="section-subtitle">Contact LEYA MOULD to discuss your cap size, production volume and the auxiliary operations you require. We will recommend a practical machine setup for your factory.</p>'
-        '<div class="contact-cards"><a href="tel:+8613606727715" class="contact-card"><span class="icon-circle">☎</span><div class="info"><span class="label">Phone</span><span class="value">+86 136 0672 7715</span></div></a>'
-        '<a href="mailto:amyhu@leyamould.com" class="contact-card"><span class="icon-circle">✉</span><div class="info"><span class="label">Email</span><span class="value">amyhu@leyamould.com</span></div></a>'
-        '<a href="' + localized_href(locale, "/contact/#inquiry") + '" class="contact-card"><span class="icon-circle whatsapp">↗</span><div class="info"><span class="label">Project Enquiry</span><span class="value">Tell us about your line</span></div></a></div></section>'
-    )
+    contact = shared_cta(locale, "auxiliary")
     body = intro(locale, title, subtitle, "/capabilities/")
     body += '<section class="aux-page"><section class="intro-section"><div class="intro-image"><img src="' + intro_image + '" alt="Various plastic bottle caps produced by LEYA MOULD" loading="lazy" decoding="async"></div><div class="intro-content"><h2>Why Cap Auxiliary Machines Are Essential</h2>' + intro_copy + '</div></section><div class="machine-grid">' + machine_cards + '</div>' + contact + '</section>'
     return body
@@ -1016,7 +1067,7 @@ def faq_page(locale: str) -> str:
     mail_svg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"></path></svg>'
     chat_svg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.2a8.4 8.4 0 0 1-12.4 7.4L4 20l1.4-4A8.4 8.4 0 1 1 20.5 11.2Z"></path></svg>'
     contact_cards = ''.join('<a class="contact-card" href="' + href + '"><span class="icon-circle' + (' whatsapp' if index == 2 else (' wechat' if index == 3 else '')) + '">' + icon + '</span><div class="info"><span class="label">' + esc(label) + '</span><span class="value">' + esc(value) + '</span></div></a>' for index, (label, value, href, icon) in enumerate(((labels[0], values[0], "tel:+8613606727715", phone_svg), (labels[1], values[1], "mailto:" + EMAIL, mail_svg), (labels[2], values[2], WA_URL, chat_svg), (labels[3], values[3], localized_href(locale, "/contact/"), chat_svg))))
-    contact_html = '<section class="faq-contact-section"><h2>' + esc(contact_title) + '</h2><p class="section-subtitle">' + esc(contact_text) + '</p><div class="contact-cards">' + contact_cards + '</div></section>'
+    contact_html = shared_cta(locale, "faq", title_override=contact_title, text_override=contact_text)
     script = '<script>(()=>{const root=document.querySelector("[data-faq-page]");if(!root)return;const items=[...root.querySelectorAll(".faq-item")];items.forEach(item=>{const button=item.querySelector(".faq-question");button.addEventListener("click",()=>{const active=item.classList.contains("active");items.forEach(other=>{other.classList.remove("active");const b=other.querySelector(".faq-question");if(b)b.setAttribute("aria-expanded","false")});if(!active){item.classList.add("active");button.setAttribute("aria-expanded","true")}})});})();</script>'
     return '<div class="faq-route">' + prefix + '<div class="faq-page" data-faq-page>' + header_html + ''.join(groups_html) + contact_html + '</div>' + script + '</div>'
 
@@ -1035,15 +1086,7 @@ def samples_page(locale: str) -> str:
             '<div class="sample-mold">🛠️ ' + esc(item["mold"]) + '</div>'
             '<div class="sample-applications"><h4>Applications</h4><ul>' + applications + '</ul></div></div></article>'
         )
-    contact = (
-        '<section class="samples-contact-section"><h2>Want to See More Samples or Request a Quote?</h2>'
-        '<p class="section-subtitle">Contact LEYA MOULD today. We will send you the right samples and a practical proposal for your project.</p>'
-        '<div class="sample-contact-cards">'
-        '<a class="sample-contact-card" href="tel:+8613606727715"><span class="sample-contact-icon">☎</span><span><strong>Phone / WhatsApp</strong><small>+86 136 0672 7715</small></span></a>'
-        '<a class="sample-contact-card" href="mailto:amyhu@leyamould.com"><span class="sample-contact-icon">✉</span><span><strong>Email</strong><small>amyhu@leyamould.com</small></span></a>'
-        '<a class="sample-contact-card sample-contact-card--accent" href="' + localized_href(locale, "/contact/#inquiry") + '"><span class="sample-contact-icon">↗</span><span><strong>Request a Quote</strong><small>Tell us about your mould</small></span></a>'
-        '</div></section>'
-    )
+    contact = shared_cta(locale, "samples")
     return intro(locale, title, subtitle, "/samples/") + '<section class="samples-page"><div class="sample-list">' + ''.join(cards) + '</div>' + contact + '</section>'
 
 VIDEO_SEED = [

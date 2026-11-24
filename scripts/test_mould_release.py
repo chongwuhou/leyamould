@@ -141,6 +141,39 @@ for route in CAP_PRODUCT_ROUTES:
     assert html.count("mould-advantage-card") == 6
     assert "mould-samples-grid" in html and "mould-quality-list" in html
     assert "HIGH-RESOLUTION IMAGES / PDF" not in html
+    assert html.count('class="mould-shared-cta mould-shared-cta--category"') == 1
+    assert "Start Your Cap Mould Project" in html
+
+# Every page-level contact panel is rendered through the same shared CTA
+# module.  Only the localized copy/variant changes by route.
+shared_cta_routes = {
+    "/Plastic-cap-mold.html": "catalog",
+    "/about/": "about",
+    "/capabilities/": "auxiliary",
+    "/faq/": "faq",
+    "/samples/": "samples",
+}
+for locale in LOCALES:
+    prefix = "" if locale == "en" else locale
+    for route, variant in shared_cta_routes.items():
+        path = DIST / prefix / (Path(route.strip("/")) / "index.html" if route.endswith("/") else Path(route.strip("/")))
+        html = path.read_text(encoding="utf-8")
+        assert html.count('class="mould-shared-cta mould-shared-cta--' + variant + '"') == 1, (locale, route, variant)
+        assert 'class="mould-shared-cta__actions"' in html
+        assert 'href="mailto:amyhu@leyamould.com"' in html
+        assert 'href="https://wa.me/8613606727715"' in html
+
+# The CAP MOULD menu is generated from the same canonical 13-item catalogue
+# as the aggregate/product pages, in both locales.
+for locale in LOCALES:
+    prefix = "" if locale == "en" else locale
+    path = DIST / prefix / "index.html"
+    html = path.read_text(encoding="utf-8")
+    assert html.count('id="menu-products"') == 1
+    assert html.count('class="nav__drop nav__drop--products"') == 1
+    assert html.count('class="mini-menu"') >= 3
+    for route in CAP_PRODUCT_ROUTES:
+        assert html.count(route) >= 2, (locale, route)
 catalog_page = (DIST / "Plastic-cap-mold.html").read_text(encoding="utf-8")
 catalog_page_es = (DIST / "es" / "Plastic-cap-mold.html").read_text(encoding="utf-8")
 for page in (catalog_page, catalog_page_es):
