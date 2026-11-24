@@ -22,7 +22,7 @@ assert replace.count("bumpPublishRevision(c.env.LEYA_DB)") >= 2
 assert "LEYA_DB missing; media revision cannot be recorded" in replace
 
 snapshot = source("functions/api/build-snapshot.js")
-assert "site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy')" in snapshot
+assert "site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy','page_copy')" in snapshot
 assert "FROM submissions" not in snapshot
 assert "MOULD_ROUTES.has" in snapshot and "MOULD_MODELS.has" in snapshot
 
