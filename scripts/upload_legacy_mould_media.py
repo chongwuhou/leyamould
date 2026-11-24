@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import urllib.request
+from urllib.parse import quote, urlsplit, urlunsplit
 from pathlib import Path
 
 from PIL import Image, ImageOps
@@ -33,7 +34,9 @@ def main() -> None:
             target = str(item["target"])
             filename = target.rsplit("/", 1)[-1]
             local = temp_path / filename
-            request = urllib.request.Request(source, headers={"User-Agent": "LEYA-MOULD-R2-MIGRATION/1.0"})
+            parts = urlsplit(source)
+            safe_source = urlunsplit((parts.scheme, parts.netloc, quote(parts.path, safe="/%:@"), quote(parts.query, safe="=&%:@,;+/"), parts.fragment))
+            request = urllib.request.Request(safe_source, headers={"User-Agent": "LEYA-MOULD-R2-MIGRATION/1.0"})
             try:
                 with urllib.request.urlopen(request, timeout=45) as response:
                     raw = response.read()
