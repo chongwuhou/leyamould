@@ -107,6 +107,8 @@ for locale in LOCALES:
 
 home = (DIST / "index.html").read_text(encoding="utf-8")
 assert home.count("/product/") >= len(CAP_PRODUCT_ROUTES)
+assert home.count('class="cap-series-card"') == 12
+assert home.count('class="process-step"') == 5
 for route in CAP_PRODUCT_ROUTES:
     assert route in home
 assert "/collections/" not in home
