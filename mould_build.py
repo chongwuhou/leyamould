@@ -95,6 +95,31 @@ def structured_page_copy(locale: str, route: str) -> dict:
 def structured_page_value(locale: str, route: str, key: str, fallback: str = "") -> str:
     value = structured_page_copy(locale, route).get(key)
     return str(value).strip() if isinstance(value, str) and value.strip() else fallback
+
+def structured_section(locale: str, route: str, section_id: str, fallback_title: str = "", fallback_body: str = "", fallback_eyebrow: str = "") -> dict:
+    """Read one small, text-only section override from D1.
+
+    Older About rows use an object keyed by section id while newer editors use
+    an array of ``{id,title,body,eyebrow}`` rows.  Accept both shapes so the
+    public templates remain backwards compatible without storing HTML/CSS in
+    the CMS.
+    """
+    raw = structured_page_copy(locale, route).get("sections")
+    row = {}
+    if isinstance(raw, dict):
+        candidate = raw.get(section_id)
+        row = candidate if isinstance(candidate, dict) else {}
+    elif isinstance(raw, list):
+        for candidate in raw:
+            if isinstance(candidate, dict) and str(candidate.get("id") or "").strip() == section_id:
+                row = candidate
+                break
+    return {
+        "eyebrow": str(row.get("eyebrow") or fallback_eyebrow).strip(),
+        "title": str(row.get("title") or fallback_title).strip(),
+        "body": str(row.get("body") or fallback_body).strip(),
+        "bullets": [str(item).strip() for item in row.get("bullets", []) if str(item).strip()][:8] if isinstance(row.get("bullets"), list) else [],
+    }
 def _normalise_page_row(row: dict) -> dict:
     """Accept the D1 snapshot's snake_case fields and the admin API's camelCase.
 
@@ -809,6 +834,23 @@ def shared_cta(locale: str, variant: str = "catalog", element_id: str = "", titl
         '</div></div></section>'
     )
 
+def _review_rows(locale: str) -> list[dict]:
+    """Return only explicitly published D1 reviews with real text."""
+    rows = []
+    for raw in STATE.get("productReviews", []):
+        if not isinstance(raw, dict) or str(raw.get("status") or "").lower() != "published":
+            continue
+        content = raw.get("content") if isinstance(raw.get("content"), dict) else raw
+        quote = str(content.get("quote") or content.get("content") or "").strip()
+        author = str(content.get("author") or "").strip()
+        if not quote or not author:
+            continue
+        if locale == "es":
+            quote = str(content.get("quoteEs") or content.get("contentEs") or quote).strip()
+            author = str(content.get("authorEs") or author).strip()
+        rows.append({"quote": quote, "author": author, "company": str(content.get("company") or "").strip()})
+    return rows[:12]
+
 def home(locale: str) -> str:
     cap = "https://www.cap-molds.com"
     managed_banners = effective_banners(locale)
@@ -828,46 +870,46 @@ def home(locale: str) -> str:
         managed_json = json.dumps(managed_banners, ensure_ascii=False).replace("</", "<\\/")
         hero += '<script type="application/json" id="xuyi-home-banners">' + managed_json + '</script>'
     advantages = ''.join('<article class="advantage-card"><span class="advantage-card__number">0' + str(i + 1) + '</span><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for i, (title, desc) in enumerate(data(locale, "advantages")))
-    advantages_section = '<section class="section section--advantages"><div class="shell">' + section_heading(locale, "WHY CHOOSE US", "Core Advantages of LEYA MOULD", "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control.") + '<div class="advantage-grid">' + advantages + '</div></div></section>'
+    adv = structured_section(locale, "/", "advantages", "Core Advantages of LEYA MOULD", "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control.", "WHY CHOOSE US")
+    advantages_section = '<section class="section section--advantages"><div class="shell">' + section_heading(locale, adv["eyebrow"], adv["title"], adv["body"]) + '<div class="advantage-grid">' + advantages + '</div></div></section>'
     # The homepage keeps the product-family showcase focused on the first
     # twelve families. The full catalogue and navigation continue to expose
     # every approved family, including the remaining bottle-tooling route.
     home_series = CAP_MOULD_SERIES[:12]
     catalog_count = len(home_series)
-    cap_products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Mould Product Families", "Explore " + str(catalog_count) + " specialized mould product families engineered for high-volume production, dimensional accuracy and long service life.") + '<div class="cap-series-grid">' + ''.join(cap_series_card(locale, item) for item in home_series) + '</div></div></section>'
+    products_copy = structured_section(locale, "/", "products", "Mould Product Families", "Explore " + str(catalog_count) + " specialized mould product families engineered for high-volume production, dimensional accuracy and long service life.", "OUR PRODUCTS")
+    cap_products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, products_copy["eyebrow"], products_copy["title"], products_copy["body"]) + '<div class="cap-series-grid">' + ''.join(cap_series_card(locale, item) for item in home_series) + '</div></div></section>'
     sample_cards = ''.join('<a class="sample-card" href="' + localized_href(locale, "/samples/") + '"><img src="' + cap + '/images/samples/' + s + '.jpg" alt="' + esc(s.replace("-", " ").title() + " reference sample") + '" loading="lazy" decoding="async"><span>' + esc(s.replace("-", " ").title()) + '</span></a>' for s in samples)
-    samples_section = '<section class="section samples-section"><div class="shell">' + section_heading(locale, "SAMPLES GALLERY", "Plastic Cap Samples", "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection.") + '<div class="samples-track-wrap"><button class="samples-scroll samples-scroll--prev" type="button" data-samples-scroll="-1" aria-label="Previous samples">‹</button><div class="samples-track" data-samples-track>' + sample_cards + '</div><button class="samples-scroll samples-scroll--next" type="button" data-samples-scroll="1" aria-label="Next samples">›</button></div><div class="section__more"><a class="text-link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + ' →</a></div></div></section>'
-    technology = '<section class="section technology-section"><div class="shell"><div class="section__head tech-section-head"><div><span class="eyebrow">OUR TECHNOLOGY</span><h2 class="section__title">Engineering Excellence Behind Every Mould</h2><div class="section-line"></div></div></div><div class="tech-grid"><div class="tech-img">' + image(cap + "/upload/Home/precision-machining.jpg", "5-axis CNC machining", "lazy") + '</div><div class="tech-text"><h3>Precision Manufacturing &amp; Strict QC</h3><p>5-axis CNC and EDM achieve ±0.005mm tolerances. Every mould undergoes CMM inspection, trial runs, and leak tests with documented reports.</p><ul class="tech-list"><li>Moldflow simulation before manufacturing</li><li>100% CMM inspection per cavity</li></ul></div></div><div class="tech-grid tech-grid--second"><div class="tech-text"><h3>Premium Steel &amp; Modular Design</h3><p>ASSAB S136, NAK80, H13 steels with vacuum heat treatment (HRC 48–52). Modular inserts enable fast cavity expansion and quick product changeovers.</p><ul class="tech-list"><li>Full material traceability with mill certificates</li><li>Standard delivery in 30–45 days</li></ul></div><div class="tech-img">' + image(cap + "/upload/Home/steel-quality.jpg", "Premium mould steel", "lazy") + '</div></div></div></section>'
+    samples_copy = structured_section(locale, "/", "samples", "Plastic Cap Samples", "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection.", "SAMPLES GALLERY")
+    samples_section = '<section class="section samples-section"><div class="shell">' + section_heading(locale, samples_copy["eyebrow"], samples_copy["title"], samples_copy["body"]) + '<div class="samples-track-wrap"><button class="samples-scroll samples-scroll--prev" type="button" data-samples-scroll="-1" aria-label="Previous samples">‹</button><div class="samples-track" data-samples-track>' + sample_cards + '</div><button class="samples-scroll samples-scroll--next" type="button" data-samples-scroll="1" aria-label="Next samples">›</button></div><div class="section__more"><a class="text-link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + ' →</a></div></div></section>'
+    tech = structured_section(locale, "/", "technology", "Engineering Excellence Behind Every Mould", "Precision manufacturing, premium steel and documented controls for repeatable production.", "OUR TECHNOLOGY")
+    technology = '<section class="section technology-section"><div class="shell"><div class="section__head tech-section-head"><div><span class="eyebrow">' + esc(tech["eyebrow"]) + '</span><h2 class="section__title">' + esc(tech["title"]) + '</h2><p class="copy-muted">' + esc(tech["body"]) + '</p><div class="section-line"></div></div></div><div class="tech-grid"><div class="tech-img">' + image(cap + "/upload/Home/precision-machining.jpg", "Precision machining", "lazy") + '</div><div class="tech-text"><h3>Precision Manufacturing &amp; Strict QC</h3><p>Machining, EDM, inspection and trial evidence are reviewed against the approved tooling brief.</p><ul class="tech-list"><li>Process review before manufacturing</li><li>Documented inspection per approved scope</li></ul></div></div><div class="tech-grid tech-grid--second"><div class="tech-text"><h3>Material &amp; Modular Design</h3><p>Steel selection, heat treatment and modular inserts are matched to the part, machine and changeover requirements confirmed for the project.</p><ul class="tech-list"><li>Material traceability where included in the project brief</li><li>Delivery timing confirmed against the approved schedule</li></ul></div><div class="tech-img">' + image(cap + "/upload/Home/steel-quality.jpg", "Mould steel", "lazy") + '</div></div></div></section>'
     steps = ''.join('<article class="process-step"><div class="step-num">' + esc(num.lstrip("0") or "0") + '</div><h4>' + esc(title) + '</h4><p>' + esc(desc.replace(" →", "")) + '</p></article>' for num, title, desc in data(locale, "process_steps"))
-    process = '<section class="section workflow-section"><div class="shell">' + section_heading(locale, "HOW WE WORK", "Your Cap Mould Journey", "From your first drawing to delivery and technical support.") + '<div class="steps">' + steps + '</div></div></section>'
+    process_copy = structured_section(locale, "/", "process", "Your Cap Mould Journey", "From your first drawing to delivery and technical support.", "HOW WE WORK")
+    process = '<section class="section workflow-section"><div class="shell">' + section_heading(locale, process_copy["eyebrow"], process_copy["title"], process_copy["body"]) + '<div class="steps">' + steps + '</div></div></section>'
     # Keep the homepage testimonial module in the same compact three-card
     # carousel rhythm as the reference site. Nine reviews are available in
     # three slides instead of making the section into a tall nine-card stack.
-    testimonial_rows = [
-        ("in", "India", "LEYA MOULD's water cap mould has been running over 3 million shots with zero defects.", "El molde de tapones de agua de LEYA MOULD lleva más de 3 millones de ciclos sin defectos.", "Production Head · India", "Responsable de producción · India"),
-        ("br", "Brazil", "The flip-top cap mould exceeds our hinge life expectations. 200k+ cycles still perfect.", "El molde de tapón flip-top supera nuestras expectativas de vida de bisagra. Más de 200.000 ciclos perfectos.", "Technical Manager · Brazil", "Director técnico · Brasil"),
-        ("de", "Germany", "From DFM to delivery, consistent quality and on-time support. Our go-to cap mould partner.", "Desde el DFM hasta la entrega, calidad constante y soporte puntual. Nuestro socio de confianza.", "Plant Director · Germany", "Director de planta · Alemania"),
-        ("us", "USA", "Their medical cap mould passed FDA validation effortlessly. IQ/OQ/PQ documents were comprehensive.", "Su molde de tapones médicos superó la validación FDA sin problemas y con documentación IQ/OQ/PQ completa.", "Quality Director · USA", "Director de calidad · EE. UU."),
-        ("it", "Italy", "We produce 2 million sauce caps daily. LEYA MOULD's moulds are maintenance-minimal.", "Producimos 2 millones de tapones para salsas al día. Los moldes requieren un mantenimiento mínimo.", "Operations Director · Italy", "Director de operaciones · Italia"),
-        ("mx", "Mexico", "The customized tamper-evident design matched our brand perfectly. DFM analysis was thorough.", "El diseño personalizado con precinto de seguridad encajó perfectamente con nuestra marca. El DFM fue exhaustivo.", "Engineering Manager · Mexico", "Responsable de ingeniería · México"),
-        ("es", "Spain", "The engine oil cap mould has been running 2 million cycles without a single leak.", "El molde de tapones para aceite de motor lleva 2 millones de ciclos sin una sola fuga.", "Production Director · Spain", "Director de producción · España"),
-        ("tr", "Turkey", "The 72-cavity olive oil cap mould produces perfect caps at 5.2-second cycles.", "El molde de tapones para aceite de oliva de 72 cavidades produce piezas perfectas en ciclos de 5,2 segundos.", "QA Manager · Turkey", "Responsable de calidad · Turquía"),
-        ("ph", "Philippines", "The handle mould for jerry cans is robust. Over 2 million cycles, zero defects.", "El molde de asas para garrafas es muy robusto. Más de 2 millones de ciclos sin defectos.", "Plant Supervisor · Philippines", "Supervisor de planta · Filipinas"),
-    ]
+    testimonial_rows = _review_rows(locale)
     testimonial_slides = []
     for slide_index in range(0, len(testimonial_rows), 3):
         cards = []
-        for flag, country, quote_en, quote_es, author_en, author_es in testimonial_rows[slide_index:slide_index + 3]:
-            quote = quote_es if locale == "es" else quote_en
-            author = author_es if locale == "es" else author_en
-            cards.append('<article class="testimonial-card"><p class="quote">&quot;' + esc(quote) + '&quot;</p><div class="author"><img src="https://flagcdn.com/w20/' + flag + '.png" alt="' + esc(country) + '"><span>' + esc(author) + '</span></div></article>')
+        for review in testimonial_rows[slide_index:slide_index + 3]:
+            company = (' · ' + review["company"]) if review.get("company") else ''
+            cards.append('<article class="testimonial-card"><p class="quote">&quot;' + esc(review["quote"]) + '&quot;</p><div class="author"><span>' + esc(review["author"] + company) + '</span></div></article>')
         active = " is-active" if slide_index == 0 else ""
         testimonial_slides.append('<div class="testimonial-slide' + active + '"><div class="testimonial-grid">' + ''.join(cards) + '</div></div>')
     testimonial_dots = ''.join('<button class="tdot' + (" active" if i == 0 else "") + '" type="button" data-testimonial-go="' + str(i) + '" aria-label="Go to review group ' + str(i + 1) + '" aria-pressed="' + ("true" if i == 0 else "false") + '"></button>' for i in range(len(testimonial_slides)))
     testimonial_script = '<script>(()=>{const root=document.querySelector("[data-testimonial-carousel]");if(!root)return;const track=root.querySelector(".testimonial-track"),dots=[...root.querySelectorAll("[data-testimonial-go]")];let index=0,timer;const go=i=>{index=(i+dots.length)%dots.length;track.style.transform="translateX(-"+(index*100)+"%)";dots.forEach((dot,n)=>{dot.classList.toggle("active",n===index);dot.setAttribute("aria-pressed",n===index?"true":"false")})};const start=()=>{clearInterval(timer);timer=setInterval(()=>go(index+1),6500)};dots.forEach((dot,n)=>dot.addEventListener("click",()=>{go(n);start()}));root.addEventListener("mouseenter",()=>clearInterval(timer));root.addEventListener("mouseleave",start);root.addEventListener("focusin",()=>clearInterval(timer));root.addEventListener("focusout",start);go(0);start()})();</script>'
-    testimonials = '<section class="section testimonial-section"><div class="shell">' + section_heading(locale, "TESTIMONIALS", "Trusted by Packaging Leaders Worldwide", "Hear what our global customers say about the quality, precision, and reliability of LEYA MOULD cap moulds.") + '<div class="testimonial-carousel" data-testimonial-carousel aria-label="Customer testimonials"><div class="testimonial-track">' + ''.join(testimonial_slides) + '</div><div class="testimonial-dots">' + testimonial_dots + '</div></div></div></section>' + testimonial_script
-    references = '<section class="section reference-section"><div class="shell">' + section_heading(locale, "ENGINEERING REFERENCE", "Built for repeatable production decisions.", "Mould structure, steel selection, inspection evidence and trial feedback stay connected through the project.") + '<div class="reference-grid"><article><span>01</span><h3>Precision manufacturing</h3><p>Machining, EDM, fitting and assembly follow the approved tooling brief.</p></article><article><span>02</span><h3>Premium steel & modular design</h3><p>Material traceability and modular inserts keep future changes practical.</p></article><article><span>03</span><h3>Trial & inspection</h3><p>Sample results, dimensional checks and agreed revisions guide handover.</p></article></div></div></section>'
-    resources = '<section class="section section--soft resource-section"><div class="shell">' + section_heading(locale, "NEWS & INSIGHTS", "Latest from LEYA MOULD", "Project notes, tooling updates and practical engineering guidance.") + '<div class="resource-grid"><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">NEWS</span><h3>Cap mould project notes</h3><p>Follow new category material, sample references and production lessons.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">ENGINEERING</span><h3>Lightweight closure design</h3><p>Review the design questions that influence sealing, cooling and cycle goals.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">QUALITY</span><h3>Inspection evidence</h3><p>Keep dimensions, trial results and approved revisions connected.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/faq/") + '"><span class="eyebrow">FAQ</span><h3>Prepare a useful tooling enquiry</h3><p>See the drawing, resin, machine and sample information that helps a quotation move faster.</p><span class="text-link">View FAQs →</span></a><a class="resource-card" href="' + localized_href(locale, "/video/") + '"><span class="eyebrow">VIDEO</span><h3>Mould trial and review</h3><p>Use the video area for future machine, trial and inspection media.</p><span class="text-link">View video →</span></a><a class="resource-card" href="' + localized_href(locale, "/contact/#inquiry") + '"><span class="eyebrow">CONTACT</span><h3>Send your project brief</h3><p>Tell LEYA MOULD what you are making and where the tooling must run.</p><span class="text-link">Start a conversation →</span></a></div></div></section>'
+    testimonial_copy = structured_section(locale, "/", "testimonials", "Trusted by Packaging Leaders Worldwide", "Reviewed customer feedback will appear here after source and publication review.", "TESTIMONIALS")
+    if testimonial_rows:
+        testimonials = '<section class="section testimonial-section"><div class="shell">' + section_heading(locale, testimonial_copy["eyebrow"], testimonial_copy["title"], testimonial_copy["body"]) + '<div class="testimonial-carousel" data-testimonial-carousel aria-label="Customer testimonials"><div class="testimonial-track">' + ''.join(testimonial_slides) + '</div><div class="testimonial-dots">' + testimonial_dots + '</div></div></div></section>' + testimonial_script
+    else:
+        testimonials = '<section class="section testimonial-section testimonial-section--empty"><div class="shell">' + section_heading(locale, testimonial_copy["eyebrow"], testimonial_copy["title"], testimonial_copy["body"]) + '</div></section>'
+    ref_copy = structured_section(locale, "/", "references", "Built for repeatable production decisions.", "Mould structure, steel selection, inspection evidence and trial feedback stay connected through the project.", "ENGINEERING REFERENCE")
+    references = '<section class="section reference-section"><div class="shell">' + section_heading(locale, ref_copy["eyebrow"], ref_copy["title"], ref_copy["body"]) + '<div class="reference-grid"><article><span>01</span><h3>Precision manufacturing</h3><p>Machining, EDM, fitting and assembly follow the approved tooling brief.</p></article><article><span>02</span><h3>Material & modular design</h3><p>Material traceability and modular inserts keep future changes practical.</p></article><article><span>03</span><h3>Trial & inspection</h3><p>Sample results, dimensional checks and agreed revisions guide handover.</p></article></div></div></section>'
+    res_copy = structured_section(locale, "/", "resources", "Latest from LEYA MOULD", "Project notes, tooling updates and practical engineering guidance.", "NEWS & INSIGHTS")
+    resources = '<section class="section section--soft resource-section"><div class="shell">' + section_heading(locale, res_copy["eyebrow"], res_copy["title"], res_copy["body"]) + '<div class="resource-grid"><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">NEWS</span><h3>Cap mould project notes</h3><p>Follow new category material, sample references and production lessons.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">ENGINEERING</span><h3>Lightweight closure design</h3><p>Review the design questions that influence sealing, cooling and cycle goals.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/news/") + '"><span class="eyebrow">QUALITY</span><h3>Inspection evidence</h3><p>Keep dimensions, trial results and approved revisions connected.</p><span class="text-link">Read updates →</span></a><a class="resource-card" href="' + localized_href(locale, "/faq/") + '"><span class="eyebrow">FAQ</span><h3>Prepare a useful tooling enquiry</h3><p>See the drawing, resin, machine and sample information that helps a quotation move faster.</p><span class="text-link">View FAQs →</span></a><a class="resource-card" href="' + localized_href(locale, "/video/") + '"><span class="eyebrow">VIDEO</span><h3>Mould trial and review</h3><p>Use the video area for future machine, trial and inspection media.</p><span class="text-link">View video →</span></a><a class="resource-card" href="' + localized_href(locale, "/contact/#inquiry") + '"><span class="eyebrow">CONTACT</span><h3>Send your project brief</h3><p>Tell LEYA MOULD what you are making and where the tooling must run.</p><span class="text-link">Start a conversation →</span></a></div></div></section>'
     return hero + advantages_section + cap_products + samples_section + technology + testimonials + process + resources
 
 def catalog_support_sections(locale: str) -> str:
@@ -1058,7 +1100,10 @@ def about_page(locale: str) -> str:
         ("Lifetime Support", "Approved drawings, inspection records and technical notes make future support easier.", '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path>')
     ]
     equipment = ["5-Axis CNC Machining Centers", "High-Speed EDM Machines", "Wire-Cut EDM Machines", "Precision Grinding Machines", "CNC Lathes & Milling Machines", "Injection Molding Trial Machines", "3D Coordinate Measuring Machines (CMM)", "Hardness Testers & Spectrometers"]
-    certifications = ["ISO 9001:2015 Quality System", "CE-ready machine documentation", "Food-contact material review", "Medical mould quality records"]
+    # Do not publish named certifications or regulatory claims until a reviewed
+    # D1 evidence record is attached to this site. These labels describe the
+    # evidence workflow without claiming an unverified certificate.
+    certifications = ["Project quality records", "Material traceability", "Trial and inspection evidence", "Buyer-specific documentation"]
     reference_images = "https://www.cap-molds.com/images/"
     facility_images = [
         (reference_images + "CNC-machining-workshop.jpg", "CNC machining workshop"),
@@ -1628,4 +1673,6 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
+
+
 
