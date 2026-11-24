@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/publish-leyamould.yml"
       - "mould_build.py"
+      - "mould_category_pages.py"
       - "build.py"
       - "templates/**"
       - "assets/**"
@@ -14,6 +15,8 @@ on:
       - "data/mould-news-editorial.json"
       - "data/mould-news-image-manifest.json"
       - "data/mould-models.json"
+      - "data/mould-product-structured.json"
+      - "data/mould-page-structured.json"
       - "data/site-navigation-defaults.json"
       - "locale_registry.py"
       - "deployment/site.config.json"
@@ -127,5 +130,3 @@ jobs:
         run: |
           echo "::error::CLOUDFLARE_API_TOKEN is not configured; source build passed but production was not deployed."
           exit 1
-
-
