@@ -20,7 +20,7 @@ renderer = read("mould_build.py")
 assert "COMMON_COPY = STATE.get(\"commonCopy\")" in renderer
 assert "COMMON_COPY.get(locale)" in renderer
 assert "d1_editorial = row.get(\"editorial\")" in renderer
-assert 'value["editorial"] = overrides[base["slug"]].get("editorial")' in renderer
+assert 'value["editorial"] = overrides[base["slug"]].get("editorial") or base.get("editorial")' in renderer
 assert "FOOTER_LOGO" in renderer and "FOOTER_COPYRIGHT" in renderer
 
 footer = read("templates/site/footer.html")
