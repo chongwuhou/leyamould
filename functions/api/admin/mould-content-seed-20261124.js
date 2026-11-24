@@ -6,6 +6,8 @@
 // overwritten by a rebuild or by a rerun of this migration.
 import EDITORIAL_DATA from "../../../data/mould-news-editorial.json";
 import MOULD_CATALOG from "../../../data/mould-catalog.json";
+import PRODUCT_STRUCTURED from "../../../data/mould-product-structured.json";
+import PAGE_STRUCTURED_DATA from "../../../data/mould-page-structured.json";
 import { authorizedMouldContentSeedRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema } from "../../_shared/blog-cms.js";
 import { bumpPublishRevision } from "../../_shared/site-settings.js";
@@ -167,6 +169,12 @@ const STRUCTURED_PAGE_COPY = {
     "/faq/": { eyebrow: "CENTRO DE AYUDA", title: "Preguntas frecuentes", subtitle: "Encuentre respuestas rápidas sobre nuestros moldes de tapas, máquinas auxiliares, proceso de pedido y soporte técnico." }
   }
 };
+for (const [locale, routes] of Object.entries(PAGE_STRUCTURED_DATA || {})) {
+  if (!STRUCTURED_PAGE_COPY[locale]) STRUCTURED_PAGE_COPY[locale] = {};
+  for (const [route, value] of Object.entries(routes || {})) {
+    STRUCTURED_PAGE_COPY[locale][route] = { ...(STRUCTURED_PAGE_COPY[locale][route] || {}), ...(value || {}) };
+  }
+}
 
 const PRODUCT_COPY = {
   "mineral-water-closure-cap-molds": ["Mineral Water Cap Mould", "Mineral Water Cap Mould Manufacturer | LEYA MOULD", "Plastic cap moulds for mineral water, beverage and PET closure applications."],
@@ -222,6 +230,12 @@ function seedProduct(item) {
   const content = { source: "leya-mould-catalog", schemaVersion: 1 };
   for (const field of PRODUCT_FIELDS) {
     if (Object.hasOwn(item || {}, field)) content[field] = item[field];
+  }
+  const structured = PRODUCT_STRUCTURED?.[String(item?.slug || "")];
+  if (structured && typeof structured === "object") {
+    content.body = structured.body || item.detail || item.description || "";
+    content.sections = Array.isArray(structured.sections) ? structured.sections : [];
+    content.faqs = Array.isArray(structured.faqs) ? structured.faqs : [];
   }
   return content;
 }
@@ -307,13 +321,27 @@ export async function onRequestPost(context) {
       inserted.pages += 1;
     }
 
-    const existingProducts = new Set(((await db.prepare("SELECT model FROM xuyi_product_content").all()).results || []).map(row => String(row.model)));
+    const existingProductRows = ((await db.prepare("SELECT model,content_json FROM xuyi_product_content").all()).results || []);
+    const existingProducts = new Map(existingProductRows.map(row => [String(row.model), row.content_json]));
     const products = Array.isArray(MOULD_CATALOG?.categories) ? MOULD_CATALOG.categories : [];
     for (const item of products) {
       const model = String(item?.slug || "");
-      if (!MOULD_PUBLIC_ROUTES.has(model) || existingProducts.has(model)) { skipped.products += 1; continue; }
-      statements.push(db.prepare("INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at) VALUES(?,?, 'published', CURRENT_TIMESTAMP)").bind(model, json(seedProduct(item))));
-      inserted.products += 1;
+      if (!MOULD_PUBLIC_ROUTES.has(model)) { skipped.products += 1; continue; }
+      const baseline = seedProduct(item);
+      if (!existingProducts.has(model)) {
+        statements.push(db.prepare("INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at) VALUES(?,?, 'published', CURRENT_TIMESTAMP)").bind(model, json(baseline)));
+        inserted.products += 1;
+        continue;
+      }
+      let current = {};
+      try { current = JSON.parse(String(existingProducts.get(model) || "{}")); } catch { current = {}; }
+      const merged = mergeMissing(current, { body: baseline.body, sections: baseline.sections, faqs: baseline.faqs });
+      if (merged) {
+        statements.push(db.prepare("UPDATE xuyi_product_content SET content_json=?,updated_at=CURRENT_TIMESTAMP WHERE model=?").bind(json(merged), model));
+        updated.products += 1;
+      } else {
+        skipped.products += 1;
+      }
     }
 
     const existingPosts = new Set(((await db.prepare("SELECT slug FROM xuyi_blog_posts").all()).results || []).map(row => String(row.slug)));
@@ -333,5 +361,3 @@ export async function onRequestPost(context) {
     return respond({ error: "D1 mould content seed failed: " + String(error?.message || error).slice(0, 240) }, 500);
   }
 }
-
-
