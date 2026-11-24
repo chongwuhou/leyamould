@@ -40,4 +40,3 @@ jobs:
           python scripts/test_dynamic_language_and_publish_guards.py
           python scripts/test_operating_runbook.py
           python scripts/test_repository_hygiene.py
-

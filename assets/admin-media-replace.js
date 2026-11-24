@@ -146,4 +146,3 @@
  $("close").addEventListener("click",()=>root.close());
  root.addEventListener("close",()=>{revoke();$("old").removeAttribute("src");$("new").removeAttribute("src");selection=null;current=null});
 })();
-

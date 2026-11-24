@@ -50,4 +50,3 @@
  });
  if(check)check.addEventListener("click",checkStatus);
 })();
-

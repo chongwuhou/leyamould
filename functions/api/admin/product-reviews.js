@@ -60,4 +60,3 @@ export async function onRequestPost(c){
  const revision=await bumpPublishRevision(db);
  return json({saved:true,id,model:review.model,status:review.status,...revision});
 }
-

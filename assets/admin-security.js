@@ -61,4 +61,3 @@ $("save-admin-password")?.addEventListener("click",changePassword);
 $("save-admin-path")?.addEventListener("click",changePath);
 document.querySelector('[data-admin-target="settings"]')?.addEventListener("click",load);
 })();
-

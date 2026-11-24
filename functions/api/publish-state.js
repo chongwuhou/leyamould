@@ -22,4 +22,3 @@ export async function onRequestGet(context){
     });
   }catch(err){return response({error:"Publishing state unavailable"},503)}
 }
-

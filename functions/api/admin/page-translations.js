@@ -164,4 +164,3 @@ export async function onRequestPost(c){
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,reviewed:true,route,locale,...revision});
 }
-

@@ -104,4 +104,3 @@
   }
   bind(); setInterval(tick,500); tick();
 })();
-

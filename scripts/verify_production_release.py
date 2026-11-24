@@ -72,4 +72,3 @@ print(
     "publishRevision=" + str(meta.get("publishRevision")),
     "mediaReferences=" + str(len(references)),
 )
-

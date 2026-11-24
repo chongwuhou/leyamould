@@ -37,4 +37,3 @@ with tempfile.TemporaryDirectory() as tmp:
     assert result["/media/page/" + "a" * 32 + ".webp"] == ["/", "/es/"]
 
 print("LEYA_R2_USAGE_INDEX_PASSED", len(refs), "media references; revision", data["publishRevision"])
-

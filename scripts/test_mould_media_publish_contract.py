@@ -43,4 +43,3 @@ assert "python scripts/verify_production_release.py" in workflow
 assert "configured locales" in workflow
 
 print("LEYA_MOULD_MEDIA_PUBLISH_CONTRACT_PASSED")
-

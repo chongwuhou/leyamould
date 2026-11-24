@@ -20,4 +20,3 @@ async function checkSetup(){
 checkSetup();
 verify();
 })();
-

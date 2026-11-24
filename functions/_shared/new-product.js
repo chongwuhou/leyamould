@@ -58,4 +58,3 @@ export function normalizeNewProduct(model,content,status="draft",options={}){
   }
  return data;
 }
-

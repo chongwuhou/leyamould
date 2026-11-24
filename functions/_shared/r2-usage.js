@@ -63,4 +63,3 @@ export const imageKey=(kind,filename)=>{
   if(!/^[a-zA-Z0-9._-]{3,140}$/.test(filename)||filename.includes(".."))return null;
   return KINDS[kind].prefix+filename;
 };
-

@@ -118,4 +118,3 @@ export async function onRequestPost(c){
  return json({success:true,date:today,inserted:candidates.length,skipped:records.length-candidates.length,
   todayCount:finalState.ledger.filter(x=>x.published_date===today).length,recorded:finalState.ledger,...revision});
 }
-

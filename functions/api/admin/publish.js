@@ -26,5 +26,5 @@ export async function onRequestPost(context){
   const denied=await guard(context);if(denied)return denied;
   const result=await bumpPublishRevision(context.env.LEYA_DB);
   return reply({queued:true,...result,
-    message:"Revision queued. Deployment depends on the XUYI GitHub Actions controller being enabled."});
+    message:"Revision queued. Deployment depends on the LEYA MOULD GitHub Actions controller being enabled."});
 }

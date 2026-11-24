@@ -47,4 +47,3 @@ for rel in ("assets/admin-blog.js", "assets/admin-media.js", "assets/admin-secur
     assert "旭一" not in text and "XUYI" not in text, rel
 
 print("LEYA_MOULD_ADMIN_CONTRACT_PASSED")
-

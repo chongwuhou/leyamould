@@ -65,4 +65,3 @@ for legacy_path in ('"brands"', '"filter-types"', '"replacement-filters"', '"shi
     assert legacy_path not in security, legacy_path
 
 print("LEYA_MOULD_BACKEND_CONTRACT_PASSED")
-

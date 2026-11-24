@@ -266,6 +266,54 @@ def _catalog_text(item: dict, locale: str, key: str) -> str:
     return str(item.get(key) or "")
 
 
+def render_model_reference_section(locale: str, models: list[dict], helpers: dict, heading: str | None = None) -> str:
+    """Render imported HMould model references inside the existing catalogue shell.
+
+    The records are labelled as references so a catalogue image or model name
+    never silently becomes an unverified LEYA production claim. Each card still
+    feeds the existing enquiry route, preserving the site's current conversion
+    and admin workflow.
+    """
+    if not models:
+        return ""
+    esc = helpers["esc"]
+    href = helpers["localized_href"]
+    image = helpers["image"]
+    es = locale == "es"
+    section_heading = heading or ("Referencias de modelos" if es else "Model References")
+    section_copy = (
+        "Modelos de referencia organizados para revisar geometría, cavidades, máquina y evidencia antes de cotizar."
+        if es else
+        "Imported model references organised for a technical review of geometry, cavities, machine interface and evidence before quotation."
+    )
+    inquire = "Consultar este modelo →" if es else "Discuss this model →"
+    source_label = "Referencia HMould" if es else "HMould reference"
+    cards = []
+    for model in models:
+        title = str(model.get("title") or "Model reference")
+        model_url = href(locale, "/contact/?model=" + str(model.get("slug") or "") + "#inquiry")
+        model_image = str(model.get("image") or "/assets/mould-placeholder.svg")
+        description = str(model.get("description") or "")
+        cards.append(
+            '<article class="mould-model-card">'
+            '<div class="mould-model-card__image">' + image(model_image, title) + '</div>'
+            '<div class="mould-model-card__body">'
+            '<span class="mould-model-card__source">' + esc(source_label) + '</span>'
+            '<h3>' + esc(title) + '</h3>'
+            '<p>' + esc(description if not es else "Referencia de catálogo para revisar geometría, cavidades, máquina y requisitos de producción.") + '</p>'
+            '<a href="' + esc(model_url) + '">' + esc(inquire) + '</a>'
+            '</div></article>'
+        )
+    return (
+        '<section class="mould-model-references" id="model-references">'
+        '<div class="mould-detail-container">'
+        '<div class="mould-section-heading"><span>' + esc(section_heading.upper()) + '</span>'
+        '<h2>' + esc(section_heading) + '</h2><p>' + esc(section_copy) + '</p><i></i></div>'
+        '<div class="mould-model-grid">' + ''.join(cards) + '</div>'
+        '</div></section>'
+    )
+
+
 def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     """Render a full reference-style page while reusing shared site helpers."""
     esc = helpers["esc"]
@@ -289,6 +337,11 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     for product_title, product_image, product_desc in details["products"]:
         products += '<a href="#contact" class="mould-product-card"><div class="mould-card-img">' + helpers["image"](_asset(product_image), product_title) + '</div><div class="mould-card-body"><h3>' + esc(product_title) + '</h3><p>' + esc(product_desc) + '</p><span>' + esc(_lang(locale, "learn")) + '</span></div></a>'
     products += '</div></div></section>'
+    model_references = render_model_reference_section(
+        locale,
+        [row for row in helpers.get("hmould_models", []) if row.get("family") == item["slug"]],
+        helpers,
+    )
 
     advantages = '<section class="mould-advantages" id="advantages"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "advantages")) + '</span><h2>Key Advantages of Our ' + esc(title) + '</h2><p>Engineered for repeatable production, stable quality and a clear technical handover.</p><i></i></div><div class="mould-advantages-grid">'
     for adv_title, adv_text in details["advantages"]:
@@ -324,5 +377,4 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     cta = shared_cta(locale, "category", element_id="contact") if shared_cta else '<section class="mould-cta" id="contact"><div class="mould-detail-container"><div class="mould-cta-box"><h2>' + esc(_lang(locale, "contact")) + '</h2><p>Send us your drawing, sample, target material, cavity plan and delivery market. We will reply with the next technical questions.</p><div class="mould-cta-row"><a href="mailto:amyhu@leyamould.com" class="mould-cta-item">✉ amyhu@leyamould.com</a><a href="https://wa.me/8613606727715" class="mould-cta-item" target="_blank" rel="noopener">WhatsApp +8613606727715</a><a href="' + href(locale, "/contact/#inquiry") + '" class="mould-cta-item mould-cta-item--accent">' + esc(_lang(locale, "quote")) + ' →</a></div></div></div></section>'
 
     lightbox = '<div class="mould-lightbox" id="mould-lightbox" aria-hidden="true"><button type="button" aria-label="Close" data-mould-close>×</button><img alt=""></div><div class="mould-video-lightbox" id="mould-video-lightbox" aria-hidden="true"><button type="button" aria-label="Close" data-mould-video-close>×</button><iframe title="Mould trial video" allow="autoplay; encrypted-media" allowfullscreen></iframe></div><script>(()=>{const l=document.getElementById("mould-lightbox"),li=l?.querySelector("img"),v=document.getElementById("mould-video-lightbox"),f=v?.querySelector("iframe");const close=()=>{l?.classList.remove("active");v?.classList.remove("active");if(f)f.src=""};document.addEventListener("click",e=>{const s=e.target.closest("[data-mould-lightbox]");if(s&&li){li.src=s.dataset.mouldLightbox;l.classList.add("active")};const b=e.target.closest("[data-mould-video]");if(b&&f){f.src="https://www.youtube.com/embed/"+b.dataset.mouldVideo+"?autoplay=1&rel=0";v.classList.add("active")};if(e.target.closest("[data-mould-close],[data-mould-video-close]")||e.target===l||e.target===v)close()});document.addEventListener("keydown",e=>{if(e.key==="Escape")close()})})();</script>'
-    return '<div class="mould-detail-page mould-detail-page--' + item["slug"] + '">' + hero + crumb + products + advantages + tech + samples + videos + quality + faq + cta + lightbox + '</div>'
-
+    return '<div class="mould-detail-page mould-detail-page--' + item["slug"] + '">' + hero + crumb + products + model_references + advantages + tech + samples + videos + quality + faq + cta + lightbox + '</div>'

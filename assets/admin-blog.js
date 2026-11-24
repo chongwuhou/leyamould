@@ -118,4 +118,3 @@ $('#blog-upload')?.addEventListener('change',async(ev)=>{
 document.querySelectorAll('[data-admin-target="blog"]').forEach(btn=>btn.addEventListener('click',()=>{if(token())list()}));
 if(token()&&!loaded)list();
 })();
-

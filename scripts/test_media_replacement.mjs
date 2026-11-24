@@ -107,4 +107,3 @@ assert.equal(response.status,200,"Legacy R2 images are replaceable with an appro
 assert.equal((await api.onRequestPut(ctx(new Request(url("shared","invalid.png"),{method:"PUT",headers,body:form})))).status,400);
 assert.equal((await api.onRequestPut(ctx(new Request(url("ppt","slide-059.webp"),{method:"PUT",headers,body:new FormData()})))).status,400);
 console.log("XUYI_R2_REPLACE_AND_ROLLBACK_TESTS_PASSED",19,"assertions; mock R2 only");
-

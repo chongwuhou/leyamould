@@ -57,4 +57,3 @@ def main():
           "blogPosts",len(payload["blogPosts"]),
           "translations",len(payload.get("translations",[])))
 if __name__=="__main__":main()
-

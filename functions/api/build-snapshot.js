@@ -97,4 +97,3 @@ export async function onRequestGet(context){
   }catch(error){return json({error:"LEYA build snapshot unavailable"},503)}
 }
 
-
