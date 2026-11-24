@@ -28,9 +28,11 @@ def main() -> None:
     items = json.loads(MANIFEST.read_text(encoding="utf-8")).get("items", [])
     if not items:
         raise SystemExit("legacy media manifest is empty")
+    start_index = max(1, int(os.environ.get("LEYA_MEDIA_START_INDEX", "1")))
     with tempfile.TemporaryDirectory(prefix="leya-legacy-media-") as temp:
         temp_path = Path(temp)
-        for index, item in enumerate(items, 1):
+        for index in range(start_index, len(items) + 1):
+            item = items[index - 1]
             source = str(item["source"])
             target = str(item["target"])
             filename = target.rsplit("/", 1)[-1]
