@@ -14,10 +14,13 @@ def read(path: str) -> str:
 snapshot = read("functions/api/build-snapshot.js")
 assert "'common_copy'" in snapshot
 assert "commonCopy:parseJson(config.common_copy,null)" in snapshot
+assert "'page_copy'" in snapshot
+assert "pageCopy:parseJson(config.page_copy,null)" in snapshot
 assert "xuyi_blog_posts WHERE status='published'" in snapshot
 
 renderer = read("mould_build.py")
 assert "COMMON_COPY = STATE.get(\"commonCopy\")" in renderer
+assert "PAGE_COPY = STATE.get(\"pageCopy\")" in renderer
 assert "COMMON_COPY.get(locale)" in renderer
 assert "d1_editorial = row.get(\"editorial\")" in renderer
 assert 'value["editorial"] = overrides[base["slug"]].get("editorial") or base.get("editorial")' in renderer
