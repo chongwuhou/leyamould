@@ -12,6 +12,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.request
 from urllib.parse import quote, urlsplit, urlunsplit
 from pathlib import Path
@@ -48,8 +49,14 @@ def main() -> None:
                 raise SystemExit(f"legacy media conversion failed for {source}: {error}") from error
             key = "site-media/page/" + filename
             command = ["npx", "--yes", "wrangler@4.148.0", "r2", "object", "put", f"{BUCKET}/{key}", "--file", str(local), "--content-type", "image/webp", "--remote"]
-            result = subprocess.run(command, cwd=ROOT, env=os.environ.copy(), text=True)
-            if result.returncode:
+            result = None
+            for attempt in range(1, 4):
+                result = subprocess.run(command, cwd=ROOT, env=os.environ.copy(), text=True)
+                if result.returncode == 0:
+                    break
+                if attempt < 3:
+                    time.sleep(attempt * 3)
+            if result is None or result.returncode:
                 raise SystemExit(f"R2 upload failed for {key} (item {index}/{len(items)})")
             print(f"LEYA_LEGACY_MEDIA_UPLOADED {index}/{len(items)} {key}", flush=True)
     print(f"LEYA_LEGACY_MEDIA_MIGRATION_PASSED objects={len(items)}")
