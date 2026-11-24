@@ -74,14 +74,18 @@ const NAVIGATION = [
   ["about", "", "About Us", "/about/", 20],
   ["products", "", "Cap Mould", "/Plastic-cap-mold.html", 30],
   ["product-water", "products", "Mineral Water Cap Mould", "/product/Mineral-Water-Closure-cap-Molds.html", 10],
-  ["product-oil", "products", "Edible Oil Cap Mould", "/product/Oil-bottle-cap-mould.html", 20],
-  ["product-flip", "products", "Flip top caps mould", "/product/Flip-top-caps-mould.html", 30],
-  ["product-engine", "products", "Engine Oil Cap Mould", "/product/Engine-Oil-Cap-Mould.html", 40],
-  ["product-food", "products", "Food Packaging Cap Mould", "/product/Food-Packaging-Cap-Mould.html", 50],
-  ["product-medical", "products", "Medical Cap Mould", "/product/Medical-Cap-Mould.html", 60],
-  ["product-personal", "products", "Personal Care Cap Mould", "/product/Personal-Care-Cap-Mould.html", 70],
-  ["product-functional", "products", "Functional Cap Mould (Combination)", "/product/Functional-Cap-Mould.html", 80],
-  ["product-handle", "products", "Plastic Handle Mould", "/product/Plastic-Handle-Cap-mould.html", 90],
+  ["product-five-gallon", "products", "5 Gallon Water Cap Mould", "/product/5-Gallon-Water-Cap-Mould.html", 20],
+  ["product-oil", "products", "Edible Oil Cap Mould", "/product/Oil-bottle-cap-mould.html", 30],
+  ["product-flip", "products", "Flip top caps mould", "/product/Flip-top-caps-mould.html", 40],
+  ["product-engine", "products", "Engine Oil Cap Mould", "/product/Engine-Oil-Cap-Mould.html", 50],
+  ["product-food", "products", "Food Packaging Cap Mould", "/product/Food-Packaging-Cap-Mould.html", 60],
+  ["product-medical", "products", "Medical Cap Mould", "/product/Medical-Cap-Mould.html", 70],
+  ["product-personal", "products", "Personal Care Cap Mould", "/product/Personal-Care-Cap-Mould.html", 80],
+  ["product-functional", "products", "Functional Cap Mould(Combination)", "/product/Functional-Cap-Mould.html", 90],
+  ["product-handle", "products", "Plastic Handle mould", "/product/Plastic-Handle-Cap-mould.html", 100],
+  ["product-wine", "products", "Wine Cap Mould", "/product/Wine-Cap-Mould.html", 110],
+  ["product-pet-preform", "products", "PET Preform Mould", "/product/PET-Preform-Mould.html", 120],
+  ["product-blow-bottle", "products", "Blow Bottle Mould", "/product/Blow-Bottle-Mould.html", 130],
   ["machine", "", "Machine", "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", 40],
   ["samples", "", "Samples", "/samples/", 50],
   ["news", "", "News", "/news/", 60],
@@ -169,11 +173,24 @@ export async function onRequestPost(context) {
       inserted.state += 1;
     }
 
-    const existingNav = new Set(((await db.prepare("SELECT id FROM site_navigation").all()).results || []).map(row => String(row.id)));
+    const existingNavRows = ((await db.prepare("SELECT id,label,url,sort_order FROM site_navigation").all()).results || []);
+    const existingNav = new Map(existingNavRows.map(row => [String(row.id), row]));
+    const seedBaselineLabels = new Set([
+      "Functional Cap Mould (Combination)", "Plastic Handle Mould",
+    ]);
     for (const [id, parentId, label, url, sortOrder] of NAVIGATION) {
-      if (!MOULD_ROUTES.has(url) || existingNav.has(id)) { skipped.navigation += 1; continue; }
-      statements.push(db.prepare("INSERT INTO site_navigation(id,parent_id,label,url,sort_order,enabled,new_window,updated_at) VALUES(?,?,?,?,?,1,0,CURRENT_TIMESTAMP)").bind(id, parentId || null, label, url, sortOrder));
-      inserted.navigation += 1;
+      if (!MOULD_ROUTES.has(url)) { skipped.navigation += 1; continue; }
+      const current = existingNav.get(id);
+      if (!current) {
+        statements.push(db.prepare("INSERT INTO site_navigation(id,parent_id,label,url,sort_order,enabled,new_window,updated_at) VALUES(?,?,?,?,?,1,0,CURRENT_TIMESTAMP)").bind(id, parentId || null, label, url, sortOrder));
+        inserted.navigation += 1;
+      } else if (seedBaselineLabels.has(String(current.label || "")) && String(current.label || "") !== label) {
+        // Repair only labels written by the first seed revision; a later owner edit stays authoritative.
+        statements.push(db.prepare("UPDATE site_navigation SET label=?,sort_order=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(label, sortOrder, id));
+        inserted.navigation += 1;
+      } else {
+        skipped.navigation += 1;
+      }
     }
 
     const pageRows = Object.entries(PAGE_COPY).map(([route, [label, title, description]]) => ({ route, label, title, description }));

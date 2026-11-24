@@ -112,22 +112,25 @@ assert home.count('class="process-step"') == 5
 for route in CAP_PRODUCT_ROUTES:
     assert route in home
 assert "/collections/" not in home
-expected_nav = [
-    "Mineral Water Cap Mould",
-    "5 Gallon Water Cap Mould",
-    "Edible Oil Cap Mould",
-    "Flip top caps mould",
-    "Engine Oil Cap Mould",
-    "Food Packaging Cap Mould",
-    "Medical Cap Mould",
-    "Personal Care Cap Mould",
-    "Functional Cap Mould(Combination)",
-    "Plastic Handle mould",
-    "Wine Cap Mould",
-    "PET Preform Mould",
-    "Blow Bottle Mould",
+# Navigation labels are D1-owned and may be edited in the admin.  The release
+# gate therefore verifies the canonical route order rather than freezing copy
+# into the build test.
+ordered_nav_routes = [
+    "/product/Mineral-Water-Closure-cap-Molds.html",
+    "/product/5-Gallon-Water-Cap-Mould.html",
+    "/product/Oil-bottle-cap-mould.html",
+    "/product/Flip-top-caps-mould.html",
+    "/product/Engine-Oil-Cap-Mould.html",
+    "/product/Food-Packaging-Cap-Mould.html",
+    "/product/Medical-Cap-Mould.html",
+    "/product/Personal-Care-Cap-Mould.html",
+    "/product/Functional-Cap-Mould.html",
+    "/product/Plastic-Handle-Cap-mould.html",
+    "/product/Wine-Cap-Mould.html",
+    "/product/PET-Preform-Mould.html",
+    "/product/Blow-Bottle-Mould.html",
 ]
-positions = [home.index(">" + label + "</a>") for label in expected_nav]
+positions = [home.index('href="' + route + '"') for route in ordered_nav_routes]
 assert positions == sorted(positions)
 assert ">Cap Mould Series</a>" not in home
 assert "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China" in home
@@ -221,6 +224,7 @@ assert detail_es.count('class="blog-editorial__product-link"') == 3
 assert (DIST / "admin" / "index.html").is_file()
 assert "LEYA MOULD" in (DIST / "admin" / "index.html").read_text(encoding="utf-8")
 print("LEYA_MOULD_RELEASE_PASSED", len(routes), "routes x", len(LOCALES), "locales")
+
 
 
 
