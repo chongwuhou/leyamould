@@ -206,7 +206,7 @@ def _catalog_from_state() -> list[dict]:
             item = by_slug.get(str(content.get("slug") or ""))
         if item is None or not content:
             continue
-        for field in ("title", "navTitle", "description", "short", "detail", "meta", "image", "route"):
+        for field in ("title", "titleEs", "navTitle", "navTitleEs", "description", "descriptionEs", "short", "shortEs", "detail", "detailEs", "meta", "metaEs", "image", "route"):
             if isinstance(content.get(field), str) and content[field].strip():
                 item[field] = content[field].strip()
         if isinstance(content.get("checks"), list):
