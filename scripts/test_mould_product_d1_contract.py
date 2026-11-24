@@ -42,6 +42,7 @@ renderer = source("mould_build.py")
 for field in ("titleEs", "navTitleEs", "descriptionEs", "shortEs", "detailEs", "metaEs", "body", "sections", "faqs"):
     assert f'"{field}"' in renderer
 assert "_catalog_from_state" in renderer and "STATE.get(" in renderer
+assert "_structured_sections" in source("mould_category_pages.py")
 
 # Realistic owner-edit simulation: D1 content must win over the checked-in
 # baseline on a clean renderer import, including a localized field.
@@ -57,6 +58,7 @@ mould_build.STATE = {
             "titleEs": "Molde editado por el propietario",
             "description": "Owner-controlled product description.",
             "body": "Owner-controlled structured product body.",
+            "sections": [{"title": "Owner technology section", "body": "Owner-controlled technical copy."}],
             "faqs": [{"question": "Owner question?", "answer": "Owner answer."}],
         },
     }]
@@ -66,6 +68,8 @@ assert edited["title"] == "OWNER EDITED 5 GALLON MOULD"
 assert edited["titleEs"] == "Molde editado por el propietario"
 assert edited["description"] == "Owner-controlled product description."
 assert edited["body"] == "Owner-controlled structured product body."
+assert edited["sections"][0]["title"] == "Owner technology section"
 assert edited["faqs"][0]["question"] == "Owner question?"
 
 print(f"LEYA_MOULD_PRODUCT_D1_CONTRACT_PASSED categories={len(categories)}")
+
