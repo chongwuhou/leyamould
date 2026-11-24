@@ -1,5 +1,17 @@
 {
   "en": {
+    "/": {
+      "sections": [
+        {"id": "advantages", "eyebrow": "WHY CHOOSE US", "title": "Core Advantages of LEYA MOULD", "body": "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control."},
+        {"id": "products", "eyebrow": "OUR PRODUCTS", "title": "Mould Product Families", "body": "Explore 12 specialized mould product families engineered for high-volume production, dimensional accuracy and long service life."},
+        {"id": "samples", "eyebrow": "SAMPLES GALLERY", "title": "Plastic Cap Samples", "body": "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection."},
+        {"id": "technology", "eyebrow": "OUR TECHNOLOGY", "title": "Engineering Excellence Behind Every Mould", "body": "Precision manufacturing, premium steel and documented controls for repeatable production."},
+        {"id": "testimonials", "eyebrow": "TESTIMONIALS", "title": "Trusted by Packaging Leaders Worldwide", "body": "Reviewed customer feedback will appear here after source and publication review."},
+        {"id": "process", "eyebrow": "HOW WE WORK", "title": "Your Cap Mould Journey", "body": "From your first drawing to delivery and technical support."},
+        {"id": "references", "eyebrow": "ENGINEERING REFERENCE", "title": "Built for repeatable production decisions.", "body": "Mould structure, steel selection, inspection evidence and trial feedback stay connected through the project."},
+        {"id": "resources", "eyebrow": "NEWS & INSIGHTS", "title": "Latest from LEYA MOULD", "body": "Project notes, tooling updates and practical engineering guidance."}
+      ]
+    },
     "/contact/": {
       "quickAnswers": [
         {"question": "⏱️ How fast can I get a quote?", "answer": "We respond within 24 hours. Use WhatsApp or email for urgent requests."},
@@ -31,6 +43,18 @@
     }
   },
   "es": {
+    "/": {
+      "sections": [
+        {"id": "advantages", "eyebrow": "POR QUÉ ELEGIRNOS", "title": "Ventajas clave de LEYA MOULD", "body": "Desde el diseño hasta la prueba, aportamos valor con excelencia de ingeniería y control de calidad estricto."},
+        {"id": "products", "eyebrow": "NUESTROS PRODUCTOS", "title": "Familias de moldes", "body": "Explore 12 familias especializadas de moldes para producción de alto volumen, precisión dimensional y larga vida útil."},
+        {"id": "samples", "eyebrow": "GALERÍA DE MUESTRAS", "title": "Muestras de tapas de plástico", "body": "Una amplia variedad de muestras para bebidas, alimentos, farmacia, cuidado personal y cierres industriales."},
+        {"id": "technology", "eyebrow": "NUESTRA TECNOLOGÍA", "title": "Excelencia de ingeniería detrás de cada molde", "body": "Fabricación de precisión, acero premium y controles documentados para una producción repetible."},
+        {"id": "testimonials", "eyebrow": "TESTIMONIOS", "title": "La confianza de compradores de packaging", "body": "Los comentarios de clientes revisados aparecerán aquí después de la revisión de origen y publicación."},
+        {"id": "process", "eyebrow": "CÓMO TRABAJAMOS", "title": "Su proyecto de moldes paso a paso", "body": "Desde el primer plano hasta la entrega y el soporte técnico."},
+        {"id": "references", "eyebrow": "REFERENCIA DE INGENIERÍA", "title": "Decisiones preparadas para una producción repetible.", "body": "La estructura, el acero, la inspección y las pruebas permanecen conectados durante el proyecto."},
+        {"id": "resources", "eyebrow": "NOTICIAS Y GUÍAS", "title": "Lo último de LEYA MOULD", "body": "Notas de proyectos, novedades de utillaje y orientación práctica de ingeniería."}
+      ]
+    },
     "/contact/": {
       "quickAnswers": [
         {"question": "⏱️ ¿Cuánto tardan en enviar una cotización?", "answer": "Respondemos en 24 horas. Use WhatsApp o correo electrónico para solicitudes urgentes."},
@@ -62,3 +86,4 @@
     }
   }
 }
+
