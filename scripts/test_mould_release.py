@@ -159,7 +159,7 @@ for page in (catalog_page, catalog_page_es):
     ]
     offsets = [page.index(section) for section in required_sections]
     assert offsets == sorted(offsets), offsets
-    labels = ('Core Advantages of LEYA MOULD', 'Bottle Cap Sample Gallery', 'Engineering Excellence Behind Every Mould', 'Your Cap Mould Journey', 'Common Questions', 'Client Feedback', 'Start Your Cap Mould Project') if page is catalog_page else ('Ventajas clave de LEYA MOULD', 'Galería de muestras de tapas', 'Excelencia de ingeniería detrás de cada molde', 'Su recorrido de molde', 'Preguntas frecuentes', 'Opiniones de clientes', 'Empiece su proyecto de moldes')
+    labels = ('Core Advantages of LEYA MOULD', 'Bottle Cap Sample Gallery', 'Technical Strength &amp; Process', 'Quality Control &amp; Inspection', 'Cooperation Process', 'Common Questions', 'Client Feedback', 'Start Your Cap Mould Project') if page is catalog_page else ('Ventajas clave de LEYA MOULD', 'Galería de muestras de tapas', 'Fortaleza técnica y proceso', 'Control de calidad e inspección', 'Proceso de cooperación', 'Preguntas frecuentes', 'Opiniones de clientes', 'Empiece su proyecto de moldes')
     for label in labels:
         assert label in page, label
     assert page.count('catalog-sample-item') >= 21
