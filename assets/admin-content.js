@@ -19,6 +19,41 @@
   ?'<textarea data-cms-field="'+esc(key)+'" rows="'+rows+'">'+esc(value)+'</textarea>'
   :'<input data-cms-field="'+esc(key)+'" value="'+esc(value)+'">')+'</label>';
  const button=(label,action)=>'<button class="btn primary" data-cms-action="'+action+'" type="button">'+label+'</button>';
+ const arrayEditor=(key,kind,label)=>'<section class="cms-array-editor" data-array-editor="'+esc(key)+'" data-array-kind="'+esc(kind)+'">'+
+  '<h4>'+esc(label)+'</h4><div class="cms-array-rows"></div><button type="button" class="btn ghost cms-array-add">+ 添加一项</button>'+
+  '<textarea data-cms-field="'+esc(key)+'" hidden></textarea></section>';
+ const arrayEditors=new Map();
+ function normalizeArrayRows(kind, value){
+  if(!Array.isArray(value))return [];
+  if(kind==="answers")return value.map(row=>({question:String(row?.question||""),answer:String(row?.answer||"")}));
+  if(kind==="groups")return value.map(group=>({title:String(group?.title||""),items:Array.isArray(group?.items)?group.items.map(row=>({question:String(row?.question||""),answer:String(row?.answer||"")})):[]}));
+  return value.map(row=>({id:String(row?.id||"section"),eyebrow:String(row?.eyebrow||""),title:String(row?.title||""),body:String(row?.body||""),bullets:Array.isArray(row?.bullets)?row.bullets.join("\\n"):String(row?.bullets||"")}));
+ }
+ function mountArrayEditor(root,key,kind,initial=[]){
+  const editor=root.querySelector('[data-array-editor="'+CSS.escape(key)+'"]');if(!editor)return;
+  const rowsRoot=editor.querySelector(".cms-array-rows"),hidden=editor.querySelector('[data-cms-field="'+CSS.escape(key)+'"]');
+  let rows=normalizeArrayRows(kind,initial);
+  const sync=()=>{hidden.value=JSON.stringify(rows);};
+  const render=()=>{
+   rowsRoot.innerHTML=rows.map((row,index)=>{
+    if(kind==="answers")return '<div class="cms-array-row" data-row="'+index+'"><input data-part="question" placeholder="问题" value="'+esc(row.question)+'"><textarea data-part="answer" rows="3" placeholder="回答">'+esc(row.answer)+'</textarea><button type="button" class="btn danger cms-array-remove">删除</button></div>';
+    if(kind==="groups")return '<div class="cms-array-row" data-row="'+index+'"><input data-part="title" placeholder="分组标题" value="'+esc(row.title)+'"><textarea data-part="items" rows="5" placeholder="每行：问题 | 回答">'+esc((row.items||[]).map(item=>item.question+" | "+item.answer).join("\\n"))+'</textarea><button type="button" class="btn danger cms-array-remove">删除分组</button></div>';
+    return '<div class="cms-array-row" data-row="'+index+'"><div class="cms-array-grid"><input data-part="id" placeholder="模块标识" value="'+esc(row.id)+'"><input data-part="eyebrow" placeholder="眉标题" value="'+esc(row.eyebrow)+'"><input data-part="title" placeholder="标题" value="'+esc(row.title)+'"></div><textarea data-part="body" rows="3" placeholder="正文">'+esc(row.body)+'</textarea><textarea data-part="bullets" rows="2" placeholder="要点，每行一条">'+esc(row.bullets)+'</textarea><button type="button" class="btn danger cms-array-remove">删除模块</button></div>';
+   }).join("");
+   rowsRoot.querySelectorAll(".cms-array-row").forEach((rowEl,index)=>rowEl.querySelectorAll("[data-part]").forEach(input=>input.addEventListener("input",()=>{
+    const part=input.dataset.part;
+    if(kind==="groups"&&part==="items")rows[index].items=String(input.value||"").split(/\\n+/).map(line=>line.split("|")).map(parts=>({question:String(parts.shift()||"").trim(),answer:parts.join("|").trim()})).filter(item=>item.question&&item.answer);
+    else rows[index][part]=input.value;
+    sync();
+   })));
+   rowsRoot.querySelectorAll(".cms-array-remove").forEach((btn,index)=>btn.addEventListener("click",()=>{rows.splice(index,1);render();sync();}));
+   sync();
+  };
+  editor.querySelector(".cms-array-add")?.addEventListener("click",()=>{rows.push(kind==="answers"?{question:"",answer:""}:kind==="groups"?{title:"",items:[]}:{id:"section",eyebrow:"",title:"",body:"",bullets:""});render();});
+  render();
+  const api={set(value){rows=normalizeArrayRows(kind,value);render();},get(){return rows;}};arrayEditors.set(key,api);return api;
+ }
+ function hydrateArrayEditor(key,value){arrayEditors.get(key)?.set(value);}
  async function load(){
    say("正在读取 LEYA MOULD D1 …");
   try{
@@ -128,13 +163,13 @@
     field("detail","","类别详细说明",4)+
     field("meta","","规格标签（例如 48 Cavity · Hot Runner）")+
     field("image","","类别主图路径（媒体库上传后复制 /media/...）")+
-     field("checks","","技术核对要点 JSON 数组，例如 [\"Drawing review\",\"Cavity plan\"]",4)+
+     field("checks","","技术核对要点（每行一条）",4)+
      field("body","","结构化正文导语（纯文本）",5)+
-     field("sections","[]","正文区块 JSON：[{\"title\":\"...\",\"body\":\"...\",\"bullets\":[]}]",8)+
-     field("faqs","[]","产品 FAQ JSON：[{\"question\":\"...\",\"answer\":\"...\"}]",8)+
+     arrayEditor("sections","sections","英文正文区块")+
+     arrayEditor("faqs","answers","英文产品 FAQ")+
      field("bodyEs","","西班牙语结构化正文导语（纯文本）",5)+
-     field("sectionsEs","[]","西班牙语正文区块 JSON",8)+
-     field("faqsEs","[]","西班牙语产品 FAQ JSON",8)+
+     arrayEditor("sectionsEs","sections","西班牙语正文区块")+
+     arrayEditor("faqsEs","answers","西班牙语产品 FAQ")+
    field("seoTitle","","SEO Title")+
    field("seoDescription","","Meta Description",3)+
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
@@ -145,7 +180,13 @@
    html='<h3>结构化页面正文 · D1</h3><p>只维护可编辑文案和问答数组，不接触 HTML/CSS。保存后由完整构建生成页面；已有后台编辑会按当前语种和路径覆盖。</p>'+
     '<label class="block-label">语种 <select id="cms-structured-locale">'+(state.structuredCopy?.locales||["en","es"]).map(locale=>'<option value="'+esc(locale)+'">'+esc(locale)+"</option>").join("")+'</select></label>'+ 
     '<label class="block-label">页面 <select id="cms-structured-route">'+routes.map(route=>'<option value="'+esc(route)+'">'+esc(route)+"</option>").join("")+'</select></label>'+ 
-    field("structuredJson","{}","结构化正文 JSON（quickAnswers / groups / sections）",20)+
+    field("structuredEyebrow","","眉标题")+
+    field("structuredTitle","","模块标题")+
+    field("structuredSubtitle","","模块说明",3)+
+    arrayEditor("quickAnswers","answers","Quick Answers（问题与回答）")+
+    arrayEditor("groups","groups","FAQ 分组")+
+    arrayEditor("sections","sections","结构化正文区块")+
+    '<textarea data-cms-field="structuredJson" hidden></textarea>'+ 
     button("保存结构化正文","structured-copy");
   }
   if(tab==="new-product"){
@@ -208,7 +249,9 @@
     button("读取英文页面供翻译","locale-source")+' '+
     button("审核完成并保存","locale-save");
   }
+  arrayEditors.clear();
   container.innerHTML=html;
+  container.querySelectorAll("[data-array-editor]").forEach(editor=>mountArrayEditor(container,editor.dataset.arrayEditor,editor.dataset.arrayKind,[]));
   if(tab==="banners"){
    for(let i=0;i<3;i++){
     container.querySelector('[data-banner-upload-btn="'+i+'"]')?.addEventListener("click",async event=>{
@@ -247,7 +290,12 @@
 
   if(tab==="structured-copy"){
    const locale=$("cms-structured-locale"),route=$("cms-structured-route"),target=container.querySelector('[data-cms-field="structuredJson"]');
-   const fill=()=>{const data=state.structuredCopy?.pageCopy?.[locale?.value]?.[route?.value]||{};if(target)target.value=JSON.stringify(data,null,2)};
+   const fill=()=>{
+    const data=state.structuredCopy?.pageCopy?.[locale?.value]?.[route?.value]||{};
+    for(const [key,value] of [["structuredEyebrow",data.eyebrow||""],["structuredTitle",data.title||""],["structuredSubtitle",data.subtitle||""]]){const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=value;}
+    hydrateArrayEditor("quickAnswers",data.quickAnswers||[]);hydrateArrayEditor("groups",data.groups||[]);hydrateArrayEditor("sections",data.sections||[]);
+    if(target)target.value=JSON.stringify({eyebrow:data.eyebrow||"",title:data.title||"",subtitle:data.subtitle||"",quickAnswers:data.quickAnswers||[],groups:data.groups||[],sections:data.sections||[]},null,2);
+   };
    locale?.addEventListener("change",fill);route?.addEventListener("change",fill);fill();
   }
 
@@ -304,9 +352,12 @@
      for(const [key,val] of Object.entries({...original,...(entry?.content||{})})){
       const el=container.querySelector('[data-cms-field="'+key+'"]');
       if(!el)continue;
-       if(["checks","sections","faqs","sectionsEs","faqsEs"].includes(key)&&Array.isArray(val))el.value=JSON.stringify(val,null,2);
+       if(["sections","faqs","sectionsEs","faqsEs"].includes(key)&&Array.isArray(val))el.value=JSON.stringify(val,null,2);
+       else if(key==="checks"&&Array.isArray(val))el.value=val.join("\\n");
       else if(typeof val==="string")el.value=val;
     }
+    hydrateArrayEditor("sections",entry?.content?.sections||[]);hydrateArrayEditor("faqs",entry?.content?.faqs||[]);
+    hydrateArrayEditor("sectionsEs",entry?.content?.sectionsEs||[]);hydrateArrayEditor("faqsEs",entry?.content?.faqsEs||[]);
     container.querySelector('[data-cms-field="status"]').value=entry?.status||"draft";
     const label=entry?"已有 D1 "+(entry.status==="published"?"正式发布":"草稿")+"记录":"当前为官网原始商品，尚无单独 D1 修改记录";
      notice.innerHTML=esc(id)+" · "+esc(label)+"。 <a href=\""+esc(route)+"\" target=\"_blank\" rel=\"noopener\">查看当前类别页 ↗</a>"+
@@ -498,13 +549,14 @@
     }else if(action==="product"){
      if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
        throw Error("请先从已配置的模具类别列表中选择类别");
-     let checks=[];try{checks=JSON.parse(value("checks")||"[]")}catch{throw Error("技术核对要点必须是 JSON 数组")}
-      let sections=[],faqs=[],sectionsEs=[],faqsEs=[];try{sections=JSON.parse(value("sections")||"[]");faqs=JSON.parse(value("faqs")||"[]");sectionsEs=JSON.parse(value("sectionsEs")||"[]");faqsEs=JSON.parse(value("faqsEs")||"[]")}catch{throw Error("结构化正文或 FAQ 必须是 JSON 数组")}
+     const checks=String(value("checks")||"").split(/\\n+/).map(item=>item.trim()).filter(Boolean);
+      const sections=arrayEditors.get("sections")?.get()||[],faqs=arrayEditors.get("faqs")?.get()||[],sectionsEs=arrayEditors.get("sectionsEs")?.get()||[],faqsEs=arrayEditors.get("faqsEs")?.get()||[];
       result=await api("product-content",{action:"save_product",model:value("model"),
        status:value("status"),content:{title:value("title"),navTitle:value("navTitle"),short:value("short"),detail:value("detail"),meta:value("meta"),
          image:value("image"),checks,body:value("body"),sections,faqs,bodyEs:value("bodyEs"),sectionsEs,faqsEs,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
     }else if(action==="structured-copy"){
-     let content;try{content=JSON.parse(value("structuredJson")||"{}")}catch{throw Error("结构化正文必须是 JSON 对象")}
+     const content={eyebrow:value("structuredEyebrow"),title:value("structuredTitle"),subtitle:value("structuredSubtitle"),quickAnswers:arrayEditors.get("quickAnswers")?.get()||[],groups:arrayEditors.get("groups")?.get()||[],sections:arrayEditors.get("sections")?.get()||[]};
+     const target=document.querySelector('[data-cms-field="structuredJson"]');if(target)target.value=JSON.stringify(content);
      result=await api("structured-copy",{action:"save_page_copy",locale:$('cms-structured-locale').value,route:$('cms-structured-route').value,content});
    }else if(action==="page-body-source"){
     const route=$("cms-page-body-route").value;
@@ -544,6 +596,7 @@
   if(!state.brand)load();
  });
 })();
+
 
 
 

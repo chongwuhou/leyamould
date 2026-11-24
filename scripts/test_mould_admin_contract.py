@@ -27,6 +27,10 @@ for endpoint in (
     '"home-banners"',
 ):
     assert endpoint in content, endpoint
+for marker in ("cms-array-editor", "Quick Answers（问题与回答）", "英文产品 FAQ", "arrayEditors.get(\"sections\")"):
+    assert marker in content, marker
+assert 'data-admin-target="audit"' not in index
+assert '/assets/admin-audit.js' not in index
 for stale in ("Why Us", "drinkware", '"/products/"', "旭一", "XUYI Bottles Website"):
     assert stale not in content, stale
 
@@ -47,3 +51,4 @@ for rel in ("assets/admin-blog.js", "assets/admin-media.js", "assets/admin-secur
     assert "旭一" not in text and "XUYI" not in text, rel
 
 print("LEYA_MOULD_ADMIN_CONTRACT_PASSED")
+
