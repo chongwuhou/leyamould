@@ -38,8 +38,8 @@ assert "generate_r2_usage_index(DIST" in build_script
 workflow = source(".github/workflows/publish-leyamould.yml")
 assert "python scripts/r2_usage_index.py" in workflow
 assert "python scripts/test_r2_usage_index.py" in workflow
-assert "python scripts/upload_legacy_mould_media.py" in workflow
-assert "python scripts/migrate_mould_content.py" in workflow
+assert "python scripts/upload_legacy_mould_media.py" not in workflow
+assert "python scripts/migrate_mould_content.py" not in workflow
 assert "LEYA_RELEASE_SHA: ${{ github.sha }}" in workflow
 assert "python scripts/verify_production_release.py" in workflow
 assert "configured locales" in workflow

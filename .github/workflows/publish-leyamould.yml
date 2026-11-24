@@ -36,7 +36,6 @@ on:
       - "scripts/test_mould_release_authority.py"
       - "scripts/test_leya_state_contract.py"
       - "scripts/generate_mould_page_bodies.py"
-      - "scripts/upload_legacy_mould_media.py"
       - "scripts/test_legacy_media_migration.py"
       - "scripts/prepare_model_reference_import.py"
       - "scripts/verify_production_release.py"
@@ -99,14 +98,6 @@ jobs:
         run: python scripts/test_leya_state_contract.py
       - name: Validate site isolation
         run: python scripts/preflight.py
-      - name: Upload legacy LEYA page media to R2
-        env:
-          LEYA_MEDIA_START_INDEX: "247"
-        run: |
-          python -m pip install --disable-pip-version-check --quiet Pillow
-          python scripts/upload_legacy_mould_media.py
-      - name: Apply owner-approved LEYA content and media baseline
-        run: python scripts/migrate_mould_content.py
       - name: Verify D1-driven language and publish guards
         run: python scripts/test_dynamic_language_and_publish_guards.py
       - name: Fetch reviewed LEYA D1 build snapshot
