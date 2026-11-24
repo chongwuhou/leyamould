@@ -83,6 +83,14 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
   return authorizedExplicitPublishRequest(request, env);
 }
 
+// One-time, source-bound LEYA MOULD content seed. The endpoint imports the
+// reviewed repository manifests itself and never accepts arbitrary article,
+// navigation or SEO copy from the caller.
+export async function authorizedMouldContentSeedRequest(request, env) {
+  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/mould-content-seed-20261124") return false;
+  return authorizedExplicitPublishRequest(request, env);
+}
+
 
 // Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
 // Narrow, source-reviewed repair for the nine multilingual Blog D1 records identified
@@ -151,5 +159,6 @@ export async function authorizedReviewedFactoryCatalogCommitRequest(request, env
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-20261103")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
+
 
 

@@ -77,6 +77,7 @@ MODEL_REFERENCE_SOURCE = "cloudflare-d1:leya_model_references" if _SNAPSHOT_MODE
 BRAND_CONFIG = STATE.get("brand") if isinstance(STATE.get("brand"), dict) else {}
 CONTACT_CONFIG = STATE.get("contacts") if isinstance(STATE.get("contacts"), dict) else {}
 NAVIGATION = [row for row in STATE.get("navigation", []) if isinstance(row, dict)]
+COMMON_COPY = STATE.get("commonCopy") if isinstance(STATE.get("commonCopy"), dict) else {}
 def _normalise_page_row(row: dict) -> dict:
     """Accept the D1 snapshot's snake_case fields and the admin API's camelCase.
 
@@ -219,8 +220,15 @@ if not (LOGO_SRC.startswith("/") or LOGO_SRC.startswith("https://")):
     LOGO_SRC = "/assets/leyamould-logo.svg?v=logo1"
 LOGO_ALT = str(_header_logo.get("alt") or BRAND_DISPLAY)
 
-def navigation_label(url: str, fallback: str) -> str:
-    """Use D1's reviewed label without changing the frozen menu structure."""
+def navigation_label(url: str, fallback: str, locale: str = "en") -> str:
+    """Use D1's reviewed source-language label without changing menu structure.
+
+    The navigation table is intentionally source-language/global. Localized
+    labels continue to come from the D1 common-copy map and the reviewed
+    catalogue fields, so an English admin edit cannot leak into Spanish.
+    """
+    if locale != "en":
+        return fallback
     rows = [row for row in NAVIGATION if str(row.get("url") or "") == url]
     rows.sort(key=lambda row: (int(row.get("sort_order", row.get("sortOrder", 999)) or 999), str(row.get("id", ""))))
     return str(rows[0].get("label") or fallback) if rows else fallback
@@ -334,7 +342,7 @@ TEXT = {
         "technical_eyebrow": "TECHNICAL CONTENT", "technical_title": "Built around evidence, not generic promises.",
         "technical_text": "Product drawings, high-resolution images and PDFs will be added to the relevant category as they are approved. Until then, category pages clearly show which information is still to be confirmed.",
         "technical_cta": "Send a Drawing or PDF →", "resources_title": "Mould project resources", "resources_text": "Share the part drawing, target resin, expected cavities, machine model, sample or PDF. We will return with the questions needed for a useful quotation.",
-        "footer_tagline": "Bottle, cap, preform and custom product mould support for international buyers.", "footer_products": "Products", "footer_capabilities": "Capabilities", "footer_contact": "Contact Us", "footer_design": "Mould Design & Engineering", "footer_manufacturing": "Precision Manufacturing", "footer_quality": "Quality & Inspection", "footer_support": "Trial & Technical Support", "footer_quote": "Request a Quote →", "footer_faq": "FAQs", "footer_privacy": "Privacy Policy", "footer_sticky": "Mould Project Enquiries", "footer_cta_title": "Ready to discuss your mould project?", "footer_cta_text": "Send your drawing, sample or PDF and tell us the production target.", "footer_eyebrow": "LEYA MOULD · ENGINEERING · MANUFACTURING", "form_required": "Company name, work email and project requirements are required. Technical drawings, samples and documents can be attached later by email or WhatsApp.", "form_company": "Company Name", "form_email": "Work Email", "form_category": "Mould Category", "form_quantity": "Estimated Quantity", "form_country": "Destination Country", "form_type": "Inquiry Type", "form_quote": "Request a Quote", "form_new": "New Mould Design", "form_review": "Existing Mould Review", "form_tech": "Technical Consultation", "form_material": "Target Material", "form_advise": "Please advise", "form_other": "Other / to be confirmed", "form_requirements": "Your Requirements", "form_consent": "I agree to the", "form_privacy": "privacy policy", "form_submit": "Send Project Enquiry →", "form_aria": "Mould project enquiry form", "back": "Back to Home →", "learn": "Learn More →", "view": "View Category →", "category_note": "Technical specifications, images and PDF references are added after project review.", "contact_title": "Tell us about your mould project.", "contact_intro": "Send the part drawing, sample, target material, cavity plan, machine information and delivery market. We will reply with the next technical questions.", "faq_title": "Mould project questions", "faq_intro": "A short starting point for buyers preparing a tooling enquiry.", "about_title": "About LEYA MOULD", "about_text": "LEYA MOULD Co.,Ltd is a mould-project brand based in Huangyan, Taizhou, Zhejiang Province, China. The site is being prepared around an evidence-led catalogue for packaging and product tooling.", "privacy_title": "Privacy & enquiry data", "privacy_text": "We use the information you submit to respond to mould project enquiries, technical questions and quotation requests. Contact amyhu@leyamould.com for data questions.", "blog_title": "Mould project resources", "blog_text": "Technical articles and approved project resources will be added as the mould catalogue is reviewed.",
+        "footer_tagline": "Bottle, cap, preform and custom product mould support for international buyers.", "footer_products": "Products", "footer_capabilities": "Capabilities", "footer_contact": "Contact Us", "footer_quick_links": "Quick Links", "footer_sitemap": "Sitemap", "footer_design": "Mould Design & Engineering", "footer_manufacturing": "Precision Manufacturing", "footer_quality": "Quality & Inspection", "footer_support": "Trial & Technical Support", "footer_quote": "Request a Quote →", "footer_faq": "FAQs", "footer_privacy": "Privacy Policy", "footer_sticky": "Mould Project Enquiries", "footer_cta_title": "Ready to discuss your mould project?", "footer_cta_text": "Send your drawing, sample or PDF and tell us the production target.", "footer_eyebrow": "LEYA MOULD · ENGINEERING · MANUFACTURING", "form_required": "Company name, work email and project requirements are required. Technical drawings, samples and documents can be attached later by email or WhatsApp.", "form_company": "Company Name", "form_email": "Work Email", "form_category": "Mould Category", "form_quantity": "Estimated Quantity", "form_country": "Destination Country", "form_type": "Inquiry Type", "form_quote": "Request a Quote", "form_new": "New Mould Design", "form_review": "Existing Mould Review", "form_tech": "Technical Consultation", "form_material": "Target Material", "form_advise": "Please advise", "form_other": "Other / to be confirmed", "form_requirements": "Your Requirements", "form_consent": "I agree to the", "form_privacy": "privacy policy", "form_submit": "Send Project Enquiry →", "form_aria": "Mould project enquiry form", "back": "Back to Home →", "learn": "Learn More →", "view": "View Category →", "category_note": "Technical specifications, images and PDF references are added after project review.", "contact_title": "Tell us about your mould project.", "contact_intro": "Send the part drawing, sample, target material, cavity plan, machine information and delivery market. We will reply with the next technical questions.", "faq_title": "Mould project questions", "faq_intro": "A short starting point for buyers preparing a tooling enquiry.", "about_title": "About LEYA MOULD", "about_text": "LEYA MOULD Co.,Ltd is a mould-project brand based in Huangyan, Taizhou, Zhejiang Province, China. The site is being prepared around an evidence-led catalogue for packaging and product tooling.", "privacy_title": "Privacy & enquiry data", "privacy_text": "We use the information you submit to respond to mould project enquiries, technical questions and quotation requests. Contact amyhu@leyamould.com for data questions.", "blog_title": "Mould project resources", "blog_text": "Technical articles and approved project resources will be added as the mould catalogue is reviewed.",
     },
     "es": {}, "pt": {}, "ru": {}, "tr": {}
 }
@@ -353,6 +361,11 @@ def esc(value: object) -> str:
     return html.escape(str(value or ""), quote=True)
 
 def text(locale: str, key: str) -> str:
+    localized = COMMON_COPY.get(locale) if isinstance(COMMON_COPY.get(locale), dict) else {}
+    source = COMMON_COPY.get("en") if isinstance(COMMON_COPY.get("en"), dict) else {}
+    value = localized.get(key) if key in localized else source.get(key)
+    if isinstance(value, str) and value.strip():
+        return value
     return str(TEXT.get(locale, TEXT["en"]).get(key, TEXT["en"].get(key, key)))
 
 def data(locale: str, key: str):
@@ -499,17 +512,17 @@ def header(locale: str, route: str) -> str:
     # label opens the aggregate page, while the caret exposes every item in
     # the canonical 13-family catalogue (the same source used by the footer
     # and the product grid).
-    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "navTitle") or catalog_text(locale, item, "title"))) + '</a>' for item in CAP_MOULD_SERIES)
+    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "navTitle") or catalog_text(locale, item, "title"), locale)) + '</a>' for item in CAP_MOULD_SERIES)
     nav = ['<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>']
-    about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">About us</a><a href="' + localized_href(locale, "/faq/") + '">FAQs</a></div></div>'
+    about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">' + esc(navigation_label("/about/", text(locale, "about"), locale)) + '</a><a href="' + localized_href(locale, "/faq/") + '">' + esc(navigation_label("/faq/", text(locale, "faq_title"), locale)) + '</a></div></div>'
     cap_nav_label = "Cap mold" if locale == "en" else text(locale, "cap_mould")
     product_menu = '<div class="nav__drop nav__drop--products"><a class="nav__link nav__link--direct" href="' + localized_href(locale, "/Plastic-cap-mold.html") + '">' + esc(cap_nav_label) + '</a><button class="nav__toggle nav__toggle--caret" data-mega-toggle type="button" aria-label="Open Cap Mould menu" aria-controls="menu-products" aria-expanded="false"><svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-products">' + product_links + '</div></div>'
     nav.append(about_menu)
     nav.append(product_menu)
-    nav.append('<a class="nav__link" href="' + localized_href(locale, "/capabilities/") + '">' + esc(text(locale, "machine")) + '</a>')
-    sample_label = "Sample" if locale == "en" else text(locale, "samples")
+    nav.append('<a class="nav__link" href="' + localized_href(locale, "/capabilities/") + '">' + esc(navigation_label("/capabilities/", text(locale, "machine"), locale)) + '</a>')
+    sample_label = navigation_label("/samples/", "Sample" if locale == "en" else text(locale, "samples"), locale)
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/samples/") + '">' + esc(sample_label) + '</a>')
-    resources_menu = '<div class="nav__drop nav__drop--resources"><a class="nav__link nav__link--direct" href="' + localized_href(locale, "/news/") + '">' + esc(text(locale, "news")) + '</a><button class="nav__toggle nav__toggle--caret" data-mega-toggle type="button" aria-label="Open News menu" aria-controls="menu-resources" aria-expanded="false"><svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-resources"><a href="' + localized_href(locale, "/news/Bottle-cap-molds.html") + '">Bottle cap molds</a><a href="' + localized_href(locale, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html") + '">Bottle Cap Machine</a></div></div>'
+    resources_menu = '<div class="nav__drop nav__drop--resources"><a class="nav__link nav__link--direct" href="' + localized_href(locale, "/news/") + '">' + esc(navigation_label("/news/", text(locale, "news"), locale)) + '</a><button class="nav__toggle nav__toggle--caret" data-mega-toggle type="button" aria-label="Open News menu" aria-controls="menu-resources" aria-expanded="false"><svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-resources"><a href="' + localized_href(locale, "/news/Bottle-cap-molds.html") + '">' + esc(navigation_label("/news/Bottle-cap-molds.html", "Bottle cap molds", locale)) + '</a><a href="' + localized_href(locale, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html") + '">' + esc(navigation_label("/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine", locale)) + '</a></div></div>'
     nav.append(resources_menu)
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/video/") + '">' + esc(text(locale, "video")) + '</a>')
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/contact/") + '">' + esc(text(locale, "contact_us")) + '</a>')
@@ -526,10 +539,18 @@ def header(locale: str, route: str) -> str:
     return render_template("header", TOPBAR=top, LOGO=logo, NAV_DESKTOP=''.join(nav), ACTIONS=actions, SEARCH=search, NAV_MOBILE=mobile)
 
 def footer(locale: str) -> str:
-    links = ''.join('<p><a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "title"))) + '</a></p>' for item in CAP_MOULD_SERIES)
+    links = ''.join('<p><a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "title"), locale)) + '</a></p>' for item in CAP_MOULD_SERIES)
     quick = ''.join('<p><a href="' + localized_href(locale, route) + '">' + esc(label) + '</a></p>' for label, route in ((text(locale, "about"), "/about/"), (text(locale, "samples"), "/samples/"), (text(locale, "video"), "/video/"), (text(locale, "news"), "/news/"), (text(locale, "faq_title"), "/faq/"), (text(locale, "contact_us"), "/contact/")))
     footer_config = BRAND_CONFIG.get("footer", {}) if isinstance(BRAND_CONFIG, dict) else {}
+    footer_logo = (BRAND_CONFIG.get("logos", {}).get("footer", {}) if isinstance(BRAND_CONFIG, dict) else {})
+    footer_logo_src = str(footer_logo.get("src") or LOGO_SRC)
+    footer_logo_alt = str(footer_logo.get("alt") or LOGO_ALT)
+    footer_logo = '<a class="footer__logo" href="' + esc(localized_href(locale, "/")) + '" aria-label="' + esc(BRAND_DISPLAY + " home") + '"><img class="footer__logo-image" src="' + esc(footer_logo_src) + '" alt="' + esc(footer_logo_alt) + '" width="260" height="51" loading="lazy" decoding="async"></a>'
+    footer_email = str(_brand_contact.get("email") or EMAIL)
+    footer_wa_url = WA_URL
+    footer_copy = str(footer_config.get("copyright") or ("© 2026 " + BRAND_DISPLAY))
     vals = {"PRODUCT_LINKS": links, "QUICK_LINKS": quick, "WHATSAPP_NUMBER": esc(WHATSAPP), "FOOTER_EYEBROW": esc(text(locale, "footer_eyebrow")), "FOOTER_CTA_TITLE": esc(text(locale, "footer_cta_title")), "FOOTER_CTA_TEXT": esc(text(locale, "footer_cta_text")), "FOOTER_CTA_BUTTON": esc(text(locale, "quote")), "FOOTER_TAGLINE": esc(footer_config.get("about") or text(locale, "footer_tagline")), "FOOTER_ADDRESS": esc(ADDRESS), "FOOTER_PRODUCTS_TITLE": esc(text(locale, "footer_products")), "FOOTER_CONTACT_TITLE": esc(footer_config.get("contactHeading") or text(locale, "footer_contact")), "FOOTER_QUOTE": esc(text(locale, "footer_quote")), "FOOTER_PRIVACY": esc(text(locale, "footer_privacy")), "FOOTER_STICKY": esc(text(locale, "footer_sticky"))}
+    vals.update({"FOOTER_LOGO": footer_logo, "FOOTER_EMAIL": esc(footer_email), "FOOTER_WA_URL": esc(footer_wa_url), "FOOTER_CONTACT_HREF": esc(localized_href(locale, "/contact/#inquiry")), "FOOTER_HOME_HREF": esc(localized_href(locale, "/")), "FOOTER_PRIVACY_HREF": esc(localized_href(locale, "/privacy-policy/")), "FOOTER_SITE_URL": esc(ORIGIN + localized_href(locale, "/")), "FOOTER_COPYRIGHT": esc(footer_copy), "FOOTER_QUICK_LINKS": esc(text(locale, "footer_quick_links")), "FOOTER_SITEMAP": esc(text(locale, "footer_sitemap"))})
     return render_template("footer", **vals)
 
 def _absolute_social_image(route: str) -> str:
@@ -1302,12 +1323,13 @@ def effective_news_items(category: str = "news") -> list[dict]:
         image_src = str(row.get("image") or "/assets/mould-news-placeholder.svg")
         if slug not in EDITORIAL_BY_SLUG:
             continue
+        d1_editorial = row.get("editorial") if isinstance(row.get("editorial"), dict) else None
         mapped.append({
             "slug": slug, "title": title, "titleEs": str(row.get("titleEs") or row.get("title_es") or ""),
             "date": date, "image": image_src, "summary": summary,
             "summaryEs": str(row.get("summaryEs") or row.get("summary_es") or ""),
             "alt": str(row.get("alt") or title), "altEs": str(row.get("altEs") or row.get("alt_es") or title),
-            "editorial": EDITORIAL_BY_SLUG.get(slug),
+            "editorial": d1_editorial or EDITORIAL_BY_SLUG.get(slug),
         })
     if reviewed:
         # Keep the full 24-article registry in the archive. A partial D1
@@ -1320,7 +1342,7 @@ def effective_news_items(category: str = "news") -> list[dict]:
             value = dict(base)
             if base["slug"] in overrides:
                 value.update({key: overrides[base["slug"]][key] for key in ("title", "titleEs", "date", "image", "summary", "summaryEs", "alt", "altEs") if overrides[base["slug"]].get(key)})
-                value["editorial"] = base.get("editorial")
+                value["editorial"] = overrides[base["slug"]].get("editorial") or base.get("editorial")
             merged.append(value)
         return merged
     return mapped or (NEWS_ITEMS if category == "news" else MACHINE_NEWS_ITEMS)
@@ -1514,5 +1536,6 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
+
 
 

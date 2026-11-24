@@ -90,6 +90,7 @@ def main() -> None:
         "products": "cloudflare-d1:mould product content" if state.get("products") else "source-fallback:data/mould-catalog.json",
         "pageBodies": "cloudflare-d1:page content" if state.get("pageBodies") else "source-fallback:mould source renderer",
         "blogPosts": "cloudflare-d1:blog posts" if state.get("blogPosts") else "source-fallback:empty reviewed resources",
+        "commonCopy": "cloudflare-d1:site_state.common_copy" if state.get("commonCopy") else "source-fallback:mould renderer copy",
         "modelReferences": "cloudflare-d1:leya_model_references" if model_reference_rows else "source-fallback:data/mould-models.json",
         "locales": "deployment/site.config.json + D1 publish-ready filter",
     }
@@ -134,6 +135,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 

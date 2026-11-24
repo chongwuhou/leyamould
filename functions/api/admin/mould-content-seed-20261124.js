@@ -1,0 +1,209 @@
+// Fixed, owner-approved LEYA MOULD content seed.
+//
+// This endpoint is deliberately source-bound: it imports the reviewed News
+// registry and the canonical shell baselines from this repository. It inserts
+// only missing D1 rows, so an owner edit already present in D1 is never
+// overwritten by a rebuild or by a rerun of this migration.
+import EDITORIAL_DATA from "../../../data/mould-news-editorial.json";
+import { authorizedMouldContentSeedRequest } from "../../_shared/build-auth.js";
+import { ensureBlogSchema } from "../../_shared/blog-cms.js";
+import { bumpPublishRevision } from "../../_shared/site-settings.js";
+import { MOULD_PUBLIC_ROUTES, MOULD_ROUTES } from "../../_shared/mould-routes.js";
+
+const respond = (body, status = 200) => Response.json(body, {
+  status,
+  headers: { "cache-control": "no-store", "x-robots-tag": "noindex,nofollow,noarchive" }
+});
+
+const BRAND = {
+  schemaVersion: 1,
+  source: {
+    mode: "cloudflare-d1-site_state.brand_config",
+    verifiedFromOrigin: "LEYA MOULD owner profile",
+    capturedAt: "2026-11-24",
+    note: "Initial LEYA MOULD shell seed; later owner edits remain authoritative."
+  },
+  identity: {
+    legalName: "LEYA MOULD Co.,Ltd",
+    displayName: "LEYA MOULD",
+    textName: "LEYA MOULD",
+    upperName: "LEYA MOULD",
+    filterBrandName: "LEYA MOULD",
+    acronym: "LM"
+  },
+  contact: {
+    email: "amyhu@leyamould.com",
+    phoneDisplay: "+86 136 0672 7715",
+    phoneE164: "+8613606727715",
+    whatsappUrl: "https://wa.me/8613606727715",
+    whatsappShortUrl: "https://wa.me/8613606727715",
+    address: "4-55,Xicheng New Village,Huangyan Taizhou,Zhejiang Province, China"
+  },
+  logos: {
+    header: { src: "/assets/leyamould-logo.svg?v=logo1", alt: "LEYA MOULD" },
+    footer: { src: "/assets/leyamould-logo.svg?v=logo1", alt: "LEYA MOULD" }
+  },
+  social: {},
+  footer: {
+    about: "Bottle, cap, preform and custom product mould support for international buyers.",
+    contactHeading: "Contact LEYA MOULD",
+    copyright: "© 2026 LEYA MOULD"
+  },
+  seo: {
+    home: {
+      en: { title: "Plastic Mould Manufacturer in China | LEYA MOULD", description: "Plastic injection moulds and tooling solutions for bottle, cap, preform and custom packaging projects." },
+      es: { title: "Fabricante de moldes de plástico en China | LEYA MOULD", description: "Moldes de inyección y soluciones de utillaje para botellas, tapones, preformas y envases personalizados." }
+    }
+  },
+  email: { defaultFromName: "LEYA MOULD Website", defaultFromPlaceholder: "amyhu@leyamould.com", ehloDomain: "leyamould.com" }
+};
+
+const COMMON_COPY = {
+  en: {
+    home: "Home", about: "About us", cap_mould: "Cap Mould", machine: "Machine", samples: "Sample", news: "News", video: "Video", contact_us: "Contact Us", contact: "Contact", quote: "Request a Quote", faq_title: "FAQs",
+    footer_eyebrow: "LEYA MOULD · ENGINEERING · MANUFACTURING", footer_cta_title: "Ready to discuss your mould project?", footer_cta_text: "Send your drawing, sample or PDF and tell us the production target.", footer_products: "Products", footer_capabilities: "Capabilities", footer_contact: "Contact Us", footer_quick_links: "Quick Links", footer_quote: "Request a Quote →", footer_privacy: "Privacy Policy", footer_sitemap: "Sitemap", footer_sticky: "Mould Project Enquiries", footer_tagline: "Bottle, cap, preform and custom product mould support for international buyers."
+  },
+  es: {
+    home: "Inicio", about: "Sobre nosotros", cap_mould: "Moldes de tapones", machine: "Máquina", samples: "Muestras", news: "Noticias", video: "Vídeo", contact_us: "Contacto", contact: "Contacto", quote: "Solicitar cotización", faq_title: "Preguntas frecuentes",
+    footer_eyebrow: "LEYA MOULD · INGENIERÍA · FABRICACIÓN", footer_cta_title: "¿Hablamos de su proyecto?", footer_cta_text: "Envíe su plano, muestra o PDF y el objetivo de producción.", footer_products: "Productos", footer_capabilities: "Capacidades", footer_contact: "Contacto", footer_quick_links: "Enlaces rápidos", footer_quote: "Solicitar cotización →", footer_privacy: "Privacidad", footer_sitemap: "Mapa del sitio", footer_sticky: "Consultas de moldes", footer_tagline: "Soporte para moldes de botellas, tapones, preformas y productos a medida."
+  }
+};
+
+const NAVIGATION = [
+  ["home", "", "Home", "/", 10],
+  ["about", "", "About Us", "/about/", 20],
+  ["products", "", "Cap Mould", "/Plastic-cap-mold.html", 30],
+  ["product-water", "products", "Mineral Water Cap Mould", "/product/Mineral-Water-Closure-cap-Molds.html", 10],
+  ["product-oil", "products", "Edible Oil Cap Mould", "/product/Oil-bottle-cap-mould.html", 20],
+  ["product-flip", "products", "Flip top caps mould", "/product/Flip-top-caps-mould.html", 30],
+  ["product-engine", "products", "Engine Oil Cap Mould", "/product/Engine-Oil-Cap-Mould.html", 40],
+  ["product-food", "products", "Food Packaging Cap Mould", "/product/Food-Packaging-Cap-Mould.html", 50],
+  ["product-medical", "products", "Medical Cap Mould", "/product/Medical-Cap-Mould.html", 60],
+  ["product-personal", "products", "Personal Care Cap Mould", "/product/Personal-Care-Cap-Mould.html", 70],
+  ["product-functional", "products", "Functional Cap Mould (Combination)", "/product/Functional-Cap-Mould.html", 80],
+  ["product-handle", "products", "Plastic Handle Mould", "/product/Plastic-Handle-Cap-mould.html", 90],
+  ["machine", "", "Machine", "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", 40],
+  ["samples", "", "Samples", "/samples/", 50],
+  ["news", "", "News", "/news/", 60],
+  ["video", "", "Video", "/video/", 70],
+  ["contact", "", "Contact Us", "/contact/", 80]
+];
+
+const PAGE_COPY = {
+  "/": ["Homepage", "Plastic Mould Manufacturer in China | LEYA MOULD", "Plastic injection moulds and tooling solutions for bottle, cap, preform and custom packaging projects."],
+  "/about/": ["About", "About LEYA MOULD | Precision Plastic Mould Manufacturer", "Learn about LEYA MOULD's engineering-led approach to plastic bottle, cap, preform and custom product mould projects."],
+  "/products/": ["Mould Categories", "Plastic Cap Mould Categories | LEYA MOULD", "Explore cap mould, bottle mould, preform mould and custom packaging tooling directions."],
+  "/Plastic-cap-mold.html": ["Mould Categories", "Plastic Cap Mould Manufacturer | LEYA MOULD", "Review LEYA MOULD plastic cap mould families, applications and project information."],
+  "/capabilities/": ["Capabilities", "Cap Auxiliary Machines and Mould Capabilities | LEYA MOULD", "Explore auxiliary equipment, mould engineering, manufacturing and trial support for cap production."],
+  "/capabilities/mould-design/": ["Mould Design & Engineering", "Mould Design and Engineering | LEYA MOULD", "DFM review, parting, cooling, ejection and tooling decisions connected to the approved part requirement."],
+  "/capabilities/precision-manufacturing/": ["Precision Manufacturing", "Precision Mould Manufacturing | LEYA MOULD", "Documented machining, EDM, fitting and inspection support for repeatable plastic mould production."],
+  "/capabilities/trial-sampling/": ["Trial, Sampling & Optimisation", "Mould Trial and Sampling Support | LEYA MOULD", "Trial parts, dimensional checks and agreed evidence before production handover."],
+  "/manufacturing/": ["How We Work", "Plastic Mould Manufacturing Process | LEYA MOULD", "A clear path from drawing review and DFM to machining, trial, inspection and technical handover."],
+  "/quality-control/": ["Quality Control", "Mould Quality Control and Inspection | LEYA MOULD", "Quality checks, inspection evidence and change control for plastic cap and packaging mould projects."],
+  "/request-sample/": ["Request a Sample", "Request a Plastic Mould Sample | LEYA MOULD", "Share your drawing, sample and production target for a project-specific mould review."],
+  "/contact/": ["Contact Us", "Contact LEYA MOULD | Plastic Mould Projects", "Send LEYA MOULD your part drawing, material, cavity plan, machine information and target market."],
+  "/samples/": ["Plastic Cap Samples", "Plastic Cap Mould Samples | LEYA MOULD", "Explore plastic cap samples and the mould directions used for packaging applications."],
+  "/news/": ["News", "Plastic Cap Mould News and Engineering Insights | LEYA MOULD", "Technical news, buyer notes and engineering insights for plastic cap mould projects."],
+  "/news/Bottle-cap-molds.html": ["Bottle Cap Mould News", "Bottle Cap Mould News | LEYA MOULD", "Engineering articles and buyer guidance for bottle cap mould design and production."],
+  "/Bottle-Cap-Machine/Bottle-Cap-Machine.html": ["Bottle Cap Machine", "Bottle Cap Machines and Auxiliary Equipment | LEYA MOULD", "Auxiliary equipment and production support for bottle cap assembly, lining and handling."],
+  "/video/": ["Video", "Cap Mould Trial Videos | LEYA MOULD", "Watch LEYA MOULD mould trial, tooling and auxiliary equipment videos."],
+  "/faq/": ["FAQ", "Plastic Mould Project FAQs | LEYA MOULD", "Answers to common questions about drawings, materials, cavities, trials and mould project delivery."],
+  "/blog/": ["Blog", "Mould Project Resources | LEYA MOULD", "Reviewed technical resources for buyers planning plastic mould and tooling projects."],
+  "/privacy-policy/": ["Privacy Policy", "Privacy Policy | LEYA MOULD", "How LEYA MOULD handles project enquiry and contact information."]
+};
+
+const PRODUCT_COPY = {
+  "mineral-water-closure-cap-molds": ["Mineral Water Cap Mould", "Mineral Water Cap Mould Manufacturer | LEYA MOULD", "Plastic cap moulds for mineral water, beverage and PET closure applications."],
+  "oil-bottle-cap-mould": ["Edible Oil Cap Mould", "Edible Oil Cap Mould Manufacturer | LEYA MOULD", "Tooling solutions for edible oil closures, pull-ring caps and pouring applications."],
+  "flip-top-caps-mould": ["Flip Top Cap Mould", "Flip Top Cap Mould Manufacturer | LEYA MOULD", "Living-hinge flip-top cap moulds for personal care, household and dispensing packaging."],
+  "engine-oil-cap-mould": ["Engine Oil Cap Mould", "Engine Oil Cap Mould Manufacturer | LEYA MOULD", "Durable mould solutions for engine oil, lubricant and industrial closure applications."],
+  "food-packaging-cap-mould": ["Food Packaging Cap Mould", "Food Packaging Cap Mould Manufacturer | LEYA MOULD", "Plastic cap moulds for sauces, food, dairy and dry-food packaging closures."],
+  "medical-cap-mould": ["Medical Cap Mould", "Medical Cap Mould Manufacturer | LEYA MOULD", "Precision moulding support for pharmaceutical, medical and diagnostic closures."],
+  "personal-care-cap-mould": ["Personal Care Cap Mould", "Personal Care Cap Mould Manufacturer | LEYA MOULD", "Cap moulds for shampoo, lotion, disc-top and personal care packaging."],
+  "functional-cap-mould": ["Functional Cap Mould", "Functional Cap Mould Manufacturer | LEYA MOULD", "Combination, dispensing and safety closure mould solutions for functional packaging."],
+  "plastic-handle-cap-mould": ["Plastic Handle Mould", "Plastic Handle Mould Manufacturer | LEYA MOULD", "Injection moulds for bottle handles, carry handles and large-container packaging."]
+};
+
+function isoDate(value) { return String(value || "").replaceAll("/", "-").slice(0, 10); }
+function json(value) { return JSON.stringify(value); }
+function seedPost(item) {
+  const title = item.title || {};
+  const description = item.description || {};
+  const intro = item.intro || {};
+  const alt = item.alt || {};
+  return {
+    schemaVersion: 1, source: "leya-mould-editorial", slug: item.slug, category: item.category,
+    date: item.date, updated: isoDate(item.date), title: title.en || "", titleEs: title.es || "",
+    description: description.en || "", descriptionEs: description.es || "", summary: description.en || "", summaryEs: description.es || "",
+    intro: intro.en || "", introEs: intro.es || "", cover: item.cover || "", image: item.cover || "",
+    alt: alt.en || title.en || "LEYA MOULD technical reference", altEs: alt.es || title.es || "Referencia técnica de LEYA MOULD",
+    editorial: item
+  };
+}
+
+async function ensureSchema(db) {
+  await db.prepare("CREATE TABLE IF NOT EXISTS site_state (key TEXT PRIMARY KEY,value TEXT NOT NULL DEFAULT '',updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS site_navigation (id TEXT PRIMARY KEY,parent_id TEXT,label TEXT NOT NULL,url TEXT NOT NULL,sort_order INTEGER NOT NULL DEFAULT 0,enabled INTEGER NOT NULL DEFAULT 1,new_window INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS site_pages (route TEXT PRIMARY KEY,label TEXT NOT NULL,seo_title TEXT NOT NULL DEFAULT '',meta_description TEXT NOT NULL DEFAULT '',robots TEXT NOT NULL DEFAULT 'noindex,nofollow',sitemap_enabled INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+}
+
+export async function onRequestPost(context) {
+  if (!(await authorizedMouldContentSeedRequest(context.request, context.env))) return respond({ error: "Unauthorized mould content seed" }, 401);
+  const db = context.env.LEYA_DB;
+  if (!db) return respond({ error: "LEYA_DB binding missing" }, 503);
+  try {
+    await ensureSchema(db);
+    await ensureBlogSchema(db);
+    const inserted = { state: 0, navigation: 0, pages: 0, posts: 0 };
+    const skipped = { state: 0, navigation: 0, pages: 0, posts: 0 };
+    const statements = [];
+    const stateRows = [
+      ["brand_config", BRAND],
+      ["contact_config", { schemaVersion: 1, contacts: [{ id: "default-sales", name: "Sales Team", title: "International Sales", email: BRAND.contact.email, phoneDisplay: BRAND.contact.phoneDisplay, phoneE164: BRAND.contact.phoneE164, whatsappUrl: BRAND.contact.whatsappUrl, avatarUrl: "", locales: [], regions: [], sortOrder: 10, enabled: true, isDefault: true }] }],
+      ["common_copy", COMMON_COPY]
+    ];
+    const existingState = new Set(((await db.prepare("SELECT key FROM site_state WHERE key IN ('brand_config','contact_config','common_copy')").all()).results || []).map(row => String(row.key)));
+    for (const [key, value] of stateRows) {
+      if (existingState.has(key)) { skipped.state += 1; continue; }
+      statements.push(db.prepare("INSERT INTO site_state(key,value,updated_at) VALUES(?,?,CURRENT_TIMESTAMP)").bind(key, json(value)));
+      inserted.state += 1;
+    }
+
+    const existingNav = new Set(((await db.prepare("SELECT id FROM site_navigation").all()).results || []).map(row => String(row.id)));
+    for (const [id, parentId, label, url, sortOrder] of NAVIGATION) {
+      if (!MOULD_ROUTES.has(url) || existingNav.has(id)) { skipped.navigation += 1; continue; }
+      statements.push(db.prepare("INSERT INTO site_navigation(id,parent_id,label,url,sort_order,enabled,new_window,updated_at) VALUES(?,?,?,?,?,1,0,CURRENT_TIMESTAMP)").bind(id, parentId || null, label, url, sortOrder));
+      inserted.navigation += 1;
+    }
+
+    const pageRows = Object.entries(PAGE_COPY).map(([route, [label, title, description]]) => ({ route, label, title, description }));
+    for (const [slug, [label, title, description]] of Object.entries(PRODUCT_COPY)) {
+      const route = MOULD_PUBLIC_ROUTES.get(slug);
+      if (route) pageRows.push({ route, label, title, description });
+    }
+    const existingPages = new Set(((await db.prepare("SELECT route FROM site_pages").all()).results || []).map(row => String(row.route)));
+    for (const page of pageRows) {
+      if (!MOULD_ROUTES.has(page.route) || existingPages.has(page.route)) { skipped.pages += 1; continue; }
+      statements.push(db.prepare("INSERT INTO site_pages(route,label,seo_title,meta_description,robots,sitemap_enabled,updated_at) VALUES(?,?,?,?, 'index,follow',1,CURRENT_TIMESTAMP)").bind(page.route, page.label, page.title, page.description));
+      inserted.pages += 1;
+    }
+
+    const existingPosts = new Set(((await db.prepare("SELECT slug FROM xuyi_blog_posts").all()).results || []).map(row => String(row.slug)));
+    const posts = Array.isArray(EDITORIAL_DATA?.items) ? EDITORIAL_DATA.items : [];
+    for (const item of posts) {
+      const slug = String(item?.slug || "");
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || existingPosts.has(slug)) { skipped.posts += 1; continue; }
+      const post = seedPost(item);
+      statements.push(db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,'published',?,?)").bind(slug, json(post), isoDate(item.date) + "T12:00:00.000Z"));
+      inserted.posts += 1;
+    }
+    if (statements.length) await db.batch(statements);
+    const changed = Object.values(inserted).reduce((sum, value) => sum + value, 0);
+    const revision = changed ? await bumpPublishRevision(db) : { revision: 0, requestedAt: "" };
+    return respond({ success: true, inserted, skipped, totalNews: posts.length, publishRevision: revision.revision, requestedAt: revision.requestedAt, ownerEditsPreserved: true });
+  } catch (error) {
+    return respond({ error: "D1 mould content seed failed: " + String(error?.message || error).slice(0, 240) }, 500);
+  }
+}
+
+
