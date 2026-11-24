@@ -1755,14 +1755,6 @@
       "conversion": "sRGB WebP, max 2400px, quality 88"
     },
     {
-      "source": "https://www.cap-molds.com/upload/caps/Bottle-cap-sample{i:02d}.jpg",
-      "target": "/media/page/26409b2e191e8dcfce223336881038b2.webp",
-      "filename": "Bottle-cap-sample{i:02d}.jpg",
-      "r2Key": "site-media/page/26409b2e191e8dcfce223336881038b2.webp",
-      "contentType": "image/webp",
-      "conversion": "sRGB WebP, max 2400px, quality 88"
-    },
-    {
       "source": "https://www.cap-molds.com/upload/flip-samples/sample01.jpg",
       "target": "/media/page/d0672e3f4cc3317c529fcd122a077ac2.webp",
       "filename": "sample01.jpg",
