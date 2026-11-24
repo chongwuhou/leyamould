@@ -17,6 +17,13 @@ seed = read("functions/api/admin/mould-content-seed-20261124.js")
 for marker in ("STRUCTURED_PAGE_COPY", "shared_cta", "mergeMissing", "[\"page_copy\", STRUCTURED_PAGE_COPY]", "ownerEditsPreserved"):
     assert marker in seed, marker
 
+structured_api = read("functions/api/admin/structured-copy.js")
+for marker in ("save_page_copy", "quickAnswers", "groups", "bumpPublishRevision"):
+    assert marker in structured_api, marker
+
+page_data = read("data/mould-page-structured.json")
+assert "quickAnswers" in page_data and "groups" in page_data
+
 renderer = read("mould_build.py")
 for marker in ("PAGE_COPY = STATE.get(\"pageCopy\")", "def structured_page_copy", "structured_page_value", "d1_ctas", "structured_eyebrow"):
     assert marker in renderer, marker
@@ -38,4 +45,3 @@ cta = mould_build.shared_cta("en", "catalog")
 assert "OWNER CTA" in cta and "Owner CTA text." in cta and "Owner note." in cta
 
 print("LEYA_MOULD_PAGE_COPY_D1_CONTRACT_PASSED")
-
