@@ -42,12 +42,14 @@ def main():
     # First rollout may read the old live Function revision before the new
     # build-snapshot endpoint is deployed. The follow-up build consumes D1 blogPosts.
     payload.setdefault("blogPosts",[])
+    payload.setdefault("modelReferences",[])
     if payload.get("site")!="leyamould" or payload.get("schemaVersion")!=1:
         raise RuntimeError("Build snapshot did not identify LEYA MOULD")
     if (not isinstance(payload.get("pages"),list)
             or not isinstance(payload.get("products"),list)
-            or not isinstance(payload.get("blogPosts"),list)):
-        raise RuntimeError("Build snapshot schema missing required pages/products/blogPosts")
+            or not isinstance(payload.get("blogPosts"),list)
+            or not isinstance(payload.get("modelReferences"),list)):
+        raise RuntimeError("Build snapshot schema missing required pages/products/blogPosts/modelReferences")
     OUTPUT.parent.mkdir(parents=True,exist_ok=True)
     OUTPUT.write_text(json.dumps(payload,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     print("LEYA_BUILD_INPUT_READY",
@@ -55,5 +57,6 @@ def main():
           "pages",len(payload["pages"]),
           "products",len(payload["products"]),
           "blogPosts",len(payload["blogPosts"]),
+          "modelReferences",len(payload["modelReferences"]),
           "translations",len(payload.get("translations",[])))
 if __name__=="__main__":main()

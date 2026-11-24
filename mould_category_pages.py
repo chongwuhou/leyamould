@@ -265,6 +265,15 @@ def _catalog_text(item: dict, locale: str, key: str) -> str:
             return translated.strip()
     return str(item.get(key) or "")
 
+def _model_text(item: dict, locale: str, key: str) -> str:
+    """Read reviewed per-locale model copy, falling back to source English."""
+    translations = item.get("translations") if isinstance(item.get("translations"), dict) else {}
+    localized = translations.get(locale) if isinstance(translations.get(locale), dict) else {}
+    value = localized.get(key)
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return str(item.get(key) or "").strip()
+
 
 def render_model_reference_section(locale: str, models: list[dict], helpers: dict, heading: str | None = None) -> str:
     """Render imported HMould model references inside the existing catalogue shell.
@@ -290,13 +299,14 @@ def render_model_reference_section(locale: str, models: list[dict], helpers: dic
     source_label = "Referencia HMould" if es else "HMould reference"
     cards = []
     for model in models:
-        title = str(model.get("title") or "Model reference")
+        title = _model_text(model, locale, "title") or "Model reference"
+        alt = _model_text(model, locale, "alt") or title
         model_url = href(locale, "/contact/?model=" + str(model.get("slug") or "") + "#inquiry")
         model_image = str(model.get("image") or "/assets/mould-placeholder.svg")
-        description = str(model.get("description") or "")
+        description = _model_text(model, locale, "description")
         cards.append(
             '<article class="mould-model-card">'
-            '<div class="mould-model-card__image">' + image(model_image, title) + '</div>'
+            '<div class="mould-model-card__image">' + image(model_image, alt) + '</div>'
             '<div class="mould-model-card__body">'
             '<span class="mould-model-card__source">' + esc(source_label) + '</span>'
             '<h3>' + esc(title) + '</h3>'

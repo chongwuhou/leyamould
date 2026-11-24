@@ -16,7 +16,7 @@ for module in (
     "admin-forms.js", "admin-blog.js", "admin-media.js", "admin-media-replace.js",
     "admin-youtube-videos.js", "admin-security.js", "admin-site-settings.js",
     "admin-content.js", "admin-reviews.js", "admin-scheduler.js",
-    "admin-product-seo.js", "admin-publish.js",
+    "admin-product-seo.js", "admin-model-references.js", "admin-publish.js",
 ):
     assert f'/assets/{module}' in index, module
 

@@ -23,7 +23,7 @@ INDEXING_APPROVED = CONFIG["site"].get("indexingApproved") is True
 OUTPUT = ROOT / (os.environ.get("LEYA_OUTPUT_DIR") or ".")
 CATALOG = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
 MODEL_DATA = json.loads((ROOT / "data/mould-models.json").read_text(encoding="utf-8")) if (ROOT / "data/mould-models.json").is_file() else {"models": []}
-HMOULD_MODELS = [row for row in MODEL_DATA.get("models", []) if isinstance(row, dict)]
+STATIC_HMOULD_MODELS = [row for row in MODEL_DATA.get("models", []) if isinstance(row, dict)]
 EDITORIAL_DATA = json.loads((ROOT / "data/mould-news-editorial.json").read_text(encoding="utf-8")) if (ROOT / "data/mould-news-editorial.json").is_file() else {"items": []}
 EDITORIAL_BY_SLUG = {str(row.get("slug")): row for row in EDITORIAL_DATA.get("items", []) if isinstance(row, dict) and row.get("slug")}
 SNAPSHOT = ROOT / "_local_ops/build-snapshot.json"
@@ -40,6 +40,34 @@ if SNAPSHOT.is_file():
     candidate = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     if candidate.get("site") == "leyamould":
         STATE = candidate
+
+def _normalise_model_reference(row: dict) -> dict:
+    """Normalise the D1 snapshot without allowing it to change layout code.
+
+    D1 owns reviewed business fields; the checked-in HMould catalogue remains
+    the deterministic fallback until the first published R2-backed snapshot.
+    """
+    value = dict(row)
+    value["slug"] = str(row.get("slug") or "").strip().lower()
+    value["family"] = str(row.get("family") or "").strip().lower()
+    value["title"] = str(row.get("title") or "").strip()
+    value["alt"] = str(row.get("alt") or value["title"]).strip()
+    value["sourceUrl"] = str(row.get("sourceUrl") or row.get("source_url") or "").strip()
+    value["sourceImage"] = str(row.get("sourceImage") or row.get("source_image") or "").strip()
+    value["image"] = str(row.get("image") or row.get("imagePath") or row.get("image_path") or "").strip()
+    value["description"] = str(row.get("description") or "").strip()
+    translations = row.get("translations")
+    value["translations"] = translations if isinstance(translations, dict) else {}
+    return value
+
+_SNAPSHOT_MODEL_REFERENCES = [
+    _normalise_model_reference(row) for row in STATE.get("modelReferences", [])
+    if isinstance(row, dict) and row.get("slug") and row.get("family") and row.get("image")
+]
+# D1/CMS is authoritative only when it supplies a published, reviewed set.
+# Empty or unavailable snapshots never blank the public catalogue.
+HMOULD_MODELS = _SNAPSHOT_MODEL_REFERENCES or STATIC_HMOULD_MODELS
+MODEL_REFERENCE_SOURCE = "cloudflare-d1:leya_model_references" if _SNAPSHOT_MODEL_REFERENCES else "source-fallback:data/mould-models.json"
 
 # The static renderer remains the visual source of truth.  These small
 # adapters make its business inputs data-driven in the same way as the

@@ -21,7 +21,7 @@ export async function onRequestGet(context){
   const db=context.env.LEYA_DB;
   if(!db)return json({error:"LEYA_DB binding missing"},503);
   try{
-    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos]=await Promise.all([
+    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos,modelReferences]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
@@ -36,7 +36,10 @@ export async function onRequestGet(context){
       // English Blog route. Localized static indexes are rendered from this
       // D1 order so every language presents the same article sequence.
       list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC"),
-      list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,updated_at FROM leya_youtube_videos ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500")
+      list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,updated_at FROM leya_youtube_videos ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500"),
+      // Model references are reviewed catalogue records. Only formally
+      // published rows enter the immutable build snapshot.
+      list(db,"SELECT slug,family,title,alt,source_url,source_image,image_path,description,translations_json,publication_status,sort_order,updated_at FROM leya_model_references WHERE publication_status='published' ORDER BY family,sort_order,slug LIMIT 2000")
     ]);
       const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
       const languageConfig=normalizeLanguageConfig(parseJson(config.language_config,defaultLanguageConfig()));
@@ -93,6 +96,17 @@ export async function onRequestGet(context){
        }).map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})})),
        youtubeVideos:youtubeVideos.filter(r=>/^[A-Za-z0-9_-]{11}$/.test(String(r.video_id||"")))
         .map(r=>({id:r.id,videoId:r.video_id,youtubeUrl:r.youtube_url,title:r.title||"",titleEn:r.title_en||r.title||"",titleEs:r.title_es||"",description:r.description||"",publishedAt:r.published_at||"",sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
+      ,modelReferences:modelReferences.filter(r=>
+          r.publication_status==="published"
+          && /^[a-z0-9][a-z0-9-]{1,139}$/.test(String(r.slug||""))
+          && typeof r.family==="string"&&r.family.length<=100
+          && typeof r.title==="string"&&r.title.length>=2&&r.title.length<=180
+          && typeof r.alt==="string"&&r.alt.length>=2&&r.alt.length<=180
+          && /^\/media\/[a-z]+\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(String(r.image_path||""))
+        ).map(r=>({slug:r.slug,family:r.family,title:r.title,alt:r.alt,
+          sourceUrl:r.source_url||"",sourceImage:r.source_image||"",image:r.image_path,
+          description:r.description||"",translations:parseJson(r.translations_json,{}),
+          sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
     });
   }catch(error){return json({error:"LEYA build snapshot unavailable"},503)}
 }

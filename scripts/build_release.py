@@ -79,6 +79,9 @@ def main() -> None:
         templates[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
     snapshot = ROOT / "_local_ops/build-snapshot.json"
     state = json.loads(snapshot.read_text(encoding="utf-8")) if snapshot.is_file() else {}
+    fallback_models = json.loads((ROOT / "data/mould-models.json").read_text(encoding="utf-8")) if (ROOT / "data/mould-models.json").is_file() else {"models": []}
+    model_reference_rows = state.get("modelReferences") if isinstance(state.get("modelReferences"), list) else []
+    model_reference_count = len(model_reference_rows) if model_reference_rows else len([row for row in fallback_models.get("models", []) if isinstance(row, dict)])
     manifest = json.loads((DIST / "locale-manifest.json").read_text(encoding="utf-8"))
     sources = {
         "brand": "cloudflare-d1:site_state.brand_config" if state.get("brand") else "source-fallback:LEYA company profile",
@@ -87,6 +90,7 @@ def main() -> None:
         "products": "cloudflare-d1:mould product content" if state.get("products") else "source-fallback:data/mould-catalog.json",
         "pageBodies": "cloudflare-d1:page content" if state.get("pageBodies") else "source-fallback:mould source renderer",
         "blogPosts": "cloudflare-d1:blog posts" if state.get("blogPosts") else "source-fallback:empty reviewed resources",
+        "modelReferences": "cloudflare-d1:leya_model_references" if model_reference_rows else "source-fallback:data/mould-models.json",
         "locales": "deployment/site.config.json + D1 publish-ready filter",
     }
     meta = {
@@ -107,7 +111,8 @@ def main() -> None:
         "contentSources": sources,
         "fileCount": len(static_files) + 1,
         "fileBreakdown": breakdown,
-        "staticModelCount": 0,
+        "modelReferenceCount": model_reference_count,
+        "staticModelCount": model_reference_count if not model_reference_rows else 0,
         "noindex": not CONFIG["site"]["indexingApproved"],
     }
     (DIST / "build-meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

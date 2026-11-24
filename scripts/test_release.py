@@ -20,7 +20,7 @@ CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8
 INDEXABLE=CONFIG["site"].get("indexingApproved") is True
 assert meta["noindex"] is (not INDEXABLE), "Release indexing flag does not match approved configuration"
 assert meta["fileCount"]<19500
-assert set(meta.get("contentSources",{}))=={"brand","navigation","pageSeo","products","pageBodies","blogPosts","locales"}, "D1/source origin metadata is incomplete"
+assert set(meta.get("contentSources",{}))=={"brand","navigation","pageSeo","products","pageBodies","blogPosts","modelReferences","locales"}, "D1/source origin metadata is incomplete"
 assert all(isinstance(v,str) and v for v in meta["contentSources"].values())
 
 class LocalRefs(HTMLParser):

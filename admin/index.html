@@ -21,6 +21,7 @@
 <button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
 <button type="button" class="admin-module-btn" data-admin-target="videos">10 YouTube 视频</button>
 <button type="button" class="admin-module-btn" data-admin-target="scheduler">11 自动发布与定时任务</button>
+<button type="button" class="admin-module-btn" data-admin-target="modelreferences">12 型号参考库 · D1/R2</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">所有正式内容、语种配置和发布状态均以 D1/CMS 为准。</p></aside><main class="shell admin-main">
 <section class="module-heading"><div><span class="eyebrow">LEYA MOULD</span><h2>无服务器网站管理</h2><p>Cloudflare Pages + D1，联系人、询盘、邮件通知、语言、翻译审核及后台安全。</p></div></section>
@@ -101,6 +102,36 @@
   <div class="row-actions"><button type="submit" class="btn primary">保存 SEO 到 D1</button>
    <button type="button" class="btn ghost" id="product-seo-reset">重新载入当前记录</button></div>
  </form>
+</section>
+<section class="panel" id="model-reference-admin-panel" data-admin-module="modelreferences">
+ <div class="panel-head"><div><div class="eyebrow">LEYA MOULD · MODEL REFERENCES · D1 / R2</div>
+  <h2>型号参考库</h2>
+  <p>这里管理从 HMould 等资料整理出的型号参考。D1 保存标题、来源、语种和审核状态；正式发布必须绑定已经压缩并上传到 LEYA R2 的图片。保存后点击顶部「一键全站重建」，前台分类页才会读取已发布快照。</p>
+ </div><span class="safe-badge">Draft → Review → R2 → Publish</span></div>
+ <div class="row-actions"><button type="button" class="btn ghost" id="model-reference-reload">读取 D1 型号</button><button type="button" class="btn ghost" id="model-reference-new">+ 新增 / 导入一条</button><label class="btn ghost">选择批量 JSON<input id="model-reference-import-file" type="file" accept="application/json" hidden></label><button type="button" class="btn primary" id="model-reference-import">批量导入草稿</button><span id="model-reference-status" class="muted" role="status" aria-live="polite"></span></div>
+ <form id="model-reference-editor" class="blog-admin-editor" autocomplete="off">
+  <div class="blog-admin-form-grid">
+   <label>稳定 slug<input id="model-reference-slug" required maxlength="140" placeholder="pet-preform-mould-48-cavities"></label>
+   <label>产品族<select id="model-reference-family" required>
+    <option value="general-cap-mould">General cap mould</option><option value="mineral-water-closure-cap-molds">Mineral water cap</option><option value="five-gallon-water-cap-mould">5 gallon water cap</option><option value="oil-bottle-cap-mould">Edible oil cap</option><option value="flip-top-caps-mould">Flip-top caps</option><option value="engine-oil-cap-mould">Engine oil cap</option><option value="food-packaging-cap-mould">Food packaging cap</option><option value="medical-cap-mould">Medical cap</option><option value="personal-care-cap-mould">Personal care cap</option><option value="functional-cap-mould">Functional cap</option><option value="plastic-handle-cap-mould">Plastic handle</option><option value="wine-cap-mould">Wine cap</option><option value="pet-preform-mould">PET preform</option><option value="blow-bottle-mould">Blow bottle</option>
+   </select></label>
+   <label>英文标题<input id="model-reference-title" required maxlength="180"></label>
+   <label>英文图片 ALT<input id="model-reference-alt" required maxlength="180"></label>
+   <label>来源页面（HTTPS）<input id="model-reference-source-url" type="url" maxlength="500" placeholder="https://www.hmould.com/..." ></label>
+   <label>来源图片（HTTPS）<input id="model-reference-source-image" type="url" maxlength="500"></label>
+   <label>LEYA 图片路径（R2 发布用）<input id="model-reference-image" maxlength="300" placeholder="/media/product/32位文件名.webp"></label>
+   <label>排序<input id="model-reference-sort" type="number" min="0" max="99999" value="0"></label>
+   <label>发布状态<select id="model-reference-publication"><option value="draft">草稿（不公开）</option><option value="published">审核通过并发布</option></select></label>
+  </div>
+  <label class="blog-admin-wide">英文说明<textarea id="model-reference-description" rows="3" maxlength="2000" placeholder="只写来源资料能支持的事实，最终钢材、穴数、机台接口等以项目确认单为准。"></textarea></label>
+  <div class="blog-admin-form-grid">
+   <label>西班牙语标题（可留空回退英文）<input id="model-reference-title-es" maxlength="180"></label>
+   <label>西班牙语 ALT（可留空回退英文）<input id="model-reference-alt-es" maxlength="180"></label>
+  </div>
+  <label class="blog-admin-wide">西班牙语说明（可留空回退英文）<textarea id="model-reference-description-es" rows="3" maxlength="2000"></textarea></label>
+  <div class="row-actions"><button type="submit" class="btn primary">保存到 D1</button><button type="button" class="btn ghost" id="model-reference-reset">清空</button></div>
+ </form>
+ <div id="model-reference-list"></div>
 </section>
 <section class="panel" id="media-admin-panel" data-admin-module="media">
 <div class="panel-head"><div><div class="eyebrow">LEYA MOULD · R2 ASSETS</div>
@@ -317,6 +348,7 @@
 <script src="/assets/admin-reviews.js" defer></script>
 <script src="/assets/admin-scheduler.js" defer></script>
 <script src="/assets/admin-product-seo.js" defer></script>
+<script src="/assets/admin-model-references.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>
 </body></html>
 
