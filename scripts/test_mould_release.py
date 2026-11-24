@@ -14,6 +14,7 @@ ORIGIN = "https://leyamould.com"
 LOCALES = ["en", "es"]
 CAP_PRODUCT_ROUTES = [
     "/product/Mineral-Water-Closure-cap-Molds.html",
+    "/product/5-Gallon-Water-Cap-Mould.html",
     "/product/Oil-bottle-cap-mould.html",
     "/product/Engine-Oil-Cap-Mould.html",
     "/product/Food-Packaging-Cap-Mould.html",
@@ -22,6 +23,9 @@ CAP_PRODUCT_ROUTES = [
     "/product/Personal-Care-Cap-Mould.html",
     "/product/Functional-Cap-Mould.html",
     "/product/Plastic-Handle-Cap-mould.html",
+    "/product/Wine-Cap-Mould.html",
+    "/product/PET-Preform-Mould.html",
+    "/product/Blow-Bottle-Mould.html",
 ]
 
 
@@ -108,6 +112,7 @@ for route in CAP_PRODUCT_ROUTES:
 assert "/collections/" not in home
 expected_nav = [
     "Mineral Water Cap Mould",
+    "5 Gallon Water Cap Mould",
     "Edible Oil Cap Mould",
     "Flip top caps mould",
     "Engine Oil Cap Mould",
@@ -116,6 +121,9 @@ expected_nav = [
     "Personal Care Cap Mould",
     "Functional Cap Mould(Combination)",
     "Plastic Handle mould",
+    "Wine Cap Mould",
+    "PET Preform Mould",
+    "Blow Bottle Mould",
 ]
 positions = [home.index(">" + label + "</a>") for label in expected_nav]
 assert positions == sorted(positions)

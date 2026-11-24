@@ -104,6 +104,10 @@ PRODUCT_FALLBACK_SEO = {
     "personal-care-cap-mould": {"seoTitle": "Molde de tapón para cuidado personal", "metaDescription": "Moldes para cierres disc-top, tubos y lociones con opciones de orificio personalizado."},
     "functional-cap-mould": {"seoTitle": "Molde de tapón funcional combinado", "metaDescription": "Moldes para mecanismos de seguridad infantil, apertura fácil y evidencia de manipulación."},
     "plastic-handle-cap-mould": {"seoTitle": "Molde de asa de plástico", "metaDescription": "Moldes de asas ergonómicas para botellas PET de 5 a 20 litros, aceite y bidones químicos."},
+    "five-gallon-water-cap-mould": {"seoTitle": "Molde de tapón para garrafón de 5 galones", "metaDescription": "Moldes para cierres de garrafón de 18,9 litros con sellado, banda de seguridad y compatibilidad con dispensadores."},
+    "wine-cap-mould": {"seoTitle": "Molde de tapón para vino y licores", "metaDescription": "Moldes de precisión para cierres de vino, licores, vertedores y superficies decorativas."},
+    "pet-preform-mould": {"seoTitle": "Molde de preformas PET", "metaDescription": "Moldes multicavidad para preformas PET y PP con control de peso, cuello y proceso de soplado."},
+    "blow-bottle-mould": {"seoTitle": "Molde de soplado para botellas", "metaDescription": "Moldes de soplado para botellas PET y envases personalizados con control de pared, cuello y refrigeración."},
 }
 
 CANONICAL_ALIASES = {
@@ -334,6 +338,14 @@ def local_link(locale: str, route: str) -> str:
 def localized_href(locale: str, route: str) -> str:
     return local_link(locale, route)
 
+def catalog_text(locale: str, item: dict, key: str) -> str:
+    """Return the reviewed Spanish catalogue field when one exists."""
+    if locale == "es":
+        translated = item.get(key + "Es")
+        if isinstance(translated, str) and translated.strip():
+            return translated.strip()
+    return str(item.get(key) or "")
+
 def image(path: str, alt: str, loading: str = "lazy") -> str:
     return '<img src="' + esc(path) + '" alt="' + esc(alt) + '" loading="' + loading + '" decoding="async">'
 
@@ -433,9 +445,11 @@ def editorial_news_items(category: str) -> list[dict]:
 
 # One canonical list in data/mould-catalog.json drives the aggregate page,
 # home cards, navigation, footer and every dedicated product route.  The
-# explicit order mirrors the reference site's nine-item Cap mold menu.
+# explicit order keeps the reference cap menu first, then the adjacent bottle
+# and preform product families added from the HMould catalogue review.
 CAP_MOULD_ORDER = [
     "mineral-water-closure-cap-molds",
+    "five-gallon-water-cap-mould",
     "oil-bottle-cap-mould",
     "flip-top-caps-mould",
     "engine-oil-cap-mould",
@@ -444,13 +458,16 @@ CAP_MOULD_ORDER = [
     "personal-care-cap-mould",
     "functional-cap-mould",
     "plastic-handle-cap-mould",
+    "wine-cap-mould",
+    "pet-preform-mould",
+    "blow-bottle-mould",
 ]
 CAP_MOULD_SERIES = sorted(CATALOG["categories"], key=lambda item: CAP_MOULD_ORDER.index(item["slug"]))
 
 def header(locale: str, route: str) -> str:
     # Keep the desktop navigation aligned with the reference: the Cap mold
     # label opens the aggregate page, while the caret exposes all nine routes.
-    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], item.get("navTitle", item["title"]))) + '</a>' for item in CAP_MOULD_SERIES)
+    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "navTitle") or catalog_text(locale, item, "title"))) + '</a>' for item in CAP_MOULD_SERIES)
     nav = ['<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>']
     about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">About us</a><a href="' + localized_href(locale, "/faq/") + '">FAQs</a></div></div>'
     cap_nav_label = "Cap mold" if locale == "en" else text(locale, "cap_mould")
@@ -477,7 +494,7 @@ def header(locale: str, route: str) -> str:
     return render_template("header", TOPBAR=top, LOGO=logo, NAV_DESKTOP=''.join(nav), ACTIONS=actions, SEARCH=search, NAV_MOBILE=mobile)
 
 def footer(locale: str) -> str:
-    links = ''.join('<p><a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], item["title"])) + '</a></p>' for item in CAP_MOULD_SERIES)
+    links = ''.join('<p><a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "title"))) + '</a></p>' for item in CAP_MOULD_SERIES)
     quick = ''.join('<p><a href="' + localized_href(locale, route) + '">' + esc(label) + '</a></p>' for label, route in ((text(locale, "about"), "/about/"), (text(locale, "samples"), "/samples/"), (text(locale, "video"), "/video/"), (text(locale, "news"), "/news/"), (text(locale, "faq_title"), "/faq/"), (text(locale, "contact_us"), "/contact/")))
     footer_config = BRAND_CONFIG.get("footer", {}) if isinstance(BRAND_CONFIG, dict) else {}
     vals = {"PRODUCT_LINKS": links, "QUICK_LINKS": quick, "WHATSAPP_NUMBER": esc(WHATSAPP), "FOOTER_EYEBROW": esc(text(locale, "footer_eyebrow")), "FOOTER_CTA_TITLE": esc(text(locale, "footer_cta_title")), "FOOTER_CTA_TEXT": esc(text(locale, "footer_cta_text")), "FOOTER_CTA_BUTTON": esc(text(locale, "quote")), "FOOTER_TAGLINE": esc(footer_config.get("about") or text(locale, "footer_tagline")), "FOOTER_ADDRESS": esc(ADDRESS), "FOOTER_PRODUCTS_TITLE": esc(text(locale, "footer_products")), "FOOTER_CONTACT_TITLE": esc(footer_config.get("contactHeading") or text(locale, "footer_contact")), "FOOTER_QUOTE": esc(text(locale, "footer_quote")), "FOOTER_PRIVACY": esc(text(locale, "footer_privacy")), "FOOTER_STICKY": esc(text(locale, "footer_sticky"))}
@@ -639,7 +656,10 @@ def section_heading(locale: str, eyebrow: str, title: str, description: str = ""
 
 def cap_series_card(locale: str, item: dict) -> str:
     href = localized_href(locale, item["route"])
-    return '<a class="cap-series-card" href="' + href + '"><div class="cap-series-card__image">' + image(item["image"], item["title"] + " reference image") + '</div><div class="cap-series-card__body"><h3>' + esc(item["title"]) + '</h3><p>' + esc(item["description"]) + '</p><div class="cap-series-card__meta"><span>' + esc(item["meta"]) + '</span><strong>' + esc(text(locale, "view")) + '</strong></div></div></a>'
+    title = catalog_text(locale, item, "title")
+    description = catalog_text(locale, item, "description")
+    meta = catalog_text(locale, item, "meta")
+    return '<a class="cap-series-card" href="' + href + '"><div class="cap-series-card__image">' + image(item["image"], title + " reference image") + '</div><div class="cap-series-card__body"><h3>' + esc(title) + '</h3><p>' + esc(description) + '</p><div class="cap-series-card__meta"><span>' + esc(meta) + '</span><strong>' + esc(text(locale, "view")) + '</strong></div></div></a>'
 
 def home(locale: str) -> str:
     cap = "https://www.cap-molds.com"
@@ -661,7 +681,8 @@ def home(locale: str) -> str:
         hero += '<script type="application/json" id="xuyi-home-banners">' + managed_json + '</script>'
     advantages = ''.join('<article class="advantage-card"><span class="advantage-card__number">0' + str(i + 1) + '</span><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for i, (title, desc) in enumerate(data(locale, "advantages")))
     advantages_section = '<section class="section section--advantages"><div class="shell">' + section_heading(locale, "WHY CHOOSE US", "Core Advantages of LEYA MOULD", "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control.") + '<div class="advantage-grid">' + advantages + '</div></div></section>'
-    cap_products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Cap Mould Series", "Explore nine specialized plastic cap mould categories engineered for high-volume production, dimensional accuracy and long service life.") + '<div class="cap-series-grid">' + ''.join(cap_series_card(locale, item) for item in CAP_MOULD_SERIES) + '</div></div></section>'
+    catalog_count = len(CAP_MOULD_SERIES)
+    cap_products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Mould Product Families", "Explore " + str(catalog_count) + " specialized mould product families engineered for high-volume production, dimensional accuracy and long service life.") + '<div class="cap-series-grid">' + ''.join(cap_series_card(locale, item) for item in CAP_MOULD_SERIES) + '</div></div></section>'
     sample_cards = ''.join('<a class="sample-card" href="' + localized_href(locale, "/samples/") + '"><img src="' + cap + '/images/samples/' + s + '.jpg" alt="' + esc(s.replace("-", " ").title() + " reference sample") + '" loading="lazy" decoding="async"><span>' + esc(s.replace("-", " ").title()) + '</span></a>' for s in samples)
     samples_section = '<section class="section samples-section"><div class="shell">' + section_heading(locale, "SAMPLES GALLERY", "Plastic Cap Samples", "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection.") + '<div class="samples-track-wrap"><button class="samples-scroll samples-scroll--prev" type="button" data-samples-scroll="-1" aria-label="Previous samples">‹</button><div class="samples-track" data-samples-track>' + sample_cards + '</div><button class="samples-scroll samples-scroll--next" type="button" data-samples-scroll="1" aria-label="Next samples">›</button></div><div class="section__more"><a class="text-link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + ' →</a></div></div></section>'
     technology = '<section class="section technology-section"><div class="shell"><div class="section__head tech-section-head"><div><span class="eyebrow">OUR TECHNOLOGY</span><h2 class="section__title">Engineering Excellence Behind Every Mould</h2><div class="section-line"></div></div></div><div class="tech-grid"><div class="tech-img">' + image(cap + "/upload/Home/precision-machining.jpg", "5-axis CNC machining", "lazy") + '</div><div class="tech-text"><h3>Precision Manufacturing &amp; Strict QC</h3><p>5-axis CNC and EDM achieve ±0.005mm tolerances. Every mould undergoes CMM inspection, trial runs, and leak tests with documented reports.</p><ul class="tech-list"><li>Moldflow simulation before manufacturing</li><li>100% CMM inspection per cavity</li></ul></div></div><div class="tech-grid tech-grid--second"><div class="tech-text"><h3>Premium Steel &amp; Modular Design</h3><p>ASSAB S136, NAK80, H13 steels with vacuum heat treatment (HRC 48–52). Modular inserts enable fast cavity expansion and quick product changeovers.</p><ul class="tech-list"><li>Full material traceability with mill certificates</li><li>Standard delivery in 30–45 days</li></ul></div><div class="tech-img">' + image(cap + "/upload/Home/steel-quality.jpg", "Premium mould steel", "lazy") + '</div></div></div></section>'
@@ -673,10 +694,11 @@ def home(locale: str) -> str:
     return hero + advantages_section + cap_products + samples_section + technology + testimonials + process + resources
 
 def products_page(locale: str) -> str:
-    hero = '<section class="catalog-hero"><div class="shell"><h1>Precision <span>CAP MOULD</span><br>Across 9 Key Categories</h1><p>Professional plastic cap mould manufacturer with 15+ years of experience. From beverage caps to medical closures, we deliver high-precision, long-life mould solutions.</p><a class="button button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a><div class="catalog-stats"><div><strong>15+</strong><span>YEARS EXPERIENCE</span></div><div><strong>9</strong><span>CAP CATEGORIES</span></div><div><strong>40+</strong><span>COUNTRIES SERVED</span></div><div><strong>2000+</strong><span>MOULDS DELIVERED</span></div></div></div></section>'
+    catalog_count = len(CAP_MOULD_SERIES)
+    hero = '<section class="catalog-hero"><div class="shell"><h1>Precision <span>MOULDING</span><br>Across ' + str(catalog_count) + ' Product Families</h1><p>Professional plastic mould manufacturer with 15+ years of experience. From closures and preforms to bottle tooling, we deliver high-precision, long-life mould solutions.</p><a class="button button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a><div class="catalog-stats"><div><strong>15+</strong><span>YEARS EXPERIENCE</span></div><div><strong>' + str(catalog_count) + '</strong><span>PRODUCT FAMILIES</span></div><div><strong>40+</strong><span>COUNTRIES SERVED</span></div><div><strong>2000+</strong><span>MOULDS DELIVERED</span></div></div></div></section>'
     crumb = '<nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(text(locale, "products")) + '</span></div></nav>'
     cards = ''.join(cap_series_card(locale, c) for c in CAP_MOULD_SERIES)
-    products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Cap Mould Series", "Explore our comprehensive range of 9 specialized plastic cap mould categories. Each mould is engineered for high-volume production, dimensional accuracy and extended service life.") + '<div class="cap-series-grid">' + cards + '</div></div></section>'
+    products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Mould Product Families", "Explore our comprehensive range of " + str(len(CAP_MOULD_SERIES)) + " specialized mould product families. Each mould is engineered for high-volume production, dimensional accuracy and extended service life.") + '<div class="cap-series-grid">' + cards + '</div></div></section>'
     return hero + crumb + products
 
 def cap_product_page(locale: str, item: dict) -> str:
@@ -1182,7 +1204,7 @@ def generate() -> dict:
         # Reference-compatible aggregate route; keep /products/ as a stable alias.
         add(code, "/Plastic-cap-mold.html", text(code, "products"), text(code, "categories_text"), products_page(code))
         for cap_item in CAP_MOULD_SERIES:
-            add(code, cap_item["route"], cap_item["title"], cap_item["description"], cap_product_page(code, cap_item))
+            add(code, cap_item["route"], catalog_text(code, cap_item, "title"), catalog_text(code, cap_item, "description"), cap_product_page(code, cap_item))
         about_body = about_page(code)
         add(code, "/about/", text(code, "about_title"), text(code, "about_text"), about_body)
         add_alias_page(code, "/about/about_us.html", "/about/", text(code, "about_title"), text(code, "about_text"), about_body, routes)

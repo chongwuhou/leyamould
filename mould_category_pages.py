@@ -27,6 +27,13 @@ REFERENCE_HERO_DESCRIPTIONS = {
     "plastic-handle-cap-mould": "Heavy‑duty injection moulds for plastic handles used on bottles, jerry cans, and containers. Engineered for high strength, wear resistance, and multi‑cavity production.",
 }
 
+REFERENCE_HERO_DESCRIPTIONS.update({
+    "five-gallon-water-cap-mould": "Heavy-duty tooling for reusable 18.9L water bottles, cooler caps and dispenser closures. Seal, tear-band and sanitisation requirements reviewed together.",
+    "wine-cap-mould": "Precision closure moulds for wine, spirits and specialty beverage bottles. Pourer, tamper evidence and decorative surfaces are matched to the bottle finish.",
+    "pet-preform-mould": "Multi-cavity PET and PP preform moulds for beverage, edible-oil and specialty packaging. Neck finish, gram weight and stretch-blow targets stay connected.",
+    "blow-bottle-mould": "Bottle blow moulds for PET containers, wide-mouth packs and custom shapes. Wall map, cooling, neck finish and machine envelope are reviewed before tooling.",
+})
+
 
 def _asset(path: str) -> str:
     if path.startswith(("http://", "https://", "/assets/")):
@@ -176,6 +183,73 @@ DETAILS = {
     ),
 }
 
+DETAILS.update({
+    "five-gallon-water-cap-mould": _spec(
+        "5 Gallon Water", "Cap Mould", "Solutions",
+        "/assets/catalog/five-gallon-hero.webp",
+        [("18.9L", "Bottle Format"), ("24", "Max Cavities"), ("3", "Seal Options"), ("5M+", "Mould Life")],
+        [
+            ("5 Gallon Water Cap Mould", "/assets/catalog/five-gallon-01.webp", "Heavy-gauge tooling for reusable water-cooler bottles and dispenser caps."),
+            ("Tamper-Evident 5 Gallon Cap", "/assets/catalog/five-gallon-02.webp", "Tear-band and inner-plug geometry reviewed for clean opening and reliable sealing."),
+            ("High-Output 5 Gallon Closure Mould", "/assets/catalog/five-gallon-03.webp", "Balanced cavities for repeatable cap weight, fit and production output."),
+        ],
+        [("Reliable Plug Seal", "The plug, thread and bottle finish are checked together."), ("Sanitisation Ready", "Material and geometry are reviewed around repeated cleaning cycles."), ("Stable Cap Weight", "Cavity balance protects repeatable resin distribution."), ("Dispenser Compatibility", "The cap interface stays aligned with the intended cooler or filling line."), ("Serviceable Inserts", "Replaceable wear parts keep maintenance practical."), ("Documented Trials", "Leak, fit and opening evidence stay with the handover file.")],
+        ("Inside Our 5 Gallon Cap Mould Engineering", [("Plug Seal & Tear Band", "Seal lands and bridge geometry are reviewed against the reusable bottle and opening force.", "/assets/catalog/five-gallon-01.webp", ["Bottle finish review", "Controlled break force", "Leak and fit checks"]), ("Cooling & Cavity Balance", "Cooling and runner balance support repeatable cap weight across the full cavity set.", "/assets/catalog/five-gallon-02.webp", ["Balanced filling", "Thermal review", "Cavity identification"])]),
+        ["/assets/catalog/five-gallon-hero.webp", "/assets/catalog/five-gallon-01.webp", "/assets/catalog/five-gallon-02.webp", "/assets/catalog/five-gallon-03.webp"],
+        [("CMM Inspection", "Bottle interface and sealing dimensions are recorded."), ("Leak Test", "The cap and plug are checked against the intended bottle."), ("Opening Force", "Tear-band behaviour is reviewed with the buyer."), ("ISO 9001 Records", "Quality evidence remains attached to the mould project.")],
+        [("Can the mould support reusable water bottles?", "Yes. The bottle finish, plug seal and sanitisation conditions are included in the tooling brief."), ("How is the tear band checked?", "The bridge layout and opening force are agreed and verified during trial."), ("Can the cap fit a different dispenser?", "Send the dispenser and bottle interface for a compatibility review."), ("Do you provide trial samples?", "Agreed samples, fit checks and inspection evidence are included before handover.")],
+        [("The cap stayed secure through repeated cooler handling.", "Packaging engineer", "Mexico"), ("The leak and opening checks made approval straightforward.", "Quality manager", "Chile"), ("Cavity weight stayed consistent across the run.", "Plant manager", "Brazil")],
+    ),
+    "wine-cap-mould": _spec(
+        "Wine & Spirits", "Cap Mould", "Solutions",
+        "/assets/catalog/wine-hero.webp",
+        [("5s", "Cycle Target"), ("48", "Max Cavities"), ("4", "Closure Styles"), ("5M+", "Mould Life")],
+        [
+            ("Wine Cap Mould", "/assets/catalog/wine-01.webp", "Precision closure tooling for wine, spirits and specialty beverage packaging."),
+            ("Decorative Wine Closure Mould", "/assets/catalog/wine-02.webp", "Surface and colour references are kept with the bottle and brand brief."),
+            ("Pourer Wine Cap Mould", "/assets/catalog/wine-03.webp", "Pourer, tamper-evident and reclose features reviewed for the filling line."),
+        ],
+        [("Bottle-Finish Matching", "The cap, thread and bottle finish are reviewed as one interface."), ("Controlled Pouring", "A pourer or spout is checked for flow and reclose behaviour."), ("Decorative Surfaces", "Polishing, texture and visible surfaces are protected during ejection."), ("Tamper Evidence", "Opening evidence is designed around the buyer's package and market."), ("Balanced Cavities", "Runner and cooling balance protect consistent appearance."), ("Traceable Handover", "Approved samples and visual standards remain attached to the project.")],
+        ("Inside Our Wine Cap Mould Engineering", [("Pourer & Seal Geometry", "The pourer, sealing land and bottle finish are reviewed for clean dispensing.", "/assets/catalog/wine-01.webp", ["Flow-path review", "Bottle fit check", "Reclose inspection"]), ("Surface Finish & Ejection", "Polished or textured cosmetic surfaces are protected through the ejection sequence.", "/assets/catalog/wine-02.webp", ["Texture reference", "Gate-mark control", "Visual approval sample"])]),
+        ["/assets/catalog/wine-hero.webp", "/assets/catalog/wine-01.webp", "/assets/catalog/wine-02.webp", "/assets/catalog/wine-03.webp"],
+        [("CMM Inspection", "Critical fit and pouring dimensions are recorded."), ("Fit & Leak Test", "The closure is checked on the intended bottle finish."), ("Visual Approval", "Colour, texture and gate-mark limits are agreed."), ("ISO 9001 Records", "Quality evidence stays with the tooling handover.")],
+        [("Can you match an existing wine closure?", "Yes. Send the bottle, cap or drawing for a fit, pourer and surface review."), ("Can the cap include a pourer?", "Pourer geometry and flow requirements can be included in the DFM brief."), ("How are decorative surfaces protected?", "Gate, ejection and polishing decisions are reviewed around the approved visual sample."), ("Do you support small and large cavity counts?", "Cavity count is matched to the bottle format, output target and machine interface.")],
+        [("The pourer and bottle fit were stable on the filling line.", "Packaging manager", "Italy"), ("The visual sample helped us approve the decorative finish.", "Brand engineer", "France"), ("The trial evidence made the closure decision easier.", "Operations director", "Portugal")],
+    ),
+    "pet-preform-mould": _spec(
+        "PET Preform", "Injection", "Moulds",
+        "/assets/catalog/preform-hero.webp",
+        [("12–144", "Cavity Range"), ("PET / PP", "Resin Options"), ("±0.01mm", "Critical Fit"), ("5M+", "Mould Life")],
+        [
+            ("Multi-Cavity PET Preform Mould", "/assets/catalog/preform-01.webp", "Preform tooling for beverage neck finishes, stable gram weight and high output."),
+            ("Valve-Type PET Preform Mould", "/assets/catalog/preform-02.webp", "Valve-gate layout and cooling are matched to the resin and machine interface."),
+            ("Edible Oil Preform Mould", "/assets/catalog/preform-03.webp", "Preform tooling for oil and specialty packaging with controlled wall distribution."),
+        ],
+        [("Neck-Finish Accuracy", "Critical threads and sealing dimensions are checked cavity by cavity."), ("Gram-Weight Control", "Runner, gate and cooling choices protect repeatable preform weight."), ("PET & PP Options", "Material assumptions stay linked to shrinkage and stretch-blow targets."), ("Valve-Gate Balance", "Balanced filling supports clean gates and stable cycle behaviour."), ("Modular Cavities", "Cavity expansion and service decisions are considered early."), ("Machine Interface", "The mould brief includes the actual injection machine and hot-runner data.")],
+        ("Inside Our Preform Mould Engineering", [("Neck Finish & Valve Gates", "Neck geometry and gate design are reviewed against the bottle and stretch-blow process.", "/assets/catalog/preform-01.webp", ["PCO and custom finishes", "Valve-gate review", "Cavity identification"]), ("Cooling & Wall Distribution", "Cooling layout and material data support predictable preform dimensions and weight.", "/assets/catalog/preform-02.webp", ["Thermal balance", "Wall-map review", "Dimensional sampling"])]),
+        ["/assets/catalog/preform-hero.webp", "/assets/catalog/preform-01.webp", "/assets/catalog/preform-02.webp", "/assets/catalog/preform-03.webp"],
+        [("CMM Inspection", "Neck finish and critical dimensions are recorded."), ("Weight Audit", "Preform weight is checked across the cavity set."), ("Gate Inspection", "Gate appearance and vestige limits are reviewed."), ("Material Traceability", "Resin and steel documentation accompany the handover.")],
+        [("Which cavity counts are possible?", "The cavity plan is matched to the bottle, machine and output target, from pilot configurations to high-cavity production."), ("Can you make edible-oil preforms?", "Yes. The resin, neck finish, wall distribution and stretch-blow target are reviewed together."), ("How do you control preform weight?", "Runner balance, gate design, cooling and cavity-by-cavity weight checks are used."), ("Can a preform mould be upgraded?", "A modular insert and cavity strategy can be evaluated when the machine and geometry allow it.")],
+        [("The neck finish stayed consistent across the complete cavity set.", "Process engineer", "Thailand"), ("The weight audit helped us stabilise the blowing process.", "Production manager", "Vietnam"), ("The DFM report clarified the machine interface before steel release.", "Tooling buyer", "Turkey")],
+    ),
+    "blow-bottle-mould": _spec(
+        "Blow Bottle", "Mould", "Solutions",
+        "/assets/catalog/blow-hero.webp",
+        [("2–16", "Cavity Range"), ("PET", "Primary Resin"), ("360°", "Wall Review"), ("3M+", "Mould Life")],
+        [
+            ("PET Blow Bottle Mould", "/assets/catalog/blow-01.webp", "Bottle-blow tooling for repeatable shape, neck finish and wall distribution."),
+            ("Wide-Mouth Bottle Mould", "/assets/catalog/blow-02.webp", "Wide-mouth and specialty container tooling with controlled cooling surfaces."),
+            ("Custom Shape Blow Mould", "/assets/catalog/blow-03.webp", "Custom bottle geometry reviewed from drawing, preform and machine envelope."),
+        ],
+        [("Wall-Thickness Control", "The preform, stretch ratio and bottle wall map are reviewed together."), ("Cooling Balance", "Cooling surfaces support stable shape and cycle repeatability."), ("Neck-Finish Fit", "The bottle neck stays matched to the approved closure and cap."), ("Machine Envelope", "Opening, mould height and blow-machine data are confirmed early."), ("Custom Geometry", "Handles, panels and special shapes are checked against the drawing."), ("Trial Evidence", "Bottle samples, dimensions and visual limits guide handover.")],
+        ("Inside Our Blow Bottle Mould Engineering", [("Preform & Stretch-Ratio Review", "The mould is developed from the preform, bottle drawing and intended stretch-blow process.", "/assets/catalog/blow-01.webp", ["Preform compatibility", "Stretch-ratio review", "Neck alignment"]), ("Cooling & Surface Quality", "Cooling and surface finish protect bottle appearance and dimensional stability.", "/assets/catalog/blow-02.webp", ["Cooling-channel review", "Parting-line control", "Visual approval sample"])]),
+        ["/assets/catalog/blow-hero.webp", "/assets/catalog/blow-01.webp", "/assets/catalog/blow-02.webp", "/assets/catalog/blow-03.webp"],
+        [("Dimensional Inspection", "Bottle height, neck and critical panels are recorded."), ("Wall Review", "Wall distribution is checked against the approved bottle brief."), ("Leak & Fit Test", "The bottle is checked with the intended closure and filling conditions."), ("Material Traceability", "Steel and process records accompany the final samples.")],
+        [("Can you develop a custom bottle shape?", "Yes. Send the drawing, preform and machine envelope for a feasibility and DFM review."), ("How is wall thickness controlled?", "The preform, stretch ratio, cooling and bottle wall map are reviewed before trial."), ("Can you match an existing bottle?", "A bottle sample, drawing or scan can be used to review the neck, parting and key surfaces."), ("Do you supply trial bottles?", "Agreed trial samples and dimensional evidence are prepared before handover.")],
+        [("The bottle shape and neck fit matched our approved drawing.", "Packaging engineer", "Indonesia"), ("Cooling changes improved repeatability across the run.", "Production director", "India"), ("The trial report made the custom bottle approval clear.", "Project manager", "Spain")],
+    ),
+})
+
 
 def _lang(locale: str, key: str) -> str:
     values = {
@@ -184,22 +258,34 @@ def _lang(locale: str, key: str) -> str:
     }
     return values.get(locale, values["en"]).get(key, values["en"].get(key, key))
 
+def _catalog_text(item: dict, locale: str, key: str) -> str:
+    if locale == "es":
+        translated = item.get(key + "Es")
+        if isinstance(translated, str) and translated.strip():
+            return translated.strip()
+    return str(item.get(key) or "")
+
 
 def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     """Render a full reference-style page while reusing shared site helpers."""
     esc = helpers["esc"]
     href = helpers["localized_href"]
     details = DETAILS[item["slug"]]
-    title = item["title"]
+    title = _catalog_text(item, locale, "title")
+    description = _catalog_text(item, locale, "description")
+    detail = _catalog_text(item, locale, "detail")
     hero_title = esc(details["hero_title"]) + ' <span class="highlight">' + esc(details["hero_accent"]) + '</span> ' + esc(details["hero_subtitle"])
-    hero = '<section class="mould-detail-hero" style="--mould-hero:url(\'' + esc(_asset(details["hero_image"])) + '\')"><div class="mould-detail-container"><h1>' + hero_title + '</h1><p class="mould-hero-subtitle">' + esc(item["description"]) + ' ' + esc(item["detail"]) + '</p><a href="#contact" class="mould-hero-cta">' + esc(_lang(locale, "quote")) + ' →</a><div class="mould-hero-stats">' + ''.join('<div class="mould-hero-stat"><div class="number">' + esc(number) + '</div><div class="label">' + esc(label) + '</div></div>' for number, label in details["stats"]) + '</div></div></section>'
+    hero = '<section class="mould-detail-hero" style="--mould-hero:url(\'' + esc(_asset(details["hero_image"])) + '\')"><div class="mould-detail-container"><h1>' + hero_title + '</h1><p class="mould-hero-subtitle">' + esc(description) + ' ' + esc(detail) + '</p><a href="#contact" class="mould-hero-cta">' + esc(_lang(locale, "quote")) + ' →</a><div class="mould-hero-stats">' + ''.join('<div class="mould-hero-stat"><div class="number">' + esc(number) + '</div><div class="label">' + esc(label) + '</div></div>' for number, label in details["stats"]) + '</div></div></section>'
     # Keep the hero copy to the same concise rhythm as the reference page.
-    hero = hero.replace(esc(item["description"]) + ' ' + esc(item["detail"]), esc(item["description"]))
-    hero = hero.replace(esc(item["description"]), esc(REFERENCE_HERO_DESCRIPTIONS.get(item["slug"], item["description"])))
+    hero = hero.replace(esc(description) + ' ' + esc(detail), esc(description))
+    reference_description = REFERENCE_HERO_DESCRIPTIONS.get(item["slug"], description)
+    if locale == "es" and item.get("descriptionEs"):
+        reference_description = description
+    hero = hero.replace(esc(description), esc(reference_description))
     hero = hero.replace('class="mould-detail-hero"', 'class="mould-detail-hero mould-detail-hero--' + item["slug"] + '"', 1)
     crumb = '<nav class="mould-breadcrumb" aria-label="Breadcrumb"><div class="mould-detail-container"><a href="' + href(locale, "/") + '">' + esc(_lang(locale, "home")) + '</a><span>/</span><a href="' + href(locale, "/Plastic-cap-mold.html") + '">' + esc(_lang(locale, "cap_mould")) + '</a><span>/</span><span>' + esc(title) + '</span></div></nav>'
 
-    products = '<section class="mould-products" id="products"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "our_products")) + '</span><h2>' + esc(details["hero_title"] + " " + details["hero_accent"]) + ' Types</h2><p>' + esc(item["detail"]) + '</p><i></i></div><div class="mould-products-grid">'
+    products = '<section class="mould-products" id="products"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "our_products")) + '</span><h2>' + esc(details["hero_title"] + " " + details["hero_accent"]) + ' Types</h2><p>' + esc(detail) + '</p><i></i></div><div class="mould-products-grid">'
     for product_title, product_image, product_desc in details["products"]:
         products += '<a href="#contact" class="mould-product-card"><div class="mould-card-img">' + helpers["image"](_asset(product_image), product_title) + '</div><div class="mould-card-body"><h3>' + esc(product_title) + '</h3><p>' + esc(product_desc) + '</p><span>' + esc(_lang(locale, "learn")) + '</span></div></a>'
     products += '</div></div></section>'

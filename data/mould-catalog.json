@@ -109,6 +109,78 @@
       "image": "https://www.cap-molds.com/upload/product/month_2105/202105262010194667.jpg",
       "route": "/product/Plastic-Handle-Cap-mould.html",
       "checks": ["Bottle interface and load requirements", "Target resin and ergonomic geometry", "Cavity, ejection and assembly plan", "Trial fit and inspection evidence"]
+    },
+    {
+      "slug": "five-gallon-water-cap-mould",
+      "title": "5 Gallon Water Cap Mould",
+      "titleEs": "Molde de tapón para garrafón de 5 galones",
+      "navTitle": "5 Gallon Water Cap Mould",
+      "navTitleEs": "Molde de tapón para garrafón de 5 galones",
+      "description": "Heavy-duty tooling for 18.9L / 5 gallon reusable water bottle closures.",
+      "descriptionEs": "Moldes resistentes para cierres de garrafones de agua reutilizables de 18,9 l / 5 galones.",
+      "short": "18.9L water-cooler closure tooling with repeatable sealing.",
+      "shortEs": "Moldes para cierres de 18,9 l con sellado repetible.",
+      "detail": "5 gallon projects are reviewed around the bottle neck, plug seal, tear band, sanitisation cycle, resin and dispenser interface.",
+      "detailEs": "Los proyectos de 5 galones se revisan según el cuello, el sello interior, la banda de seguridad, el ciclo de sanitización, la resina y el dispensador.",
+      "meta": "18.9L · Water Cooler",
+      "metaEs": "18,9 l · Dispensador de agua",
+      "image": "/assets/catalog/five-gallon-hero.webp",
+      "route": "/product/5-Gallon-Water-Cap-Mould.html",
+      "checks": ["Bottle neck, plug seal and tear-band geometry", "Resin and repeated-sanitisation assumptions", "Cavity balance, ejection and dispenser fit", "Trial samples, leak checks and inspection evidence"]
+    },
+    {
+      "slug": "wine-cap-mould",
+      "title": "Wine Cap Mould",
+      "titleEs": "Molde de tapón para vino",
+      "navTitle": "Wine Cap Mould",
+      "navTitleEs": "Molde de tapón para vino",
+      "description": "Precision closure tooling for wine, spirits and specialty beverage bottles.",
+      "descriptionEs": "Moldes de precisión para cierres de botellas de vino, licores y bebidas especiales.",
+      "short": "Tamper-evident and decorative closures for wine and spirits.",
+      "shortEs": "Cierres decorativos y con evidencia de apertura para vinos y licores.",
+      "detail": "Wine closure projects connect the bottle finish, tamper evidence, pourer or spout, decorative surface, resin and filling-line application torque.",
+      "detailEs": "Los proyectos de cierres para vino conectan el acabado de la botella, la evidencia de apertura, el vertedor, la superficie decorativa, la resina y el par de aplicación de la línea de llenado.",
+      "meta": "Wine · Spirits · Decorative",
+      "metaEs": "Vino · Licores · Decorativo",
+      "image": "/assets/catalog/wine-hero.webp",
+      "route": "/product/Wine-Cap-Mould.html",
+      "checks": ["Bottle finish, pourer and tamper-evident geometry", "Resin, decoration and surface-finish references", "Cavity balance, ejection and cap application torque", "Trial fit, visual approval and inspection evidence"]
+    },
+    {
+      "slug": "pet-preform-mould",
+      "title": "PET Preform Mould",
+      "titleEs": "Molde de preformas PET",
+      "navTitle": "PET Preform Mould",
+      "navTitleEs": "Molde de preformas PET",
+      "description": "Multi-cavity PET and PP preform tooling for beverage, edible oil and specialty packaging.",
+      "descriptionEs": "Moldes multicavidad para preformas de PET y PP destinadas a bebidas, aceites comestibles y envases especiales.",
+      "short": "PET and PP preform tooling from pilot to high-cavity production.",
+      "shortEs": "Moldes de preformas PET y PP desde series piloto hasta alta cavitación.",
+      "detail": "Preform projects are defined by neck finish, gram weight, resin, cavity count, valve or hot-runner layout, stretch-blow target and machine interface.",
+      "detailEs": "Los proyectos de preformas se definen por el acabado del cuello, el peso, la resina, el número de cavidades, el sistema de válvulas o canal caliente, el objetivo de soplado y la interfaz de máquina.",
+      "meta": "PET · PP · 12–144 Cavities",
+      "metaEs": "PET · PP · 12–144 cavidades",
+      "image": "/assets/catalog/preform-hero.webp",
+      "route": "/product/PET-Preform-Mould.html",
+      "checks": ["Neck finish, gram weight and preform drawing", "PET/PP resin, shrinkage and valve-gate assumptions", "Cavity balance, cooling and machine interface", "Trial preforms, dimensional reports and handover evidence"]
+    },
+    {
+      "slug": "blow-bottle-mould",
+      "title": "Blow Bottle Mould",
+      "titleEs": "Molde de soplado para botellas",
+      "navTitle": "Blow Bottle Mould",
+      "navTitleEs": "Molde de soplado para botellas",
+      "description": "Blow mould tooling for PET bottles, wide-mouth containers and custom packaging shapes.",
+      "descriptionEs": "Moldes de soplado para botellas PET, envases de boca ancha y formatos de packaging personalizados.",
+      "short": "Bottle-blow tooling for repeatable shape, wall and neck control.",
+      "shortEs": "Moldes de soplado para controlar forma, pared y cuello de manera repetible.",
+      "detail": "Bottle mould projects connect the bottle drawing, preform, stretch ratio, wall map, cooling, neck finish, machine envelope and trial inspection plan.",
+      "detailEs": "Los proyectos de moldes de botella conectan el plano, la preforma, la relación de estiramiento, el mapa de pared, la refrigeración, el cuello, el espacio de máquina y el plan de inspección.",
+      "meta": "PET · Blow Moulding · Custom Shape",
+      "metaEs": "PET · Soplado · Forma personalizada",
+      "image": "/assets/catalog/blow-hero.webp",
+      "route": "/product/Blow-Bottle-Mould.html",
+      "checks": ["Bottle drawing, preform and stretch-ratio review", "Wall-thickness, cooling and material assumptions", "Machine envelope, neck finish and ejection plan", "Trial bottles, dimensional checks and visual approval"]
     }
   ],
   "services": [
@@ -117,4 +189,3 @@
     {"slug": "trial-sampling", "title": "Trial, Sampling & Optimisation", "text": "Plan trial shots, sample feedback, dimensional checks and controlled changes before production handover."}
   ]
 }
-
