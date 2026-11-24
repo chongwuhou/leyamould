@@ -1,0 +1,25 @@
+name: LEYA one-time D1 content seed
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/leya-one-time-content-seed.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      XUYI_SITE_ORIGIN: https://leyamould.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Seed LEYA D1 content without overwriting owner edits
+        run: python scripts/migrate_mould_content.py
