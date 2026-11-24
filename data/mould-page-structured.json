@@ -1,0 +1,64 @@
+{
+  "en": {
+    "/contact/": {
+      "quickAnswers": [
+        {"question": "⏱️ How fast can I get a quote?", "answer": "We respond within 24 hours. Use WhatsApp or email for urgent requests."},
+        {"question": "📐 What information do I need to provide?", "answer": "Share the cap design, material, cavity count and production volume."},
+        {"question": "🌍 Do you ship internationally?", "answer": "Yes, we support international mould projects and export handover documentation."},
+        {"question": "📱 How do I contact LEYA MOULD?", "answer": "Use the phone, email or WhatsApp options on this page and include your project brief."}
+      ]
+    },
+    "/faq/": {
+      "groups": [
+        {"title": "Products & Capabilities", "items": [
+          {"question": "What types of plastic cap moulds does LEYA MOULD manufacture?", "answer": "We specialize in water and beverage cap moulds, hot-fill caps, edible oil caps, soy sauce and condiment closures, medical and cosmetic caps, flip-top, tamper-evident, sports, two-color, wide-mouth, motor oil, 5-gallon, pull-ring and custom closure moulds."},
+          {"question": "Do you provide auxiliary machines along with cap moulds?", "answer": "Yes. We can coordinate cap lining, folding, slitting, pad printing, wadding and combined machines to complete an integrated production cell."},
+          {"question": "Can you design a custom cap mould for my closure?", "answer": "Yes. Provide a 2D/3D drawing or sample cap and we will review geometry, material, cavity plan, machine interface and trial requirements."}
+        ]},
+        {"title": "Ordering & Delivery", "items": [
+          {"question": "What information do I need to provide for a quotation?", "answer": "Please share the cap type, 2D/3D drawings, material, cavity number, injection machine specifications, target volume and special requirements."},
+          {"question": "What is the typical lead time for a new cap mould?", "answer": "Lead time depends on complexity and cavity count. The detailed schedule is confirmed with the project quotation."},
+          {"question": "Do you offer mould trials and sample testing before shipment?", "answer": "Yes. Trial planning, dimensional checks and sample review are kept with the tooling handover before shipment."},
+          {"question": "What payment terms do you accept?", "answer": "Payment terms are confirmed in the project quotation according to scope, schedule and commercial requirements."}
+        ]},
+        {"title": "Technical & Support", "items": [
+          {"question": "What materials are used for your cap moulds?", "answer": "We select mould steels such as S136, NAK80, H13 and equivalent grades according to resin, cycle target, cavity plan and service life."},
+          {"question": "What is the warranty on your cap moulds?", "answer": "Warranty scope and support terms are defined in the project quotation, with technical records kept for practical maintenance."},
+          {"question": "Do you ship moulds internationally?", "answer": "Yes. We coordinate export packing, international shipping and approved project documentation for handover."},
+          {"question": "How do I start a project with LEYA MOULD?", "answer": "Contact us by email or WhatsApp with the drawing, sample, material, cavity plan, machine information and destination market."}
+        ]}
+      ]
+    }
+  },
+  "es": {
+    "/contact/": {
+      "quickAnswers": [
+        {"question": "⏱️ ¿Cuánto tardan en enviar una cotización?", "answer": "Respondemos en 24 horas. Use WhatsApp o correo electrónico para solicitudes urgentes."},
+        {"question": "📐 ¿Qué información debo proporcionar?", "answer": "Comparta el diseño de la tapa, material, número de cavidades y volumen de producción."},
+        {"question": "🌍 ¿Realizan envíos internacionales?", "answer": "Sí, apoyamos proyectos internacionales de moldes y la documentación de entrega."},
+        {"question": "📱 ¿Cómo contacto con LEYA MOULD?", "answer": "Use las opciones de teléfono, correo o WhatsApp e incluya el resumen de su proyecto."}
+      ]
+    },
+    "/faq/": {
+      "groups": [
+        {"title": "Productos y capacidades", "items": [
+          {"question": "¿Qué tipos de moldes para tapas fabrica LEYA MOULD?", "answer": "Fabricamos moldes para tapas de agua y bebidas, hot-fill, aceite comestible, salsas, medicina, cosmética, flip-top, precintos, deportivas, bicomponente, boca ancha, aceite de motor, garrafas y cierres personalizados."},
+          {"question": "¿También suministran máquinas auxiliares?", "answer": "Sí. Podemos coordinar máquinas de lining, plegado, corte, impresión, wadding y soluciones combinadas para completar una célula integrada."},
+          {"question": "¿Pueden diseñar un molde personalizado?", "answer": "Sí. Envíe un plano 2D/3D o una muestra y revisaremos geometría, material, cavidades, máquina y pruebas."}
+        ]},
+        {"title": "Pedidos y entrega", "items": [
+          {"question": "¿Qué información necesito para recibir una cotización?", "answer": "Necesitamos el tipo de tapa, planos 2D/3D, material, número de cavidades, máquina, volumen previsto y requisitos especiales."},
+          {"question": "¿Cuál es el plazo habitual para un molde nuevo?", "answer": "Depende de la complejidad y las cavidades. El calendario detallado se confirma con la cotización."},
+          {"question": "¿Realizan pruebas y validación antes del envío?", "answer": "Sí. Las pruebas, comprobaciones dimensionales y revisión de muestras quedan en la entrega técnica."},
+          {"question": "¿Qué condiciones de pago aceptan?", "answer": "Las condiciones se confirman en la cotización según el alcance, calendario y requisitos comerciales."}
+        ]},
+        {"title": "Técnica y soporte", "items": [
+          {"question": "¿Qué materiales utilizan para los moldes?", "answer": "Seleccionamos aceros como S136, NAK80, H13 y equivalentes según resina, ciclo, cavidades y vida útil."},
+          {"question": "¿Qué garantía ofrecen?", "answer": "La garantía y el soporte se definen en la oferta, y mantenemos registros técnicos para el mantenimiento."},
+          {"question": "¿Realizan envíos internacionales?", "answer": "Sí. Coordinamos embalaje de exportación, transporte internacional y documentación aprobada."},
+          {"question": "¿Cómo comienzo un proyecto con LEYA MOULD?", "answer": "Envíe el plano, muestra, material, cavidades, máquina y mercado de destino por correo o WhatsApp."}
+        ]}
+      ]
+    }
+  }
+}
