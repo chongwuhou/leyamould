@@ -10,7 +10,8 @@ const BLOG_DETAIL_ROUTE_RE=/^\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/;
 const NEWS_DETAIL_ROUTE_RE=/^\/news\/[A-Za-z0-9][A-Za-z0-9_-]*\.html$/;
 function managedPageRoute(route){
   const value=String(route||"");
-  return isMouldRoute(value)||BLOG_DETAIL_ROUTE_RE.test(value)||NEWS_DETAIL_ROUTE_RE.test(value);
+  const registered=MOULD_ROUTES.has(value);
+  return registered||isMouldRoute(value)||BLOG_DETAIL_ROUTE_RE.test(value)||NEWS_DETAIL_ROUTE_RE.test(value);
 }
 function pageContentType(route){
   const value=String(route||"");
