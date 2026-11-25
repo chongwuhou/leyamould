@@ -397,6 +397,21 @@ def page_override_for(locale: str, route: str) -> dict:
     slug = product_slug_for_route(route)
     if slug:
         product = PRODUCT_SEO_OVERRIDES.get((slug, locale)) or PRODUCT_SEO_OVERRIDES.get((slug, "en"))
+        if not product:
+            # Older published product rows were seeded with reviewed localized
+            # title/description fields before xuyi_product_seo was introduced.
+            # They are still D1-owned values, so use them as the effective SEO
+            # record rather than falling back to a source-only string.
+            for row in STATE.get("products", []):
+                if not isinstance(row, dict) or str(row.get("model") or "").strip().lower() != slug:
+                    continue
+                content = row.get("content") if isinstance(row.get("content"), dict) else {}
+                suffix = "Es" if locale == "es" else ""
+                title = str(content.get("seoTitle" + suffix) or content.get("titleEs" if locale == "es" else "title") or content.get("nameEs" if locale == "es" else "name") or "").strip()
+                description = str(content.get("seoDescription" + suffix) or content.get("descriptionEs" if locale == "es" else "description") or content.get("shortEs" if locale == "es" else "short") or "").strip()
+                if title and description:
+                    product = {"seoTitle": title, "metaDescription": description}
+                break
         if not product and locale == "es":
             product = PRODUCT_FALLBACK_SEO.get(slug)
         if product:
