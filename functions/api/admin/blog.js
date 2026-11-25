@@ -18,6 +18,13 @@ async function publishedProductSlugs(db){
  }catch{}
  return known;
 }
+async function ensureRouteRegistry(db){
+ await db.prepare(`CREATE TABLE IF NOT EXISTS site_pages(
+  route TEXT PRIMARY KEY,label TEXT NOT NULL,seo_title TEXT NOT NULL DEFAULT '',
+  meta_description TEXT NOT NULL DEFAULT '',robots TEXT NOT NULL DEFAULT 'noindex,nofollow',
+  sitemap_enabled INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+ )`).run();
+}
 async function editorialError(db,post){
  const links=productLinks(post);
  if(links.length<2||links.length>5)return "正文必须包含 2–5 个不同的真实产品型号链接";
@@ -80,7 +87,17 @@ export async function onRequestPost(context){
   }
   await db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,?,?,?) ON CONFLICT(slug) DO UPDATE SET status=excluded.status,content_json=excluded.content_json,updated_at=CURRENT_TIMESTAMP,published_at=CASE WHEN excluded.status='published' THEN COALESCE(xuyi_blog_posts.published_at,excluded.published_at) ELSE xuyi_blog_posts.published_at END")
     .bind(post.slug,status,content,status==="published"?new Date().toISOString():null).run();
-  if(action==="publish"){await db.prepare("DELETE FROM xuyi_blog_drafts WHERE slug=?").bind(post.slug).run();await cancelBlogSchedule(db,post.slug);}  return reply({saved:true,status,slug:post.slug,url:status==="published"?"/blog/"+post.slug+"/":null});
+  if(action==="publish"){
+    await ensureRouteRegistry(db);
+    await db.prepare(`INSERT INTO site_pages(route,label,seo_title,meta_description,robots,sitemap_enabled,updated_at)
+      VALUES(?,?,?,?,'noindex,nofollow',0,CURRENT_TIMESTAMP)
+      ON CONFLICT(route) DO UPDATE SET label=excluded.label,seo_title=excluded.seo_title,
+      meta_description=excluded.meta_description,updated_at=CURRENT_TIMESTAMP`)
+      .bind("/blog/"+post.slug+"/",post.title,post.title,post.description).run();
+    await db.prepare("DELETE FROM xuyi_blog_drafts WHERE slug=?").bind(post.slug).run();
+    await cancelBlogSchedule(db,post.slug);
+  }
+  return reply({saved:true,status,slug:post.slug,url:status==="published"?"/blog/"+post.slug+"/":null});
  }
   if(action==="schedule"){
    let post;try{post=normalizeBlogPost(payload.post)}catch(error){return reply({error:String(error.message||error)},400)}
