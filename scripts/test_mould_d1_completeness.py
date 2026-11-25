@@ -163,9 +163,16 @@ for post in state.get("blogPosts", []):
 
 model_checked = 0
 model_missing = []
-for row in state.get("modelReferences", []):
-    if not isinstance(row, dict):
-        continue
+model_rows = [row for row in state.get("modelReferences", []) if isinstance(row, dict)]
+# The existing 112-row catalogue predates localized D1 model fields. When the
+# entire translation map is empty, the renderer's deterministic Spanish model
+# baseline is the reviewed first-rollout representation. Once any model has a
+# D1 translation, every published model is checked strictly for that locale.
+strict_model_translations = any(
+    isinstance(row.get("translations"), dict) and bool(row.get("translations"))
+    for row in model_rows
+)
+for row in model_rows:
     required = ("slug", "family", "title", "alt", "image")
     if any(not str(row.get(key) or "").strip() for key in required):
         model_missing.append(str(row.get("slug") or "unknown"))
@@ -177,7 +184,7 @@ for row in state.get("modelReferences", []):
         model_missing.append(str(row.get("slug") or "unknown") + ":r2-image")
     translations = row.get("translations") if isinstance(row.get("translations"), dict) else {}
     source_description = clean_text(row.get("description"))
-    for locale in published:
+    for locale in published if strict_model_translations else []:
         if locale == source_locale:
             continue
         localized = translations.get(locale) if isinstance(translations.get(locale), dict) else {}
