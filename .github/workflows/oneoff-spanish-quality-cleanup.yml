@@ -1,0 +1,33 @@
+name: One-time Spanish quality label cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/oneoff-spanish-quality-cleanup.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Replace the remaining reviewed Spanish quality label
+        shell: bash
+        run: |
+          cat > /tmp/leya-es-quality.sql <<'SQL'
+          UPDATE xuyi_translation_overrides
+          SET translated_json=replace(translated_json,'Quality Control & Inspection','Control de calidad e inspección')
+          WHERE locale='es' AND resource_id LIKE 'page:%';
+          SQL
+          npx --yes wrangler@4.148.0 d1 execute leyamould-d1 --remote --file=/tmp/leya-es-quality.sql
