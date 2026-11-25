@@ -45,3 +45,19 @@ export const MOULD_ROUTES = new Set([
 export const MANAGED_MODELS = MOULD_MODELS;
 export const MANAGED_ROUTES = MOULD_ROUTES;
 
+// Published category rows may be added from the LEYA CMS. Keep the static
+// allow-list for the original catalogue, but validate new D1-backed categories
+// by the same safe slug/route contract instead of requiring a code change.
+export const DYNAMIC_MODEL_RE = /^[a-z0-9][a-z0-9-]{1,63}$/;
+export const DYNAMIC_PRODUCT_ROUTE_RE = /^\/product\/[a-z0-9][a-z0-9-]{1,63}\.html$/;
+export function isMouldModel(value) {
+  return DYNAMIC_MODEL_RE.test(String(value || ""));
+}
+export function isMouldProductRoute(value) {
+  return DYNAMIC_PRODUCT_ROUTE_RE.test(String(value || ""));
+}
+export function isMouldRoute(value) {
+  const route = String(value || "");
+  return MOULD_ROUTES.has(route) || isMouldProductRoute(route);
+}
+

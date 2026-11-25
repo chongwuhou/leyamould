@@ -121,6 +121,9 @@
    <label>来源页面（HTTPS）<input id="model-reference-source-url" type="url" maxlength="500" placeholder="https://www.hmould.com/..." ></label>
    <label>来源图片（HTTPS）<input id="model-reference-source-image" type="url" maxlength="500"></label>
    <label>LEYA 图片路径（R2 发布用）<input id="model-reference-image" maxlength="300" placeholder="/media/product/32位文件名.webp"></label>
+   <label>PDF 资料路径（可选）<input id="model-reference-pdf" maxlength="500" placeholder="/media/ppt/model-datasheet.pdf"></label>
+   <label>PDF SHA-256（绑定后才能发布）<input id="model-reference-pdf-sha256" maxlength="64" pattern="[a-fA-F0-9]{64}"></label>
+   <label>PDF 页数<input id="model-reference-pdf-pages" type="number" min="0" max="9999" value="0"></label>
    <label>排序<input id="model-reference-sort" type="number" min="0" max="99999" value="0"></label>
    <label>发布状态<select id="model-reference-publication"><option value="draft">草稿（不公开）</option><option value="published">审核通过并发布</option></select></label>
   </div>

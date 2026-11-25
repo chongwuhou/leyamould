@@ -1,5 +1,5 @@
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
-import { MOULD_ROUTES } from "../../_shared/mould-routes.js";
+import { MOULD_ROUTES, isMouldRoute } from "../../_shared/mould-routes.js";
 
 const clean = (value) => String(value ?? "").trim();
 
@@ -55,6 +55,7 @@ const SCHEMA = [
     sort_order INTEGER NOT NULL DEFAULT 0,
     enabled INTEGER NOT NULL DEFAULT 1 CHECK (enabled IN (0,1)),
     new_window INTEGER NOT NULL DEFAULT 0 CHECK (new_window IN (0,1)),
+    translations_json TEXT NOT NULL DEFAULT '{}',
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`
 ];
@@ -78,6 +79,11 @@ async function requireAdmin(context) {
 
 async function ensureSchema(db) {
   for (const sql of SCHEMA) await db.prepare(sql).run();
+  // Existing D1 installations predate localized navigation.  ALTER is
+  // idempotent through the PRAGMA check and keeps the visual template intact.
+  const columns = (await db.prepare("PRAGMA table_info(site_navigation)").all()).results || [];
+  if (!columns.some(row => row.name === "translations_json"))
+    await db.prepare("ALTER TABLE site_navigation ADD COLUMN translations_json TEXT NOT NULL DEFAULT '{}'").run();
 }
 
 function validPath(value) {
@@ -94,6 +100,10 @@ function validNavUrl(value) {
   const url = clean(value);
   return validPath(url) || /^https:\/\/[^\s]+$/i.test(url) || /^(mailto|tel):[^\s]+$/i.test(url);
 }
+
+// Keep the original route set visible as a compatibility reference; dynamic
+// product routes are accepted by isMouldRoute below.
+const STATIC_MOULD_ROUTE_COUNT = MOULD_ROUTES.size;
 
 const RESERVED_REDIRECT_SOURCES = ["/api/","/admin/","/assets/","/media/","/_","/robots.txt","/sitemap.xml","/build-meta.json"];
 function validRedirectSource(value) {
@@ -125,15 +135,22 @@ function validateNavigation(input) {
     const parentId = clean(row?.parentId);
     const label = clean(row?.label);
     const url = clean(row?.url);
+    const translations = row?.translations && typeof row.translations === "object" && !Array.isArray(row.translations) ? row.translations : {};
     const sortOrder = Number.isFinite(Number(row?.sortOrder)) ? Math.trunc(Number(row.sortOrder)) : (index + 1) * 10;
     if (!/^[a-z0-9][a-z0-9-]{0,79}$/i.test(id)) throw new Error("Invalid navigation id: " + id);
     if (ids.has(id)) throw new Error("Duplicate navigation id: " + id);
     if (!label || label.length > 80) throw new Error("Invalid navigation label for " + id);
     if (!validNavUrl(url)) throw new Error("Invalid navigation URL for " + id);
-    if (url.startsWith("/") && !MOULD_ROUTES.has(url))
+    if (url.startsWith("/") && !isMouldRoute(url))
       throw new Error("Navigation URL is not a configured LEYA MOULD route: " + url);
     ids.add(id);
-    return { id, parentId, label, url, sortOrder, newWindow: Boolean(row?.newWindow) };
+    const cleanTranslations = {};
+    for (const [locale, value] of Object.entries(translations)) {
+      if (!/^[a-z]{2}(?:-[A-Z]{2})?$/.test(locale) || typeof value !== "string" || clean(value).length > 80)
+        throw new Error("Invalid navigation translation for " + id);
+      if (clean(value)) cleanTranslations[locale] = clean(value);
+    }
+    return { id, parentId, label, url, sortOrder, newWindow: Boolean(row?.newWindow), translations: cleanTranslations };
   });
   const byId = new Map(rows.map((row) => [row.id, row]));
   for (const row of rows) {
@@ -166,7 +183,7 @@ async function load(db) {
   const [redirectsResult, navigationResult] = await db.batch([
     db.prepare(`SELECT source_path,target_path,status_code FROM site_redirects
       WHERE enabled=1 ORDER BY source_path`),
-    db.prepare(`SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation
+    db.prepare(`SELECT id,parent_id,label,url,sort_order,new_window,translations_json FROM site_navigation
       WHERE enabled=1 ORDER BY COALESCE(parent_id,''),sort_order,id`)
   ]);
   const storedRedirects = (redirectsResult.results || []).map((row) => ({
@@ -174,7 +191,8 @@ async function load(db) {
   }));
   const storedNavigation = (navigationResult.results || []).map((row) => ({
     id: row.id, parentId: row.parent_id || "", label: row.label, url: row.url,
-    sortOrder: Number(row.sort_order || 0), newWindow: Boolean(row.new_window)
+    sortOrder: Number(row.sort_order || 0), newWindow: Boolean(row.new_window),
+    translations: (() => { try { const value = JSON.parse(row.translations_json || "{}"); return value && typeof value === "object" && !Array.isArray(value) ? value : {}; } catch { return {}; } })()
   }));
   return {
     redirects: storedRedirects.length ? storedRedirects : DEFAULT_REDIRECTS,
@@ -217,9 +235,9 @@ export async function onRequestPost(context) {
       const statements = [db.prepare("DELETE FROM site_navigation")];
       for (const row of rows) {
         statements.push(db.prepare(`INSERT INTO site_navigation
-          (id,parent_id,label,url,sort_order,enabled,new_window,updated_at)
-          VALUES(?,?,?,?,?,1,?,CURRENT_TIMESTAMP)`)
-          .bind(row.id, row.parentId || null, row.label, row.url, row.sortOrder, row.newWindow ? 1 : 0));
+          (id,parent_id,label,url,sort_order,enabled,new_window,translations_json,updated_at)
+          VALUES(?,?,?,?,?,1,?,?,CURRENT_TIMESTAMP)`)
+          .bind(row.id, row.parentId || null, row.label, row.url, row.sortOrder, row.newWindow ? 1 : 0, JSON.stringify(row.translations || {})));
       }
       await db.batch(statements);
       return response({ saved: true, kind: "navigation", count: rows.length, ...(await queuePublish(db)) });

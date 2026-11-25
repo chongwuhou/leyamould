@@ -10,6 +10,7 @@ contracts.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 
@@ -377,6 +378,8 @@ def render_model_reference_section(locale: str, models: list[dict], helpers: dic
         model_url = href(locale, "/contact/?model=" + str(model.get("slug") or "") + "#inquiry")
         model_image = str(model.get("image") or "/assets/mould-placeholder.svg")
         description = _model_text(model, locale, "description")
+        pdf_url = str(model.get("pdfUrl") or model.get("pdf_url") or "").strip()
+        pdf_link = ('<a class="mould-model-card__pdf" href="' + esc(pdf_url) + '" target="_blank" rel="noopener">' + esc("Ficha PDF" if es else "PDF datasheet") + '</a>') if re.match(r"^(?:/media/|https://)", pdf_url) else ""
         cards.append(
             '<article class="mould-model-card">'
             '<div class="mould-model-card__image">' + image(model_image, alt) + '</div>'
@@ -384,8 +387,8 @@ def render_model_reference_section(locale: str, models: list[dict], helpers: dic
             '<span class="mould-model-card__source">' + esc(source_label) + '</span>'
             '<h3>' + esc(title) + '</h3>'
             '<p>' + esc(description if not es else "Referencia de catálogo para revisar geometría, cavidades, máquina y requisitos de producción.") + '</p>'
-            '<a href="' + esc(model_url) + '">' + esc(inquire) + '</a>'
-            '</div></article>'
+            '<a href="' + esc(model_url) + '">' + esc(inquire) + '</a>' + pdf_link
+            + '</div></article>'
         )
     return (
         '<section class="mould-model-references" id="model-references">'
@@ -401,7 +404,24 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     """Render a full reference-style page while reusing shared site helpers."""
     esc = helpers["esc"]
     href = helpers["localized_href"]
-    details = DETAILS[item["slug"]]
+    # D1 can add a reviewed family without a Python deploy.  Unknown families
+    # use the same DOM/CSS contract with conservative copy and no invented
+    # media; existing families continue to use their rich reference spec.
+    details = DETAILS.get(item["slug"])
+    if details is None:
+        title = str(item.get("title") or item.get("name") or item.get("slug") or "Custom Mould").strip()
+        image = str(item.get("image") or "/assets/catalog/catalog-placeholder.webp").strip()
+        description = str(item.get("description") or item.get("short") or "Custom plastic packaging moulds engineered around the buyer's drawing, material and production target.").strip()
+        details = _spec(
+            title, "Cap Mould", "Solutions", image,
+            [("Custom", "Project Format"), ("DFM", "Technical Review"), ("QC", "Inspection"), ("5M+", "Mould Life")],
+            [(title, image, description)],
+            [("Precision Engineering", "The tooling brief connects the part drawing, material, machine and quality target."),
+             ("Documented Trials", "Samples and inspection evidence remain attached to the project handover.")],
+            ("Engineering for Your Mould", [("Design Review", description, image, ["Drawing review", "Material check", "Trial approval"])]),
+            [image], [("Dimensional Inspection", "Critical dimensions are checked against the approved drawing."), ("Trial Samples", "Agreed samples guide the final approval.")],
+            [("Can you review a custom mould?", "Yes. Send the drawing, sample, material and production target for a technical review."), ("Do you provide trial samples?", "Agreed trial samples and inspection evidence are included before handover.")],
+            [], [])
     category = _category_payload(item)
     hero_data = category.get("hero") if isinstance(category.get("hero"), dict) else {}
     title = _catalog_text(item, locale, "title")
