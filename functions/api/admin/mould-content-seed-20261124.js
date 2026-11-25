@@ -210,6 +210,35 @@ function mergeMissing(target, baseline) {
   }
   return changed ? target : null;
 }
+// Replace only values that are absent or still equal to the original English
+// baseline. This lets the reviewed Spanish baseline repair the first seed
+// without overwriting a later owner edit in D1.
+function mergeReviewed(target, baseline, englishBaseline) {
+  let changed = false;
+  if (!target || typeof target !== "object" || Array.isArray(target)) target = {};
+  for (const [key, value] of Object.entries(baseline || {})) {
+    const current = target[key];
+    const english = englishBaseline && typeof englishBaseline === "object" ? englishBaseline[key] : undefined;
+    if (!(key in target) || current === null || current === "" || (english !== undefined && JSON.stringify(current) === JSON.stringify(english))) {
+      target[key] = value;
+      changed = true;
+    } else if (value && typeof value === "object" && !Array.isArray(value) && current && typeof current === "object" && !Array.isArray(current)) {
+      if (mergeReviewed(current, value, english)) changed = true;
+    }
+  }
+  return changed ? target : null;
+}
+
+const NAV_ES = {
+  "/": "Inicio", "/about/": "Sobre nosotros", "/Plastic-cap-mold.html": "Moldes de tapones",
+  "/Bottle-Cap-Machine/Bottle-Cap-Machine.html": "Máquina", "/samples/": "Muestras", "/news/": "Noticias", "/video/": "Vídeo", "/contact/": "Contacto",
+  "/news/Bottle-cap-molds.html": "Noticias sobre moldes de tapas",
+};
+function navSpanishLabel(url, fallback) {
+  if (NAV_ES[url]) return NAV_ES[url];
+  const category = (MOULD_CATALOG?.categories || []).find(item => item && String(item.route || "") === String(url || ""));
+  return String(category?.navTitleEs || category?.titleEs || fallback || "");
+}
 function seedPost(item) {
   const title = item.title || {};
   const description = item.description || {};
@@ -277,6 +306,7 @@ function seoBaseline(item, locale) {
 async function ensureSchema(db) {
   await db.prepare("CREATE TABLE IF NOT EXISTS site_state (key TEXT PRIMARY KEY,value TEXT NOT NULL DEFAULT '',updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS site_navigation (id TEXT PRIMARY KEY,parent_id TEXT,label TEXT NOT NULL,url TEXT NOT NULL,sort_order INTEGER NOT NULL DEFAULT 0,enabled INTEGER NOT NULL DEFAULT 1,new_window INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  try { await db.prepare("ALTER TABLE site_navigation ADD COLUMN translations_json TEXT NOT NULL DEFAULT '{}'").run(); } catch { /* existing column */ }
   await db.prepare("CREATE TABLE IF NOT EXISTS site_pages (route TEXT PRIMARY KEY,label TEXT NOT NULL,seo_title TEXT NOT NULL DEFAULT '',meta_description TEXT NOT NULL DEFAULT '',robots TEXT NOT NULL DEFAULT 'noindex,nofollow',sitemap_enabled INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_page_content(route TEXT PRIMARY KEY,main_html TEXT NOT NULL DEFAULT '',publication_status TEXT NOT NULL DEFAULT 'draft' CHECK(publication_status IN ('draft','published')),updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS xuyi_product_content (model TEXT PRIMARY KEY,content_json TEXT NOT NULL DEFAULT '{}',publication_status TEXT NOT NULL DEFAULT 'draft' CHECK(publication_status IN ('draft','published')),updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
@@ -313,7 +343,9 @@ export async function onRequestPost(context) {
       if (key === "common_copy" || key === "page_copy") {
         let current = {};
         try { current = JSON.parse(String(existingState.get(key) || "{}")); } catch { current = {}; }
-        const merged = mergeMissing(current, value);
+        const merged = key === "common_copy"
+          ? mergeReviewed(current, value, { en: COMMON_COPY.en })
+          : mergeMissing(current, value);
         if (merged) {
           statements.push(db.prepare("UPDATE site_state SET value=?,updated_at=CURRENT_TIMESTAMP WHERE key=?").bind(json(merged), key));
           updated.state += 1;
@@ -325,7 +357,7 @@ export async function onRequestPost(context) {
       }
     }
 
-    const existingNavRows = ((await db.prepare("SELECT id,label,url,sort_order FROM site_navigation").all()).results || []);
+    const existingNavRows = ((await db.prepare("SELECT id,label,url,sort_order,translations_json FROM site_navigation").all()).results || []);
     const existingNav = new Map(existingNavRows.map(row => [String(row.id), row]));
     const seedBaselineLabels = new Set([
       "Functional Cap Mould (Combination)", "Plastic Handle Mould",
@@ -333,15 +365,25 @@ export async function onRequestPost(context) {
     for (const [id, parentId, label, url, sortOrder] of NAVIGATION) {
       if (!MOULD_ROUTES.has(url)) { skipped.navigation += 1; continue; }
       const current = existingNav.get(id);
+      const esLabel = navSpanishLabel(url, label);
       if (!current) {
-        statements.push(db.prepare("INSERT INTO site_navigation(id,parent_id,label,url,sort_order,enabled,new_window,updated_at) VALUES(?,?,?,?,?,1,0,CURRENT_TIMESTAMP)").bind(id, parentId || null, label, url, sortOrder));
+        statements.push(db.prepare("INSERT INTO site_navigation(id,parent_id,label,url,sort_order,enabled,new_window,translations_json,updated_at) VALUES(?,?,?,?,?,1,0,?,CURRENT_TIMESTAMP)").bind(id, parentId || null, label, url, sortOrder, json(esLabel ? { es: esLabel } : {})));
         inserted.navigation += 1;
       } else if (seedBaselineLabels.has(String(current.label || "")) && String(current.label || "") !== label) {
         // Repair only labels written by the first seed revision; a later owner edit stays authoritative.
         statements.push(db.prepare("UPDATE site_navigation SET label=?,sort_order=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(label, sortOrder, id));
         inserted.navigation += 1;
       } else {
-        skipped.navigation += 1;
+        let translations = {};
+        try { translations = JSON.parse(String(current.translations_json || "{}")); } catch { translations = {}; }
+        const existingEs = String(translations.es || "").trim();
+        if (esLabel && (!existingEs || existingEs === String(current.label || "").trim())) {
+          translations.es = esLabel;
+          statements.push(db.prepare("UPDATE site_navigation SET translations_json=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(json(translations), id));
+          updated.navigation += 1;
+        } else {
+          skipped.navigation += 1;
+        }
       }
     }
 

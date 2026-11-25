@@ -14,6 +14,7 @@ from pathlib import Path
 
 from locale_registry import approved_locales
 from mould_category_pages import render_category_page, render_model_reference_section
+from mould_localization import ES_COMMON_COPY, ES_SEO, ES_SHARED_CTA, spanish_editorial_copy, spanish_model_description, spanish_model_text, spanish_ui_copy, spanish_ui_text
 
 ROOT = Path(__file__).resolve().parent
 # The supplied logo is kept as a source asset so the published header can scale it without stretching.
@@ -70,8 +71,18 @@ def _normalise_model_reference(row: dict) -> dict:
         value["pdfPages"] = 0
     translations = row.get("translations")
     value["translations"] = translations if isinstance(translations, dict) else {}
+    # Published D1 rows may predate the Spanish model fields.  Add a
+    # deterministic translation only when the owner has not supplied one;
+    # source numbers, family and verified media remain unchanged.
+    if not isinstance(value["translations"].get("es"), dict):
+        value["translations"]["es"] = {}
+    es = value["translations"]["es"]
+    es.setdefault("title", spanish_model_text(value["title"]))
+    es.setdefault("alt", spanish_model_text(value["alt"]))
+    es.setdefault("description", spanish_model_description(value["description"]))
     return value
 
+STATIC_HMOULD_MODELS = [_normalise_model_reference(row) for row in STATIC_HMOULD_MODELS]
 _SNAPSHOT_MODEL_REFERENCES = [
     _normalise_model_reference(row) for row in STATE.get("modelReferences", [])
     if isinstance(row, dict) and row.get("slug") and row.get("family") and row.get("image")
@@ -118,7 +129,11 @@ def structured_page_copy(locale: str, route: str) -> dict:
     d1_localized = PAGE_COPY.get(locale, {}) if isinstance(PAGE_COPY.get(locale, {}), dict) else {}
     row = source.get(route) if isinstance(source.get(route), dict) else {}
     row = _merge_copy(row, source_locale.get(route) if isinstance(source_locale.get(route), dict) else {})
-    row = _merge_copy(row, d1_source.get(route) if isinstance(d1_source.get(route), dict) else {})
+    # A source-language D1 row must not overwrite the reviewed Spanish branch.
+    # Use D1's localized object when present; otherwise retain the checked-in
+    # locale baseline and let the shared renderer provide the safe fallback.
+    if locale == "en":
+        row = _merge_copy(row, d1_source.get(route) if isinstance(d1_source.get(route), dict) else {})
     row = _merge_copy(row, d1_localized.get(route) if isinstance(d1_localized.get(route), dict) else {})
     return row
 
@@ -326,6 +341,20 @@ def navigation_label(url: str, fallback: str, locale: str = "en") -> str:
     labels continue to come from the D1 common-copy map and the reviewed
     catalogue fields, so an English admin edit cannot leak into Spanish.
     """
+    if locale == "es":
+        route_labels = {
+            "/about/": text("es", "about"), "/faq/": text("es", "faq_title"),
+            "/capabilities/": text("es", "machine"), "/samples/": text("es", "samples"),
+            "/news/": text("es", "news"), "/video/": text("es", "video"),
+            "/contact/": text("es", "contact_us"),
+            "/news/Bottle-cap-molds.html": "Noticias sobre moldes de tapas",
+            "/Bottle-Cap-Machine/Bottle-Cap-Machine.html": "Máquinas para tapas de botella",
+        }
+        if url in route_labels:
+            return route_labels[url]
+        for item in CATALOG.get("categories", []):
+            if isinstance(item, dict) and str(item.get("route") or "") == url:
+                return str(item.get("navTitleEs") or item.get("titleEs") or fallback)
     rows = [row for row in NAVIGATION if str(row.get("url") or "") == url]
     rows.sort(key=lambda row: (int(row.get("sort_order", row.get("sortOrder", 999)) or 999), str(row.get("id", ""))))
     if not rows:
@@ -333,6 +362,24 @@ def navigation_label(url: str, fallback: str, locale: str = "en") -> str:
     row = rows[0]
     translations = row.get("translations") if isinstance(row.get("translations"), dict) else {}
     localized = translations.get(locale) if isinstance(translations, dict) else None
+    if locale == "es" and not localized:
+        # Older D1 navigation rows have no translations_json column value yet.
+        # Use the reviewed catalogue fields and shared labels until the seed
+        # migration fills the missing D1 translations.
+        route_labels = {
+            "/about/": text("es", "about"), "/faq/": text("es", "faq_title"),
+            "/capabilities/": text("es", "machine"), "/samples/": text("es", "samples"),
+            "/news/": text("es", "news"), "/video/": text("es", "video"),
+            "/contact/": text("es", "contact_us"),
+            "/news/Bottle-cap-molds.html": "Noticias sobre moldes de tapas",
+            "/Bottle-Cap-Machine/Bottle-Cap-Machine.html": "Máquinas para tapas de botella",
+        }
+        localized = route_labels.get(url)
+        if not localized:
+            for item in CATALOG.get("categories", []):
+                if isinstance(item, dict) and str(item.get("route") or "") == url:
+                    localized = item.get("navTitleEs") or item.get("titleEs")
+                    break
     return str(localized or row.get("label") or fallback)
 
 def product_navigation_items() -> list[dict]:
@@ -384,6 +431,13 @@ def product_slug_for_route(route: str) -> str:
 def page_override_for(locale: str, route: str) -> dict:
     """Return route metadata, preferring the product SEO row for this locale."""
     value = dict(PAGE_OVERRIDES.get(route, {}))
+    if locale == "es" and route in ES_SEO:
+        # site_pages stores the source-language SEO row.  Until a localized
+        # page override exists, the reviewed Spanish SEO registry is the
+        # correct locale-specific value; it must not inherit English metadata.
+        title, description = ES_SEO[route]
+        value["seoTitle"] = title
+        value["metaDescription"] = description
     slug = product_slug_for_route(route)
     if slug:
         product = PRODUCT_SEO_OVERRIDES.get((slug, locale)) or PRODUCT_SEO_OVERRIDES.get((slug, "en"))
@@ -514,6 +568,37 @@ TEXT["pt"].update({"samples": "Amostras", "video": "Vídeo"})
 TEXT["ru"].update({"samples": "Образцы", "video": "Видео"})
 TEXT["tr"].update({"samples": "Numuneler", "video": "Video"})
 TEXT["es"].update({"cap_mould": "Moldes de tapones", "machine": "Máquina", "contact_us": "Contacto"})
+# The D1 common-copy row remains authoritative for owner-edited values, but a
+# missing value or the old English baseline must never leak into the Spanish
+# build.  This is also the clean-checkout fallback used before the first D1
+# snapshot is available.
+for _key, _value in ES_COMMON_COPY.items():
+    if not TEXT["es"].get(_key) or TEXT["es"].get(_key) == TEXT["en"].get(_key):
+        TEXT["es"][_key] = _value
+TEXT["es"].update({"samples": "Muestras", "video": "Vídeo", "news": "Noticias", "contact": "Contacto", "cap_mould": "Moldes de tapones", "machine": "Máquina", "contact_us": "Contacto"})
+
+def _repair_d1_spanish_copy() -> None:
+    """Repair only known English baseline values in the in-memory D1 copy."""
+    if not isinstance(COMMON_COPY, dict):
+        return
+    current = COMMON_COPY.setdefault("es", {})
+    if not isinstance(current, dict):
+        COMMON_COPY["es"] = current = {}
+    for key, value in ES_COMMON_COPY.items():
+        if not current.get(key) or current.get(key) == TEXT["en"].get(key):
+            current[key] = value
+    ctas = current.setdefault("shared_cta", {})
+    if not isinstance(ctas, dict):
+        COMMON_COPY["es"]["shared_cta"] = ctas = {}
+    for variant, value in ES_SHARED_CTA.items():
+        row = ctas.setdefault(variant, {})
+        if not isinstance(row, dict):
+            ctas[variant] = row = {}
+        for key, localized in value.items():
+            if not row.get(key) or row.get(key) == COMMON_COPY.get("en", {}).get("shared_cta", {}).get(variant, {}).get(key):
+                row[key] = localized
+
+_repair_d1_spanish_copy()
 
 def esc(value: object) -> str:
     return html.escape(str(value or ""), quote=True)
@@ -675,23 +760,34 @@ def header(locale: str, route: str) -> str:
     nav = ['<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>']
     about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">' + esc(navigation_label("/about/", text(locale, "about"), locale)) + '</a><a href="' + localized_href(locale, "/faq/") + '">' + esc(navigation_label("/faq/", text(locale, "faq_title"), locale)) + '</a></div></div>'
     cap_nav_label = "Cap mold" if locale == "en" else text(locale, "cap_mould")
-    product_menu = '<div class="nav__drop nav__drop--products"><a class="nav__link nav__link--direct" href="' + localized_href(locale, "/Plastic-cap-mold.html") + '">' + esc(cap_nav_label) + '</a><button class="nav__toggle nav__toggle--caret" data-mega-toggle type="button" aria-label="Open Cap Mould menu" aria-controls="menu-products" aria-expanded="false"><svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-products">' + product_links + '</div></div>'
+    cap_menu_aria = "Abrir menú de moldes de tapas" if locale == "es" else "Open Cap Mould menu"
+    news_menu_aria = "Abrir menú de noticias" if locale == "es" else "Open News menu"
+    product_menu = '<div class="nav__drop nav__drop--products"><a class="nav__link nav__link--direct" href="' + localized_href(locale, "/Plastic-cap-mold.html") + '">' + esc(cap_nav_label) + '</a><button class="nav__toggle nav__toggle--caret" data-mega-toggle type="button" aria-label="' + esc(cap_menu_aria) + '" aria-controls="menu-products" aria-expanded="false"><svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-products">' + product_links + '</div></div>'
     nav.append(about_menu)
     nav.append(product_menu)
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/capabilities/") + '">' + esc(navigation_label("/capabilities/", text(locale, "machine"), locale)) + '</a>')
     sample_label = navigation_label("/samples/", "Sample" if locale == "en" else text(locale, "samples"), locale)
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/samples/") + '">' + esc(sample_label) + '</a>')
-    resources_menu = '<div class="nav__drop nav__drop--resources"><a class="nav__link nav__link--direct" href="' + localized_href(locale, "/news/") + '">' + esc(navigation_label("/news/", text(locale, "news"), locale)) + '</a><button class="nav__toggle nav__toggle--caret" data-mega-toggle type="button" aria-label="Open News menu" aria-controls="menu-resources" aria-expanded="false"><svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-resources"><a href="' + localized_href(locale, "/news/Bottle-cap-molds.html") + '">' + esc(navigation_label("/news/Bottle-cap-molds.html", "Bottle cap molds", locale)) + '</a><a href="' + localized_href(locale, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html") + '">' + esc(navigation_label("/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine", locale)) + '</a></div></div>'
+    resources_menu = '<div class="nav__drop nav__drop--resources"><a class="nav__link nav__link--direct" href="' + localized_href(locale, "/news/") + '">' + esc(navigation_label("/news/", text(locale, "news"), locale)) + '</a><button class="nav__toggle nav__toggle--caret" data-mega-toggle type="button" aria-label="' + esc(news_menu_aria) + '" aria-controls="menu-resources" aria-expanded="false"><svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-resources"><a href="' + localized_href(locale, "/news/Bottle-cap-molds.html") + '">' + esc(navigation_label("/news/Bottle-cap-molds.html", "Bottle cap molds", locale)) + '</a><a href="' + localized_href(locale, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html") + '">' + esc(navigation_label("/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine", locale)) + '</a></div></div>'
     nav.append(resources_menu)
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/video/") + '">' + esc(text(locale, "video")) + '</a>')
     nav.append('<a class="nav__link" href="' + localized_href(locale, "/contact/") + '">' + esc(text(locale, "contact_us")) + '</a>')
     mobile = '<a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><a href="' + localized_href(locale, "/about/") + '">' + esc(text(locale, "about")) + '</a><a href="' + localized_href(locale, "/capabilities/") + '">' + esc(text(locale, "machine")) + '</a><a href="' + localized_href(locale, "/samples/") + '">' + esc(sample_label) + '</a><a href="' + localized_href(locale, "/video/") + '">' + esc(text(locale, "video")) + '</a><a href="' + localized_href(locale, "/contact/") + '">' + esc(text(locale, "contact_us")) + '</a>'
-    mobile += '<details><summary>' + esc(text(locale, "cap_mould")) + '</summary>' + product_links + '</details><a href="' + localized_href(locale, "/news/") + '">' + esc(text(locale, "news")) + '</a><details><summary>' + esc(text(locale, "news")) + ' categories</summary><a href="' + localized_href(locale, "/news/Bottle-cap-molds.html") + '">Bottle cap molds</a><a href="' + localized_href(locale, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html") + '">Bottle Cap Machine</a></details>'
+    news_category_label = "categorías de noticias" if locale == "es" else "categories"
+    bottle_news_label = "Noticias sobre moldes de tapas" if locale == "es" else "Bottle cap molds"
+    bottle_machine_label = "Máquinas para tapas de botella" if locale == "es" else "Bottle Cap Machine"
+    mobile += '<details><summary>' + esc(text(locale, "cap_mould")) + '</summary>' + product_links + '</details><a href="' + localized_href(locale, "/news/") + '">' + esc(text(locale, "news")) + '</a><details><summary>' + esc(text(locale, "news")) + ' ' + news_category_label + '</summary><a href="' + localized_href(locale, "/news/Bottle-cap-molds.html") + '">' + bottle_news_label + '</a><a href="' + localized_href(locale, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html") + '">' + bottle_machine_label + '</a></details>'
     options = ''.join('<option value="' + esc(route_for(lang["code"], route)) + '"' + (' selected' if lang["code"] == locale else '') + '>' + esc(lang["nativeName"]) + '</option>' for lang in LOCALES)
     phone_digits = re.sub(r"[^0-9+]", "", WHATSAPP)
     logo = '<a href="' + local_link(locale, "/") + '" class="logo" aria-label="' + esc(BRAND_DISPLAY) + ' home"><img class="logo__image" src="' + esc(LOGO_SRC) + '" alt="' + esc(LOGO_ALT) + '" width="260" height="51" decoding="async"></a>'
-    actions = '<div class="header__actions"><a class="nav-phone-desktop" href="tel:' + esc(phone_digits) + '"><span class="phone-text">' + esc(WHATSAPP) + '</span><span class="phone-icon-wrap"><svg class="phone-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z" fill="currentColor"></path></svg></span></a><select class="language-switch" data-language-switch aria-label="Choose language">' + options + '</select><button class="icon-button" id="search-toggle" aria-label="Search products" aria-expanded="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><a class="button header__quote" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + '</a><button class="icon-button menu-button" id="mobile-menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="menu-label">Menu</span></button></div>'
-    search = '<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="' + localized_href(locale, "/products/") + '" method="get"><input type="search" name="q" placeholder="Search mould category or application…" aria-label="Search mould category or application"><button class="button" type="submit">Search →</button></form></div>'
+    choose_language = "Elegir idioma" if locale == "es" else "Choose language"
+    search_label = "Buscar productos" if locale == "es" else "Search products"
+    open_menu = "Abrir menú" if locale == "es" else "Open menu"
+    menu_label = "Menú" if locale == "es" else "Menu"
+    search_placeholder = "Buscar categoría de molde o aplicación…" if locale == "es" else "Search mould category or application…"
+    search_submit = "Buscar →" if locale == "es" else "Search →"
+    actions = '<div class="header__actions"><a class="nav-phone-desktop" href="tel:' + esc(phone_digits) + '"><span class="phone-text">' + esc(WHATSAPP) + '</span><span class="phone-icon-wrap"><svg class="phone-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2-2.2z" fill="currentColor"></path></svg></span></a><select class="language-switch" data-language-switch aria-label="' + esc(choose_language) + '">' + options + '</select><button class="icon-button" id="search-toggle" aria-label="' + esc(search_label) + '" aria-expanded="false" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><a class="button header__quote" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + '</a><button class="icon-button menu-button" id="mobile-menu" aria-label="' + esc(open_menu) + '" aria-expanded="false" aria-controls="mobile-navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span class="menu-label">' + esc(menu_label) + '</span></button></div>'
+    search = '<div id="search-panel" class="search-panel"><form class="shell search-panel__form" action="' + localized_href(locale, "/products/") + '" method="get"><input type="search" name="q" placeholder="' + esc(search_placeholder) + '" aria-label="' + esc(search_placeholder.rstrip("…")) + '"><button class="button" type="submit">' + esc(search_submit) + '</button></form></div>'
     top_left = '<div class="top-bar-left"><a href="mailto:' + esc(EMAIL) + '" class="info-item" title="Email us"><span class="info-icon">' + topbar_icon("email") + '</span><span>' + esc(EMAIL) + '</span></a><span class="info-separator"></span><a href="tel:' + esc(phone_digits) + '" class="info-item" title="Call us"><span class="info-icon">' + topbar_icon("phone") + '</span><span>' + esc(WHATSAPP) + '</span></a><span class="info-separator"></span><span class="info-item" title="Our address"><span class="info-icon">' + topbar_icon("pin") + '</span><span>' + esc(ADDRESS) + '</span></span></div>'
     top_right = '<div class="top-bar-right"><a href="' + esc(SOCIAL_URLS["tiktok"]) + '" target="_blank" rel="noopener noreferrer" class="social-link tiktok" title="TikTok" aria-label="TikTok">' + topbar_icon("tiktok") + '</a><a href="' + esc(SOCIAL_URLS["youtube"]) + '" target="_blank" rel="noopener noreferrer" class="social-link youtube" title="YouTube" aria-label="YouTube">' + topbar_icon("youtube") + '</a><a href="' + esc(SOCIAL_URLS["facebook"]) + '" target="_blank" rel="noopener noreferrer" class="social-link facebook" title="Facebook" aria-label="Facebook">' + topbar_icon("facebook") + '</a></div>'
     top = '<div class="topbar top-bar" id="topBar"><div class="shell topbar__inner top-bar-inner">' + top_left + top_right + '</div></div>'
@@ -788,7 +884,7 @@ def _json_ld(locale: str, title: str, description: str, route: str, canonical: s
         page["headline"] = title
         page["image"] = [image_url]
     graph.append(page)
-    crumbs = [{"@type": "ListItem", "position": 1, "name": "Home", "item": ORIGIN + route_for(locale, "/")}]
+    crumbs = [{"@type": "ListItem", "position": 1, "name": text(locale, "home"), "item": ORIGIN + route_for(locale, "/")}]
     if route != "/":
         crumbs.append({"@type": "ListItem", "position": 2, "name": title, "item": canonical})
         graph.append({"@type": "BreadcrumbList", "@id": canonical + "#breadcrumb", "itemListElement": crumbs})
@@ -824,7 +920,12 @@ def rail(locale: str) -> str:
     phone = '<a href="tel:' + esc(phone_digits) + '" class="rail-float rail-float--phone" title="Call us" aria-label="Call us"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 4.5 9.7 4c.5-.1 1 .2 1.2.7l1.2 2.8c.2.4.1.9-.2 1.2l-1.4 1.4a13.4 13.4 0 0 0 3.4 3.4l1.4-1.4c.3-.3.8-.4 1.2-.2l2.8 1.2c.5.2.8.7.7 1.2l-.5 2.6c-.1.5-.5.8-1 .8C11.8 17.7 6.3 12.2 6.3 5.5c0-.5.3-.9.8-1Z"/></svg><span class="floating-tooltip">Call</span></a>'
     whatsapp = '<a href="' + WA_URL + '" target="_blank" rel="noopener noreferrer" class="rail-float rail-float--whatsapp" title="Chat on WhatsApp" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.2a8.4 8.4 0 0 1-12.4 7.4L4 20l1.4-4A8.4 8.4 0 1 1 20.5 11.2Z"/><path d="M9.2 8.8c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.6 1.4c.1.2.1.4-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.4.6c.3.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.1.4-1.7.2-2.1-.6-4.7-3.2-5.3-5.3-.2-.6-.1-1.2.1-1.8Z"/></svg><span class="floating-tooltip">WhatsApp</span></a>'
     wechat = '<a href="' + localized_href(locale, "/contact/") + '" class="rail-float rail-float--wechat" title="WeChat contact" aria-label="WeChat contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 6.3C6.9 6.3 4 8.5 4 11.2c0 1.6 1 3 2.5 3.9L6 17l2.2-1.1c.7.2 1.5.3 2.3.3 3.6 0 6.5-2.2 6.5-4.9S14.1 6.3 10.5 6.3Z"/><path d="M14.2 10.1c3.2 0 5.8 1.9 5.8 4.4 0 1.3-.7 2.5-1.9 3.3l.4 1.5-1.8-.9c-.6.2-1.3.3-2 .3-3.2 0-5.8-1.8-5.8-4.2"/></svg><span class="floating-tooltip">WeChat</span></a>'
-    return '<aside class="rail" role="complementary" aria-label="Quick contact">' + phone + whatsapp + wechat + '</aside>'
+    if locale == "es":
+        phone = phone.replace('title="Call us"', 'title="Llamar"').replace('aria-label="Call us"', 'aria-label="Llamar"').replace('>Call</span>', '>Llamar</span>')
+        whatsapp = whatsapp.replace('title="Chat on WhatsApp"', 'title="Chat por WhatsApp"').replace('aria-label="Chat on WhatsApp"', 'aria-label="Chat por WhatsApp"')
+        wechat = wechat.replace('title="WeChat contact"', 'title="Contacto por WeChat"').replace('aria-label="WeChat contact"', 'aria-label="Contacto por WeChat"')
+    rail_label = "Contacto rápido" if locale == "es" else "Quick contact"
+    return '<aside class="rail" role="complementary" aria-label="' + esc(rail_label) + '">' + phone + whatsapp + wechat + '</aside>'
 
 def shell(locale: str, title: str, description: str, route: str, body: str) -> str:
     return render_template("shell", HEAD=head(locale, title, description, route), HEADER=header(locale, route), SIDEBAR=rail(locale), BODY=body, FOOTER=footer(locale))
@@ -850,16 +951,16 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     structured_title = structured_page_value(locale, route, "title", "")
     structured_subtitle = structured_page_value(locale, route, "subtitle", "")
     if route == "/capabilities/":
-        page_eyebrow = "AUXILIARY EQUIPMENT"
+        page_eyebrow = "EQUIPOS AUXILIARES" if locale == "es" else "AUXILIARY EQUIPMENT"
         page_title = "Cap <span class=\"reference-title-accent\">Auxiliary Machines</span>"
     elif route == "/video/":
-        page_eyebrow = "EXPLORE OUR WORK"
+        page_eyebrow = "EXPLORE NUESTRO TRABAJO" if locale == "es" else "EXPLORE OUR WORK"
         page_title = "Video <span class=\"reference-title-accent\">Gallery</span>" if locale == "en" else "Galería de <span class=\"reference-title-accent\">vídeos</span>"
     elif route == "/about/":
         page_eyebrow = "OUR STORY" if locale == "en" else "NUESTRA HISTORIA"
         page_title = ("About <span class=\"reference-title-accent\">LEYA MOULD</span>" if locale == "en" else "Sobre <span class=\"reference-title-accent\">LEYA MOULD</span>")
     else:
-        page_eyebrow = "LEYA MOULD · PRECISION TOOLING"
+        page_eyebrow = "LEYA MOULD · UTILLAJE DE PRECISIÓN" if locale == "es" else "LEYA MOULD · PRECISION TOOLING"
         page_title = esc(title)
     if structured_eyebrow:
         page_eyebrow = structured_eyebrow
@@ -978,7 +1079,10 @@ def home(locale: str) -> str:
     steel_img = legacy_media_url("/upload/Home/steel-quality.jpg")
     samples = ["water-cap", "csd-cap", "hotfill-cap", "oil-cap", "soysauce-cap", "pharma-cap", "disc-top-cap", "flip-top-cap", "tamper-evident-cap", "push-pull-cap", "pull-ring-cap", "two-shot-cap", "custom-cap", "wide-mouth-cap", "squeeze-sports-cap", "motor-oil-cap", "5-gallon-cap", "bottle-handle"]
     hero_tail = "" if managed_banners else " Manufacturer"
-    hero = '<section class="hero hero-slider" data-hero tabindex="0" aria-label="' + esc(BRAND_DISPLAY) + '"><div class="hero__backdrop"></div><div class="hero__inner shell"><div class="hero__copy"><span class="eyebrow">' + esc(text(locale, "hero_eyebrow")) + '</span><h1 id="hero-title">' + esc(first_banner["title"]) + ' <span>' + esc(first_banner["highlight"]) + '</span>' + esc(hero_tail) + '</h1><p id="hero-description">' + esc(first_banner["description"]) + '</p><div class="actions"><a id="hero-cta" class="button button--round" href="' + esc(first_banner["link"]) + '">' + esc(first_banner["cta"]) + '</a><a class="button button--outline button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "hero_secondary")) + '</a></div><p class="hero__note">' + esc(text(locale, "hero_note")) + '</p></div><div class="hero__art"><a class="hero__art-link" href="' + esc(first_banner["link"]) + '" aria-label="' + esc(first_banner["alt"]) + '"><img id="hero-image" src="' + esc(hero_img) + '" alt="' + esc(first_banner["alt"]) + '" loading="eager" decoding="async"></a></div></div><button class="hero__arrow hero__arrow--prev" type="button" data-hero-nav="-1" aria-label="Previous slide">‹</button><button class="hero__arrow hero__arrow--next" type="button" data-hero-nav="1" aria-label="Next slide">›</button><div class="hero__controls"><button class="hero__dot active" data-hero-go="0" aria-pressed="true" type="button">01</button><button class="hero__dot" data-hero-go="1" aria-pressed="false" type="button">02</button><button class="hero__dot" data-hero-go="2" aria-pressed="false" type="button">03</button><span id="hero-status" class="sr-only" aria-live="polite">Slide 1 of 3</span></div></section>'
+    previous_slide = "Diapositiva anterior" if locale == "es" else "Previous slide"
+    next_slide = "Diapositiva siguiente" if locale == "es" else "Next slide"
+    slide_status = "Diapositiva 1 de 3" if locale == "es" else "Slide 1 of 3"
+    hero = '<section class="hero hero-slider" data-hero tabindex="0" aria-label="' + esc(BRAND_DISPLAY) + '"><div class="hero__backdrop"></div><div class="hero__inner shell"><div class="hero__copy"><span class="eyebrow">' + esc(text(locale, "hero_eyebrow")) + '</span><h1 id="hero-title">' + esc(first_banner["title"]) + ' <span>' + esc(first_banner["highlight"]) + '</span>' + esc(hero_tail) + '</h1><p id="hero-description">' + esc(first_banner["description"]) + '</p><div class="actions"><a id="hero-cta" class="button button--round" href="' + esc(first_banner["link"]) + '">' + esc(first_banner["cta"]) + '</a><a class="button button--outline button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "hero_secondary")) + '</a></div><p class="hero__note">' + esc(text(locale, "hero_note")) + '</p></div><div class="hero__art"><a class="hero__art-link" href="' + esc(first_banner["link"]) + '" aria-label="' + esc(first_banner["alt"]) + '"><img id="hero-image" src="' + esc(hero_img) + '" alt="' + esc(first_banner["alt"]) + '" loading="eager" decoding="async"></a></div></div><button class="hero__arrow hero__arrow--prev" type="button" data-hero-nav="-1" aria-label="' + esc(previous_slide) + '">‹</button><button class="hero__arrow hero__arrow--next" type="button" data-hero-nav="1" aria-label="' + esc(next_slide) + '">›</button><div class="hero__controls"><button class="hero__dot active" data-hero-go="0" aria-pressed="true" type="button">01</button><button class="hero__dot" data-hero-go="1" aria-pressed="false" type="button">02</button><button class="hero__dot" data-hero-go="2" aria-pressed="false" type="button">03</button><span id="hero-status" class="sr-only" aria-live="polite">' + esc(slide_status) + '</span></div></section>'
     if managed_banners:
         managed_json = json.dumps(managed_banners, ensure_ascii=False).replace("</", "<\\/")
         hero += '<script type="application/json" id="xuyi-home-banners">' + managed_json + '</script>'
@@ -997,7 +1101,9 @@ def home(locale: str) -> str:
     sample_items = structured_section_items(locale, "/", "samples", [{"id": s, "title": s.replace("-", " ").title(), "image": "/images/samples/" + s + ".jpg", "alt": s.replace("-", " ").title() + " reference sample"} for s in samples])
     sample_cards = ''.join('<a class="sample-card" href="' + localized_href(locale, str(item.get("link") or "/samples/")) + '"><img src="' + legacy_media_url(str(item.get("image") or "")) + '" alt="' + esc(str(item.get("alt") or item.get("title") or "LEYA MOULD sample")) + '" loading="lazy" decoding="async"><span>' + esc(str(item.get("title") or item.get("label") or "")) + '</span></a>' for item in sample_items)
     samples_copy = structured_section(locale, "/", "samples", "Plastic Cap Samples", "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection.", "SAMPLES GALLERY")
-    samples_section = '<section class="section samples-section"><div class="shell">' + section_heading(locale, samples_copy["eyebrow"], samples_copy["title"], samples_copy["body"]) + '<div class="samples-track-wrap"><button class="samples-scroll samples-scroll--prev" type="button" data-samples-scroll="-1" aria-label="Previous samples">‹</button><div class="samples-track" data-samples-track>' + sample_cards + '</div><button class="samples-scroll samples-scroll--next" type="button" data-samples-scroll="1" aria-label="Next samples">›</button></div><div class="section__more"><a class="text-link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + ' →</a></div></div></section>'
+    previous_samples = "Muestras anteriores" if locale == "es" else "Previous samples"
+    next_samples = "Muestras siguientes" if locale == "es" else "Next samples"
+    samples_section = '<section class="section samples-section"><div class="shell">' + section_heading(locale, samples_copy["eyebrow"], samples_copy["title"], samples_copy["body"]) + '<div class="samples-track-wrap"><button class="samples-scroll samples-scroll--prev" type="button" data-samples-scroll="-1" aria-label="' + esc(previous_samples) + '">‹</button><div class="samples-track" data-samples-track>' + sample_cards + '</div><button class="samples-scroll samples-scroll--next" type="button" data-samples-scroll="1" aria-label="' + esc(next_samples) + '">›</button></div><div class="section__more"><a class="text-link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + ' →</a></div></div></section>'
     tech = structured_section(locale, "/", "technology", "Engineering Excellence Behind Every Mould", "Precision manufacturing, premium steel and documented controls for repeatable production.", "OUR TECHNOLOGY")
     tech_items = structured_section_items(locale, "/", "technology", [{"title": "Precision Manufacturing & Strict QC", "body": "Machining, EDM, inspection and trial evidence are reviewed against the approved tooling brief.", "bullets": ["Process review before manufacturing", "Documented inspection per approved scope"]}, {"title": "Material & Modular Design", "body": "Steel selection, heat treatment and modular inserts are matched to the part, machine and changeover requirements confirmed for the project.", "bullets": ["Material traceability where included in the project brief", "Delivery timing confirmed against the approved schedule"]}])
     first_tech = tech_items[0] if tech_items else {}
@@ -1057,6 +1163,15 @@ def catalog_support_sections(locale: str) -> str:
     faq_copy = structured_section(locale, route, "faq")
     testimonial_copy = structured_section(locale, route, "testimonials")
     video_copy = structured_section(locale, route, "videos")
+    if es:
+        advantages_copy = spanish_ui_copy(advantages_copy)
+        samples_copy = spanish_ui_copy(samples_copy)
+        technology_copy = spanish_ui_copy(technology_copy)
+        quality_copy = spanish_ui_copy(quality_copy)
+        workflow_copy = spanish_ui_copy(workflow_copy)
+        faq_copy = spanish_ui_copy(faq_copy)
+        testimonial_copy = spanish_ui_copy(testimonial_copy)
+        video_copy = spanish_ui_copy(video_copy)
     advantages_title, advantages_desc = advantages_copy["title"], advantages_copy["body"]
     samples_title, samples_desc = samples_copy["title"], samples_copy["body"]
     technology_title, technology_desc = technology_copy["title"], technology_copy["body"]
@@ -1106,13 +1221,19 @@ def catalog_support_sections(locale: str) -> str:
 
 def products_page(locale: str) -> str:
     catalog_count = len(CAP_MOULD_SERIES)
-    hero = '<section class="catalog-hero"><div class="shell"><h1>Precision <span>MOULDING</span><br>Across ' + str(catalog_count) + ' Product Families</h1><p>Professional plastic mould manufacturer with 15+ years of experience. From closures and preforms to bottle tooling, we deliver high-precision, long-life mould solutions.</p><a class="button button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a><div class="catalog-stats"><div><strong>15+</strong><span>YEARS EXPERIENCE</span></div><div><strong>' + str(catalog_count) + '</strong><span>PRODUCT FAMILIES</span></div><div><strong>40+</strong><span>COUNTRIES SERVED</span></div><div><strong>2000+</strong><span>MOULDS DELIVERED</span></div></div></div></section>'
+    hero_title = "Precisión <span>MOLDEADO</span><br>En " + str(catalog_count) + " familias de productos" if locale == "es" else "Precision <span>MOULDING</span><br>Across " + str(catalog_count) + " Product Families"
+    hero_text = "Fabricante profesional de moldes de plástico con más de 15 años de experiencia. Desde cierres y preformas hasta moldes para botellas, ofrecemos soluciones de alta precisión y larga vida útil." if locale == "es" else "Professional plastic mould manufacturer with 15+ years of experience. From closures and preforms to bottle tooling, we deliver high-precision, long-life mould solutions."
+    stat_labels = ("AÑOS DE EXPERIENCIA", "FAMILIAS DE PRODUCTOS", "PAÍSES ATENDIDOS", "MOLDES ENTREGADOS") if locale == "es" else ("YEARS EXPERIENCE", "PRODUCT FAMILIES", "COUNTRIES SERVED", "MOULDS DELIVERED")
+    hero = '<section class="catalog-hero"><div class="shell"><h1>' + hero_title + '</h1><p>' + hero_text + '</p><a class="button button--round" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a><div class="catalog-stats"><div><strong>15+</strong><span>' + stat_labels[0] + '</span></div><div><strong>' + str(catalog_count) + '</strong><span>' + stat_labels[1] + '</span></div><div><strong>40+</strong><span>' + stat_labels[2] + '</span></div><div><strong>2000+</strong><span>' + stat_labels[3] + '</span></div></div></div></section>'
     crumb = '<nav class="reference-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc(text(locale, "products")) + '</span></div></nav>'
     cards = ''.join(cap_series_card(locale, c) for c in CAP_MOULD_SERIES)
-    products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, "OUR PRODUCTS", "Mould Product Families", "Explore our comprehensive range of " + str(len(CAP_MOULD_SERIES)) + " specialized mould product families. Each mould is engineered for high-volume production, dimensional accuracy and extended service life.") + '<div class="cap-series-grid">' + cards + '</div></div></section>'
+    products_eyebrow = "NUESTROS PRODUCTOS" if locale == "es" else "OUR PRODUCTS"
+    products_title = "Familias de productos de moldes" if locale == "es" else "Mould Product Families"
+    products_body = "Explore nuestra gama completa de " + str(len(CAP_MOULD_SERIES)) + " familias especializadas de productos de moldes. Cada molde está diseñado para producción de gran volumen, precisión dimensional y una vida útil prolongada." if locale == "es" else "Explore our comprehensive range of " + str(len(CAP_MOULD_SERIES)) + " specialized mould product families. Each mould is engineered for high-volume production, dimensional accuracy and extended service life."
+    products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, products_eyebrow, products_title, products_body) + '<div class="cap-series-grid">' + cards + '</div></div></section>'
     model_helpers = {"esc": esc, "image": image, "localized_href": localized_href}
     general_models = [row for row in HMOULD_MODELS if row.get("family") == "general-cap-mould"]
-    model_references = render_model_reference_section(locale, general_models, model_helpers, "Additional Cap Model References")
+    model_references = render_model_reference_section(locale, general_models, model_helpers, "Referencias adicionales de modelos de tapas" if locale == "es" else "Additional Cap Model References")
     return hero + crumb + products + model_references + catalog_support_sections(locale)
 
 def cap_product_page(locale: str, item: dict) -> str:
@@ -1181,6 +1302,11 @@ def about_page(locale: str) -> str:
     # D1 evidence record is attached to this site. These labels describe the
     # evidence workflow without claiming an unverified certificate.
     certifications = ["Project quality records", "Material traceability", "Trial and inspection evidence", "Buyer-specific documentation"]
+    if es:
+        timeline = spanish_ui_copy(timeline)
+        advantages = spanish_ui_copy(advantages)
+        equipment = [spanish_ui_text(value) for value in equipment]
+        certifications = [spanish_ui_text(value) for value in certifications]
     reference_images = "https://www.cap-molds.com/images/"
     facility_images = [
         (legacy_media_url("/images/CNC-machining-workshop.jpg"), "CNC machining workshop"),
@@ -1204,20 +1330,33 @@ def about_page(locale: str) -> str:
     about_stats = structured_page_copy(locale, "/about/").get("stats")
     if not isinstance(about_stats, list) or not about_stats:
         about_stats = [{"label": value, "title": label} for value, label in [("15+", "Years of Experience"), ("60+", "Countries Served"), ("500+", "Moulds Delivered"), ("80+", "Skilled Team Members")]]
+    if es:
+        # D1 may contain the English baseline for a statistic row.  Keep the
+        # number but always pass the visible label through the reviewed UI
+        # glossary before rendering the Spanish page.
+        about_stats = spanish_ui_copy(about_stats)
     overview = '<section class="mould-about-block"><div class="mould-about-overview"><div class="mould-about-overview-image"><img src="' + ABOUT_MEDIA["team"] + '" alt="LEYA MOULD engineering team reviewing a mould project" loading="eager" decoding="async"></div><div><h2>' + esc(who) + '</h2>' + ''.join('<p>' + esc(p) + '</p>' for p in who_paras) + '</div></div><div class="mould-about-stats">' + ''.join('<div class="mould-about-stat"><span class="number">' + esc(str(item.get("label") or "")) + '</span><span class="label">' + esc(str(item.get("title") or "")) + '</span></div>' for item in about_stats[:4] if isinstance(item, dict)) + '</div></section>'
     journey_html = '<section class="mould-about-block"><h2>' + esc(journey) + '</h2><div class="mould-about-timeline">' + ''.join('<div class="mould-about-timeline-item"><span class="year">' + esc(year) + '</span><div><h3>' + esc(head) + '</h3><p>' + esc(desc) + '</p></div></div>' for year, head, desc in timeline) + '</div></section>'
     advantages_html = '<section class="mould-about-block"><h2>' + esc(why) + '</h2><div class="mould-about-advantages">' + ''.join('<article><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg></div><h3>' + esc(head) + '</h3><p>' + esc(desc) + '</p></article>' for head, desc, icon in advantages) + '</div></section>'
-    equipment_html = '<section class="mould-about-block"><h2>' + esc(facility) + '</h2><p>Our manufacturing references use modern machining, inspection and trial equipment so every tooling decision can be checked against the production brief.</p><ul class="mould-about-equipment">' + ''.join('<li><span>✓</span>' + esc(item) + '</li>' for item in equipment) + '</ul></section>'
-    cert_html = '<section class="mould-about-block"><h2>' + esc(certs) + '</h2><p>Quality evidence is kept with the project and reviewed before shipment. The final documentation follows the confirmed buyer requirements.</p><div class="mould-about-certifications">' + ''.join('<span>' + esc(item) + '</span>' for item in certifications) + '</div></section>'
-    facilities_html = '<section class="mould-about-block"><h2>' + esc(production) + '</h2><p>LEYA MOULD production references show the engineering, inspection and sample-review work behind each tooling project.</p><div class="mould-about-facilities">' + ''.join('<figure><img src="' + esc(file_name) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async"></figure>' for file_name, alt in facility_images) + '</div></section>'
+    equipment_intro = "Nuestros recursos de fabricación utilizan mecanizado, inspección y equipos de prueba modernos para que cada decisión de utillaje pueda comprobarse frente al documento técnico de producción." if es else "Our manufacturing references use modern machining, inspection and trial equipment so every tooling decision can be checked against the production brief."
+    equipment_html = '<section class="mould-about-block"><h2>' + esc(facility) + '</h2><p>' + equipment_intro + '</p><ul class="mould-about-equipment">' + ''.join('<li><span>✓</span>' + esc(item) + '</li>' for item in equipment) + '</ul></section>'
+    cert_intro = "La evidencia de calidad se conserva con el proyecto y se revisa antes del envío. La documentación final sigue los requisitos confirmados por el comprador." if es else "Quality evidence is kept with the project and reviewed before shipment. The final documentation follows the confirmed buyer requirements."
+    facility_intro = "Las referencias de producción de LEYA MOULD muestran el trabajo de ingeniería, inspección y revisión de muestras que respalda cada proyecto de utillaje." if es else "LEYA MOULD production references show the engineering, inspection and sample-review work behind each tooling project."
+    if es:
+        cert_intro = spanish_ui_text(cert_intro)
+        facility_intro = spanish_ui_text(facility_intro)
+    cert_html = '<section class="mould-about-block"><h2>' + esc(certs) + '</h2><p>' + esc(cert_intro) + '</p><div class="mould-about-certifications">' + ''.join('<span>' + esc(item) + '</span>' for item in certifications) + '</div></section>'
+    facilities_html = '<section class="mould-about-block"><h2>' + esc(production) + '</h2><p>' + esc(facility_intro) + '</p><div class="mould-about-facilities">' + ''.join('<figure><img src="' + esc(file_name) + '" alt="' + esc(spanish_ui_text(alt) if es else alt) + '" loading="lazy" decoding="async"></figure>' for file_name, alt in facility_images) + '</div></section>'
     contact_html = shared_cta(locale, "about", title_override=together, text_override=together_text)
     return '<div class="mould-about-page">' + intro_body + overview + journey_html + advantages_html + equipment_html + cert_html + facilities_html + contact_html + '</div>'
 
 def capabilities_page(locale: str) -> str:
     title = "Cap Auxiliary Machines" if locale == "en" else ("Máquinas auxiliares para tapas" if locale == "es" else text(locale, "capabilities"))
-    subtitle = "Complete your cap production line with our specialized auxiliary machines. Designed to work seamlessly with our plastic cap molds, these machines handle critical post-molding operations such as lining, folding, slitting, printing, and wadding."
+    subtitle = "Complete su línea de producción de tapas con nuestras máquinas auxiliares especializadas. Diseñadas para trabajar con nuestros moldes de tapas de plástico, realizan operaciones posteriores críticas como revestimiento, plegado, corte, impresión y colocación de juntas." if locale == "es" else "Complete your cap production line with our specialized auxiliary machines. Designed to work seamlessly with our plastic cap molds, these machines handle critical post-molding operations such as lining, folding, slitting, printing, and wadding."
     intro_image = "/media/page/e60d307101686212f51ca482b73b56cf.webp"
     intro_copy = (
+        ("<p>Aunque los moldes de inyección producen la forma básica de la tapa, muchos cierres modernos necesitan procesos adicionales para funcionar correctamente. Las bandas de precinto deben plegarse o cortarse con precisión para romperse limpiamente al abrirse. Los revestimientos de sellado por inducción deben insertarse con exactitud para crear envases estancos. Los logotipos y códigos de fecha se imprimen a menudo en la superficie para trazabilidad y marketing. Estas operaciones requieren máquinas auxiliares dedicadas que ayuden a mantener una calidad estricta.</p>"
+        "<p>En LEYA MOULD no solo fabricamos los moldes que dan forma a sus tapas; también ofrecemos una gama completa de máquinas auxiliares para completar la producción. Al proporcionar el molde y el equipo posterior, ayudamos a crear una célula integrada con calidad constante, cambios más rápidos y soporte posventa simplificado. A continuación se muestran seis máquinas habituales.</p>") if locale == "es" else
         "<p>While injection molds produce the basic cap shape, many modern closures require additional processing to achieve full functionality. "
         "Tamper-evident bands must be precisely folded or slit to break cleanly upon opening. Induction seal liners need to be inserted accurately "
         "to create leak-proof containers. Brand logos and date codes are often printed on the cap surface for traceability and marketing. "
@@ -1226,15 +1365,17 @@ def capabilities_page(locale: str) -> str:
         "to complete your production. By providing both mold and post-molding equipment, we help you build a fully integrated manufacturing cell "
         "with consistent quality, faster changeovers, and simplified after-sales support. Below are six popular cap auxiliary machines.</p>"
     )
+    machine_rows = spanish_ui_copy(AUXILIARY_MACHINES) if locale == "es" else AUXILIARY_MACHINES
     machine_cards = ''.join(
         '<article class="machine-card"><img class="machine-card-image" src="' + legacy_media_url('/upload/product/month_2105/' + str(item["image"])) + '" alt="' + esc(item["alt"]) + '" loading="lazy" decoding="async">'
         '<div class="machine-card-body"><h2 class="machine-card-name">' + esc(item["name"]) + '</h2><p class="machine-card-desc">' + esc(item["description"]) + '</p>'
         '<a href="' + localized_href(locale, "/contact/?model=" + item["model"] + "#inquiry") + '" class="machine-link">Learn More <span aria-hidden="true">→</span></a></div></article>'
-        for item in AUXILIARY_MACHINES
+        for item in machine_rows
     )
     contact = shared_cta(locale, "auxiliary")
     body = intro(locale, title, subtitle, "/capabilities/")
-    body += '<section class="aux-page"><section class="intro-section"><div class="intro-image"><img src="' + intro_image + '" alt="Various plastic bottle caps produced by LEYA MOULD" loading="lazy" decoding="async"></div><div class="intro-content"><h2>Why Cap Auxiliary Machines Are Essential</h2>' + intro_copy + '</div></section><div class="machine-grid">' + machine_cards + '</div>' + contact + '</section>'
+    machine_heading = "Por qué son esenciales las máquinas auxiliares para tapas" if locale == "es" else "Why Cap Auxiliary Machines Are Essential"
+    body = '<section class="aux-page"><section class="intro-section"><div class="intro-image"><img src="' + intro_image + '" alt="' + ("Tapas de plástico producidas por LEYA MOULD" if locale == "es" else "Various plastic bottle caps produced by LEYA MOULD") + '" loading="lazy" decoding="async"></div><div class="intro-content"><h2>' + machine_heading + '</h2>' + intro_copy + '</div></section><div class="machine-grid">' + machine_cards.replace('>Learn More <span', '>Ver más <span' if locale == "es" else '>Learn More <span') + '</div>' + contact + '</section>'
     return body
 
 def service_page(locale: str, service: dict) -> str:
@@ -1251,7 +1392,8 @@ def contact_page(locale: str) -> str:
         labels_fallback = ["Years Experience", "Countries Served", "Moulds Delivered", "Quote Response"] if locale == "en" else ["Años de experiencia", "Países atendidos", "Moldes entregados", "Respuesta de cotización"]
         stats_rows = [{"label": value, "title": label} for value, label in zip(["15+", "60+", "500+", "24h"], labels_fallback)]
     stats = '<div class="trust-row" aria-label="LEYA MOULD at a glance">' + ''.join('<div class="trust-badge"><span class="badge-number">' + esc(str(item.get("label") or "")) + '</span><span class="badge-label">' + esc(str(item.get("title") or "")) + '</span></div>' for item in stats_rows[:4] if isinstance(item, dict)) + '</div>'
-    info = '<div class="contact-info-card"><div class="contact-info-block"><span class="contact-info-icon">⌖</span><h3>Factory Address</h3><strong>LEYA MOULD Co.,Ltd</strong><p>' + esc(ADDRESS) + '</p></div><div class="contact-info-block"><h3>Contact Methods</h3><dl class="contact-methods"><div><dt>PHONE / WHATSAPP</dt><dd><a href="tel:+8613606727715">+86 136 0672 7715</a></dd></div><div><dt>EMAIL</dt><dd><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></dd></div><div><dt>WEBSITE</dt><dd><a href="https://leyamould.com/">leyamould.com</a></dd></div></dl></div>' + stats + '</div>'
+    info_labels = ("Dirección de fábrica", "Métodos de contacto", "TELÉFONO / WHATSAPP", "CORREO", "SITIO WEB") if locale == "es" else ("Factory Address", "Contact Methods", "PHONE / WHATSAPP", "EMAIL", "WEBSITE")
+    info = '<div class="contact-info-card"><div class="contact-info-block"><span class="contact-info-icon">⌖</span><h3>' + info_labels[0] + '</h3><strong>LEYA MOULD Co.,Ltd</strong><p>' + esc(ADDRESS) + '</p></div><div class="contact-info-block"><h3>' + info_labels[1] + '</h3><dl class="contact-methods"><div><dt>' + info_labels[2] + '</dt><dd><a href="tel:+8613606727715">+86 136 0672 7715</a></dd></div><div><dt>' + info_labels[3] + '</dt><dd><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></dd></div><div><dt>' + info_labels[4] + '</dt><dd><a href="https://leyamould.com/">leyamould.com</a></dd></div></dl></div>' + stats + '</div>'
     quick_answers = [("⏱️ How fast can I get a quote?", "We respond within 24 hours. Use WhatsApp/WeChat for urgent requests."), ("📐 What info do I need to provide?", "Share cap design, material, cavity count, and production volume."), ("🌍 Do you ship internationally?", "Yes, we serve 60+ countries worldwide."), ("📱 How do I add you on WhatsApp/WeChat?", "Scan the QR codes on this page or click to enlarge them.")]
     if locale == "es":
         quick_answers = [("⏱️ ¿Cuánto tardan en enviar una cotización?", "Respondemos en 24 horas. Use WhatsApp/WeChat para solicitudes urgentes."), ("📐 ¿Qué información debo proporcionar?", "Comparta el diseño de la tapa, material, número de cavidades y volumen de producción."), ("🌍 ¿Realizan envíos internacionales?", "Sí, atendemos a más de 60 países."), ("📱 ¿Cómo puedo añadirles en WhatsApp/WeChat?", "Escanee los códigos QR de esta página o haga clic para ampliarlos.")]
@@ -1269,7 +1411,9 @@ def contact_page(locale: str) -> str:
             quick_answers = reviewed
     quick_title = "Quick Answers" if locale == "en" else "Respuestas rápidas"
     quick = '<section class="faq-teaser" aria-labelledby="quick-answers-title"><h2 id="quick-answers-title">' + quick_title + '</h2><div class="faq-list">' + ''.join('<div class="faq-item"><p class="faq-q">' + esc(question) + '</p><p class="faq-a">' + esc(answer) + '</p></div>' for question, answer in quick_answers) + '</div></section>'
-    body += '<section class="section contact-section"><div class="shell"><div class="contact-layout">' + info + '<div class="contact-form-panel"><h2>Send Us Your Inquiry</h2><p>Fill out the form and we will reply as soon as possible.</p>' + form + '</div></div>' + quick + '</div></section>'
+    form_title = "Envíenos su consulta" if locale == "es" else "Send Us Your Inquiry"
+    form_intro = "Complete el formulario y le responderemos lo antes posible." if locale == "es" else "Fill out the form and we will reply as soon as possible."
+    body += '<section class="section contact-section"><div class="shell"><div class="contact-layout">' + info + '<div class="contact-form-panel"><h2>' + form_title + '</h2><p>' + form_intro + '</p>' + form + '</div></div>' + quick + '</div></section>'
     return body
 
 def faq_page(locale: str) -> str:
@@ -1377,9 +1521,10 @@ def faq_page(locale: str) -> str:
 def samples_page(locale: str) -> str:
     cap = "https://www.cap-molds.com"
     title = "Plastic Cap Samples" if locale == "en" else ("Muestras de tapas de plástico" if locale == "es" else text(locale, "samples"))
-    subtitle = "Explore a wide variety of plastic bottle caps that we manufacture using our high-precision injection molds. Each cap is a sample of what our molds can produce — from standard water closures to complex tamper-evident designs."
+    subtitle = ("Explore una amplia variedad de tapas de plástico fabricadas con nuestros moldes de inyección de alta precisión. Cada tapa muestra lo que pueden producir nuestros moldes, desde cierres estándar de agua hasta diseños complejos con precinto." if locale == "es" else "Explore a wide variety of plastic bottle caps that we manufacture using our high-precision injection molds. Each cap is a sample of what our molds can produce — from standard water closures to complex tamper-evident designs.")
     cards = []
-    for item in SAMPLE_ITEMS:
+    sample_rows = spanish_ui_copy(SAMPLE_ITEMS) if locale == "es" else SAMPLE_ITEMS
+    for item in sample_rows:
         applications = ''.join('<li>' + esc(app) + '</li>' for app in item["applications"])
         cards.append(
             '<article class="sample-card">'
@@ -1387,15 +1532,20 @@ def samples_page(locale: str) -> str:
             '<div class="sample-body"><h2 class="sample-name">' + esc(item["name"]) + '</h2>'
             '<p class="sample-desc">' + esc(item["description"]) + '</p>'
             '<div class="sample-mold">🛠️ ' + esc(item["mold"]) + '</div>'
-            '<div class="sample-applications"><h4>Applications</h4><ul>' + applications + '</ul></div></div></article>'
+            '<div class="sample-applications"><h4>' + ("Aplicaciones" if locale == "es" else "Applications") + '</h4><ul>' + applications + '</ul></div></div></article>'
         )
     contact = shared_cta(locale, "samples")
     return intro(locale, title, subtitle, "/samples/") + '<section class="samples-page"><div class="sample-list">' + ''.join(cards) + '</div>' + contact + '</section>'
 
 VIDEO_SEED = json.loads((ROOT / "data/leya-youtube-seed.json").read_text(encoding="utf-8"))
 def video_card(item: dict, locale: str) -> str:
-    title = esc(item.get("titleEs" if locale == "es" else "titleEn", item.get("titleEn", "LEYA MOULD video")))
-    description = esc(item.get("description", ""))
+    raw_title = item.get("titleEs" if locale == "es" else "titleEn") or item.get("titleEn", "LEYA MOULD video")
+    raw_description = item.get("descriptionEs" if locale == "es" else "description") or item.get("description", "")
+    if locale == "es":
+        raw_title = spanish_ui_text(raw_title)
+        raw_description = spanish_ui_text(raw_description)
+    title = esc(raw_title)
+    description = esc(raw_description)
     video_id = esc(item.get("videoId", ""))
     published = esc(item.get("publishedAt", ""))
     date_text = "" if not item.get("publishedAt") else item["publishedAt"][:10]
@@ -1421,6 +1571,8 @@ def video_page(locale: str) -> str:
     videos = [item for item in videos if isinstance(item, dict) and re.fullmatch(r"[A-Za-z0-9_-]{11}", str(item.get("videoId") or ""))]
     if not videos:
         videos = VIDEO_SEED
+    if locale == "es":
+        videos = [dict(item, titleEs=spanish_ui_text(item.get("titleEs") or item.get("titleEn") or item.get("title") or "LEYA MOULD video"), descriptionEs=spanish_ui_text(item.get("descriptionEs") or item.get("description") or "")) for item in videos]
     cards = ''.join(video_card(item, locale) for item in videos)
     empty = "No videos found yet." if locale == "en" else "Todavía no hay vídeos."
     labels = {"close": "Close video" if locale == "en" else "Cerrar vídeo", "play": "Play video" if locale == "en" else "Reproducir vídeo"}
@@ -1445,6 +1597,8 @@ def catalog_video_section(locale: str) -> str:
     videos = [item for item in videos if isinstance(item, dict) and re.fullmatch(r"[A-Za-z0-9_-]{11}", str(item.get("videoId") or ""))]
     if not videos:
         videos = VIDEO_SEED
+    if locale == "es":
+        videos = [dict(item, titleEs=spanish_ui_text(item.get("titleEs") or item.get("titleEn") or item.get("title") or "LEYA MOULD video"), descriptionEs=spanish_ui_text(item.get("descriptionEs") or item.get("description") or "")) for item in videos]
     videos = videos[:5]
     cards = ''.join(video_card(item, locale) for item in videos)
     payload = json.dumps(videos, ensure_ascii=False).replace("</", "<\\/")
@@ -1556,6 +1710,12 @@ def rich_news_body(locale: str, item: dict, category_label: str) -> str:
     """Render the seven-part GEO article without changing the shared shell."""
     editorial = item.get("editorial") if isinstance(item.get("editorial"), dict) else {}
     lang = "es" if locale == "es" else "en"
+    if lang == "es":
+        # Existing D1/editorial rows remain authoritative, but their Spanish
+        # branches may contain the old mixed English baseline. Clean only the
+        # Spanish-facing branches at render time so English/owner content is
+        # preserved until the formal D1 seed catches up.
+        editorial = spanish_editorial_copy(editorial)
     title = localized_item_text(item, locale, "title")
     summary = localized_item_text(item, locale, "summary")
     cover_alt = item.get("altEs" if lang == "es" else "alt") or title
@@ -1590,6 +1750,8 @@ def rich_news_body(locale: str, item: dict, category_label: str) -> str:
         related = EDITORIAL_BY_SLUG.get(str(slug))
         if not related:
             continue
+        if lang == "es":
+            related = spanish_editorial_copy(related)
         rtitle = (related.get("title") or {}).get(lang) or (related.get("title") or {}).get("en")
         rsummary = (related.get("description") or {}).get(lang) or (related.get("description") or {}).get("en")
         related_cards.append('<a class="blog-related__item" href="' + localized_href(locale, _editorial_route(str(slug)) + str(slug) + ".html") + '"><img src="' + esc(str(related.get("cover") or "/assets/mould-news-placeholder.svg")) + '" alt="' + esc(rtitle) + '" loading="lazy" decoding="async"><span><strong>' + esc(rtitle) + '</strong><small>' + esc(rsummary) + '</small></span></a>')
@@ -1636,6 +1798,21 @@ def add_alias_page(locale: str, alias_route: str, canonical_route: str, title: s
 
 def generate() -> dict:
     routes: dict[str, str] = {}
+    redirects: list[str] = []
+    legacy_aliases = (
+        ("/about/about_us.html", "/about/"),
+        ("/about/ABOUT_US.html", "/about/"),
+        ("/machine/Cap-Auxiliary-Machines.html", "/capabilities/"),
+        ("/contact/contact_us.html", "/contact/"),
+        ("/cap-samples/Sample.html", "/samples/"),
+        ("/news/news.html", "/news/"),
+        ("/videolist/Cap-Mold-Video.html", "/video/"),
+        ("/about/FAQs.html", "/faq/"),
+    )
+    for locale in LOCALES:
+        code = locale["code"]
+        for source_route, target_route in legacy_aliases:
+            redirects.append(route_for(code, source_route) + " " + route_for(code, target_route) + " 301")
     news_items = effective_news_items("news")
     machine_news_items = effective_news_items("machine")
     def add(locale: str, route: str, title: str, description: str, body: str) -> None:
@@ -1655,7 +1832,31 @@ def generate() -> dict:
         # the renderer's translated baseline instead of silently showing an
         # English body from the source-language CMS row.
         source_body = BODY_OVERRIDES.get(route) if locale == "en" else ""
-        final_body = str(translated.get("mainHtml") or source_body or body)
+        localized_body = str(translated.get("mainHtml") or "")
+        if locale == "es" and localized_body:
+            # The first D1 translation seed stored the English reference HTML
+            # in several Spanish overrides. Keep a genuinely Spanish owner
+            # edit, but reject that known baseline so the structured renderer
+            # can supply the reviewed locale page instead.
+            plain = re.sub(r"<[^>]+>", " ", localized_body)
+            # These are headings and sentence fragments from the first seed
+            # that accidentally copied the English body into the Spanish D1
+            # override.  Any one of them is enough to discard that stale
+            # snapshot; the structured renderer below is the reviewed locale
+            # fallback and keeps genuine Spanish owner edits intact.
+            english_markers = (
+                "OUR STORY", "PRECISION TOOLING", "OUR PRODUCTS", "Mould Product Families",
+                "Factory Address", "Trial samples", "BOTTLE CAP MOULDS", "EXPLORE OUR WORK",
+                "Quality Assurance", "What Buyers Say", "Common Questions", "Mould Trials",
+                "Quality Control & Inspection", "Trial and validation", "Our Journey",
+                "Why Choose LEYA MOULD", "Our Facility & Equipment", "Certifications & Quality",
+                "Our Production Facilities", "Let's Work Together", "Plastic Cap Samples",
+                "Engineering Excellence Behind Every Mould", "Start Your Cap Mould Project",
+                "Want to See More Samples or Request a Quote", "Need Auxiliary Equipment for Your Cap Line?",
+            )
+            if any(marker.lower() in plain.lower() for marker in english_markers):
+                localized_body = ""
+        final_body = str(localized_body or source_body or body)
         write(file_path, shell(locale, final_title + " | " + BRAND_DISPLAY if route != "/" else final_title + " | " + BRAND_DISPLAY, final_description, route, final_body))
         routes[localized] = title
     for locale in LOCALES:
@@ -1668,11 +1869,8 @@ def generate() -> dict:
             add(code, cap_item["route"], catalog_text(code, cap_item, "title"), catalog_text(code, cap_item, "description"), cap_product_page(code, cap_item))
         about_body = about_page(code)
         add(code, "/about/", text(code, "about_title"), text(code, "about_text"), about_body)
-        add_alias_page(code, "/about/about_us.html", "/about/", text(code, "about_title"), text(code, "about_text"), about_body, routes)
-        add_alias_page(code, "/about/ABOUT_US.html", "/about/", text(code, "about_title"), text(code, "about_text"), about_body, routes)
         add(code, "/capabilities/", text(code, "capabilities"), text(code, "technical_text"), capabilities_page(code))
         capabilities_body = capabilities_page(code)
-        add_alias_page(code, "/machine/Cap-Auxiliary-Machines.html", "/capabilities/", "Cap Auxiliary Machines" if code == "en" else text(code, "capabilities"), text(code, "technical_text"), capabilities_body, routes)
         for service in CATALOG["services"]:
             add(code, "/capabilities/" + service["slug"] + "/", service["title"], service["text"], service_page(code, service))
         add(code, "/manufacturing/", text(code, "process"), text(code, "process_title"), simple_page(code, "/manufacturing/", text(code, "process"), text(code, "process_title"), '<p>' + esc(text(code, "process_title")) + '</p><p>' + esc(text(code, "technical_text")) + '</p>'))
@@ -1680,31 +1878,29 @@ def generate() -> dict:
         add(code, "/request-sample/", text(code, "quote"), text(code, "resources_text"), contact_page(code))
         contact_body = contact_page(code)
         add(code, "/contact/", text(code, "contact"), text(code, "contact_intro"), contact_body)
-        add_alias_page(code, "/contact/contact_us.html", "/contact/", text(code, "contact"), text(code, "contact_intro"), contact_body, routes)
         samples_title = "Plastic Cap Samples" if code == "en" else ("Muestras de tapas de plástico" if code == "es" else text(code, "samples"))
         samples_body = samples_page(code)
         add(code, "/samples/", samples_title, "Explore plastic bottle cap samples manufactured with precision moulds.", samples_body)
-        add_alias_page(code, "/cap-samples/Sample.html", "/samples/", samples_title, "Explore plastic bottle cap samples manufactured with precision moulds.", samples_body, routes)
         news_title = "News & Updates" if code == "en" else "Noticias y novedades"
         news_description = "Stay informed with LEYA MOULD mould technology, project notes and engineering insights." if code == "en" else "Conozca las novedades técnicas y los proyectos de LEYA MOULD."
-        news_body = news_listing_page(code, "/news/", news_title, news_description, news_items, "/news/", "NEWS & INSIGHTS")
+        news_category_label = "NOTICIAS Y NOVEDADES" if code == "es" else "NEWS & INSIGHTS"
+        machine_category_label = "MÁQUINAS PARA TAPAS" if code == "es" else "BOTTLE CAP MACHINE"
+        bottle_news_category_label = "NOTICIAS SOBRE MOLDES DE TAPAS" if code == "es" else "BOTTLE CAP MOULDS"
+        news_body = news_listing_page(code, "/news/", news_title, news_description, news_items, "/news/", news_category_label)
         add(code, "/news/", news_title, news_description, news_body)
-        add_alias_page(code, "/news/news.html", "/news/", news_title, news_description, news_body, routes)
-        add(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_listing_page(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_items, "/news/", "BOTTLE CAP MOULDS"))
-        add(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", news_listing_page(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", machine_news_items, "/Bottle-Cap-Machine/", "BOTTLE CAP MACHINE"))
+        add(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_listing_page(code, "/news/Bottle-cap-molds.html", "Bottle Cap Mould News" if code == "en" else "Noticias sobre moldes de tapas", "Bottle cap mould project notes, market observations and practical production guidance." if code == "en" else "Notas de proyectos y orientación práctica sobre moldes de tapas.", news_items, "/news/", bottle_news_category_label))
+        add(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", news_listing_page(code, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "Bottle Cap Machine" if code == "en" else "Máquinas para tapas de botella", "Machine, process and quality notes for complete bottle-cap production lines." if code == "en" else "Notas de máquinas, procesos y calidad para líneas de tapas.", machine_news_items, "/Bottle-Cap-Machine/", machine_category_label))
         for item in news_items:
             detail_route = "/news/" + item["slug"] + ".html"
-            add(code, detail_route, localized_item_text(item, code, "title"), localized_item_text(item, code, "summary"), news_detail_page(code, detail_route, item, "/news/Bottle-cap-molds.html", "BOTTLE CAP MOULDS"))
+            add(code, detail_route, localized_item_text(item, code, "title"), localized_item_text(item, code, "summary"), news_detail_page(code, detail_route, item, "/news/Bottle-cap-molds.html", bottle_news_category_label))
         for item in machine_news_items:
             detail_route = "/Bottle-Cap-Machine/" + item["slug"] + ".html"
-            add(code, detail_route, localized_item_text(item, code, "title"), localized_item_text(item, code, "summary"), news_detail_page(code, detail_route, item, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", "BOTTLE CAP MACHINE"))
+            add(code, detail_route, localized_item_text(item, code, "title"), localized_item_text(item, code, "summary"), news_detail_page(code, detail_route, item, "/Bottle-Cap-Machine/Bottle-Cap-Machine.html", machine_category_label))
         video_title = "Video Gallery" if code == "en" else "Galería de vídeos"
         video_description = "Watch our latest mould demonstrations, factory tours, and technical insights." if code == "en" else "Vea nuestras demostraciones de moldes y conocimientos técnicos."
         video_body = video_page(code)
         add(code, "/video/", video_title, video_description, video_body)
-        add_alias_page(code, "/videolist/Cap-Mold-Video.html", "/video/", video_title, video_description, video_body, routes)
         add(code, "/faq/", text(code, "faq_title"), text(code, "faq_intro"), faq_page(code))
-        add_alias_page(code, "/about/FAQs.html", "/faq/", text(code, "faq_title"), text(code, "faq_intro"), faq_page(code), routes)
         add(code, "/blog/", text(code, "blog_title"), text(code, "blog_text"), simple_page(code, "/blog/", text(code, "blog_title"), text(code, "blog_text"), '<p>' + esc(text(code, "blog_text")) + '</p><p><a class="button" href="' + localized_href(code, "/contact/#inquiry") + '">' + esc(text(code, "quote")) + ' →</a></p>'))
         add(code, "/privacy-policy/", text(code, "privacy_title"), text(code, "privacy_text"), simple_page(code, "/privacy-policy/", text(code, "privacy_title"), text(code, "privacy_text"), '<p>' + esc(text(code, "privacy_text")) + '</p>'))
     not_found = shell("en", "Page Not Found | LEYA MOULD", "The requested page could not be found.", "/404.html", intro("en", "Page Not Found", "The requested page could not be found.", "/404.html") + '<section class="section"><div class="shell"><a class="button" href="/">Back to Home →</a></div></section>')
@@ -1721,6 +1917,7 @@ def generate() -> dict:
     write("sitemap.xml", "\n".join(sitemap) + "\n")
     manifest = {"schemaVersion": 1, "locales": [{**row, "enabled": True, "publishReady": True} for row in LOCALES], "routes": sorted(routes)}
     write("locale-manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    write("_redirects", "\n".join(redirects) + "\n")
     return {"routes": routes, "locales": LOCALES}
 
 if __name__ == "__main__":

@@ -42,7 +42,8 @@ assert {item["category"] for item in items} == {"news", "machine"}
 assert all(len(item.get("sections", {}).get("en", [])) == 7 for item in items)
 
 workflow = read(".github/workflows/publish-leyamould.yml")
-assert "scripts/migrate_mould_content.py" not in workflow
+assert "scripts/migrate_mould_content.py" in workflow
+assert "Seed reviewed LEYA D1 content and translations" in workflow
 assert "scripts/test_mould_release_authority.py" in workflow
 
 print("LEYA_MOULD_D1_SOURCE_AUTHORITY_PASSED")

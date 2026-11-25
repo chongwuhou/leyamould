@@ -194,11 +194,13 @@ for locale, page in catalog_pages:
     if locale == SOURCE_LOCALE:
         labels = ('Core Advantages of LEYA MOULD', 'Bottle Cap Sample Gallery', 'Technical Strength &amp; Process', 'Quality Control &amp; Inspection', 'Cooperation Process', 'Common Questions', 'Client Feedback', 'Start Your Cap Mould Project')
     elif locale == "es":
-        labels = ('Ventajas clave de LEYA MOULD', 'Galería de muestras de tapas', 'Fortaleza técnica y proceso', 'Control de calidad e inspección', 'Proceso de cooperación', 'Preguntas frecuentes', 'Opiniones de clientes', 'Empiece su proyecto de moldes')
+        labels = ('Ventajas clave de LEYA MOULD', 'Galería de muestras de tapas', 'Fortaleza técnica y proceso', 'Control de calidad e inspección', 'Proceso de cooperación', 'Preguntas frecuentes', 'Opiniones de clientes')
     else:
         labels = ('Core Advantages', 'Bottle Cap', 'Technical', 'Quality', 'Cooperation', 'Questions', 'Client', 'Cap Mould')
     for label in labels:
         assert label in page, (locale, label)
+    if locale == "es":
+        assert "Inicie su proyecto de moldes" in page or "Empiece su proyecto de moldes" in page
     if locale == SOURCE_LOCALE:
         assert page.count('id="catalog-testimonials"') == 1
         assert page.count('Client Feedback') == 1

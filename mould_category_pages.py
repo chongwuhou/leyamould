@@ -13,6 +13,8 @@ import json
 import re
 from pathlib import Path
 
+from mould_localization import spanish_model_description, spanish_model_text, spanish_ui_copy, spanish_ui_text
+
 
 REFERENCE_ORIGIN = "https://www.cap-molds.com"
 _MEDIA_MANIFEST = Path(__file__).resolve().parent / "data" / "mould-legacy-media-manifest.json"
@@ -346,7 +348,13 @@ def _model_text(item: dict, locale: str, key: str) -> str:
     value = localized.get(key)
     if isinstance(value, str) and value.strip():
         return value.strip()
-    return str(item.get(key) or "").strip()
+    source = str(item.get(key) or "").strip()
+    if locale == "es":
+        if key in {"title", "alt"}:
+            return spanish_model_text(source)
+        if key == "description":
+            return spanish_model_description(source)
+    return source
 
 
 def render_model_reference_section(locale: str, models: list[dict], helpers: dict, heading: str | None = None) -> str:
@@ -422,7 +430,13 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
             [image], [("Dimensional Inspection", "Critical dimensions are checked against the approved drawing."), ("Trial Samples", "Agreed samples guide the final approval.")],
             [("Can you review a custom mould?", "Yes. Send the drawing, sample, material and production target for a technical review."), ("Do you provide trial samples?", "Agreed trial samples and inspection evidence are included before handover.")],
             [], [])
+    if locale == "es":
+        # D1 localized fields still win when present; this only localizes the
+        # checked-in/reference fallback strings that predate the Spanish row.
+        details = spanish_ui_copy(details)
     category = _category_payload(item)
+    if locale == "es":
+        category = spanish_ui_copy(category)
     hero_data = category.get("hero") if isinstance(category.get("hero"), dict) else {}
     title = _catalog_text(item, locale, "title")
     description = _catalog_text(item, locale, "description")
@@ -441,7 +455,11 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     crumb = '<nav class="mould-breadcrumb" aria-label="Breadcrumb"><div class="mould-detail-container"><a href="' + href(locale, "/") + '">' + esc(_lang(locale, "home")) + '</a><span>/</span><a href="' + href(locale, "/Plastic-cap-mold.html") + '">' + esc(_lang(locale, "cap_mould")) + '</a><span>/</span><span>' + esc(title) + '</span></div></nav>'
 
     product_rows = _category_rows(category.get("products"), [{"title": title, "image": image, "body": body} for title, image, body in details["products"]], 12)
+    if locale == "es":
+        product_rows = spanish_ui_copy(product_rows)
     products_heading = _category_text(category, "productsTitle", hero_title_text + " " + hero_accent + " Types")
+    if locale == "es":
+        products_heading = spanish_ui_text(products_heading)
     products = '<section class="mould-products" id="products"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "our_products")) + '</span><h2>' + esc(products_heading) + '</h2><p>' + esc(detail) + '</p><i></i></div><div class="mould-products-grid">'
     for row in product_rows:
         product_title = str(row.get("title") or "").strip()
@@ -458,6 +476,8 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     advantage_rows = _category_rows(category.get("advantages"), [{"title": adv_title, "body": adv_text} for adv_title, adv_text in details["advantages"]], 12)
     advantages_title = _category_text(category, "advantagesTitle", "Key Advantages of Our " + title)
     advantages_body = _category_text(category, "advantagesBody", "Engineered for repeatable production, stable quality and a clear technical handover.")
+    if locale == "es":
+        advantages_title, advantages_body = spanish_ui_text(advantages_title), spanish_ui_text(advantages_body)
     advantages = '<section class="mould-advantages" id="advantages"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "advantages")) + '</span><h2>' + esc(advantages_title) + '</h2><p>' + esc(advantages_body) + '</p><i></i></div><div class="mould-advantages-grid">'
     for row in advantage_rows:
         advantages += '<article class="mould-advantage-card"><div class="mould-adv-icon">✓</div><h4>' + esc(str(row.get("title") or "")) + '</h4><p>' + esc(str(row.get("body") or row.get("description") or "")) + '</p></article>'
@@ -467,6 +487,9 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     technology_fallback = [{"title": row[0], "body": row[1], "image": row[2], "bullets": row[3]} for row in details["technology"][1]]
     structured_technology = _category_rows(category_technology.get("items"), technology_fallback, 8)
     tech_heading = _category_text(category_technology, "title", details["technology"][0])
+    if locale == "es":
+        structured_technology = spanish_ui_copy(structured_technology)
+        tech_heading = spanish_ui_text(tech_heading)
     tech = '<section class="mould-technology" id="technical"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "technology")) + '</span><h2>' + esc(tech_heading) + '</h2><i></i></div>'
     for index, row in enumerate(structured_technology):
         tech_title = str(row.get("title") or "")
@@ -479,8 +502,12 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     tech += '</div></section>'
 
     sample_rows = _category_rows(category.get("samples"), [{"image": sample} for sample in details["samples"]], 24)
+    if locale == "es":
+        sample_rows = spanish_ui_copy(sample_rows)
     samples_title = _category_text(category, "samplesTitle", title + " Gallery")
     samples_body = _category_text(category, "samplesBody", "Click any image to enlarge. Samples and reference parts are shown for technical discussion.")
+    if locale == "es":
+        samples_title, samples_body = spanish_ui_text(samples_title), spanish_ui_text(samples_body)
     samples = '<section class="mould-samples" id="samples"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "samples")) + '</span><h2>' + esc(samples_title) + '</h2><p>' + esc(samples_body) + '</p><i></i></div><div class="mould-samples-grid">'
     for row in sample_rows:
         sample = str(row.get("image") or "").strip()
@@ -489,10 +516,14 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     samples += '</div></div></section>'
 
     video_rows = _category_rows(category.get("videos"), [{"videoId": video_id, "title": video_title} for video_id, video_title in details["videos"]], 24)
+    if locale == "es":
+        video_rows = spanish_ui_copy(video_rows)
     videos = ''
     if video_rows:
         videos_title = _category_text(category, "videosTitle", title + ' Trial Videos')
         videos_body = _category_text(category, "videosBody", "Watch the mould trial and production references in full screen.")
+        if locale == "es":
+            videos_title, videos_body = spanish_ui_text(videos_title), spanish_ui_text(videos_body)
         videos = '<section class="mould-videos" id="videos"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "videos")) + '</span><h2>' + esc(videos_title) + '</h2><p>' + esc(videos_body) + '</p><i></i></div><div class="mould-videos-grid">'
         for row in video_rows:
             video_id = str(row.get("videoId") or "").strip()
@@ -503,19 +534,30 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
         videos += '</div></div></section>'
 
     quality_rows = _category_rows(category.get("quality"), [{"title": q, "body": a} for q, a in details["quality"]], 12)
+    if locale == "es":
+        quality_rows = spanish_ui_copy(quality_rows)
     quality_title = _category_text(category, "qualityTitle", "Quality Control & Inspection")
     quality_body = _category_text(category, "qualityBody", "Every mould passes a documented inspection path before shipment.")
+    if locale == "es":
+        quality_title, quality_body = spanish_ui_text(quality_title), spanish_ui_text(quality_body)
     quality = '<section class="mould-quality" id="quality"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "quality")) + '</span><h2>' + esc(quality_title) + '</h2><p>' + esc(quality_body) + '</p><i></i></div><div class="mould-quality-list">' + ''.join('<article><b>✓</b><h4>' + esc(str(row.get("title") or "")) + '</h4><p>' + esc(str(row.get("body") or "")) + '</p></article>' for row in quality_rows) + '</div></div></section>'
 
     faq_pairs = _structured_faqs(item, locale, details["faqs"])
+    if locale == "es":
+        faq_pairs = spanish_ui_copy(faq_pairs)
     faq_rows = ''.join('<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>' for q, a in faq_pairs)
     testimonial_rows = _category_rows(category.get("testimonials"), [{"quote": quote, "author": author, "country": country} for quote, author, country in details["testimonials"]], 12)
+    if locale == "es":
+        testimonial_rows = spanish_ui_copy(testimonial_rows)
     feedback = ''.join('<article class="mould-testimonial"><p>“' + esc(str(row.get("quote") or "")) + '”</p><b>' + esc(str(row.get("author") or "")) + '</b><span>' + esc(str(row.get("country") or "")) + '</span></article>' for row in testimonial_rows)
     feedback_title = _category_text(category, "feedbackTitle", "What Buyers Say")
+    if locale == "es":
+        feedback_title = spanish_ui_text(feedback_title)
     faq = '<section class="mould-faq" id="faq"><div class="mould-detail-container"><div class="mould-faq-grid"><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "faq")) + '</span><h2>' + esc(title) + ' FAQ</h2><i></i></div><div class="mould-faq-list">' + faq_rows + '</div></div><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "feedback")) + '</span><h2>' + esc(feedback_title) + '</h2><i></i></div><div class="mould-testimonials">' + feedback + '</div></div></div></div></section>'
 
     shared_cta = helpers.get("shared_cta")
-    cta = shared_cta(locale, "category", element_id="contact") if shared_cta else '<section class="mould-cta" id="contact"><div class="mould-detail-container"><div class="mould-cta-box"><h2>' + esc(_lang(locale, "contact")) + '</h2><p>Send us your drawing, sample, target material, cavity plan and delivery market. We will reply with the next technical questions.</p><div class="mould-cta-row"><a href="mailto:amyhu@leyamould.com" class="mould-cta-item">✉ amyhu@leyamould.com</a><a href="https://wa.me/8613606727715" class="mould-cta-item" target="_blank" rel="noopener">WhatsApp +8613606727715</a><a href="' + href(locale, "/contact/#inquiry") + '" class="mould-cta-item mould-cta-item--accent">' + esc(_lang(locale, "quote")) + ' →</a></div></div></div></section>'
+    fallback_cta_copy = "Envíenos su dibujo, muestra, material objetivo, plan de cavidades y mercado de entrega. Le responderemos con las próximas preguntas técnicas." if locale == "es" else "Send us your drawing, sample, target material, cavity plan and delivery market. We will reply with the next technical questions."
+    cta = shared_cta(locale, "category", element_id="contact") if shared_cta else '<section class="mould-cta" id="contact"><div class="mould-detail-container"><div class="mould-cta-box"><h2>' + esc(_lang(locale, "contact")) + '</h2><p>' + esc(fallback_cta_copy) + '</p><div class="mould-cta-row"><a href="mailto:amyhu@leyamould.com" class="mould-cta-item">✉ amyhu@leyamould.com</a><a href="https://wa.me/8613606727715" class="mould-cta-item" target="_blank" rel="noopener">WhatsApp +8613606727715</a><a href="' + href(locale, "/contact/#inquiry") + '" class="mould-cta-item mould-cta-item--accent">' + esc(_lang(locale, "quote")) + ' →</a></div></div></div></section>'
 
     lightbox = '<div class="mould-lightbox" id="mould-lightbox" aria-hidden="true"><button type="button" aria-label="Close" data-mould-close>×</button><img alt=""></div><div class="mould-video-lightbox" id="mould-video-lightbox" aria-hidden="true"><button type="button" aria-label="Close" data-mould-video-close>×</button><iframe title="Mould trial video" allow="autoplay; encrypted-media" allowfullscreen></iframe></div><script>(()=>{const l=document.getElementById("mould-lightbox"),li=l?.querySelector("img"),v=document.getElementById("mould-video-lightbox"),f=v?.querySelector("iframe");const close=()=>{l?.classList.remove("active");v?.classList.remove("active");if(f)f.src=""};document.addEventListener("click",e=>{const s=e.target.closest("[data-mould-lightbox]");if(s&&li){li.src=s.dataset.mouldLightbox;l.classList.add("active")};const b=e.target.closest("[data-mould-video]");if(b&&f){f.src="https://www.youtube.com/embed/"+b.dataset.mouldVideo+"?autoplay=1&rel=0";v.classList.add("active")};if(e.target.closest("[data-mould-close],[data-mould-video-close]")||e.target===l||e.target===v)close()});document.addEventListener("keydown",e=>{if(e.key==="Escape")close()})})();</script>'
     return '<div class="mould-detail-page mould-detail-page--' + item["slug"] + '">' + hero + crumb + products + model_references + advantages + tech + samples + videos + quality + faq + cta + lightbox + '</div>'
