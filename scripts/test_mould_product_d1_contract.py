@@ -28,9 +28,10 @@ for slug in (
 snapshot = source("functions/api/build-snapshot.js")
 assert "xuyi_product_content WHERE publication_status='published'" in snapshot
 assert "onlyProducts=products.filter" in snapshot
+assert "ensureYoutubeVideos(db)" in snapshot
 
 seed = source("functions/api/admin/mould-content-seed-20261124.js")
-for marker in ("mould-catalog.json", "mould-product-structured.json", "xuyi_product_content", "existingProducts", "productImagesRemainTemplateBound"):
+for marker in ("mould-catalog.json", "mould-product-structured.json", "xuyi_product_content", "existingProducts", "productImagesRemainTemplateBound", "content.category"):
     assert marker in seed, marker
 
 catalog = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
@@ -43,6 +44,13 @@ for field in ("titleEs", "navTitleEs", "descriptionEs", "shortEs", "detailEs", "
     assert f'"{field}"' in renderer
 assert "_catalog_from_state" in renderer and "STATE.get(" in renderer
 assert "_structured_sections" in source("mould_category_pages.py")
+page_data = json.loads((ROOT / "data/mould-page-structured.json").read_text(encoding="utf-8"))
+for locale in ("en", "es"):
+    sections = page_data[locale]["/Plastic-cap-mold.html"]["sections"]
+    assert {row["id"] for row in sections} >= {"advantages", "samples", "technology", "quality", "workflow", "faq", "videos"}
+    assert len(next(row for row in sections if row["id"] == "samples")["items"]) == 21
+product_admin = source("functions/api/admin/product-content.js")
+assert "function categoryCopy" in product_admin and "out.samples" in product_admin
 
 # Realistic owner-edit simulation: D1 content must win over the checked-in
 # baseline on a clean renderer import, including a localized field.
@@ -60,6 +68,7 @@ mould_build.STATE = {
             "body": "Owner-controlled structured product body.",
             "sections": [{"title": "Owner technology section", "body": "Owner-controlled technical copy."}],
             "faqs": [{"question": "Owner question?", "answer": "Owner answer."}],
+            "category": {"hero": {"title": "Owner category hero"}, "samples": [{"image": "/upload/owner/sample.jpg", "alt": "Owner sample"}]},
         },
     }]
 }
@@ -70,5 +79,7 @@ assert edited["description"] == "Owner-controlled product description."
 assert edited["body"] == "Owner-controlled structured product body."
 assert edited["sections"][0]["title"] == "Owner technology section"
 assert edited["faqs"][0]["question"] == "Owner question?"
+assert edited["categoryCopy"]["hero"]["title"] == "Owner category hero"
+assert edited["categoryCopy"]["samples"][0]["image"] == "/upload/owner/sample.jpg"
 
 print(f"LEYA_MOULD_PRODUCT_D1_CONTRACT_PASSED categories={len(categories)}")

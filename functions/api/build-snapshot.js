@@ -4,6 +4,7 @@
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
 import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from "../_shared/site-settings.js";
 import { ensureLeyaSystemSchema } from "../_shared/leya-system.js";
+import { ensureYoutubeVideos } from "../_shared/youtube-videos.js";
 import { MOULD_MODELS, MOULD_ROUTES, mouldModelFromRoute } from "../_shared/mould-routes.js";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
@@ -23,6 +24,10 @@ export async function onRequestGet(context){
   if(!db)return json({error:"LEYA_DB binding missing"},503);
   try{
     await ensureLeyaSystemSchema(db);
+    // The build snapshot is also the first reader after a fresh deployment.
+    // Ensure the video schema/migrations exist before selecting the published
+    // rows, so a new column never makes an otherwise valid build fail.
+    await ensureYoutubeVideos(db);
     const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos,modelReferences]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy','page_copy')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
@@ -38,7 +43,7 @@ export async function onRequestGet(context){
       // English Blog route. Localized static indexes are rendered from this
       // D1 order so every language presents the same article sequence.
       list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC"),
-      list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,updated_at FROM leya_youtube_videos ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500"),
+      list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,source,status,published_at,sort_order,updated_at FROM leya_youtube_videos WHERE status='published' ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500"),
       // Model references are reviewed catalogue records. Only formally
       // published rows enter the immutable build snapshot.
       list(db,"SELECT slug,family,title,alt,source_url,source_image,image_path,description,translations_json,publication_status,sort_order,updated_at FROM leya_model_references WHERE publication_status='published' ORDER BY family,sort_order,slug LIMIT 2000")
@@ -98,8 +103,8 @@ export async function onRequestGet(context){
          if(!resource.startsWith("page:"))return false;
          return MOULD_ROUTES.has(resource.slice(5));
        }).map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})})),
-       youtubeVideos:youtubeVideos.filter(r=>/^[A-Za-z0-9_-]{11}$/.test(String(r.video_id||"")))
-        .map(r=>({id:r.id,videoId:r.video_id,youtubeUrl:r.youtube_url,title:r.title||"",titleEn:r.title_en||r.title||"",titleEs:r.title_es||"",description:r.description||"",publishedAt:r.published_at||"",sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
+       youtubeVideos:youtubeVideos.filter(r=>/^[A-Za-z0-9_-]{11}$/.test(String(r.video_id||""))&&r.status!=="draft")
+        .map(r=>({id:r.id,videoId:r.video_id,youtubeUrl:r.youtube_url,title:r.title||"",titleEn:r.title_en||r.title||"",titleEs:r.title_es||"",description:r.description||"",category:r.category||"mould-trial",thumbnailUrl:r.thumbnail_url||("https://i.ytimg.com/vi/"+r.video_id+"/mqdefault.jpg"),source:r.source||"youtube",status:r.status||"published",publishedAt:r.published_at||"",sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
       ,modelReferences:modelReferences.filter(r=>
           r.publication_status==="published"
           && /^[a-z0-9][a-z0-9-]{1,139}$/.test(String(r.slug||""))

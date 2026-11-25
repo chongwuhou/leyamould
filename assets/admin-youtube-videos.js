@@ -29,6 +29,7 @@
     $("youtube-video-url").value = "";
     $("youtube-video-title-en").value = "";
     $("youtube-video-title-es").value = "";
+    $("youtube-video-category").value = "mould-trial";
     $("youtube-video-published-at").value = "";
     $("youtube-video-save").textContent = "+ 增加视频";
     $("youtube-video-cancel").hidden = true;
@@ -38,6 +39,7 @@
     $("youtube-video-url").value = item.youtubeUrl || "";
     $("youtube-video-title-en").value = item.titleEn || item.title || "";
     $("youtube-video-title-es").value = item.titleEs || "";
+    $("youtube-video-category").value = item.category || "mould-trial";
     $("youtube-video-published-at").value = formatDateTime(item.publishedAt || item.createdAt);
     $("youtube-video-save").textContent = "保存修改";
     $("youtube-video-cancel").hidden = false;
@@ -48,7 +50,7 @@
     const root = $("youtube-video-list");
     if (!root) return;
     root.innerHTML = items.length ? items.map(item =>
-      '<article class="blog-admin-row"><div><strong>' + esc(item.titleEn || item.title || "LEYA MOULD video") + '</strong><small>ES: ' + esc(item.titleEs || "回退英文") + ' · ' + esc(item.youtubeUrl) + ' · ' + esc(item.publishedAt || item.createdAt || "") + '</small></div><div class="row-actions"><button type="button" class="btn ghost" data-youtube-edit="' + esc(item.id) + '">编辑</button><button type="button" class="btn ghost" data-youtube-delete="' + esc(item.id) + '">删除</button></div></article>'
+      '<article class="blog-admin-row"><div><strong>' + esc(item.titleEn || item.title || "LEYA MOULD video") + '</strong><small>ES: ' + esc(item.titleEs || "回退英文") + ' · ' + esc(item.category || "mould-trial") + ' · ' + esc(item.youtubeUrl) + ' · ' + esc(item.publishedAt || item.createdAt || "") + '</small></div><div class="row-actions"><button type="button" class="btn ghost" data-youtube-edit="' + esc(item.id) + '">编辑</button><button type="button" class="btn ghost" data-youtube-delete="' + esc(item.id) + '">删除</button></div></article>'
     ).join("") : '<p class="muted">暂无视频链接。</p>';
   }
   async function load() {
@@ -61,6 +63,7 @@
     const input = $("youtube-video-url");
     const titleEn = $("youtube-video-title-en");
     const titleEs = $("youtube-video-title-es");
+    const category = $("youtube-video-category");
     const publishedAt = $("youtube-video-published-at");
     const button = $("youtube-video-save");
     const url = input.value.trim();
@@ -68,7 +71,7 @@
     const wasEditing = Boolean(editingId);
     button.disabled = true;
     try {
-      await call({ action: "save", id: editingId || undefined, youtubeUrl: url, titleEn: titleEn.value.trim(), titleEs: titleEs.value.trim(), publishedAt: publishedAt.value });
+      await call({ action: "save", id: editingId || undefined, youtubeUrl: url, titleEn: titleEn.value.trim(), titleEs: titleEs.value.trim(), category: category.value.trim(), publishedAt: publishedAt.value });
       resetForm();
       await load();
       status(wasEditing ? "视频链接已更新。" : "视频链接已增加。");

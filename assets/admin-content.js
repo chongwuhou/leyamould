@@ -28,7 +28,7 @@
   if(kind==="answers")return value.map(row=>({question:String(row?.question||""),answer:String(row?.answer||"")}));
   if(kind==="groups")return value.map(group=>({title:String(group?.title||""),items:Array.isArray(group?.items)?group.items.map(row=>({question:String(row?.question||""),answer:String(row?.answer||"")})):[]}));
   if(kind==="stats")return value.map(row=>({label:String(row?.label||""),title:String(row?.title||""),body:String(row?.body||"")}));
-  return value.map(row=>({id:String(row?.id||"section"),eyebrow:String(row?.eyebrow||""),title:String(row?.title||""),body:String(row?.body||""),bullets:Array.isArray(row?.bullets)?row.bullets.join("\\n"):String(row?.bullets||""),items:Array.isArray(row?.items)?row.items.map(item=>({label:String(item?.label||""),title:String(item?.title||""),body:String(item?.body||""),link:String(item?.link||"")})):[]}));
+  return value.map(row=>({id:String(row?.id||"section"),eyebrow:String(row?.eyebrow||""),title:String(row?.title||""),body:String(row?.body||""),bullets:Array.isArray(row?.bullets)?row.bullets.join("\\n"):String(row?.bullets||""),items:Array.isArray(row?.items)?row.items.map(item=>({label:String(item?.label||""),title:String(item?.title||""),body:String(item?.body||""),link:String(item?.link||""),image:String(item?.image||""),alt:String(item?.alt||"")})):[]}));
  }
  function mountArrayEditor(root,key,kind,initial=[]){
   const editor=root.querySelector('[data-array-editor="'+CSS.escape(key)+'"]');if(!editor)return;
@@ -40,12 +40,12 @@
     if(kind==="answers")return '<div class="cms-array-row" data-row="'+index+'"><input data-part="question" placeholder="问题" value="'+esc(row.question)+'"><textarea data-part="answer" rows="3" placeholder="回答">'+esc(row.answer)+'</textarea><button type="button" class="btn danger cms-array-remove">删除</button></div>';
     if(kind==="groups")return '<div class="cms-array-row" data-row="'+index+'"><input data-part="title" placeholder="分组标题" value="'+esc(row.title)+'"><textarea data-part="items" rows="5" placeholder="每行：问题 | 回答">'+esc((row.items||[]).map(item=>item.question+" | "+item.answer).join("\\n"))+'</textarea><button type="button" class="btn danger cms-array-remove">删除分组</button></div>';
     if(kind==="stats")return '<div class="cms-array-row" data-row="'+index+'"><div class="cms-array-grid"><input data-part="label" placeholder="数字（如 15+）" value="'+esc(row.label)+'"><input data-part="title" placeholder="统计标题" value="'+esc(row.title)+'"><input data-part="body" placeholder="说明（可选）" value="'+esc(row.body)+'"></div><button type="button" class="btn danger cms-array-remove">删除统计</button></div>';
-    return '<div class="cms-array-row" data-row="'+index+'"><div class="cms-array-grid"><input data-part="id" placeholder="模块标识" value="'+esc(row.id)+'"><input data-part="eyebrow" placeholder="眉标题" value="'+esc(row.eyebrow)+'"><input data-part="title" placeholder="标题" value="'+esc(row.title)+'"></div><textarea data-part="body" rows="3" placeholder="正文">'+esc(row.body)+'</textarea><textarea data-part="bullets" rows="2" placeholder="要点，每行一条">'+esc(row.bullets)+'</textarea><textarea data-part="items" rows="4" placeholder="子项，每行：标题 | 内容">'+esc((row.items||[]).map(item=>(item.title||item.label)+" | "+item.body).join("\\n"))+'</textarea><button type="button" class="btn danger cms-array-remove">删除模块</button></div>';
+    return '<div class="cms-array-row" data-row="'+index+'"><div class="cms-array-grid"><input data-part="id" placeholder="模块标识" value="'+esc(row.id)+'"><input data-part="eyebrow" placeholder="眉标题" value="'+esc(row.eyebrow)+'"><input data-part="title" placeholder="标题" value="'+esc(row.title)+'"></div><textarea data-part="body" rows="3" placeholder="正文">'+esc(row.body)+'</textarea><textarea data-part="bullets" rows="2" placeholder="要点，每行一条">'+esc(row.bullets)+'</textarea><textarea data-part="items" rows="5" placeholder="子项，每行：标题 | 内容 | 图片路径 | ALT">'+esc((row.items||[]).map(item=>(item.title||item.label)+" | "+item.body+(item.image?" | "+item.image:"")+(item.alt?" | "+item.alt:"")).join("\\n"))+'</textarea><button type="button" class="btn danger cms-array-remove">删除模块</button></div>';
    }).join("");
    rowsRoot.querySelectorAll(".cms-array-row").forEach((rowEl,index)=>rowEl.querySelectorAll("[data-part]").forEach(input=>input.addEventListener("input",()=>{
     const part=input.dataset.part;
     if(kind==="groups"&&part==="items")rows[index].items=String(input.value||"").split(/\\n+/).map(line=>line.split("|")).map(parts=>({question:String(parts.shift()||"").trim(),answer:parts.join("|").trim()})).filter(item=>item.question&&item.answer);
-    else if(kind==="sections"&&part==="items")rows[index].items=String(input.value||"").split(/\\n+/).map(line=>line.split("|")).map(parts=>({title:String(parts.shift()||"").trim(),body:parts.join("|").trim()})).filter(item=>item.title&&item.body);
+    else if(kind==="sections"&&part==="items")rows[index].items=String(input.value||"").split(/\\n+/).map(line=>line.split("|")).map(parts=>({title:String(parts.shift()||"").trim(),body:String(parts.shift()||"").trim(),image:String(parts.shift()||"").trim(),alt:String(parts.join("|")||"").trim()})).filter(item=>item.title&&item.body);
     else rows[index][part]=input.value;
     sync();
    })));
@@ -173,6 +173,7 @@
      field("bodyEs","","西班牙语结构化正文导语（纯文本）",5)+
      arrayEditor("sectionsEs","sections","西班牙语正文区块")+
      arrayEditor("faqsEs","answers","西班牙语产品 FAQ")+
+     field("categoryJson","","分类页完整模块 JSON（产品卡、优势、技术、样例、质量、评价、视频；高级编辑）",18)+
    field("seoTitle","","SEO Title")+
    field("seoDescription","","Meta Description",3)+
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
@@ -321,7 +322,7 @@
    const known=[...new Set([...(state.products.catalogModels||[]),
      ...(state.products.items||[]).filter(x=>!x.content?.newProduct).map(x=>x.model)])].sort();
    let requestNumber=0;
-     const sourceFields=["title","navTitle","short","detail","meta","image","checks","body","sections","faqs","bodyEs","sectionsEs","faqsEs","seoTitle","seoDescription"];
+      const sourceFields=["title","navTitle","short","detail","meta","image","checks","body","sections","faqs","bodyEs","sectionsEs","faqsEs","categoryJson","seoTitle","seoDescription"];
      const resetFields=()=>{for(const key of sourceFields){
       const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=((key.includes("sections")||key.includes("faqs"))?"[]":"");
    }container.querySelector('[data-cms-field="status"]').value="draft";};
@@ -356,7 +357,8 @@
      for(const [key,val] of Object.entries({...original,...(entry?.content||{})})){
       const el=container.querySelector('[data-cms-field="'+key+'"]');
       if(!el)continue;
-       if(["sections","faqs","sectionsEs","faqsEs"].includes(key)&&Array.isArray(val))el.value=JSON.stringify(val,null,2);
+        if(["sections","faqs","sectionsEs","faqsEs"].includes(key)&&Array.isArray(val))el.value=JSON.stringify(val,null,2);
+        else if(key==="categoryJson"&&val&&typeof val==="object")el.value=JSON.stringify(val,null,2);
        else if(key==="checks"&&Array.isArray(val))el.value=val.join("\\n");
       else if(typeof val==="string")el.value=val;
     }
@@ -555,9 +557,11 @@
        throw Error("请先从已配置的模具类别列表中选择类别");
      const checks=String(value("checks")||"").split(/\\n+/).map(item=>item.trim()).filter(Boolean);
       const sections=arrayEditors.get("sections")?.get()||[],faqs=arrayEditors.get("faqs")?.get()||[],sectionsEs=arrayEditors.get("sectionsEs")?.get()||[],faqsEs=arrayEditors.get("faqsEs")?.get()||[];
-      result=await api("product-content",{action:"save_product",model:value("model"),
+       let category={};
+       try{category=JSON.parse(String(value("categoryJson")||"{}"))}catch(error){throw Error("分类页模块 JSON 格式错误")}
+       result=await api("product-content",{action:"save_product",model:value("model"),
        status:value("status"),content:{title:value("title"),navTitle:value("navTitle"),short:value("short"),detail:value("detail"),meta:value("meta"),
-         image:value("image"),checks,body:value("body"),sections,faqs,bodyEs:value("bodyEs"),sectionsEs,faqsEs,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
+          image:value("image"),checks,body:value("body"),sections,faqs,bodyEs:value("bodyEs"),sectionsEs,faqsEs,category,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
     }else if(action==="structured-copy"){
      const content={eyebrow:value("structuredEyebrow"),title:value("structuredTitle"),subtitle:value("structuredSubtitle"),quickAnswers:arrayEditors.get("quickAnswers")?.get()||[],groups:arrayEditors.get("groups")?.get()||[],sections:arrayEditors.get("sections")?.get()||[],stats:arrayEditors.get("stats")?.get()||[]};
      const target=document.querySelector('[data-cms-field="structuredJson"]');if(target)target.value=JSON.stringify(content);

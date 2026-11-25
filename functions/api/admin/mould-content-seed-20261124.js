@@ -247,6 +247,13 @@ function seedProduct(item) {
     content.body = structured.body || item.detail || item.description || "";
     content.sections = Array.isArray(structured.sections) ? structured.sections : [];
     content.faqs = Array.isArray(structured.faqs) ? structured.faqs : [];
+    // Category business copy is D1-owned as one structured payload. The
+    // renderer keeps only layout/escaping logic; products, advantages,
+    // technology, samples, quality, testimonials and videos are editable
+    // data rather than a second hidden source in Python.
+    if (structured.category && typeof structured.category === "object") {
+      content.category = structured.category;
+    }
   }
   return content;
 }

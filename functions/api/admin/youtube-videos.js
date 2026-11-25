@@ -16,14 +16,14 @@ async function authorized(context) {
 
 async function list(db) {
   await ensureYoutubeVideos(db);
-  return (await db.prepare(`SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,created_at,updated_at
+  return (await db.prepare(`SELECT id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,source,status,published_at,sort_order,created_at,updated_at
     FROM leya_youtube_videos ORDER BY sort_order ASC, created_at DESC, id ASC LIMIT 500`).all()).results || [];
 }
 
 function mapRow(row) {
   return { id: row.id, videoId: row.video_id, youtubeUrl: row.youtube_url, title: row.title,
     titleEn: row.title_en || row.title, titleEs: row.title_es || "",
-    description: row.description, publishedAt: row.published_at, sortOrder: row.sort_order,
+    description: row.description, category: row.category || "mould-trial", thumbnailUrl: row.thumbnail_url || "", source: row.source || "youtube", status: row.status || "published", publishedAt: row.published_at, sortOrder: row.sort_order,
     createdAt: row.created_at, updatedAt: row.updated_at };
 }
 
@@ -57,6 +57,7 @@ export async function onRequestPost(context) {
     if (!titleEn) return json({ error: "请填写英文标题" }, 400);
     const title = titleEn || titleEs || "LEYA MOULD video";
     const description = String(input?.description || "").trim().slice(0, 500);
+    const category = String(input?.category || "mould-trial").trim().slice(0, 80) || "mould-trial";
     const publishedAt = String(input?.publishedAt || "").trim();
     if (publishedAt && !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:?\d{2})?$/.test(publishedAt))
       return json({ error: "发布时间格式不正确" }, 400);
@@ -66,17 +67,19 @@ export async function onRequestPost(context) {
       if (!found) return json({ error: "Video not found" }, 404);
       if (!Number.isFinite(Number(input?.sortOrder))) order = Number(found.sort_order || 0);
       await db.prepare(`UPDATE leya_youtube_videos SET
-        video_id=?,youtube_url=?,title=?,title_en=?,title_es=?,description=?,published_at=?,sort_order=?,updated_at=CURRENT_TIMESTAMP
-        WHERE id=?`).bind(normalized.id, normalized.url, title, titleEn, titleEs, description,
+        video_id=?,youtube_url=?,title=?,title_en=?,title_es=?,description=?,category=?,thumbnail_url=?,source='youtube',status='published',published_at=?,sort_order=?,updated_at=CURRENT_TIMESTAMP
+        WHERE id=?`).bind(normalized.id, normalized.url, title, titleEn, titleEs, description, category,
+        "https://i.ytimg.com/vi/" + normalized.id + "/mqdefault.jpg",
         publishedAt || new Date().toISOString(), order, existingId).run();
-      const updated = await db.prepare("SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,created_at,updated_at FROM leya_youtube_videos WHERE id=?").bind(existingId).first();
+      const updated = await db.prepare("SELECT id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,source,status,published_at,sort_order,created_at,updated_at FROM leya_youtube_videos WHERE id=?").bind(existingId).first();
       return json({ saved: true, updated: true, item: mapRow(updated), ...(await bumpPublishRevision(db)) });
     }
     const id = crypto.randomUUID();
     await db.prepare(`INSERT INTO leya_youtube_videos
-      (id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order)
-      VALUES(?,?,?,?,?,?,?,?,?)`).bind(id, normalized.id, normalized.url, title, titleEn, titleEs, description, publishedAt || new Date().toISOString(), order).run();
-    return json({ saved: true, item: mapRow(await db.prepare("SELECT id,video_id,youtube_url,title,title_en,title_es,description,published_at,sort_order,created_at,updated_at FROM leya_youtube_videos WHERE id=?").bind(id).first()), ...(await bumpPublishRevision(db)) });
+      (id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,source,status,published_at,sort_order)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(id, normalized.id, normalized.url, title, titleEn, titleEs, description, category,
+        "https://i.ytimg.com/vi/" + normalized.id + "/mqdefault.jpg", "youtube", "published", publishedAt || new Date().toISOString(), order).run();
+    return json({ saved: true, item: mapRow(await db.prepare("SELECT id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,source,status,published_at,sort_order,created_at,updated_at FROM leya_youtube_videos WHERE id=?").bind(id).first()), ...(await bumpPublishRevision(db)) });
   } catch (error) {
     if (/UNIQUE|constraint/i.test(String(error?.message || ""))) return json({ error: "这个 YouTube 视频已经存在" }, 409);
     return json({ error: "Unable to save YouTube video" }, 503);

@@ -31,4 +31,3 @@ assert "data-admin-target=\"audit\"" not in admin
 assert "admin-audit.js" not in admin
 
 print("LEYA_LIGHTWEIGHT_STATE_CONTRACT_PASSED")
-

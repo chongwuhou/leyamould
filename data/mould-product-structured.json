@@ -24,7 +24,193 @@
         "title": "Inside Our Water Cap Mould Engineering",
         "body": "Balanced hot-runner layouts and conformal cooling keep temperature uniform across cavities."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Water & Beverage",
+        "accent": "Cap Mould",
+        "subtitle": "Solutions",
+        "image": "/upload/Banner/water-bev-hero.jpg",
+        "stats": [
+          {
+            "number": "5s",
+            "label": "Cycle Time"
+          },
+          {
+            "number": "72",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "6",
+            "label": "Mould Types"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "High Quality PCO 1881 Mineral Water Cap Injection Mould | 32/48/72 Cavity Available | Factory Direct",
+          "image": "/Upload/20231107/202311070817255253.jpg",
+          "body": "Ideal for screw caps for mineral water, purified water, spring water and other beverage PET bottles."
+        },
+        {
+          "title": "48 Cavity 38mm Neck Mineral Water Closure Cap Mould",
+          "image": "/Upload/20260617/202606171039475377.jpg",
+          "body": "A balanced high-output configuration for production efficiency and predictable mould cost."
+        },
+        {
+          "title": "Mineral Water Closure Cap Moulds | High-Precision Manufacturer",
+          "image": "/upload/product/month_2105/202105252222459511.jpg",
+          "body": "High-precision water bottle cap moulds with cavity options matched to the buyer's line."
+        },
+        {
+          "title": "32 Cavity Mineral Water Closure Cap Mould",
+          "image": "/upload/product/month_2105/202105252218052303.jpg",
+          "body": "High productivity, precision machining and hot-runner balance for beverage closures."
+        },
+        {
+          "title": "Custom Compression & Injection Moulds for PCO 1881 / 1810",
+          "image": "/upload/product/month_2105/202105252201289687.jpg",
+          "body": "Custom neck finishes and high-speed closure tooling for international packaging projects."
+        },
+        {
+          "title": "24 Cavity PCO 1881 Mineral Water Cap Injection Mould",
+          "image": "/upload/product/month_2105/202105252226261284.jpg",
+          "body": "Hot-runner tooling for still, sparkling and carbonated beverage production."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Ultra-Fast Cycles",
+          "body": "Optimized cooling and hot runners can achieve cycle times from 4.5 seconds."
+        },
+        {
+          "title": "Micron-Level Tolerances",
+          "body": "Cavity-to-cavity variation is controlled for consistent cap dimensions."
+        },
+        {
+          "title": "PCO & ISBT Standards",
+          "body": "Neck-finish options support international beverage packaging requirements."
+        },
+        {
+          "title": "Hot Runner Integration",
+          "body": "Balanced nozzle control reduces waste and protects fill consistency."
+        },
+        {
+          "title": "Corrosion-Resistant Steel",
+          "body": "S136 mirror steel supports long life in high-moisture production environments."
+        },
+        {
+          "title": "Quick Cavity Expansion",
+          "body": "Modular inserts make future cavity upgrades easier to plan."
+        }
+      ],
+      "technology": {
+        "title": "Inside Our Water Cap Mould Engineering",
+        "items": [
+          {
+            "title": "Hot Runner & Cooling Design",
+            "body": "Balanced hot-runner layouts and conformal cooling keep temperature uniform across cavities.",
+            "image": "/images/Hot-Runner-Cooling-Design.jpg",
+            "bullets": [
+              "Valve-gate or open-gate options",
+              "3D-printed conformal cooling inserts",
+              "Thermal imaging verification before shipment"
+            ]
+          },
+          {
+            "title": "Stripper Plate & Ejection",
+            "body": "A guided stripper plate releases tamper-evident caps smoothly without deforming bridges.",
+            "image": "/images/Stripper-Plate-Ejection.jpg",
+            "bullets": [
+              "Hardened H13 stripper plate",
+              "Guided ejection with linear bearings",
+              "Two-stage ejection for fragile bridges"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample1.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample2.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample3.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample4.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample5.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample6.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample7.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample8.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample9.jpg"
+        },
+        {
+          "image": "/upload/Water-Beverage-Cap/watercap-sample10.jpg"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Full dimensional reports for all cavities."
+        },
+        {
+          "title": "Cycle Time Verification",
+          "body": "On-machine trials confirm the output target."
+        },
+        {
+          "title": "Cap Weight Audit",
+          "body": "Material distribution is checked cavity by cavity."
+        },
+        {
+          "title": "ISO 9001 Certified",
+          "body": "Quality management evidence stays with the project file."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The 72-cavity PCO 1881 mould doubled our output while keeping cap quality consistent.",
+          "author": "Bottling plant manager",
+          "country": "Nigeria"
+        },
+        {
+          "quote": "The lightweight cap design reduced material cost without changing the seal.",
+          "author": "Packaging engineer",
+          "country": "United Arab Emirates"
+        },
+        {
+          "quote": "The trial report made approval straightforward for our production team.",
+          "author": "Operations director",
+          "country": "Philippines"
+        }
+      ],
+      "videos": [
+        {
+          "videoId": "m7Hd7Uodb_Y",
+          "title": "PCO 1881 water cap mould trial"
+        },
+        {
+          "videoId": "x_AY9rMwvLw",
+          "title": "Sports cap mould trial"
+        }
+      ]
+    }
   },
   "oil-bottle-cap-mould": {
     "body": "High‑precision moulds for olive oil, sunflower oil, canola oil, and cooking oil bottles. Leak‑proof design, food‑grade compliance, multi‑cavity up to 72 cavities.",
@@ -51,7 +237,200 @@
         "title": "Inside Our Edible Oil Cap Mould Engineering",
         "body": "Moldflow-reviewed sealing rings and conformal cooling keep every cavity round and consistent."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Edible Oil",
+        "accent": "Cap Mould",
+        "subtitle": "Solutions",
+        "image": "/upload/product/month_2105/202105262038349426.jpg",
+        "stats": [
+          {
+            "number": "5s",
+            "label": "Cycle Time"
+          },
+          {
+            "number": "72",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "5",
+            "label": "Mould Variants"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "16 Cavity Edible Oil Flip Top Cap Mould",
+          "image": "/Upload/20260618/202606180755323692.jpg",
+          "body": "High-precision flip-cap tooling for cooking oil and food packaging lines."
+        },
+        {
+          "title": "8 Cavity Edible Oil Bottle Cap Mould",
+          "image": "/Upload/20260618/202606180741263964.jpg",
+          "body": "Stable production with hot-runner balance and long mould life."
+        },
+        {
+          "title": "6 Cavity Oil Pull Cap Mould",
+          "image": "/Upload/20260618/202606180733586664.jpg",
+          "body": "Leak-proof pull-top tooling for edible oil bottle packaging."
+        },
+        {
+          "title": "6 Cavity Oil Pull Cap Mould | Food Packaging",
+          "image": "/Upload/20260617/202606171717064343.jpg",
+          "body": "Precision machining and tamper-evident release for cooking oils."
+        },
+        {
+          "title": "16 Cavity Tamper-Evident Edible Oil Cap Mould",
+          "image": "/Upload/20260617/202606171704179997.jpg",
+          "body": "Anti-theft ring design with repeatable filling and sealing."
+        },
+        {
+          "title": "16 Cavity Tamper-Evident Pull Ring Cap Mould",
+          "image": "/Upload/20260617/202606171650511166.jpg",
+          "body": "Durable pull-ring tooling for high-output oil packaging."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Leak-Proof Design",
+          "body": "Triple-point sealing geometry protects the package under hot-fill conditions."
+        },
+        {
+          "title": "Food-Grade Compliance",
+          "body": "Materials and polishing are selected around food-contact documentation."
+        },
+        {
+          "title": "Corrosion Resistant",
+          "body": "S136 or NAK80 steel resists acidic oils and cleaning chemicals."
+        },
+        {
+          "title": "Fast Cycle Times",
+          "body": "Conformal cooling and hot runners keep cycle targets stable."
+        },
+        {
+          "title": "Micron-Level Tolerances",
+          "body": "Cavity-to-cavity variation is controlled for seal integrity."
+        },
+        {
+          "title": "Modular Cavity Design",
+          "body": "Interchangeable inserts allow future cavity-count changes."
+        }
+      ],
+      "technology": {
+        "title": "Inside Our Edible Oil Cap Mould Engineering",
+        "items": [
+          {
+            "title": "Leak-Proof Seal & Conformal Cooling",
+            "body": "Moldflow-reviewed sealing rings and conformal cooling keep every cavity round and consistent.",
+            "image": "/images/Leak‑Proof-Seal-Conformal-Cooling.jpg",
+            "bullets": [
+              "Optimized gate placement",
+              "3D-printed cooling inserts",
+              "Thermal imaging verification"
+            ]
+          },
+          {
+            "title": "Food-Grade Steel & Anti-Corrosion Treatment",
+            "body": "Mirror-polished stainless mould steel reduces bacterial adhesion and makes cleaning easier.",
+            "image": "/images/Food-Grade-Steel.jpg",
+            "bullets": [
+              "ASSAB S136 or NAK80",
+              "Vacuum heat treatment",
+              "Full material traceability"
+            ]
+          },
+          {
+            "title": "Multi-Cavity Consistency & Quick Change",
+            "body": "Balanced inserts let the buyer expand output or replace a single cavity with less downtime.",
+            "image": "/images/Multi-Cavity-Quick-Change.jpg",
+            "bullets": [
+              "24 to 72 cavity options",
+              "Individual nozzle control",
+              "Quick-change inserts"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample1.jpg"
+        },
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample2.jpg"
+        },
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample3.jpg"
+        },
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample4.jpg"
+        },
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample6.jpg"
+        },
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample7.jpg"
+        },
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample8.jpg"
+        },
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample9.jpg"
+        },
+        {
+          "image": "/upload/Edible-Oil-Cap/oilcap-sample10.jpg"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Dimensional reports cover every cavity."
+        },
+        {
+          "title": "Leak Test",
+          "body": "Oil-filling tests are performed at elevated temperature."
+        },
+        {
+          "title": "Cap Weight Audit",
+          "body": "Material distribution is checked before delivery."
+        },
+        {
+          "title": "ISO 9001 Certified",
+          "body": "Quality records remain attached to the mould project."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The pull-ring tooling has run millions of cycles without a leak.",
+          "author": "Production director",
+          "country": "Spain"
+        },
+        {
+          "quote": "The food-grade mould met our hygiene requirements and the DFM report improved the design.",
+          "author": "QA manager",
+          "country": "Turkey"
+        },
+        {
+          "quote": "The 72-cavity mould produces consistent caps at a stable cycle.",
+          "author": "Operations manager",
+          "country": "Italy"
+        }
+      ],
+      "videos": [
+        {
+          "videoId": "O81wopvbPrY",
+          "title": "Edible oil cap mould trial"
+        },
+        {
+          "videoId": "1wfR93CVe3s",
+          "title": "China flip-top caps mould manufacturers"
+        }
+      ]
+    }
   },
   "flip-top-caps-mould": {
     "body": "High‑cycle flip‑top cap moulds engineered for smooth action, 50,000+ cycles tested, tailored for shampoo, lotion, and cosmetic packaging.",
@@ -78,7 +457,195 @@
         "title": "Inside Our Flip-Top Mould Engineering",
         "body": "The hinge radius, snap fit and opening force are verified before the mould is released."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Flip Top Cap Mould –",
+        "accent": "Living Hinge",
+        "subtitle": "Precision",
+        "image": "/upload/Banner/20210524213222103.jpg",
+        "stats": [
+          {
+            "number": "50k+",
+            "label": "Hinge Cycles Tested"
+          },
+          {
+            "number": "±0.01mm",
+            "label": "Precision"
+          },
+          {
+            "number": "72",
+            "label": "Max Cavities"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "Shampoo Flip-Top",
+          "image": "/images/Design/Flip-Top-Cap-Mold.png",
+          "body": "Living-hinge tooling for shampoo and conditioner bottles."
+        },
+        {
+          "title": "Lotion Disc Top",
+          "image": "/images/Design/Lotion-Disc-Top.jpg",
+          "body": "Smooth dispensing with a durable snap-fit closure."
+        },
+        {
+          "title": "Dual-Color Cap",
+          "image": "/images/Design/Dual‑Color-Cap.jpg",
+          "body": "Two-material visual differentiation for branded packaging."
+        },
+        {
+          "title": "Detergent Cap",
+          "image": "/images/Design/Detergent-Cap.jpg",
+          "body": "High-strength flip-top tooling for household liquids."
+        },
+        {
+          "title": "Travel Size Cap",
+          "image": "/images/Design/Travel-Size-Cap.jpg",
+          "body": "Compact closure geometry for personal-care packs."
+        },
+        {
+          "title": "Flip-Top with Tear Band",
+          "image": "/images/Design/Flip‑Top-with-Tear-Band.jpg",
+          "body": "Tamper-evident opening with controlled bridge breakage."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Living Hinge Engineering",
+          "body": "Hinge geometry is tuned for repeatable opening and closing."
+        },
+        {
+          "title": "Leak-Proof Seal",
+          "body": "Seal surfaces are checked against the bottle finish and product viscosity."
+        },
+        {
+          "title": "Fast Cycle Times",
+          "body": "Cooling and balanced gating support high-volume cosmetic production."
+        },
+        {
+          "title": "Custom Orifice & Finish",
+          "body": "Dispensing openings and decorative surfaces are reviewed with the brand team."
+        },
+        {
+          "title": "Easy Demolding",
+          "body": "Ejection is designed around the hinge and cosmetic surfaces."
+        },
+        {
+          "title": "Durable Steel Selection",
+          "body": "Wear-resistant steel and polishing protect the hinge cavity."
+        }
+      ],
+      "technology": {
+        "title": "Inside Our Flip-Top Mould Engineering",
+        "items": [
+          {
+            "title": "Living Hinge Design",
+            "body": "The hinge radius, snap fit and opening force are verified before the mould is released.",
+            "image": "/images/Flip‑Top-Mould.png",
+            "bullets": [
+              "Opening-cycle target review",
+              "Controlled snap fit",
+              "Orifice and seal inspection"
+            ]
+          },
+          {
+            "title": "Cooling & Steel Strategy",
+            "body": "Balanced cooling prevents warpage around thin hinge and cap-wall sections.",
+            "image": "/images/Cooling-Steel-Strategy.png",
+            "bullets": [
+              "Conformal cooling options",
+              "Polished cavity surfaces",
+              "Wear-part replacement plan"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/flip-samples/sample01.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample02.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample03.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample04.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample05.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample06.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample07.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample08.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample09.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample10.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample11.jpg"
+        },
+        {
+          "image": "/upload/flip-samples/sample12.jpg"
+        }
+      ],
+      "quality": [
+        {
+          "title": "Hinge Fatigue Test",
+          "body": "Open-close cycles verify the living hinge."
+        },
+        {
+          "title": "Leak Test",
+          "body": "Seal performance is checked with the intended bottle finish."
+        },
+        {
+          "title": "Dimensional Report",
+          "body": "Critical orifice and hinge dimensions are recorded."
+        },
+        {
+          "title": "Material Certificate",
+          "body": "Resin and steel documentation stays with the handover file."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The flip-top mould runs smoothly and the hinge action stays consistent.",
+          "author": "Packaging engineer",
+          "country": "Mexico"
+        },
+        {
+          "quote": "The samples made approval easy for our cosmetic filling line.",
+          "author": "Technical manager",
+          "country": "Spain"
+        },
+        {
+          "quote": "The polishing and ejection detail protected the visible surface.",
+          "author": "Brand operations",
+          "country": "France"
+        }
+      ],
+      "videos": [
+        {
+          "videoId": "O81wopvbPrY",
+          "title": "China flip-top caps mould manufacturers"
+        },
+        {
+          "videoId": "1wfR93CVe3s",
+          "title": "Flip-top cap mould trial"
+        }
+      ]
+    }
   },
   "engine-oil-cap-mould": {
     "body": "Heavy‑duty injection moulds engineered for motor oil, lubricant, ATF, and hydraulic fluid bottles. Superior chemical resistance, high‑torque seal integrity, and lifetime durability up to 5 million cycles.",
@@ -105,7 +672,203 @@
         "title": "How We Build Tough Engine Oil Cap Moulds",
         "body": "The tooling brief connects steel selection, thermal stability and the seal lip around the fluid specification."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Engine Oil Cap Mould",
+        "accent": "for Demanding",
+        "subtitle": "Automotive Fluids",
+        "image": "/upload/Banner/Engine-Oil-Cap-Mould.jpg",
+        "stats": [
+          {
+            "number": "4.8s",
+            "label": "Cycle Time"
+          },
+          {
+            "number": "72",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "5",
+            "label": "Specialized Variants"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "PCO 38mm Motor Oil Cap Mould",
+          "image": "/upload/Engine-Oil-Cap/PCO38-engine-oil-cap-mould.jpg",
+          "body": "Reliable thread and seal geometry for common automotive lubricant bottles."
+        },
+        {
+          "title": "5L Tamper-Evident Oil Cap Mould",
+          "image": "/upload/Engine-Oil-Cap/5L-engine-oil-cap-mould.jpg",
+          "body": "High-strength tooling for larger containers and visible tamper evidence."
+        },
+        {
+          "title": "Chemical-Resistant Cap Mould",
+          "image": "/upload/Engine-Oil-Cap/chemical-resistant-oil-cap-mould.jpg",
+          "body": "Steel and sealing choices that tolerate aggressive oil additives."
+        },
+        {
+          "title": "High-Torque Engine Oil Cap Mould",
+          "image": "/upload/Engine-Oil-Cap/high-torque-engine-oil-cap-mould.jpg",
+          "body": "Torque-stable threads protect the seal during filling and transport."
+        },
+        {
+          "title": "4-Cavity High-Output Mould",
+          "image": "/upload/Engine-Oil-Cap/engine-oil-cap-mould.jpg",
+          "body": "Balanced cavity production for demanding industrial lines."
+        },
+        {
+          "title": "Custom Engine Oil Cap Mould",
+          "image": "/upload/Engine-Oil-Cap/custom-engine-oil-cap-mould.jpg",
+          "body": "Custom pouring, grip and tamper features based on the buyer's package."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Chemical Resistance",
+          "body": "Steel, coatings and resin assumptions are selected for lubricant contact."
+        },
+        {
+          "title": "Zero Leakage",
+          "body": "Seal geometry and trial checks protect against fluid loss."
+        },
+        {
+          "title": "High Torque Stability",
+          "body": "Thread and ejection design support repeatable application torque."
+        },
+        {
+          "title": "Ultra-Fast Cycles",
+          "body": "Cooling is planned around output and wall-thickness targets."
+        },
+        {
+          "title": "Precision Manufacturing",
+          "body": "CMM and fit checks keep cavity variation under control."
+        },
+        {
+          "title": "Modular Design",
+          "body": "Interchangeable components make service and upgrades easier."
+        }
+      ],
+      "technology": {
+        "title": "How We Build Tough Engine Oil Cap Moulds",
+        "items": [
+          {
+            "title": "Anti-Corrosion Steel & High-Temp Sealing",
+            "body": "The tooling brief connects steel selection, thermal stability and the seal lip around the fluid specification.",
+            "image": "/upload/Engine-Oil-Cap/sealing-cooling-design.jpg",
+            "bullets": [
+              "S136 corrosion-resistant steel",
+              "High-temperature seal review",
+              "Thermal balance verification"
+            ]
+          },
+          {
+            "title": "Tamper-Evident Band & High-Torque Unscrewing",
+            "body": "Band bridges, threads and ejection are balanced for clean opening and reliable re-closing.",
+            "image": "/upload/Engine-Oil-Cap/tamper-evident-ejection.jpg",
+            "bullets": [
+              "Controlled break force",
+              "High-torque thread profile",
+              "Guided unscrewing"
+            ]
+          },
+          {
+            "title": "Multi-Cavity Balance & Rapid Cavity Swap",
+            "body": "Balanced runners and replaceable inserts reduce downtime when a cavity needs service.",
+            "image": "/upload/Engine-Oil-Cap/multi-cavity-quick-change.jpg",
+            "bullets": [
+              "Cavity-to-cavity balance",
+              "Quick-change inserts",
+              "Inspection after replacement"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/Engine-Oil-Cap/sample1.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample2.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample3.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample4.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample5.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample6.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample7.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample8.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample9.jpg"
+        },
+        {
+          "image": "/upload/Engine-Oil-Cap/sample10.jpg"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Dimensions and thread geometry are recorded."
+        },
+        {
+          "title": "Leak Test",
+          "body": "Actual fluid or controlled pressure tests confirm sealing."
+        },
+        {
+          "title": "Cap Weight Audit",
+          "body": "Material distribution is checked across cavities."
+        },
+        {
+          "title": "ISO 9001 Certified",
+          "body": "Quality records support production release."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The oil cap tooling held torque and seal performance across the production run.",
+          "author": "Plant manager",
+          "country": "Thailand"
+        },
+        {
+          "quote": "The cavity swap plan reduced our planned maintenance downtime.",
+          "author": "Maintenance engineer",
+          "country": "Germany"
+        },
+        {
+          "quote": "The trial report made the leak approval process clear.",
+          "author": "Quality manager",
+          "country": "Poland"
+        }
+      ],
+      "videos": [
+        {
+          "videoId": "6j8loGkHg-E",
+          "title": "Engine oil cap mould trial"
+        },
+        {
+          "videoId": "O81wopvbPrY",
+          "title": "Oil cap mould production"
+        }
+      ]
+    }
   },
   "food-packaging-cap-mould": {
     "body": "Precision injection moulds for yogurt cups, sauce bottles, jam jars, and ready‑meal containers. FDA & EU compliant, leak‑proof, tamper‑evident, and built for high‑output lines.",
@@ -132,7 +895,163 @@
         "title": "Cap Mould Manufacturing Advantages",
         "body": "CNC, EDM, polishing and inspection are planned around the food-contact closure geometry."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Food Packaging Cap Mould",
+        "accent": "for Safe & Fresh",
+        "subtitle": "Products",
+        "image": "/upload/Banner/food-packaging-hero.jpg",
+        "stats": [
+          {
+            "number": "5.2s",
+            "label": "Cycle Time"
+          },
+          {
+            "number": "72",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "4",
+            "label": "Cap Variants"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "Yogurt & Dairy Cap Mould",
+          "image": "/upload/Food-Packaging-Cap/yogurt-cap-mould.jpg",
+          "body": "Food-grade closure tooling for dairy and drinkable-yogurt packages."
+        },
+        {
+          "title": "Sauce & Dressing Cap Mould",
+          "image": "/upload/Food-Packaging-Cap/sauce-cap-mould.jpg",
+          "body": "Leak-proof dispensing and tamper evidence for sauces and dressings."
+        },
+        {
+          "title": "Jar & Spread Cap Mould",
+          "image": "/upload/Food-Packaging-Cap/jar-cap-mould.jpg",
+          "body": "Screw-on and snap-on closures for jars, spreads and dry foods."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "FDA & EU Compliant",
+          "body": "The project brief records food-contact documentation and material traceability."
+        },
+        {
+          "title": "Leak-Proof Seal",
+          "body": "Seal surfaces are checked for product freshness and transport stability."
+        },
+        {
+          "title": "Hot-Fill Ready",
+          "body": "Cooling and steel choices are reviewed for hot-fill process conditions."
+        },
+        {
+          "title": "Precision Tolerances",
+          "body": "Critical dimensions are measured before production handover."
+        },
+        {
+          "title": "Fast Cycle Times",
+          "body": "Balanced gating and cooling support high-output lines."
+        },
+        {
+          "title": "Modular Design",
+          "body": "Insert strategies make future package changes easier."
+        }
+      ],
+      "technology": {
+        "title": "Cap Mould Manufacturing Advantages",
+        "items": [
+          {
+            "title": "High Precision Machining & Strict QC",
+            "body": "CNC, EDM, polishing and inspection are planned around the food-contact closure geometry.",
+            "image": "/upload/Food-Packaging-Cap/precision-machining.jpg",
+            "bullets": [
+              "Cavity and thread inspection",
+              "Polished sealing surfaces",
+              "Trial sample approval"
+            ]
+          },
+          {
+            "title": "Premium Steel & Fast Delivery",
+            "body": "Steel traceability and a clear production brief reduce surprises before shipment.",
+            "image": "/upload/Food-Packaging-Cap/steel-fast-delivery.jpg",
+            "bullets": [
+              "Material certificate",
+              "Planned machining sequence",
+              "Documented handover"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/Food-Packaging-Cap/sample1.png"
+        },
+        {
+          "image": "/upload/Food-Packaging-Cap/sample2.png"
+        },
+        {
+          "image": "/upload/Food-Packaging-Cap/sample3.png"
+        },
+        {
+          "image": "/upload/Food-Packaging-Cap/sample4.png"
+        },
+        {
+          "image": "/upload/Food-Packaging-Cap/sample5.png"
+        },
+        {
+          "image": "/upload/Food-Packaging-Cap/sample6.png"
+        },
+        {
+          "image": "/upload/Food-Packaging-Cap/sample7.png"
+        },
+        {
+          "image": "/upload/Food-Packaging-Cap/sample8.png"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Critical dimensions are recorded cavity by cavity."
+        },
+        {
+          "title": "Leak Test",
+          "body": "Seal performance is checked against the intended package."
+        },
+        {
+          "title": "Weight Audit",
+          "body": "Material distribution supports consistent filling."
+        },
+        {
+          "title": "ISO 9001 Certified",
+          "body": "Quality documents accompany the project handover."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The sauce closure passed the filling-line leak checks on the first approved trial.",
+          "author": "Quality manager",
+          "country": "Italy"
+        },
+        {
+          "quote": "The polished cavities made cleaning and inspection straightforward.",
+          "author": "Packaging director",
+          "country": "Spain"
+        },
+        {
+          "quote": "The modular design gives us room for future pack sizes.",
+          "author": "Operations manager",
+          "country": "Chile"
+        }
+      ],
+      "videos": []
+    }
   },
   "medical-cap-mould": {
     "body": "Precision injection moulds for pharmaceutical, diagnostic, and medical device caps. Cleanroom‑compatible, FDA & ISO 13485 compliant, and engineered for high‑purity production.",
@@ -159,7 +1078,166 @@
         "title": "Cap Mould Manufacturing Advantages",
         "body": "CNC and EDM work is planned around critical medical closure dimensions."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Medical Cap Mould",
+        "accent": "for Sterile",
+        "subtitle": "Healthcare Packaging",
+        "image": "/upload/Banner/medical-cap-hero.jpg",
+        "stats": [
+          {
+            "number": "5.8s",
+            "label": "Cycle Time"
+          },
+          {
+            "number": "64",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "3",
+            "label": "Cap Variants"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "Pharmaceutical Screw Cap Mould",
+          "image": "/upload/Medical-Cap/pharma-cap-mould.png",
+          "body": "Controlled closure tooling for pharmaceutical bottles and syrups."
+        },
+        {
+          "title": "Child-Resistant Cap Mould",
+          "image": "/upload/Medical-Cap/child-resistant-cap-mould.png",
+          "body": "Push-turn and safety features with documented functional checks."
+        },
+        {
+          "title": "Diagnostic & Reagent Cap Mould",
+          "image": "/upload/Medical-Cap/diagnostic-cap-mould.png",
+          "body": "Burr-free, cleanable closures for diagnostic and reagent packaging."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "ISO 13485 Certified",
+          "body": "Quality records and validation expectations are included in the tooling brief."
+        },
+        {
+          "title": "Cleanroom-Ready",
+          "body": "Surface, cleanliness and packaging requirements are reviewed before trial."
+        },
+        {
+          "title": "Precision Tolerances",
+          "body": "Critical sealing and functional dimensions are measured and recorded."
+        },
+        {
+          "title": "Child-Resistant Design",
+          "body": "Opening force and user-safety functions are checked with the intended package."
+        },
+        {
+          "title": "Fast Cycle Times",
+          "body": "Balanced cavity and cooling design supports repeatable output."
+        },
+        {
+          "title": "100% Validation",
+          "body": "Trial, inspection and approval evidence stay connected to the project."
+        }
+      ],
+      "technology": {
+        "title": "Cap Mould Manufacturing Advantages",
+        "items": [
+          {
+            "title": "High Precision Machining & Strict QC",
+            "body": "CNC and EDM work is planned around critical medical closure dimensions.",
+            "image": "/upload/Medical-Cap/precision-machining.jpg",
+            "bullets": [
+              "Burr-free parting surfaces",
+              "Controlled polishing",
+              "Dimensional inspection"
+            ]
+          },
+          {
+            "title": "Premium Steel & Fast Delivery",
+            "body": "Traceable steel and a staged inspection plan support a clean project handover.",
+            "image": "/upload/Medical-Cap/steel-fast-delivery.jpg",
+            "bullets": [
+              "Material certificates",
+              "Trial samples",
+              "Validation records"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/Medical-Cap/sample2.png"
+        },
+        {
+          "image": "/upload/Medical-Cap/sample3.png"
+        },
+        {
+          "image": "/upload/Medical-Cap/sample4.png"
+        },
+        {
+          "image": "/upload/Medical-Cap/sample5.png"
+        },
+        {
+          "image": "/upload/Medical-Cap/sample6.png"
+        },
+        {
+          "image": "/upload/Medical-Cap/sample7.png"
+        },
+        {
+          "image": "/upload/Medical-Cap/sample8.png"
+        },
+        {
+          "image": "/upload/Medical-Cap/sample9.png"
+        },
+        {
+          "image": "/upload/Medical-Cap/sample10.png"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Critical dimensions are reported for each cavity."
+        },
+        {
+          "title": "Leak & Seal Test",
+          "body": "Seal function is verified against the bottle finish."
+        },
+        {
+          "title": "IQ/OQ/PQ",
+          "body": "Validation evidence is planned around the buyer's release process."
+        },
+        {
+          "title": "ISO 13485 Certified",
+          "body": "Quality documentation supports controlled production."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The burr-free samples helped us complete our internal approval quickly.",
+          "author": "Validation manager",
+          "country": "United Kingdom"
+        },
+        {
+          "quote": "The inspection records were clear enough for our regulated packaging file.",
+          "author": "Quality director",
+          "country": "Turkey"
+        },
+        {
+          "quote": "The child-resistant mechanism remained consistent across cavities.",
+          "author": "Product manager",
+          "country": "Brazil"
+        }
+      ],
+      "videos": []
+    }
   },
   "personal-care-cap-mould": {
     "body": "Precision injection moulds for flip‑top, disc‑top, and pump caps used on shampoo, lotion, body wash, and cosmetic bottles. Soft‑touch, leak‑proof, and built for high‑speed filling lines.",
@@ -186,7 +1264,166 @@
         "title": "Cap Mould Manufacturing Advantages",
         "body": "The project brief connects hinge, disc-top or pump geometry to the final package."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Personal Care Cap Mould",
+        "accent": "for Beauty & Hygiene",
+        "subtitle": "Brands",
+        "image": "/upload/Banner/personal-care-hero.jpg",
+        "stats": [
+          {
+            "number": "5.5s",
+            "label": "Cycle Time"
+          },
+          {
+            "number": "48",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "3",
+            "label": "Cap Variants"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "Flip-Top Cap Mould",
+          "image": "/upload/Personal-Care-Cap/flip-top-cap-mould.jpg",
+          "body": "Living-hinge tooling for shampoo, conditioner and body wash."
+        },
+        {
+          "title": "Disc-Top Cap Mould",
+          "image": "/upload/Personal-Care-Cap/disc-top-cap-mould.jpg",
+          "body": "Smooth actuation and premium visible surfaces for lotions and creams."
+        },
+        {
+          "title": "Pump & Dispenser Cap Mould",
+          "image": "/upload/Personal-Care-Cap/pump-cap-mould.jpg",
+          "body": "Dispensing geometry matched to product viscosity and package finish."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Soft-Touch Finish",
+          "body": "Surface texture and polishing are planned with the brand reference sample."
+        },
+        {
+          "title": "Leak-Proof Design",
+          "body": "Seal surfaces are matched to the bottle and filling process."
+        },
+        {
+          "title": "Durable Living Hinge",
+          "body": "Hinge geometry supports repeated consumer opening."
+        },
+        {
+          "title": "Precision Tolerances",
+          "body": "Critical fit and dispensing dimensions are recorded."
+        },
+        {
+          "title": "Fast Cycle Times",
+          "body": "Balanced cooling supports high-speed filling lines."
+        },
+        {
+          "title": "Custom Surface Finish",
+          "body": "Texture, gloss and decorative areas can be reviewed in DFM."
+        }
+      ],
+      "technology": {
+        "title": "Cap Mould Manufacturing Advantages",
+        "items": [
+          {
+            "title": "Specialized Cap Mould Engineering",
+            "body": "The project brief connects hinge, disc-top or pump geometry to the final package.",
+            "image": "/upload/Personal-Care-Cap/precision-machining.jpg",
+            "bullets": [
+              "Hinge and seal review",
+              "Cosmetic surface control",
+              "Trial sample approval"
+            ]
+          },
+          {
+            "title": "Premium Steel & Reliable Delivery",
+            "body": "A clear mould plan and replacement-part strategy protect repeatable production.",
+            "image": "/upload/Personal-Care-Cap/steel-fast-delivery.jpg",
+            "bullets": [
+              "Polished cavity surfaces",
+              "Traceable steel",
+              "Documented handover"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/Personal-Care-Cap/sample1.png"
+        },
+        {
+          "image": "/upload/Personal-Care-Cap/sample2.png"
+        },
+        {
+          "image": "/upload/Personal-Care-Cap/sample3.png"
+        },
+        {
+          "image": "/upload/Personal-Care-Cap/sample4.png"
+        },
+        {
+          "image": "/upload/Personal-Care-Cap/sample5.png"
+        },
+        {
+          "image": "/upload/Personal-Care-Cap/sample6.png"
+        },
+        {
+          "image": "/upload/Personal-Care-Cap/sample7.png"
+        },
+        {
+          "image": "/upload/Personal-Care-Cap/sample8.png"
+        },
+        {
+          "image": "/upload/Personal-Care-Cap/sample9.png"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Fit and dispensing dimensions are recorded."
+        },
+        {
+          "title": "Leak Test",
+          "body": "Seal performance is checked before release."
+        },
+        {
+          "title": "Hinge Cycle Test",
+          "body": "Opening and closing cycles verify the living hinge."
+        },
+        {
+          "title": "ISO 9001 Certified",
+          "body": "Quality records support repeatable delivery."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The hinge and surface finish matched our brand sample closely.",
+          "author": "Brand engineering manager",
+          "country": "France"
+        },
+        {
+          "quote": "The disc-top seal stayed stable through the filling-line trial.",
+          "author": "Production manager",
+          "country": "Poland"
+        },
+        {
+          "quote": "The mould was easy to maintain because the wear parts were documented.",
+          "author": "Maintenance lead",
+          "country": "Italy"
+        }
+      ],
+      "videos": []
+    }
   },
   "functional-cap-mould": {
     "body": "Precision injection moulds for sport caps, push‑pull closures, and complex combination caps. Leak‑proof, durable, and designed for high‑output assembly lines.",
@@ -213,7 +1450,166 @@
         "title": "Cap Mould Manufacturing Advantages",
         "body": "The mould plan connects the mechanism, assembly sequence and inspection evidence."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Functional Cap Mould",
+        "accent": "for Multi-Component",
+        "subtitle": "Closures",
+        "image": "/upload/Banner/functional-cap-hero.jpg",
+        "stats": [
+          {
+            "number": "6.2s",
+            "label": "Cycle Time"
+          },
+          {
+            "number": "48",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "3",
+            "label": "Cap Variants"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "Sport & Push-Pull Cap Mould",
+          "image": "/upload/Functional-Cap/sport-cap-mould.jpg",
+          "body": "One-hand drinking closures with balanced valve and cap components."
+        },
+        {
+          "title": "Multi-Component Combination Mould",
+          "image": "/upload/Functional-Cap/combination-cap-mould.jpg",
+          "body": "Complex assemblies with insert and material-interface planning."
+        },
+        {
+          "title": "Functional Cap Mould",
+          "image": "/upload/Functional-Cap/Functional-Cap-Mould.jpg",
+          "body": "Custom functional mechanisms for household, sports and medical packaging."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Multi-Component Precision",
+          "body": "Insert, overmould and assembly relationships are reviewed before steel is cut."
+        },
+        {
+          "title": "Leak-Proof Valve Design",
+          "body": "Valve and sealing surfaces are checked against product pressure and use."
+        },
+        {
+          "title": "Smooth Actuation",
+          "body": "User interaction, opening force and reclose action are part of the brief."
+        },
+        {
+          "title": "Precision Tolerances",
+          "body": "Critical interfaces are measured across all cavities."
+        },
+        {
+          "title": "Fast Cycle Times",
+          "body": "Cooling and runner balance protect repeatable output."
+        },
+        {
+          "title": "Modular Insert System",
+          "body": "Replaceable inserts make future mechanisms easier to maintain."
+        }
+      ],
+      "technology": {
+        "title": "Cap Mould Manufacturing Advantages",
+        "items": [
+          {
+            "title": "Specialized Engineering for Complex Closures",
+            "body": "The mould plan connects the mechanism, assembly sequence and inspection evidence.",
+            "image": "/upload/Functional-Cap/precision-engineering.jpg",
+            "bullets": [
+              "Mechanism review",
+              "Insert alignment",
+              "Functional trial"
+            ]
+          },
+          {
+            "title": "Premium Materials & On-Time Delivery",
+            "body": "Material and steel traceability remain attached to the project from design to delivery.",
+            "image": "/upload/Functional-Cap/steel-delivery.jpg",
+            "bullets": [
+              "Wear-part strategy",
+              "Assembly check",
+              "Documented handover"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/Functional-Cap/sample1.jpg"
+        },
+        {
+          "image": "/upload/Functional-Cap/sample2.jpg"
+        },
+        {
+          "image": "/upload/Functional-Cap/sample3.jpg"
+        },
+        {
+          "image": "/upload/Functional-Cap/sample4.jpg"
+        },
+        {
+          "image": "/upload/Functional-Cap/sample5.jpg"
+        },
+        {
+          "image": "/upload/Functional-Cap/sample6.jpg"
+        },
+        {
+          "image": "/upload/Functional-Cap/sample7.jpg"
+        },
+        {
+          "image": "/upload/Functional-Cap/sample8.jpg"
+        },
+        {
+          "image": "/upload/Functional-Cap/sample9.jpg"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Functional interfaces are checked cavity by cavity."
+        },
+        {
+          "title": "Leak & Valve Test",
+          "body": "Valve opening and seal performance are verified."
+        },
+        {
+          "title": "Actuation Cycle Test",
+          "body": "Repeated operation checks the user-facing mechanism."
+        },
+        {
+          "title": "ISO 9001 Certified",
+          "body": "Quality records accompany the final samples."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The push-pull cap opened smoothly and stayed leak-free in production.",
+          "author": "Process engineer",
+          "country": "United States"
+        },
+        {
+          "quote": "The combination mould simplified our assembly line changeover.",
+          "author": "Operations manager",
+          "country": "Mexico"
+        },
+        {
+          "quote": "The functional trial caught the last small adjustment before release.",
+          "author": "Quality manager",
+          "country": "South Korea"
+        }
+      ],
+      "videos": []
+    }
   },
   "plastic-handle-cap-mould": {
     "body": "Heavy‑duty injection moulds for plastic handles used on bottles, jerry cans, and containers. Engineered for high strength, wear resistance, and multi‑cavity production.",
@@ -240,7 +1636,187 @@
         "title": "Cap Mould Manufacturing Advantages",
         "body": "CNC, EDM and inspection protect the bottle interface and load-bearing geometry."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Handle Mould",
+        "accent": "for Durable Bottle Carrying",
+        "subtitle": "Solutions",
+        "image": "/upload/Banner/handle-hero.jpg",
+        "stats": [
+          {
+            "number": "6s",
+            "label": "Cycle Time"
+          },
+          {
+            "number": "48",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "4",
+            "label": "Handle Variants"
+          },
+          {
+            "number": "3M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "Plastic Handle Mould",
+          "image": "/upload/product/month_2105/202105281747478932.jpg",
+          "body": "Handle tooling for oil bottles, water bottles and large containers."
+        },
+        {
+          "title": "Plastic Handle Mould",
+          "image": "/upload/product/month_2105/202105281747284286.jpg",
+          "body": "Round and size-specific grip geometries for different bottle interfaces."
+        },
+        {
+          "title": "Plastic Handle Mould",
+          "image": "/upload/product/month_2105/202105262015364802.jpg",
+          "body": "Ergonomic handle design with a controlled bottle connection."
+        },
+        {
+          "title": "Plastic Handle Mould",
+          "image": "/upload/product/month_2105/202105262012138550.jpg",
+          "body": "High-strength moulding for reusable and chemical containers."
+        },
+        {
+          "title": "24 Cavity Plastic Handle Mould",
+          "image": "/upload/product/month_2105/202105262010194667.jpg",
+          "body": "Multi-cavity production for repeatable handle weight and fit."
+        },
+        {
+          "title": "24 Cavity Plastic Handle Mould",
+          "image": "/upload/product/month_2105/202105262002365573.jpg",
+          "body": "Custom neck dimensions and load targets reviewed before tooling."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "High Load-Bearing",
+          "body": "Rib geometry and bottle interface are reviewed against the carrying load."
+        },
+        {
+          "title": "Wear-Resistant Steel",
+          "body": "The mould is designed around repeatable grip and ejection surfaces."
+        },
+        {
+          "title": "Fast Cycle Times",
+          "body": "Balanced cooling supports high-volume handle production."
+        },
+        {
+          "title": "Precision Tolerances",
+          "body": "Bottle fit and assembly dimensions are measured."
+        },
+        {
+          "title": "Modular Design",
+          "body": "Replaceable inserts support different handle sizes."
+        },
+        {
+          "title": "100% Testing",
+          "body": "Trial fit, weight and load evidence are captured before delivery."
+        }
+      ],
+      "technology": {
+        "title": "Cap Mould Manufacturing Advantages",
+        "items": [
+          {
+            "title": "High Precision Machining & Strict QC",
+            "body": "CNC, EDM and inspection protect the bottle interface and load-bearing geometry.",
+            "image": "/upload/Handle-Mould/precision-machining.jpg",
+            "bullets": [
+              "Interface measurement",
+              "Grip surface check",
+              "Trial-fit report"
+            ]
+          },
+          {
+            "title": "Premium Steel & Fast Delivery",
+            "body": "A staged machining plan and spare-part notes reduce later downtime.",
+            "image": "/upload/Handle-Mould/steel-fast-delivery.jpg",
+            "bullets": [
+              "Steel certificate",
+              "Cavity balance",
+              "Documented handover"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/upload/Handle-Mould/sample1.jpg"
+        },
+        {
+          "image": "/upload/Handle-Mould/sample2.jpg"
+        },
+        {
+          "image": "/upload/Handle-Mould/sample3.jpg"
+        },
+        {
+          "image": "/upload/Handle-Mould/sample4.jpg"
+        },
+        {
+          "image": "/upload/Handle-Mould/sample5.jpg"
+        },
+        {
+          "image": "/upload/Handle-Mould/sample6.jpg"
+        },
+        {
+          "image": "/upload/Handle-Mould/sample7.jpg"
+        },
+        {
+          "image": "/upload/Handle-Mould/sample8.jpg"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Bottle interface and handle dimensions are recorded."
+        },
+        {
+          "title": "Load Test",
+          "body": "The handle is checked against the intended carrying load."
+        },
+        {
+          "title": "Weight Audit",
+          "body": "Material distribution supports repeatable assembly."
+        },
+        {
+          "title": "ISO 9001 Certified",
+          "body": "Quality records accompany the production samples."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The handle stayed comfortable and secure during the full load test.",
+          "author": "Packaging engineer",
+          "country": "Vietnam"
+        },
+        {
+          "quote": "The multi-cavity mould kept handle weight and fit consistent.",
+          "author": "Plant director",
+          "country": "Malaysia"
+        },
+        {
+          "quote": "The bottle-interface report helped us approve the tool quickly.",
+          "author": "Product manager",
+          "country": "Saudi Arabia"
+        }
+      ],
+      "videos": [
+        {
+          "videoId": "P-G27RAJcxs",
+          "title": "Plastic handle mould trial"
+        },
+        {
+          "videoId": "DquWhXWBscE",
+          "title": "Handle mould production"
+        }
+      ]
+    }
   },
   "five-gallon-water-cap-mould": {
     "body": "Heavy-duty tooling for reusable 18.9L water bottles, cooler caps and dispenser closures. Seal, tear-band and sanitisation requirements reviewed together.",
@@ -267,7 +1843,151 @@
         "title": "Inside Our 5 Gallon Cap Mould Engineering",
         "body": "Seal lands and bridge geometry are reviewed against the reusable bottle and opening force."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "5 Gallon Water",
+        "accent": "Cap Mould",
+        "subtitle": "Solutions",
+        "image": "/assets/catalog/five-gallon-hero.webp",
+        "stats": [
+          {
+            "number": "18.9L",
+            "label": "Bottle Format"
+          },
+          {
+            "number": "24",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "3",
+            "label": "Seal Options"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "5 Gallon Water Cap Mould",
+          "image": "/assets/catalog/five-gallon-01.webp",
+          "body": "Heavy-gauge tooling for reusable water-cooler bottles and dispenser caps."
+        },
+        {
+          "title": "Tamper-Evident 5 Gallon Cap",
+          "image": "/assets/catalog/five-gallon-02.webp",
+          "body": "Tear-band and inner-plug geometry reviewed for clean opening and reliable sealing."
+        },
+        {
+          "title": "High-Output 5 Gallon Closure Mould",
+          "image": "/assets/catalog/five-gallon-03.webp",
+          "body": "Balanced cavities for repeatable cap weight, fit and production output."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Reliable Plug Seal",
+          "body": "The plug, thread and bottle finish are checked together."
+        },
+        {
+          "title": "Sanitisation Ready",
+          "body": "Material and geometry are reviewed around repeated cleaning cycles."
+        },
+        {
+          "title": "Stable Cap Weight",
+          "body": "Cavity balance protects repeatable resin distribution."
+        },
+        {
+          "title": "Dispenser Compatibility",
+          "body": "The cap interface stays aligned with the intended cooler or filling line."
+        },
+        {
+          "title": "Serviceable Inserts",
+          "body": "Replaceable wear parts keep maintenance practical."
+        },
+        {
+          "title": "Documented Trials",
+          "body": "Leak, fit and opening evidence stay with the handover file."
+        }
+      ],
+      "technology": {
+        "title": "Inside Our 5 Gallon Cap Mould Engineering",
+        "items": [
+          {
+            "title": "Plug Seal & Tear Band",
+            "body": "Seal lands and bridge geometry are reviewed against the reusable bottle and opening force.",
+            "image": "/assets/catalog/five-gallon-01.webp",
+            "bullets": [
+              "Bottle finish review",
+              "Controlled break force",
+              "Leak and fit checks"
+            ]
+          },
+          {
+            "title": "Cooling & Cavity Balance",
+            "body": "Cooling and runner balance support repeatable cap weight across the full cavity set.",
+            "image": "/assets/catalog/five-gallon-02.webp",
+            "bullets": [
+              "Balanced filling",
+              "Thermal review",
+              "Cavity identification"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/assets/catalog/five-gallon-hero.webp"
+        },
+        {
+          "image": "/assets/catalog/five-gallon-01.webp"
+        },
+        {
+          "image": "/assets/catalog/five-gallon-02.webp"
+        },
+        {
+          "image": "/assets/catalog/five-gallon-03.webp"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Bottle interface and sealing dimensions are recorded."
+        },
+        {
+          "title": "Leak Test",
+          "body": "The cap and plug are checked against the intended bottle."
+        },
+        {
+          "title": "Opening Force",
+          "body": "Tear-band behaviour is reviewed with the buyer."
+        },
+        {
+          "title": "ISO 9001 Records",
+          "body": "Quality evidence remains attached to the mould project."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The cap stayed secure through repeated cooler handling.",
+          "author": "Packaging engineer",
+          "country": "Mexico"
+        },
+        {
+          "quote": "The leak and opening checks made approval straightforward.",
+          "author": "Quality manager",
+          "country": "Chile"
+        },
+        {
+          "quote": "Cavity weight stayed consistent across the run.",
+          "author": "Plant manager",
+          "country": "Brazil"
+        }
+      ],
+      "videos": []
+    }
   },
   "wine-cap-mould": {
     "body": "Precision closure moulds for wine, spirits and specialty beverage bottles. Pourer, tamper evidence and decorative surfaces are matched to the bottle finish.",
@@ -294,7 +2014,151 @@
         "title": "Inside Our Wine Cap Mould Engineering",
         "body": "The pourer, sealing land and bottle finish are reviewed for clean dispensing."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Wine & Spirits",
+        "accent": "Cap Mould",
+        "subtitle": "Solutions",
+        "image": "/assets/catalog/wine-hero.webp",
+        "stats": [
+          {
+            "number": "5s",
+            "label": "Cycle Target"
+          },
+          {
+            "number": "48",
+            "label": "Max Cavities"
+          },
+          {
+            "number": "4",
+            "label": "Closure Styles"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "Wine Cap Mould",
+          "image": "/assets/catalog/wine-01.webp",
+          "body": "Precision closure tooling for wine, spirits and specialty beverage packaging."
+        },
+        {
+          "title": "Decorative Wine Closure Mould",
+          "image": "/assets/catalog/wine-02.webp",
+          "body": "Surface and colour references are kept with the bottle and brand brief."
+        },
+        {
+          "title": "Pourer Wine Cap Mould",
+          "image": "/assets/catalog/wine-03.webp",
+          "body": "Pourer, tamper-evident and reclose features reviewed for the filling line."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Bottle-Finish Matching",
+          "body": "The cap, thread and bottle finish are reviewed as one interface."
+        },
+        {
+          "title": "Controlled Pouring",
+          "body": "A pourer or spout is checked for flow and reclose behaviour."
+        },
+        {
+          "title": "Decorative Surfaces",
+          "body": "Polishing, texture and visible surfaces are protected during ejection."
+        },
+        {
+          "title": "Tamper Evidence",
+          "body": "Opening evidence is designed around the buyer's package and market."
+        },
+        {
+          "title": "Balanced Cavities",
+          "body": "Runner and cooling balance protect consistent appearance."
+        },
+        {
+          "title": "Traceable Handover",
+          "body": "Approved samples and visual standards remain attached to the project."
+        }
+      ],
+      "technology": {
+        "title": "Inside Our Wine Cap Mould Engineering",
+        "items": [
+          {
+            "title": "Pourer & Seal Geometry",
+            "body": "The pourer, sealing land and bottle finish are reviewed for clean dispensing.",
+            "image": "/assets/catalog/wine-01.webp",
+            "bullets": [
+              "Flow-path review",
+              "Bottle fit check",
+              "Reclose inspection"
+            ]
+          },
+          {
+            "title": "Surface Finish & Ejection",
+            "body": "Polished or textured cosmetic surfaces are protected through the ejection sequence.",
+            "image": "/assets/catalog/wine-02.webp",
+            "bullets": [
+              "Texture reference",
+              "Gate-mark control",
+              "Visual approval sample"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/assets/catalog/wine-hero.webp"
+        },
+        {
+          "image": "/assets/catalog/wine-01.webp"
+        },
+        {
+          "image": "/assets/catalog/wine-02.webp"
+        },
+        {
+          "image": "/assets/catalog/wine-03.webp"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Critical fit and pouring dimensions are recorded."
+        },
+        {
+          "title": "Fit & Leak Test",
+          "body": "The closure is checked on the intended bottle finish."
+        },
+        {
+          "title": "Visual Approval",
+          "body": "Colour, texture and gate-mark limits are agreed."
+        },
+        {
+          "title": "ISO 9001 Records",
+          "body": "Quality evidence stays with the tooling handover."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The pourer and bottle fit were stable on the filling line.",
+          "author": "Packaging manager",
+          "country": "Italy"
+        },
+        {
+          "quote": "The visual sample helped us approve the decorative finish.",
+          "author": "Brand engineer",
+          "country": "France"
+        },
+        {
+          "quote": "The trial evidence made the closure decision easier.",
+          "author": "Operations director",
+          "country": "Portugal"
+        }
+      ],
+      "videos": []
+    }
   },
   "pet-preform-mould": {
     "body": "Multi-cavity PET and PP preform moulds for beverage, edible-oil and specialty packaging. Neck finish, gram weight and stretch-blow targets stay connected.",
@@ -321,7 +2185,151 @@
         "title": "Inside Our Preform Mould Engineering",
         "body": "Neck geometry and gate design are reviewed against the bottle and stretch-blow process."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "PET Preform",
+        "accent": "Injection",
+        "subtitle": "Moulds",
+        "image": "/assets/catalog/preform-hero.webp",
+        "stats": [
+          {
+            "number": "12–144",
+            "label": "Cavity Range"
+          },
+          {
+            "number": "PET / PP",
+            "label": "Resin Options"
+          },
+          {
+            "number": "±0.01mm",
+            "label": "Critical Fit"
+          },
+          {
+            "number": "5M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "Multi-Cavity PET Preform Mould",
+          "image": "/assets/catalog/preform-01.webp",
+          "body": "Preform tooling for beverage neck finishes, stable gram weight and high output."
+        },
+        {
+          "title": "Valve-Type PET Preform Mould",
+          "image": "/assets/catalog/preform-02.webp",
+          "body": "Valve-gate layout and cooling are matched to the resin and machine interface."
+        },
+        {
+          "title": "Edible Oil Preform Mould",
+          "image": "/assets/catalog/preform-03.webp",
+          "body": "Preform tooling for oil and specialty packaging with controlled wall distribution."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Neck-Finish Accuracy",
+          "body": "Critical threads and sealing dimensions are checked cavity by cavity."
+        },
+        {
+          "title": "Gram-Weight Control",
+          "body": "Runner, gate and cooling choices protect repeatable preform weight."
+        },
+        {
+          "title": "PET & PP Options",
+          "body": "Material assumptions stay linked to shrinkage and stretch-blow targets."
+        },
+        {
+          "title": "Valve-Gate Balance",
+          "body": "Balanced filling supports clean gates and stable cycle behaviour."
+        },
+        {
+          "title": "Modular Cavities",
+          "body": "Cavity expansion and service decisions are considered early."
+        },
+        {
+          "title": "Machine Interface",
+          "body": "The mould brief includes the actual injection machine and hot-runner data."
+        }
+      ],
+      "technology": {
+        "title": "Inside Our Preform Mould Engineering",
+        "items": [
+          {
+            "title": "Neck Finish & Valve Gates",
+            "body": "Neck geometry and gate design are reviewed against the bottle and stretch-blow process.",
+            "image": "/assets/catalog/preform-01.webp",
+            "bullets": [
+              "PCO and custom finishes",
+              "Valve-gate review",
+              "Cavity identification"
+            ]
+          },
+          {
+            "title": "Cooling & Wall Distribution",
+            "body": "Cooling layout and material data support predictable preform dimensions and weight.",
+            "image": "/assets/catalog/preform-02.webp",
+            "bullets": [
+              "Thermal balance",
+              "Wall-map review",
+              "Dimensional sampling"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/assets/catalog/preform-hero.webp"
+        },
+        {
+          "image": "/assets/catalog/preform-01.webp"
+        },
+        {
+          "image": "/assets/catalog/preform-02.webp"
+        },
+        {
+          "image": "/assets/catalog/preform-03.webp"
+        }
+      ],
+      "quality": [
+        {
+          "title": "CMM Inspection",
+          "body": "Neck finish and critical dimensions are recorded."
+        },
+        {
+          "title": "Weight Audit",
+          "body": "Preform weight is checked across the cavity set."
+        },
+        {
+          "title": "Gate Inspection",
+          "body": "Gate appearance and vestige limits are reviewed."
+        },
+        {
+          "title": "Material Traceability",
+          "body": "Resin and steel documentation accompany the handover."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The neck finish stayed consistent across the complete cavity set.",
+          "author": "Process engineer",
+          "country": "Thailand"
+        },
+        {
+          "quote": "The weight audit helped us stabilise the blowing process.",
+          "author": "Production manager",
+          "country": "Vietnam"
+        },
+        {
+          "quote": "The DFM report clarified the machine interface before steel release.",
+          "author": "Tooling buyer",
+          "country": "Turkey"
+        }
+      ],
+      "videos": []
+    }
   },
   "blow-bottle-mould": {
     "body": "Bottle blow moulds for PET containers, wide-mouth packs and custom shapes. Wall map, cooling, neck finish and machine envelope are reviewed before tooling.",
@@ -348,7 +2356,150 @@
         "title": "Inside Our Blow Bottle Mould Engineering",
         "body": "The mould is developed from the preform, bottle drawing and intended stretch-blow process."
       }
-    ]
+    ],
+    "category": {
+      "hero": {
+        "title": "Blow Bottle",
+        "accent": "Mould",
+        "subtitle": "Solutions",
+        "image": "/assets/catalog/blow-hero.webp",
+        "stats": [
+          {
+            "number": "2–16",
+            "label": "Cavity Range"
+          },
+          {
+            "number": "PET",
+            "label": "Primary Resin"
+          },
+          {
+            "number": "360°",
+            "label": "Wall Review"
+          },
+          {
+            "number": "3M+",
+            "label": "Mould Life"
+          }
+        ]
+      },
+      "products": [
+        {
+          "title": "PET Blow Bottle Mould",
+          "image": "/assets/catalog/blow-01.webp",
+          "body": "Bottle-blow tooling for repeatable shape, neck finish and wall distribution."
+        },
+        {
+          "title": "Wide-Mouth Bottle Mould",
+          "image": "/assets/catalog/blow-02.webp",
+          "body": "Wide-mouth and specialty container tooling with controlled cooling surfaces."
+        },
+        {
+          "title": "Custom Shape Blow Mould",
+          "image": "/assets/catalog/blow-03.webp",
+          "body": "Custom bottle geometry reviewed from drawing, preform and machine envelope."
+        }
+      ],
+      "advantages": [
+        {
+          "title": "Wall-Thickness Control",
+          "body": "The preform, stretch ratio and bottle wall map are reviewed together."
+        },
+        {
+          "title": "Cooling Balance",
+          "body": "Cooling surfaces support stable shape and cycle repeatability."
+        },
+        {
+          "title": "Neck-Finish Fit",
+          "body": "The bottle neck stays matched to the approved closure and cap."
+        },
+        {
+          "title": "Machine Envelope",
+          "body": "Opening, mould height and blow-machine data are confirmed early."
+        },
+        {
+          "title": "Custom Geometry",
+          "body": "Handles, panels and special shapes are checked against the drawing."
+        },
+        {
+          "title": "Trial Evidence",
+          "body": "Bottle samples, dimensions and visual limits guide handover."
+        }
+      ],
+      "technology": {
+        "title": "Inside Our Blow Bottle Mould Engineering",
+        "items": [
+          {
+            "title": "Preform & Stretch-Ratio Review",
+            "body": "The mould is developed from the preform, bottle drawing and intended stretch-blow process.",
+            "image": "/assets/catalog/blow-01.webp",
+            "bullets": [
+              "Preform compatibility",
+              "Stretch-ratio review",
+              "Neck alignment"
+            ]
+          },
+          {
+            "title": "Cooling & Surface Quality",
+            "body": "Cooling and surface finish protect bottle appearance and dimensional stability.",
+            "image": "/assets/catalog/blow-02.webp",
+            "bullets": [
+              "Cooling-channel review",
+              "Parting-line control",
+              "Visual approval sample"
+            ]
+          }
+        ]
+      },
+      "samples": [
+        {
+          "image": "/assets/catalog/blow-hero.webp"
+        },
+        {
+          "image": "/assets/catalog/blow-01.webp"
+        },
+        {
+          "image": "/assets/catalog/blow-02.webp"
+        },
+        {
+          "image": "/assets/catalog/blow-03.webp"
+        }
+      ],
+      "quality": [
+        {
+          "title": "Dimensional Inspection",
+          "body": "Bottle height, neck and critical panels are recorded."
+        },
+        {
+          "title": "Wall Review",
+          "body": "Wall distribution is checked against the approved bottle brief."
+        },
+        {
+          "title": "Leak & Fit Test",
+          "body": "The bottle is checked with the intended closure and filling conditions."
+        },
+        {
+          "title": "Material Traceability",
+          "body": "Steel and process records accompany the final samples."
+        }
+      ],
+      "testimonials": [
+        {
+          "quote": "The bottle shape and neck fit matched our approved drawing.",
+          "author": "Packaging engineer",
+          "country": "Indonesia"
+        },
+        {
+          "quote": "Cooling changes improved repeatability across the run.",
+          "author": "Production director",
+          "country": "India"
+        },
+        {
+          "quote": "The trial report made the custom bottle approval clear.",
+          "author": "Project manager",
+          "country": "Spain"
+        }
+      ],
+      "videos": []
+    }
   }
 }
-
