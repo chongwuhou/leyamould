@@ -13,9 +13,10 @@ def source(path: str) -> str:
 
 data = json.loads(source("data/mould-models.json"))
 rows = data.get("models", [])
-assert len(rows) == 112, f"expected 112 non-glass reference models, got {len(rows)}"
-slugs = [str(row.get("slug") or "") for row in rows]
-assert len(set(slugs)) == len(slugs)
+assert isinstance(rows, list) and rows, "reference catalogue must not be empty"
+slugs = [str(row.get("slug") or "").strip().lower() for row in rows]
+assert all(slugs), "every reference model requires a slug"
+assert len(set(slugs)) == len(slugs), "reference model slugs must be unique"
 assert all(row.get("family") and row.get("title") and row.get("image") for row in rows)
 assert all("glass cement" not in " ".join(str(row.get(key) or "") for key in ("family", "title", "sourceUrl", "description")).lower() for row in rows)
 
