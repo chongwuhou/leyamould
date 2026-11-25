@@ -57,6 +57,12 @@ def translation_map(rows):
 page_rows = [row for row in state.get("pages", []) if isinstance(row, dict) and clean_text(row.get("route"))]
 page_routes = {clean_text(row.get("route")) for row in page_rows}
 page_routes.update(clean_text(row.get("route")) for row in state.get("pageBodies", []) if isinstance(row, dict) and clean_text(row.get("route")))
+registry_rows = [row for row in state.get("pageRegistry", state.get("pages", [])) if isinstance(row, dict) and clean_text(row.get("route"))]
+registry_routes = {clean_text(row.get("route")) for row in registry_rows}
+if registry_routes != page_routes:
+    missing = sorted(page_routes - registry_routes)
+    extra = sorted(registry_routes - page_routes)
+    raise SystemExit("D1 page registry mismatch: missing=" + ",".join(missing[:10]) + " extra=" + ",".join(extra[:10]))
 page_translation = translation_map(state.get("translations", []))
 page_missing = []
 
