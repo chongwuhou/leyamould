@@ -12,6 +12,7 @@ def read(rel: str) -> str:
 snapshot = read("functions/api/build-snapshot.js")
 assert "'page_copy'" in snapshot
 assert "pageCopy:parseJson(config.page_copy,null)" in snapshot
+assert "pageRegistry" in snapshot and "pageFields" in snapshot and "contentType" in snapshot
 
 assert not (ROOT / "functions/api/admin/content-seed.js").exists()
 assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists()
@@ -22,6 +23,9 @@ for marker in ("save_page_copy", "quickAnswers", "groups", "bumpPublishRevision"
 
 page_data = read("data/mould-page-structured.json")
 assert "quickAnswers" in page_data and "groups" in page_data
+
+blog_admin = read("functions/api/admin/blog.js")
+assert "ensureRouteRegistry" in blog_admin and "/blog/"+post.slug+"/" in blog_admin
 
 renderer = read("mould_build.py")
 for marker in ("PAGE_COPY = STATE.get(\"pageCopy\")", "def structured_page_copy", "structured_page_value", "d1_ctas", "structured_eyebrow"):
