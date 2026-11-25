@@ -32,11 +32,20 @@ if not {"en", "es"}.issubset(set(published)):
 
 products = [row for row in state.get("products", []) if isinstance(row, dict) and re.fullmatch(r"[a-z0-9][a-z0-9-]{1,63}", str(row.get("model") or ""))]
 seo = {(str(row.get("slug") or "").lower(), str(row.get("locale") or "").lower()): row for row in state.get("productSeo", []) if isinstance(row, dict)}
+def effective_product_seo(product, locale):
+    model = str(product.get("model") or "").lower()
+    content = product.get("content") if isinstance(product.get("content"), dict) else {}
+    suffix = "Es" if locale == "es" else ""
+    title = content.get("seoTitle" + suffix) or content.get("titleEs" if locale == "es" else "title") or content.get("nameEs" if locale == "es" else "name")
+    description = content.get("seoDescription" + suffix) or content.get("descriptionEs" if locale == "es" else "description") or content.get("shortEs" if locale == "es" else "short")
+    if str(title or "").strip() and str(description or "").strip():
+        return {"slug": model, "locale": locale, "seoTitle": str(title).strip(), "metaDescription": str(description).strip(), "source": "xuyi_product_content"}
+    return None
 missing = []
 for product in products:
     model = str(product["model"]).lower()
     for locale in published:
-        row = seo.get((model, locale))
+        row = seo.get((model, locale)) or effective_product_seo(product, locale)
         if not row or not str(row.get("seoTitle") or "").strip() or not str(row.get("metaDescription") or "").strip():
             missing.append(f"{model}:{locale}")
 if missing:

@@ -38,6 +38,48 @@ async function ensureModelReferenceSchema(db){
 function parseJson(value,fallback){
   try{return value?JSON.parse(value):fallback}catch{return fallback}
 }
+function validSeoTitle(value){
+  const text=String(value??"").trim();
+  return text.length>=12&&text.length<=90&&!/[<>]/.test(text)?text:"";
+}
+function validMetaDescription(value){
+  const text=String(value??"").trim();
+  return text.length>=30&&text.length<=240&&!/[<>]/.test(text)?text:"";
+}
+function effectiveProductSeoRows(rows,products,localeCodes,sourceLocale){
+  // The dedicated SEO table remains the first owner. Older published product
+  // rows seeded before the SEO table existed still carry reviewed localized
+  // title/description fields in xuyi_product_content; expose those D1-owned
+  // fields as the effective SEO rows so a release never drops their metadata.
+  const byKey=new Map();
+  for(const row of rows){
+    const slug=String(row.slug||"").trim().toLowerCase();
+    const locale=String(row.locale||"").trim().toLowerCase();
+    const seoTitle=validSeoTitle(row.seo_title);
+    const metaDescription=validMetaDescription(row.meta_description);
+    if(!isMouldModel(slug)||!localeCodes.has(locale)||!seoTitle||!metaDescription)continue;
+    byKey.set(slug+"\u0000"+locale,{slug,locale,seoTitle,metaDescription,updatedAt:row.updated_at||"",source:"xuyi_product_seo"});
+  }
+  for(const product of products){
+    const slug=String(product.model||"").trim().toLowerCase();
+    if(!isMouldModel(slug))continue;
+    const content=parseJson(product.content_json,{});
+    for(const locale of localeCodes){
+      const key=slug+"\u0000"+locale;
+      if(byKey.has(key))continue;
+      const isSource=locale===String(sourceLocale||"en").toLowerCase()||locale==="en";
+      const title=validSeoTitle(content[isSource?"seoTitle":"seoTitle"+(locale==="es"?"Es":"")])
+        ||validSeoTitle(content[locale==="es"?"titleEs":"title"])
+        ||validSeoTitle(content[locale==="es"?"nameEs":"name"]);
+      const metaDescription=validMetaDescription(content[isSource?"seoDescription":"seoDescription"+(locale==="es"?"Es":"")])
+        ||validMetaDescription(content[locale==="es"?"descriptionEs":"description"])
+        ||validMetaDescription(content[locale==="es"?"shortEs":"short"]);
+      if(title&&metaDescription)
+        byKey.set(key,{slug,locale,seoTitle:title,metaDescription,updatedAt:product.updated_at||"",source:"xuyi_product_content"});
+    }
+  }
+  return [...byKey.values()].sort((a,b)=>a.slug.localeCompare(b.slug)||a.locale.localeCompare(b.locale));
+}
 export async function onRequestGet(context){
   if(!(await authorizedBuildRequest(context.request,context.env)))return json({error:"Unauthorized"},401);
   const db=context.env.LEYA_DB;
@@ -97,6 +139,7 @@ export async function onRequestGet(context){
         return [{...post,slug:r.slug,status:"published",updated_at:r.updated_at||"",published_at:r.published_at||""}];
       }catch{return [];}
     });
+    const effectiveProductSeo=effectiveProductSeoRows(productSeo,onlyProducts,publicLocaleCodes,languageConfig.sourceLocale);
     return json({
       site:"leyamould",schemaVersion:1,
       adminPath,
@@ -112,12 +155,10 @@ export async function onRequestGet(context){
         .map(r=>({route:r.route,mainHtml:r.main_html})),
        products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
       blogPosts:onlyBlogPosts,
-       productSeo:productSeo.filter(r=>isMouldModel(r.slug)
-         && publicLocaleCodes.has(r.locale)
-        && typeof r.seo_title==="string"&&r.seo_title.length<=90
-        && typeof r.meta_description==="string"&&r.meta_description.length<=240)
-        .map(r=>({slug:r.slug,locale:r.locale,seoTitle:r.seo_title,
-          metaDescription:r.meta_description,updatedAt:r.updated_at})),
+       // D1 remains the only source: explicit xuyi_product_seo rows win, and
+       // legacy product content fields are promoted into the same snapshot
+       // contract without inventing copy or touching owner data.
+       productSeo:effectiveProductSeo,
        productReviews:productReviews
          .filter(r=>MOULD_MODELS.has(String(r.model||""))
           && Number.isInteger(r.rating)&&r.rating>=1&&r.rating<=5

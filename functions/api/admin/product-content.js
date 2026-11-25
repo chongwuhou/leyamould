@@ -126,6 +126,19 @@ export async function onRequestPost(context){
     // no-overwrite guard when two admins import the same model concurrently.
     if(p.createOnly===true&&Number(saved?.meta?.changes??0)!==1)
       return respond({error:"Model already exists; create-only import will not overwrite"},409);
+    if(content.seoTitle||content.seoDescription||content.seoTitleEs||content.seoDescriptionEs){
+      await ensureProductSeo(db);
+      const languageConfig=await loadLanguageConfig(db);
+      for(const locale of new Set([languageConfig.sourceLocale,"en","es"])){
+        const suffix=locale==="es"?"Es":"";
+        const title=content["seoTitle"+suffix],desc=content["seoDescription"+suffix];
+        if(!title&&!desc)continue;
+        if(!title||!desc)return respond({error:"SEO title and description must both be provided for "+locale},400);
+        try{normalizeProductSeo({slug:canonicalProductSlug(model),locale,seoTitle:title,metaDescription:desc})}
+        catch(error){return respond({error:String(error.message||error)},400)}
+        await upsertProductSeo(db,{slug:canonicalProductSlug(model),locale,seoTitle:title,metaDescription:desc});
+      }
+    }
     if(status==="published"){
       const route="/product/"+model+".html";
       await db.batch([
@@ -149,7 +162,7 @@ export async function onRequestPost(context){
   if(!isMouldModel(model))return respond({error:"Invalid mould category slug"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
   const db=context.env.LEYA_DB;await ensure(db);
-  const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","body","bodyEs","sections","sectionsEs","faqs","faqsEs","category"];
+  const allowed=["title","titleEs","navTitle","navTitleEs","name","description","descriptionEs","short","shortEs","detail","detailEs","meta","metaEs","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","seoTitleEs","seoDescriptionEs","body","bodyEs","sections","sectionsEs","faqs","faqsEs","category"];
   let content={};
   const previousRow=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
   try{content=previousRow?.content_json?JSON.parse(previousRow.content_json):{};}catch{return respond({error:"Existing product JSON invalid"},409)}
@@ -165,18 +178,24 @@ export async function onRequestPost(context){
     content[key]=v[key].trim();
   }
   if(status==="published"&&(!content.title&&!content.name||!content.description))return respond({error:"Published mould category requires title and description"},400);
-  if(content.seoTitle||content.seoDescription){
+  if(content.seoTitle||content.seoDescription||content.seoTitleEs||content.seoDescriptionEs){
     await ensureProductSeo(db);
     const slug=canonicalProductSlug(model);
-     const sourceLocale=(await loadLanguageConfig(db)).sourceLocale;
-     const previous=await db.prepare("SELECT seo_title,meta_description FROM xuyi_product_seo WHERE slug=? AND locale=?")
-       .bind(slug,sourceLocale).first();
-    const title=content.seoTitle||previous?.seo_title;
-    const desc=content.seoDescription||previous?.meta_description;
-    if(!title||!desc)return respond({error:"SEO title and description must both be provided for a new record"},400);
-     try{normalizeProductSeo({slug,locale:sourceLocale,seoTitle:title,metaDescription:desc})}
-    catch(err){return respond({error:String(err.message||err)},400)}
-     await upsertProductSeo(db,{slug,locale:sourceLocale,seoTitle:title,metaDescription:desc});
+    const languageConfig=await loadLanguageConfig(db);
+    const sourceLocale=languageConfig.sourceLocale;
+    const seoUpdates=[];
+    for(const locale of new Set([sourceLocale,"en","es"])){
+      const suffix=locale==="es"?"Es":"";
+      const previous=await db.prepare("SELECT seo_title,meta_description FROM xuyi_product_seo WHERE slug=? AND locale=?").bind(slug,locale).first();
+      const title=content["seoTitle"+suffix]||previous?.seo_title;
+      const desc=content["seoDescription"+suffix]||previous?.meta_description;
+      if(!title&&!desc)continue;
+      if(!title||!desc)return respond({error:"SEO title and description must both be provided for "+locale},400);
+      try{normalizeProductSeo({slug,locale,seoTitle:title,metaDescription:desc})}
+      catch(err){return respond({error:String(err.message||err)},400)}
+      seoUpdates.push({slug,locale,seoTitle:title,metaDescription:desc});
+    }
+    for(const item of seoUpdates)await upsertProductSeo(db,item);
   }
   await db.prepare(`INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at) VALUES(?,?,?,CURRENT_TIMESTAMP)
     ON CONFLICT(model) DO UPDATE SET content_json=excluded.content_json,publication_status=excluded.publication_status,updated_at=CURRENT_TIMESTAMP`)

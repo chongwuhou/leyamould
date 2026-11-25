@@ -29,6 +29,7 @@ snapshot = source("functions/api/build-snapshot.js")
 assert "xuyi_product_content WHERE publication_status='published'" in snapshot
 assert "onlyProducts=products.filter" in snapshot
 assert "ensureYoutubeVideos(db)" in snapshot
+assert "effectiveProductSeoRows" in snapshot
 
 seed = source("functions/api/admin/mould-content-seed-20261124.js")
 for marker in ("mould-catalog.json", "mould-product-structured.json", "xuyi_product_content", "existingProducts", "productImagesRemainTemplateBound", "content.category"):
@@ -51,6 +52,9 @@ for locale in ("en", "es"):
     assert len(next(row for row in sections if row["id"] == "samples")["items"]) == 21
 product_admin = source("functions/api/admin/product-content.js")
 assert "function categoryCopy" in product_admin and "out.samples" in product_admin
+assert '"seoTitleEs"' in product_admin and '"seoDescriptionEs"' in product_admin
+new_product = source("functions/_shared/new-product.js")
+assert 'seoTitleEs:clean("seoTitleEs",90)' in new_product
 
 # Realistic owner-edit simulation: D1 content must win over the checked-in
 # baseline on a clean renderer import, including a localized field.

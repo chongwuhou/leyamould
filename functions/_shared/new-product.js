@@ -19,8 +19,11 @@ export function normalizeNewProduct(model,content,status="draft",options={}){
  const data={
   newProduct:true,factoryModel:clean("factoryModel",80),
   category:clean("category",90),name:clean("name",180),
+  titleEs:clean("titleEs",180),navTitle:clean("navTitle",180),navTitleEs:clean("navTitleEs",180),
   material:clean("material",200),capacity:clean("capacity",120),
-  description:clean("description",1300),image:clean("image",300),
+  description:clean("description",1300),descriptionEs:clean("descriptionEs",1300),
+  short:clean("short",900),shortEs:clean("shortEs",900),detail:clean("detail",1300),detailEs:clean("detailEs",1300),
+  meta:clean("meta",300),metaEs:clean("metaEs",300),image:clean("image",300),
   colors:clean("colors",300),packing:clean("packing",300),
   dimensions:clean("dimensions",160),unit_weight:clean("unit_weight",120),
   temperature_range:clean("temperature_range",120),retail_box_size:clean("retail_box_size",120),
@@ -30,16 +33,19 @@ export function normalizeNewProduct(model,content,status="draft",options={}){
   sourceSha256:clean("sourceSha256",64),sourceImageSha256:clean("sourceImageSha256",64),
   sourceNotes:clean("sourceNotes",800),qcStatus:clean("qcStatus",40),
   imageReviewStatus:clean("imageReviewStatus",40),
-  seoTitle:clean("seoTitle",90),seoDescription:clean("seoDescription",240)
+  seoTitle:clean("seoTitle",90),seoDescription:clean("seoDescription",240),
+  seoTitleEs:clean("seoTitleEs",90),seoDescriptionEs:clean("seoDescriptionEs",240)
  };
  const categories=Array.isArray(options.categories)&&options.categories.length?options.categories:CATEGORY_OPTIONS;
  if(data.category&&!categories.includes(data.category))throw Error("Choose a valid configured mould category");
  for(const [key,max] of [
-  ["factoryModel",80],["name",180],["material",200],["capacity",120],["description",1300],
+  ["factoryModel",80],["name",180],["titleEs",180],["navTitle",180],["navTitleEs",180],
+  ["material",200],["capacity",120],["description",1300],["descriptionEs",1300],
+  ["short",900],["shortEs",900],["detail",1300],["detailEs",1300],["meta",300],["metaEs",300],
   ["colors",300],["packing",300],["dimensions",160],["unit_weight",120],["temperature_range",120],
   ["retail_box_size",120],["carton_quantity",120],["carton_size",120],["carton_gross_weight",120],
   ["catalogOunceLabel",80],["sourceDocument",180],["sourcePage",20],["sourceSha256",64],["sourceImageSha256",64],["sourceNotes",800],
-  ["qcStatus",40],["imageReviewStatus",40],["seoTitle",90],["seoDescription",240]
+  ["qcStatus",40],["imageReviewStatus",40],["seoTitle",90],["seoDescription",240],["seoTitleEs",90],["seoDescriptionEs",240]
  ]){
   if(data[key].length>max)throw Error("Field too long: "+key);
  }
