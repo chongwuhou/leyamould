@@ -71,6 +71,8 @@
    <input name="reviewDate" id="review-date" type="date" required></label>
   <label class="block-label">客户评价原文
    <textarea name="content" id="review-text" rows="5" required minlength="12" maxlength="3000" placeholder="请保持客户真实的评价内容，不要自行编造或补充星级。"></textarea></label>
+  <label class="block-label">可核验的真实来源（发布必填）
+   <input name="sourceUrl" id="review-source-url" type="url" required placeholder="https://...（客户邮件、公开评价页或已授权案例来源）"></label>
   <label class="block-label">发布状态
    <select name="status" id="review-status"><option value="draft">草稿（不公开）</option>
    <option value="published">审核通过并发布</option></select></label>
@@ -109,7 +111,7 @@
   <h2>型号参考库</h2>
   <p>这里管理从 HMould 等资料整理出的型号参考。D1 保存标题、来源、语种和审核状态；正式发布必须绑定已经压缩并上传到 LEYA R2 的图片。保存后点击顶部「一键全站重建」，前台分类页才会读取已发布快照。</p>
  </div><span class="safe-badge">Draft → Review → R2 → Publish</span></div>
- <div class="row-actions"><button type="button" class="btn ghost" id="model-reference-reload">读取 D1 型号</button><button type="button" class="btn ghost" id="model-reference-new">+ 新增 / 导入一条</button><label class="btn ghost">选择批量 JSON<input id="model-reference-import-file" type="file" accept="application/json" hidden></label><button type="button" class="btn primary" id="model-reference-import">批量导入草稿</button><span id="model-reference-status" class="muted" role="status" aria-live="polite"></span></div>
+ <div class="row-actions"><button type="button" class="btn ghost" id="model-reference-reload">读取 D1 型号</button><button type="button" class="btn ghost" id="model-reference-new">+ 新增 / 导入一条</button><button type="button" class="btn ghost" id="model-reference-regrade">按真实资料重新分级</button><label class="btn ghost">选择批量 JSON<input id="model-reference-import-file" type="file" accept="application/json" hidden></label><button type="button" class="btn primary" id="model-reference-import">批量导入草稿</button><span id="model-reference-status" class="muted" role="status" aria-live="polite"></span></div>
  <form id="model-reference-editor" class="blog-admin-editor" autocomplete="off">
   <div class="blog-admin-form-grid">
    <label>稳定 slug<input id="model-reference-slug" required maxlength="140" placeholder="pet-preform-mould-48-cavities"></label>
@@ -129,10 +131,10 @@
   </div>
   <label class="blog-admin-wide">英文说明<textarea id="model-reference-description" rows="3" maxlength="2000" placeholder="只写来源资料能支持的事实，最终钢材、穴数、机台接口等以项目确认单为准。"></textarea></label>
   <div class="blog-admin-form-grid">
-   <label>西班牙语标题（可留空回退英文）<input id="model-reference-title-es" maxlength="180"></label>
-   <label>西班牙语 ALT（可留空回退英文）<input id="model-reference-alt-es" maxlength="180"></label>
+   <label>西班牙语标题（发布必填）<input id="model-reference-title-es" maxlength="180"></label>
+   <label>西班牙语 ALT（发布必填）<input id="model-reference-alt-es" maxlength="180"></label>
   </div>
-  <label class="blog-admin-wide">西班牙语说明（可留空回退英文）<textarea id="model-reference-description-es" rows="3" maxlength="2000"></textarea></label>
+  <label class="blog-admin-wide">西班牙语说明（英文有说明时发布必填）<textarea id="model-reference-description-es" rows="3" maxlength="2000"></textarea></label>
   <div class="row-actions"><button type="submit" class="btn primary">保存到 D1</button><button type="button" class="btn ghost" id="model-reference-reset">清空</button></div>
  </form>
  <div id="model-reference-list"></div>

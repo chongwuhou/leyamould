@@ -60,6 +60,11 @@
     catch(error){status.textContent=error.message}
   });
   $('model-reference-reload')?.addEventListener('click',load);
+  $('model-reference-regrade')?.addEventListener('click',async()=>{
+    if(!confirm('将按来源、R2 图片、语言字段和 PDF 元数据检查所有已发布型号；不符合的会降为草稿。确认继续？'))return;
+    try{status.textContent='正在按真实资料重新分级…';const result=await api('POST',{action:'regrade'});status.textContent='重新分级完成：降为草稿 '+(result.counts?.demoted||0)+'，保留发布 '+(result.counts?.kept||0);await load()}
+    catch(error){status.textContent=error.message}
+  });
   $('model-reference-new')?.addEventListener('click',reset);
   $('model-reference-reset')?.addEventListener('click',reset);
   $('model-reference-import')?.addEventListener('click',async()=>{

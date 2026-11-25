@@ -29,6 +29,48 @@ published = [str(row.get("code") or "").lower() for row in languages.get("langua
 published = published or ["en", "es"]
 if not {"en", "es"}.issubset(set(published)):
     raise SystemExit("LEYA requires reviewed English and Spanish publish locales")
+source_locale = str(languages.get("sourceLocale") or "en").lower()
+if source_locale not in published:
+    raise SystemExit(f"source locale is not publish-ready: {source_locale}")
+
+def clean_text(value):
+    return str(value or "").strip()
+
+def translation_map(rows):
+    result = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        resource = clean_text(row.get("resourceId"))
+        locale = clean_text(row.get("locale")).lower()
+        content = row.get("content") if isinstance(row.get("content"), dict) else {}
+        if resource and locale:
+            result[(resource, locale)] = content
+    return result
+
+# Production cannot silently ship source-language fallback as a translated
+# page. Every managed page therefore needs reviewed SEO/copy per publish locale.
+page_rows = [row for row in state.get("pages", []) if isinstance(row, dict) and clean_text(row.get("route"))]
+page_routes = {clean_text(row.get("route")) for row in page_rows}
+page_routes.update(clean_text(row.get("route")) for row in state.get("pageBodies", []) if isinstance(row, dict) and clean_text(row.get("route")))
+page_translation = translation_map(state.get("translations", []))
+page_missing = []
+for row in page_rows:
+    route = clean_text(row.get("route"))
+    if not clean_text(row.get("seo_title")) or not clean_text(row.get("meta_description")):
+        page_missing.append(route + ":source-seo")
+for route in sorted(page_routes):
+    has_body = any(isinstance(item, dict) and clean_text(item.get("route")) == route and len(clean_text(item.get("mainHtml"))) >= 100 for item in state.get("pageBodies", []))
+    for locale in published:
+        if locale == source_locale:
+            continue
+        content = page_translation.get(("page:" + route, locale))
+        if not content or not clean_text(content.get("title")) or not clean_text(content.get("description")):
+            page_missing.append(f"{route}:{locale}:title-description")
+        if has_body and (not content or len(clean_text(content.get("mainHtml"))) < 100):
+            page_missing.append(f"{route}:{locale}:mainHtml")
+if page_missing:
+    raise SystemExit("D1 page language/SEO completeness is incomplete: " + ", ".join(page_missing[:40]))
 
 products = [row for row in state.get("products", []) if isinstance(row, dict) and re.fullmatch(r"[a-z0-9][a-z0-9-]{1,63}", str(row.get("model") or ""))]
 seo = {(str(row.get("slug") or "").lower(), str(row.get("locale") or "").lower()): row for row in state.get("productSeo", []) if isinstance(row, dict)}
@@ -57,7 +99,7 @@ effective_count = 0
 for product in products:
     model = str(product["model"]).lower()
     for locale in published:
-        row = seo.get((model, locale)) or effective_product_seo(product, locale)
+        row = seo.get((model, locale)) if locale != source_locale else (seo.get((model, locale)) or effective_product_seo(product, locale))
         if not row or not str(row.get("seoTitle") or "").strip() or not str(row.get("metaDescription") or "").strip():
             missing.append(f"{model}:{locale}")
         else:
@@ -119,9 +161,29 @@ for row in state.get("modelReferences", []):
         model_missing.append(str(row.get("slug") or "unknown"))
     if row.get("sourceUrl") and not str(row.get("sourceUrl")).startswith(("https://", "http://")):
         model_missing.append(str(row.get("slug") or "unknown") + ":source")
+    if not clean_text(row.get("sourceUrl")).startswith("https://") or not clean_text(row.get("sourceImage")).startswith("https://"):
+        model_missing.append(str(row.get("slug") or "unknown") + ":verified-source")
+    if not clean_text(row.get("image")).startswith("/media/"):
+        model_missing.append(str(row.get("slug") or "unknown") + ":r2-image")
+    translations = row.get("translations") if isinstance(row.get("translations"), dict) else {}
+    source_description = clean_text(row.get("description"))
+    for locale in published:
+        if locale == source_locale:
+            continue
+        localized = translations.get(locale) if isinstance(translations.get(locale), dict) else {}
+        if not clean_text(localized.get("title")) or not clean_text(localized.get("alt")):
+            model_missing.append(str(row.get("slug") or "unknown") + ":" + locale + ":title-alt")
+        if source_description and not clean_text(localized.get("description")):
+            model_missing.append(str(row.get("slug") or "unknown") + ":" + locale + ":description")
+    if clean_text(row.get("pdfUrl")) and (len(clean_text(row.get("pdfSha256"))) != 64 or int(row.get("pdfPages") or 0) < 1):
+        model_missing.append(str(row.get("slug") or "unknown") + ":pdf-metadata")
     model_checked += 1
 if model_missing:
     raise SystemExit("Published model reference fields are incomplete: " + ", ".join(model_missing[:20]))
+
+for review in state.get("productReviews", []):
+    if not isinstance(review, dict) or not clean_text(review.get("sourceUrl")).startswith("https://"):
+        raise SystemExit("Published product reviews require a verified HTTPS source URL")
 
 for post in state.get("blogPosts", []):
     if not isinstance(post, dict):

@@ -28,7 +28,8 @@ for slug in (
 snapshot = source("functions/api/build-snapshot.js")
 assert "xuyi_product_content WHERE publication_status='published'" in snapshot
 assert "onlyProducts=products.filter" in snapshot
-assert "ensureYoutubeVideos(db)" in snapshot
+assert "ensureYoutubeVideos(db)" not in snapshot
+assert "ALTER TABLE" not in snapshot and "CREATE TABLE" not in snapshot
 assert "effectiveProductSeoRows" in snapshot
 
 seed = source("functions/api/admin/mould-content-seed-20261124.js")

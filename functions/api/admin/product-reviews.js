@@ -21,12 +21,12 @@ export async function onRequestGet(c){
  const denied=await authorized(c);if(denied)return denied;
  const db=c.env.LEYA_DB;await ensureProductReviews(db);
  const [rows,products]=await Promise.all([
-  db.prepare("SELECT id,model,rating,author,review_date,content,status,updated_at FROM xuyi_product_reviews ORDER BY updated_at DESC,id LIMIT 2000").all(),
+  db.prepare("SELECT id,model,rating,author,review_date,content,source_url,source_verified_at,status,updated_at FROM xuyi_product_reviews ORDER BY updated_at DESC,id LIMIT 2000").all(),
   db.prepare("SELECT model,content_json,publication_status FROM xuyi_product_content WHERE publication_status='published' ORDER BY model").all()
  ]);
  const extra=(products.results||[]).filter(x=>{try{return JSON.parse(x.content_json)?.newProduct===true}catch{return false}}).map(x=>x.model);
  return json({models:[...new Set([...MANAGED_MODELS,...extra])].sort(),
-  items:(rows.results||[]).map(r=>({id:r.id,model:r.model,rating:r.rating,author:r.author,reviewDate:r.review_date,content:r.content,status:r.status,updatedAt:r.updated_at}))});
+  items:(rows.results||[]).map(r=>({id:r.id,model:r.model,rating:r.rating,author:r.author,reviewDate:r.review_date,content:r.content,sourceUrl:r.source_url||"",sourceVerifiedAt:r.source_verified_at||"",status:r.status,updatedAt:r.updated_at}))});
 }
 export async function onRequestPost(c){
  const denied=await authorized(c);if(denied)return denied;
@@ -50,13 +50,13 @@ export async function onRequestPost(c){
    return json({error:"Review not found"},404);
  const sql=[
   "INSERT INTO xuyi_product_reviews",
-  "(id,model,rating,author,review_date,content,status,updated_at)",
-  "VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)",
+  "(id,model,rating,author,review_date,content,source_url,source_verified_at,status,updated_at)",
+  "VALUES(?,?,?,?,?,?,?,CASE WHEN ?<>'' THEN CURRENT_TIMESTAMP ELSE '' END,?,CURRENT_TIMESTAMP)",
   "ON CONFLICT(id) DO UPDATE SET model=excluded.model,rating=excluded.rating,",
   "author=excluded.author,review_date=excluded.review_date,content=excluded.content,",
-  "status=excluded.status,updated_at=CURRENT_TIMESTAMP"
+  "source_url=excluded.source_url,source_verified_at=excluded.source_verified_at,status=excluded.status,updated_at=CURRENT_TIMESTAMP"
  ].join(" ");
- await db.prepare(sql).bind(id,review.model,review.rating,review.author,review.reviewDate,review.content,review.status).run();
+ await db.prepare(sql).bind(id,review.model,review.rating,review.author,review.reviewDate,review.content,review.sourceUrl,review.sourceUrl,review.status).run();
  const revision=await bumpPublishRevision(db);
  return json({saved:true,id,model:review.model,status:review.status,...revision});
 }

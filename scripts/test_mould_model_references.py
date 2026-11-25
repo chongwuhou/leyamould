@@ -27,6 +27,8 @@ for required in (
     assert required in api, required
 assert "LEYA_ASSETS.head" in api
 assert "Bulk import aborted; no rows were written" in api
+assert 'action==="regrade"' in api
+assert "publication_status='draft'" in api
 
 snapshot = source("functions/api/build-snapshot.js")
 assert "leya_model_references" in snapshot
@@ -47,5 +49,9 @@ assert "model-reference-editor" in admin and "model-reference-import" in admin
 
 release = source("scripts/build_release.py")
 assert '"modelReferences"' in release and "modelReferenceCount" in release
+
+regrade = source("scripts/regrade_mould_references.py")
+assert "never calls a remote API" in regrade
+assert "draft_until_d1_review" in regrade
 
 print("LEYA_MOULD_MODEL_REFERENCE_CONTRACT_PASSED", f"rows={len(rows)}")

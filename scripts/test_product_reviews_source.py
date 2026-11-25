@@ -106,6 +106,8 @@ for loc in ("en","es","pt","ru","tr"):
 
 assert "productReviews" in (ROOT/"functions/api/build-snapshot.js").read_text("utf8")
 assert "status='published'" in (ROOT/"functions/api/build-snapshot.js").read_text("utf8")
+reviews_source=(ROOT/"functions/_shared/product-reviews.js").read_text("utf8")
+assert "source_url" in reviews_source and "可核验的 HTTPS 评价来源" in reviews_source
 assert "product_reviews_source import at_product_source" in (ROOT/"site_renderer.py").read_text("utf8")
 assert "product_reviews_source import at_product_source" in (ROOT/"scripts/render_locales.py").read_text("utf8")
 admin=(ROOT/"admin/index.html").read_text("utf8")

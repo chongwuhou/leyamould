@@ -44,7 +44,7 @@
  function edit(r){
   editingId=r.id;
   for(const [name,val] of [["model",r.model],["rating",String(r.rating)],["author",r.author],
-   ["reviewDate",r.reviewDate],["content",r.content],["status",r.status]]){
+   ["reviewDate",r.reviewDate],["content",r.content],["sourceUrl",r.sourceUrl||""],["status",r.status]]){
    const el=$("review-editor").elements.namedItem(name);if(el)el.value=val;
   }
   $("review-authentic").checked=false;
@@ -59,6 +59,7 @@
    rating:Number(form.elements.namedItem("rating").value),author:form.elements.namedItem("author").value.trim(),
    reviewDate:form.elements.namedItem("reviewDate").value,
    content:form.elements.namedItem("content").value.trim(),
+   sourceUrl:form.elements.namedItem("sourceUrl").value.trim(),
    status:form.elements.namedItem("status").value,
    confirmedAuthentic:$("review-authentic").checked};
   if(!models.includes(body.model)){status("请从已有产品型号中选择，不要把公司评价挂到不存在的型号。");return}

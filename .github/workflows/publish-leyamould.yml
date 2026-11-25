@@ -32,6 +32,7 @@ on:
       - "scripts/test_mould_admin_contract.py"
       - "scripts/test_mould_media_publish_contract.py"
       - "scripts/test_mould_model_references.py"
+      - "scripts/regrade_mould_references.py"
       - "scripts/test_mould_d1_source_authority.py"
       - "scripts/test_mould_page_copy_d1_contract.py"
       - "scripts/test_mould_product_d1_contract.py"
@@ -91,6 +92,8 @@ jobs:
         run: python scripts/test_legacy_media_migration.py
       - name: Verify LEYA model-reference D1/R2 contract
         run: python scripts/test_mould_model_references.py
+      - name: Report model-reference publication readiness
+        run: python scripts/regrade_mould_references.py
       - name: Verify LEYA D1 content-source authority
         run: python scripts/test_mould_d1_source_authority.py
       - name: Verify LEYA product catalog D1 authority

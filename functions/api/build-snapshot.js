@@ -3,8 +3,6 @@
 // or other private tables; responses are no-store and not indexable.
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
 import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from "../_shared/site-settings.js";
-import { ensureLeyaSystemSchema } from "../_shared/leya-system.js";
-import { ensureYoutubeVideos } from "../_shared/youtube-videos.js";
 import { MOULD_MODELS, MOULD_ROUTES, isMouldModel, isMouldProductRoute, isMouldRoute, mouldModelFromRoute } from "../_shared/mould-routes.js";
 import MOULD_CATALOG from "../../data/mould-catalog.json";
 
@@ -16,26 +14,16 @@ async function list(db,sql){
     throw error;
   }
 }
-async function ensureNavigationSchema(db){
+async function tableColumns(db,table){
   try{
-    const columns=(await db.prepare("PRAGMA table_info(site_navigation)").all()).results||[];
-    if(columns.length&&!columns.some(row=>row.name==="translations_json"))
-      await db.prepare("ALTER TABLE site_navigation ADD COLUMN translations_json TEXT NOT NULL DEFAULT '{}'").run();
+    const rows=(await db.prepare("PRAGMA table_info("+table+")").all()).results||[];
+    return new Set(rows.map(row=>String(row.name||"")));
   }catch(error){
-    // A clean database may not have navigation yet; the existing list helper
-    // will safely return an empty D1 section in that case.
-    if(!/no such table/i.test(String(error?.message||error)))throw error;
+    if(/no such table/i.test(String(error?.message||error)))return new Set();
+    throw error;
   }
 }
-async function ensureModelReferenceSchema(db){
-  try{
-    const columns=(await db.prepare("PRAGMA table_info(leya_model_references)").all()).results||[];
-    if(!columns.length)return;
-    for(const [name,type] of [["pdf_url","TEXT"],["pdf_sha256","TEXT"],["pdf_pages","INTEGER"]]){
-      if(!columns.some(row=>row.name===name))await db.prepare(`ALTER TABLE leya_model_references ADD COLUMN ${name} ${type} NOT NULL DEFAULT '${type==="INTEGER"?"0":""}'`).run();
-    }
-  }catch(error){if(!/no such table/i.test(String(error?.message||error)))throw error;}
-}
+const optionalColumn=(columns,name,fallback)=>columns.has(name)?name:(fallback+" AS "+name);
 function parseJson(value,fallback){
   try{return value?JSON.parse(value):fallback}catch{return fallback}
 }
@@ -100,32 +88,39 @@ export async function onRequestGet(context){
   const db=context.env.LEYA_DB;
   if(!db)return json({error:"LEYA_DB binding missing"},503);
   try{
-    await ensureLeyaSystemSchema(db);
-    await ensureNavigationSchema(db);
-    await ensureModelReferenceSchema(db);
-    // The build snapshot is also the first reader after a fresh deployment.
-    // Ensure the video schema/migrations exist before selecting the published
-    // rows, so a new column never makes an otherwise valid build fail.
-    await ensureYoutubeVideos(db);
+    // Schema discovery is read-only.  Older D1 tables may not yet contain a
+    // newly added optional column; the snapshot must still read safely rather
+    // than migrating the database from a GET request.
+    const [navigationColumns,reviewColumns,videoColumns,modelReferenceColumns]=await Promise.all([
+      tableColumns(db,"site_navigation"),tableColumns(db,"xuyi_product_reviews"),
+      tableColumns(db,"leya_youtube_videos"),tableColumns(db,"leya_model_references")
+    ]);
+    const navigationTranslations=optionalColumn(navigationColumns,"translations_json","'{}'");
+    const reviewSourceUrl=optionalColumn(reviewColumns,"source_url","''");
+    const reviewSourceVerifiedAt=optionalColumn(reviewColumns,"source_verified_at","''");
+    const videoSource=optionalColumn(videoColumns,"source","'youtube'");
+    const modelPdfUrl=optionalColumn(modelReferenceColumns,"pdf_url","''");
+    const modelPdfSha=optionalColumn(modelReferenceColumns,"pdf_sha256","''");
+    const modelPdfPages=optionalColumn(modelReferenceColumns,"pdf_pages","0");
     const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos,modelReferences]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy','page_copy')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
-      list(db,"SELECT id,parent_id,label,url,sort_order,new_window,translations_json FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
+      list(db,"SELECT id,parent_id,label,url,sort_order,new_window,"+navigationTranslations+" FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
       list(db,"SELECT source_path,target_path,status_code FROM site_redirects WHERE enabled=1 ORDER BY source_path"),
       list(db,"SELECT model,content_json,publication_status FROM xuyi_product_content WHERE publication_status='published' ORDER BY model"),
       list(db,"SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides ORDER BY locale,resource_id"),
       list(db,"SELECT route,main_html FROM xuyi_page_content WHERE publication_status='published' ORDER BY route"),
       list(db,"SELECT path,alt_json FROM xuyi_media_alt ORDER BY path LIMIT 12000"),
-      list(db,"SELECT id,model,rating,author,review_date,content,status FROM xuyi_product_reviews WHERE status='published' ORDER BY model,review_date DESC,id"),
+      list(db,"SELECT id,model,rating,author,review_date,content,"+reviewSourceUrl+","+reviewSourceVerifiedAt+",status FROM xuyi_product_reviews WHERE status='published' ORDER BY model,review_date DESC,id"),
       list(db,"SELECT slug,locale,seo_title,meta_description,updated_at FROM xuyi_product_seo ORDER BY slug,locale"),
       // Keep the build snapshot in the same deterministic order as the live
       // English Blog route. Localized static indexes are rendered from this
       // D1 order so every language presents the same article sequence.
       list(db,"SELECT slug,status,content_json,updated_at,published_at FROM xuyi_blog_posts WHERE status='published' ORDER BY COALESCE(published_at,updated_at) DESC,slug ASC"),
-      list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,source,status,published_at,sort_order,updated_at FROM leya_youtube_videos WHERE status='published' ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500"),
+      list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,"+videoSource+",status,published_at,sort_order,updated_at FROM leya_youtube_videos WHERE status='published' ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500"),
       // Model references are reviewed catalogue records. Only formally
       // published rows enter the immutable build snapshot.
-      list(db,"SELECT slug,family,title,alt,source_url,source_image,image_path,description,translations_json,pdf_url,pdf_sha256,pdf_pages,publication_status,sort_order,updated_at FROM leya_model_references WHERE publication_status='published' ORDER BY family,sort_order,slug LIMIT 2000")
+      list(db,"SELECT slug,family,title,alt,source_url,source_image,image_path,description,translations_json,"+modelPdfUrl+","+modelPdfSha+","+modelPdfPages+",publication_status,sort_order,updated_at FROM leya_model_references WHERE publication_status='published' ORDER BY family,sort_order,slug LIMIT 2000")
     ]);
       const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
       const languageConfig=normalizeLanguageConfig(parseJson(config.language_config,defaultLanguageConfig()));
@@ -179,9 +174,11 @@ export async function onRequestGet(context){
           && Number.isInteger(r.rating)&&r.rating>=1&&r.rating<=5
           && typeof r.author==="string"&&r.author.length>=2&&r.author.length<100
           && /^\d{4}-\d{2}-\d{2}$/.test(r.review_date)
-          && typeof r.content==="string"&&r.content.length>=12)
+          && typeof r.content==="string"&&r.content.length>=12
+          && /^https:\/\//i.test(String(r.source_url||""))
+          && String(r.source_verified_at||"").trim())
         .map(r=>({id:r.id,model:r.model,rating:r.rating,author:r.author,
-          reviewDate:r.review_date,content:r.content,status:"published"})),
+          reviewDate:r.review_date,content:r.content,sourceUrl:r.source_url,status:"published"})),
        mediaAlts:mediaAlts.filter(r=>/^\/media\/(?:product|page|shared|ppt|excel|group|capability|gallery|blog)\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(r.path))
          .map(r=>({path:r.path,translations:parseJson(r.alt_json,{})})),
        translations:translations.filter(r=>{

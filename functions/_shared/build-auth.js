@@ -88,13 +88,7 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
 // navigation or SEO copy from the caller.
 export async function authorizedMouldContentSeedRequest(request, env) {
   const pathname = new URL(request.url).pathname;
-  if (request.method !== "POST" || !new Set([
-    "/api/admin/content-seed",
-    "/api/admin/mould-content-seed-20261124"
-  ]).has(pathname)) return false;
-  // The dated path is retained only as a disabled compatibility alias. New
-  // owner-approved seeds use the stable generic route below.
-  if (pathname === "/api/admin/mould-content-seed-20261124" && String(env.LEYA_ALLOW_LEGACY_MIGRATIONS || "") !== "1") return false;
+  if (request.method !== "POST" || pathname !== "/api/admin/content-seed") return false;
   return authorizedExplicitPublishRequest(request, env);
 }
 
@@ -153,17 +147,6 @@ export async function authorizedProductSeoPromotionRequest(request, env){
 // Narrow scheduler heartbeat/claim endpoint for the canonical LEYA MOULD GitHub runner.
 export async function authorizedSchedulerRunnerRequest(request, env){
   if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/scheduler-runner")return false;
-  return verifyCloudflareProjectToken(bearerToken(request),env);
-}
-
-// One-time reviewed 58-model factory catalog import. These two exact routes
-// are the only write paths admitted for the existing LEYA MOULD CI project token.
-export async function authorizedReviewedFactoryCatalogImageUploadRequest(request, env){
-  if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-images-20261103")return false;
-  return verifyCloudflareProjectToken(bearerToken(request),env);
-}
-export async function authorizedReviewedFactoryCatalogCommitRequest(request, env){
-  if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/factory-catalog-20261103")return false;
   return verifyCloudflareProjectToken(bearerToken(request),env);
 }
 

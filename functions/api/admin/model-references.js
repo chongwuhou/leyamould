@@ -80,7 +80,8 @@ function parseTranslations(value,locales){
 }
 
 async function normalized(input,db){
-  const languages=publicLanguages(await loadLanguageConfig(db));
+  const languageConfig=await loadLanguageConfig(db);
+  const languages=publicLanguages(languageConfig);
   const localeCodes=languages.map(item=>item.code);
   const slug=clean(input?.slug,140).toLowerCase();
   if(!SLUG.test(slug))throw Error("Invalid model slug");
@@ -108,6 +109,20 @@ async function normalized(input,db){
   if(!Number.isInteger(sortOrder)||sortOrder<0||sortOrder>99999)throw Error("Invalid sort order");
   const translations=parseTranslations(input?.translations??input?.translationsJson??input?.translations_json,localeCodes);
   if(pdfUrl && !pdfSha256)throw Error("PDF SHA-256 is required when a PDF is attached");
+  if(pdfUrl && pdfPages<1)throw Error("PDF page count is required when a PDF is attached");
+  if(status==="published"){
+    if(!/^https:\/\//i.test(sourceUrl)||!/^https:\/\//i.test(sourceImage))
+      throw Error("Published model references require an HTTPS source URL and source image");
+    const sourceLocale=String(languageConfig.sourceLocale||"en").toLowerCase();
+    for(const locale of localeCodes){
+      if(locale===sourceLocale)continue;
+      const localized=translations[locale];
+      if(!localized?.title||!localized?.alt)
+        throw Error("Published model references require reviewed "+locale+" title and ALT text");
+      if(description && !localized.description)
+        throw Error("Published model references require reviewed "+locale+" description");
+    }
+  }
   return {slug,family,title,alt,sourceUrl,sourceImage,imagePath,description,translations,pdfUrl,pdfSha256,pdfPages,status,sortOrder,reviewedAt:clean(input?.reviewedAt||input?.reviewed_at,80)};
 }
 
@@ -128,6 +143,22 @@ function output(row){
 }
 function parseStored(value){try{const data=JSON.parse(value||"{}");return data&&typeof data==="object"&&!Array.isArray(data)?data:{};}catch{return {}}}
 
+function reviewIssues(row,locales,sourceLocale){
+  const issues=[];
+  if(!/^https:\/\//i.test(String(row.source_url||"")))issues.push("source_url");
+  if(!/^https:\/\//i.test(String(row.source_image||"")))issues.push("source_image");
+  if(!String(row.image_path||"").startsWith("/media/"))issues.push("r2_image");
+  const translations=parseStored(row.translations_json);
+  for(const locale of locales){
+    if(locale===sourceLocale)continue;
+    const item=translations[locale];
+    if(!item?.title||!item?.alt)issues.push(locale+"_title_alt");
+    if(String(row.description||"").trim()&&!item?.description)issues.push(locale+"_description");
+  }
+  if(String(row.pdf_url||"").trim()&&(!/^[a-f0-9]{64}$/i.test(String(row.pdf_sha256||""))||Number(row.pdf_pages||0)<1))issues.push("pdf_metadata");
+  return issues;
+}
+
 export async function onRequestGet(c){
   const {db,error}=await guard(c);if(error)return error;
   const rows=(await db.prepare("SELECT id,slug,family,title,alt,source_url,source_image,image_path,description,translations_json,pdf_url,pdf_sha256,pdf_pages,publication_status,sort_order,reviewed_at,updated_at FROM leya_model_references ORDER BY family,sort_order,slug LIMIT 2000").all()).results||[];
@@ -138,6 +169,23 @@ export async function onRequestPost(c){
   const {db,error}=await guard(c);if(error)return error;
   let input;try{input=await c.request.json()}catch{return respond({error:"Invalid JSON"},400)}
   const action=input?.action||"save";
+  if(action==="regrade"){
+    const languageConfig=await loadLanguageConfig(db);
+    const locales=publicLanguages(languageConfig).map(item=>item.code);
+    const sourceLocale=String(languageConfig.sourceLocale||"en").toLowerCase();
+    const rows=(await db.prepare("SELECT id,slug,source_url,source_image,image_path,description,translations_json,pdf_url,pdf_sha256,pdf_pages,publication_status FROM leya_model_references WHERE publication_status='published' ORDER BY slug LIMIT 2000").all()).results||[];
+    const demoted=[],kept=[];
+    for(const row of rows){
+      const issues=reviewIssues(row,locales,sourceLocale);
+      if(!issues.length){
+        try{await verifyPublishedImage(c,{imagePath:row.image_path});kept.push(row.slug);continue}catch(error){issues.push("r2_image_missing")}
+      }
+      await db.prepare("UPDATE leya_model_references SET publication_status='draft',reviewed_at='',updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(row.id).run();
+      demoted.push({slug:row.slug,issues});
+    }
+    const revision=demoted.length?await bumpPublishRevision(db):{};
+    return respond({regraded:true,demoted,kept,counts:{demoted:demoted.length,kept:kept.length},...revision});
+  }
   if(action==="delete"){
     const slug=clean(input?.slug,140).toLowerCase();
     const row=await db.prepare("SELECT publication_status FROM leya_model_references WHERE slug=?").bind(slug).first();
