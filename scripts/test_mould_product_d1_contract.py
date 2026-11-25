@@ -31,6 +31,7 @@ assert "onlyProducts=products.filter" in snapshot
 assert "ensureYoutubeVideos(db)" not in snapshot
 assert "ALTER TABLE" not in snapshot and "CREATE TABLE" not in snapshot
 assert "effectiveProductSeoRows" in snapshot
+assert "contentSchemaVersion" in snapshot and "structured" in snapshot
 
 assert not (ROOT / "functions/api/admin/content-seed.js").exists()
 assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists()
@@ -53,6 +54,7 @@ for locale in ("en", "es"):
 product_admin = source("functions/api/admin/product-content.js")
 assert "function categoryCopy" in product_admin and "out.samples" in product_admin
 assert '"seoTitleEs"' in product_admin and '"seoDescriptionEs"' in product_admin
+assert '"structured"' in product_admin
 new_product = source("functions/_shared/new-product.js")
 assert 'seoTitleEs:clean("seoTitleEs",90)' in new_product
 
@@ -73,6 +75,7 @@ mould_build.STATE = {
             "sections": [{"title": "Owner technology section", "body": "Owner-controlled technical copy."}],
             "faqs": [{"question": "Owner question?", "answer": "Owner answer."}],
             "category": {"hero": {"title": "Owner category hero"}, "samples": [{"image": "/upload/owner/sample.jpg", "alt": "Owner sample"}]},
+            "structured": {"hero": {"title": "Owner structured hero"}, "samples": [{"image": "/upload/owner/structured.jpg", "alt": "Owner structured sample"}]},
         },
     }]
 }
@@ -83,8 +86,8 @@ assert edited["description"] == "Owner-controlled product description."
 assert edited["body"] == "Owner-controlled structured product body."
 assert edited["sections"][0]["title"] == "Owner technology section"
 assert edited["faqs"][0]["question"] == "Owner question?"
-assert edited["categoryCopy"]["hero"]["title"] == "Owner category hero"
-assert edited["categoryCopy"]["samples"][0]["image"] == "/upload/owner/sample.jpg"
+assert edited["categoryCopy"]["hero"]["title"] == "Owner structured hero"
+assert edited["categoryCopy"]["samples"][0]["image"] == "/upload/owner/structured.jpg"
 
 # A new published D1 family must enter the same safe category renderer without
 # changing the checked-in catalogue or requiring a hardcoded route list.
