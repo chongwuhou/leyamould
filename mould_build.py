@@ -203,23 +203,13 @@ for _seo in STATE.get("productSeo", []):
             "metaDescription": _description,
         }
 
-# Reviewed source fallback for the two currently published locales. D1 rows
-# remain authoritative and replace these values as soon as an editor saves a
-# locale-specific product SEO record.
+# Reviewed source fallback for the two currently published locales. This is
+# derived from the canonical catalogue only when D1 has no row; an editor's
+# D1 value always replaces it.
 PRODUCT_FALLBACK_SEO = {
-    "mineral-water-closure-cap-molds": {"seoTitle": "Molde de tapón para agua y bebidas", "metaDescription": "Moldes de alta precisión para cierres de agua mineral, bebidas carbonatadas y zumos."},
-    "oil-bottle-cap-mould": {"seoTitle": "Molde de tapón para aceite comestible", "metaDescription": "Soluciones de molde para cierres con anilla y evidencia de manipulación en envases de aceite."},
-    "flip-top-caps-mould": {"seoTitle": "Molde de tapón cosmético flip-top", "metaDescription": "Moldes con bisagra viva para envases de champú, acondicionador y cuidado personal."},
-    "engine-oil-cap-mould": {"seoTitle": "Molde de tapón para aceite de motor", "metaDescription": "Moldes resistentes para cierres de lubricantes de automoción y envases industriales."},
-    "food-packaging-cap-mould": {"seoTitle": "Molde de tapón para envases alimentarios", "metaDescription": "Moldes para cierres roscados y a presión de salsas, lácteos y alimentos secos."},
-    "medical-cap-mould": {"seoTitle": "Molde de tapón médico", "metaDescription": "Moldes de precisión para frascos farmacéuticos, jarabes y envases de diagnóstico."},
-    "personal-care-cap-mould": {"seoTitle": "Molde de tapón para cuidado personal", "metaDescription": "Moldes para cierres disc-top, tubos y lociones con opciones de orificio personalizado."},
-    "functional-cap-mould": {"seoTitle": "Molde de tapón funcional combinado", "metaDescription": "Moldes para mecanismos de seguridad infantil, apertura fácil y evidencia de manipulación."},
-    "plastic-handle-cap-mould": {"seoTitle": "Molde de asa de plástico", "metaDescription": "Moldes de asas ergonómicas para botellas PET de 5 a 20 litros, aceite y bidones químicos."},
-    "five-gallon-water-cap-mould": {"seoTitle": "Molde de tapón para garrafón de 5 galones", "metaDescription": "Moldes para cierres de garrafón de 18,9 litros con sellado, banda de seguridad y compatibilidad con dispensadores."},
-    "wine-cap-mould": {"seoTitle": "Molde de tapón para vino y licores", "metaDescription": "Moldes de precisión para cierres de vino, licores, vertedores y superficies decorativas."},
-    "pet-preform-mould": {"seoTitle": "Molde de preformas PET", "metaDescription": "Moldes multicavidad para preformas PET y PP con control de peso, cuello y proceso de soplado."},
-    "blow-bottle-mould": {"seoTitle": "Molde de soplado para botellas", "metaDescription": "Moldes de soplado para botellas PET y envases personalizados con control de pared, cuello y refrigeración."},
+    str(item.get("slug")): {"seoTitle": str(item.get("titleEs") or "").strip(), "metaDescription": str(item.get("descriptionEs") or "").strip()}
+    for item in CATALOG.get("categories", [])
+    if isinstance(item, dict) and item.get("slug") and item.get("titleEs") and item.get("descriptionEs")
 }
 
 CANONICAL_ALIASES = {
@@ -412,8 +402,19 @@ def page_override_for(locale: str, route: str) -> dict:
                 if title and description:
                     product = {"seoTitle": title, "metaDescription": description}
                 break
-        if not product and locale == "es":
-            product = PRODUCT_FALLBACK_SEO.get(slug)
+        if not product:
+            fallback = PRODUCT_FALLBACK_SEO.get(slug) if locale == "es" else None
+            if fallback:
+                product = fallback
+            else:
+                for item in CATALOG.get("categories", []):
+                    if not isinstance(item, dict) or str(item.get("slug") or "").strip().lower() != slug:
+                        continue
+                    title = str(item.get("title") or "").strip()
+                    description = str(item.get("description") or "").strip()
+                    if title and description:
+                        product = {"seoTitle": title, "metaDescription": description}
+                    break
         if product:
             value.update(product)
     return value
