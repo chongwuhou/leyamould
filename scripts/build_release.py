@@ -93,10 +93,15 @@ def main() -> None:
         "navigation": "cloudflare-d1:site_navigation filtered to mould routes" if state.get("navigation") else "source-fallback:data/mould-catalog.json",
         "pageSeo": "cloudflare-d1:site_pages" if state.get("pages") else "source-fallback:mould source renderer",
         "products": "cloudflare-d1:mould product content" if state.get("products") else "source-fallback:data/mould-catalog.json",
+        "productSeo": "cloudflare-d1:xuyi_product_seo plus reviewed D1 product fields" if state.get("productSeo") else "source-fallback:effective product metadata only",
         "pageBodies": "cloudflare-d1:page content" if state.get("pageBodies") else "source-fallback:mould source renderer",
         "pageCopy": "cloudflare-d1:site_state.page_copy" if state.get("pageCopy") else "source-fallback:mould structured page copy",
         "blogPosts": "cloudflare-d1:blog posts" if state.get("blogPosts") else "source-fallback:empty reviewed resources",
+        "translations": "cloudflare-d1:xuyi_translation_overrides and localized D1 records" if state.get("translations") else "source-fallback:locale renderer copy",
         "commonCopy": "cloudflare-d1:site_state.common_copy" if state.get("commonCopy") else "source-fallback:mould renderer copy",
+        "mediaAlts": "cloudflare-d1:xuyi_media_alt" if state.get("mediaAlts") else "source-fallback:reviewed media manifest",
+        "productReviews": "cloudflare-d1:xuyi_product_reviews" if state.get("productReviews") else "source-fallback:no published reviews",
+        "youtubeVideos": "cloudflare-d1:leya_youtube_videos" if state.get("youtubeVideos") else "source-fallback:reviewed YouTube registry",
         "modelReferences": "cloudflare-d1:leya_model_references" if model_reference_rows else "source-fallback:data/mould-models.json",
         "locales": "deployment/site.config.json + D1 publish-ready filter",
     }
@@ -120,6 +125,18 @@ def main() -> None:
         "fileBreakdown": breakdown,
         "modelReferenceCount": model_reference_count,
         "staticModelCount": model_reference_count if not model_reference_rows else 0,
+        "contentCounts": {
+            "pages": len(state.get("pages") or []),
+            "pageBodies": len(state.get("pageBodies") or []),
+            "products": len(state.get("products") or []),
+            "productSeo": len(state.get("productSeo") or []),
+            "translations": len(state.get("translations") or []),
+            "blogPosts": len(state.get("blogPosts") or []),
+            "modelReferences": len(state.get("modelReferences") or []),
+            "mediaAlts": len(state.get("mediaAlts") or []),
+            "productReviews": len(state.get("productReviews") or []),
+            "youtubeVideos": len(state.get("youtubeVideos") or []),
+        },
         "noindex": not CONFIG["site"]["indexingApproved"],
     }
     (DIST / "build-meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -141,6 +158,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 

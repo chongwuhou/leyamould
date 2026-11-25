@@ -12,7 +12,8 @@ import PAGE_BODY_DATA from "../../../data/mould-page-bodies.json";
 import LEGACY_MEDIA_MANIFEST from "../../../data/mould-legacy-media-manifest.json";
 import { authorizedMouldContentSeedRequest } from "../../_shared/build-auth.js";
 import { ensureBlogSchema } from "../../_shared/blog-cms.js";
-import { bumpPublishRevision } from "../../_shared/site-settings.js";
+import { bumpPublishRevision, loadLanguageConfig, publicLanguages } from "../../_shared/site-settings.js";
+import { ensureProductSeo } from "../../_shared/product-seo.js";
 import { MOULD_PUBLIC_ROUTES, MOULD_ROUTES } from "../../_shared/mould-routes.js";
 
 const respond = (body, status = 200) => Response.json(body, {
@@ -258,6 +259,21 @@ function seedProduct(item) {
   return content;
 }
 
+function seoBaseline(item, locale) {
+  // Only seed a locale from its own reviewed fields.  Falling back to English
+  // here would create a false multilingual SEO row and violate the D1
+  // publishing standard.
+  const suffix = locale === "en" ? "" : locale === "es" ? "Es" : null;
+  if (suffix === null) return null;
+  const title = String(item?.["title" + suffix] || "").trim();
+  const description = String(item?.["description" + suffix] || "").trim();
+  if (title.length < 2 || description.length < 30) return null;
+  const seoTitle = (title + (locale === "es" ? " | LEYA MOULD" : " Manufacturer | LEYA MOULD")).slice(0, 90).trim();
+  const metaDescription = description.slice(0, 240).trim();
+  if (seoTitle.length < 12 || metaDescription.length < 30) return null;
+  return { seoTitle, metaDescription };
+}
+
 async function ensureSchema(db) {
   await db.prepare("CREATE TABLE IF NOT EXISTS site_state (key TEXT PRIMARY KEY,value TEXT NOT NULL DEFAULT '',updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   await db.prepare("CREATE TABLE IF NOT EXISTS site_navigation (id TEXT PRIMARY KEY,parent_id TEXT,label TEXT NOT NULL,url TEXT NOT NULL,sort_order INTEGER NOT NULL DEFAULT 0,enabled INTEGER NOT NULL DEFAULT 1,new_window INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
@@ -273,9 +289,10 @@ export async function onRequestPost(context) {
   try {
     await ensureSchema(db);
     await ensureBlogSchema(db);
-    const inserted = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, posts: 0 };
-    const updated = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, posts: 0 };
-    const skipped = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, posts: 0 };
+    await ensureProductSeo(db);
+    const inserted = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, productSeo: 0, posts: 0 };
+    const updated = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, productSeo: 0, posts: 0 };
+    const skipped = { state: 0, navigation: 0, pages: 0, pageBodies: 0, products: 0, productSeo: 0, posts: 0 };
     const statements = [];
     const stateRows = [
       ["brand_config", BRAND],
@@ -364,6 +381,9 @@ export async function onRequestPost(context) {
 
     const existingProductRows = ((await db.prepare("SELECT model,content_json FROM xuyi_product_content").all()).results || []);
     const existingProducts = new Map(existingProductRows.map(row => [String(row.model), row.content_json]));
+    const publicLocaleCodes = publicLanguages(await loadLanguageConfig(db)).map(language => String(language.code).toLowerCase());
+    const existingSeoRows = ((await db.prepare("SELECT slug,locale FROM xuyi_product_seo").all()).results || []);
+    const existingSeo = new Set(existingSeoRows.map(row => String(row.slug).toLowerCase() + "\u0000" + String(row.locale).toLowerCase()));
     const products = Array.isArray(MOULD_CATALOG?.categories) ? MOULD_CATALOG.categories : [];
     for (const item of products) {
       const model = String(item?.slug || "");
@@ -386,6 +406,18 @@ export async function onRequestPost(context) {
       } else {
         skipped.products += 1;
       }
+      for (const locale of publicLocaleCodes) {
+        const seo = seoBaseline(item, locale);
+        const key = model.toLowerCase() + "\u0000" + locale;
+        if (!seo || existingSeo.has(key)) {
+          skipped.productSeo += 1;
+          continue;
+        }
+        statements.push(db.prepare("INSERT OR IGNORE INTO xuyi_product_seo(slug,locale,seo_title,meta_description,updated_at) VALUES(?,?,?,?,CURRENT_TIMESTAMP)")
+          .bind(model.toLowerCase(), locale, seo.seoTitle, seo.metaDescription));
+        existingSeo.add(key);
+        inserted.productSeo += 1;
+      }
     }
 
     const existingPosts = new Set(((await db.prepare("SELECT slug FROM xuyi_blog_posts").all()).results || []).map(row => String(row.slug)));
@@ -405,4 +437,5 @@ export async function onRequestPost(context) {
     return respond({ error: "D1 mould content seed failed: " + String(error?.message || error).slice(0, 240) }, 500);
   }
 }
+
 

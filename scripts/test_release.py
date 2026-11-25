@@ -20,7 +20,7 @@ CONFIG=json.loads((ROOT/"deployment/site.config.json").read_text(encoding="utf-8
 INDEXABLE=CONFIG["site"].get("indexingApproved") is True
 assert meta["noindex"] is (not INDEXABLE), "Release indexing flag does not match approved configuration"
 assert meta["fileCount"]<19500
-assert set(meta.get("contentSources",{}))=={"brand","navigation","pageSeo","products","pageBodies","pageCopy","blogPosts","commonCopy","modelReferences","locales"}, "D1/source origin metadata is incomplete"
+assert set(meta.get("contentSources",{}))=={"brand","navigation","pageSeo","products","productSeo","pageBodies","pageCopy","blogPosts","translations","commonCopy","mediaAlts","productReviews","youtubeVideos","modelReferences","locales"}, "D1/source origin metadata is incomplete"
 assert all(isinstance(v,str) and v for v in meta["contentSources"].values())
 
 class LocalRefs(HTMLParser):
@@ -209,4 +209,5 @@ for hidden in ("_local_ops", "functions", "templates", ".wrangler"):
 if broken:
     print("SITE_RELEASE_ERRORS",len(broken),broken[:40]);sys.exit(1)
 print("SITE_RELEASE_TESTS_PASSED",f"html={len(pages)}",f"assets={meta['fileCount']}",f"broken={len(broken)}")
+
 

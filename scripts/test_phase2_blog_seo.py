@@ -39,6 +39,7 @@ def main():
     manifest=json.loads((DIST/"locale-manifest.json").read_text(encoding="utf8"))
     locales=manifest.get("locales") or []
     assert locales, "Locale manifest is empty"
+    source_locale = str(next((row.get("code") for row in locales if row.get("sortOrder") == 10), locales[0].get("code") or "en"))
     sitemap=ET.parse(DIST/"sitemap.xml").getroot()
     sitemap_rows={item.find(NS+"loc").text:item for item in sitemap if item.find(NS+"loc") is not None}
     checked=0
@@ -91,12 +92,13 @@ def main():
             checked+=1
     for language in locales:
         code=str(language.get("code") or "")
-        if code=="en": continue
+        if code==source_locale: continue
         for slug in published:
             localized=article_keywords.get((code,slug),"")
-            english=article_keywords.get(("en",slug),"")
-            assert localized and localized != english, (code,slug,"English Blog keywords inherited")
+            source=article_keywords.get((source_locale,slug),"")
+            assert localized and localized != source, (code,slug,"source-language Blog keywords inherited")
     print("XUYI_PHASE2_BLOG_SEO_PASSED",checked,"localized_blog_pages",faq_pages,"FAQPage",breadcrumb_pages,"BreadcrumbList",image_count,"images","localized_keywords",len(article_keywords),"citation_pages",citation_pages,"evidence_pages",evidence_pages)
 
 if __name__=="__main__":
     main()
+

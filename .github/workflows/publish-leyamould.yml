@@ -37,6 +37,8 @@ on:
       - "scripts/test_mould_product_d1_contract.py"
       - "scripts/test_mould_release_authority.py"
       - "scripts/test_mould_d1_completeness.py"
+      - "scripts/test_phase2_blog_seo.py"
+      - "scripts/test_blog_card_contract.py"
       - "scripts/test_leya_state_contract.py"
       - "scripts/generate_mould_page_bodies.py"
       - "scripts/test_legacy_media_migration.py"
@@ -111,6 +113,10 @@ jobs:
         run: python scripts/build_release.py
       - name: Validate mould routes, configured locales and contacts
         run: python scripts/test_mould_release.py
+      - name: Validate published News SEO, language pages and media geometry
+        run: python scripts/test_phase2_blog_seo.py
+      - name: Validate shared Blog card contract
+        run: python scripts/test_blog_card_contract.py
       - name: Generate and validate public R2 reference index
         run: |
           python scripts/r2_usage_index.py
@@ -135,4 +141,5 @@ jobs:
         run: |
           echo "::error::CLOUDFLARE_API_TOKEN is not configured; source build passed but production was not deployed."
           exit 1
+
 

@@ -32,7 +32,7 @@ assert "ensureYoutubeVideos(db)" in snapshot
 assert "effectiveProductSeoRows" in snapshot
 
 seed = source("functions/api/admin/mould-content-seed-20261124.js")
-for marker in ("mould-catalog.json", "mould-product-structured.json", "xuyi_product_content", "existingProducts", "productImagesRemainTemplateBound", "content.category"):
+for marker in ("mould-catalog.json", "mould-product-structured.json", "xuyi_product_content", "existingProducts", "productImagesRemainTemplateBound", "content.category", "ensureProductSeo", "xuyi_product_seo", "inserted.productSeo"):
     assert marker in seed, marker
 
 catalog = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
@@ -86,4 +86,22 @@ assert edited["faqs"][0]["question"] == "Owner question?"
 assert edited["categoryCopy"]["hero"]["title"] == "Owner category hero"
 assert edited["categoryCopy"]["samples"][0]["image"] == "/upload/owner/sample.jpg"
 
+# A new published D1 family must enter the same safe category renderer without
+# changing the checked-in catalogue or requiring a hardcoded route list.
+mould_build.STATE = {
+    "products": [{
+        "model": "new-owner-mould-family",
+        "content": {
+            "route": "/product/new-owner-mould-family.html",
+            "title": "New Owner Mould Family",
+            "description": "A reviewed owner-managed mould family for packaging projects.",
+        },
+    }]
+}
+dynamic = next(row for row in mould_build._catalog_from_state() if row.get("slug") == "new-owner-mould-family")
+assert dynamic["route"] == "/product/new-owner-mould-family.html"
+assert dynamic["title"] == "New Owner Mould Family"
+assert dynamic["description"].startswith("A reviewed owner-managed")
+
 print(f"LEYA_MOULD_PRODUCT_D1_CONTRACT_PASSED categories={len(categories)}")
+
