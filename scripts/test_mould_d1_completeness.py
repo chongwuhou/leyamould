@@ -187,6 +187,8 @@ for row in state.get("modelReferences", []):
     model_checked += 1
 if model_missing:
     raise SystemExit("Published model reference fields are incomplete: " + ", ".join(model_missing[:20]))
+if os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT") in {"1", "true", "yes"} and model_checked != 112:
+    raise SystemExit(f"Production D1 model reference count must be exactly 112, got {model_checked}")
 
 for review in state.get("productReviews", []):
     if not isinstance(review, dict) or not clean_text(review.get("sourceUrl")).startswith("https://"):

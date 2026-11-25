@@ -73,7 +73,11 @@ def main():
             if row_issues: issues.append({"slug":str(row.get("slug") or "unknown"),"issues":row_issues})
         audit={"total":len(payload["modelReferences"]),"published":len(payload["modelReferences"]),"draft":0,"publishedIssues":issues}
         payload["modelReferenceAudit"]=audit
+    if int(audit.get("total",0) or 0)!=112 or len(payload["modelReferences"])!=112:
+        raise RuntimeError("D1 model reference gate requires exactly 112 published models; got total="+str(audit.get("total",0))+" snapshot="+str(len(payload["modelReferences"])))
     if audit["publishedIssues"]:
+        categories=sorted({issue for row in audit["publishedIssues"] for issue in (row.get("issues") or [])})
+        print("LEYA_MODEL_REFERENCE_GATE_BLOCKED", "total", audit.get("total",0), "published", audit.get("published",0), "issues", len(audit["publishedIssues"]), "categories", ",".join(categories), flush=True)
         raise RuntimeError("Published D1 model references failed the review gate")
     OUTPUT.parent.mkdir(parents=True,exist_ok=True)
     OUTPUT.write_text(json.dumps(payload,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
