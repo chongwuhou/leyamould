@@ -58,11 +58,6 @@ page_rows = [row for row in state.get("pages", []) if isinstance(row, dict) and 
 page_routes = {clean_text(row.get("route")) for row in page_rows}
 page_routes.update(clean_text(row.get("route")) for row in state.get("pageBodies", []) if isinstance(row, dict) and clean_text(row.get("route")))
 page_translation = translation_map(state.get("translations", []))
-# The first read-only rollout can encounter a legacy D1 database where the
-# page-translation table is still empty. That state uses the reviewed locale
-# renderer baseline; once any override exists, completeness is strict and no
-# partial override may fall back silently.
-strict_page_translations = bool(page_translation)
 page_missing = []
 
 for row in page_rows:
@@ -71,7 +66,7 @@ for row in page_rows:
         page_missing.append(route + ":source-seo")
 for route in sorted(page_routes):
     has_body = any(isinstance(item, dict) and clean_text(item.get("route")) == route and len(clean_text(item.get("mainHtml"))) >= 100 for item in state.get("pageBodies", []))
-    for locale in published if strict_page_translations else []:
+    for locale in published:
         if locale == source_locale:
             continue
         content = page_translation.get(("page:" + route, locale))
@@ -163,16 +158,9 @@ for post in state.get("blogPosts", []):
 
 model_checked = 0
 model_missing = []
-model_rows = [row for row in state.get("modelReferences", []) if isinstance(row, dict)]
-# The existing 112-row catalogue predates localized D1 model fields. When the
-# entire translation map is empty, the renderer's deterministic Spanish model
-# baseline is the reviewed first-rollout representation. Once any model has a
-# D1 translation, every published model is checked strictly for that locale.
-strict_model_translations = any(
-    isinstance(row.get("translations"), dict) and bool(row.get("translations"))
-    for row in model_rows
-)
-for row in model_rows:
+for row in state.get("modelReferences", []):
+    if not isinstance(row, dict):
+        continue
     required = ("slug", "family", "title", "alt", "image")
     if any(not str(row.get(key) or "").strip() for key in required):
         model_missing.append(str(row.get("slug") or "unknown"))
@@ -184,7 +172,7 @@ for row in model_rows:
         model_missing.append(str(row.get("slug") or "unknown") + ":r2-image")
     translations = row.get("translations") if isinstance(row.get("translations"), dict) else {}
     source_description = clean_text(row.get("description"))
-    for locale in published if strict_model_translations else []:
+    for locale in published:
         if locale == source_locale:
             continue
         localized = translations.get(locale) if isinstance(translations.get(locale), dict) else {}
