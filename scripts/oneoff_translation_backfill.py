@@ -64,7 +64,6 @@ def main() -> None:
         raise RuntimeError(f"Expected 112 model rows, got {len(models)}")
 
     statements = [
-        "BEGIN;",
         "CREATE TABLE IF NOT EXISTS xuyi_translation_overrides (resource_id TEXT NOT NULL, locale TEXT NOT NULL, translated_json TEXT NOT NULL DEFAULT '{}', reviewed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(resource_id, locale));",
     ]
     for route, title, description, main_html in pages:
@@ -94,7 +93,6 @@ def main() -> None:
             "UPDATE leya_model_references SET translations_json="
             f"{sql(payload)}, updated_at=CURRENT_TIMESTAMP WHERE slug={sql(row.get('slug', ''))};"
         )
-    statements.append("COMMIT;")
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text("\n".join(statements) + "\n", encoding="utf-8")
     print("LEYA_TRANSLATION_BACKFILL_SQL_READY", f"pages={len(pages)}", f"models={len(models)}", f"bytes={OUTPUT.stat().st_size}")
