@@ -18,8 +18,7 @@ assert workflow.count("pages deploy dist --project-name leyamould") == 1
 assert "scripts/test_mould_release_authority.py" in workflow
 snapshot_fetch = read("scripts/fetch_build_snapshot.py")
 assert "read_d1_translations" not in snapshot_fetch
-assert "wrangler@4.1480" not in snapshot_fetch
-assert "wrangler@4.1480" not in snapshot_fetch
+assert "wrangler" not in snapshot_fetch
 
 renderer = read("mould_build.py")
 for marker in ("structured_section(locale, \"/\", \"advantages\"", "structured_section(locale, \"/\", \"products\"", "structured_section(locale, \"/\", \"technology\"", "STATE.get(\"productReviews\", [])"):
