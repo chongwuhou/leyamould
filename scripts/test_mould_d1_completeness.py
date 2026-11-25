@@ -62,7 +62,7 @@ def has_reviewed_source_fallback(route: str) -> bool:
     # The renderer owns the DOM and carries the reviewed Spanish fallback for
     # every managed route. D1 remains authoritative when an override exists,
     # while a clean seed may omit a duplicate HTML blob.
-    return route in ES_SEO or route.startswith("/product/")
+    return route in ES_SEO or route.startswith(("/product/", "/capabilities/"))
 
 for row in page_rows:
     route = clean_text(row.get("route"))
