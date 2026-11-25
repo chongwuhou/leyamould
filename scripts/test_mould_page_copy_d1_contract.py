@@ -25,7 +25,7 @@ page_data = read("data/mould-page-structured.json")
 assert "quickAnswers" in page_data and "groups" in page_data
 
 blog_admin = read("functions/api/admin/blog.js")
-assert "ensureRouteRegistry" in blog_admin and "/blog/"+post.slug+"/" in blog_admin
+assert "ensureRouteRegistry" in blog_admin and '\"/blog/\"+post.slug+\"/\"' in blog_admin
 
 renderer = read("mould_build.py")
 for marker in ("PAGE_COPY = STATE.get(\"pageCopy\")", "def structured_page_copy", "structured_page_value", "d1_ctas", "structured_eyebrow"):
