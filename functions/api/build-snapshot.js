@@ -197,6 +197,7 @@ export async function onRequestGet(context){
          const resource=String(r.resource_id||"");
          if(!resource.startsWith("page:"))return false;
          const route=resource.slice(5);
+         // Canonical page translation snapshot includes dynamic routes.
          // Page overrides are D1-managed for every generated page, including
          // dynamic news and product detail routes. Keep only canonical paths.
          return route==="/"||/^\/[A-Za-z0-9][A-Za-z0-9/_-]*(?:\.html)?$/.test(route);
