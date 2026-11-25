@@ -294,8 +294,9 @@ def _published_content(row: object) -> dict:
 def _catalog_from_state() -> list[dict]:
     """Build the public category registry from D1, with a clean source fallback.
 
-    The checked-in catalogue supplies the reference layout and rich copy for
-    the original families.  A published D1 row may also introduce a new safe
+    The checked-in catalogue supplies only the visual fallback for a clean
+    checkout. Published D1 rows own the structured family content and may also
+    introduce a new safe
     family; it receives the same category template instead of disappearing
     from menus and generated routes.
     """
@@ -330,8 +331,9 @@ def _catalog_from_state() -> list[dict]:
                 item[field] = content[field]
         if isinstance(content.get("checks"), list):
             item["checks"] = [str(value).strip() for value in content["checks"] if str(value).strip()][:12]
-        if isinstance(content.get("category"), dict):
-            item["categoryCopy"] = content["category"]
+        structured = content.get("structured") if isinstance(content.get("structured"), dict) else content.get("category")
+        if isinstance(structured, dict):
+            item["categoryCopy"] = structured
     return rows
 
 CATALOG["categories"] = _catalog_from_state()

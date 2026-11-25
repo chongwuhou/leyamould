@@ -162,7 +162,7 @@ export async function onRequestPost(context){
   if(!isMouldModel(model))return respond({error:"Invalid mould category slug"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
   const db=context.env.LEYA_DB;await ensure(db);
-  const allowed=["title","titleEs","navTitle","navTitleEs","name","description","descriptionEs","short","shortEs","detail","detailEs","meta","metaEs","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","seoTitleEs","seoDescriptionEs","body","bodyEs","sections","sectionsEs","faqs","faqsEs","category"];
+  const allowed=["title","titleEs","navTitle","navTitleEs","name","description","descriptionEs","short","shortEs","detail","detailEs","meta","metaEs","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","seoTitleEs","seoDescriptionEs","body","bodyEs","sections","sectionsEs","faqs","faqsEs","category","structured"];
   let content={};
   const previousRow=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
   try{content=previousRow?.content_json?JSON.parse(previousRow.content_json):{};}catch{return respond({error:"Existing product JSON invalid"},409)}
@@ -173,7 +173,14 @@ export async function onRequestPost(context){
     }
     if(key==="sections"||key==="sectionsEs"){try{content[key]=structuredSections(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
     if(key==="faqs"||key==="faqsEs"){try{content[key]=structuredFaqs(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
-    if(key==="category"){try{content[key]=categoryCopy(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
+    if(key==="category"||key==="structured"){
+      try{
+        const normalized=categoryCopy(v[key]);
+        content.category=normalized;
+        content.structured=normalized;
+      }catch(error){return respond({error:String(error.message||error)},400)}
+      continue;
+    }
     if(typeof v[key]!=="string"||v[key].length>3000)return respond({error:"Invalid "+key},400);
     content[key]=v[key].trim();
   }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Report the 112 reference models' publication readiness without writing D1.
+"""Report the current D1 reference models' publication readiness without writing D1.
 
 The report is deliberately source-only: it never calls a remote API and never
 invents translations, PDFs, customer claims or production parameters.  The

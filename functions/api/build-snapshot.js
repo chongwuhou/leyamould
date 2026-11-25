@@ -6,6 +6,23 @@ import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from 
 import { MOULD_MODELS, MOULD_ROUTES, isMouldModel, isMouldProductRoute, isMouldRoute, mouldModelFromRoute } from "../_shared/mould-routes.js";
 import MOULD_CATALOG from "../../data/mould-catalog.json";
 
+const BLOG_DETAIL_ROUTE_RE=/^\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/;
+const NEWS_DETAIL_ROUTE_RE=/^\/news\/[A-Za-z0-9][A-Za-z0-9_-]*\.html$/;
+function managedPageRoute(route){
+  const value=String(route||"");
+  const registered=MOULD_ROUTES.has(value);
+  return registered||isMouldRoute(value)||BLOG_DETAIL_ROUTE_RE.test(value)||NEWS_DETAIL_ROUTE_RE.test(value);
+}
+function pageContentType(route){
+  const value=String(route||"");
+  if(/^\/product\//.test(value))return "product";
+  if(BLOG_DETAIL_ROUTE_RE.test(value))return "blog";
+  if(NEWS_DETAIL_ROUTE_RE.test(value)||value==="/news/")return "news";
+  if(value==="/video/")return "video";
+  if(value==="/Bottle-Cap-Machine/Bottle-Cap-Machine.html"||value.startsWith("/capabilities/"))return "capability";
+  return "page";
+}
+
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 async function list(db,sql){
   try{return (await db.prepare(sql).all()).results||[]}catch(error){
@@ -130,8 +147,7 @@ export async function onRequestGet(context){
     const adminPath=security.adminPath||"admin";
     if(typeof adminPath!=="string"||!/^[a-z0-9][a-z0-9-]{2,47}$/.test(adminPath))
       throw new Error("Invalid LEYA admin route");
-    const onlyRoutes=pages.filter(r=>(MOULD_ROUTES.has(r.route)||isMouldRoute(r.route))&&r.route.length<=300);
-    const onlyNavigation=navigation.filter(r=>isMouldRoute(r.url));
+    const onlyNavigation=navigation.filter(r=>managedPageRoute(r.url));
     // Existing categories remain in the static allow-list, while new CMS
     // categories are admitted only when the model and canonical route are safe.
     const onlyProducts=products.filter(r=>{
@@ -149,6 +165,50 @@ export async function onRequestGet(context){
         if(!post||typeof post!=="object"||Array.isArray(post))return [];
         return [{...post,slug:r.slug,status:"published",updated_at:r.updated_at||"",published_at:r.published_at||""}];
       }catch{return [];}
+    });
+    // Build a complete D1-owned route registry.  Static page rows remain
+    // authoritative; published product and Blog rows are promoted into the
+    // same registry so a newly approved route cannot disappear merely because
+    // an older site_pages migration has not yet materialized its row.
+    const pageRegistry=new Map();
+    for(const row of pages){
+      const route=String(row.route||"");
+      if(!managedPageRoute(route)||route.length>300)continue;
+      pageRegistry.set(route,{...row,contentType:pageContentType(route),contentKey:route,source:"site_pages"});
+    }
+    for(const row of onlyProducts){
+      const content=parseJson(row.content_json,{});
+      const route=String(content.route||"/product/"+row.model+".html");
+      if(!isMouldProductRoute(route))continue;
+      const title=String(content.seoTitle||content.title||content.name||row.model).trim();
+      const description=String(content.seoDescription||content.description||content.short||"").trim();
+      if(!pageRegistry.has(route))pageRegistry.set(route,{route,label:title,seo_title:title,meta_description:description,robots:"noindex,nofollow",sitemap_enabled:0,contentType:"product",contentKey:row.model,source:"product_content"});
+    }
+    for(const post of onlyBlogPosts){
+      const route="/blog/"+String(post.slug||"")+"/";
+      if(!BLOG_DETAIL_ROUTE_RE.test(route))continue;
+      if(!pageRegistry.has(route))pageRegistry.set(route,{route,label:String(post.title||post.slug||"").trim(),seo_title:String(post.title||"").trim(),meta_description:String(post.description||"").trim(),robots:"noindex,nofollow",sitemap_enabled:0,contentType:"blog",contentKey:String(post.slug||""),source:"blog_posts"});
+    }
+    const onlyRoutes=[...pageRegistry.values()].sort((a,b)=>String(a.route).localeCompare(String(b.route)));
+    const productByRoute=new Map(onlyProducts.map(row=>{
+      const content=parseJson(row.content_json,{});
+      return [String(content.route||"/product/"+row.model+".html"),{model:row.model,content}];
+    }));
+    const blogByRoute=new Map(onlyBlogPosts.map(post=>["/blog/"+String(post.slug||"")+"/",post]));
+    const pageCopy= parseJson(config.page_copy,{});
+    const pageFields=onlyRoutes.map(row=>{
+      const route=String(row.route||"");
+      const type=String(row.contentType||pageContentType(route));
+      let fields={};
+      if(type==="product")fields=productByRoute.get(route)?.content||{};
+      else if(type==="blog")fields=blogByRoute.get(route)||{};
+      else{
+        for(const locale of publicLocaleCodes){
+          const localized=pageCopy&&typeof pageCopy==="object"&&pageCopy[locale]&&typeof pageCopy[locale]==="object"?pageCopy[locale]:{};
+          if(localized[route]&&typeof localized[route]==="object")fields[locale]=localized[route];
+        }
+      }
+      return {route,contentType:type,contentKey:String(row.contentKey||route),seoTitle:String(row.seo_title||""),metaDescription:String(row.meta_description||""),fields};
     });
     const effectiveProductSeo=effectiveProductSeoRows(productSeo,onlyProducts,publicLocaleCodes,languageConfig.sourceLocale);
     const modelReferenceAudit={total:allModelReferences.length,
@@ -173,9 +233,17 @@ export async function onRequestGet(context){
        commonCopy:parseJson(config.common_copy,null),
        pageCopy:parseJson(config.page_copy,null),
        modelReferenceAudit,
-       pageBodies:pageBodies.filter(r=>isMouldRoute(r.route)&&typeof r.main_html==="string")
+       pageRegistry:onlyRoutes,
+       pageFields,
+       pageBodies:pageBodies.filter(r=>managedPageRoute(r.route)&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
-       products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
+       products:onlyProducts.map(r=>{
+         const content=parseJson(r.content_json,{});
+         const structured=content&&typeof content.structured==="object"&&!Array.isArray(content.structured)
+           ?content.structured
+           :(content&&typeof content.category==="object"&&!Array.isArray(content.category)?content.category:{});
+         return {model:r.model,route:String(content.route||"/product/"+r.model+".html"),content,structured,contentSchemaVersion:1};
+       }),
       blogPosts:onlyBlogPosts,
        // D1 remains the only source: explicit xuyi_product_seo rows win, and
        // legacy product content fields are promoted into the same snapshot

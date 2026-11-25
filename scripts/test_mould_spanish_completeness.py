@@ -3,7 +3,7 @@
 
 This is a local, deterministic check.  It does not call a translation API or
 Cloudflare.  It checks the files produced by the source renderer, the reviewed
-112-model fallback, and the legacy-route redirect contract.
+model-reference fallback, and the legacy-route redirect contract.
 """
 from __future__ import annotations
 
@@ -82,9 +82,14 @@ def main() -> None:
         for marker in ENGLISH_LEAKS:
             if marker.casefold() in text.casefold():
                 leaks.append(f"{path}:{marker}")
-    if len(HMOULD_MODELS) != 112:
-        leaks.append(f"models:expected-112-got-{len(HMOULD_MODELS)}")
+    if not HMOULD_MODELS:
+        leaks.append("models:no-published-reference-models")
+    seen_models = set()
     for row in HMOULD_MODELS:
+        slug = str(row.get("slug") or "").strip().lower()
+        if not slug or slug in seen_models:
+            leaks.append(f"model:{slug or 'unknown'}:duplicate-slug")
+        seen_models.add(slug)
         es = row.get("translations", {}).get("es", {}) if isinstance(row.get("translations"), dict) else {}
         if not all(str(es.get(key) or "").strip() for key in ("title", "alt", "description")):
             leaks.append(f"model:{row.get('slug','unknown')}:es")
