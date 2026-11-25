@@ -21,7 +21,9 @@ python scripts/test_repository_hygiene.py
 - `publish_daily_product_reviews.py` 与 `run_publish_scheduler.py`：当前调度/评价链路的专用入口，只有对应 workflow 和授权条件满足时才运行。
 - Blog 批量发布、翻译修复、图片批次和 SEO 批次统一使用当前通用 D1/CMS API；按日期拆分的一次性入口已经移除，禁止重新创建。
 - 首次 LEYA 内容迁移使用 `scripts/migrate_mould_content.py` 调用稳定的 `/api/admin/content-seed`；日期命名的兼容地址在生产环境默认关闭，迁移只补缺失记录，不覆盖 D1 已审核内容。
+- 内容写入完成后由正常的 LEYA 发布工作流重新构建，使静态发布元数据与 D1 发布版本保持一致。
 - 媒体后台上传会先在浏览器压缩 WebP，再进入 R2；后台内容保存沿用 D1 + publish revision 的轻量流程。
 - 任何脚本不得直接修改 `dist/`、线上 HTML 或 R2 缓存来替代源模板、D1/CMS 或 R2 正式修改。
 
 `test_repository_hygiene.py` 会阻止已清理的一次性发布入口和日期批次脚本重新进入仓库。若确实需要新能力，先扩展通用入口、字段所有权、幂等条件、回滚方式和回归测试，再接入 workflow。
+
