@@ -32,8 +32,8 @@ def main() -> int:
             "sourceReady": source_ready,
             "imageReferenceReady": image_ready,
             "ownerReviewed": owner_reviewed,
-            "publicationState": "ready" if (source_ready and image_ready and owner_reviewed) else "needs_review",
-            "reason": "D1 Spanish title/ALT/description, R2 image, PDF metadata and owner review are required before publication",
+            "publicationState": "ready" if (source_ready and image_ready) else "needs_review",
+            "reason": "D1 Spanish title/ALT/description, R2 image and PDF metadata are required before publication; owner review timestamp is informational only",
         })
     report = {
         "source": payload.get("source"),

@@ -159,7 +159,6 @@ export async function onRequestGet(context){
         if(!/^https:\/\//i.test(String(row.source_url||"")))issues.push("source_url");
         if(!/^https:\/\//i.test(String(row.source_image||"")))issues.push("source_image");
         if(!/^\/media\/[a-z]+\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/i.test(String(row.image_path||"")))issues.push("r2_image");
-        if(!/^\d{4}-\d{2}-\d{2}(?:T|$)/.test(String(row.reviewed_at||"")))issues.push("owner_review");
         return issues.length?{slug:row.slug,issues}:null;
       }).filter(Boolean)};
     return json({
@@ -208,7 +207,6 @@ export async function onRequestGet(context){
           && typeof r.title==="string"&&r.title.length>=2&&r.title.length<=180
           && typeof r.alt==="string"&&r.alt.length>=2&&r.alt.length<=180
           && /^\/media\/[a-z]+\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(String(r.image_path||""))
-          && /^\d{4}-\d{2}-\d{2}(?:T|$)/.test(String(r.reviewed_at||""))
         ).map(r=>({slug:r.slug,family:r.family,title:r.title,alt:r.alt,
           sourceUrl:r.source_url||"",sourceImage:r.source_image||"",image:r.image_path,
           description:r.description||"",translations:parseJson(r.translations_json,{}),pdfUrl:r.pdf_url||"",pdfSha256:r.pdf_sha256||"",pdfPages:Number(r.pdf_pages||0),

@@ -64,12 +64,10 @@ def main():
             source_url=str(row.get("sourceUrl") or row.get("source_url") or "")
             source_image=str(row.get("sourceImage") or row.get("source_image") or "")
             image=str(row.get("image") or row.get("imagePath") or row.get("image_path") or "")
-            reviewed=str(row.get("reviewedAt") or row.get("reviewed_at") or "")
             row_issues=[]
             if not source_url.lower().startswith("https://"): row_issues.append("source_url")
             if not source_image.lower().startswith("https://"): row_issues.append("source_image")
             if not image.startswith("/media/"): row_issues.append("r2_image")
-            if not reviewed[:10].count("-")==2: row_issues.append("owner_review")
             if row_issues: issues.append({"slug":str(row.get("slug") or "unknown"),"issues":row_issues})
         audit={"total":len(payload["modelReferences"]),"published":len(payload["modelReferences"]),"draft":0,"publishedIssues":issues}
         payload["modelReferenceAudit"]=audit

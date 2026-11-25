@@ -111,8 +111,6 @@ async function normalized(input,db){
   if(pdfUrl && !pdfSha256)throw Error("PDF SHA-256 is required when a PDF is attached");
   if(pdfUrl && pdfPages<1)throw Error("PDF page count is required when a PDF is attached");
   if(status==="published"){
-    if(!/^\d{4}-\d{2}-\d{2}(?:T|$)/.test(String(input?.reviewedAt||input?.reviewed_at||"")))
-      throw Error("Published model references require an owner review timestamp");
     if(!/^https:\/\//i.test(sourceUrl)||!/^https:\/\//i.test(sourceImage))
       throw Error("Published model references require an HTTPS source URL and source image");
     const sourceLocale=String(languageConfig.sourceLocale||"en").toLowerCase();
@@ -147,7 +145,6 @@ function parseStored(value){try{const data=JSON.parse(value||"{}");return data&&
 
 function reviewIssues(row,locales,sourceLocale){
   const issues=[];
-  if(!/^\d{4}-\d{2}-\d{2}(?:T|$)/.test(String(row.reviewed_at||"")))issues.push("owner_review");
   if(!/^https:\/\//i.test(String(row.source_url||"")))issues.push("source_url");
   if(!/^https:\/\//i.test(String(row.source_image||"")))issues.push("source_image");
   if(!String(row.image_path||"").startsWith("/media/"))issues.push("r2_image");

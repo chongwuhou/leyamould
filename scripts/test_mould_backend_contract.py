@@ -84,7 +84,9 @@ snapshot = source("functions/api/build-snapshot.js")
 for forbidden in ("ensureLeyaSystemSchema", "ensureNavigationSchema", "ensureModelReferenceSchema", "ensureYoutubeVideos", "ALTER TABLE", "CREATE TABLE"):
     assert forbidden not in snapshot, forbidden
 assert "source_url" in source("functions/_shared/product-reviews.js")
-assert "Published model references require reviewed" in source("functions/api/admin/model-references.js")
+model_api = source("functions/api/admin/model-references.js")
+assert "Published model references require an HTTPS source URL and source image" in model_api
+assert "Published model references require an owner review timestamp" not in model_api
 
 print("LEYA_MOULD_BACKEND_CONTRACT_PASSED")
 

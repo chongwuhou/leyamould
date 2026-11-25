@@ -87,7 +87,7 @@ def _normalise_model_reference(row: dict) -> dict:
 STATIC_HMOULD_MODELS = [_normalise_model_reference(row) for row in STATIC_HMOULD_MODELS]
 _SNAPSHOT_MODEL_REFERENCES = [
     _normalise_model_reference(row) for row in STATE.get("modelReferences", [])
-    if isinstance(row, dict) and row.get("slug") and row.get("family") and row.get("image") and row.get("reviewedAt")
+    if isinstance(row, dict) and row.get("slug") and row.get("family") and row.get("image")
 ]
 # D1/CMS is authoritative in production.  An authenticated production
 # snapshot that contains no reviewed rows must not silently repopulate the

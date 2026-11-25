@@ -180,8 +180,6 @@ for row in state.get("modelReferences", []):
             model_missing.append(str(row.get("slug") or "unknown") + ":" + locale + ":title-alt")
         if source_description and not clean_text(localized.get("description")):
             model_missing.append(str(row.get("slug") or "unknown") + ":" + locale + ":description")
-    if not clean_text(row.get("reviewedAt")):
-        model_missing.append(str(row.get("slug") or "unknown") + ":owner-review")
     if clean_text(row.get("pdfUrl")) and (len(clean_text(row.get("pdfSha256"))) != 64 or int(row.get("pdfPages") or 0) < 1):
         model_missing.append(str(row.get("slug") or "unknown") + ":pdf-metadata")
     model_checked += 1
