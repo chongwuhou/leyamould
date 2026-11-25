@@ -2,7 +2,8 @@
 """Build the isolated LEYA MOULD static release.
 
 This release step deliberately packages only this repository's templates,
-assets and admin UI.  Cloudflare bindings and business data remain owned by
+assets and admin UI.  A post-seed rebuild keeps the static revision aligned
+with the current D1 publish revision.  Cloudflare bindings and business data remain owned by
 the LEYA D1/R2 project; no remote API is called here.
 """
 from __future__ import annotations
