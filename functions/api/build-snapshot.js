@@ -189,6 +189,26 @@ export async function onRequestGet(context){
       if(!pageRegistry.has(route))pageRegistry.set(route,{route,label:String(post.title||post.slug||"").trim(),seo_title:String(post.title||"").trim(),meta_description:String(post.description||"").trim(),robots:"noindex,nofollow",sitemap_enabled:0,contentType:"blog",contentKey:String(post.slug||""),source:"blog_posts"});
     }
     const onlyRoutes=[...pageRegistry.values()].sort((a,b)=>String(a.route).localeCompare(String(b.route)));
+    const productByRoute=new Map(onlyProducts.map(row=>{
+      const content=parseJson(row.content_json,{});
+      return [String(content.route||"/product/"+row.model+".html"),{model:row.model,content}];
+    }));
+    const blogByRoute=new Map(onlyBlogPosts.map(post=>["/blog/"+String(post.slug||"")+"/",post]));
+    const pageCopy= parseJson(config.page_copy,{});
+    const pageFields=onlyRoutes.map(row=>{
+      const route=String(row.route||"");
+      const type=String(row.contentType||pageContentType(route));
+      let fields={};
+      if(type==="product")fields=productByRoute.get(route)?.content||{};
+      else if(type==="blog")fields=blogByRoute.get(route)||{};
+      else{
+        for(const locale of publicLocaleCodes){
+          const localized=pageCopy&&typeof pageCopy==="object"&&pageCopy[locale]&&typeof pageCopy[locale]==="object"?pageCopy[locale]:{};
+          if(localized[route]&&typeof localized[route]==="object")fields[locale]=localized[route];
+        }
+      }
+      return {route,contentType:type,contentKey:String(row.contentKey||route),seoTitle:String(row.seo_title||""),metaDescription:String(row.meta_description||""),fields};
+    });
     const effectiveProductSeo=effectiveProductSeoRows(productSeo,onlyProducts,publicLocaleCodes,languageConfig.sourceLocale);
     const modelReferenceAudit={total:allModelReferences.length,
       published:allModelReferences.filter(row=>row.publication_status==="published").length,
@@ -213,6 +233,7 @@ export async function onRequestGet(context){
        pageCopy:parseJson(config.page_copy,null),
        modelReferenceAudit,
        pageRegistry:onlyRoutes,
+       pageFields,
        pageBodies:pageBodies.filter(r=>managedPageRoute(r.route)&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
        products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
