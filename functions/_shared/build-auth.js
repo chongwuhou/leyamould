@@ -83,48 +83,6 @@ export async function authorizedReviewedBlogBatchRequest(request, env) {
   return authorizedExplicitPublishRequest(request, env);
 }
 
-// One-time, source-bound LEYA MOULD content seed. The endpoint imports the
-// reviewed repository manifests itself and never accepts arbitrary article,
-// navigation or SEO copy from the caller.
-export async function authorizedMouldContentSeedRequest(request, env) {
-  const pathname = new URL(request.url).pathname;
-  if (request.method !== "POST" || pathname !== "/api/admin/content-seed") return false;
-  return authorizedExplicitPublishRequest(request, env);
-}
-
-
-// Owner-reviewed, sha256-bound R2 images. This narrow CI exception cannot edit other content.
-// Narrow, source-reviewed repair for the nine multilingual Blog D1 records identified
-// by the 2026-11-05 live translation audit. It accepts no arbitrary copy.
-export async function authorizedReviewedBlogTranslationRepairRequest(request, env) {
-  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-translation-repair-20261105") return false;
-  return verifyCloudflareProjectToken(bearerToken(request), env);
-}
-export async function authorizedReviewedBlogIndexCopyCleanupRequest(request, env) {
-  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-index-copy-cleanup-20261117") return false;
-  return verifyCloudflareProjectToken(bearerToken(request), env);
-}
-
-// Narrow, reviewed phase-two D1 translation semantics repair. It accepts no arbitrary
-// copy and only targets the fixed multilingual records in the migration endpoint.
-export async function authorizedReviewedBlogSeoPhase2Request(request, env) {
-  if (request.method !== "POST" || new URL(request.url).pathname !== "/api/admin/blog-seo-phase2-corrections") return false;
-  return verifyCloudflareProjectToken(bearerToken(request), env);
-}
-export async function authorizedReviewedBlogImageUploadRequest(request, env) {
-  if (request.method!=="POST" || !["/api/admin/blog-images-20261030","/api/admin/blog-images-20261031","/api/admin/blog-images-20261102","/api/admin/blog-images-20261103","/api/admin/blog-images-20261107","/api/admin/blog-images-20261110","/api/admin/blog-images-20261111"].includes(new URL(request.url).pathname)) return false;
-  return verifyCloudflareProjectToken(bearerToken(request),env);
-}// Narrow exception for the reviewed 101-model daily XLSX publisher. The
-// existing GitHub CI Cloudflare token proves access to THIS XUYI project,
-// but may only call the source-validated, append-only, three-per-day endpoint.
-// Ordinary admin CRUD remains password/session protected as before.
-// Exact one-time, owner-reviewed three-image R2/CMS upload. General admin writes remain restricted.
-export async function authorizedReviewedBlogCoverRequest(request, env) {
- const url=new URL(request.url);
- if (request.method!=="POST" || url.pathname!=="/api/admin/blog-covers-20261029" ||
-     !new Set(["upload","commit"]).has(url.searchParams.get("mode"))) return false;
- return verifyCloudflareProjectToken(bearerToken(request),env);
-}
 export async function authorizedDailyProductReviewRequest(request, env) {
   if (new URL(request.url).pathname !== "/api/admin/daily-product-reviews" ||
       !new Set(["GET", "POST"]).has(request.method)) return false;
@@ -132,22 +90,9 @@ export async function authorizedDailyProductReviewRequest(request, env) {
   return verifyCloudflareProjectToken(bearerToken(request), env);
 }
 
-// Fixed, source-reviewed one-time migration: the caller may select a batch,
-// but never supply arbitrary SEO copy or model names to a write endpoint.
-export async function authorizedProductSeoPromotionRequest(request, env){
-  if(!new Set([
-    "/api/admin/product-seo-promotion-20261020",
-    "/api/admin/product-seo-refresh-20261104",
-    "/api/admin/collection-seo-refresh-20261105"
-  ]).has(new URL(request.url).pathname)||
-     !new Set(["GET","POST"]).has(request.method))return false;
-  return verifyCloudflareProjectToken(bearerToken(request),env);
-}
+// Historical date-named repair, migration and scheduler routes were removed.
+// Keeping no helper for them ensures an old URL cannot regain a write
+// capability merely by reappearing under an old filename.
 
-// Narrow scheduler heartbeat/claim endpoint for the canonical LEYA MOULD GitHub runner.
-export async function authorizedSchedulerRunnerRequest(request, env){
-  if(request.method!=="POST"||new URL(request.url).pathname!=="/api/admin/scheduler-runner")return false;
-  return verifyCloudflareProjectToken(bearerToken(request),env);
-}
 
 

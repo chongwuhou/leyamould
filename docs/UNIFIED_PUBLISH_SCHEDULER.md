@@ -1,23 +1,23 @@
-# XUYI unified scheduled publishing
+# XUYI unified publication queue
 
 Status: current architecture
 
 ## Purpose
 
-The admin module "09 自动发布与定时任务" is the owner control plane for both authentic product reviews and reviewed Blog articles. It persists task configuration and execution history in XUYI D1. The browser never contains the Cloudflare project token or any source workbook.
+The admin module "11 发布队列（手动）" is the owner control plane for reviewed product reviews and Blog articles. It persists queue configuration and history in XUYI D1. Automatic publication is retired; the browser never contains the Cloudflare project token or any source workbook.
 
 ## Default tasks
 
-| Task | Enabled on first initialization | Time zone | Default time | Daily limit |
+| Queue | Automatic execution | Time zone | Default time | Daily limit |
 |---|---:|---|---:|---:|
-| Product reviews | Yes | Asia/Shanghai | 09:17 | 3 |
-| Blog articles | Yes | Asia/Shanghai | 00:00 earliest check | 3 |
+| Product reviews | No | Asia/Shanghai | 09:17 (planning only) | 3 |
+| Blog articles | No | Asia/Shanghai | 00:00 (planning only) | 3 |
 
-Defaults are inserted with INSERT OR IGNORE; existing owner settings are never overwritten by subsequent schema checks. System default tasks can be paused or edited, but not deleted. Custom tasks can be created, edited, paused, resumed, and deleted.
+Defaults are inserted with INSERT OR IGNORE; all task rows are forced to `enabled=0`. Existing task history is preserved, but no task can resume automatic execution. Custom queue records can be created, edited, paused, or deleted.
 
-Review tasks run once per configured local date. The review publication ledger and daily cap use Beijing calendar dates, so review tasks are restricted to Asia/Shanghai. Multiple active review tasks contribute to one global daily quota; each task also has its own per-run limit. A review task first created after its scheduled time on a given day is intentionally deferred until the next day, avoiding an unexpected immediate batch on initial activation.
+Historical review task settings and ledger rows are retained for reference. They no longer claim work or consume a daily quota.
 
-Blog tasks poll every five minutes after their configured earliest-check time. Each Blog article has its own scheduled Beijing timestamp in the Blog editor. Multiple active Blog tasks contribute to one global daily quota, and each task also has its own per-task daily limit. All review and Blog daily quotas reset on the Beijing calendar date, regardless of a task's selected execution time zone. The sum of enabled task limits is the Blog-wide daily cap; both content-type totals are shown in the admin scheduler and calculated from D1. A queued article is not eligible until its exact scheduled timestamp has passed.
+Blog and review schedule times are retained as planning metadata only. No five-minute heartbeat, task claim, quota consumption, content publication, or build dispatch occurs. The queue remains available for owner review and manual publication through the normal CMS modules.
 ## Blog editorial gate
 
 A Blog article is scheduled from the existing Blog editor, not generated automatically. Before scheduling:
@@ -27,7 +27,7 @@ A Blog article is scheduled from the existing Blog editor, not generated automat
 - the owner must explicitly confirm that the body, links, related reading, and cover have been reviewed and approved;
 - the exact serialized article content is SHA-256 bound to the queue entry.
 
-If the draft changes after scheduling, the hash check moves it to needs_review and prevents publication. Manually publishing or retiring a scheduled article cancels its pending queue item. Published posts are never auto-published a second time.
+If the draft changes after scheduling, the hash check moves it to needs_review. Manually publishing or retiring a queued article cancels its pending queue item. Published posts are never auto-published.
 
 ## Review source safety
 
@@ -36,23 +36,22 @@ The only accepted source files remain 101-zhenshipingjia.xlsx and 101-additional
 - the exclusion of the known duplicate customer/SKU attribution;
 - multiple distinct customers reviewing the same model;
 - the append-only v2 review ledger;
-- a server-enforced daily quota derived from enabled review tasks.
+- the historical quota fields, which are no longer consumed by an automatic runner.
 
 No source workbook, derived review payload, or private customer data is copied to dist/ or public R2 storage.
 
 ## Execution architecture
 
-- GitHub Actions runs a five-minute scheduler heartbeat only when the repository/workflow credentials and owner policy permit it; repository visibility alone does not grant Cloudflare access.
-- The runner uses the existing CLOUDFLARE_API_TOKEN secret. The dedicated /api/admin/scheduler-runner endpoint accepts only POST and verifies that token against this exact Cloudflare Pages project.
-- The regular /api/admin/scheduler CRUD API remains protected by the normal website admin session.
-- D1 task claims are idempotent: review tasks claim once per task/date; Blog tasks claim once per five-minute local-time bucket. The GitHub workflow has a concurrency group to prevent overlapping scheduler runs.
-- On a successful D1 publication, the runner dispatches the existing publish-leyamould.yml workflow so the static pages rebuild promptly. The existing 30-minute revision poll remains a fallback.
-- The site build continues to fetch the authenticated D1 snapshot and deploy the static site. A scheduled article becomes visible on the static website after that build finishes.
+- The former five-minute scheduler heartbeat and `/api/admin/scheduler-runner` endpoint are deleted. Scheduled tasks remain visible as queue history, but no background process claims or publishes them.
+- The regular `/api/admin/scheduler` CRUD API remains protected by the normal website admin session and rejects resume/enable requests.
+- The shared claim and publish functions fail closed when called by stale code, returning a disabled result without changing publication data.
+- Manual CMS publication remains available only through its explicit owner authorization and the read-only D1 snapshot build path.
+- The site build continues to fetch the authenticated D1 snapshot and deploy the static site after an owner-triggered manual publication.
 
 ## D1 tables
 
-- xuyi_publish_tasks: recurring task configuration.
-- xuyi_publish_runs: idempotent claims and execution history.
+- xuyi_publish_tasks: retained queue configuration (all rows disabled).
+- xuyi_publish_runs: retained historical execution records; no new automatic claims are created.
 - xuyi_blog_schedule: article-level schedule, editorial approval, content hash, and publication state.
 - Existing xuyi_product_reviews, review publication ledgers, and Blog CMS tables remain authoritative for content.
 
@@ -60,8 +59,8 @@ All new tables are additive and created idempotently. No existing reviews or art
 
 ## Safety / deployment notes
 
-- Creating the scheduler tables seeds the two default task rows but does not publish any content.
-- No existing Blog article is automatically queued; the owner must schedule a draft in the Blog editor.
-- Pausing a task prevents new claims. Resuming permits the next due task check.
-- Daily quotas are enforced server-side; changing the UI alone cannot bypass them.
-- The scheduler is a separate, explicit capability. If the owner pauses automated publication, keep the workflow and D1 task history but leave task execution disabled; manual publication remains available through the same formal D1/CMS rules.
+- Creating the queue tables inserts two disabled default rows and does not publish or queue content automatically.
+- No existing Blog article is automatically queued; the owner must use the Blog editor and then publish manually.
+- Queue records can be paused or deleted; resume is rejected while automatic publication is retired.
+- There is no automatic daily quota consumer. Manual CMS publication still enforces its own content and authorization checks.
+

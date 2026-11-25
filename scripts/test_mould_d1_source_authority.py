@@ -30,9 +30,8 @@ footer = read("templates/site/footer.html")
 for marker in ("{{FOOTER_LOGO}}", "{{FOOTER_EMAIL}}", "{{FOOTER_WA_URL}}", "{{FOOTER_COPYRIGHT}}", "{{FOOTER_QUICK_LINKS}}"):
     assert marker in footer, marker
 
-seed = read("functions/api/admin/mould-content-seed-20261124.js")
-for marker in ("mould-news-editorial.json", "xuyi_blog_posts", "site_pages", "site_navigation", "common_copy", "ownerEditsPreserved"):
-    assert marker in seed, marker
+assert not (ROOT / "functions/api/admin/content-seed.js").exists()
+assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists()
 
 editorial = json.loads((ROOT / "data/mould-news-editorial.json").read_text(encoding="utf-8"))
 items = editorial.get("items") or []
@@ -42,9 +41,12 @@ assert {item["category"] for item in items} == {"news", "machine"}
 assert all(len(item.get("sections", {}).get("en", [])) == 7 for item in items)
 
 workflow = read(".github/workflows/publish-leyamould.yml")
-assert "scripts/migrate_mould_content.py" in workflow
-assert "Seed reviewed LEYA D1 content and translations" in workflow
+assert "scripts/migrate_mould_content.py" not in workflow
+assert "Seed reviewed LEYA D1 content and translations" not in workflow
+assert "Build bootstrap source release before D1 seed" not in workflow
+assert 'LEYA_REQUIRE_D1_SNAPSHOT: "1"' in workflow
 assert "scripts/test_mould_release_authority.py" in workflow
 
 print("LEYA_MOULD_D1_SOURCE_AUTHORITY_PASSED")
+
 

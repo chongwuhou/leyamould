@@ -50,6 +50,11 @@ def main():
             or not isinstance(payload.get("blogPosts"),list)
             or not isinstance(payload.get("modelReferences"),list)):
         raise RuntimeError("Build snapshot schema missing required pages/products/blogPosts/modelReferences")
+    audit = payload.get("modelReferenceAudit")
+    if not isinstance(audit, dict) or not isinstance(audit.get("publishedIssues"), list):
+        raise RuntimeError("Build snapshot schema missing modelReferenceAudit")
+    if audit["publishedIssues"]:
+        raise RuntimeError("Published D1 model references failed the review gate")
     OUTPUT.parent.mkdir(parents=True,exist_ok=True)
     OUTPUT.write_text(json.dumps(payload,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     print("LEYA_BUILD_INPUT_READY",
@@ -58,5 +63,7 @@ def main():
           "products",len(payload["products"]),
           "blogPosts",len(payload["blogPosts"]),
           "modelReferences",len(payload["modelReferences"]),
+          "modelDrafts",int(audit.get("draft",0) or 0),
           "translations",len(payload.get("translations",[])))
 if __name__=="__main__":main()
+

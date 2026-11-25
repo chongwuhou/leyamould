@@ -3,7 +3,10 @@ import {ensureBlogSchema} from "./blog-cms.js";const TASKS_SQL=`CREATE TABLE IF 
 const RUNS_SQL=`CREATE TABLE IF NOT EXISTS xuyi_publish_runs (id TEXT PRIMARY KEY,task_id TEXT NOT NULL,scheduled_for TEXT NOT NULL,started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,finished_at TEXT,status TEXT NOT NULL CHECK(status IN ('running','success','partial','failed')),published_count INTEGER NOT NULL DEFAULT 0,skipped_count INTEGER NOT NULL DEFAULT 0,error TEXT NOT NULL DEFAULT '',UNIQUE(task_id,scheduled_for))`;
 const BLOG_QUEUE_SQL=`CREATE TABLE IF NOT EXISTS xuyi_blog_schedule (slug TEXT PRIMARY KEY,scheduled_at TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','published','cancelled','needs_review')),approved INTEGER NOT NULL DEFAULT 0 CHECK(approved IN (0,1)),content_sha256 TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_at TEXT)`;
 const BLOG_LOCALE_QUEUE_SQL=`CREATE TABLE IF NOT EXISTS xuyi_blog_locale_schedule (slug TEXT NOT NULL,locale TEXT NOT NULL,scheduled_at TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled','published','cancelled','needs_review')),approved INTEGER NOT NULL DEFAULT 0 CHECK(approved IN (0,1)),payload_json TEXT NOT NULL,content_sha256 TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,published_at TEXT,PRIMARY KEY(slug,locale))`;
-const DEFAULTS=[{id:"reviews-daily",content_type:"reviews",name:"产品评价自动发布",enabled:1,timezone:"Asia/Shanghai",schedule_time:"09:17",daily_limit:3},{id:"blog-daily",content_type:"blog",name:"Blog 文章自动发布",enabled:1,timezone:"Asia/Shanghai",schedule_time:"00:00",daily_limit:3}];
+// Automatic publication is retired. Queue tables/history remain available
+// for manual planning, but every execution path fails closed.
+export const AUTOMATIC_PUBLICATION_ENABLED=false;
+const DEFAULTS=[{id:"reviews-daily",content_type:"reviews",name:"产品评价发布队列（手动）",enabled:0,timezone:"Asia/Shanghai",schedule_time:"09:17",daily_limit:3},{id:"blog-daily",content_type:"blog",name:"Blog 发布队列（手动）",enabled:0,timezone:"Asia/Shanghai",schedule_time:"00:00",daily_limit:3}];
 async function ensureLocaleQueue(db){
  const row=await db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='xuyi_blog_locale_schedule'").first();
  const sql=String(row?.sql||"").toLowerCase();
@@ -22,6 +25,7 @@ export async function ensurePublishScheduler(db){
  await db.prepare("CREATE INDEX IF NOT EXISTS idx_xuyi_blog_schedule_due ON xuyi_blog_schedule(status,scheduled_at)").run();
  await db.prepare("CREATE INDEX IF NOT EXISTS idx_xuyi_blog_locale_schedule_due ON xuyi_blog_locale_schedule(status,scheduled_at,slug)").run();
  for(const t of DEFAULTS)await db.prepare("INSERT OR IGNORE INTO xuyi_publish_tasks(id,content_type,name,enabled,timezone,schedule_time,daily_limit) VALUES(?,?,?,?,?,?,?)").bind(t.id,t.content_type,t.name,t.enabled,t.timezone,t.schedule_time,t.daily_limit).run();
+ await db.prepare("UPDATE xuyi_publish_tasks SET enabled=0 WHERE enabled<>0").run();
  }export function localClock(now,timezone){const p=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:timezone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(now).map(x=>[x.type,x.value]));return {date:p.year+"-"+p.month+"-"+p.day,time:p.hour+":"+p.minute};}
 export function taskPublishedToday(rows,taskId,date){
  return rows.filter(x=>{
@@ -34,13 +38,7 @@ export function dailyRemaining(globalLimit,globalPublished,taskLimit,taskPublish
 }
 
 function nextRunLabel(task,now,runs){
- try{
-  const c=localClock(now,task.timezone);
-  if(task.content_type==="blog")return "每5分钟检查（起始 "+task.schedule_time+"） ("+task.timezone+")"+(task.enabled?"":" · 已暂停");
-  const ran=runs.some(r=>r.task_id===task.id&&r.scheduled_for===c.date);
-  const next=(!ran&&c.time<task.schedule_time)?c.date:localClock(new Date(now.getTime()+36*60*60*1000),task.timezone).date;
-  return next+" "+task.schedule_time+" ("+task.timezone+")"+(task.enabled?"":" · 已暂停");
- }catch{return "时区无效"}
+ return "自动发布已关闭 · 仅保留手动队列记录";
 }
 export async function getPublishTasks(db){
  await ensurePublishScheduler(db);
@@ -60,14 +58,14 @@ export async function getPublishTasks(db){
  const limit=Number(input?.daily_limit),max=type==="reviews"?20:10;if(!Number.isInteger(limit)||limit<1||limit>max)throw Error("每日数量超出允许范围 1–"+max);
  const existing=await db.prepare("SELECT content_type FROM xuyi_publish_tasks WHERE id=?").bind(id).first();
  if(["reviews-daily","blog-daily"].includes(id)&&existing&&existing.content_type!==type)throw Error("系统默认任务类型不能更改");
- const enabled=input?.enabled===false||input?.enabled===0?0:1;
- if(enabled){const active=(await db.prepare("SELECT id,daily_limit FROM xuyi_publish_tasks WHERE content_type=? AND enabled=1 AND id<>?").bind(type,id).all()).results||[];const total=active.reduce((sum,x)=>sum+Number(x.daily_limit||0),0);if(total+limit>max)throw Error("同类型所有启用任务的每日总上限不能超过 "+max+" 条");}
- await db.prepare("INSERT INTO xuyi_publish_tasks(id,content_type,name,enabled,timezone,schedule_time,daily_limit) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET content_type=excluded.content_type,name=excluded.name,enabled=excluded.enabled,timezone=excluded.timezone,schedule_time=excluded.schedule_time,daily_limit=excluded.daily_limit,updated_at=CURRENT_TIMESTAMP").bind(id,type,name,enabled,timezone,time,limit).run();
+ if(input?.enabled===true||input?.enabled===1)throw Error("自动发布已关闭；任务只能保存为手动队列");
+ await db.prepare("INSERT INTO xuyi_publish_tasks(id,content_type,name,enabled,timezone,schedule_time,daily_limit) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET content_type=excluded.content_type,name=excluded.name,enabled=0,timezone=excluded.timezone,schedule_time=excluded.schedule_time,daily_limit=excluded.daily_limit,updated_at=CURRENT_TIMESTAMP").bind(id,type,name,0,timezone,time,limit).run();
  return {id};
 }export async function mutatePublishTask(db,action,id){
  await ensurePublishScheduler(db);const key=String(id||"");if(!/^[a-z0-9][a-z0-9-]{2,70}$/.test(key))throw Error("任务 ID 无效");
  if(action==="delete"){if(["reviews-daily","blog-daily"].includes(key))throw Error("系统默认任务不能删除，可以暂停");await db.prepare("DELETE FROM xuyi_publish_tasks WHERE id=?").bind(key).run();return {deleted:true};}
  if(action==="pause"||action==="resume"){
+  if(action==="resume")throw Error("自动发布已关闭；不能恢复自动执行");
   const task=await db.prepare("SELECT content_type,daily_limit FROM xuyi_publish_tasks WHERE id=?").bind(key).first();if(!task)throw Error("任务不存在");
   const enabled=action==="resume"?1:0;
   if(enabled){const max=task.content_type==="reviews"?20:10;const active=(await db.prepare("SELECT daily_limit FROM xuyi_publish_tasks WHERE content_type=? AND enabled=1 AND id<>?").bind(task.content_type,key).all()).results||[];const total=active.reduce((sum,x)=>sum+Number(x.daily_limit||0),0);if(total+Number(task.daily_limit||0)>max)throw Error("恢复后同类型每日总上限会超过 "+max+" 条");}
@@ -76,6 +74,7 @@ export async function getPublishTasks(db){
  throw Error("未知任务操作");
 }
 export async function claimDuePublishTasks(db,now=new Date()){
+ if(!AUTOMATIC_PUBLICATION_ENABLED)return {claimed:[],globalReviewLimit:0,disabled:true};
  await ensurePublishScheduler(db);
  const tasks=(await db.prepare("SELECT * FROM xuyi_publish_tasks WHERE enabled=1 ORDER BY content_type,schedule_time").all()).results||[];
  const claimed=[];
@@ -140,6 +139,7 @@ export async function scheduleBlogLocalePost(db,{slug,locale,scheduledAt,approve
 }
 
 export async function publishDueBlogPosts(db,task,now=new Date()){
+ if(!AUTOMATIC_PUBLICATION_ENABLED)return {published:0,skipped:0,needsReview:0,disabled:true};
  await ensurePublishScheduler(db);await ensureBlogSchema(db);
  const active=(await db.prepare("SELECT daily_limit FROM xuyi_publish_tasks WHERE content_type='blog' AND enabled=1").all()).results||[];
  const dailyLimit=active.reduce((sum,x)=>sum+Number(x.daily_limit||0),0);
@@ -247,7 +247,7 @@ export async function finishPublishRun(db,runId,result){
  return {updated:Number(r.meta?.changes||0)===1,status};
 }
 export async function scheduleBlogPost(db,{slug,scheduledAt,approved,contentJson}){
- await ensurePublishScheduler(db);const time=Date.parse(String(scheduledAt||""));if(!Number.isFinite(time)||time<=Date.now())throw Error("定时发布时间必须是未来时间");if(approved!==true)throw Error("自动发布前必须确认文章已完成正文、产品内链、相关阅读和封面审核");
+ await ensurePublishScheduler(db);const time=Date.parse(String(scheduledAt||""));if(!Number.isFinite(time)||time<=Date.now())throw Error("计划时间必须是未来时间");if(approved!==true)throw Error("保存发布计划前必须确认文章已完成正文、产品内链、相关阅读和封面审核");
  const content=String(contentJson||""),digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(content)),hash=Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,"0")).join("");
  await db.prepare("INSERT INTO xuyi_blog_schedule(slug,scheduled_at,status,approved,content_sha256) VALUES(?,?,'scheduled',1,?) ON CONFLICT(slug) DO UPDATE SET scheduled_at=excluded.scheduled_at,status='scheduled',approved=1,content_sha256=excluded.content_sha256,updated_at=CURRENT_TIMESTAMP,published_at=NULL").bind(slug,new Date(time).toISOString(),hash).run();return {slug,scheduledAt:new Date(time).toISOString(),approved:true};
 }
@@ -257,4 +257,5 @@ export async function cancelBlogSchedule(db,slug){
  await db.prepare("UPDATE xuyi_blog_locale_schedule SET status='cancelled',approved=0,updated_at=CURRENT_TIMESTAMP WHERE slug=? AND status='scheduled'").bind(slug).run();
  return {cancelled:Number(r.meta?.changes||0)===1};
 }
+
 

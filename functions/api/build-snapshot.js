@@ -102,7 +102,7 @@ export async function onRequestGet(context){
     const modelPdfUrl=optionalColumn(modelReferenceColumns,"pdf_url","''");
     const modelPdfSha=optionalColumn(modelReferenceColumns,"pdf_sha256","''");
     const modelPdfPages=optionalColumn(modelReferenceColumns,"pdf_pages","0");
-    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos,modelReferences]=await Promise.all([
+    const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos,modelReferences,allModelReferences]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy','page_copy')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
       list(db,"SELECT id,parent_id,label,url,sort_order,new_window,"+navigationTranslations+" FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
@@ -120,7 +120,8 @@ export async function onRequestGet(context){
       list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,"+videoSource+",status,published_at,sort_order,updated_at FROM leya_youtube_videos WHERE status='published' ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500"),
       // Model references are reviewed catalogue records. Only formally
       // published rows enter the immutable build snapshot.
-      list(db,"SELECT slug,family,title,alt,source_url,source_image,image_path,description,translations_json,"+modelPdfUrl+","+modelPdfSha+","+modelPdfPages+",publication_status,sort_order,updated_at FROM leya_model_references WHERE publication_status='published' ORDER BY family,sort_order,slug LIMIT 2000")
+      list(db,"SELECT slug,family,title,alt,source_url,source_image,image_path,description,translations_json,"+modelPdfUrl+","+modelPdfSha+","+modelPdfPages+",publication_status,sort_order,reviewed_at,updated_at FROM leya_model_references WHERE publication_status='published' ORDER BY family,sort_order,slug LIMIT 2000"),
+      list(db,"SELECT slug,publication_status,source_url,source_image,image_path,reviewed_at FROM leya_model_references ORDER BY family,sort_order,slug LIMIT 2000")
     ]);
       const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
       const languageConfig=normalizeLanguageConfig(parseJson(config.language_config,defaultLanguageConfig()));
@@ -150,6 +151,17 @@ export async function onRequestGet(context){
       }catch{return [];}
     });
     const effectiveProductSeo=effectiveProductSeoRows(productSeo,onlyProducts,publicLocaleCodes,languageConfig.sourceLocale);
+    const modelReferenceAudit={total:allModelReferences.length,
+      published:allModelReferences.filter(row=>row.publication_status==="published").length,
+      draft:allModelReferences.filter(row=>row.publication_status!=="published").length,
+      publishedIssues:allModelReferences.filter(row=>row.publication_status==="published").map(row=>{
+        const issues=[];
+        if(!/^https:\/\//i.test(String(row.source_url||"")))issues.push("source_url");
+        if(!/^https:\/\//i.test(String(row.source_image||"")))issues.push("source_image");
+        if(!/^\/media\/[a-z]+\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/i.test(String(row.image_path||"")))issues.push("r2_image");
+        if(!/^\d{4}-\d{2}-\d{2}(?:T|$)/.test(String(row.reviewed_at||"")))issues.push("owner_review");
+        return issues.length?{slug:row.slug,issues}:null;
+      }).filter(Boolean)};
     return json({
       site:"leyamould",schemaVersion:1,
       adminPath,
@@ -161,7 +173,8 @@ export async function onRequestGet(context){
        banners:parseJson(config.home_banner_config,null),
        commonCopy:parseJson(config.common_copy,null),
        pageCopy:parseJson(config.page_copy,null),
-      pageBodies:pageBodies.filter(r=>isMouldRoute(r.route)&&typeof r.main_html==="string")
+       modelReferenceAudit,
+       pageBodies:pageBodies.filter(r=>isMouldRoute(r.route)&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
        products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
       blogPosts:onlyBlogPosts,
@@ -195,11 +208,13 @@ export async function onRequestGet(context){
           && typeof r.title==="string"&&r.title.length>=2&&r.title.length<=180
           && typeof r.alt==="string"&&r.alt.length>=2&&r.alt.length<=180
           && /^\/media\/[a-z]+\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(String(r.image_path||""))
+          && /^\d{4}-\d{2}-\d{2}(?:T|$)/.test(String(r.reviewed_at||""))
         ).map(r=>({slug:r.slug,family:r.family,title:r.title,alt:r.alt,
           sourceUrl:r.source_url||"",sourceImage:r.source_image||"",image:r.image_path,
           description:r.description||"",translations:parseJson(r.translations_json,{}),pdfUrl:r.pdf_url||"",pdfSha256:r.pdf_sha256||"",pdfPages:Number(r.pdf_pages||0),
-          sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
+          reviewedAt:r.reviewed_at||"",sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
     });
   }catch(error){return json({error:"LEYA build snapshot unavailable"},503)}
 }
+
 

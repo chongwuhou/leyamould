@@ -32,9 +32,8 @@ assert "ensureYoutubeVideos(db)" not in snapshot
 assert "ALTER TABLE" not in snapshot and "CREATE TABLE" not in snapshot
 assert "effectiveProductSeoRows" in snapshot
 
-seed = source("functions/api/admin/mould-content-seed-20261124.js")
-for marker in ("mould-catalog.json", "mould-product-structured.json", "xuyi_product_content", "existingProducts", "productImagesRemainTemplateBound", "content.category", "ensureProductSeo", "xuyi_product_seo", "inserted.productSeo"):
-    assert marker in seed, marker
+assert not (ROOT / "functions/api/admin/content-seed.js").exists()
+assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists()
 
 catalog = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
 categories = catalog.get("categories") or []
@@ -105,4 +104,5 @@ assert dynamic["title"] == "New Owner Mould Family"
 assert dynamic["description"].startswith("A reviewed owner-managed")
 
 print(f"LEYA_MOULD_PRODUCT_D1_CONTRACT_PASSED categories={len(categories)}")
+
 

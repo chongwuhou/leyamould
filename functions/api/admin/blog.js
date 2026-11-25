@@ -85,8 +85,8 @@ export async function onRequestPost(context){
   if(action==="schedule"){
    let post;try{post=normalizeBlogPost(payload.post)}catch(error){return reply({error:String(error.message||error)},400)}
    const existing=await db.prepare("SELECT status FROM xuyi_blog_posts WHERE slug=?").bind(post.slug).first();
-   if(existing?.status==="published"||existing?.status==="retired")return reply({error:"只能给尚未发布的草稿安排自动发布时间"},409);
-   if(!post.sections.some(s=>s.paragraph.length>=120))return reply({error:"文章正文不够完整，不能安排自动发布"},400);
+   if(existing?.status==="published"||existing?.status==="retired")return reply({error:"只能给尚未发布的草稿记录计划时间"},409);
+   if(!post.sections.some(s=>s.paragraph.length>=120))return reply({error:"文章正文不够完整，不能保存发布计划"},400);
     const editorial=await editorialError(db,post);if(editorial)return reply({error:editorial},400);
    const content=JSON.stringify(post);if(content.length>100000)return reply({error:"Article content is too large"},413);
    await db.prepare("INSERT INTO xuyi_blog_posts(slug,status,content_json,published_at) VALUES(?,'draft',?,NULL) ON CONFLICT(slug) DO UPDATE SET status='draft',content_json=excluded.content_json,updated_at=CURRENT_TIMESTAMP").bind(post.slug,content).run();
@@ -104,5 +104,6 @@ export async function onRequestPost(context){
  }
  return reply({error:"Unknown action"},400);
 }
+
 
 

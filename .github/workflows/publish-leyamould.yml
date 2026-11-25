@@ -1,5 +1,6 @@
 name: Leyamould mould-site source build
-# The source workflow is the only deployment path; D1 content is fetched before each clean build.
+# The source workflow is the only deployment path. Production content is read
+# from an authenticated D1 snapshot; this workflow never seeds or mutates D1.
 
 on:
   push:
@@ -110,20 +111,13 @@ jobs:
         run: python scripts/preflight.py
       - name: Verify D1-driven language and publish guards
         run: python scripts/test_dynamic_language_and_publish_guards.py
-      # Publish the reviewed source renderer first so the fixed seed endpoint
-      # is live.  The bootstrap build is intentionally allowed to use the
-      # checked-in source fallback; the strict D1 gate runs immediately after
-      # the seed and fresh snapshot below.
-      - name: Build bootstrap source release before D1 seed
-        env:
-          LEYA_REQUIRE_D1_SNAPSHOT: "0"
-        run: python scripts/build_release.py
-      - name: Deploy bootstrap source release before D1 seed
-        if: env.CLOUDFLARE_API_TOKEN != ''
-        run: npx --yes wrangler@4.148.0 pages deploy dist --project-name leyamould --branch main
-      - name: Seed reviewed LEYA D1 content and translations
-        if: env.CLOUDFLARE_API_TOKEN != ''
-        run: python scripts/migrate_mould_content.py
+      - name: Verify strict production translation authority
+        run: python scripts/test_mould_translation_authority.py
+      - name: Verify automatic publication remains disabled
+        run: node scripts/test_publish_scheduler_disabled.mjs
+      # D1 is an external content source, not a build target.  Fetch it once
+      # before the first clean build; there is deliberately no bootstrap
+      # deploy and no seed/migration request in the normal release path.
       - name: Fetch reviewed LEYA D1 build snapshot
         run: python scripts/fetch_build_snapshot.py
       - name: Verify complete D1 SEO and multilingual content
@@ -144,9 +138,8 @@ jobs:
           python scripts/test_r2_usage_index.py
       - name: Verify shared templates
         run: python scripts/test_shared_templates.py
-      - name: Verify second clean source rebuild
+      - name: Verify second clean source rebuild from the same D1 snapshot
         run: |
-          python scripts/fetch_build_snapshot.py
           python scripts/build_release.py
           python scripts/test_mould_release.py
           python scripts/r2_usage_index.py
@@ -162,5 +155,6 @@ jobs:
         run: |
           echo "::error::CLOUDFLARE_API_TOKEN is not configured; source build passed but production was not deployed."
           exit 1
+
 
 

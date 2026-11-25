@@ -85,9 +85,9 @@ def main() -> None:
     if str(os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT", "")).lower() in {"1", "true", "yes"}:
         if not snapshot.is_file() or state.get("site") != "leyamould":
             raise SystemExit("Refusing production build without an authenticated LEYA D1 snapshot")
-    fallback_models = json.loads((ROOT / "data/mould-models.json").read_text(encoding="utf-8")) if (ROOT / "data/mould-models.json").is_file() else {"models": []}
     model_reference_rows = state.get("modelReferences") if isinstance(state.get("modelReferences"), list) else []
-    model_reference_count = len(model_reference_rows) if model_reference_rows else len([row for row in fallback_models.get("models", []) if isinstance(row, dict)])
+    strict_d1 = str(os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT", "")).lower() in {"1", "true", "yes"}
+    model_reference_count = len(model_reference_rows)
     manifest = json.loads((DIST / "locale-manifest.json").read_text(encoding="utf-8"))
     sources = {
         "brand": "cloudflare-d1:site_state.brand_config" if state.get("brand") else "source-fallback:LEYA company profile",
@@ -98,12 +98,12 @@ def main() -> None:
         "pageBodies": "cloudflare-d1:page content" if state.get("pageBodies") else "source-fallback:mould source renderer",
         "pageCopy": "cloudflare-d1:site_state.page_copy" if state.get("pageCopy") else "source-fallback:mould structured page copy",
         "blogPosts": "cloudflare-d1:blog posts" if state.get("blogPosts") else "source-fallback:empty reviewed resources",
-        "translations": "cloudflare-d1:xuyi_translation_overrides and localized D1 records" if state.get("translations") else "source-fallback:locale renderer copy",
+        "translations": "cloudflare-d1:xuyi_translation_overrides and localized D1 records" if state.get("translations") else ("missing:production translation overrides" if strict_d1 else "source-fallback:locale renderer copy"),
         "commonCopy": "cloudflare-d1:site_state.common_copy" if state.get("commonCopy") else "source-fallback:mould renderer copy",
         "mediaAlts": "cloudflare-d1:xuyi_media_alt" if state.get("mediaAlts") else "source-fallback:reviewed media manifest",
         "productReviews": "cloudflare-d1:xuyi_product_reviews" if state.get("productReviews") else "source-fallback:no published reviews",
         "youtubeVideos": "cloudflare-d1:leya_youtube_videos" if state.get("youtubeVideos") else "source-fallback:reviewed YouTube registry",
-        "modelReferences": "cloudflare-d1:leya_model_references" if model_reference_rows else "source-fallback:data/mould-models.json",
+        "modelReferences": "cloudflare-d1:leya_model_references" if model_reference_rows else ("missing:reviewed D1 model references" if strict_d1 else "source-fallback:data/mould-models.json"),
         "locales": "deployment/site.config.json + D1 publish-ready filter",
     }
     meta = {
@@ -125,7 +125,7 @@ def main() -> None:
         "fileCount": len(static_files) + 1,
         "fileBreakdown": breakdown,
         "modelReferenceCount": model_reference_count,
-        "staticModelCount": model_reference_count if not model_reference_rows else 0,
+        "staticModelCount": 0,
         "contentCounts": {
             "pages": len(state.get("pages") or []),
             "pageBodies": len(state.get("pageBodies") or []),
@@ -159,6 +159,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 

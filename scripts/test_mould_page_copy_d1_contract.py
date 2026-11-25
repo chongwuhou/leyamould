@@ -13,9 +13,8 @@ snapshot = read("functions/api/build-snapshot.js")
 assert "'page_copy'" in snapshot
 assert "pageCopy:parseJson(config.page_copy,null)" in snapshot
 
-seed = read("functions/api/admin/mould-content-seed-20261124.js")
-for marker in ("STRUCTURED_PAGE_COPY", "shared_cta", "mergeMissing", "[\"page_copy\", STRUCTURED_PAGE_COPY]", "ownerEditsPreserved"):
-    assert marker in seed, marker
+assert not (ROOT / "functions/api/admin/content-seed.js").exists()
+assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists()
 
 structured_api = read("functions/api/admin/structured-copy.js")
 for marker in ("save_page_copy", "quickAnswers", "groups", "bumpPublishRevision"):
@@ -45,3 +44,4 @@ cta = mould_build.shared_cta("en", "catalog")
 assert "OWNER CTA" in cta and "Owner CTA text." in cta and "Owner note." in cta
 
 print("LEYA_MOULD_PAGE_COPY_D1_CONTRACT_PASSED")
+

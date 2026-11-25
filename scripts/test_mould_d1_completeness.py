@@ -52,17 +52,13 @@ def translation_map(rows):
     return result
 
 # Production cannot silently ship source-language fallback as a translated
-# page. Every managed page therefore needs reviewed SEO/copy per publish locale.
+# page. Every managed page therefore needs a complete reviewed D1 override per
+# publish locale.  The renderer fallback is intentionally not accepted here.
 page_rows = [row for row in state.get("pages", []) if isinstance(row, dict) and clean_text(row.get("route"))]
 page_routes = {clean_text(row.get("route")) for row in page_rows}
 page_routes.update(clean_text(row.get("route")) for row in state.get("pageBodies", []) if isinstance(row, dict) and clean_text(row.get("route")))
 page_translation = translation_map(state.get("translations", []))
 page_missing = []
-def has_reviewed_source_fallback(route: str) -> bool:
-    # The renderer owns the DOM and carries the reviewed Spanish fallback for
-    # every managed route. D1 remains authoritative when an override exists,
-    # while a clean seed may omit a duplicate HTML blob.
-    return route in ES_SEO or route.startswith(("/product/", "/capabilities/"))
 
 for row in page_rows:
     route = clean_text(row.get("route"))
@@ -74,9 +70,9 @@ for route in sorted(page_routes):
         if locale == source_locale:
             continue
         content = page_translation.get(("page:" + route, locale))
-        if (not content or not clean_text(content.get("title")) or not clean_text(content.get("description"))) and not has_reviewed_source_fallback(route):
+        if not content or not clean_text(content.get("title")) or not clean_text(content.get("description")):
             page_missing.append(f"{route}:{locale}:title-description")
-        if has_body and (not content or len(clean_text(content.get("mainHtml"))) < 100) and not has_reviewed_source_fallback(route):
+        if not content or len(clean_text(content.get("mainHtml"))) < 120:
             page_missing.append(f"{route}:{locale}:mainHtml")
 if page_missing:
     raise SystemExit("D1 page language/SEO completeness is incomplete: " + ", ".join(page_missing[:40]))
@@ -180,12 +176,12 @@ for row in state.get("modelReferences", []):
         if locale == source_locale:
             continue
         localized = translations.get(locale) if isinstance(translations.get(locale), dict) else {}
-        source_model = next((item for item in HMOULD_MODELS if str(item.get("slug") or "") == str(row.get("slug") or "")), None)
-        source_es = source_model.get("translations", {}).get(locale, {}) if isinstance(source_model, dict) else {}
-        if (not clean_text(localized.get("title")) or not clean_text(localized.get("alt"))) and not (clean_text(source_es.get("title")) and clean_text(source_es.get("alt"))):
+        if not clean_text(localized.get("title")) or not clean_text(localized.get("alt")):
             model_missing.append(str(row.get("slug") or "unknown") + ":" + locale + ":title-alt")
-        if source_description and not clean_text(localized.get("description")) and not clean_text(source_es.get("description")):
+        if source_description and not clean_text(localized.get("description")):
             model_missing.append(str(row.get("slug") or "unknown") + ":" + locale + ":description")
+    if not clean_text(row.get("reviewedAt")):
+        model_missing.append(str(row.get("slug") or "unknown") + ":owner-review")
     if clean_text(row.get("pdfUrl")) and (len(clean_text(row.get("pdfSha256"))) != 64 or int(row.get("pdfPages") or 0) < 1):
         model_missing.append(str(row.get("slug") or "unknown") + ":pdf-metadata")
     model_checked += 1
@@ -203,4 +199,5 @@ for post in state.get("blogPosts", []):
         raise SystemExit("D1 Spanish News fields are incomplete: " + str(post.get("slug") or ""))
 
 print("LEYA_MOULD_D1_COMPLETENESS_PASSED", f"products={len(products)}", f"effectiveSeo={effective_count}", f"explicitSeo={len(seo)}", f"blogPosts={blog_checked}", f"modelReferences={model_checked}", f"locales={','.join(published)}")
+
 

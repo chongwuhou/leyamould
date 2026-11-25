@@ -20,7 +20,7 @@
 ## 运行入口
 
 - 常规入口：scripts/publish_daily_product_reviews.py
-- 调度入口：scripts/run_publish_scheduler.py
+- 自动调度入口已关闭；产品评价只能通过人工审核后台处理。
 - 校验：scripts/test_daily_product_reviews.py、scripts/test_daily_product_reviews_api.mjs
 
 所有入口都必须先 dry-run/只读核对，再条件写入 D1；失败或响应不明确时先读取账本，不盲目重复 POST。人工和 AI 遵守同一套上限、去重、审核和回读规则。
@@ -28,3 +28,4 @@
 ## 完成与回滚
 
 评价发布不等于 Blog 或全站发布。只有 D1 写入、产品页显示、构建、CI 和线上核验全部有证据，才报告完成。回滚使用 D1 历史记录和 Git 正式版本，不删除源评价，不修改 dist，不把业务数据回写到代码快照。
+

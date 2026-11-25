@@ -24,14 +24,16 @@ def main() -> int:
     report_rows = []
     for row in rows:
         source_ready = str(row.get("sourceUrl") or "").startswith("https://") and str(row.get("sourceImage") or "").startswith("https://")
-        image_ready = str(row.get("image") or "").startswith("/assets/") or str(row.get("image") or "").startswith("/media/")
+        image_ready = str(row.get("image") or "").startswith("/media/")
+        owner_reviewed = bool(str(row.get("reviewedAt") or row.get("reviewed_at") or "").strip())
         report_rows.append({
             "slug": row.get("slug", ""),
             "family": row.get("family", ""),
             "sourceReady": source_ready,
             "imageReferenceReady": image_ready,
-            "publicationState": "needs_review" if not (source_ready and image_ready) else "draft_until_d1_review",
-            "reason": "D1 Spanish title/ALT/description, R2 image and owner review are still required before publication",
+            "ownerReviewed": owner_reviewed,
+            "publicationState": "ready" if (source_ready and image_ready and owner_reviewed) else "needs_review",
+            "reason": "D1 Spanish title/ALT/description, R2 image, PDF metadata and owner review are required before publication",
         })
     report = {
         "source": payload.get("source"),
@@ -51,3 +53,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

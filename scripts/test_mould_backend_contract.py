@@ -71,6 +71,10 @@ auth = source("functions/_shared/build-auth.js")
 assert "authorizedReviewedFactoryCatalog" not in auth
 assert "/api/admin/mould-content-seed-20261124" not in auth
 assert "LEYA_ALLOW_LEGACY_MIGRATIONS" not in auth
+assert "authorizedSchedulerRunnerRequest" not in auth
+assert not (ROOT / "functions/api/admin/content-seed.js").exists()
+assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists()
+assert not (ROOT / "functions/api/admin/scheduler-runner.js").exists()
 for removed in (
     "functions/api/admin/factory-catalog-20261103.js",
     "functions/api/admin/factory-catalog-images-20261103.js",
@@ -83,3 +87,4 @@ assert "source_url" in source("functions/_shared/product-reviews.js")
 assert "Published model references require reviewed" in source("functions/api/admin/model-references.js")
 
 print("LEYA_MOULD_BACKEND_CONTRACT_PASSED")
+

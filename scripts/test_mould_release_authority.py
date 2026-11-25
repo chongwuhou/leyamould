@@ -11,9 +11,10 @@ workflow = read(".github/workflows/publish-leyamould.yml")
 assert "python scripts/fetch_build_snapshot.py" in workflow
 assert "python scripts/build_release.py" in workflow
 assert "npx --yes wrangler@4.148.0 pages deploy dist --project-name leyamould --branch main" in workflow
-assert "scripts/migrate_mould_content.py" in workflow
-assert "Seed reviewed LEYA D1 content and translations" in workflow
-assert workflow.count("pages deploy dist --project-name leyamould") == 2
+assert "scripts/migrate_mould_content.py" not in workflow
+assert "Seed reviewed LEYA D1 content and translations" not in workflow
+assert "Build bootstrap source release before D1 seed" not in workflow
+assert workflow.count("pages deploy dist --project-name leyamould") == 1
 assert "scripts/test_mould_release_authority.py" in workflow
 
 renderer = read("mould_build.py")
@@ -40,3 +41,4 @@ assert "bodyEs" in admin and "sectionsEs" in admin and "faqsEs" in admin
 assert "if(tab===\"structured-copy\")" in admin
 
 print("LEYA_MOULD_RELEASE_AUTHORITY_GATE_PASSED")
+

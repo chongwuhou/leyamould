@@ -20,7 +20,7 @@
 <button type="button" class="admin-module-btn" data-admin-target="productseo">08 产品 SEO · D1</button>
 <button type="button" class="admin-module-btn" data-admin-target="media">09 R2 通用媒体库</button>
 <button type="button" class="admin-module-btn" data-admin-target="videos">10 YouTube 视频</button>
-<button type="button" class="admin-module-btn" data-admin-target="scheduler">11 自动发布与定时任务</button>
+<button type="button" class="admin-module-btn" data-admin-target="scheduler">11 发布队列（手动）</button>
 <button type="button" class="admin-module-btn" data-admin-target="modelreferences">12 型号参考库 · D1/R2</button>
 <button type="button" class="admin-module-btn" data-admin-target="all">显示所有</button></nav>
 <p class="admin-sidebar-info">所有正式内容、语种配置和发布状态均以 D1/CMS 为准。</p></aside><main class="shell admin-main">
@@ -128,6 +128,7 @@
    <label>PDF 页数<input id="model-reference-pdf-pages" type="number" min="0" max="9999" value="0"></label>
    <label>排序<input id="model-reference-sort" type="number" min="0" max="99999" value="0"></label>
    <label>发布状态<select id="model-reference-publication"><option value="draft">草稿（不公开）</option><option value="published">审核通过并发布</option></select></label>
+   <label>负责人审核时间（发布必填）<input id="model-reference-reviewed-at" type="datetime-local"></label>
   </div>
   <label class="blog-admin-wide">英文说明<textarea id="model-reference-description" rows="3" maxlength="2000" placeholder="只写来源资料能支持的事实，最终钢材、穴数、机台接口等以项目确认单为准。"></textarea></label>
   <div class="blog-admin-form-grid">
@@ -196,7 +197,7 @@
 <label class="blog-admin-wide">FAQ（每行：问题 | 回答）<textarea id="blog-faqs" rows="5"></textarea></label>
 <label class="blog-admin-wide">相关文章 Slug（每行一项，定时发布需人工选择 2–3 篇已发布文章）<textarea id="blog-related" rows="4"></textarea></label>
 <label>计划发布时间（北京时间）<input id="blog-scheduled-at" type="datetime-local"></label>
-<label class="blog-admin-wide"><input type="checkbox" id="blog-editorial-approved"> 我已人工审核正文、2–5 个不同产品型号链接、2–3 篇相关阅读及封面与文章场景一致，确认可自动发布。</label>
+<label class="blog-admin-wide"><input type="checkbox" id="blog-editorial-approved"> 我已人工审核正文、2–5 个不同产品型号链接、2–3 篇相关阅读及封面与文章场景一致，确认可进入发布队列。</label>
 </div>
 <div class="row" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
 <button type="submit" class="btn ghost" id="blog-save-btn">保存草稿</button>
@@ -207,20 +208,20 @@
 <p class="muted">Blog 英语原稿优先；其他语言沿用统一的审核工作流，不会自动发布未经审核的翻译。</p>
 </form></section>
 <section class="panel" id="scheduler-admin-panel" data-admin-module="scheduler">
-<div class="panel-head"><div><div class="eyebrow">LEYA MOULD · UNIFIED PUBLISH SCHEDULER</div><h2>自动发布与定时任务</h2>
-  <p>统一管理产品评价和 Blog 自动发布。每日数量分别在对应任务的「编辑」中设置并保存到 D1；同类型所有启用任务的数量合计为该类型每日总上限。每 5 分钟检查一次到期任务。</p></div></div>
+<div class="panel-head"><div><div class="eyebrow">LEYA MOULD · MANUAL PUBLICATION QUEUE</div><h2>发布队列（手动）</h2>
+ <p>统一管理产品评价和 Blog 的手动发布队列。历史任务和计划时间保留在 D1 供复核，但自动发布已关闭，不会后台领取、发布或触发构建。</p></div></div>
  <div class="row-actions"><button type="button" class="btn ghost" id="scheduler-refresh">刷新全部定时任务</button><button type="button" class="btn primary" id="scheduler-new">+ 新建定时任务</button></div>
  <p id="scheduler-status" role="status" aria-live="polite"></p>
  <p id="scheduler-quota-summary" class="muted" aria-live="polite"></p>
  <div id="scheduler-task-list"></div>
  <form id="scheduler-task-form" class="blog-admin-editor" hidden>
   <h3 id="scheduler-form-heading">新建定时任务</h3>
-  <label>任务类型<select id="scheduler-type"><option value="reviews">产品评价自动发布</option><option value="blog">Blog 文章自动发布</option></select></label>
+  <label>队列类型<select id="scheduler-type"><option value="reviews">产品评价发布队列</option><option value="blog">Blog 文章发布队列</option></select></label>
   <label>任务名称<input id="scheduler-name" required maxlength="100"></label>
-  <label>每日计划时间（评价按此时间执行；Blog 从此时间起每 5 分钟检查到期文章）<input id="scheduler-time" type="time" required value="09:17"></label>
+  <label>计划时间（仅作队列记录，不会自动执行）<input id="scheduler-time" type="time" required value="09:17"></label>
   <label>时区<select id="scheduler-timezone"><option value="Asia/Shanghai">Asia/Shanghai（北京时间）</option><option value="America/Los_Angeles">America/Los_Angeles</option><option value="America/New_York">America/New_York</option><option value="Europe/London">Europe/London</option><option value="UTC">UTC</option></select></label>
   <label>每日发布数量（本任务额度；同类型启用任务合计为每日总量）<input id="scheduler-limit" type="number" min="1" max="20" value="3" required></label>
-  <label><input type="checkbox" id="scheduler-enabled" checked> 创建后立即启用</label>
+  <label><input type="checkbox" id="scheduler-enabled" disabled> 自动发布（已关闭）</label>
   <div class="row-actions"><button type="submit" class="btn primary">保存任务</button><button type="button" class="btn ghost" id="scheduler-cancel">取消</button></div>
  </form>
  <h3>Blog 定时发布队列</h3><div id="scheduler-blog-queue"></div>
@@ -358,6 +359,7 @@
 <script src="/assets/admin-model-references.js" defer></script>
 <script src="/assets/admin-publish.js" defer></script>
 </body></html>
+
 
 
 

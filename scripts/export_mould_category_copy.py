@@ -1,9 +1,8 @@
-"""Export the reviewed category renderer data into the D1 seed dataset.
+"""Export reviewed category data into a D1 import payload.
 
 The public renderer keeps its visual/layout code in ``mould_category_pages``.
-This small one-time converter moves the business copy and media references into
-the JSON source used by the D1 content seed, so later owner edits can replace
-the category payload without editing the renderer.
+This offline converter prepares business copy and media references for a
+reviewed owner import. It does not call a production endpoint or mutate D1.
 """
 from __future__ import annotations
 
@@ -67,3 +66,4 @@ def export() -> None:
 
 if __name__ == "__main__":
     export()
+

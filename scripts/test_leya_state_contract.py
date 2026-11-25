@@ -22,12 +22,12 @@ assert "compressForUpload" in media
 assert "image/webp" in media
 assert "toBlob(resolve,'image/webp',0.88)" in blog
 
-seed = read("functions/api/admin/mould-content-seed-20261124.js")
-assert "mould-page-bodies.json" in seed
-assert "pageBodies" in seed
+assert not (ROOT / "functions/api/admin/content-seed.js").exists()
+assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists()
 
 admin = read("admin/index.html")
 assert "data-admin-target=\"audit\"" not in admin
 assert "admin-audit.js" not in admin
 
 print("LEYA_LIGHTWEIGHT_STATE_CONTRACT_PASSED")
+

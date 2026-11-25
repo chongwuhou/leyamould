@@ -34,6 +34,9 @@ snapshot = source("functions/api/build-snapshot.js")
 assert "leya_model_references" in snapshot
 assert "modelReferences" in snapshot
 assert "publication_status='published'" in snapshot
+assert "reviewed_at" in snapshot
+assert "modelReferenceAudit" in snapshot
+assert "publishedIssues" in snapshot
 
 renderer = source("mould_build.py")
 assert "STATE.get(\"modelReferences\"" in renderer
@@ -46,12 +49,14 @@ admin = source("admin/index.html")
 assert "modelreferences" in admin
 assert "/assets/admin-model-references.js" in admin
 assert "model-reference-editor" in admin and "model-reference-import" in admin
+assert "model-reference-reviewed-at" in admin
 
 release = source("scripts/build_release.py")
 assert '"modelReferences"' in release and "modelReferenceCount" in release
 
 regrade = source("scripts/regrade_mould_references.py")
 assert "never calls a remote API" in regrade
-assert "draft_until_d1_review" in regrade
+assert "ownerReviewed" in regrade
 
 print("LEYA_MOULD_MODEL_REFERENCE_CONTRACT_PASSED", f"rows={len(rows)}")
+

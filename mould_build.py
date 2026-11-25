@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent
 CONFIG = json.loads((ROOT / "deployment/site.config.json").read_text(encoding="utf-8"))
 ORIGIN = CONFIG["site"]["origin"]
 INDEXING_APPROVED = CONFIG["site"].get("indexingApproved") is True
+STRICT_D1 = os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT", "").strip().lower() in {"1", "true", "yes"}
 OUTPUT = ROOT / (os.environ.get("LEYA_OUTPUT_DIR") or ".")
 CATALOG = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
 MODEL_DATA = json.loads((ROOT / "data/mould-models.json").read_text(encoding="utf-8")) if (ROOT / "data/mould-models.json").is_file() else {"models": []}
@@ -63,6 +64,7 @@ def _normalise_model_reference(row: dict) -> dict:
     value["sourceImage"] = str(row.get("sourceImage") or row.get("source_image") or "").strip()
     value["image"] = str(row.get("image") or row.get("imagePath") or row.get("image_path") or "").strip()
     value["description"] = str(row.get("description") or "").strip()
+    value["reviewedAt"] = str(row.get("reviewedAt") or row.get("reviewed_at") or "").strip()
     value["pdfUrl"] = str(row.get("pdfUrl") or row.get("pdf_url") or "").strip()
     value["pdfSha256"] = str(row.get("pdfSha256") or row.get("pdf_sha256") or "").strip().lower()
     try:
@@ -85,12 +87,14 @@ def _normalise_model_reference(row: dict) -> dict:
 STATIC_HMOULD_MODELS = [_normalise_model_reference(row) for row in STATIC_HMOULD_MODELS]
 _SNAPSHOT_MODEL_REFERENCES = [
     _normalise_model_reference(row) for row in STATE.get("modelReferences", [])
-    if isinstance(row, dict) and row.get("slug") and row.get("family") and row.get("image")
+    if isinstance(row, dict) and row.get("slug") and row.get("family") and row.get("image") and row.get("reviewedAt")
 ]
-# D1/CMS is authoritative only when it supplies a published, reviewed set.
-# Empty or unavailable snapshots never blank the public catalogue.
-HMOULD_MODELS = _SNAPSHOT_MODEL_REFERENCES or STATIC_HMOULD_MODELS
-MODEL_REFERENCE_SOURCE = "cloudflare-d1:leya_model_references" if _SNAPSHOT_MODEL_REFERENCES else "source-fallback:data/mould-models.json"
+# D1/CMS is authoritative in production.  An authenticated production
+# snapshot that contains no reviewed rows must not silently repopulate the
+# public catalogue from the checked-in import.  The source catalogue remains a
+# deterministic fallback only for local clean-checkout work.
+HMOULD_MODELS = _SNAPSHOT_MODEL_REFERENCES if STRICT_D1 else (_SNAPSHOT_MODEL_REFERENCES or STATIC_HMOULD_MODELS)
+MODEL_REFERENCE_SOURCE = "cloudflare-d1:leya_model_references" if STRICT_D1 or _SNAPSHOT_MODEL_REFERENCES else "source-fallback:data/mould-models.json"
 
 # The static renderer remains the visual source of truth.  These small
 # adapters make its business inputs data-driven in the same way as the
@@ -123,8 +127,11 @@ def structured_page_copy(locale: str, route: str) -> dict:
     spacing and responsive layout.  A missing locale/field falls back to the
     source-language row and finally to the existing renderer baseline.
     """
-    source = _PAGE_SOURCE.get("en", {}) if isinstance(_PAGE_SOURCE.get("en", {}), dict) else {}
-    source_locale = _PAGE_SOURCE.get(locale, {}) if isinstance(_PAGE_SOURCE.get(locale, {}), dict) else {}
+    # In a production snapshot the translated page override is the only
+    # accepted locale source.  Checked-in Spanish copy remains available for a
+    # local clean checkout, but it must never silently fill a production page.
+    source = {} if STRICT_D1 and locale != "en" else (_PAGE_SOURCE.get("en", {}) if isinstance(_PAGE_SOURCE.get("en", {}), dict) else {})
+    source_locale = {} if STRICT_D1 and locale != "en" else (_PAGE_SOURCE.get(locale, {}) if isinstance(_PAGE_SOURCE.get(locale, {}), dict) else {})
     d1_source = PAGE_COPY.get("en", {}) if isinstance(PAGE_COPY.get("en", {}), dict) else {}
     d1_localized = PAGE_COPY.get(locale, {}) if isinstance(PAGE_COPY.get(locale, {}), dict) else {}
     row = source.get(route) if isinstance(source.get(route), dict) else {}
@@ -1714,7 +1721,7 @@ def rich_news_body(locale: str, item: dict, category_label: str) -> str:
         # Existing D1/editorial rows remain authoritative, but their Spanish
         # branches may contain the old mixed English baseline. Clean only the
         # Spanish-facing branches at render time so English/owner content is
-        # preserved until the formal D1 seed catches up.
+        # preserved only for local preview; production requires translated D1 content.
         editorial = spanish_editorial_copy(editorial)
     title = localized_item_text(item, locale, "title")
     summary = localized_item_text(item, locale, "summary")
@@ -1825,6 +1832,11 @@ def generate() -> dict:
             file_path = localized.strip("/") + "/index.html"
         page_override = page_override_for(locale, route)
         translated = localized_override(locale, route)
+        if STRICT_D1 and locale != "en":
+            required = ("title", "description", "mainHtml")
+            missing = [key for key in required if not str(translated.get(key) or "").strip()]
+            if missing:
+                raise RuntimeError("Strict D1 translation missing for " + route + ":" + locale + ":" + ",".join(missing))
         final_title = str(translated.get("title") or page_override.get("seoTitle") or title)
         final_description = str(translated.get("description") or page_override.get("metaDescription") or description)
         # xuyi_page_content stores the reviewed source-language body. A
@@ -1923,5 +1935,6 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
+
 
 
