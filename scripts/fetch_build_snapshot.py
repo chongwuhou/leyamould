@@ -6,6 +6,7 @@ never silently build stale content when the authenticated fetch fails.
 """
 import json
 import os
+import subprocess
 from pathlib import Path
 import urllib.request
 import urllib.error
@@ -13,6 +14,47 @@ import time
 
 ROOT=Path(__file__).resolve().parent.parent
 OUTPUT=ROOT/"_local_ops"/"build-snapshot.json"
+
+def read_d1_translations():
+    """Read page translations directly from D1 when an older live Function
+    returns a filtered snapshot. This is an authenticated read-only query;
+    it never seeds, migrates, or writes the database.
+    """
+    account_id=os.environ.get("CLOUDFLARE_ACCOUNT_ID","")
+    if not account_id:
+        raise SystemExit("LEYA Cloudflare account unavailable")
+    command=("SELECT resource_id,locale,translated_json "
+             "FROM xuyi_translation_overrides "
+             "WHERE resource_id LIKE 'page:%' "
+             "ORDER BY locale,resource_id")
+    result=subprocess.run(
+        ["npx","--yes","wrangler@4.148.0","d1","execute","leyamould-d1",
+         "--remote","--command",command,"--json"],
+        check=True,capture_output=True,text=True,
+        env={**os.environ,"CLOUDFLARE_ACCOUNT_ID":account_id},
+        timeout=120,
+    )
+    raw=json.loads(result.stdout)
+    rows=[]
+    for batch in raw if isinstance(raw,list) else [raw]:
+        if not isinstance(batch,dict):
+            continue
+        for row in batch.get("results",[]):
+            if not isinstance(row,dict):
+                continue
+            try:
+                content=json.loads(row.get("translated_json") or "{}")
+            except (TypeError,json.JSONDecodeError):
+                content={}
+            rows.append({
+                "resourceId":str(row.get("resource_id") or ""),
+                "locale":str(row.get("locale") or ""),
+                "content":content if isinstance(content,dict) else {},
+            })
+    if not rows:
+        raise RuntimeError("Read-only D1 translation query returned no rows")
+    return rows
+
 def main():
     token=os.environ.get("CLOUDFLARE_API_TOKEN","")
     if not token:raise SystemExit("LEYA build token unavailable")
@@ -43,6 +85,13 @@ def main():
     # build-snapshot endpoint is deployed. The follow-up build consumes D1 blogPosts.
     payload.setdefault("blogPosts",[])
     payload.setdefault("modelReferences",[])
+    # The deployed Function may still be the previous revision while this
+    # source build is running. Complete only the translation slice from the
+    # same D1 database, using a read-only query, so the strict gate never
+    # falls back to repository or renderer copy.
+    if len(payload.get("translations",[])) < 57:
+        payload["translations"]=read_d1_translations()
+        print("LEYA_TRANSLATIONS_READ_DIRECT_D1",len(payload["translations"]),flush=True)
     if payload.get("site")!="leyamould" or payload.get("schemaVersion")!=1:
         raise RuntimeError("Build snapshot did not identify LEYA MOULD")
     if (not isinstance(payload.get("pages"),list)
