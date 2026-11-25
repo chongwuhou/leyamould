@@ -196,7 +196,10 @@ export async function onRequestGet(context){
        translations:translations.filter(r=>{
          const resource=String(r.resource_id||"");
          if(!resource.startsWith("page:"))return false;
-         return isMouldRoute(resource.slice(5));
+         const route=resource.slice(5);
+         // Page overrides are D1-managed for every generated page, including
+         // dynamic news and product detail routes. Keep only canonical paths.
+         return route==="/"||/^\/[A-Za-z0-9][A-Za-z0-9/_-]*(?:\.html)?$/.test(route);
        }).map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})})),
        youtubeVideos:youtubeVideos.filter(r=>/^[A-Za-z0-9_-]{11}$/.test(String(r.video_id||""))&&r.status!=="draft")
         .map(r=>({id:r.id,videoId:r.video_id,youtubeUrl:r.youtube_url,title:r.title||"",titleEn:r.title_en||r.title||"",titleEs:r.title_es||"",description:r.description||"",category:r.category||"mould-trial",thumbnailUrl:r.thumbnail_url||("https://i.ytimg.com/vi/"+r.video_id+"/mqdefault.jpg"),source:r.source||"youtube",status:r.status||"published",publishedAt:r.published_at||"",sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
