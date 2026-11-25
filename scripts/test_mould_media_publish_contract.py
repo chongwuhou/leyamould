@@ -39,7 +39,11 @@ workflow = source(".github/workflows/publish-leyamould.yml")
 assert "python scripts/r2_usage_index.py" in workflow
 assert "python scripts/test_r2_usage_index.py" in workflow
 assert "python scripts/upload_legacy_mould_media.py" not in workflow
-assert "python scripts/migrate_mould_content.py" not in workflow
+# The reviewed D1 seed is a single bootstrap step.  It must be present once,
+# before the strict snapshot/read-only build, and never be used as a repeated
+# media upload path.
+assert workflow.count("python scripts/migrate_mould_content.py") == 1
+assert workflow.index("Deploy bootstrap source release before D1 seed") < workflow.index("python scripts/migrate_mould_content.py") < workflow.index("Fetch reviewed LEYA D1 build snapshot")
 assert "LEYA_RELEASE_SHA: ${{ github.sha }}" in workflow
 assert "python scripts/verify_production_release.py" in workflow
 assert "configured locales" in workflow
