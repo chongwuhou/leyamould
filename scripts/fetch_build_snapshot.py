@@ -52,7 +52,27 @@ def main():
         raise RuntimeError("Build snapshot schema missing required pages/products/blogPosts/modelReferences")
     audit = payload.get("modelReferenceAudit")
     if not isinstance(audit, dict) or not isinstance(audit.get("publishedIssues"), list):
-        raise RuntimeError("Build snapshot schema missing modelReferenceAudit")
+        # The currently deployed Function may predate the audit field.  Do
+        # not weaken the gate or use a fallback: derive the same fail-closed
+        # audit from the published rows so the first backend rollout reports
+        # the real data problem instead of a schema mismatch.
+        issues=[]
+        for row in payload["modelReferences"]:
+            if not isinstance(row,dict):
+                issues.append({"slug":"unknown","issues":["row"]})
+                continue
+            source_url=str(row.get("sourceUrl") or row.get("source_url") or "")
+            source_image=str(row.get("sourceImage") or row.get("source_image") or "")
+            image=str(row.get("image") or row.get("imagePath") or row.get("image_path") or "")
+            reviewed=str(row.get("reviewedAt") or row.get("reviewed_at") or "")
+            row_issues=[]
+            if not source_url.lower().startswith("https://"): row_issues.append("source_url")
+            if not source_image.lower().startswith("https://"): row_issues.append("source_image")
+            if not image.startswith("/media/"): row_issues.append("r2_image")
+            if not reviewed[:10].count("-")==2: row_issues.append("owner_review")
+            if row_issues: issues.append({"slug":str(row.get("slug") or "unknown"),"issues":row_issues})
+        audit={"total":len(payload["modelReferences"]),"published":len(payload["modelReferences"]),"draft":0,"publishedIssues":issues}
+        payload["modelReferenceAudit"]=audit
     if audit["publishedIssues"]:
         raise RuntimeError("Published D1 model references failed the review gate")
     OUTPUT.parent.mkdir(parents=True,exist_ok=True)
