@@ -19,7 +19,7 @@
   const value=id=>$(id)?.value.trim()||'';
   const setValue=(id,v)=>{if($(id))$(id).value=v??''};
   function reset(){
-    ['model-reference-slug','model-reference-title','model-reference-alt','model-reference-source-url','model-reference-source-image','model-reference-image','model-reference-description','model-reference-title-es','model-reference-alt-es','model-reference-description-es'].forEach(id=>setValue(id,''));
+    ['model-reference-slug','model-reference-title','model-reference-alt','model-reference-source-url','model-reference-source-image','model-reference-image','model-reference-pdf','model-reference-pdf-sha256','model-reference-description','model-reference-title-es','model-reference-alt-es','model-reference-description-es'].forEach(id=>setValue(id,''));
     setValue('model-reference-sort','0');setValue('model-reference-publication','draft');
     $('model-reference-editor')?.removeAttribute('data-edit-slug');
   }
@@ -28,6 +28,7 @@
     setValue('model-reference-title',item.title);setValue('model-reference-alt',item.alt);
     setValue('model-reference-source-url',item.sourceUrl);setValue('model-reference-source-image',item.sourceImage);
     setValue('model-reference-image',item.imagePath);setValue('model-reference-description',item.description);
+    setValue('model-reference-pdf',item.pdfUrl);setValue('model-reference-pdf-sha256',item.pdfSha256);setValue('model-reference-pdf-pages',item.pdfPages||0);
     setValue('model-reference-sort',item.sortOrder);setValue('model-reference-publication',item.publicationStatus);
     const es=item.translations?.es||{};setValue('model-reference-title-es',es.title);setValue('model-reference-alt-es',es.alt);setValue('model-reference-description-es',es.description);
     $('model-reference-editor')?.setAttribute('data-edit-slug',item.slug);
@@ -54,7 +55,7 @@
     const translations={};
     const es={title:value('model-reference-title-es'),alt:value('model-reference-alt-es'),description:value('model-reference-description-es')};
     if(Object.values(es).some(Boolean))translations.es=es;
-    const item={slug:value('model-reference-slug'),family:value('model-reference-family'),title:value('model-reference-title'),alt:value('model-reference-alt'),sourceUrl:value('model-reference-source-url'),sourceImage:value('model-reference-source-image'),imagePath:value('model-reference-image'),description:value('model-reference-description'),sortOrder:Number(value('model-reference-sort')||0),publicationStatus:value('model-reference-publication'),translations};
+    const item={slug:value('model-reference-slug'),family:value('model-reference-family'),title:value('model-reference-title'),alt:value('model-reference-alt'),sourceUrl:value('model-reference-source-url'),sourceImage:value('model-reference-source-image'),imagePath:value('model-reference-image'),pdfUrl:value('model-reference-pdf'),pdfSha256:value('model-reference-pdf-sha256'),pdfPages:Number(value('model-reference-pdf-pages')||0),description:value('model-reference-description'),sortOrder:Number(value('model-reference-sort')||0),publicationStatus:value('model-reference-publication'),translations};
     try{status.textContent='正在保存…';await api('POST',{action:'save',item});status.textContent='已保存到 D1；如需前台更新，请执行一次全站重建';await load()}
     catch(error){status.textContent=error.message}
   });

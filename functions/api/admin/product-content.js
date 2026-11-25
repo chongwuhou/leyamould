@@ -1,7 +1,11 @@
-// LEYA MOULD category copy/SEO CMS. Only the allow-listed mould categories are editable.
+// LEYA MOULD category copy/SEO CMS. Original categories keep their stable
+// routes; newly-created categories use the same safe slug contract and become
+// part of the D1 catalogue without a code deploy. The old compatibility note
+// "draft-only until its LEYA route and detail template are registered" is now
+// closed by the generic route registration performed on publish.
 import { authorizedBuildRequest } from "../../_shared/build-auth.js";
 import { bumpPublishRevision,loadLanguageConfig } from "../../_shared/site-settings.js";
-import { MANAGED_MODELS, MOULD_PUBLIC_ROUTES, mouldRoute } from "../../_shared/mould-routes.js";
+import { MANAGED_MODELS, MOULD_PUBLIC_ROUTES, isMouldModel, mouldRoute } from "../../_shared/mould-routes.js";
 import { authorizeAdminRequest } from "../../_shared/admin-security.js";
 import { normalizeNewProduct,CATEGORY_OPTIONS } from "../../_shared/new-product.js";
 import { imageKey } from "../../_shared/r2-usage.js";
@@ -52,7 +56,16 @@ async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_prod
   content_json TEXT NOT NULL DEFAULT '{}',
   publication_status TEXT NOT NULL DEFAULT 'draft' CHECK(publication_status IN ('draft','published')),
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-)`).run();}
+)`).run();
+ await db.prepare(`CREATE TABLE IF NOT EXISTS site_pages(
+  route TEXT PRIMARY KEY,label TEXT NOT NULL,seo_title TEXT NOT NULL DEFAULT '',meta_description TEXT NOT NULL DEFAULT '',robots TEXT NOT NULL DEFAULT 'noindex,nofollow',sitemap_enabled INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+ )`).run();
+ await db.prepare(`CREATE TABLE IF NOT EXISTS site_navigation(
+  id TEXT PRIMARY KEY,parent_id TEXT,label TEXT NOT NULL,url TEXT NOT NULL,sort_order INTEGER NOT NULL DEFAULT 0,
+  enabled INTEGER NOT NULL DEFAULT 1,new_window INTEGER NOT NULL DEFAULT 0,translations_json TEXT NOT NULL DEFAULT '{}',updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+ )`).run();
+ const columns=(await db.prepare("PRAGMA table_info(site_navigation)").all()).results||[];
+ if(!columns.some(row=>row.name==="translations_json"))await db.prepare("ALTER TABLE site_navigation ADD COLUMN translations_json TEXT NOT NULL DEFAULT '{}'").run();}
 async function auth(c){
   if(!c.env.ADMIN_TOKEN)return respond({error:"Admin not configured"},503);
   if(!(await authorizedBuildRequest(c.request,c.env)))return respond({error:"Unauthorized"},401);
@@ -64,7 +77,8 @@ export async function onRequestGet(context){
   const db=context.env.LEYA_DB;await ensure(db);
   const rows=(await db.prepare("SELECT model,content_json,publication_status,updated_at FROM xuyi_product_content ORDER BY model LIMIT 1000").all()).results||[];
   // D1 stores reviewed category overrides, not the checked-in catalogue.
-  return respond({categories:CATEGORY_OPTIONS,catalogModels:[...MANAGED_MODELS].sort(),
+  const dynamicModels=rows.map(r=>String(r.model||"")).filter(model=>isMouldModel(model));
+  return respond({categories:CATEGORY_OPTIONS,catalogModels:[...new Set([...MANAGED_MODELS,...dynamicModels])].sort(),
     modelRoutes:Object.fromEntries(MOULD_PUBLIC_ROUTES),
     items:rows.map(r=>({model:r.model,route:mouldRoute(r.model),content:JSON.parse(r.content_json),status:r.publication_status,updatedAt:r.updated_at}))});
 }
@@ -76,15 +90,13 @@ export async function onRequestPost(context){
     if(!(await authorizeAdminRequest(context.request,context.env)))return respond({error:"Admin authorization required"},401);
     const model=clean(p.model,80);
     const status=p.status==="published"?"published":"draft";
-    // The frozen public renderer currently exposes only the registered mould
-    // categories. A new D1 row may be prepared as a draft, but claiming it is
-    // published before its route/detail specification is registered would
-    // leave a successful CMS write with no public page.
-    if(status==="published"&&!MANAGED_MODELS.has(model))
-      return respond({error:"This mould category is draft-only until its LEYA route and detail template are registered"},409);
+    if(!isMouldModel(model))return respond({error:"Invalid mould category slug"},400);
     let content;
     try{content=normalizeNewProduct(model,p.content,status)}
     catch(error){return respond({error:String(error.message||error)},400)}
+    content.route="/product/"+model+".html";
+    if(!content.title)content.title=content.name;
+    if(!content.description)content.description=content.description||"";
     const db=context.env.LEYA_DB;await ensure(db);
     const prior=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
     if(prior){
@@ -114,6 +126,19 @@ export async function onRequestPost(context){
     // no-overwrite guard when two admins import the same model concurrently.
     if(p.createOnly===true&&Number(saved?.meta?.changes??0)!==1)
       return respond({error:"Model already exists; create-only import will not overwrite"},409);
+    if(status==="published"){
+      const route="/product/"+model+".html";
+      await db.batch([
+        db.prepare(`INSERT INTO site_pages(route,label,seo_title,meta_description,robots,sitemap_enabled,updated_at)
+          VALUES(?,?,?,?,'index,follow',1,CURRENT_TIMESTAMP)
+          ON CONFLICT(route) DO UPDATE SET label=excluded.label,seo_title=CASE WHEN excluded.seo_title<>'' THEN excluded.seo_title ELSE site_pages.seo_title END,updated_at=CURRENT_TIMESTAMP`)
+          .bind(route,content.title||content.name||model,content.seoTitle||content.title||content.name||model,content.seoDescription||content.description||""),
+        db.prepare(`INSERT INTO site_navigation(id,parent_id,label,url,sort_order,enabled,new_window,updated_at)
+          VALUES(?, 'products', ?, ?, 999, 1, 0, CURRENT_TIMESTAMP)
+          ON CONFLICT(id) DO UPDATE SET label=excluded.label,url=excluded.url,enabled=1,updated_at=CURRENT_TIMESTAMP`)
+          .bind("product-"+model,content.navTitle||content.title||content.name||model,route)
+      ]);
+    }
     const revision=await bumpPublishRevision(db);
     return respond({saved:true,model,status,newProduct:true,route:"/product/"+model+".html",
        locales:"Source language only until each translation is reviewed",...revision});
@@ -121,9 +146,9 @@ export async function onRequestPost(context){
   if(p?.action!=="save_product")return respond({error:"Unknown action"},400);
   const model=clean(p.model,80),v=p.content||{},status=p.status==="published"?"published":"draft";
   if(!/^[a-z0-9][a-z0-9-]{1,80}$/.test(model))return respond({error:"Invalid mould category slug"},400);
-  if(!MANAGED_MODELS.has(model))return respond({error:"Mould category not found in the current LEYA catalog"},400);
+  if(!isMouldModel(model))return respond({error:"Invalid mould category slug"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
-  const db=c.env.LEYA_DB;await ensure(db);
+  const db=context.env.LEYA_DB;await ensure(db);
   const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","body","bodyEs","sections","sectionsEs","faqs","faqsEs","category"];
   let content={};
   const previousRow=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
@@ -156,6 +181,16 @@ export async function onRequestPost(context){
   await db.prepare(`INSERT INTO xuyi_product_content(model,content_json,publication_status,updated_at) VALUES(?,?,?,CURRENT_TIMESTAMP)
     ON CONFLICT(model) DO UPDATE SET content_json=excluded.content_json,publication_status=excluded.publication_status,updated_at=CURRENT_TIMESTAMP`)
     .bind(model,JSON.stringify(content),status).run();
+  if(status==="published"&&!MANAGED_MODELS.has(model)){
+    const route=mouldRoute(model);
+    await db.prepare(`INSERT INTO site_pages(route,label,seo_title,meta_description,robots,sitemap_enabled,updated_at)
+      VALUES(?,?,?,'', 'index,follow',1,CURRENT_TIMESTAMP)
+      ON CONFLICT(route) DO NOTHING`).bind(route,content.title||content.name||model,content.seoTitle||content.title||content.name||model).run();
+    await db.prepare(`INSERT INTO site_navigation(id,parent_id,label,url,sort_order,enabled,new_window,updated_at)
+      VALUES(?, 'products', ?, ?, 999, 1, 0, CURRENT_TIMESTAMP)
+      ON CONFLICT(id) DO UPDATE SET label=excluded.label,url=excluded.url,enabled=1,updated_at=CURRENT_TIMESTAMP`)
+      .bind("product-"+model,content.navTitle||content.title||content.name||model,route).run();
+  }
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,model,status,route:mouldRoute(model),...revision});
 }

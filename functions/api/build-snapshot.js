@@ -5,7 +5,7 @@ import { authorizedBuildRequest } from "../_shared/build-auth.js";
 import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from "../_shared/site-settings.js";
 import { ensureLeyaSystemSchema } from "../_shared/leya-system.js";
 import { ensureYoutubeVideos } from "../_shared/youtube-videos.js";
-import { MOULD_MODELS, MOULD_ROUTES, mouldModelFromRoute } from "../_shared/mould-routes.js";
+import { MOULD_MODELS, MOULD_ROUTES, isMouldModel, isMouldProductRoute, isMouldRoute, mouldModelFromRoute } from "../_shared/mould-routes.js";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 async function list(db,sql){
@@ -14,6 +14,26 @@ async function list(db,sql){
     if (/no such table/i.test(String(error?.message||error)))return [];
     throw error;
   }
+}
+async function ensureNavigationSchema(db){
+  try{
+    const columns=(await db.prepare("PRAGMA table_info(site_navigation)").all()).results||[];
+    if(columns.length&&!columns.some(row=>row.name==="translations_json"))
+      await db.prepare("ALTER TABLE site_navigation ADD COLUMN translations_json TEXT NOT NULL DEFAULT '{}'").run();
+  }catch(error){
+    // A clean database may not have navigation yet; the existing list helper
+    // will safely return an empty D1 section in that case.
+    if(!/no such table/i.test(String(error?.message||error)))throw error;
+  }
+}
+async function ensureModelReferenceSchema(db){
+  try{
+    const columns=(await db.prepare("PRAGMA table_info(leya_model_references)").all()).results||[];
+    if(!columns.length)return;
+    for(const [name,type] of [["pdf_url","TEXT"],["pdf_sha256","TEXT"],["pdf_pages","INTEGER"]]){
+      if(!columns.some(row=>row.name===name))await db.prepare(`ALTER TABLE leya_model_references ADD COLUMN ${name} ${type} NOT NULL DEFAULT '${type==="INTEGER"?"0":""}'`).run();
+    }
+  }catch(error){if(!/no such table/i.test(String(error?.message||error)))throw error;}
 }
 function parseJson(value,fallback){
   try{return value?JSON.parse(value):fallback}catch{return fallback}
@@ -24,6 +44,8 @@ export async function onRequestGet(context){
   if(!db)return json({error:"LEYA_DB binding missing"},503);
   try{
     await ensureLeyaSystemSchema(db);
+    await ensureNavigationSchema(db);
+    await ensureModelReferenceSchema(db);
     // The build snapshot is also the first reader after a fresh deployment.
     // Ensure the video schema/migrations exist before selecting the published
     // rows, so a new column never makes an otherwise valid build fail.
@@ -31,7 +53,7 @@ export async function onRequestGet(context){
     const [state,pages,navigation,redirects,products,translations,pageBodies,mediaAlts,productReviews,productSeo,blogPosts,youtubeVideos,modelReferences]=await Promise.all([
       list(db,"SELECT key,value FROM site_state WHERE key IN ('brand_config','contact_config','language_config','admin_security_config','publish_revision','home_banner_config','common_copy','page_copy')"),
       list(db,"SELECT route,label,seo_title,meta_description,robots,sitemap_enabled FROM site_pages ORDER BY route"),
-      list(db,"SELECT id,parent_id,label,url,sort_order,new_window FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
+      list(db,"SELECT id,parent_id,label,url,sort_order,new_window,translations_json FROM site_navigation WHERE enabled=1 ORDER BY sort_order,id"),
       list(db,"SELECT source_path,target_path,status_code FROM site_redirects WHERE enabled=1 ORDER BY source_path"),
       list(db,"SELECT model,content_json,publication_status FROM xuyi_product_content WHERE publication_status='published' ORDER BY model"),
       list(db,"SELECT resource_id,locale,translated_json FROM xuyi_translation_overrides ORDER BY locale,resource_id"),
@@ -46,7 +68,7 @@ export async function onRequestGet(context){
       list(db,"SELECT id,video_id,youtube_url,title,title_en,title_es,description,category,thumbnail_url,source,status,published_at,sort_order,updated_at FROM leya_youtube_videos WHERE status='published' ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 500"),
       // Model references are reviewed catalogue records. Only formally
       // published rows enter the immutable build snapshot.
-      list(db,"SELECT slug,family,title,alt,source_url,source_image,image_path,description,translations_json,publication_status,sort_order,updated_at FROM leya_model_references WHERE publication_status='published' ORDER BY family,sort_order,slug LIMIT 2000")
+      list(db,"SELECT slug,family,title,alt,source_url,source_image,image_path,description,translations_json,pdf_url,pdf_sha256,pdf_pages,publication_status,sort_order,updated_at FROM leya_model_references WHERE publication_status='published' ORDER BY family,sort_order,slug LIMIT 2000")
     ]);
       const config=Object.fromEntries(state.map(r=>[r.key,r.value]));
       const languageConfig=normalizeLanguageConfig(parseJson(config.language_config,defaultLanguageConfig()));
@@ -55,9 +77,17 @@ export async function onRequestGet(context){
     const adminPath=security.adminPath||"admin";
     if(typeof adminPath!=="string"||!/^[a-z0-9][a-z0-9-]{2,47}$/.test(adminPath))
       throw new Error("Invalid LEYA admin route");
-    const onlyRoutes=pages.filter(r=>MOULD_ROUTES.has(String(r.route||""))&&r.route.length<=300);
-    const onlyNavigation=navigation.filter(r=>MOULD_ROUTES.has(String(r.url||"")));
-    const onlyProducts=products.filter(r=>MOULD_MODELS.has(String(r.model||"")));
+    const onlyRoutes=pages.filter(r=>(MOULD_ROUTES.has(r.route)||isMouldRoute(r.route))&&r.route.length<=300);
+    const onlyNavigation=navigation.filter(r=>isMouldRoute(r.url));
+    // Existing categories remain in the static allow-list, while new CMS
+    // categories are admitted only when the model and canonical route are safe.
+    const onlyProducts=products.filter(r=>{
+      const model=String(r.model||"");
+      if(!isMouldModel(model)) return false;
+      const content=parseJson(r.content_json,{});
+      const route=String(content.route||"");
+      return MOULD_MODELS.has(model)||isMouldProductRoute(route)||isMouldProductRoute("/product/"+model+".html");
+    });
     const onlyBlogPosts=blogPosts.flatMap(r=>{
       if(typeof r.slug!=="string"||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.slug)
          ||r.status!=="published"||typeof r.content_json!=="string"||r.content_json.length>100000)return [];
@@ -74,15 +104,15 @@ export async function onRequestGet(context){
        brand:parseJson(config.brand_config,null),
        contacts:parseJson(config.contact_config,null),
        languages:languageConfig,
-       pages:onlyRoutes,navigation:onlyNavigation,redirects,
+       pages:onlyRoutes,navigation:onlyNavigation.map(r=>({...r,translations:parseJson(r.translations_json,{}),translations_json:undefined})),redirects,
        banners:parseJson(config.home_banner_config,null),
        commonCopy:parseJson(config.common_copy,null),
        pageCopy:parseJson(config.page_copy,null),
-      pageBodies:pageBodies.filter(r=>MOULD_ROUTES.has(String(r.route||""))&&typeof r.main_html==="string")
+      pageBodies:pageBodies.filter(r=>isMouldRoute(r.route)&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
        products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
       blogPosts:onlyBlogPosts,
-       productSeo:productSeo.filter(r=>MOULD_MODELS.has(String(r.slug||""))
+       productSeo:productSeo.filter(r=>isMouldModel(r.slug)
          && publicLocaleCodes.has(r.locale)
         && typeof r.seo_title==="string"&&r.seo_title.length<=90
         && typeof r.meta_description==="string"&&r.meta_description.length<=240)
@@ -101,7 +131,7 @@ export async function onRequestGet(context){
        translations:translations.filter(r=>{
          const resource=String(r.resource_id||"");
          if(!resource.startsWith("page:"))return false;
-         return MOULD_ROUTES.has(resource.slice(5));
+         return isMouldRoute(resource.slice(5));
        }).map(r=>({resourceId:r.resource_id,locale:r.locale,content:parseJson(r.translated_json,{})})),
        youtubeVideos:youtubeVideos.filter(r=>/^[A-Za-z0-9_-]{11}$/.test(String(r.video_id||""))&&r.status!=="draft")
         .map(r=>({id:r.id,videoId:r.video_id,youtubeUrl:r.youtube_url,title:r.title||"",titleEn:r.title_en||r.title||"",titleEs:r.title_es||"",description:r.description||"",category:r.category||"mould-trial",thumbnailUrl:r.thumbnail_url||("https://i.ytimg.com/vi/"+r.video_id+"/mqdefault.jpg"),source:r.source||"youtube",status:r.status||"published",publishedAt:r.published_at||"",sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
@@ -114,7 +144,7 @@ export async function onRequestGet(context){
           && /^\/media\/[a-z]+\/[a-zA-Z0-9._-]+\.(?:png|jpg|jpeg|webp)$/.test(String(r.image_path||""))
         ).map(r=>({slug:r.slug,family:r.family,title:r.title,alt:r.alt,
           sourceUrl:r.source_url||"",sourceImage:r.source_image||"",image:r.image_path,
-          description:r.description||"",translations:parseJson(r.translations_json,{}),
+          description:r.description||"",translations:parseJson(r.translations_json,{}),pdfUrl:r.pdf_url||"",pdfSha256:r.pdf_sha256||"",pdfPages:Number(r.pdf_pages||0),
           sortOrder:Number(r.sort_order||0),updatedAt:r.updated_at||""}))
     });
   }catch(error){return json({error:"LEYA build snapshot unavailable"},503)}

@@ -62,6 +62,12 @@ def _normalise_model_reference(row: dict) -> dict:
     value["sourceImage"] = str(row.get("sourceImage") or row.get("source_image") or "").strip()
     value["image"] = str(row.get("image") or row.get("imagePath") or row.get("image_path") or "").strip()
     value["description"] = str(row.get("description") or "").strip()
+    value["pdfUrl"] = str(row.get("pdfUrl") or row.get("pdf_url") or "").strip()
+    value["pdfSha256"] = str(row.get("pdfSha256") or row.get("pdf_sha256") or "").strip().lower()
+    try:
+        value["pdfPages"] = int(row.get("pdfPages") or row.get("pdf_pages") or 0)
+    except (TypeError, ValueError):
+        value["pdfPages"] = 0
     translations = row.get("translations")
     value["translations"] = translations if isinstance(translations, dict) else {}
     return value
@@ -274,7 +280,13 @@ def _published_content(row: object) -> dict:
     return content if isinstance(content, dict) else {}
 
 def _catalog_from_state() -> list[dict]:
-    """Overlay only mould category records; never import water-cup models."""
+    """Build the public category registry from D1, with a clean source fallback.
+
+    The checked-in catalogue supplies the reference layout and rich copy for
+    the original families.  A published D1 row may also introduce a new safe
+    family; it receives the same category template instead of disappearing
+    from menus and generated routes.
+    """
     rows = json.loads(json.dumps(CATALOG.get("categories", [])))
     by_slug = {str(item.get("slug")): item for item in rows}
     for row in STATE.get("products", []):
@@ -285,6 +297,17 @@ def _catalog_from_state() -> list[dict]:
         item = by_slug.get(model)
         if item is None:
             item = by_slug.get(str(content.get("slug") or ""))
+        if item is None and content:
+            route = str(content.get("route") or f"/product/{model}.html").strip()
+            if re.fullmatch(r"/product/[a-z0-9][a-z0-9-]{1,63}\.html", route) and re.fullmatch(r"[a-z0-9][a-z0-9-]{1,63}", model):
+                title = str(content.get("title") or content.get("name") or model.replace("-", " ").title()).strip()
+                description = str(content.get("description") or content.get("short") or "Custom mould family for plastic packaging projects.").strip()
+                item = {"slug": model, "title": title, "navTitle": str(content.get("navTitle") or title), "description": description,
+                        "short": str(content.get("short") or description), "detail": str(content.get("detail") or description),
+                        "meta": str(content.get("meta") or description), "route": route, "image": str(content.get("image") or ""),
+                        "checks": content.get("checks") if isinstance(content.get("checks"), list) else []}
+                rows.append(item)
+                by_slug[model] = item
         if item is None or not content:
             continue
         for field in ("title", "titleEs", "navTitle", "navTitleEs", "description", "descriptionEs", "short", "shortEs", "detail", "detailEs", "meta", "metaEs", "body", "bodyEs", "sections", "sectionsEs", "faqs", "faqsEs", "image", "route"):
@@ -313,11 +336,44 @@ def navigation_label(url: str, fallback: str, locale: str = "en") -> str:
     labels continue to come from the D1 common-copy map and the reviewed
     catalogue fields, so an English admin edit cannot leak into Spanish.
     """
-    if locale != "en":
-        return fallback
     rows = [row for row in NAVIGATION if str(row.get("url") or "") == url]
     rows.sort(key=lambda row: (int(row.get("sort_order", row.get("sortOrder", 999)) or 999), str(row.get("id", ""))))
-    return str(rows[0].get("label") or fallback) if rows else fallback
+    if not rows:
+        return fallback
+    row = rows[0]
+    translations = row.get("translations") if isinstance(row.get("translations"), dict) else {}
+    localized = translations.get(locale) if isinstance(translations, dict) else None
+    return str(localized or row.get("label") or fallback)
+
+def product_navigation_items() -> list[dict]:
+    """Merge D1 product children with the checked-in visual catalogue.
+
+    D1 controls additions, order and labels; the catalogue keeps existing
+    families visible when an older database has not yet been seeded with every
+    child row.
+    """
+    by_route = {str(item.get("route") or ""): item for item in CAP_MOULD_SERIES if isinstance(item, dict)}
+    children = [row for row in NAVIGATION if str(row.get("parent_id") or row.get("parentId") or "") == "products" and str(row.get("url") or "").startswith("/")]
+    children.sort(key=lambda row: (int(row.get("sort_order", row.get("sortOrder", 999)) or 999), str(row.get("id", ""))))
+    result = []
+    seen = set()
+    for row in children:
+        route = str(row.get("url") or "")
+        item = by_route.get(route)
+        if item is None:
+            match = re.fullmatch(r"/product/([a-z0-9][a-z0-9-]{1,63})\.html", route)
+            if match:
+                item = {"slug": match.group(1), "route": route, "title": str(row.get("label") or match.group(1).replace("-", " ").title()), "navTitle": str(row.get("label") or "")}
+        if item and route not in seen:
+            item = dict(item)
+            item["_navLabel"] = row.get("label") or ""
+            result.append(item)
+            seen.add(route)
+    for item in CAP_MOULD_SERIES:
+        route = str(item.get("route") or "")
+        if route not in seen:
+            result.append(item)
+    return result
 
 def localized_override(locale: str, route: str) -> dict:
     value = TRANSLATION_OVERRIDES.get(("page:" + route, locale))
@@ -591,14 +647,15 @@ CAP_MOULD_ORDER = [
     "pet-preform-mould",
     "blow-bottle-mould",
 ]
-CAP_MOULD_SERIES = sorted(CATALOG["categories"], key=lambda item: CAP_MOULD_ORDER.index(item["slug"]))
+CAP_MOULD_SERIES = sorted(CATALOG["categories"], key=lambda item: (CAP_MOULD_ORDER.index(item["slug"]) if item.get("slug") in CAP_MOULD_ORDER else 1000, str(item.get("slug") or "")))
 
 def header(locale: str, route: str) -> str:
     # Keep the desktop navigation aligned with the reference: the Cap Mould
     # label opens the aggregate page, while the caret exposes every item in
     # the canonical 13-family catalogue (the same source used by the footer
     # and the product grid).
-    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "navTitle") or catalog_text(locale, item, "title"), locale)) + '</a>' for item in CAP_MOULD_SERIES)
+    product_items = product_navigation_items()
+    product_links = ''.join('<a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "navTitle") or catalog_text(locale, item, "title"), locale)) + '</a>' for item in product_items)
     nav = ['<a class="nav__link" href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a>']
     about_menu = '<div class="nav__drop"><button class="nav__toggle" data-mega-toggle type="button" aria-controls="menu-about" aria-expanded="false">' + esc(text(locale, "about")) + '<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button><div class="mini-menu" id="menu-about"><a href="' + localized_href(locale, "/about/") + '">' + esc(navigation_label("/about/", text(locale, "about"), locale)) + '</a><a href="' + localized_href(locale, "/faq/") + '">' + esc(navigation_label("/faq/", text(locale, "faq_title"), locale)) + '</a></div></div>'
     cap_nav_label = "Cap mold" if locale == "en" else text(locale, "cap_mould")
@@ -625,7 +682,7 @@ def header(locale: str, route: str) -> str:
     return render_template("header", TOPBAR=top, LOGO=logo, NAV_DESKTOP=''.join(nav), ACTIONS=actions, SEARCH=search, NAV_MOBILE=mobile)
 
 def footer(locale: str) -> str:
-    links = ''.join('<p><a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "title"), locale)) + '</a></p>' for item in CAP_MOULD_SERIES)
+    links = ''.join('<p><a href="' + localized_href(locale, item["route"]) + '">' + esc(navigation_label(item["route"], catalog_text(locale, item, "title"), locale)) + '</a></p>' for item in product_navigation_items())
     quick = ''.join('<p><a href="' + localized_href(locale, route) + '">' + esc(label) + '</a></p>' for label, route in ((text(locale, "about"), "/about/"), (text(locale, "samples"), "/samples/"), (text(locale, "video"), "/video/"), (text(locale, "news"), "/news/"), (text(locale, "faq_title"), "/faq/"), (text(locale, "contact_us"), "/contact/")))
     footer_config = BRAND_CONFIG.get("footer", {}) if isinstance(BRAND_CONFIG, dict) else {}
     footer_logo = (BRAND_CONFIG.get("logos", {}).get("footer", {}) if isinstance(BRAND_CONFIG, dict) else {})
@@ -1417,15 +1474,22 @@ def effective_news_items(category: str = "news") -> list[dict]:
             continue
         date = str(row.get("date") or row.get("published_at") or row.get("updated_at") or "")[:10].replace("-", "/")
         image_src = str(row.get("image") or "/assets/mould-news-placeholder.svg")
-        if slug not in EDITORIAL_BY_SLUG:
-            continue
         d1_editorial = row.get("editorial") if isinstance(row.get("editorial"), dict) else None
+        editorial = d1_editorial or EDITORIAL_BY_SLUG.get(slug)
+        d1_category = str((editorial or {}).get("category") or row.get("category") or "news")
+        if d1_category != category:
+            continue
+        if not editorial:
+            # New D1 articles do not need a Python registry entry.  The shared
+            # detail template can still render a safe structured brief until
+            # the editor adds richer sections.
+            editorial = {"slug": slug, "category": category, "intro": {"en": summary, "es": str(row.get("summaryEs") or summary)}, "sections": {"en": [], "es": []}, "checklist": {"en": [], "es": []}, "faqs": {"en": [], "es": []}, "products": [], "related": [], "evidenceSources": []}
         mapped.append({
             "slug": slug, "title": title, "titleEs": str(row.get("titleEs") or row.get("title_es") or ""),
             "date": date, "image": image_src, "summary": summary,
             "summaryEs": str(row.get("summaryEs") or row.get("summary_es") or ""),
             "alt": str(row.get("alt") or title), "altEs": str(row.get("altEs") or row.get("alt_es") or title),
-            "editorial": d1_editorial or EDITORIAL_BY_SLUG.get(slug),
+            "editorial": editorial,
         })
     if reviewed:
         # Keep the full 24-article registry in the archive. A partial D1
@@ -1440,6 +1504,9 @@ def effective_news_items(category: str = "news") -> list[dict]:
                 value.update({key: overrides[base["slug"]][key] for key in ("title", "titleEs", "date", "image", "summary", "summaryEs", "alt", "altEs") if overrides[base["slug"]].get(key)})
                 value["editorial"] = overrides[base["slug"]].get("editorial") or base.get("editorial")
             merged.append(value)
+        known = {row["slug"] for row in merged}
+        merged.extend(row for row in mapped if row["slug"] not in known)
+        merged.sort(key=lambda row: (str(row.get("date") or ""), str(row.get("slug") or "")), reverse=True)
         return merged
     return mapped or (NEWS_ITEMS if category == "news" else MACHINE_NEWS_ITEMS)
 
@@ -1461,6 +1528,12 @@ def news_listing_page(locale: str, route: str, title: str, subtitle: str, items:
 
 def _editorial_route(slug: str) -> str:
     row = EDITORIAL_BY_SLUG.get(slug) or {}
+    if not row:
+        for candidate in STATE.get("blogPosts", []) if isinstance(STATE.get("blogPosts"), list) else []:
+            if str(candidate.get("slug") or "") != str(slug):
+                continue
+            row = candidate.get("editorial") if isinstance(candidate.get("editorial"), dict) else candidate
+            break
     return "/news/" if row.get("category") == "news" else "/Bottle-Cap-Machine/"
 
 def rich_news_body(locale: str, item: dict, category_label: str) -> str:

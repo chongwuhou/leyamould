@@ -7,6 +7,7 @@
 import {authorizeAdminRequest} from "../../_shared/admin-security.js";
 import {bumpPublishRevision,loadLanguageConfig,publicLanguages} from "../../_shared/site-settings.js";
 import {imageKey} from "../../_shared/r2-usage.js";
+import {isMouldModel} from "../../_shared/mould-routes.js";
 
 const respond=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 const clean=(value,max=500)=>String(value??"").trim().slice(0,max);
@@ -32,11 +33,18 @@ async function ensure(db){
     image_path TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     translations_json TEXT NOT NULL DEFAULT '{}',
+    pdf_url TEXT NOT NULL DEFAULT '',
+    pdf_sha256 TEXT NOT NULL DEFAULT '',
+    pdf_pages INTEGER NOT NULL DEFAULT 0,
     publication_status TEXT NOT NULL DEFAULT 'draft' CHECK(publication_status IN ('draft','published')),
     sort_order INTEGER NOT NULL DEFAULT 0,
     reviewed_at TEXT NOT NULL DEFAULT '',
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`).run();
+  const columns=(await db.prepare("PRAGMA table_info(leya_model_references)").all()).results||[];
+  if(!columns.some(row=>row.name==="pdf_url"))await db.prepare("ALTER TABLE leya_model_references ADD COLUMN pdf_url TEXT NOT NULL DEFAULT ''").run();
+  if(!columns.some(row=>row.name==="pdf_sha256"))await db.prepare("ALTER TABLE leya_model_references ADD COLUMN pdf_sha256 TEXT NOT NULL DEFAULT ''").run();
+  if(!columns.some(row=>row.name==="pdf_pages"))await db.prepare("ALTER TABLE leya_model_references ADD COLUMN pdf_pages INTEGER NOT NULL DEFAULT 0").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS idx_leya_model_references_status ON leya_model_references(publication_status,family,sort_order,slug)").run();
 }
 
@@ -77,7 +85,7 @@ async function normalized(input,db){
   const slug=clean(input?.slug,140).toLowerCase();
   if(!SLUG.test(slug))throw Error("Invalid model slug");
   const family=clean(input?.family,100).toLowerCase();
-  if(!MODEL_FAMILIES.has(family))throw Error("Choose a configured mould family");
+  if(!MODEL_FAMILIES.has(family) && !isMouldModel(family))throw Error("Choose a configured mould family");
   const title=clean(input?.title,180);
   const alt=clean(input?.alt||title,180);
   if(title.length<2||alt.length<2)throw Error("English title and ALT are required");
@@ -88,12 +96,19 @@ async function normalized(input,db){
   const imagePath=clean(input?.imagePath||input?.image||input?.image_path,300);
   if(imagePath&&!IMAGE_PATH.test(imagePath))throw Error("Image must be a LEYA /media or checked-in /assets path");
   const description=clean(input?.description,2000);
+  const pdfUrl=clean(input?.pdfUrl||input?.pdf_url,500);
+  if(pdfUrl && !/^\/media\/|^https:\/\//i.test(pdfUrl))throw Error("PDF must use a LEYA /media path or HTTPS URL");
+  const pdfSha256=clean(input?.pdfSha256||input?.pdf_sha256,64).toLowerCase();
+  if(pdfSha256 && !/^[a-f0-9]{64}$/.test(pdfSha256))throw Error("PDF SHA-256 must be 64 hexadecimal characters");
+  const pdfPages=Number(input?.pdfPages??input?.pdf_pages??0);
+  if(!Number.isInteger(pdfPages)||pdfPages<0||pdfPages>9999)throw Error("Invalid PDF page count");
   const status=input?.publicationStatus||input?.status||"draft";
   if(status!=="draft"&&status!=="published")throw Error("Invalid publication status");
   const sortOrder=Number(input?.sortOrder??input?.sort_order??0);
   if(!Number.isInteger(sortOrder)||sortOrder<0||sortOrder>99999)throw Error("Invalid sort order");
   const translations=parseTranslations(input?.translations??input?.translationsJson??input?.translations_json,localeCodes);
-  return {slug,family,title,alt,sourceUrl,sourceImage,imagePath,description,translations,status,sortOrder,reviewedAt:clean(input?.reviewedAt||input?.reviewed_at,80)};
+  if(pdfUrl && !pdfSha256)throw Error("PDF SHA-256 is required when a PDF is attached");
+  return {slug,family,title,alt,sourceUrl,sourceImage,imagePath,description,translations,pdfUrl,pdfSha256,pdfPages,status,sortOrder,reviewedAt:clean(input?.reviewedAt||input?.reviewed_at,80)};
 }
 
 async function verifyPublishedImage(c,record){
@@ -107,7 +122,7 @@ async function verifyPublishedImage(c,record){
 function output(row){
   return {id:row.id,slug:row.slug,family:row.family,title:row.title,alt:row.alt,
     sourceUrl:row.source_url||"",sourceImage:row.source_image||"",imagePath:row.image_path||"",
-    description:row.description||"",translations:parseStored(row.translations_json),
+    description:row.description||"",translations:parseStored(row.translations_json),pdfUrl:row.pdf_url||"",pdfSha256:row.pdf_sha256||"",pdfPages:Number(row.pdf_pages||0),
     publicationStatus:row.publication_status,sortOrder:Number(row.sort_order||0),
     reviewedAt:row.reviewed_at||"",updatedAt:row.updated_at||""};
 }
@@ -115,7 +130,7 @@ function parseStored(value){try{const data=JSON.parse(value||"{}");return data&&
 
 export async function onRequestGet(c){
   const {db,error}=await guard(c);if(error)return error;
-  const rows=(await db.prepare("SELECT id,slug,family,title,alt,source_url,source_image,image_path,description,translations_json,publication_status,sort_order,reviewed_at,updated_at FROM leya_model_references ORDER BY family,sort_order,slug LIMIT 2000").all()).results||[];
+  const rows=(await db.prepare("SELECT id,slug,family,title,alt,source_url,source_image,image_path,description,translations_json,pdf_url,pdf_sha256,pdf_pages,publication_status,sort_order,reviewed_at,updated_at FROM leya_model_references ORDER BY family,sort_order,slug LIMIT 2000").all()).results||[];
   return respond({items:rows.map(output),counts:{all:rows.length,draft:rows.filter(row=>row.publication_status==="draft").length,published:rows.filter(row=>row.publication_status==="published").length}});
 }
 
@@ -153,15 +168,15 @@ export async function onRequestPost(c){
     if(failed.length)return respond({error:"Bulk import aborted; no rows were written",existing,failed},400);
     if(prepared.length){
       const statements=prepared.map(value=>db.prepare(`INSERT INTO leya_model_references
-        (slug,family,title,alt,source_url,source_image,image_path,description,translations_json,publication_status,sort_order,reviewed_at,updated_at)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
+        (slug,family,title,alt,source_url,source_image,image_path,description,translations_json,pdf_url,pdf_sha256,pdf_pages,publication_status,sort_order,reviewed_at,updated_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
         ON CONFLICT(slug) DO UPDATE SET family=excluded.family,title=excluded.title,alt=excluded.alt,
         source_url=excluded.source_url,source_image=excluded.source_image,image_path=excluded.image_path,
-        description=excluded.description,translations_json=excluded.translations_json,
+        description=excluded.description,translations_json=excluded.translations_json,pdf_url=excluded.pdf_url,pdf_sha256=excluded.pdf_sha256,pdf_pages=excluded.pdf_pages,
         publication_status=excluded.publication_status,sort_order=excluded.sort_order,
         reviewed_at=excluded.reviewed_at,updated_at=CURRENT_TIMESTAMP`)
         .bind(value.slug,value.family,value.title,value.alt,value.sourceUrl,value.sourceImage,value.imagePath,
-          value.description,JSON.stringify(value.translations),value.status,value.sortOrder,value.reviewedAt));
+          value.description,JSON.stringify(value.translations),value.pdfUrl,value.pdfSha256,value.pdfPages,value.status,value.sortOrder,value.reviewedAt));
       try{await db.batch(statements)}catch(err){return respond({error:"Bulk import failed; database batch was not committed",detail:String(err?.message||err)},503)}
       const revision=await bumpPublishRevision(db);
       return respond({saved:prepared.map(value=>value.slug),existing,failed:[],...revision});
@@ -176,15 +191,15 @@ export async function onRequestPost(c){
       if(prior&&createOnly){existing.push(value.slug);continue;}
       if(value.status==="published")await verifyPublishedImage(c,value);
       await db.prepare(`INSERT INTO leya_model_references
-        (slug,family,title,alt,source_url,source_image,image_path,description,translations_json,publication_status,sort_order,reviewed_at,updated_at)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
+        (slug,family,title,alt,source_url,source_image,image_path,description,translations_json,pdf_url,pdf_sha256,pdf_pages,publication_status,sort_order,reviewed_at,updated_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
         ON CONFLICT(slug) DO UPDATE SET family=excluded.family,title=excluded.title,alt=excluded.alt,
         source_url=excluded.source_url,source_image=excluded.source_image,image_path=excluded.image_path,
-        description=excluded.description,translations_json=excluded.translations_json,
+        description=excluded.description,translations_json=excluded.translations_json,pdf_url=excluded.pdf_url,pdf_sha256=excluded.pdf_sha256,pdf_pages=excluded.pdf_pages,
         publication_status=excluded.publication_status,sort_order=excluded.sort_order,
         reviewed_at=excluded.reviewed_at,updated_at=CURRENT_TIMESTAMP`)
         .bind(value.slug,value.family,value.title,value.alt,value.sourceUrl,value.sourceImage,value.imagePath,
-          value.description,JSON.stringify(value.translations),value.status,value.sortOrder,value.reviewedAt).run();
+          value.description,JSON.stringify(value.translations),value.pdfUrl,value.pdfSha256,value.pdfPages,value.status,value.sortOrder,value.reviewedAt).run();
       saved.push(value.slug);
     }catch(err){failed.push({slug:clean(raw?.slug,140),error:String(err?.message||err)})}
   }
