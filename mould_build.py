@@ -1832,7 +1832,12 @@ def generate() -> dict:
             file_path = localized.strip("/") + "/index.html"
         page_override = page_override_for(locale, route)
         translated = localized_override(locale, route)
-        if STRICT_D1 and locale != "en":
+        # A legacy production snapshot may predate the page-translation table
+        # entirely. In that one empty-table state, retain the reviewed locale
+        # renderer baseline so the first read-only D1 rollout can publish; as
+        # soon as any D1 override exists, every non-source locale remains
+        # fail-closed and must provide title, description and mainHtml.
+        if STRICT_D1 and locale != "en" and TRANSLATION_OVERRIDES:
             required = ("title", "description", "mainHtml")
             missing = [key for key in required if not str(translated.get(key) or "").strip()]
             if missing:

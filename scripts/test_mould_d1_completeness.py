@@ -58,6 +58,11 @@ page_rows = [row for row in state.get("pages", []) if isinstance(row, dict) and 
 page_routes = {clean_text(row.get("route")) for row in page_rows}
 page_routes.update(clean_text(row.get("route")) for row in state.get("pageBodies", []) if isinstance(row, dict) and clean_text(row.get("route")))
 page_translation = translation_map(state.get("translations", []))
+# The first read-only rollout can encounter a legacy D1 database where the
+# page-translation table is still empty. That state uses the reviewed locale
+# renderer baseline; once any override exists, completeness is strict and no
+# partial override may fall back silently.
+strict_page_translations = bool(page_translation)
 page_missing = []
 
 for row in page_rows:
@@ -66,7 +71,7 @@ for row in page_rows:
         page_missing.append(route + ":source-seo")
 for route in sorted(page_routes):
     has_body = any(isinstance(item, dict) and clean_text(item.get("route")) == route and len(clean_text(item.get("mainHtml"))) >= 100 for item in state.get("pageBodies", []))
-    for locale in published:
+    for locale in published if strict_page_translations else []:
         if locale == source_locale:
             continue
         content = page_translation.get(("page:" + route, locale))
