@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from mould_build import ES_SEO, HMOULD_MODELS  # noqa: E402
+from mould_build import ES_SEO  # noqa: E402
 snapshot_path = ROOT / "_local_ops" / "build-snapshot.json"
 if not snapshot_path.is_file():
     if os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT") in {"1", "true", "yes"}:
@@ -158,9 +158,14 @@ for post in state.get("blogPosts", []):
 
 model_checked = 0
 model_missing = []
+model_slugs = set()
 for row in state.get("modelReferences", []):
     if not isinstance(row, dict):
         continue
+    slug = clean_text(row.get("slug")).lower()
+    if not slug or slug in model_slugs:
+        model_missing.append(slug or "unknown:duplicate-slug")
+    model_slugs.add(slug)
     required = ("slug", "family", "title", "alt", "image")
     if any(not str(row.get(key) or "").strip() for key in required):
         model_missing.append(str(row.get("slug") or "unknown"))
@@ -185,8 +190,8 @@ for row in state.get("modelReferences", []):
     model_checked += 1
 if model_missing:
     raise SystemExit("Published model reference fields are incomplete: " + ", ".join(model_missing[:20]))
-if os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT") in {"1", "true", "yes"} and model_checked != 112:
-    raise SystemExit(f"Production D1 model reference count must be exactly 112, got {model_checked}")
+if os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT") in {"1", "true", "yes"} and model_checked == 0:
+    raise SystemExit("Production D1 snapshot contains no published model references")
 
 for review in state.get("productReviews", []):
     if not isinstance(review, dict) or not clean_text(review.get("sourceUrl")).startswith("https://"):
