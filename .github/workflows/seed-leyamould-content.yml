@@ -1,0 +1,24 @@
+name: Seed LEYA production content
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed-production-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Write reviewed LEYA content to production D1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          XUYI_SITE_ORIGIN: https://leyamould.com
+        run: python scripts/migrate_mould_content.py
+
