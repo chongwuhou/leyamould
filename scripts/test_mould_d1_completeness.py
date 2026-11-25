@@ -32,14 +32,25 @@ if not {"en", "es"}.issubset(set(published)):
 
 products = [row for row in state.get("products", []) if isinstance(row, dict) and re.fullmatch(r"[a-z0-9][a-z0-9-]{1,63}", str(row.get("model") or ""))]
 seo = {(str(row.get("slug") or "").lower(), str(row.get("locale") or "").lower()): row for row in state.get("productSeo", []) if isinstance(row, dict)}
+catalog = {}
+catalog_path = ROOT / "data" / "mould-catalog.json"
+if catalog_path.is_file():
+    try:
+        catalog = {str(row.get("slug") or "").lower(): row for row in (json.loads(catalog_path.read_text(encoding="utf-8")).get("categories") or []) if isinstance(row, dict)}
+    except (OSError, ValueError):
+        catalog = {}
 def effective_product_seo(product, locale):
     model = str(product.get("model") or "").lower()
     content = product.get("content") if isinstance(product.get("content"), dict) else {}
     suffix = "Es" if locale == "es" else ""
     title = content.get("seoTitle" + suffix) or content.get("titleEs" if locale == "es" else "title") or content.get("nameEs" if locale == "es" else "name")
     description = content.get("seoDescription" + suffix) or content.get("descriptionEs" if locale == "es" else "description") or content.get("shortEs" if locale == "es" else "short")
+    if not str(title or "").strip() or not str(description or "").strip():
+        baseline = catalog.get(model) or {}
+        title = title or baseline.get("titleEs" if locale == "es" else "title")
+        description = description or baseline.get("descriptionEs" if locale == "es" else "description")
     if str(title or "").strip() and str(description or "").strip():
-        return {"slug": model, "locale": locale, "seoTitle": str(title).strip(), "metaDescription": str(description).strip(), "source": "xuyi_product_content"}
+        return {"slug": model, "locale": locale, "seoTitle": str(title).strip(), "metaDescription": str(description).strip(), "source": "d1-content-or-reviewed-catalog"}
     return None
 missing = []
 for product in products:

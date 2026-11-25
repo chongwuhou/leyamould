@@ -376,7 +376,10 @@ export async function onRequestPost(context) {
       }
       let current = {};
       try { current = JSON.parse(String(existingProducts.get(model) || "{}")); } catch { current = {}; }
-      const merged = mergeMissing(current, { body: baseline.body, sections: baseline.sections, faqs: baseline.faqs });
+      // Backfill only fields that were absent when the first migration ran.
+      // This includes localized product copy/SEO; any owner-edited value stays
+      // authoritative and is never replaced by the reviewed baseline.
+      const merged = mergeMissing(current, baseline);
       if (merged) {
         statements.push(db.prepare("UPDATE xuyi_product_content SET content_json=?,updated_at=CURRENT_TIMESTAMP WHERE model=?").bind(json(merged), model));
         updated.products += 1;

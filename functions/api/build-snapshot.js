@@ -6,6 +6,7 @@ import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from 
 import { ensureLeyaSystemSchema } from "../_shared/leya-system.js";
 import { ensureYoutubeVideos } from "../_shared/youtube-videos.js";
 import { MOULD_MODELS, MOULD_ROUTES, isMouldModel, isMouldProductRoute, isMouldRoute, mouldModelFromRoute } from "../_shared/mould-routes.js";
+import MOULD_CATALOG from "../../data/mould-catalog.json";
 
 const json=(body,status=200)=>Response.json(body,{status,headers:{"cache-control":"no-store","x-robots-tag":"noindex,nofollow,noarchive"}});
 async function list(db,sql){
@@ -76,6 +77,20 @@ function effectiveProductSeoRows(rows,products,localeCodes,sourceLocale){
         ||validMetaDescription(content[locale==="es"?"shortEs":"short"]);
       if(title&&metaDescription)
         byKey.set(key,{slug,locale,seoTitle:title,metaDescription,updatedAt:product.updated_at||"",source:"xuyi_product_content"});
+    }
+  }
+  // The reviewed catalogue is the last deterministic source for a legacy row
+  // that predates localized product fields. It is only used when neither D1
+  // SEO table nor D1 product content has a value, and never overwrites edits.
+  for(const item of (MOULD_CATALOG?.categories||[])){
+    const slug=String(item?.slug||"").trim().toLowerCase();
+    if(!isMouldModel(slug))continue;
+    for(const locale of localeCodes){
+      const key=slug+"\u0000"+locale;
+      if(byKey.has(key))continue;
+      const title=validSeoTitle(locale==="es"?item?.titleEs:item?.title);
+      const metaDescription=validMetaDescription(locale==="es"?item?.descriptionEs:item?.description);
+      if(title&&metaDescription)byKey.set(key,{slug,locale,seoTitle:title,metaDescription,updatedAt:"",source:"mould-catalog"});
     }
   }
   return [...byKey.values()].sort((a,b)=>a.slug.localeCompare(b.slug)||a.locale.localeCompare(b.locale));
