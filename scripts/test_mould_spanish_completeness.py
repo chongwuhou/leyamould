@@ -3,7 +3,7 @@
 
 This is a local, deterministic check.  It does not call a translation API or
 Cloudflare.  It checks the files produced by the source renderer, the reviewed
-112-model fallback, and the legacy-route redirect contract.
+model-reference fallback, and the legacy-route redirect contract.
 """
 from __future__ import annotations
 
