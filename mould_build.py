@@ -85,6 +85,19 @@ CONTACT_CONFIG = STATE.get("contacts") if isinstance(STATE.get("contacts"), dict
 NAVIGATION = [row for row in STATE.get("navigation", []) if isinstance(row, dict)]
 COMMON_COPY = STATE.get("commonCopy") if isinstance(STATE.get("commonCopy"), dict) else {}
 PAGE_COPY = STATE.get("pageCopy") if isinstance(STATE.get("pageCopy"), dict) else {}
+try:
+    _PAGE_SOURCE = json.loads((ROOT / "data" / "mould-page-structured.json").read_text(encoding="utf-8"))
+except (OSError, ValueError):
+    _PAGE_SOURCE = {}
+
+def _merge_copy(base: dict, override: dict) -> dict:
+    result = json.loads(json.dumps(base)) if isinstance(base, dict) else {}
+    for key, value in (override or {}).items():
+        if isinstance(value, dict) and isinstance(result.get(key), dict):
+            result[key] = _merge_copy(result[key], value)
+        else:
+            result[key] = value
+    return result
 
 def structured_page_copy(locale: str, route: str) -> dict:
     """Return the reviewed structured copy for one route and locale.
@@ -93,10 +106,15 @@ def structured_page_copy(locale: str, route: str) -> dict:
     spacing and responsive layout.  A missing locale/field falls back to the
     source-language row and finally to the existing renderer baseline.
     """
-    source = PAGE_COPY.get("en", {}) if isinstance(PAGE_COPY.get("en", {}), dict) else {}
-    localized = PAGE_COPY.get(locale, {}) if isinstance(PAGE_COPY.get(locale, {}), dict) else {}
-    row = localized.get(route) if isinstance(localized.get(route), dict) else source.get(route)
-    return row if isinstance(row, dict) else {}
+    source = _PAGE_SOURCE.get("en", {}) if isinstance(_PAGE_SOURCE.get("en", {}), dict) else {}
+    source_locale = _PAGE_SOURCE.get(locale, {}) if isinstance(_PAGE_SOURCE.get(locale, {}), dict) else {}
+    d1_source = PAGE_COPY.get("en", {}) if isinstance(PAGE_COPY.get("en", {}), dict) else {}
+    d1_localized = PAGE_COPY.get(locale, {}) if isinstance(PAGE_COPY.get(locale, {}), dict) else {}
+    row = source.get(route) if isinstance(source.get(route), dict) else {}
+    row = _merge_copy(row, source_locale.get(route) if isinstance(source_locale.get(route), dict) else {})
+    row = _merge_copy(row, d1_source.get(route) if isinstance(d1_source.get(route), dict) else {})
+    row = _merge_copy(row, d1_localized.get(route) if isinstance(d1_localized.get(route), dict) else {})
+    return row
 
 def structured_page_value(locale: str, route: str, key: str, fallback: str = "") -> str:
     value = structured_page_copy(locale, route).get(key)
@@ -125,7 +143,7 @@ def structured_section(locale: str, route: str, section_id: str, fallback_title:
         "title": str(row.get("title") or fallback_title).strip(),
         "body": str(row.get("body") or fallback_body).strip(),
         "bullets": [str(item).strip() for item in row.get("bullets", []) if str(item).strip()][:8] if isinstance(row.get("bullets"), list) else [],
-        "items": [item for item in row.get("items", []) if isinstance(item, dict)][:12] if isinstance(row.get("items"), list) else [],
+        "items": [item for item in row.get("items", []) if isinstance(item, dict)][:48] if isinstance(row.get("items"), list) else [],
     }
 
 def structured_section_items(locale: str, route: str, section_id: str, fallback: list[dict] | None = None) -> list[dict]:
@@ -133,7 +151,7 @@ def structured_section_items(locale: str, route: str, section_id: str, fallback:
     section = structured_section(locale, route, section_id)
     items = section.get("items") if isinstance(section, dict) else []
     if isinstance(items, list) and items:
-        return [item for item in items if isinstance(item, dict)][:12]
+        return [item for item in items if isinstance(item, dict)][:48]
     return list(fallback or [])
 def _normalise_page_row(row: dict) -> dict:
     """Accept the D1 snapshot's snake_case fields and the admin API's camelCase.
@@ -277,6 +295,8 @@ def _catalog_from_state() -> list[dict]:
                 item[field] = content[field]
         if isinstance(content.get("checks"), list):
             item["checks"] = [str(value).strip() for value in content["checks"] if str(value).strip()][:12]
+        if isinstance(content.get("category"), dict):
+            item["categoryCopy"] = content["category"]
     return rows
 
 CATALOG["categories"] = _catalog_from_state()
@@ -901,7 +921,8 @@ def home(locale: str) -> str:
     catalog_count = len(home_series)
     products_copy = structured_section(locale, "/", "products", "Mould Product Families", "Explore " + str(catalog_count) + " specialized mould product families engineered for high-volume production, dimensional accuracy and long service life.", "OUR PRODUCTS")
     cap_products = '<section class="section cap-series-section"><div class="shell">' + section_heading(locale, products_copy["eyebrow"], products_copy["title"], products_copy["body"]) + '<div class="cap-series-grid">' + ''.join(cap_series_card(locale, item) for item in home_series) + '</div></div></section>'
-    sample_cards = ''.join('<a class="sample-card" href="' + localized_href(locale, "/samples/") + '"><img src="' + legacy_media_url('/images/samples/' + s + '.jpg') + '" alt="' + esc(s.replace("-", " ").title() + " reference sample") + '" loading="lazy" decoding="async"><span>' + esc(s.replace("-", " ").title()) + '</span></a>' for s in samples)
+    sample_items = structured_section_items(locale, "/", "samples", [{"id": s, "title": s.replace("-", " ").title(), "image": "/images/samples/" + s + ".jpg", "alt": s.replace("-", " ").title() + " reference sample"} for s in samples])
+    sample_cards = ''.join('<a class="sample-card" href="' + localized_href(locale, str(item.get("link") or "/samples/")) + '"><img src="' + legacy_media_url(str(item.get("image") or "")) + '" alt="' + esc(str(item.get("alt") or item.get("title") or "LEYA MOULD sample")) + '" loading="lazy" decoding="async"><span>' + esc(str(item.get("title") or item.get("label") or "")) + '</span></a>' for item in sample_items)
     samples_copy = structured_section(locale, "/", "samples", "Plastic Cap Samples", "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection.", "SAMPLES GALLERY")
     samples_section = '<section class="section samples-section"><div class="shell">' + section_heading(locale, samples_copy["eyebrow"], samples_copy["title"], samples_copy["body"]) + '<div class="samples-track-wrap"><button class="samples-scroll samples-scroll--prev" type="button" data-samples-scroll="-1" aria-label="Previous samples">‹</button><div class="samples-track" data-samples-track>' + sample_cards + '</div><button class="samples-scroll samples-scroll--next" type="button" data-samples-scroll="1" aria-label="Next samples">›</button></div><div class="section__more"><a class="text-link" href="' + localized_href(locale, "/samples/") + '">' + esc(text(locale, "samples")) + ' →</a></div></div></section>'
     tech = structured_section(locale, "/", "technology", "Engineering Excellence Behind Every Mould", "Precision manufacturing, premium steel and documented controls for repeatable production.", "OUR TECHNOLOGY")
@@ -909,7 +930,9 @@ def home(locale: str) -> str:
     first_tech = tech_items[0] if tech_items else {}
     second_tech = tech_items[1] if len(tech_items) > 1 else first_tech
     tech_list = lambda item: ''.join('<li>' + esc(str(bullet)) + '</li>' for bullet in (item.get("bullets") or [])[:8])
-    technology = '<section class="section technology-section"><div class="shell"><div class="section__head tech-section-head"><div><span class="eyebrow">' + esc(tech["eyebrow"]) + '</span><h2 class="section__title">' + esc(tech["title"]) + '</h2><p class="copy-muted">' + esc(tech["body"]) + '</p><div class="section-line"></div></div></div><div class="tech-grid"><div class="tech-img">' + image(legacy_media_url("/upload/Home/precision-machining.jpg"), "Precision machining", "lazy") + '</div><div class="tech-text"><h3>' + esc(str(first_tech.get("title") or "Precision Manufacturing & Strict QC")) + '</h3><p>' + esc(str(first_tech.get("body") or "")) + '</p><ul class="tech-list">' + tech_list(first_tech) + '</ul></div></div><div class="tech-grid tech-grid--second"><div class="tech-text"><h3>' + esc(str(second_tech.get("title") or "Material & Modular Design")) + '</h3><p>' + esc(str(second_tech.get("body") or "")) + '</p><ul class="tech-list">' + tech_list(second_tech) + '</ul></div><div class="tech-img">' + image(legacy_media_url("/upload/Home/steel-quality.jpg"), "Mould steel", "lazy") + '</div></div></div></section>'
+    first_tech_image = str(first_tech.get("image") or legacy_media_url("/upload/Home/precision-machining.jpg"))
+    second_tech_image = str(second_tech.get("image") or legacy_media_url("/upload/Home/steel-quality.jpg"))
+    technology = '<section class="section technology-section"><div class="shell"><div class="section__head tech-section-head"><div><span class="eyebrow">' + esc(tech["eyebrow"]) + '</span><h2 class="section__title">' + esc(tech["title"]) + '</h2><p class="copy-muted">' + esc(tech["body"]) + '</p><div class="section-line"></div></div></div><div class="tech-grid"><div class="tech-img">' + image(legacy_media_url(first_tech_image), str(first_tech.get("alt") or "Precision machining"), "lazy") + '</div><div class="tech-text"><h3>' + esc(str(first_tech.get("title") or "Precision Manufacturing & Strict QC")) + '</h3><p>' + esc(str(first_tech.get("body") or "")) + '</p><ul class="tech-list">' + tech_list(first_tech) + '</ul></div></div><div class="tech-grid tech-grid--second"><div class="tech-text"><h3>' + esc(str(second_tech.get("title") or "Material & Modular Design")) + '</h3><p>' + esc(str(second_tech.get("body") or "")) + '</p><ul class="tech-list">' + tech_list(second_tech) + '</ul></div><div class="tech-img">' + image(legacy_media_url(second_tech_image), str(second_tech.get("alt") or "Mould steel"), "lazy") + '</div></div></div></section>'
     process_fallback = [{"label": num, "title": title, "body": desc.replace(" →", "")} for num, title, desc in data(locale, "process_steps")]
     process_items = structured_section_items(locale, "/", "process", process_fallback)
     steps = ''.join('<article class="process-step"><div class="step-num">' + esc(str(item.get("label") or str(i + 1)).lstrip("0") or "0") + '</div><h4>' + esc(str(item.get("title") or "")) + '</h4><p>' + esc(str(item.get("body") or "")) + '</p></article>' for i, item in enumerate(process_items))
@@ -951,104 +974,45 @@ def catalog_support_sections(locale: str) -> str:
     Keep these modules in one renderer so the aggregate page stays complete,
     while the individual routes and the shared shell remain untouched.
     """
-    cap = "https://www.cap-molds.com"
+    route = "/Plastic-cap-mold.html"
     es = locale == "es"
-    advantages_title = "Ventajas clave de LEYA MOULD" if es else "Core Advantages of LEYA MOULD"
-    advantages_desc = "Desde el diseño del molde hasta la prueba, entregamos valor con excelencia de ingeniería y control de calidad estricto." if es else "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control."
-    samples_title = "Muestras de tapas de plástico" if es else "Plastic Cap Samples"
-    samples_desc = "Una amplia variedad de muestras para bebidas, alimentos, farmacia, cuidado personal y cierres industriales. Use las flechas para explorar la colección." if es else "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection."
-    technology_title = "Excelencia de ingeniería detrás de cada molde" if es else "Engineering Excellence Behind Every Mould"
-    technology_desc = "Fabricación de precisión, acero premium y controles documentados para una producción repetible." if es else "Precision manufacturing, premium steel and documented controls for repeatable production."
-    quality_title = "Control de calidad e inspección" if es else "Quality Control & Inspection"
-    quality_desc = "Cada molde se revisa antes, durante y después de la prueba para que la entrega sea verificable." if es else "Every mould is reviewed before, during and after trial so the handover is measurable and traceable."
-    workflow_title = "Su recorrido de molde" if es else "Your Cap Mould Journey"
-    workflow_desc = "Desde su primer plano hasta la entrega y el soporte técnico." if es else "From your first drawing to delivery and technical support."
-    faq_title = "Preguntas frecuentes" if es else "Common Questions"
-    faq_desc = "Respuestas rápidas sobre diseño, pruebas, plazos y soporte." if es else "Quick answers about design, trials, lead times and support."
-    testimonial_title = "Opiniones de clientes" if es else "Client Feedback"
-    testimonial_desc = "Lo que compradores de packaging valoran en la calidad, precisión y soporte de LEYA MOULD." if es else "What packaging buyers value in LEYA MOULD quality, precision and support."
+    advantages_copy = structured_section(locale, route, "advantages")
+    samples_copy = structured_section(locale, route, "samples")
+    technology_copy = structured_section(locale, route, "technology")
+    quality_copy = structured_section(locale, route, "quality")
+    workflow_copy = structured_section(locale, route, "workflow")
+    faq_copy = structured_section(locale, route, "faq")
+    testimonial_copy = structured_section(locale, route, "testimonials")
+    video_copy = structured_section(locale, route, "videos")
+    advantages_title, advantages_desc = advantages_copy["title"], advantages_copy["body"]
+    samples_title, samples_desc = samples_copy["title"], samples_copy["body"]
+    technology_title, technology_desc = technology_copy["title"], technology_copy["body"]
+    quality_title, quality_desc = quality_copy["title"], quality_copy["body"]
+    workflow_title, workflow_desc = workflow_copy["title"], workflow_copy["body"]
+    faq_title, faq_desc = faq_copy["title"], faq_copy["body"]
+    testimonial_title, testimonial_desc = testimonial_copy["title"], testimonial_copy["body"]
 
-    advantage_items = [
-        ("Premium Steel", "ASSAB, DAIDO certified steel for millions of cycles."),
-        ("Micron Precision", "±0.01mm tolerances with high-speed CNC and EDM."),
-        ("Fast Cycles", "Conformal cooling reduces cycle time, boosting output."),
-        ("Custom Solutions", "Tailored designs from simple caps to complex combinations."),
-        ("Lifetime Support", "Remote guidance, maintenance tips, and spare parts service."),
-        ("On-Time Delivery", "Efficient project management to meet your deadlines."),
-    ]
-    if es:
-        advantage_items = [
-            ("Acero premium", "Acero certificado ASSAB y DAIDO para millones de ciclos."),
-            ("Precisión micrométrica", "Tolerancias de ±0,01 mm con CNC y EDM de alta velocidad."),
-            ("Ciclos rápidos", "La refrigeración conformada reduce el ciclo y aumenta la producción."),
-            ("Soluciones a medida", "Diseños adaptados desde tapas simples hasta combinaciones complejas."),
-            ("Soporte continuo", "Guía remota, mantenimiento y servicio de repuestos."),
-            ("Entrega a tiempo", "Gestión eficiente para cumplir sus fechas objetivo."),
-        ]
-    advantages = ''.join('<article class="advantage-card"><span class="advantage-card__number">0' + str(i + 1) + '</span><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for i, (title, desc) in enumerate(advantage_items))
-    advantages_section = '<section id="catalog-advantages" class="section section--advantages"><div class="shell">' + section_heading(locale, "WHY CHOOSE US" if not es else "POR QUÉ ELEGIRNOS", advantages_title, advantages_desc) + '<div class="advantage-grid catalog-advantage-grid">' + advantages + '</div></div></section>'
+    advantage_items = [row for row in advantages_copy.get("items", []) if isinstance(row, dict)]
+    advantages = ''.join('<article class="advantage-card"><span class="advantage-card__number">' + str(i + 1).zfill(2) + '</span><h3>' + esc(str(row.get("title") or row.get("label") or "")) + '</h3><p>' + esc(str(row.get("body") or "")) + '</p></article>' for i, row in enumerate(advantage_items))
+    advantages_section = '<section id="catalog-advantages" class="section section--advantages"><div class="shell">' + section_heading(locale, advantages_copy.get("eyebrow") or ("WHY CHOOSE US" if not es else "POR QUÉ ELEGIRNOS"), advantages_title, advantages_desc) + '<div class="advantage-grid catalog-advantage-grid">' + advantages + '</div></div></section>'
 
-    # Match the source gallery: 21 images, a clean grid and a click-to-enlarge
-    # lightbox. These are the same compressed public sample assets used by the
-    # reference page, so no placeholder cards are silently introduced.
-    sample_cards = ''.join('<button class="catalog-sample-item" type="button" data-sample-img="' + legacy_media_url('/upload/caps/Bottle-cap-sample' + str(i).zfill(2) + '.jpg') + '" aria-label="' + esc(("Ampliar muestra de tapa " if es else "Enlarge bottle cap sample ") + str(i)) + '"><img src="' + legacy_media_url('/upload/caps/Bottle-cap-sample' + str(i).zfill(2) + '.jpg') + '" alt="' + esc(("Muestra de tapa " if es else "Bottle cap sample ") + str(i)) + '" loading="lazy" decoding="async"></button>' for i in range(1, 22))
-    samples_section = '<section id="catalog-samples" class="section samples-section"><div class="shell">' + section_heading(locale, "CAP SAMPLES" if not es else "MUESTRAS DE TAPAS", "Bottle Cap Sample Gallery" if not es else "Galería de muestras de tapas", "Click on any image to enlarge. All samples are produced from our moulds and represent the quality you can expect for your own production." if not es else "Haga clic en cualquier imagen para ampliarla. Todas las muestras se producen con nuestros moldes y representan la calidad que puede esperar.") + '<div class="catalog-sample-grid" id="catalogSampleGrid">' + sample_cards + '</div></div></section><div class="catalog-lightbox" id="catalogLightbox" aria-hidden="true"><button type="button" class="catalog-lightbox__close" data-sample-close aria-label="Close sample">×</button><img id="catalogLightboxImg" src="" alt=""></div><script>(()=>{const grid=document.getElementById("catalogSampleGrid"),box=document.getElementById("catalogLightbox"),img=document.getElementById("catalogLightboxImg");if(!grid||!box||!img)return;const close=()=>{box.classList.remove("is-open");box.setAttribute("aria-hidden","true");img.src=""};grid.addEventListener("click",e=>{const b=e.target.closest("[data-sample-img]");if(!b)return;img.src=b.dataset.sampleImg;box.classList.add("is-open");box.setAttribute("aria-hidden","false")});box.addEventListener("click",e=>{if(e.target===box||e.target.closest("[data-sample-close]"))close()});document.addEventListener("keydown",e=>{if(e.key==="Escape")close()})})();</script>'
+    sample_rows = [row for row in samples_copy.get("items", []) if isinstance(row, dict)]
+    sample_cards = ''.join('<button class="catalog-sample-item" type="button" data-sample-img="' + legacy_media_url(str(row.get("image") or "")) + '" aria-label="' + esc(str(row.get("alt") or row.get("title") or ("Muestra de tapa " if es else "Bottle cap sample"))) + '"><img src="' + legacy_media_url(str(row.get("image") or "")) + '" alt="' + esc(str(row.get("alt") or row.get("title") or "LEYA MOULD cap sample")) + '" loading="lazy" decoding="async"></button>' for row in sample_rows if row.get("image"))
+    samples_section = '<section id="catalog-samples" class="section samples-section"><div class="shell">' + section_heading(locale, samples_copy.get("eyebrow") or ("CAP SAMPLES" if not es else "MUESTRAS DE TAPAS"), samples_title, samples_desc) + '<div class="catalog-sample-grid" id="catalogSampleGrid">' + sample_cards + '</div></div></section><div class="catalog-lightbox" id="catalogLightbox" aria-hidden="true"><button type="button" class="catalog-lightbox__close" data-sample-close aria-label="Close sample">×</button><img id="catalogLightboxImg" src="" alt=""></div><script>(()=>{const grid=document.getElementById("catalogSampleGrid"),box=document.getElementById("catalogLightbox"),img=document.getElementById("catalogLightboxImg");if(!grid||!box||!img)return;const close=()=>{box.classList.remove("is-open");box.setAttribute("aria-hidden","true");img.src=""};grid.addEventListener("click",e=>{const b=e.target.closest("[data-sample-img]");if(!b)return;img.src=b.dataset.sampleImg;box.classList.add("is-open");box.setAttribute("aria-hidden","false")});box.addEventListener("click",e=>{if(e.target===box||e.target.closest("[data-sample-close]"))close()});document.addEventListener("keydown",e=>{if(e.key==="Escape")close()})})();</script>'
 
-    technical_items = [
-        ("3D Design & Simulation", "Advanced CAD/CAE for optimal gate location and cooling layout."),
-        ("Precision Machining", "High-speed CNC, wire EDM, and jig grinding for micron accuracy."),
-        ("Heat Treatment", "Vacuum heat treatment ensures uniform hardness and stability."),
-        ("Conformal Cooling", "3D-printed inserts reduce cycle time by up to 30%."),
-        ("Automated Polishing", "Robotic cells deliver mirror finishes for perfect part release."),
-        ("Material Expertise", "Optimized for PP, HDPE, LDPE, PET, and specialty polymers."),
-    ]
-    if es:
-        technical_items = [
-            ("Diseño 3D y simulación", "CAD/CAE avanzado para optimizar la entrada y la refrigeración."),
-            ("Mecanizado de precisión", "CNC de alta velocidad, EDM de hilo y rectificado para precisión micrométrica."),
-            ("Tratamiento térmico", "El tratamiento al vacío garantiza dureza uniforme y estabilidad."),
-            ("Refrigeración conformada", "Insertos impresos en 3D reducen el ciclo hasta un 30 %."),
-            ("Pulido automatizado", "Celdas robotizadas entregan acabados espejo para una expulsión perfecta."),
-            ("Experiencia en materiales", "Optimizado para PP, HDPE, LDPE, PET y polímeros especiales."),
-        ]
-    tech_cards = ''.join('<article class="tech-card"><div class="tech-icon">' + str(i + 1).zfill(2) + '</div><div><h4>' + esc(title) + '</h4><p>' + esc(desc) + '</p></div></article>' for i, (title, desc) in enumerate(technical_items))
-    technology = '<section id="catalog-technology" class="technical-section"><div class="shell"><div class="section-header"><div class="section-tag">' + ("TECNOLOGÍA" if es else "TECHNOLOGY") + '</div><h2 class="section-title">' + esc("Fortaleza técnica y proceso" if es else "Technical Strength & Process") + '</h2><p class="section-sub">' + esc("Desde la simulación inicial del flujo 3D hasta el pulido automatizado final, nuestra fabricación integrada garantiza calidad constante y plazos más cortos." if es else "From initial 3D mould flow simulation to final automated polishing, our vertically integrated manufacturing ensures consistent quality and shorter lead times.") + '</p><div class="section-line"></div></div><div class="tech-grid">' + tech_cards + '</div></div></section>'
+    technical_items = [row for row in technology_copy.get("items", []) if isinstance(row, dict)]
+    tech_cards = ''.join('<article class="tech-card"><div class="tech-icon">' + str(i + 1).zfill(2) + '</div><div><h4>' + esc(str(row.get("title") or "")) + '</h4><p>' + esc(str(row.get("body") or "")) + '</p></div></article>' for i, row in enumerate(technical_items))
+    technology = '<section id="catalog-technology" class="technical-section"><div class="shell"><div class="section-header"><div class="section-tag">' + esc(technology_copy.get("eyebrow") or ("TECNOLOGÍA" if es else "TECHNOLOGY")) + '</div><h2 class="section-title">' + esc(technology_title) + '</h2><p class="section-sub">' + esc(technology_desc) + '</p><div class="section-line"></div></div><div class="tech-grid">' + tech_cards + '</div></div></section>'
 
-    quality_items = [
-        ("01", "Steel inspection", "Material certificates and heat-treatment records are checked before machining."),
-        ("02", "In-process measurement", "Critical dimensions, cooling circuits and fitting points are measured during production."),
-        ("03", "Pre-shipment trial", "Trial parts, cycle notes and agreed inspection points are reviewed before handover."),
-        ("04", "Documented support", "Drawings, reports and approved revisions stay attached to the project for future service."),
-    ]
-    if es:
-        quality_items = [("01", "Inspección del acero", "Análisis de espectrómetro para cada lote."), ("02", "Medición en proceso", "CMM y escaneo láser durante el mecanizado."), ("03", "Prueba previa al envío", "Prueba completa con informe de inspección."), ("04", "Certificación ISO 9001", "Sistema de gestión de calidad implantado.")]
-    quality_cards = ''.join('<article class="quality-item"><div class="quality-icon">' + num + '</div><h4>' + esc(title) + '</h4><p>' + esc(desc) + '</p></article>' for num, title, desc in quality_items)
-    quality = '<section id="catalog-quality" class="quality-section"><div class="shell"><div class="section-header"><div class="section-tag">' + ("CALIDAD" if es else "QUALITY") + '</div><h2 class="section-title">' + esc(quality_title) + '</h2><p class="section-sub">' + esc("Cada molde pasa por un proceso de inspección de varias etapas, desde el acero hasta la prueba final, para garantizar un rendimiento conforme a los estándares internacionales." if es else "Every mould undergoes a rigorous multi-stage inspection process, from raw steel to final trial, guaranteeing performance that meets international standards.") + '</p><div class="section-line"></div></div><div class="quality-list">' + quality_cards + '</div></div></section>'
+    quality_items = [row for row in quality_copy.get("items", []) if isinstance(row, dict)]
+    quality_cards = ''.join('<article class="quality-item"><div class="quality-icon">' + esc(str(row.get("label") or str(i + 1).zfill(2))) + '</div><h4>' + esc(str(row.get("title") or "")) + '</h4><p>' + esc(str(row.get("body") or "")) + '</p></article>' for i, row in enumerate(quality_items))
+    quality = '<section id="catalog-quality" class="quality-section"><div class="shell"><div class="section-header"><div class="section-tag">' + esc(quality_copy.get("eyebrow") or ("CALIDAD" if es else "QUALITY")) + '</div><h2 class="section-title">' + esc(quality_title) + '</h2><p class="section-sub">' + esc(quality_desc) + '</p><div class="section-line"></div></div><div class="quality-list">' + quality_cards + '</div></div></section>'
 
-    steps = ''.join('<article class="step"><strong>' + esc(num) + '</strong><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p></article>' for num, title, desc in data(locale, "process_steps"))
-    process = '<section id="catalog-workflow" class="process-section"><div class="shell"><div class="section-header"><div class="section-tag">' + ("FLUJO DE TRABAJO" if es else "WORKFLOW") + '</div><h2 class="section-title">' + esc("Proceso de cooperación" if es else "Cooperation Process") + '</h2><p class="section-sub">' + esc("Un enfoque transparente, paso a paso, desde la consulta inicial hasta la entrega final mantiene su proyecto en el camino correcto." if es else "A transparent, step-by-step approach from initial inquiry to final delivery keeps your project on track and meets your expectations.") + '</p><div class="section-line"></div></div><div class="process-steps">' + steps + '</div></div></section>'
+    workflow_items = [row for row in workflow_copy.get("items", []) if isinstance(row, dict)]
+    steps = ''.join('<article class="step"><strong>' + esc(str(row.get("label") or str(i + 1).zfill(2))) + '</strong><h3>' + esc(str(row.get("title") or "")) + '</h3><p>' + esc(str(row.get("body") or "")) + '</p></article>' for i, row in enumerate(workflow_items))
+    process = '<section id="catalog-workflow" class="process-section"><div class="shell"><div class="section-header"><div class="section-tag">' + esc(workflow_copy.get("eyebrow") or ("FLUJO DE TRABAJO" if es else "WORKFLOW")) + '</div><h2 class="section-title">' + esc(workflow_title) + '</h2><p class="section-sub">' + esc(workflow_desc) + '</p><div class="section-line"></div></div><div class="process-steps">' + steps + '</div></div></section>'
 
-    faq_pairs = [
-        ("What information should I send for a quotation?", "Please share the cap drawing or sample, material, cavity count, machine interface and target output."),
-        ("Can you make a custom cap mould?", "Yes. We review the part geometry, sealing surfaces, cooling, ejection and trial requirements before confirming the design."),
-        ("What is the normal lead time?", "A standard sample mould often takes 15–25 days; production tooling is normally 35–55 days depending on complexity."),
-        ("Do you test samples before shipment?", "Yes. Trial parts, dimensional checks and approved revision notes are kept with the handover package."),
-        ("Which steels are available?", "S136, NAK80, H13 and equivalent grades can be selected according to resin, cycle and service-life targets."),
-        ("Do you support international buyers?", "Yes. We coordinate export packing, documentation and delivery for international projects."),
-        ("Can you supply auxiliary machines?", "Yes. Lining, assembly, folding, slitting and other auxiliary equipment can be coordinated for a complete cell."),
-        ("How do I start a project?", "Send the drawing, sample, resin, cavities, machine information and destination market by email or WhatsApp."),
-    ]
-    if es:
-        faq_pairs = [
-            ("¿Qué información debo enviar para una cotización?", "Comparta el plano o muestra, material, número de cavidades, interfaz de máquina y producción prevista."),
-            ("¿Pueden fabricar un molde de tapa personalizado?", "Sí. Revisamos la geometría, las superficies de sellado, la refrigeración, la expulsión y las pruebas antes de confirmar el diseño."),
-            ("¿Cuál es el plazo normal?", "Un molde de muestra suele tardar 15–25 días; el molde de producción normalmente 35–55 días según la complejidad."),
-            ("¿Prueban las muestras antes del envío?", "Sí. Las piezas de prueba, comprobaciones dimensionales y revisiones aprobadas quedan en el paquete de entrega."),
-            ("¿Qué aceros están disponibles?", "Seleccionamos S136, NAK80, H13 y equivalentes según la resina, el ciclo y la vida útil prevista."),
-            ("¿Atienden a compradores internacionales?", "Sí. Coordinamos embalaje de exportación, documentación y entrega para proyectos internacionales."),
-            ("¿Pueden suministrar máquinas auxiliares?", "Sí. Podemos coordinar máquinas de lining, ensamblaje, plegado, corte y otras soluciones auxiliares."),
-            ("¿Cómo comienzo un proyecto?", "Envíe el plano, muestra, resina, cavidades, información de máquina y mercado por correo o WhatsApp."),
-        ]
+    faq_pairs = [(str(row.get("question") or ""), str(row.get("answer") or "")) for row in faq_copy.get("items", []) if isinstance(row, dict) and row.get("question") and row.get("answer")]
     faq_rows = ''.join('<details' + (' open' if i == 0 else '') + '><summary>' + esc(question) + '</summary><p class="faq-answer">' + esc(answer) + '</p></details>' for i, (question, answer) in enumerate(faq_pairs))
     # Never invent customer names, countries or performance claims. The
     # catalogue may show only reviews explicitly approved in D1; otherwise it
@@ -1058,7 +1022,7 @@ def catalog_support_sections(locale: str) -> str:
         review_cards = ''.join('<article class="testimonial-card"><div class="quote">&quot;' + esc(row["quote"]) + '&quot;</div><div class="author">' + esc(row["author"]) + '</div>' + ('<div class="company">' + esc(row["company"]) + '</div>' if row.get("company") else '') + '</article>' for row in catalog_reviews[:3])
         testimonials = '<div id="catalog-testimonials" class="testimonials"><h3><span class="testimonial-star">★</span> ' + esc(testimonial_title) + '</h3>' + review_cards + '</div>'
     else:
-        testimonials = '<div id="catalog-testimonials" class="testimonials testimonials--empty"><h3><span class="testimonial-star">★</span> ' + esc(testimonial_title) + '</h3><p>' + esc("Reviewed customer feedback will appear here after source and publication review." if not es else "Las opiniones verificadas aparecerán después de la revisión de la fuente y la publicación.") + '</p></div>'
+        testimonials = '<div id="catalog-testimonials" class="testimonials testimonials--empty"><h3><span class="testimonial-star">★</span> ' + esc(testimonial_title) + '</h3><p>' + esc(testimonial_desc) + '</p></div>'
     faq = '<section id="catalog-faq" class="faq-section"><div class="shell"><div class="faq-grid"><div class="faq-list"><h3 id="faq-heading"><span class="faq-star">?</span> ' + esc(faq_title) + '</h3>' + faq_rows + '</div>' + testimonials + '</div></div></section>'
 
     contact = shared_cta(locale, "catalog", element_id="catalog-contact")
@@ -1355,59 +1319,7 @@ def samples_page(locale: str) -> str:
     contact = shared_cta(locale, "samples")
     return intro(locale, title, subtitle, "/samples/") + '<section class="samples-page"><div class="sample-list">' + ''.join(cards) + '</div>' + contact + '</section>'
 
-VIDEO_SEED = [
-    {"videoId": "elkadaPoBHc", "titleEn": "Video of 5 gallon cap trial mold", "titleEs": "Vídeo de prueba del molde de tapa de garrafón", "description": "", "publishedAt": "2021-10-07T00:57:36Z"},
-    {"videoId": "wMPqPOKdnf4", "titleEn": "8cavity flip top cap mold with cold runner", "titleEs": "Molde de tapa abatible de 8 cavidades con colada fría", "description": "", "publishedAt": "2021-10-07T00:58:46Z"},
-    {"videoId": "E0M3IwYBsGw", "titleEn": "16cavity cap mold with slitting machine and cold runner", "titleEs": "Molde de tapas de 16 cavidades con máquina de corte y colada fría", "description": "", "publishedAt": "2021-10-07T00:59:24Z"},
-    {"videoId": "y1NrJ4GUOO4", "titleEn": "28mm high speed cap mould", "titleEs": "Molde de tapas de alta velocidad de 28 mm", "description": "", "publishedAt": "2021-10-07T00:59:54Z"},
-    {"videoId": "YLNnJWATMB4", "titleEn": "28 drops plastic cover (24 cavity)", "titleEs": "Tapa plástica de 28 puntos (24 cavidades)", "description": "", "publishedAt": "2021-10-09T07:30:01Z"},
-    {"videoId": "t-I5OczexGc", "titleEn": "32-cavity cap mold", "titleEs": "Molde de tapas de 32 cavidades", "description": "", "publishedAt": "2021-10-09T07:32:51Z"},
-    {"videoId": "1VO69jVYxgY", "titleEn": "32-cavity bottle cap injection molding (hot runner)", "titleEs": "Inyección de tapas de botella de 32 cavidades (canal caliente)", "description": "", "publishedAt": "2021-10-12T03:05:54Z"},
-    {"videoId": "03FybMF9qCE", "titleEn": "48-cavity cap mold", "titleEs": "Molde de tapas de 48 cavidades", "description": "", "publishedAt": "2021-10-12T03:06:30Z"},
-    {"videoId": "LpWp3_8S2c0", "titleEn": "48 cavity cap mold", "titleEs": "Molde de tapas de 48 cavidades", "description": "", "publishedAt": "2021-10-13T10:20:32Z"},
-    {"videoId": "eJCq4OYiR68", "titleEn": "48mm cap mold", "titleEs": "Molde de tapas de 48 mm", "description": "", "publishedAt": "2021-10-13T10:21:23Z"},
-    {"videoId": "2AnfOabyI10", "titleEn": "cap molds flip top cap mould", "titleEs": "Molde de tapas abatibles", "description": "", "publishedAt": "2021-10-13T10:22:15Z"},
-    {"videoId": "5AaCsTX7W2s", "titleEn": "Bottle Cap Mould-Oil Cap Trial Video", "titleEs": "Vídeo de prueba del molde de tapa para aceite", "description": "", "publishedAt": "2021-10-19T00:36:22Z"}
-    ,{"videoId": "_NQOLYk86pg", "titleEn": "Bottle cap mold injection process", "description": "", "publishedAt": "2021-10-19T00:40:24Z"}
-    ,{"videoId": "q7jK4xlw69I", "titleEn": "5 gallon handle trial video", "description": "", "publishedAt": "2021-10-25T13:17:08Z"}
-    ,{"videoId": "Wq8C6vaYx2M", "titleEn": "Flip Top Caps Mould Combination Video", "description": "", "publishedAt": "2021-10-27T00:07:52Z"}
-    ,{"videoId": "Wd34XWe7GW0", "titleEn": "Clamshell mold inner lid", "description": "", "publishedAt": "2021-10-30T00:31:17Z"}
-    ,{"videoId": "4WGtdJ0RbKs", "titleEn": "38 handle mould (video)", "description": "", "publishedAt": "2021-11-09T05:39:50Z"}
-    ,{"videoId": "oO1s-x2Toak", "titleEn": "Bottle cap assembly machine", "description": "", "publishedAt": "2021-11-09T05:43:28Z"}
-    ,{"videoId": "IykcO0ub3tY", "titleEn": "PET bottle cap mould", "description": "", "publishedAt": "2021-11-10T23:53:23Z"}
-    ,{"videoId": "DquWhXWBscE", "titleEn": "PET bottle handle mould", "description": "", "publishedAt": "2021-11-10T23:54:58Z"}
-    ,{"videoId": "eiUVBe98Pxo", "titleEn": "PET48 mouth bottle cap mould", "description": "", "publishedAt": "2021-11-10T23:55:55Z"}
-    ,{"videoId": "aL9L1gSqusA", "titleEn": "Automatic beverage bottle cap folding and cutting machine", "description": "", "publishedAt": "2021-11-24T01:45:01Z"}
-    ,{"videoId": "1WSPN8xIu-Y", "titleEn": "Mineral water bottle cap cutting machine", "description": "", "publishedAt": "2022-01-06T07:49:02Z"}
-    ,{"videoId": "x46eR9ULJ84", "titleEn": "Nucleic acid extraction tube mold", "description": "", "publishedAt": "2022-02-11T00:32:27Z"}
-    ,{"videoId": "fOju6mXi_aU", "titleEn": "5 Gallon Smart Cap Bottle Cap Mold", "description": "", "publishedAt": "2022-02-16T08:34:56Z"}
-    ,{"videoId": "O81wopvbPrY", "titleEn": "1 out of 24 cavities 29/21 edible oil cap mould, edible oil cap mould, plastic cap mould", "description": "", "publishedAt": "2022-03-24T05:45:44Z"}
-    ,{"videoId": "XjPrI73RTPM", "titleEn": "Cap cutting machine Cap ring cutting machine Cap electrostatic precipitator", "description": "", "publishedAt": "2022-03-29T00:30:50Z"}
-    ,{"videoId": "v-Xx2AR6dkU", "titleEn": "Nucleic acid cap mould, sampling tube cap, virus tube cap mould", "description": "", "publishedAt": "2022-04-02T00:18:00Z"}
-    ,{"videoId": "6j8loGkHg-E", "titleEn": "Oil cap mould, 4 liter Mobil oil cap", "description": "", "publishedAt": "2022-04-06T09:02:42Z"}
-    ,{"videoId": "lMzPKjPUW10", "titleEn": "29/21 oil cap mould, olive oil cap mould, cooking oil cap mould", "description": "", "publishedAt": "2022-04-07T04:36:00Z"}
-    ,{"videoId": "Wz3ieeKzUZA", "titleEn": "Anti-theft bottle cap, bottle cap mould - outer anti-theft bottle cap mould", "description": "", "publishedAt": "2022-04-08T09:30:25Z"}
-    ,{"videoId": "4YHOguWhg4I", "titleEn": "38 bottle caps, juice caps and beverage caps - capping machine - bottle cap folding machine", "description": "", "publishedAt": "2022-04-13T05:09:50Z"}
-    ,{"videoId": "fVs3yAMm8mE", "titleEn": "Motor cap off, automatic cap off mould, anti-theft cap, anti-theft oil cap", "description": "", "publishedAt": "2022-04-14T01:54:54Z"}
-    ,{"videoId": "L0QfA_EfSAk", "titleEn": "16-cavity 28-port flip mold, 28-410 oil motor flip, automatic flip off, butterfly flip molds", "description": "", "publishedAt": "2022-04-15T07:10:21Z"}
-    ,{"videoId": "4ThJj0Gnggs", "titleEn": "Virus tube cap mould, 60 cavity nucleic acid tube cap mould, sampling tube cap mould", "description": "", "publishedAt": "2022-04-18T00:45:21Z"}
-    ,{"videoId": "RNQh1bI8xEQ", "titleEn": "18-410 inner plug cap, flat cap inner plug cap mould manufacturing", "description": "", "publishedAt": "2022-04-19T05:43:05Z"}
-    ,{"videoId": "cYTcA_nSda4", "titleEn": "5 gallon lid mould, pure water bucket lid mould, smart lid mould", "description": "", "publishedAt": "2022-04-21T00:50:43Z"}
-    ,{"videoId": "YNh3qCmpI9E", "titleEn": "48 mouth water cap 5L water cap mould 1-3L gallon bucket cap water cap mould oil cap mould", "description": "", "publishedAt": "2022-04-25T01:24:34Z"}
-    ,{"videoId": "go2N0k8XrjY", "titleEn": "55 mouth bucket cap 18.9 liter bucket cap mould 3-5 gallon bucket cap water bottle cap mould", "description": "", "publishedAt": "2022-04-28T01:07:18Z"}
-    ,{"videoId": "2Rzi5JjJvRI", "titleEn": "Wide mouth pet bottle cap mould, high transparent bottle cap, crystal bottle cap", "description": "", "publishedAt": "2022-05-05T10:11:19Z"}
-    ,{"videoId": "134e25e9b3k", "titleEn": "cap folding and slitting machine + gasket mounting machine", "description": "", "publishedAt": "2022-05-10T02:45:17Z"}
-    ,{"videoId": "q9mPWB1wczM", "titleEn": "Automatic combination bottle Cap lining machine", "description": "", "publishedAt": "2022-05-11T07:19:14Z"}
-    ,{"videoId": "zeGz5MY-y5A", "titleEn": "20/24/28/32/38mm flat cover mold, flat top cover mold", "description": "", "publishedAt": "2022-05-13T09:49:13Z"}
-    ,{"videoId": "kvJDFZTXIP8", "titleEn": "24-410 28-410, 32-410 Cosmetic bottle caps, health care product caps Syrup bottle caps moulds", "description": "", "publishedAt": "2022-05-16T04:38:53Z"}
-    ,{"videoId": "SIuGaN4zxbQ", "titleEn": "29-21 flip lid cooking oil flip lid mold olive oil lid mold sunflower oil lid mold maker", "description": "", "publishedAt": "2022-05-17T09:53:11Z"}
-    ,{"videoId": "M-aQ8iZRAPE", "titleEn": "Engine oli cap mould manufacture", "description": "", "publishedAt": "2022-05-19T03:21:07Z"}
-    ,{"videoId": "O4bCwhfPM24", "titleEn": "Bottle cap folding +cutting machine, 28 ports, 30/25 29/25 38 45 48mm water cap beverage cap oil cap", "description": "", "publishedAt": "2022-05-27T00:24:12Z"}
-    ,{"videoId": "DYZ73vH_iCU", "titleEn": "Anti-theft cap Tear cap Pull ear cap Tear edge cover cap mold", "description": "", "publishedAt": "2022-06-01T06:02:43Z"}
-    ,{"videoId": "m2OA8-PdONU", "titleEn": "55mm bucket cover five gallon smart cover, disposable gallon bucket cover large bucket cover", "description": "", "publishedAt": "2022-06-13T02:26:12Z"}
-    ,{"videoId": "eNRJgBfNKmk", "titleEn": "Bottle cap folding and cutting machine", "description": "", "publishedAt": "2022-06-22T06:47:25Z"}
-]
-
+VIDEO_SEED = json.loads((ROOT / "data/leya-youtube-seed.json").read_text(encoding="utf-8"))
 def video_card(item: dict, locale: str) -> str:
     title = esc(item.get("titleEs" if locale == "es" else "titleEn", item.get("titleEn", "LEYA MOULD video")))
     description = esc(item.get("description", ""))
@@ -1463,15 +1375,16 @@ def catalog_video_section(locale: str) -> str:
     videos = videos[:5]
     cards = ''.join(video_card(item, locale) for item in videos)
     payload = json.dumps(videos, ensure_ascii=False).replace("</", "<\\/")
-    title = "Cap Mould Trial Videos" if locale == "en" else "Vídeos de pruebas de moldes"
-    description = ("Watch the latest mould trial videos managed from the YouTube video module."
+    video_copy = structured_section(locale, "/Plastic-cap-mold.html", "videos", "Cap Mould Trial Videos", "Watch the latest mould trial videos managed from the YouTube video module.", "MOULD TRIALS")
+    title = video_copy["title"] or ("Cap Mould Trial Videos" if locale == "en" else "Vídeos de pruebas de moldes")
+    description = video_copy["body"] or ("Watch the latest mould trial videos managed from the YouTube video module."
                    if locale == "en" else "Vea los últimos vídeos de pruebas gestionados desde el módulo de vídeos de YouTube.")
     close_label = "Close video" if locale == "en" else "Cerrar vídeo"
     play_label = "Play video" if locale == "en" else "Reproducir vídeo"
     empty_label = "No videos found yet." if locale == "en" else "Todavía no hay vídeos."
     script = '''<script>(()=>{const root=document.querySelector("[data-catalog-videos]");if(!root)return;const grid=document.getElementById("catalogVideoGrid"),empty=document.getElementById("catalogVideoEmpty"),modal=document.getElementById("catalogVideoModal"),frame=document.getElementById("catalogVideoIframe"),close=document.getElementById("catalogVideoClose"),lang=document.documentElement.lang||"en";const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\\\"":"&quot;","'":"&#39;"}[c]));const date=v=>{try{return new Intl.DateTimeFormat(lang,{year:"numeric",month:"long",day:"numeric"}).format(new Date(v))}catch{return v||""}};const card=v=>{const id=String(v.videoId||"");if(!/^[A-Za-z0-9_-]{11}$/.test(id))return "";const title=(lang==="es"?v.titleEs:v.titleEn)||v.title||"LEYA MOULD video";return `<article class="video-card" data-video-id="${esc(id)}"><div class="video-thumb" data-video-id="${esc(id)}" role="button" tabindex="0" aria-label="${esc(lang==="es"?"Reproducir vídeo":"Play video")}"><img src="https://i.ytimg.com/vi/${esc(id)}/mqdefault.jpg" alt="${esc(title)}" loading="lazy" decoding="async"><span class="play-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></span></div><div class="video-body"><time class="video-date" datetime="${esc(v.publishedAt||"")}">${date(v.publishedAt)}</time><h3 class="video-title"><button type="button" class="video-title-link" data-video-id="${esc(id)}">${esc(title)}</button></h3><p class="video-desc">${esc(v.description||"")}</p></div></article>`};const render=items=>{const visible=(items||[]).slice(0,5);grid.innerHTML=visible.map(card).join("");empty.hidden=visible.length>0};const play=id=>{if(!/^[A-Za-z0-9_-]{11}$/.test(id))return;frame.src="https://www.youtube.com/embed/"+id+"?autoplay=1&rel=0";modal.classList.add("active");modal.setAttribute("aria-hidden","false")};const stop=()=>{modal.classList.remove("active");modal.setAttribute("aria-hidden","true");frame.src=""};grid.addEventListener("click",e=>{const target=e.target.closest("[data-video-id]");if(target)play(target.dataset.videoId)});grid.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.closest("[data-video-id]")){e.preventDefault();play(e.target.closest("[data-video-id]").dataset.videoId)}});close.addEventListener("click",stop);modal.addEventListener("click",e=>{if(e.target===modal)stop()});document.addEventListener("keydown",e=>{if(e.key==="Escape")stop()});fetch(root.dataset.publicApi+"?locale="+encodeURIComponent(lang),{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(d=>render(d.items||[])).catch(()=>{});})();</script>'''
     return ('<section class="section catalog-video-section" data-catalog-videos data-public-api="/api/youtube-videos"><div class="shell">'
-        + section_heading(locale, "MOULD TRIALS", title, description)
+        + section_heading(locale, video_copy.get("eyebrow") or "MOULD TRIALS", title, description)
         + '<div class="video-gallery-page catalog-video-gallery"><div class="video-grid" id="catalogVideoGrid">' + cards + '</div><p class="video-empty" id="catalogVideoEmpty" hidden>' + esc(empty_label) + '</p></div>'
         + '<div class="video-modal" id="catalogVideoModal" aria-hidden="true"><div class="video-modal-inner" role="dialog" aria-modal="true" aria-label="' + esc(title) + '"><button type="button" class="close-modal" id="catalogVideoClose" aria-label="' + esc(close_label) + '">×</button><iframe id="catalogVideoIframe" title="' + esc(play_label) + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div></div>'
         + '<script type="application/json" id="catalogVideoSeed">' + payload + '</script>' + script + '</div></section>')

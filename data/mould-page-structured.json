@@ -2,114 +2,1324 @@
   "en": {
     "/": {
       "sections": [
-        {"id": "advantages", "eyebrow": "WHY CHOOSE US", "title": "Core Advantages of LEYA MOULD", "body": "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control.", "items": [{"title": "Design review", "body": "Part geometry, parting line, cooling and ejection are checked against the intended process."}, {"title": "Project matching", "body": "The tooling brief records the mould family, material, machine interface and target output information supplied by the buyer."}, {"title": "Sample-led decisions", "body": "Trial parts and agreed inspection points guide optimisation before production handover."}, {"title": "Clear communication", "body": "Drawings, PDFs, photos and revision notes stay attached to the enquiry."}]},
-        {"id": "products", "eyebrow": "OUR PRODUCTS", "title": "Mould Product Families", "body": "Explore 12 specialized mould product families engineered for high-volume production, dimensional accuracy and long service life."},
-        {"id": "samples", "eyebrow": "SAMPLES GALLERY", "title": "Plastic Cap Samples", "body": "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection."},
-        {"id": "technology", "eyebrow": "OUR TECHNOLOGY", "title": "Engineering Excellence Behind Every Mould", "body": "Precision manufacturing, premium steel and documented controls for repeatable production."},
-        {"id": "testimonials", "eyebrow": "TESTIMONIALS", "title": "Trusted by Packaging Leaders Worldwide", "body": "Reviewed customer feedback will appear here after source and publication review."},
-        {"id": "process", "eyebrow": "HOW WE WORK", "title": "Your Cap Mould Journey", "body": "From your first drawing to delivery and technical support.", "items": [{"label": "01", "title": "Share Design", "body": "Send your drawing or sample for an initial technical review."}, {"label": "02", "title": "DFM Analysis", "body": "Review mould flow, parting, cooling and optimisation opportunities."}, {"label": "03", "title": "Manufacturing", "body": "Coordinate precision machining, EDM, fitting and heat treatment."}, {"label": "04", "title": "Trial & Inspection", "body": "Complete trial runs, dimensional checks and agreed inspection evidence."}, {"label": "05", "title": "Delivery & Support", "body": "Keep approved files, delivery notes and technical support connected."}]},
-        {"id": "references", "eyebrow": "ENGINEERING REFERENCE", "title": "Built for repeatable production decisions.", "body": "Mould structure, steel selection, inspection evidence and trial feedback stay connected through the project.", "items": [{"title": "Precision manufacturing", "body": "Machining, EDM, fitting and assembly follow the approved tooling brief."}, {"title": "Material & modular design", "body": "Material traceability and modular inserts keep future changes practical."}, {"title": "Trial & inspection", "body": "Sample results, dimensional checks and agreed revisions guide handover."}]},
-        {"id": "resources", "eyebrow": "NEWS & INSIGHTS", "title": "Latest from LEYA MOULD", "body": "Project notes, tooling updates and practical engineering guidance.", "items": [{"label": "NEWS", "title": "Cap mould project notes", "body": "Follow new category material, sample references and production lessons.", "link": "/news/"}, {"label": "ENGINEERING", "title": "Lightweight closure design", "body": "Review the design questions that influence sealing, cooling and cycle goals.", "link": "/news/"}, {"label": "QUALITY", "title": "Inspection evidence", "body": "Keep dimensions, trial results and approved revisions connected.", "link": "/news/"}, {"label": "FAQ", "title": "Prepare a useful tooling enquiry", "body": "See the drawing, resin, machine and sample information that helps a quotation move faster.", "link": "/faq/"}, {"label": "VIDEO", "title": "Mould trial and review", "body": "Use the video area for future machine, trial and inspection media.", "link": "/video/"}, {"label": "CONTACT", "title": "Send your project brief", "body": "Tell LEYA MOULD what you are making and where the tooling must run.", "link": "/contact/#inquiry"}]}
+        {
+          "id": "advantages",
+          "eyebrow": "WHY CHOOSE US",
+          "title": "Core Advantages of LEYA MOULD",
+          "body": "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control.",
+          "items": [
+            {
+              "title": "Design review",
+              "body": "Part geometry, parting line, cooling and ejection are checked against the intended process."
+            },
+            {
+              "title": "Project matching",
+              "body": "The tooling brief records the mould family, material, machine interface and target output information supplied by the buyer."
+            },
+            {
+              "title": "Sample-led decisions",
+              "body": "Trial parts and agreed inspection points guide optimisation before production handover."
+            },
+            {
+              "title": "Clear communication",
+              "body": "Drawings, PDFs, photos and revision notes stay attached to the enquiry."
+            }
+          ]
+        },
+        {
+          "id": "products",
+          "eyebrow": "OUR PRODUCTS",
+          "title": "Mould Product Families",
+          "body": "Explore 12 specialized mould product families engineered for high-volume production, dimensional accuracy and long service life."
+        },
+        {
+          "id": "samples",
+          "eyebrow": "SAMPLES GALLERY",
+          "title": "Plastic Cap Samples",
+          "body": "A wide variety of cap samples for beverage, food, pharma, personal-care and industrial closures. Use the arrows to browse the collection.",
+          "items": [
+            {
+              "id": "water-cap",
+              "title": "Water Cap",
+              "image": "/images/samples/water-cap.jpg",
+              "alt": "Water cap reference sample"
+            },
+            {
+              "id": "csd-cap",
+              "title": "CSD Cap",
+              "image": "/images/samples/csd-cap.jpg",
+              "alt": "CSD cap reference sample"
+            },
+            {
+              "id": "hotfill-cap",
+              "title": "Hotfill Cap",
+              "image": "/images/samples/hotfill-cap.jpg",
+              "alt": "Hotfill cap reference sample"
+            },
+            {
+              "id": "oil-cap",
+              "title": "Oil Cap",
+              "image": "/images/samples/oil-cap.jpg",
+              "alt": "Oil cap reference sample"
+            },
+            {
+              "id": "soysauce-cap",
+              "title": "Soysauce Cap",
+              "image": "/images/samples/soysauce-cap.jpg",
+              "alt": "Soysauce cap reference sample"
+            },
+            {
+              "id": "pharma-cap",
+              "title": "Pharma Cap",
+              "image": "/images/samples/pharma-cap.jpg",
+              "alt": "Pharma cap reference sample"
+            },
+            {
+              "id": "disc-top-cap",
+              "title": "Disc Top Cap",
+              "image": "/images/samples/disc-top-cap.jpg",
+              "alt": "Disc top cap reference sample"
+            },
+            {
+              "id": "flip-top-cap",
+              "title": "Flip Top Cap",
+              "image": "/images/samples/flip-top-cap.jpg",
+              "alt": "Flip top cap reference sample"
+            },
+            {
+              "id": "tamper-evident-cap",
+              "title": "Tamper Evident Cap",
+              "image": "/images/samples/tamper-evident-cap.jpg",
+              "alt": "Tamper evident cap reference sample"
+            },
+            {
+              "id": "push-pull-cap",
+              "title": "Push Pull Cap",
+              "image": "/images/samples/push-pull-cap.jpg",
+              "alt": "Push pull cap reference sample"
+            },
+            {
+              "id": "pull-ring-cap",
+              "title": "Pull Ring Cap",
+              "image": "/images/samples/pull-ring-cap.jpg",
+              "alt": "Pull ring cap reference sample"
+            },
+            {
+              "id": "two-shot-cap",
+              "title": "Two Shot Cap",
+              "image": "/images/samples/two-shot-cap.jpg",
+              "alt": "Two shot cap reference sample"
+            }
+          ]
+        },
+        {
+          "id": "technology",
+          "eyebrow": "OUR TECHNOLOGY",
+          "title": "Engineering Excellence Behind Every Mould",
+          "body": "Precision manufacturing, premium steel and documented controls for repeatable production.",
+          "items": [
+            {
+              "title": "Precision Manufacturing & Strict QC",
+              "body": "Machining, EDM, inspection and trial evidence are reviewed against the approved tooling brief.",
+              "bullets": [
+                "Process review before manufacturing",
+                "Documented inspection per approved scope"
+              ],
+              "image": "/upload/Home/precision-machining.jpg",
+              "alt": "Precision machining"
+            },
+            {
+              "title": "Material & Modular Design",
+              "body": "Steel selection, heat treatment and modular inserts are matched to the part, machine and changeover requirements confirmed for the project.",
+              "bullets": [
+                "Material traceability where included in the project brief",
+                "Delivery timing confirmed against the approved schedule"
+              ],
+              "image": "/upload/Home/steel-quality.jpg",
+              "alt": "Mould steel"
+            }
+          ]
+        },
+        {
+          "id": "testimonials",
+          "eyebrow": "TESTIMONIALS",
+          "title": "Trusted by Packaging Leaders Worldwide",
+          "body": "Reviewed customer feedback will appear here after source and publication review."
+        },
+        {
+          "id": "process",
+          "eyebrow": "HOW WE WORK",
+          "title": "Your Cap Mould Journey",
+          "body": "From your first drawing to delivery and technical support.",
+          "items": [
+            {
+              "label": "01",
+              "title": "Share Design",
+              "body": "Send your drawing or sample for an initial technical review."
+            },
+            {
+              "label": "02",
+              "title": "DFM Analysis",
+              "body": "Review mould flow, parting, cooling and optimisation opportunities."
+            },
+            {
+              "label": "03",
+              "title": "Manufacturing",
+              "body": "Coordinate precision machining, EDM, fitting and heat treatment."
+            },
+            {
+              "label": "04",
+              "title": "Trial & Inspection",
+              "body": "Complete trial runs, dimensional checks and agreed inspection evidence."
+            },
+            {
+              "label": "05",
+              "title": "Delivery & Support",
+              "body": "Keep approved files, delivery notes and technical support connected."
+            }
+          ]
+        },
+        {
+          "id": "references",
+          "eyebrow": "ENGINEERING REFERENCE",
+          "title": "Built for repeatable production decisions.",
+          "body": "Mould structure, steel selection, inspection evidence and trial feedback stay connected through the project.",
+          "items": [
+            {
+              "title": "Precision manufacturing",
+              "body": "Machining, EDM, fitting and assembly follow the approved tooling brief."
+            },
+            {
+              "title": "Material & modular design",
+              "body": "Material traceability and modular inserts keep future changes practical."
+            },
+            {
+              "title": "Trial & inspection",
+              "body": "Sample results, dimensional checks and agreed revisions guide handover."
+            }
+          ]
+        },
+        {
+          "id": "resources",
+          "eyebrow": "NEWS & INSIGHTS",
+          "title": "Latest from LEYA MOULD",
+          "body": "Project notes, tooling updates and practical engineering guidance.",
+          "items": [
+            {
+              "label": "NEWS",
+              "title": "Cap mould project notes",
+              "body": "Follow new category material, sample references and production lessons.",
+              "link": "/news/"
+            },
+            {
+              "label": "ENGINEERING",
+              "title": "Lightweight closure design",
+              "body": "Review the design questions that influence sealing, cooling and cycle goals.",
+              "link": "/news/"
+            },
+            {
+              "label": "QUALITY",
+              "title": "Inspection evidence",
+              "body": "Keep dimensions, trial results and approved revisions connected.",
+              "link": "/news/"
+            },
+            {
+              "label": "FAQ",
+              "title": "Prepare a useful tooling enquiry",
+              "body": "See the drawing, resin, machine and sample information that helps a quotation move faster.",
+              "link": "/faq/"
+            },
+            {
+              "label": "VIDEO",
+              "title": "Mould trial and review",
+              "body": "Use the video area for future machine, trial and inspection media.",
+              "link": "/video/"
+            },
+            {
+              "label": "CONTACT",
+              "title": "Send your project brief",
+              "body": "Tell LEYA MOULD what you are making and where the tooling must run.",
+              "link": "/contact/#inquiry"
+            }
+          ]
+        }
       ]
     },
     "/about/": {
       "stats": [
-        {"label": "15+", "title": "Years of Experience"},
-        {"label": "60+", "title": "Countries Served"},
-        {"label": "500+", "title": "Moulds Delivered"},
-        {"label": "80+", "title": "Skilled Team Members"}
+        {
+          "label": "15+",
+          "title": "Years of Experience"
+        },
+        {
+          "label": "60+",
+          "title": "Countries Served"
+        },
+        {
+          "label": "500+",
+          "title": "Moulds Delivered"
+        },
+        {
+          "label": "80+",
+          "title": "Skilled Team Members"
+        }
       ]
     },
     "/contact/": {
       "stats": [
-        {"label": "15+", "title": "Years Experience"},
-        {"label": "60+", "title": "Countries Served"},
-        {"label": "500+", "title": "Moulds Delivered"},
-        {"label": "24h", "title": "Quote Response"}
+        {
+          "label": "15+",
+          "title": "Years Experience"
+        },
+        {
+          "label": "60+",
+          "title": "Countries Served"
+        },
+        {
+          "label": "500+",
+          "title": "Moulds Delivered"
+        },
+        {
+          "label": "24h",
+          "title": "Quote Response"
+        }
       ],
       "quickAnswers": [
-        {"question": "⏱️ How fast can I get a quote?", "answer": "We respond within 24 hours. Use WhatsApp or email for urgent requests."},
-        {"question": "📐 What information do I need to provide?", "answer": "Share the cap design, material, cavity count and production volume."},
-        {"question": "🌍 Do you ship internationally?", "answer": "Yes, we support international mould projects and export handover documentation."},
-        {"question": "📱 How do I contact LEYA MOULD?", "answer": "Use the phone, email or WhatsApp options on this page and include your project brief."}
+        {
+          "question": "⏱️ How fast can I get a quote?",
+          "answer": "We respond within 24 hours. Use WhatsApp or email for urgent requests."
+        },
+        {
+          "question": "📐 What information do I need to provide?",
+          "answer": "Share the cap design, material, cavity count and production volume."
+        },
+        {
+          "question": "🌍 Do you ship internationally?",
+          "answer": "Yes, we support international mould projects and export handover documentation."
+        },
+        {
+          "question": "📱 How do I contact LEYA MOULD?",
+          "answer": "Use the phone, email or WhatsApp options on this page and include your project brief."
+        }
       ]
     },
     "/faq/": {
       "groups": [
-        {"title": "Products & Capabilities", "items": [
-          {"question": "What types of plastic cap moulds does LEYA MOULD manufacture?", "answer": "We specialize in water and beverage cap moulds, hot-fill caps, edible oil caps, soy sauce and condiment closures, medical and cosmetic caps, flip-top, tamper-evident, sports, two-color, wide-mouth, motor oil, 5-gallon, pull-ring and custom closure moulds."},
-          {"question": "Do you provide auxiliary machines along with cap moulds?", "answer": "Yes. We can coordinate cap lining, folding, slitting, pad printing, wadding and combined machines to complete an integrated production cell."},
-          {"question": "Can you design a custom cap mould for my closure?", "answer": "Yes. Provide a 2D/3D drawing or sample cap and we will review geometry, material, cavity plan, machine interface and trial requirements."}
-        ]},
-        {"title": "Ordering & Delivery", "items": [
-          {"question": "What information do I need to provide for a quotation?", "answer": "Please share the cap type, 2D/3D drawings, material, cavity number, injection machine specifications, target volume and special requirements."},
-          {"question": "What is the typical lead time for a new cap mould?", "answer": "Lead time depends on complexity and cavity count. The detailed schedule is confirmed with the project quotation."},
-          {"question": "Do you offer mould trials and sample testing before shipment?", "answer": "Yes. Trial planning, dimensional checks and sample review are kept with the tooling handover before shipment."},
-          {"question": "What payment terms do you accept?", "answer": "Payment terms are confirmed in the project quotation according to scope, schedule and commercial requirements."}
-        ]},
-        {"title": "Technical & Support", "items": [
-          {"question": "What materials are used for your cap moulds?", "answer": "We select mould steels such as S136, NAK80, H13 and equivalent grades according to resin, cycle target, cavity plan and service life."},
-          {"question": "What is the warranty on your cap moulds?", "answer": "Warranty scope and support terms are defined in the project quotation, with technical records kept for practical maintenance."},
-          {"question": "Do you ship moulds internationally?", "answer": "Yes. We coordinate export packing, international shipping and approved project documentation for handover."},
-          {"question": "How do I start a project with LEYA MOULD?", "answer": "Contact us by email or WhatsApp with the drawing, sample, material, cavity plan, machine information and destination market."}
-        ]}
+        {
+          "title": "Products & Capabilities",
+          "items": [
+            {
+              "question": "What types of plastic cap moulds does LEYA MOULD manufacture?",
+              "answer": "We specialize in water and beverage cap moulds, hot-fill caps, edible oil caps, soy sauce and condiment closures, medical and cosmetic caps, flip-top, tamper-evident, sports, two-color, wide-mouth, motor oil, 5-gallon, pull-ring and custom closure moulds."
+            },
+            {
+              "question": "Do you provide auxiliary machines along with cap moulds?",
+              "answer": "Yes. We can coordinate cap lining, folding, slitting, pad printing, wadding and combined machines to complete an integrated production cell."
+            },
+            {
+              "question": "Can you design a custom cap mould for my closure?",
+              "answer": "Yes. Provide a 2D/3D drawing or sample cap and we will review geometry, material, cavity plan, machine interface and trial requirements."
+            }
+          ]
+        },
+        {
+          "title": "Ordering & Delivery",
+          "items": [
+            {
+              "question": "What information do I need to provide for a quotation?",
+              "answer": "Please share the cap type, 2D/3D drawings, material, cavity number, injection machine specifications, target volume and special requirements."
+            },
+            {
+              "question": "What is the typical lead time for a new cap mould?",
+              "answer": "Lead time depends on complexity and cavity count. The detailed schedule is confirmed with the project quotation."
+            },
+            {
+              "question": "Do you offer mould trials and sample testing before shipment?",
+              "answer": "Yes. Trial planning, dimensional checks and sample review are kept with the tooling handover before shipment."
+            },
+            {
+              "question": "What payment terms do you accept?",
+              "answer": "Payment terms are confirmed in the project quotation according to scope, schedule and commercial requirements."
+            }
+          ]
+        },
+        {
+          "title": "Technical & Support",
+          "items": [
+            {
+              "question": "What materials are used for your cap moulds?",
+              "answer": "We select mould steels such as S136, NAK80, H13 and equivalent grades according to resin, cycle target, cavity plan and service life."
+            },
+            {
+              "question": "What is the warranty on your cap moulds?",
+              "answer": "Warranty scope and support terms are defined in the project quotation, with technical records kept for practical maintenance."
+            },
+            {
+              "question": "Do you ship moulds internationally?",
+              "answer": "Yes. We coordinate export packing, international shipping and approved project documentation for handover."
+            },
+            {
+              "question": "How do I start a project with LEYA MOULD?",
+              "answer": "Contact us by email or WhatsApp with the drawing, sample, material, cavity plan, machine information and destination market."
+            }
+          ]
+        }
+      ]
+    },
+    "/Plastic-cap-mold.html": {
+      "sections": [
+        {
+          "id": "advantages",
+          "eyebrow": "WHY CHOOSE US",
+          "title": "Core Advantages of LEYA MOULD",
+          "body": "From mould design to trial delivery, we deliver value through engineering excellence and strict quality control.",
+          "items": [
+            {
+              "title": "Premium Steel",
+              "body": "ASSAB and DAIDO certified steel options support long service life and stable production."
+            },
+            {
+              "title": "Micron Precision",
+              "body": "CNC, EDM and measured fitting keep critical cap dimensions within the approved tooling brief."
+            },
+            {
+              "title": "Fast Cycles",
+              "body": "Balanced runners and cooling are reviewed against the output target before trial."
+            },
+            {
+              "title": "Custom Solutions",
+              "body": "The mould plan is matched to the closure geometry, resin, machine and cavity requirement."
+            },
+            {
+              "title": "Lifetime Support",
+              "body": "Remote guidance, maintenance notes and spare-part recommendations remain connected to the handover."
+            },
+            {
+              "title": "On-Time Delivery",
+              "body": "A staged production plan keeps design review, machining, trial and delivery visible."
+            }
+          ]
+        },
+        {
+          "id": "samples",
+          "eyebrow": "CAP SAMPLES",
+          "title": "Bottle Cap Sample Gallery",
+          "body": "Click any image to enlarge. Samples and reference parts are shown for technical discussion.",
+          "items": [
+            {
+              "title": "Bottle cap sample 01",
+              "image": "/upload/caps/Bottle-cap-sample01.jpg",
+              "alt": "Bottle cap sample 01"
+            },
+            {
+              "title": "Bottle cap sample 02",
+              "image": "/upload/caps/Bottle-cap-sample02.jpg",
+              "alt": "Bottle cap sample 02"
+            },
+            {
+              "title": "Bottle cap sample 03",
+              "image": "/upload/caps/Bottle-cap-sample03.jpg",
+              "alt": "Bottle cap sample 03"
+            },
+            {
+              "title": "Bottle cap sample 04",
+              "image": "/upload/caps/Bottle-cap-sample04.jpg",
+              "alt": "Bottle cap sample 04"
+            },
+            {
+              "title": "Bottle cap sample 05",
+              "image": "/upload/caps/Bottle-cap-sample05.jpg",
+              "alt": "Bottle cap sample 05"
+            },
+            {
+              "title": "Bottle cap sample 06",
+              "image": "/upload/caps/Bottle-cap-sample06.jpg",
+              "alt": "Bottle cap sample 06"
+            },
+            {
+              "title": "Bottle cap sample 07",
+              "image": "/upload/caps/Bottle-cap-sample07.jpg",
+              "alt": "Bottle cap sample 07"
+            },
+            {
+              "title": "Bottle cap sample 08",
+              "image": "/upload/caps/Bottle-cap-sample08.jpg",
+              "alt": "Bottle cap sample 08"
+            },
+            {
+              "title": "Bottle cap sample 09",
+              "image": "/upload/caps/Bottle-cap-sample09.jpg",
+              "alt": "Bottle cap sample 09"
+            },
+            {
+              "title": "Bottle cap sample 10",
+              "image": "/upload/caps/Bottle-cap-sample10.jpg",
+              "alt": "Bottle cap sample 10"
+            },
+            {
+              "title": "Bottle cap sample 11",
+              "image": "/upload/caps/Bottle-cap-sample11.jpg",
+              "alt": "Bottle cap sample 11"
+            },
+            {
+              "title": "Bottle cap sample 12",
+              "image": "/upload/caps/Bottle-cap-sample12.jpg",
+              "alt": "Bottle cap sample 12"
+            },
+            {
+              "title": "Bottle cap sample 13",
+              "image": "/upload/caps/Bottle-cap-sample13.jpg",
+              "alt": "Bottle cap sample 13"
+            },
+            {
+              "title": "Bottle cap sample 14",
+              "image": "/upload/caps/Bottle-cap-sample14.jpg",
+              "alt": "Bottle cap sample 14"
+            },
+            {
+              "title": "Bottle cap sample 15",
+              "image": "/upload/caps/Bottle-cap-sample15.jpg",
+              "alt": "Bottle cap sample 15"
+            },
+            {
+              "title": "Bottle cap sample 16",
+              "image": "/upload/caps/Bottle-cap-sample16.jpg",
+              "alt": "Bottle cap sample 16"
+            },
+            {
+              "title": "Bottle cap sample 17",
+              "image": "/upload/caps/Bottle-cap-sample17.jpg",
+              "alt": "Bottle cap sample 17"
+            },
+            {
+              "title": "Bottle cap sample 18",
+              "image": "/upload/caps/Bottle-cap-sample18.jpg",
+              "alt": "Bottle cap sample 18"
+            },
+            {
+              "title": "Bottle cap sample 19",
+              "image": "/upload/caps/Bottle-cap-sample19.jpg",
+              "alt": "Bottle cap sample 19"
+            },
+            {
+              "title": "Bottle cap sample 20",
+              "image": "/upload/caps/Bottle-cap-sample20.jpg",
+              "alt": "Bottle cap sample 20"
+            },
+            {
+              "title": "Bottle cap sample 21",
+              "image": "/upload/caps/Bottle-cap-sample21.jpg",
+              "alt": "Bottle cap sample 21"
+            }
+          ]
+        },
+        {
+          "id": "technology",
+          "eyebrow": "TECHNOLOGY",
+          "title": "Technical Strength & Process",
+          "body": "From initial 3D mould-flow review to final polishing, integrated manufacturing keeps quality consistent and lead times visible.",
+          "items": [
+            {
+              "title": "3D Design & Simulation",
+              "body": "Advanced CAD and CAE review gate location, parting and cooling before steel is cut."
+            },
+            {
+              "title": "Precision Machining",
+              "body": "High-speed CNC, wire EDM and jig grinding deliver the dimensional control required for cap tooling."
+            },
+            {
+              "title": "Heat Treatment",
+              "body": "Vacuum heat treatment is selected to maintain hardness, stability and wear resistance."
+            },
+            {
+              "title": "Conformal Cooling",
+              "body": "Cooling layouts are matched to wall thickness and cycle targets where the project requires it."
+            },
+            {
+              "title": "Automated Polishing",
+              "body": "Controlled polishing protects cosmetic surfaces and supports reliable part release."
+            },
+            {
+              "title": "Material Expertise",
+              "body": "PP, HDPE, LDPE, PET and specialty polymers are considered in the tooling brief."
+            }
+          ]
+        },
+        {
+          "id": "quality",
+          "eyebrow": "QUALITY",
+          "title": "Quality Control & Inspection",
+          "body": "Every mould passes a documented inspection path from raw steel to final trial before shipment.",
+          "items": [
+            {
+              "label": "01",
+              "title": "Steel inspection",
+              "body": "Material certificates and heat-treatment records are checked before machining."
+            },
+            {
+              "label": "02",
+              "title": "In-process measurement",
+              "body": "Critical dimensions, cooling circuits and fitting points are measured during production."
+            },
+            {
+              "label": "03",
+              "title": "Pre-shipment trial",
+              "body": "Trial parts, cycle notes and agreed inspection points are reviewed before handover."
+            },
+            {
+              "label": "04",
+              "title": "Documented support",
+              "body": "Drawings, reports and approved revisions stay attached to the project for future service."
+            }
+          ]
+        },
+        {
+          "id": "workflow",
+          "eyebrow": "WORKFLOW",
+          "title": "Cooperation Process",
+          "body": "A transparent, step-by-step approach from initial inquiry to final delivery keeps your project on track.",
+          "items": [
+            {
+              "label": "01",
+              "title": "Share Design",
+              "body": "Send your drawing or sample for an initial technical review."
+            },
+            {
+              "label": "02",
+              "title": "DFM Analysis",
+              "body": "Review mould flow, parting, cooling and optimisation opportunities."
+            },
+            {
+              "label": "03",
+              "title": "Manufacturing",
+              "body": "Coordinate precision machining, EDM, fitting and heat treatment."
+            },
+            {
+              "label": "04",
+              "title": "Trial & Inspection",
+              "body": "Complete trial runs, dimensional checks and agreed inspection evidence."
+            },
+            {
+              "label": "05",
+              "title": "Delivery & Support",
+              "body": "Keep approved files, delivery notes and technical support connected."
+            }
+          ]
+        },
+        {
+          "id": "faq",
+          "eyebrow": "FAQ",
+          "title": "Common Questions",
+          "body": "Quick answers about design, trials, lead times and support.",
+          "items": [
+            {
+              "question": "What information should I send for a quotation?",
+              "answer": "Please share the cap drawing or sample, material, cavity count, machine interface and target output."
+            },
+            {
+              "question": "Can you make a custom cap mould?",
+              "answer": "Yes. We review the part geometry, sealing surfaces, cooling, ejection and trial requirements before confirming the design."
+            },
+            {
+              "question": "What is the normal lead time?",
+              "answer": "A standard sample mould often takes 15–25 days; production tooling is normally 35–55 days depending on complexity."
+            },
+            {
+              "question": "Do you test samples before shipment?",
+              "answer": "Yes. Trial parts, dimensional checks and approved revision notes are kept with the handover package."
+            },
+            {
+              "question": "Which steels are available?",
+              "answer": "S136, NAK80, H13 and equivalent grades can be selected according to resin, cycle and service-life targets."
+            },
+            {
+              "question": "Do you support international buyers?",
+              "answer": "Yes. We coordinate export packing, documentation and delivery for international projects."
+            },
+            {
+              "question": "Can you supply auxiliary machines?",
+              "answer": "Yes. Lining, assembly, folding, slitting and other auxiliary equipment can be coordinated for a complete cell."
+            },
+            {
+              "question": "How do I start a project?",
+              "answer": "Send the drawing, sample, resin, cavities, machine information and destination market by email or WhatsApp."
+            }
+          ]
+        },
+        {
+          "id": "testimonials",
+          "eyebrow": "CLIENT FEEDBACK",
+          "title": "Client Feedback",
+          "body": "Published customer feedback appears here after the source and publication review."
+        },
+        {
+          "id": "videos",
+          "eyebrow": "MOULD TRIALS",
+          "title": "Cap Mould Trial Videos",
+          "body": "Watch the latest mould trial videos managed from the YouTube video module."
+        }
       ]
     }
   },
   "es": {
     "/": {
       "sections": [
-        {"id": "advantages", "eyebrow": "POR QUÉ ELEGIRNOS", "title": "Ventajas clave de LEYA MOULD", "body": "Desde el diseño hasta la prueba, aportamos valor con excelencia de ingeniería y control de calidad estricto.", "items": [{"title": "Revisión del diseño", "body": "La geometría, línea de partición, refrigeración y expulsión se revisan según el proceso previsto."}, {"title": "Ajuste del proyecto", "body": "El informe registra la familia del molde, material, máquina y producción objetivo del comprador."}, {"title": "Decisiones con muestras", "body": "Las piezas de prueba y los puntos de inspección acordados guían la optimización."}, {"title": "Comunicación clara", "body": "Planos, PDF, fotos y revisiones permanecen ligados a la consulta."}]},
-        {"id": "products", "eyebrow": "NUESTROS PRODUCTOS", "title": "Familias de moldes", "body": "Explore 12 familias especializadas de moldes para producción de alto volumen, precisión dimensional y larga vida útil."},
-        {"id": "samples", "eyebrow": "GALERÍA DE MUESTRAS", "title": "Muestras de tapas de plástico", "body": "Una amplia variedad de muestras para bebidas, alimentos, farmacia, cuidado personal y cierres industriales."},
-        {"id": "technology", "eyebrow": "NUESTRA TECNOLOGÍA", "title": "Excelencia de ingeniería detrás de cada molde", "body": "Fabricación de precisión, acero premium y controles documentados para una producción repetible."},
-        {"id": "testimonials", "eyebrow": "TESTIMONIOS", "title": "La confianza de compradores de packaging", "body": "Los comentarios de clientes revisados aparecerán aquí después de la revisión de origen y publicación."},
-        {"id": "process", "eyebrow": "CÓMO TRABAJAMOS", "title": "Su proyecto de moldes paso a paso", "body": "Desde el primer plano hasta la entrega y el soporte técnico.", "items": [{"label": "01", "title": "Compartir diseño", "body": "Envíe el plano o la muestra para una revisión técnica inicial."}, {"label": "02", "title": "Análisis DFM", "body": "Revisamos flujo, partición, refrigeración y oportunidades de optimización."}, {"label": "03", "title": "Fabricación", "body": "Coordinamos mecanizado, EDM, ajuste y tratamiento térmico."}, {"label": "04", "title": "Prueba e inspección", "body": "Completamos pruebas, comprobaciones dimensionales y evidencias acordadas."}, {"label": "05", "title": "Entrega y soporte", "body": "Mantenemos conectados los archivos aprobados, la entrega y el soporte técnico."}]},
-        {"id": "references", "eyebrow": "REFERENCIA DE INGENIERÍA", "title": "Decisiones preparadas para una producción repetible.", "body": "La estructura, el acero, la inspección y las pruebas permanecen conectados durante el proyecto.", "items": [{"title": "Fabricación de precisión", "body": "El mecanizado, EDM, ajuste y montaje siguen el informe aprobado."}, {"title": "Material y diseño modular", "body": "La trazabilidad y los insertos modulares facilitan cambios futuros."}, {"title": "Prueba e inspección", "body": "Las muestras, comprobaciones y revisiones guían la entrega."}]},
-        {"id": "resources", "eyebrow": "NOTICIAS Y GUÍAS", "title": "Lo último de LEYA MOULD", "body": "Notas de proyectos, novedades de utillaje y orientación práctica de ingeniería.", "items": [{"label": "NOTICIAS", "title": "Notas de proyectos de moldes", "body": "Siga materiales, muestras y lecciones de producción.", "link": "/news/"}, {"label": "INGENIERÍA", "title": "Diseño de cierres ligeros", "body": "Revise las decisiones que influyen en sellado, refrigeración y ciclos.", "link": "/news/"}, {"label": "CALIDAD", "title": "Evidencias de inspección", "body": "Mantenga conectados los resultados, dimensiones y revisiones.", "link": "/news/"}, {"label": "FAQ", "title": "Prepare una consulta útil", "body": "Consulte la información que ayuda a acelerar una cotización.", "link": "/faq/"}, {"label": "VÍDEO", "title": "Prueba y revisión del molde", "body": "Vea demostraciones y revisiones técnicas.", "link": "/video/"}, {"label": "CONTACTO", "title": "Envíe su proyecto", "body": "Cuéntenos qué fabrica y dónde funcionará el molde.", "link": "/contact/#inquiry"}]}
+        {
+          "id": "advantages",
+          "eyebrow": "POR QUÉ ELEGIRNOS",
+          "title": "Ventajas clave de LEYA MOULD",
+          "body": "Desde el diseño hasta la prueba, aportamos valor con excelencia de ingeniería y control de calidad estricto.",
+          "items": [
+            {
+              "title": "Revisión del diseño",
+              "body": "La geometría, línea de partición, refrigeración y expulsión se revisan según el proceso previsto."
+            },
+            {
+              "title": "Ajuste del proyecto",
+              "body": "El informe registra la familia del molde, material, máquina y producción objetivo del comprador."
+            },
+            {
+              "title": "Decisiones con muestras",
+              "body": "Las piezas de prueba y los puntos de inspección acordados guían la optimización."
+            },
+            {
+              "title": "Comunicación clara",
+              "body": "Planos, PDF, fotos y revisiones permanecen ligados a la consulta."
+            }
+          ]
+        },
+        {
+          "id": "products",
+          "eyebrow": "NUESTROS PRODUCTOS",
+          "title": "Familias de moldes",
+          "body": "Explore 12 familias especializadas de moldes para producción de alto volumen, precisión dimensional y larga vida útil."
+        },
+        {
+          "id": "samples",
+          "eyebrow": "GALERÍA DE MUESTRAS",
+          "title": "Muestras de tapas de plástico",
+          "body": "Una amplia variedad de muestras para bebidas, alimentos, farmacia, cuidado personal y cierres industriales.",
+          "items": [
+            {
+              "id": "water-cap",
+              "title": "Tapa de agua",
+              "image": "/images/samples/water-cap.jpg",
+              "alt": "Muestra de tapa de agua"
+            },
+            {
+              "id": "csd-cap",
+              "title": "Tapa CSD",
+              "image": "/images/samples/csd-cap.jpg",
+              "alt": "Muestra de tapa CSD"
+            },
+            {
+              "id": "hotfill-cap",
+              "title": "Tapa hot-fill",
+              "image": "/images/samples/hotfill-cap.jpg",
+              "alt": "Muestra de tapa hot-fill"
+            },
+            {
+              "id": "oil-cap",
+              "title": "Tapa de aceite",
+              "image": "/images/samples/oil-cap.jpg",
+              "alt": "Muestra de tapa de aceite"
+            },
+            {
+              "id": "soysauce-cap",
+              "title": "Tapa de salsa",
+              "image": "/images/samples/soysauce-cap.jpg",
+              "alt": "Muestra de tapa de salsa"
+            },
+            {
+              "id": "pharma-cap",
+              "title": "Tapa médica",
+              "image": "/images/samples/pharma-cap.jpg",
+              "alt": "Muestra de tapa médica"
+            },
+            {
+              "id": "disc-top-cap",
+              "title": "Tapa disc-top",
+              "image": "/images/samples/disc-top-cap.jpg",
+              "alt": "Muestra de tapa disc-top"
+            },
+            {
+              "id": "flip-top-cap",
+              "title": "Tapa flip-top",
+              "image": "/images/samples/flip-top-cap.jpg",
+              "alt": "Muestra de tapa flip-top"
+            },
+            {
+              "id": "tamper-evident-cap",
+              "title": "Tapa con precinto",
+              "image": "/images/samples/tamper-evident-cap.jpg",
+              "alt": "Muestra de tapa con precinto"
+            },
+            {
+              "id": "push-pull-cap",
+              "title": "Tapa push-pull",
+              "image": "/images/samples/push-pull-cap.jpg",
+              "alt": "Muestra de tapa push-pull"
+            },
+            {
+              "id": "pull-ring-cap",
+              "title": "Tapa pull-ring",
+              "image": "/images/samples/pull-ring-cap.jpg",
+              "alt": "Muestra de tapa pull-ring"
+            },
+            {
+              "id": "two-shot-cap",
+              "title": "Tapa bicomponente",
+              "image": "/images/samples/two-shot-cap.jpg",
+              "alt": "Muestra de tapa bicomponente"
+            }
+          ]
+        },
+        {
+          "id": "technology",
+          "eyebrow": "NUESTRA TECNOLOGÍA",
+          "title": "Excelencia de ingeniería detrás de cada molde",
+          "body": "Fabricación de precisión, acero premium y controles documentados para una producción repetible.",
+          "items": [
+            {
+              "title": "Fabricación de precisión y control estricto",
+              "body": "El mecanizado, EDM, la inspección y las pruebas se revisan según el informe aprobado.",
+              "bullets": [
+                "Revisión antes de fabricar",
+                "Inspección documentada"
+              ],
+              "image": "/upload/Home/precision-machining.jpg",
+              "alt": "Mecanizado de precisión"
+            },
+            {
+              "title": "Material y diseño modular",
+              "body": "El acero, el tratamiento térmico y los insertos se adaptan a la pieza y a la máquina.",
+              "bullets": [
+                "Trazabilidad cuando está incluida en el proyecto",
+                "Calendario confirmado"
+              ],
+              "image": "/upload/Home/steel-quality.jpg",
+              "alt": "Acero del molde"
+            }
+          ]
+        },
+        {
+          "id": "testimonials",
+          "eyebrow": "TESTIMONIOS",
+          "title": "La confianza de compradores de packaging",
+          "body": "Los comentarios de clientes revisados aparecerán aquí después de la revisión de origen y publicación."
+        },
+        {
+          "id": "process",
+          "eyebrow": "CÓMO TRABAJAMOS",
+          "title": "Su proyecto de moldes paso a paso",
+          "body": "Desde el primer plano hasta la entrega y el soporte técnico.",
+          "items": [
+            {
+              "label": "01",
+              "title": "Compartir diseño",
+              "body": "Envíe el plano o la muestra para una revisión técnica inicial."
+            },
+            {
+              "label": "02",
+              "title": "Análisis DFM",
+              "body": "Revisamos flujo, partición, refrigeración y oportunidades de optimización."
+            },
+            {
+              "label": "03",
+              "title": "Fabricación",
+              "body": "Coordinamos mecanizado, EDM, ajuste y tratamiento térmico."
+            },
+            {
+              "label": "04",
+              "title": "Prueba e inspección",
+              "body": "Completamos pruebas, comprobaciones dimensionales y evidencias acordadas."
+            },
+            {
+              "label": "05",
+              "title": "Entrega y soporte",
+              "body": "Mantenemos conectados los archivos aprobados, la entrega y el soporte técnico."
+            }
+          ]
+        },
+        {
+          "id": "references",
+          "eyebrow": "REFERENCIA DE INGENIERÍA",
+          "title": "Decisiones preparadas para una producción repetible.",
+          "body": "La estructura, el acero, la inspección y las pruebas permanecen conectados durante el proyecto.",
+          "items": [
+            {
+              "title": "Fabricación de precisión",
+              "body": "El mecanizado, EDM, ajuste y montaje siguen el informe aprobado."
+            },
+            {
+              "title": "Material y diseño modular",
+              "body": "La trazabilidad y los insertos modulares facilitan cambios futuros."
+            },
+            {
+              "title": "Prueba e inspección",
+              "body": "Las muestras, comprobaciones y revisiones guían la entrega."
+            }
+          ]
+        },
+        {
+          "id": "resources",
+          "eyebrow": "NOTICIAS Y GUÍAS",
+          "title": "Lo último de LEYA MOULD",
+          "body": "Notas de proyectos, novedades de utillaje y orientación práctica de ingeniería.",
+          "items": [
+            {
+              "label": "NOTICIAS",
+              "title": "Notas de proyectos de moldes",
+              "body": "Siga materiales, muestras y lecciones de producción.",
+              "link": "/news/"
+            },
+            {
+              "label": "INGENIERÍA",
+              "title": "Diseño de cierres ligeros",
+              "body": "Revise las decisiones que influyen en sellado, refrigeración y ciclos.",
+              "link": "/news/"
+            },
+            {
+              "label": "CALIDAD",
+              "title": "Evidencias de inspección",
+              "body": "Mantenga conectados los resultados, dimensiones y revisiones.",
+              "link": "/news/"
+            },
+            {
+              "label": "FAQ",
+              "title": "Prepare una consulta útil",
+              "body": "Consulte la información que ayuda a acelerar una cotización.",
+              "link": "/faq/"
+            },
+            {
+              "label": "VÍDEO",
+              "title": "Prueba y revisión del molde",
+              "body": "Vea demostraciones y revisiones técnicas.",
+              "link": "/video/"
+            },
+            {
+              "label": "CONTACTO",
+              "title": "Envíe su proyecto",
+              "body": "Cuéntenos qué fabrica y dónde funcionará el molde.",
+              "link": "/contact/#inquiry"
+            }
+          ]
+        }
       ]
     },
     "/about/": {
       "stats": [
-        {"label": "15+", "title": "Años de experiencia"},
-        {"label": "60+", "title": "Países atendidos"},
-        {"label": "500+", "title": "Moldes entregados"},
-        {"label": "80+", "title": "Profesionales especializados"}
+        {
+          "label": "15+",
+          "title": "Años de experiencia"
+        },
+        {
+          "label": "60+",
+          "title": "Países atendidos"
+        },
+        {
+          "label": "500+",
+          "title": "Moldes entregados"
+        },
+        {
+          "label": "80+",
+          "title": "Profesionales especializados"
+        }
       ]
     },
     "/contact/": {
       "stats": [
-        {"label": "15+", "title": "Años de experiencia"},
-        {"label": "60+", "title": "Países atendidos"},
-        {"label": "500+", "title": "Moldes entregados"},
-        {"label": "24h", "title": "Respuesta de cotización"}
+        {
+          "label": "15+",
+          "title": "Años de experiencia"
+        },
+        {
+          "label": "60+",
+          "title": "Países atendidos"
+        },
+        {
+          "label": "500+",
+          "title": "Moldes entregados"
+        },
+        {
+          "label": "24h",
+          "title": "Respuesta de cotización"
+        }
       ],
       "quickAnswers": [
-        {"question": "⏱️ ¿Cuánto tardan en enviar una cotización?", "answer": "Respondemos en 24 horas. Use WhatsApp o correo electrónico para solicitudes urgentes."},
-        {"question": "📐 ¿Qué información debo proporcionar?", "answer": "Comparta el diseño de la tapa, material, número de cavidades y volumen de producción."},
-        {"question": "🌍 ¿Realizan envíos internacionales?", "answer": "Sí, apoyamos proyectos internacionales de moldes y la documentación de entrega."},
-        {"question": "📱 ¿Cómo contacto con LEYA MOULD?", "answer": "Use las opciones de teléfono, correo o WhatsApp e incluya el resumen de su proyecto."}
+        {
+          "question": "⏱️ ¿Cuánto tardan en enviar una cotización?",
+          "answer": "Respondemos en 24 horas. Use WhatsApp o correo electrónico para solicitudes urgentes."
+        },
+        {
+          "question": "📐 ¿Qué información debo proporcionar?",
+          "answer": "Comparta el diseño de la tapa, material, número de cavidades y volumen de producción."
+        },
+        {
+          "question": "🌍 ¿Realizan envíos internacionales?",
+          "answer": "Sí, apoyamos proyectos internacionales de moldes y la documentación de entrega."
+        },
+        {
+          "question": "📱 ¿Cómo contacto con LEYA MOULD?",
+          "answer": "Use las opciones de teléfono, correo o WhatsApp e incluya el resumen de su proyecto."
+        }
       ]
     },
     "/faq/": {
       "groups": [
-        {"title": "Productos y capacidades", "items": [
-          {"question": "¿Qué tipos de moldes para tapas fabrica LEYA MOULD?", "answer": "Fabricamos moldes para tapas de agua y bebidas, hot-fill, aceite comestible, salsas, medicina, cosmética, flip-top, precintos, deportivas, bicomponente, boca ancha, aceite de motor, garrafas y cierres personalizados."},
-          {"question": "¿También suministran máquinas auxiliares?", "answer": "Sí. Podemos coordinar máquinas de lining, plegado, corte, impresión, wadding y soluciones combinadas para completar una célula integrada."},
-          {"question": "¿Pueden diseñar un molde personalizado?", "answer": "Sí. Envíe un plano 2D/3D o una muestra y revisaremos geometría, material, cavidades, máquina y pruebas."}
-        ]},
-        {"title": "Pedidos y entrega", "items": [
-          {"question": "¿Qué información necesito para recibir una cotización?", "answer": "Necesitamos el tipo de tapa, planos 2D/3D, material, número de cavidades, máquina, volumen previsto y requisitos especiales."},
-          {"question": "¿Cuál es el plazo habitual para un molde nuevo?", "answer": "Depende de la complejidad y las cavidades. El calendario detallado se confirma con la cotización."},
-          {"question": "¿Realizan pruebas y validación antes del envío?", "answer": "Sí. Las pruebas, comprobaciones dimensionales y revisión de muestras quedan en la entrega técnica."},
-          {"question": "¿Qué condiciones de pago aceptan?", "answer": "Las condiciones se confirman en la cotización según el alcance, calendario y requisitos comerciales."}
-        ]},
-        {"title": "Técnica y soporte", "items": [
-          {"question": "¿Qué materiales utilizan para los moldes?", "answer": "Seleccionamos aceros como S136, NAK80, H13 y equivalentes según resina, ciclo, cavidades y vida útil."},
-          {"question": "¿Qué garantía ofrecen?", "answer": "La garantía y el soporte se definen en la oferta, y mantenemos registros técnicos para el mantenimiento."},
-          {"question": "¿Realizan envíos internacionales?", "answer": "Sí. Coordinamos embalaje de exportación, transporte internacional y documentación aprobada."},
-          {"question": "¿Cómo comienzo un proyecto con LEYA MOULD?", "answer": "Envíe el plano, muestra, material, cavidades, máquina y mercado de destino por correo o WhatsApp."}
-        ]}
+        {
+          "title": "Productos y capacidades",
+          "items": [
+            {
+              "question": "¿Qué tipos de moldes para tapas fabrica LEYA MOULD?",
+              "answer": "Fabricamos moldes para tapas de agua y bebidas, hot-fill, aceite comestible, salsas, medicina, cosmética, flip-top, precintos, deportivas, bicomponente, boca ancha, aceite de motor, garrafas y cierres personalizados."
+            },
+            {
+              "question": "¿También suministran máquinas auxiliares?",
+              "answer": "Sí. Podemos coordinar máquinas de lining, plegado, corte, impresión, wadding y soluciones combinadas para completar una célula integrada."
+            },
+            {
+              "question": "¿Pueden diseñar un molde personalizado?",
+              "answer": "Sí. Envíe un plano 2D/3D o una muestra y revisaremos geometría, material, cavidades, máquina y pruebas."
+            }
+          ]
+        },
+        {
+          "title": "Pedidos y entrega",
+          "items": [
+            {
+              "question": "¿Qué información necesito para recibir una cotización?",
+              "answer": "Necesitamos el tipo de tapa, planos 2D/3D, material, número de cavidades, máquina, volumen previsto y requisitos especiales."
+            },
+            {
+              "question": "¿Cuál es el plazo habitual para un molde nuevo?",
+              "answer": "Depende de la complejidad y las cavidades. El calendario detallado se confirma con la cotización."
+            },
+            {
+              "question": "¿Realizan pruebas y validación antes del envío?",
+              "answer": "Sí. Las pruebas, comprobaciones dimensionales y revisión de muestras quedan en la entrega técnica."
+            },
+            {
+              "question": "¿Qué condiciones de pago aceptan?",
+              "answer": "Las condiciones se confirman en la cotización según el alcance, calendario y requisitos comerciales."
+            }
+          ]
+        },
+        {
+          "title": "Técnica y soporte",
+          "items": [
+            {
+              "question": "¿Qué materiales utilizan para los moldes?",
+              "answer": "Seleccionamos aceros como S136, NAK80, H13 y equivalentes según resina, ciclo, cavidades y vida útil."
+            },
+            {
+              "question": "¿Qué garantía ofrecen?",
+              "answer": "La garantía y el soporte se definen en la oferta, y mantenemos registros técnicos para el mantenimiento."
+            },
+            {
+              "question": "¿Realizan envíos internacionales?",
+              "answer": "Sí. Coordinamos embalaje de exportación, transporte internacional y documentación aprobada."
+            },
+            {
+              "question": "¿Cómo comienzo un proyecto con LEYA MOULD?",
+              "answer": "Envíe el plano, muestra, material, cavidades, máquina y mercado de destino por correo o WhatsApp."
+            }
+          ]
+        }
+      ]
+    },
+    "/Plastic-cap-mold.html": {
+      "sections": [
+        {
+          "id": "advantages",
+          "eyebrow": "POR QUÉ ELEGIRNOS",
+          "title": "Ventajas clave de LEYA MOULD",
+          "body": "Desde el diseño hasta la prueba, aportamos valor con excelencia de ingeniería y control de calidad estricto.",
+          "items": [
+            {
+              "title": "Acero premium",
+              "body": "Las opciones de acero certificado ASSAB y DAIDO favorecen una vida útil larga y una producción estable."
+            },
+            {
+              "title": "Precisión micrométrica",
+              "body": "El CNC, EDM y el ajuste medido mantienen las dimensiones críticas dentro del informe aprobado."
+            },
+            {
+              "title": "Ciclos rápidos",
+              "body": "Los canales equilibrados y la refrigeración se revisan según el objetivo de producción."
+            },
+            {
+              "title": "Soluciones a medida",
+              "body": "El molde se adapta a la geometría, resina, máquina y número de cavidades de la tapa."
+            },
+            {
+              "title": "Soporte continuo",
+              "body": "La guía remota, el mantenimiento y los repuestos permanecen ligados a la entrega."
+            },
+            {
+              "title": "Entrega a tiempo",
+              "body": "Un plan por etapas mantiene visibles el diseño, mecanizado, prueba y entrega."
+            }
+          ]
+        },
+        {
+          "id": "samples",
+          "eyebrow": "MUESTRAS DE TAPAS",
+          "title": "Galería de muestras de tapas",
+          "body": "Haga clic en una imagen para ampliarla. Las muestras se muestran para la conversación técnica.",
+          "items": [
+            {
+              "title": "Muestra de tapa 01",
+              "image": "/upload/caps/Bottle-cap-sample01.jpg",
+              "alt": "Muestra de tapa 01"
+            },
+            {
+              "title": "Muestra de tapa 02",
+              "image": "/upload/caps/Bottle-cap-sample02.jpg",
+              "alt": "Muestra de tapa 02"
+            },
+            {
+              "title": "Muestra de tapa 03",
+              "image": "/upload/caps/Bottle-cap-sample03.jpg",
+              "alt": "Muestra de tapa 03"
+            },
+            {
+              "title": "Muestra de tapa 04",
+              "image": "/upload/caps/Bottle-cap-sample04.jpg",
+              "alt": "Muestra de tapa 04"
+            },
+            {
+              "title": "Muestra de tapa 05",
+              "image": "/upload/caps/Bottle-cap-sample05.jpg",
+              "alt": "Muestra de tapa 05"
+            },
+            {
+              "title": "Muestra de tapa 06",
+              "image": "/upload/caps/Bottle-cap-sample06.jpg",
+              "alt": "Muestra de tapa 06"
+            },
+            {
+              "title": "Muestra de tapa 07",
+              "image": "/upload/caps/Bottle-cap-sample07.jpg",
+              "alt": "Muestra de tapa 07"
+            },
+            {
+              "title": "Muestra de tapa 08",
+              "image": "/upload/caps/Bottle-cap-sample08.jpg",
+              "alt": "Muestra de tapa 08"
+            },
+            {
+              "title": "Muestra de tapa 09",
+              "image": "/upload/caps/Bottle-cap-sample09.jpg",
+              "alt": "Muestra de tapa 09"
+            },
+            {
+              "title": "Muestra de tapa 10",
+              "image": "/upload/caps/Bottle-cap-sample10.jpg",
+              "alt": "Muestra de tapa 10"
+            },
+            {
+              "title": "Muestra de tapa 11",
+              "image": "/upload/caps/Bottle-cap-sample11.jpg",
+              "alt": "Muestra de tapa 11"
+            },
+            {
+              "title": "Muestra de tapa 12",
+              "image": "/upload/caps/Bottle-cap-sample12.jpg",
+              "alt": "Muestra de tapa 12"
+            },
+            {
+              "title": "Muestra de tapa 13",
+              "image": "/upload/caps/Bottle-cap-sample13.jpg",
+              "alt": "Muestra de tapa 13"
+            },
+            {
+              "title": "Muestra de tapa 14",
+              "image": "/upload/caps/Bottle-cap-sample14.jpg",
+              "alt": "Muestra de tapa 14"
+            },
+            {
+              "title": "Muestra de tapa 15",
+              "image": "/upload/caps/Bottle-cap-sample15.jpg",
+              "alt": "Muestra de tapa 15"
+            },
+            {
+              "title": "Muestra de tapa 16",
+              "image": "/upload/caps/Bottle-cap-sample16.jpg",
+              "alt": "Muestra de tapa 16"
+            },
+            {
+              "title": "Muestra de tapa 17",
+              "image": "/upload/caps/Bottle-cap-sample17.jpg",
+              "alt": "Muestra de tapa 17"
+            },
+            {
+              "title": "Muestra de tapa 18",
+              "image": "/upload/caps/Bottle-cap-sample18.jpg",
+              "alt": "Muestra de tapa 18"
+            },
+            {
+              "title": "Muestra de tapa 19",
+              "image": "/upload/caps/Bottle-cap-sample19.jpg",
+              "alt": "Muestra de tapa 19"
+            },
+            {
+              "title": "Muestra de tapa 20",
+              "image": "/upload/caps/Bottle-cap-sample20.jpg",
+              "alt": "Muestra de tapa 20"
+            },
+            {
+              "title": "Muestra de tapa 21",
+              "image": "/upload/caps/Bottle-cap-sample21.jpg",
+              "alt": "Muestra de tapa 21"
+            }
+          ]
+        },
+        {
+          "id": "technology",
+          "eyebrow": "TECNOLOGÍA",
+          "title": "Fortaleza técnica y proceso",
+          "body": "Desde la revisión inicial del flujo 3D hasta el pulido final, la fabricación integrada mantiene la calidad y los plazos visibles.",
+          "items": [
+            {
+              "title": "Diseño 3D y simulación",
+              "body": "El CAD y CAE revisan la entrada, partición y refrigeración antes de cortar el acero."
+            },
+            {
+              "title": "Mecanizado de precisión",
+              "body": "CNC, EDM de hilo y rectificado proporcionan el control dimensional requerido."
+            },
+            {
+              "title": "Tratamiento térmico",
+              "body": "El tratamiento al vacío mantiene dureza, estabilidad y resistencia al desgaste."
+            },
+            {
+              "title": "Refrigeración conformada",
+              "body": "La refrigeración se adapta al espesor y al ciclo cuando el proyecto lo requiere."
+            },
+            {
+              "title": "Pulido automatizado",
+              "body": "El pulido controlado protege las superficies cosméticas y facilita la expulsión."
+            },
+            {
+              "title": "Experiencia en materiales",
+              "body": "PP, HDPE, LDPE, PET y polímeros especiales se consideran en el informe."
+            }
+          ]
+        },
+        {
+          "id": "quality",
+          "eyebrow": "CALIDAD",
+          "title": "Control de calidad e inspección",
+          "body": "Cada molde sigue un recorrido documentado desde el acero hasta la prueba final antes del envío.",
+          "items": [
+            {
+              "label": "01",
+              "title": "Inspección del acero",
+              "body": "Los certificados de material y tratamiento térmico se comprueban antes del mecanizado."
+            },
+            {
+              "label": "02",
+              "title": "Medición en proceso",
+              "body": "Las dimensiones críticas, circuitos de refrigeración y puntos de ajuste se miden durante la producción."
+            },
+            {
+              "label": "03",
+              "title": "Prueba previa al envío",
+              "body": "Las piezas de prueba, ciclos y puntos de inspección se revisan antes de la entrega."
+            },
+            {
+              "label": "04",
+              "title": "Soporte documentado",
+              "body": "Planos, informes y revisiones aprobadas permanecen ligados al proyecto."
+            }
+          ]
+        },
+        {
+          "id": "workflow",
+          "eyebrow": "FLUJO DE TRABAJO",
+          "title": "Proceso de cooperación",
+          "body": "Un enfoque transparente desde la consulta inicial hasta la entrega final mantiene el proyecto en el camino correcto.",
+          "items": [
+            {
+              "label": "01",
+              "title": "Compartir diseño",
+              "body": "Envíe el plano o la muestra para una revisión técnica inicial."
+            },
+            {
+              "label": "02",
+              "title": "Análisis DFM",
+              "body": "Revisamos flujo, partición, refrigeración y oportunidades de optimización."
+            },
+            {
+              "label": "03",
+              "title": "Fabricación",
+              "body": "Coordinamos mecanizado, EDM, ajuste y tratamiento térmico."
+            },
+            {
+              "label": "04",
+              "title": "Prueba e inspección",
+              "body": "Completamos pruebas, comprobaciones dimensionales y evidencias acordadas."
+            },
+            {
+              "label": "05",
+              "title": "Entrega y soporte",
+              "body": "Mantenemos conectados los archivos aprobados, la entrega y el soporte técnico."
+            }
+          ]
+        },
+        {
+          "id": "faq",
+          "eyebrow": "PREGUNTAS",
+          "title": "Preguntas frecuentes",
+          "body": "Respuestas rápidas sobre diseño, pruebas, plazos y soporte.",
+          "items": [
+            {
+              "question": "¿Qué información debo enviar para una cotización?",
+              "answer": "Comparta el plano o muestra, material, número de cavidades, interfaz de máquina y producción prevista."
+            },
+            {
+              "question": "¿Pueden fabricar un molde de tapa personalizado?",
+              "answer": "Sí. Revisamos la geometría, las superficies de sellado, la refrigeración, la expulsión y las pruebas antes de confirmar el diseño."
+            },
+            {
+              "question": "¿Cuál es el plazo normal?",
+              "answer": "Un molde de muestra suele tardar 15–25 días; el molde de producción normalmente 35–55 días según la complejidad."
+            },
+            {
+              "question": "¿Prueban las muestras antes del envío?",
+              "answer": "Sí. Las piezas de prueba, comprobaciones dimensionales y revisiones aprobadas quedan en el paquete de entrega."
+            },
+            {
+              "question": "¿Qué aceros están disponibles?",
+              "answer": "Seleccionamos S136, NAK80, H13 y equivalentes según la resina, el ciclo y la vida útil prevista."
+            },
+            {
+              "question": "¿Atienden a compradores internacionales?",
+              "answer": "Sí. Coordinamos embalaje de exportación, documentación y entrega para proyectos internacionales."
+            },
+            {
+              "question": "¿Pueden suministrar máquinas auxiliares?",
+              "answer": "Sí. Podemos coordinar máquinas de lining, ensamblaje, plegado, corte y otras soluciones auxiliares."
+            },
+            {
+              "question": "¿Cómo comienzo un proyecto?",
+              "answer": "Envíe el plano, muestra, resina, cavidades, información de máquina y mercado por correo o WhatsApp."
+            }
+          ]
+        },
+        {
+          "id": "testimonials",
+          "eyebrow": "OPINIONES",
+          "title": "Opiniones de clientes",
+          "body": "Los comentarios publicados aparecen aquí después de revisar la fuente y la publicación."
+        },
+        {
+          "id": "videos",
+          "eyebrow": "PRUEBAS DE MOLDES",
+          "title": "Vídeos de pruebas de moldes",
+          "body": "Vea los últimos vídeos de pruebas gestionados desde el módulo de vídeos de YouTube."
+        }
       ]
     }
   }

@@ -20,6 +20,33 @@ function structuredFaqs(value){
   if(!Array.isArray(value)||value.length>12||value.some(row=>!row||typeof row!=="object"||Array.isArray(row)))throw Error("Invalid product FAQs");
   return value.map(row=>{const question=clean(row.question,240),answer=clean(row.answer,1800);if(!question||!answer)return null;return {question,answer};}).filter(Boolean);
 }
+function categoryCopy(value){
+  if(!value||typeof value!=="object"||Array.isArray(value))throw Error("Invalid category copy");
+  if(JSON.stringify(value).length>120000)throw Error("Category copy is too large");
+  const text=(x,n=1800)=>clean(x,n);
+  const media=x=>{const v=text(x,500);if(v&&!(/^(?:\/|https?:\/\/)/.test(v)))throw Error("Category media must be a site path or HTTPS URL");return v;};
+  const rows=(input,limit,mapper)=>{
+    if(!Array.isArray(input)||input.length>limit)throw Error("Invalid category list");
+    return input.map(mapper).filter(Boolean);
+  };
+  const out={};
+  const hero=value.hero;
+  if(hero&&typeof hero==="object"&&!Array.isArray(hero)){
+    out.hero={title:text(hero.title,180),accent:text(hero.accent,180),subtitle:text(hero.subtitle,180),image:media(hero.image),stats:rows(hero.stats||[],8,row=>{
+      const number=text(row?.number,40),label=text(row?.label,120);
+      return number||label?{number,label}:null;
+    })};
+  }
+  out.products=rows(value.products||[],12,row=>({title:text(row?.title,240),image:media(row?.image),body:text(row?.body,1800)}));
+  out.advantages=rows(value.advantages||[],12,row=>({title:text(row?.title,240),body:text(row?.body,1800)}));
+  const tech=value.technology;
+  if(tech&&typeof tech==="object"&&!Array.isArray(tech))out.technology={title:text(tech.title,240),items:rows(tech.items||[],8,row=>({title:text(row?.title,240),body:text(row?.body,1800),image:media(row?.image),bullets:Array.isArray(row?.bullets)?row.bullets.map(x=>text(x,240)).filter(Boolean).slice(0,8):[]}))};
+  out.samples=rows(value.samples||[],24,row=>({image:media(row?.image),alt:text(row?.alt,240)}));
+  out.quality=rows(value.quality||[],12,row=>({label:text(row?.label,40),title:text(row?.title,240),body:text(row?.body,1800)}));
+  out.testimonials=rows(value.testimonials||[],12,row=>({quote:text(row?.quote,1800),author:text(row?.author,160),country:text(row?.country,100)}));
+  out.videos=rows(value.videos||[],24,row=>({videoId:/^[A-Za-z0-9_-]{11}$/.test(String(row?.videoId||""))?String(row.videoId):"",title:text(row?.title,240)}));
+  return out;
+}
 async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_product_content(
   model TEXT PRIMARY KEY,
   content_json TEXT NOT NULL DEFAULT '{}',
@@ -97,7 +124,7 @@ export async function onRequestPost(context){
   if(!MANAGED_MODELS.has(model))return respond({error:"Mould category not found in the current LEYA catalog"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
   const db=c.env.LEYA_DB;await ensure(db);
-  const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","body","bodyEs","sections","sectionsEs","faqs","faqsEs"];
+  const allowed=["title","navTitle","name","description","short","detail","meta","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","body","bodyEs","sections","sectionsEs","faqs","faqsEs","category"];
   let content={};
   const previousRow=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
   try{content=previousRow?.content_json?JSON.parse(previousRow.content_json):{};}catch{return respond({error:"Existing product JSON invalid"},409)}
@@ -108,6 +135,7 @@ export async function onRequestPost(context){
     }
     if(key==="sections"||key==="sectionsEs"){try{content[key]=structuredSections(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
     if(key==="faqs"||key==="faqsEs"){try{content[key]=structuredFaqs(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
+    if(key==="category"){try{content[key]=categoryCopy(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
     if(typeof v[key]!=="string"||v[key].length>3000)return respond({error:"Invalid "+key},400);
     content[key]=v[key].trim();
   }

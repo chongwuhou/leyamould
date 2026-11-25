@@ -25,4 +25,3 @@ python scripts/test_repository_hygiene.py
 - 任何脚本不得直接修改 `dist/`、线上 HTML 或 R2 缓存来替代源模板、D1/CMS 或 R2 正式修改。
 
 `test_repository_hygiene.py` 会阻止已清理的一次性发布入口和日期批次脚本重新进入仓库。若确实需要新能力，先扩展通用入口、字段所有权、幂等条件、回滚方式和回归测试，再接入 workflow。
-

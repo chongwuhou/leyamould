@@ -97,6 +97,23 @@ def _structured_sections(item: dict, locale: str, fallback: list[tuple[str, str,
     return rows or fallback
 
 
+def _category_payload(item: dict) -> dict:
+    """Return the published D1 category payload, with source fallback only on a clean checkout."""
+    value = item.get("categoryCopy")
+    return value if isinstance(value, dict) else {}
+
+
+def _category_rows(value: object, fallback: list[dict] | None = None, limit: int = 24) -> list[dict]:
+    if isinstance(value, list) and value:
+        return [row for row in value if isinstance(row, dict)][:limit]
+    return list(fallback or [])[:limit]
+
+
+def _category_text(value: dict, key: str, fallback: str = "") -> str:
+    candidate = value.get(key)
+    return str(candidate).strip() if isinstance(candidate, str) and candidate.strip() else fallback
+
+
 def _spec(hero_title, accent, subtitle, image, stats, products, advantages,
           technology, samples, quality, faqs, testimonials, videos=None):
     return {
@@ -385,22 +402,31 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     esc = helpers["esc"]
     href = helpers["localized_href"]
     details = DETAILS[item["slug"]]
+    category = _category_payload(item)
+    hero_data = category.get("hero") if isinstance(category.get("hero"), dict) else {}
     title = _catalog_text(item, locale, "title")
     description = _catalog_text(item, locale, "description")
     detail = _structured_text(item, locale, "body", _catalog_text(item, locale, "detail"))
-    hero_title = esc(details["hero_title"]) + ' <span class="highlight">' + esc(details["hero_accent"]) + '</span> ' + esc(details["hero_subtitle"])
-    hero = '<section class="mould-detail-hero" style="--mould-hero:url(\'' + esc(_asset(details["hero_image"])) + '\')"><div class="mould-detail-container"><h1>' + hero_title + '</h1><p class="mould-hero-subtitle">' + esc(description) + ' ' + esc(detail) + '</p><a href="#contact" class="mould-hero-cta">' + esc(_lang(locale, "quote")) + ' →</a><div class="mould-hero-stats">' + ''.join('<div class="mould-hero-stat"><div class="number">' + esc(number) + '</div><div class="label">' + esc(label) + '</div></div>' for number, label in details["stats"]) + '</div></div></section>'
-    # Keep the hero copy to the same concise rhythm as the reference page.
-    hero = hero.replace(esc(description) + ' ' + esc(detail), esc(description))
-    reference_description = REFERENCE_HERO_DESCRIPTIONS.get(item["slug"], description)
-    if locale == "es" and item.get("descriptionEs"):
-        reference_description = description
-    hero = hero.replace(esc(description), esc(reference_description))
+    hero_title_text = _category_text(hero_data, "title", details["hero_title"])
+    hero_accent = _category_text(hero_data, "accent", details["hero_accent"])
+    hero_subtitle = _category_text(hero_data, "subtitle", details["hero_subtitle"])
+    hero_image = _category_text(hero_data, "image", details["hero_image"])
+    stats = _category_rows(hero_data.get("stats"), [{"number": number, "label": label} for number, label in details["stats"]], 8)
+    reference_description = _category_text(category, "heroDescriptionEs" if locale == "es" else "heroDescription", detail or description)
+    if locale == "es" and not reference_description:
+        reference_description = _catalog_text(item, locale, "description") or detail or description
+    hero_title = esc(hero_title_text) + ' <span class="highlight">' + esc(hero_accent) + '</span> ' + esc(hero_subtitle)
+    hero = '<section class="mould-detail-hero" style="--mould-hero:url(\'' + esc(_asset(hero_image)) + '\')"><div class="mould-detail-container"><h1>' + hero_title + '</h1><p class="mould-hero-subtitle">' + esc(reference_description) + '</p><a href="#contact" class="mould-hero-cta">' + esc(_lang(locale, "quote")) + ' →</a><div class="mould-hero-stats">' + ''.join('<div class="mould-hero-stat"><div class="number">' + esc(str(row.get("number") or "")) + '</div><div class="label">' + esc(str(row.get("label") or "")) + '</div></div>' for row in stats) + '</div></div></section>'
     hero = hero.replace('class="mould-detail-hero"', 'class="mould-detail-hero mould-detail-hero--' + item["slug"] + '"', 1)
     crumb = '<nav class="mould-breadcrumb" aria-label="Breadcrumb"><div class="mould-detail-container"><a href="' + href(locale, "/") + '">' + esc(_lang(locale, "home")) + '</a><span>/</span><a href="' + href(locale, "/Plastic-cap-mold.html") + '">' + esc(_lang(locale, "cap_mould")) + '</a><span>/</span><span>' + esc(title) + '</span></div></nav>'
 
-    products = '<section class="mould-products" id="products"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "our_products")) + '</span><h2>' + esc(details["hero_title"] + " " + details["hero_accent"]) + ' Types</h2><p>' + esc(detail) + '</p><i></i></div><div class="mould-products-grid">'
-    for product_title, product_image, product_desc in details["products"]:
+    product_rows = _category_rows(category.get("products"), [{"title": title, "image": image, "body": body} for title, image, body in details["products"]], 12)
+    products_heading = _category_text(category, "productsTitle", hero_title_text + " " + hero_accent + " Types")
+    products = '<section class="mould-products" id="products"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "our_products")) + '</span><h2>' + esc(products_heading) + '</h2><p>' + esc(detail) + '</p><i></i></div><div class="mould-products-grid">'
+    for row in product_rows:
+        product_title = str(row.get("title") or "").strip()
+        product_image = str(row.get("image") or "").strip()
+        product_desc = str(row.get("body") or row.get("description") or "").strip()
         products += '<a href="#contact" class="mould-product-card"><div class="mould-card-img">' + helpers["image"](_asset(product_image), product_title) + '</div><div class="mould-card-body"><h3>' + esc(product_title) + '</h3><p>' + esc(product_desc) + '</p><span>' + esc(_lang(locale, "learn")) + '</span></div></a>'
     products += '</div></div></section>'
     model_references = render_model_reference_section(
@@ -409,37 +435,64 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
         helpers,
     )
 
-    advantages = '<section class="mould-advantages" id="advantages"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "advantages")) + '</span><h2>Key Advantages of Our ' + esc(title) + '</h2><p>Engineered for repeatable production, stable quality and a clear technical handover.</p><i></i></div><div class="mould-advantages-grid">'
-    for adv_title, adv_text in details["advantages"]:
-        advantages += '<article class="mould-advantage-card"><div class="mould-adv-icon">✓</div><h4>' + esc(adv_title) + '</h4><p>' + esc(adv_text) + '</p></article>'
+    advantage_rows = _category_rows(category.get("advantages"), [{"title": adv_title, "body": adv_text} for adv_title, adv_text in details["advantages"]], 12)
+    advantages_title = _category_text(category, "advantagesTitle", "Key Advantages of Our " + title)
+    advantages_body = _category_text(category, "advantagesBody", "Engineered for repeatable production, stable quality and a clear technical handover.")
+    advantages = '<section class="mould-advantages" id="advantages"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "advantages")) + '</span><h2>' + esc(advantages_title) + '</h2><p>' + esc(advantages_body) + '</p><i></i></div><div class="mould-advantages-grid">'
+    for row in advantage_rows:
+        advantages += '<article class="mould-advantage-card"><div class="mould-adv-icon">✓</div><h4>' + esc(str(row.get("title") or "")) + '</h4><p>' + esc(str(row.get("body") or row.get("description") or "")) + '</p></article>'
     advantages += '</div></div></section>'
 
-    structured_technology = _structured_sections(item, locale, details["technology"][1])
-    tech = '<section class="mould-technology" id="technical"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "technology")) + '</span><h2>' + esc(details["technology"][0]) + '</h2><i></i></div>'
-    for index, (tech_title, tech_text, tech_image, bullets) in enumerate(structured_technology):
+    category_technology = category.get("technology") if isinstance(category.get("technology"), dict) else {}
+    technology_fallback = [{"title": row[0], "body": row[1], "image": row[2], "bullets": row[3]} for row in details["technology"][1]]
+    structured_technology = _category_rows(category_technology.get("items"), technology_fallback, 8)
+    tech_heading = _category_text(category_technology, "title", details["technology"][0])
+    tech = '<section class="mould-technology" id="technical"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "technology")) + '</span><h2>' + esc(tech_heading) + '</h2><i></i></div>'
+    for index, row in enumerate(structured_technology):
+        tech_title = str(row.get("title") or "")
+        tech_text = str(row.get("body") or "")
+        tech_image = str(row.get("image") or "")
+        bullets = row.get("bullets") if isinstance(row.get("bullets"), list) else []
         media = '<div class="mould-tech-image">' + helpers["image"](_asset(tech_image), tech_title) + '</div>'
         copy = '<div class="mould-tech-copy"><h3>' + esc(tech_title) + '</h3><p>' + esc(tech_text) + '</p><ul>' + ''.join('<li>✓ ' + esc(bullet) + '</li>' for bullet in bullets) + '</ul></div>'
         tech += '<div class="mould-tech-grid' + (' mould-tech-grid--reverse' if index % 2 else '') + '">' + (copy + media if index % 2 else media + copy) + '</div>'
     tech += '</div></section>'
 
-    samples = '<section class="mould-samples" id="samples"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "samples")) + '</span><h2>' + esc(title) + ' Gallery</h2><p>Click any image to enlarge. Samples and reference parts are shown for technical discussion.</p><i></i></div><div class="mould-samples-grid">'
-    for sample in details["samples"]:
-        samples += '<button class="mould-sample" type="button" data-mould-lightbox="' + esc(_asset(sample)) + '">' + helpers["image"](_asset(sample), title + " sample") + '</button>'
+    sample_rows = _category_rows(category.get("samples"), [{"image": sample} for sample in details["samples"]], 24)
+    samples_title = _category_text(category, "samplesTitle", title + " Gallery")
+    samples_body = _category_text(category, "samplesBody", "Click any image to enlarge. Samples and reference parts are shown for technical discussion.")
+    samples = '<section class="mould-samples" id="samples"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "samples")) + '</span><h2>' + esc(samples_title) + '</h2><p>' + esc(samples_body) + '</p><i></i></div><div class="mould-samples-grid">'
+    for row in sample_rows:
+        sample = str(row.get("image") or "").strip()
+        sample_alt = str(row.get("alt") or (title + " sample")).strip()
+        samples += '<button class="mould-sample" type="button" data-mould-lightbox="' + esc(_asset(sample)) + '">' + helpers["image"](_asset(sample), sample_alt) + '</button>'
     samples += '</div></div></section>'
 
+    video_rows = _category_rows(category.get("videos"), [{"videoId": video_id, "title": video_title} for video_id, video_title in details["videos"]], 24)
     videos = ''
-    if details["videos"]:
-        videos = '<section class="mould-videos" id="videos"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "videos")) + '</span><h2>' + esc(title) + ' Trial Videos</h2><p>Watch the mould trial and production references in full screen.</p><i></i></div><div class="mould-videos-grid">'
-        for video_id, video_title in details["videos"]:
+    if video_rows:
+        videos_title = _category_text(category, "videosTitle", title + ' Trial Videos')
+        videos_body = _category_text(category, "videosBody", "Watch the mould trial and production references in full screen.")
+        videos = '<section class="mould-videos" id="videos"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "videos")) + '</span><h2>' + esc(videos_title) + '</h2><p>' + esc(videos_body) + '</p><i></i></div><div class="mould-videos-grid">'
+        for row in video_rows:
+            video_id = str(row.get("videoId") or "").strip()
+            video_title = str(row.get("title") or "").strip()
+            if not video_id or not video_title:
+                continue
             videos += '<button class="mould-video-card" type="button" data-mould-video="' + esc(video_id) + '"><div class="mould-video-thumb"><img src="https://img.youtube.com/vi/' + esc(video_id) + '/mqdefault.jpg" alt="' + esc(video_title) + '"><b>▶</b></div><span>' + esc(video_title) + '</span></button>'
         videos += '</div></div></section>'
 
-    quality = '<section class="mould-quality" id="quality"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "quality")) + '</span><h2>Quality Control &amp; Inspection</h2><p>Every mould passes a documented inspection path before shipment.</p><i></i></div><div class="mould-quality-list">' + ''.join('<article><b>✓</b><h4>' + esc(q) + '</h4><p>' + esc(a) + '</p></article>' for q, a in details["quality"]) + '</div></div></section>'
+    quality_rows = _category_rows(category.get("quality"), [{"title": q, "body": a} for q, a in details["quality"]], 12)
+    quality_title = _category_text(category, "qualityTitle", "Quality Control & Inspection")
+    quality_body = _category_text(category, "qualityBody", "Every mould passes a documented inspection path before shipment.")
+    quality = '<section class="mould-quality" id="quality"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "quality")) + '</span><h2>' + esc(quality_title) + '</h2><p>' + esc(quality_body) + '</p><i></i></div><div class="mould-quality-list">' + ''.join('<article><b>✓</b><h4>' + esc(str(row.get("title") or "")) + '</h4><p>' + esc(str(row.get("body") or "")) + '</p></article>' for row in quality_rows) + '</div></div></section>'
 
     faq_pairs = _structured_faqs(item, locale, details["faqs"])
     faq_rows = ''.join('<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>' for q, a in faq_pairs)
-    feedback = ''.join('<article class="mould-testimonial"><p>“' + esc(quote) + '”</p><b>' + esc(author) + '</b><span>' + esc(country) + '</span></article>' for quote, author, country in details["testimonials"])
-    faq = '<section class="mould-faq" id="faq"><div class="mould-detail-container"><div class="mould-faq-grid"><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "faq")) + '</span><h2>' + esc(title) + ' FAQ</h2><i></i></div><div class="mould-faq-list">' + faq_rows + '</div></div><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "feedback")) + '</span><h2>What Buyers Say</h2><i></i></div><div class="mould-testimonials">' + feedback + '</div></div></div></div></section>'
+    testimonial_rows = _category_rows(category.get("testimonials"), [{"quote": quote, "author": author, "country": country} for quote, author, country in details["testimonials"]], 12)
+    feedback = ''.join('<article class="mould-testimonial"><p>“' + esc(str(row.get("quote") or "")) + '”</p><b>' + esc(str(row.get("author") or "")) + '</b><span>' + esc(str(row.get("country") or "")) + '</span></article>' for row in testimonial_rows)
+    feedback_title = _category_text(category, "feedbackTitle", "What Buyers Say")
+    faq = '<section class="mould-faq" id="faq"><div class="mould-detail-container"><div class="mould-faq-grid"><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "faq")) + '</span><h2>' + esc(title) + ' FAQ</h2><i></i></div><div class="mould-faq-list">' + faq_rows + '</div></div><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "feedback")) + '</span><h2>' + esc(feedback_title) + '</h2><i></i></div><div class="mould-testimonials">' + feedback + '</div></div></div></div></section>'
 
     shared_cta = helpers.get("shared_cta")
     cta = shared_cta(locale, "category", element_id="contact") if shared_cta else '<section class="mould-cta" id="contact"><div class="mould-detail-container"><div class="mould-cta-box"><h2>' + esc(_lang(locale, "contact")) + '</h2><p>Send us your drawing, sample, target material, cavity plan and delivery market. We will reply with the next technical questions.</p><div class="mould-cta-row"><a href="mailto:amyhu@leyamould.com" class="mould-cta-item">✉ amyhu@leyamould.com</a><a href="https://wa.me/8613606727715" class="mould-cta-item" target="_blank" rel="noopener">WhatsApp +8613606727715</a><a href="' + href(locale, "/contact/#inquiry") + '" class="mould-cta-item mould-cta-item--accent">' + esc(_lang(locale, "quote")) + ' →</a></div></div></div></section>'

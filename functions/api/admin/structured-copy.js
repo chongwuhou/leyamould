@@ -24,11 +24,12 @@ function groups(value){
   return value.map(group=>{const title=clean(group?.title,180),items=Array.isArray(group?.items)?group.items:[];if(!title||!items.length||items.length>12)throw Error("Each FAQ group needs 1–12 items");return {title,items:items.map(row=>{const question=clean(row?.question,240),answer=clean(row?.answer,1800);if(!question||!answer)throw Error("Each FAQ item needs a question and answer");return {question,answer};})};});
 }
 function listItems(value){
-  if(!Array.isArray(value)||value.length>12)throw Error("section items must contain 1–12 items");
+  if(!Array.isArray(value)||value.length>48)throw Error("section items must contain 1–48 items");
   return value.map(row=>{
-    const id=clean(row?.id,80),label=clean(row?.label,180),title=clean(row?.title,240),body=clean(row?.body,1800),link=clean(row?.link,500);
+    const id=clean(row?.id,80),label=clean(row?.label,180),title=clean(row?.title,240),body=clean(row?.body,1800),link=clean(row?.link,500),image=clean(row?.image,500),alt=clean(row?.alt,240);
     if(!title&&!label)throw Error("Each section item needs a title or label");
-    return {id,label,title,body,link,bullets:Array.isArray(row?.bullets)?row.bullets.map(x=>clean(x,240)).filter(Boolean).slice(0,8):[]};
+    if(image&&!/^(?:\/|https?:\/\/)/.test(image))throw Error("Section item image must be a site path or HTTPS URL");
+    return {id,label,title,body,link,image,alt,bullets:Array.isArray(row?.bullets)?row.bullets.map(x=>clean(x,240)).filter(Boolean).slice(0,8):[]};
   });
 }
 function validate(input){

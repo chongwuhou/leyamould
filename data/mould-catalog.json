@@ -12,7 +12,18 @@
       "meta": "PCO 1881 · Hot Runner",
       "image": "/media/page/e50982b018d86ad9543da27fd2e51cec.webp",
       "route": "/product/Mineral-Water-Closure-cap-Molds.html",
-      "checks": ["Product drawing and closure geometry review", "Target resin, shrinkage and sealing assumptions", "Cavity plan, cycle goal and machine interface", "Trial samples, inspection points and handover evidence"]
+      "checks": [
+        "Product drawing and closure geometry review",
+        "Target resin, shrinkage and sealing assumptions",
+        "Cavity plan, cycle goal and machine interface",
+        "Trial samples, inspection points and handover evidence"
+      ],
+      "titleEs": "Molde de tapón para agua y bebidas",
+      "navTitleEs": "Molde de tapón para agua y bebidas",
+      "descriptionEs": "Moldes de precisión para cierres de agua mineral, bebidas carbonatadas y zumos.",
+      "shortEs": "Moldes de precisión para cierres de agua mineral, bebidas carbonatadas y zumos.",
+      "detailEs": "Revisión de cuello, resina, cavidades, refrigeración y máquina para cierres de bebidas.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "oil-bottle-cap-mould",
@@ -24,7 +35,18 @@
       "meta": "Pull Ring · Tamper-Evident",
       "image": "/media/page/21677532c2473392984c59cdeb95811b.webp",
       "route": "/product/Oil-bottle-cap-mould.html",
-      "checks": ["Pourer, thread and tamper-evident geometry", "Target resin and shrinkage assumptions", "Cavity balance, ejection and inspection plan", "Trial sample and sealing evidence"]
+      "checks": [
+        "Pourer, thread and tamper-evident geometry",
+        "Target resin and shrinkage assumptions",
+        "Cavity balance, ejection and inspection plan",
+        "Trial sample and sealing evidence"
+      ],
+      "titleEs": "Molde de tapón para aceite comestible",
+      "navTitleEs": "Molde de tapón para aceite comestible",
+      "descriptionEs": "Soluciones con anilla y precinto para botellas de aceite de oliva, girasol y cocina.",
+      "shortEs": "Soluciones con anilla y precinto para botellas de aceite de oliva, girasol y cocina.",
+      "detailEs": "La geometría del vertedor, el sellado, la resina y la máquina se revisan juntos.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "engine-oil-cap-mould",
@@ -36,7 +58,18 @@
       "meta": "High Temp · Heavy Duty",
       "image": "/media/page/982e1a09dd16ea0e7fb33b5a8cc23154.webp",
       "route": "/product/Engine-Oil-Cap-Mould.html",
-      "checks": ["Closure and pouring-feature review", "Target resin and chemical-use assumptions", "Cavity, cooling and ejection plan", "Trial, fit and leak-check evidence"]
+      "checks": [
+        "Closure and pouring-feature review",
+        "Target resin and chemical-use assumptions",
+        "Cavity, cooling and ejection plan",
+        "Trial, fit and leak-check evidence"
+      ],
+      "titleEs": "Molde de tapón para aceite de motor",
+      "navTitleEs": "Molde de tapón para aceite de motor",
+      "descriptionEs": "Cierres resistentes para lubricantes de automoción y envases industriales.",
+      "shortEs": "Cierres resistentes para lubricantes de automoción y envases industriales.",
+      "detailEs": "El proyecto se define por el dibujo, la resistencia química, el par de aplicación y la máquina.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "food-packaging-cap-mould",
@@ -48,7 +81,18 @@
       "meta": "Food Grade · Airtight",
       "image": "/media/page/7b82cd5fa6656ca8478da329230d5beb.webp",
       "route": "/product/Food-Packaging-Cap-Mould.html",
-      "checks": ["Closure drawing and sealing surface", "Target resin and food-contact documents", "Cavity balance, gate and ejection", "Inspection points and trial evidence"]
+      "checks": [
+        "Closure drawing and sealing surface",
+        "Target resin and food-contact documents",
+        "Cavity balance, gate and ejection",
+        "Inspection points and trial evidence"
+      ],
+      "titleEs": "Molde de tapón para envases alimentarios",
+      "navTitleEs": "Molde de tapón para envases alimentarios",
+      "descriptionEs": "Moldes para cierres roscados y a presión de salsas, lácteos y alimentos secos.",
+      "shortEs": "Moldes para cierres roscados y a presión de salsas, lácteos y alimentos secos.",
+      "detailEs": "La seguridad alimentaria, el sellado, la resina y la producción objetivo se documentan antes de fabricar.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "medical-cap-mould",
@@ -60,7 +104,18 @@
       "meta": "Controlled · Burr-Free",
       "image": "/media/page/bd41cb0e0f6f5a065e55d95927234fbe.webp",
       "route": "/product/Medical-Cap-Mould.html",
-      "checks": ["Closure function and critical dimensions", "Target resin and cleanliness requirements", "Cavity, ejection and inspection plan", "Trial samples and approval evidence"]
+      "checks": [
+        "Closure function and critical dimensions",
+        "Target resin and cleanliness requirements",
+        "Cavity, ejection and inspection plan",
+        "Trial samples and approval evidence"
+      ],
+      "titleEs": "Molde de tapón médico",
+      "navTitleEs": "Molde de tapón médico",
+      "descriptionEs": "Cierres de precisión para frascos farmacéuticos, jarabes y envases de diagnóstico.",
+      "shortEs": "Cierres de precisión para frascos farmacéuticos, jarabes y envases de diagnóstico.",
+      "detailEs": "La geometría funcional, la limpieza, la resina y la evidencia de inspección forman parte de la revisión.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "flip-top-caps-mould",
@@ -72,7 +127,18 @@
       "meta": "Living Hinge · Flip-Top",
       "image": "/media/page/acfb96e81600d582ff253bc5e378704c.webp",
       "route": "/product/Flip-top-caps-mould.html",
-      "checks": ["Hinge, snap fit and orifice geometry", "Target resin and surface-finish references", "Cavity balance, cooling and ejection", "Opening-cycle and trial evidence"]
+      "checks": [
+        "Hinge, snap fit and orifice geometry",
+        "Target resin and surface-finish references",
+        "Cavity balance, cooling and ejection",
+        "Opening-cycle and trial evidence"
+      ],
+      "titleEs": "Molde de tapón cosmético flip-top",
+      "navTitleEs": "Molde de tapón cosmético flip-top",
+      "descriptionEs": "Moldes con bisagra viva para champú, acondicionador y cuidado personal.",
+      "shortEs": "Moldes con bisagra viva para champú, acondicionador y cuidado personal.",
+      "detailEs": "La bisagra, el encaje, el orificio, el acabado y el objetivo de ciclos se revisan con la muestra.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "personal-care-cap-mould",
@@ -84,7 +150,18 @@
       "meta": "Disc Top · Custom Orifice",
       "image": "/media/page/acfb96e81600d582ff253bc5e378704c.webp",
       "route": "/product/Personal-Care-Cap-Mould.html",
-      "checks": ["Dispensing geometry and sealing surface", "Target resin and cosmetic finish", "Cavity, cooling and ejection plan", "Trial samples and inspection evidence"]
+      "checks": [
+        "Dispensing geometry and sealing surface",
+        "Target resin and cosmetic finish",
+        "Cavity, cooling and ejection plan",
+        "Trial samples and inspection evidence"
+      ],
+      "titleEs": "Molde de tapón para cuidado personal",
+      "navTitleEs": "Molde de tapón para cuidado personal",
+      "descriptionEs": "Moldes para cierres disc-top, tubos y lociones con orificios personalizados.",
+      "shortEs": "Moldes para cierres disc-top, tubos y lociones con orificios personalizados.",
+      "detailEs": "El dispensado, el acabado, la resina y el sellado se ajustan al envase y a la producción.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "functional-cap-mould",
@@ -96,7 +173,18 @@
       "meta": "Child-Resistant · Easy-Open",
       "image": "/media/page/f23725ce7c08c5d39c28f74501f0a2f7.webp",
       "route": "/product/Functional-Cap-Mould.html",
-      "checks": ["Mechanism and user-interaction review", "Target resin and assembly assumptions", "Cavity, ejection and inspection plan", "Functional trial and approval evidence"]
+      "checks": [
+        "Mechanism and user-interaction review",
+        "Target resin and assembly assumptions",
+        "Cavity, ejection and inspection plan",
+        "Functional trial and approval evidence"
+      ],
+      "titleEs": "Molde de tapón funcional combinado",
+      "navTitleEs": "Molde de tapón funcional combinado",
+      "descriptionEs": "Mecanismos de seguridad infantil, apertura fácil y precinto en una misma familia.",
+      "shortEs": "Mecanismos de seguridad infantil, apertura fácil y precinto en una misma familia.",
+      "detailEs": "La interacción, el montaje, la resina, la evidencia de apertura y las pruebas se revisan antes del acero.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "plastic-handle-cap-mould",
@@ -108,7 +196,18 @@
       "meta": "High Load · Ergonomic",
       "image": "/media/page/866bf9036e8206707b1b9f81bae8b8ba.webp",
       "route": "/product/Plastic-Handle-Cap-mould.html",
-      "checks": ["Bottle interface and load requirements", "Target resin and ergonomic geometry", "Cavity, ejection and assembly plan", "Trial fit and inspection evidence"]
+      "checks": [
+        "Bottle interface and load requirements",
+        "Target resin and ergonomic geometry",
+        "Cavity, ejection and assembly plan",
+        "Trial fit and inspection evidence"
+      ],
+      "titleEs": "Molde de asa de plástico",
+      "navTitleEs": "Molde de asa de plástico",
+      "descriptionEs": "Asas ergonómicas para botellas PET de 5–20 litros, aceite y bidones químicos.",
+      "shortEs": "Asas ergonómicas para botellas PET de 5–20 litros, aceite y bidones químicos.",
+      "detailEs": "La interfaz con la botella, la carga, el agarre, la resina y la máquina se confirman en el informe.",
+      "metaEs": "Revisión técnica · Producción repetible"
     },
     {
       "slug": "five-gallon-water-cap-mould",
@@ -126,7 +225,12 @@
       "metaEs": "18,9 l · Dispensador de agua",
       "image": "/assets/catalog/five-gallon-hero.webp",
       "route": "/product/5-Gallon-Water-Cap-Mould.html",
-      "checks": ["Bottle neck, plug seal and tear-band geometry", "Resin and repeated-sanitisation assumptions", "Cavity balance, ejection and dispenser fit", "Trial samples, leak checks and inspection evidence"]
+      "checks": [
+        "Bottle neck, plug seal and tear-band geometry",
+        "Resin and repeated-sanitisation assumptions",
+        "Cavity balance, ejection and dispenser fit",
+        "Trial samples, leak checks and inspection evidence"
+      ]
     },
     {
       "slug": "wine-cap-mould",
@@ -144,7 +248,12 @@
       "metaEs": "Vino · Licores · Decorativo",
       "image": "/assets/catalog/wine-hero.webp",
       "route": "/product/Wine-Cap-Mould.html",
-      "checks": ["Bottle finish, pourer and tamper-evident geometry", "Resin, decoration and surface-finish references", "Cavity balance, ejection and cap application torque", "Trial fit, visual approval and inspection evidence"]
+      "checks": [
+        "Bottle finish, pourer and tamper-evident geometry",
+        "Resin, decoration and surface-finish references",
+        "Cavity balance, ejection and cap application torque",
+        "Trial fit, visual approval and inspection evidence"
+      ]
     },
     {
       "slug": "pet-preform-mould",
@@ -162,7 +271,12 @@
       "metaEs": "PET · PP · 12–144 cavidades",
       "image": "/assets/catalog/preform-hero.webp",
       "route": "/product/PET-Preform-Mould.html",
-      "checks": ["Neck finish, gram weight and preform drawing", "PET/PP resin, shrinkage and valve-gate assumptions", "Cavity balance, cooling and machine interface", "Trial preforms, dimensional reports and handover evidence"]
+      "checks": [
+        "Neck finish, gram weight and preform drawing",
+        "PET/PP resin, shrinkage and valve-gate assumptions",
+        "Cavity balance, cooling and machine interface",
+        "Trial preforms, dimensional reports and handover evidence"
+      ]
     },
     {
       "slug": "blow-bottle-mould",
@@ -180,12 +294,29 @@
       "metaEs": "PET · Soplado · Forma personalizada",
       "image": "/assets/catalog/blow-hero.webp",
       "route": "/product/Blow-Bottle-Mould.html",
-      "checks": ["Bottle drawing, preform and stretch-ratio review", "Wall-thickness, cooling and material assumptions", "Machine envelope, neck finish and ejection plan", "Trial bottles, dimensional checks and visual approval"]
+      "checks": [
+        "Bottle drawing, preform and stretch-ratio review",
+        "Wall-thickness, cooling and material assumptions",
+        "Machine envelope, neck finish and ejection plan",
+        "Trial bottles, dimensional checks and visual approval"
+      ]
     }
   ],
   "services": [
-    {"slug": "mould-design", "title": "Mould Design & Engineering", "text": "Review drawings, parting lines, cooling, ejection and the production machine interface before tooling is approved."},
-    {"slug": "precision-manufacturing", "title": "Precision Manufacturing", "text": "Coordinate machining, EDM, fitting and assembly against the approved tooling brief and inspection checkpoints."},
-    {"slug": "trial-sampling", "title": "Trial, Sampling & Optimisation", "text": "Plan trial shots, sample feedback, dimensional checks and controlled changes before production handover."}
+    {
+      "slug": "mould-design",
+      "title": "Mould Design & Engineering",
+      "text": "Review drawings, parting lines, cooling, ejection and the production machine interface before tooling is approved."
+    },
+    {
+      "slug": "precision-manufacturing",
+      "title": "Precision Manufacturing",
+      "text": "Coordinate machining, EDM, fitting and assembly against the approved tooling brief and inspection checkpoints."
+    },
+    {
+      "slug": "trial-sampling",
+      "title": "Trial, Sampling & Optimisation",
+      "text": "Plan trial shots, sample feedback, dimensional checks and controlled changes before production handover."
+    }
   ]
 }
