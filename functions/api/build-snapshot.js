@@ -236,7 +236,13 @@ export async function onRequestGet(context){
        pageFields,
        pageBodies:pageBodies.filter(r=>managedPageRoute(r.route)&&typeof r.main_html==="string")
         .map(r=>({route:r.route,mainHtml:r.main_html})),
-       products:onlyProducts.map(r=>({model:r.model,content:parseJson(r.content_json,{})})),
+       products:onlyProducts.map(r=>{
+         const content=parseJson(r.content_json,{});
+         const structured=content&&typeof content.structured==="object"&&!Array.isArray(content.structured)
+           ?content.structured
+           :(content&&typeof content.category==="object"&&!Array.isArray(content.category)?content.category:{});
+         return {model:r.model,route:String(content.route||"/product/"+r.model+".html"),content,structured,contentSchemaVersion:1};
+       }),
       blogPosts:onlyBlogPosts,
        // D1 remains the only source: explicit xuyi_product_seo rows win, and
        // legacy product content fields are promoted into the same snapshot
