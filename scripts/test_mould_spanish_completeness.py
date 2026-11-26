@@ -96,6 +96,10 @@ def main() -> None:
         if not re.search(r'<meta name="description" content="[^\"]{35,}">', source):
             leaks.append(f"{path}:description")
         text = visible(path)
+        if path.as_posix().endswith("/es/samples/index.html") and "specification" in text.casefold():
+            marker = "specification"
+            position = text.casefold().find(marker)
+            print("SPANISH_DEBUG_SAMPLES_CONTEXT", repr(text[max(0, position - 180):position + 220]), flush=True)
         for marker in ENGLISH_LEAKS:
             if marker.casefold() in text.casefold():
                 leaks.append(f"{path}:{marker}")
