@@ -51,6 +51,24 @@ function categoryCopy(value){
   out.videos=rows(value.videos||[],24,row=>({videoId:/^[A-Za-z0-9_-]{11}$/.test(String(row?.videoId||""))?String(row.videoId):"",title:text(row?.title,240)}));
   return out;
 }
+function validatePublishedProductContent(content){
+  const title=value=>String(value||"").trim();
+  const modules=(value,label)=>{
+    if(!value||typeof value!=="object"||Array.isArray(value))throw Error("Published product requires "+label+" structured fields");
+    if(!value.hero||typeof value.hero!=="object"||!title(value.hero.title))throw Error("Published product requires "+label+" hero title");
+    for(const key of ["products","advantages","samples","quality"])
+      if(!Array.isArray(value[key])||!value[key].length)throw Error("Published product requires "+label+" "+key);
+    if(!value.technology||typeof value.technology!=="object"||!Array.isArray(value.technology.items)||!value.technology.items.length)
+      throw Error("Published product requires "+label+" technology items");
+  };
+  if(!title(content.route))throw Error("Published product requires a canonical route");
+  if(!title(content.title||content.name)||!title(content.description||content.short))throw Error("Published product requires source title and description");
+  if(!title(content.titleEs||content.nameEs)||!title(content.descriptionEs||content.shortEs))throw Error("Published product requires Spanish title and description");
+  modules(content.structured||content.category,"source");
+  modules(content.structuredEs||content.categoryEs,"es");
+  if(content.sections&&!content.sectionsEs)throw Error("Published product requires Spanish sections");
+  if(content.faqs&&!content.faqsEs)throw Error("Published product requires Spanish FAQs");
+}
 async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_product_content(
   model TEXT PRIMARY KEY,
   content_json TEXT NOT NULL DEFAULT '{}',
@@ -106,6 +124,7 @@ export async function onRequestPost(context){
       if(previous.newProduct!==true)return respond({error:"Model already owned by legacy catalog"},409);
     }
     if(status==="published"){
+      try{validatePublishedProductContent(content)}catch(error){return respond({error:String(error.message||error)},409)}
       const match=/^\/media\/([a-z]+)\/([a-zA-Z0-9._-]+)$/.exec(content.image);
       const key=match?imageKey(match[1],match[2]):null;
       if(!key||!context.env.LEYA_ASSETS)return respond({error:"A verified R2 image is required before publication"},409);
@@ -162,7 +181,7 @@ export async function onRequestPost(context){
   if(!isMouldModel(model))return respond({error:"Invalid mould category slug"},400);
   if(!v||typeof v!=="object"||Array.isArray(v))return respond({error:"Invalid product content"},400);
   const db=context.env.LEYA_DB;await ensure(db);
-  const allowed=["title","titleEs","navTitle","navTitleEs","name","description","descriptionEs","short","shortEs","detail","detailEs","meta","metaEs","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","seoTitleEs","seoDescriptionEs","body","bodyEs","sections","sectionsEs","faqs","faqsEs","category","structured"];
+  const allowed=["title","titleEs","navTitle","navTitleEs","name","description","descriptionEs","short","shortEs","detail","detailEs","meta","metaEs","route","checks","capacity","material","colors","packing","dimensions","carton_quantity","carton_size","image","seoTitle","seoDescription","seoTitleEs","seoDescriptionEs","body","bodyEs","sections","sectionsEs","faqs","faqsEs","category","structured","categoryEs","structuredEs"];
   let content={};
   const previousRow=await db.prepare("SELECT content_json FROM xuyi_product_content WHERE model=?").bind(model).first();
   try{content=previousRow?.content_json?JSON.parse(previousRow.content_json):{};}catch{return respond({error:"Existing product JSON invalid"},409)}
@@ -173,11 +192,12 @@ export async function onRequestPost(context){
     }
     if(key==="sections"||key==="sectionsEs"){try{content[key]=structuredSections(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
     if(key==="faqs"||key==="faqsEs"){try{content[key]=structuredFaqs(v[key]);}catch(error){return respond({error:String(error.message||error)},400)};continue;}
-    if(key==="category"||key==="structured"){
+    if(key==="category"||key==="structured"||key==="categoryEs"||key==="structuredEs"){
       try{
         const normalized=categoryCopy(v[key]);
-        content.category=normalized;
-        content.structured=normalized;
+        const localized=key.endsWith("Es");
+        content[localized?"categoryEs":"category"]=normalized;
+        content[localized?"structuredEs":"structured"]=normalized;
       }catch(error){return respond({error:String(error.message||error)},400)}
       continue;
     }
@@ -185,6 +205,9 @@ export async function onRequestPost(context){
     content[key]=v[key].trim();
   }
   if(status==="published"&&(!content.title&&!content.name||!content.description))return respond({error:"Published mould category requires title and description"},400);
+  if(status==="published"){
+    try{validatePublishedProductContent(content)}catch(error){return respond({error:String(error.message||error)},409)}
+  }
   if(content.seoTitle||content.seoDescription||content.seoTitleEs||content.seoDescriptionEs){
     await ensureProductSeo(db);
     const slug=canonicalProductSlug(model);
@@ -220,6 +243,7 @@ export async function onRequestPost(context){
   const revision=await bumpPublishRevision(db);
   return respond({saved:true,model,status,route:mouldRoute(model),...revision});
 }
+
 
 
 

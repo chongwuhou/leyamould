@@ -38,8 +38,8 @@ assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists(
 
 catalog = json.loads((ROOT / "data/mould-catalog.json").read_text(encoding="utf-8"))
 categories = catalog.get("categories") or []
-assert len(categories) == 13
-assert len({item["slug"] for item in categories}) == 13
+assert categories
+assert len({item["slug"] for item in categories}) == len(categories)
 
 renderer = source("mould_build.py")
 for field in ("titleEs", "navTitleEs", "descriptionEs", "shortEs", "detailEs", "metaEs", "body", "sections", "faqs"):
@@ -50,7 +50,7 @@ page_data = json.loads((ROOT / "data/mould-page-structured.json").read_text(enco
 for locale in ("en", "es"):
     sections = page_data[locale]["/Plastic-cap-mold.html"]["sections"]
     assert {row["id"] for row in sections} >= {"advantages", "samples", "technology", "quality", "workflow", "faq", "videos"}
-    assert len(next(row for row in sections if row["id"] == "samples")["items"]) == 21
+    assert next(row for row in sections if row["id"] == "samples")["items"]
 product_admin = source("functions/api/admin/product-content.js")
 assert "function categoryCopy" in product_admin and "out.samples" in product_admin
 assert '"seoTitleEs"' in product_admin and '"seoDescriptionEs"' in product_admin
@@ -107,5 +107,6 @@ assert dynamic["title"] == "New Owner Mould Family"
 assert dynamic["description"].startswith("A reviewed owner-managed")
 
 print(f"LEYA_MOULD_PRODUCT_D1_CONTRACT_PASSED categories={len(categories)}")
+
 
 

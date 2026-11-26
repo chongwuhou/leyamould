@@ -47,5 +47,14 @@ assert mould_build.structured_page_value("es", "/about/", "title") == "Sobre edi
 cta = mould_build.shared_cta("en", "catalog")
 assert "OWNER CTA" in cta and "Owner CTA text." in cta and "Owner note." in cta
 
+# Production strict mode must not resurrect a checked-in page field when the
+# D1 row is absent. Restore the local fixture mode before this contract exits.
+mould_build.STRICT_D1 = True
+mould_build.PAGE_COPY = {"en": {}, "es": {}}
+assert mould_build.structured_page_value("en", "/missing/", "title", "STATIC TITLE") == ""
+assert mould_build.structured_section_items("en", "/missing/", "items", [{"title": "STATIC"}]) == []
+mould_build.STRICT_D1 = False
+
 print("LEYA_MOULD_PAGE_COPY_D1_CONTRACT_PASSED")
+
 

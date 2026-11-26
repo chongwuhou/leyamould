@@ -4,7 +4,6 @@
 import { authorizedBuildRequest } from "../_shared/build-auth.js";
 import { defaultLanguageConfig, normalizeLanguageConfig, publicLanguages } from "../_shared/site-settings.js";
 import { MOULD_MODELS, MOULD_ROUTES, isMouldModel, isMouldProductRoute, isMouldRoute, mouldModelFromRoute } from "../_shared/mould-routes.js";
-import MOULD_CATALOG from "../../data/mould-catalog.json";
 
 const BLOG_DETAIL_ROUTE_RE=/^\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/;
 const NEWS_DETAIL_ROUTE_RE=/^\/news\/[A-Za-z0-9][A-Za-z0-9_-]*\.html$/;
@@ -54,9 +53,10 @@ function validMetaDescription(value){
 }
 function effectiveProductSeoRows(rows,products,localeCodes,sourceLocale){
   // The dedicated SEO table remains the first owner. Older published product
-  // rows seeded before the SEO table existed still carry reviewed localized
-  // title/description fields in xuyi_product_content; expose those D1-owned
-  // fields as the effective SEO rows so a release never drops their metadata.
+  // rows seeded before the SEO table existed may still carry reviewed
+  // localized title/description fields in xuyi_product_content; expose those
+  // D1-owned fields as effective SEO rows. No repository catalogue fallback is
+  // allowed in the production snapshot.
   const byKey=new Map();
   for(const row of rows){
     const slug=String(row.slug||"").trim().toLowerCase();
@@ -82,20 +82,6 @@ function effectiveProductSeoRows(rows,products,localeCodes,sourceLocale){
         ||validMetaDescription(content[locale==="es"?"shortEs":"short"]);
       if(title&&metaDescription)
         byKey.set(key,{slug,locale,seoTitle:title,metaDescription,updatedAt:product.updated_at||"",source:"xuyi_product_content"});
-    }
-  }
-  // The reviewed catalogue is the last deterministic source for a legacy row
-  // that predates localized product fields. It is only used when neither D1
-  // SEO table nor D1 product content has a value, and never overwrites edits.
-  for(const item of (MOULD_CATALOG?.categories||[])){
-    const slug=String(item?.slug||"").trim().toLowerCase();
-    if(!isMouldModel(slug))continue;
-    for(const locale of localeCodes){
-      const key=slug+"\u0000"+locale;
-      if(byKey.has(key))continue;
-      const title=validSeoTitle(locale==="es"?item?.titleEs:item?.title);
-      const metaDescription=validMetaDescription(locale==="es"?item?.descriptionEs:item?.description);
-      if(title&&metaDescription)byKey.set(key,{slug,locale,seoTitle:title,metaDescription,updatedAt:"",source:"mould-catalog"});
     }
   }
   return [...byKey.values()].sort((a,b)=>a.slug.localeCompare(b.slug)||a.locale.localeCompare(b.locale));
@@ -288,5 +274,6 @@ export async function onRequestGet(context){
     });
   }catch(error){return json({error:"LEYA build snapshot unavailable"},503)}
 }
+
 
 

@@ -85,25 +85,14 @@ if page_missing:
 
 products = [row for row in state.get("products", []) if isinstance(row, dict) and re.fullmatch(r"[a-z0-9][a-z0-9-]{1,63}", str(row.get("model") or ""))]
 seo = {(str(row.get("slug") or "").lower(), str(row.get("locale") or "").lower()): row for row in state.get("productSeo", []) if isinstance(row, dict)}
-catalog = {}
-catalog_path = ROOT / "data" / "mould-catalog.json"
-if catalog_path.is_file():
-    try:
-        catalog = {str(row.get("slug") or "").lower(): row for row in (json.loads(catalog_path.read_text(encoding="utf-8")).get("categories") or []) if isinstance(row, dict)}
-    except (OSError, ValueError):
-        catalog = {}
 def effective_product_seo(product, locale):
     model = str(product.get("model") or "").lower()
     content = product.get("content") if isinstance(product.get("content"), dict) else {}
     suffix = "Es" if locale == "es" else ""
     title = content.get("seoTitle" + suffix) or content.get("titleEs" if locale == "es" else "title") or content.get("nameEs" if locale == "es" else "name")
     description = content.get("seoDescription" + suffix) or content.get("descriptionEs" if locale == "es" else "description") or content.get("shortEs" if locale == "es" else "short")
-    if not str(title or "").strip() or not str(description or "").strip():
-        baseline = catalog.get(model) or {}
-        title = title or baseline.get("titleEs" if locale == "es" else "title")
-        description = description or baseline.get("descriptionEs" if locale == "es" else "description")
     if str(title or "").strip() and str(description or "").strip():
-        return {"slug": model, "locale": locale, "seoTitle": str(title).strip(), "metaDescription": str(description).strip(), "source": "d1-content-or-reviewed-catalog"}
+        return {"slug": model, "locale": locale, "seoTitle": str(title).strip(), "metaDescription": str(description).strip(), "source": "d1-content"}
     return None
 missing = []
 effective_count = 0
@@ -117,6 +106,55 @@ for product in products:
             effective_count += 1
 if missing:
     raise SystemExit("D1 product SEO is incomplete: " + ", ".join(missing[:20]))
+
+# Product-family pages are rendered from structured D1 fields.  A title/SEO
+# row alone is not enough: otherwise the renderer can silently fall back to
+# the checked-in category fixture.  Validate the module shape for every
+# published locale without assuming any historical catalogue total.
+def structured_modules(value, label):
+    issues = []
+    if not isinstance(value, dict):
+        return [label + ":structured"]
+    for key in ("hero", "products", "advantages", "technology", "samples", "quality"):
+        row = value.get(key)
+        if key in {"hero", "technology"}:
+            if not isinstance(row, dict):
+                issues.append(label + ":" + key)
+                continue
+            if key == "hero" and not str(row.get("title") or "").strip():
+                issues.append(label + ":hero.title")
+            if key == "technology" and not isinstance(row.get("items"), list):
+                issues.append(label + ":technology.items")
+        elif not isinstance(row, list) or not row:
+            issues.append(label + ":" + key)
+    return issues
+
+product_fields_missing = []
+for product in products:
+    model = str(product.get("model") or "").lower()
+    content = product.get("content") if isinstance(product.get("content"), dict) else {}
+    if not str(content.get("route") or "").strip():
+        product_fields_missing.append(model + ":route")
+    for locale in published:
+        suffix = "Es" if locale == "es" else ""
+        title = content.get("title" + suffix) or content.get("name" + suffix)
+        description = content.get("description" + suffix) or content.get("short" + suffix)
+        if not str(title or "").strip():
+            product_fields_missing.append(model + ":" + locale + ":title")
+        if not str(description or "").strip():
+            product_fields_missing.append(model + ":" + locale + ":description")
+        if locale != source_locale:
+            for base in ("body", "sections", "faqs"):
+                if content.get(base) and not content.get(base + suffix):
+                    product_fields_missing.append(model + ":" + locale + ":" + base)
+        structured = content.get("structured") if isinstance(content.get("structured"), dict) else content.get("category")
+        if locale == source_locale:
+            product_fields_missing.extend(model + ":" + issue for issue in structured_modules(structured, locale))
+        else:
+            localized = content.get("structuredEs") if isinstance(content.get("structuredEs"), dict) else content.get("categoryEs")
+            product_fields_missing.extend(model + ":" + issue for issue in structured_modules(localized, locale))
+if product_fields_missing:
+    raise SystemExit("D1 product structured fields are incomplete: " + ", ".join(product_fields_missing[:40]))
 
 product_routes = set()
 for product in products:
@@ -210,5 +248,6 @@ for post in state.get("blogPosts", []):
         raise SystemExit("D1 Spanish News fields are incomplete: " + str(post.get("slug") or ""))
 
 print("LEYA_MOULD_D1_COMPLETENESS_PASSED", f"products={len(products)}", f"effectiveSeo={effective_count}", f"explicitSeo={len(seo)}", f"blogPosts={blog_checked}", f"modelReferences={model_checked}", f"locales={','.join(published)}")
+
 
 

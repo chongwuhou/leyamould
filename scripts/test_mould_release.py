@@ -207,8 +207,10 @@ for locale, page in catalog_pages:
     else:
         assert page.count('id="catalog-testimonials"') == 1
         assert page.count('Opiniones de clientes') == 1
-    assert page.count('catalog-sample-item') >= 21
-    assert page.count('class="video-card"') >= 5
+    # Inventory sizes are D1-owned and may grow or shrink. Verify that the
+    # modules are wired without freezing an historical sample/video count.
+    assert 'class="catalog-sample-item"' in page
+    assert 'class="video-card"' in page
 if "es" in LOCALES:
     es_prefix = next(str(row.get("pathPrefix") or "es").strip("/") for row in locale_rows if str(row["code"]).lower() == "es")
     sample_product = product_routes[0]
@@ -228,6 +230,7 @@ assert detail_es.count('class="blog-editorial__product-link"') == 3
 assert (DIST / "admin" / "index.html").is_file()
 assert "LEYA MOULD" in (DIST / "admin" / "index.html").read_text(encoding="utf-8")
 print("LEYA_MOULD_RELEASE_PASSED", len(routes), "routes x", len(LOCALES), "locales", "products", len(product_routes))
+
 
 
 
