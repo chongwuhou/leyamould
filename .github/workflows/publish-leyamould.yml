@@ -43,6 +43,7 @@ on:
       - "scripts/test_mould_production_source_boundary.py"
       - "scripts/test_mould_release_authority.py"
       - "scripts/test_mould_d1_completeness.py"
+      - "scripts/test_mould_product_jsonld.py"
       - "scripts/test_mould_translation_authority.py"
       - "scripts/test_publish_scheduler_disabled.mjs"
       - "scripts/fetch_build_snapshot.py"
