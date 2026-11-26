@@ -173,7 +173,8 @@
      field("bodyEs","","西班牙语结构化正文导语（纯文本）",5)+
      arrayEditor("sectionsEs","sections","西班牙语正文区块")+
      arrayEditor("faqsEs","answers","西班牙语产品 FAQ")+
-     field("categoryJson","","分类页完整模块 JSON（产品卡、优势、技术、样例、质量、评价、视频；高级编辑）",18)+
+     field("categoryJson","","英文分类页完整模块 JSON（产品卡、优势、技术、样例、质量、评价、视频；高级编辑）",18)+
+     field("categoryEsJson","","西班牙语分类页完整模块 JSON（产品卡、优势、技术、样例、质量、评价、视频；高级编辑）",18)+
    field("seoTitle","","SEO Title")+
    field("seoDescription","","Meta Description",3)+
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
@@ -322,7 +323,7 @@
    const known=[...new Set([...(state.products.catalogModels||[]),
      ...(state.products.items||[]).filter(x=>!x.content?.newProduct).map(x=>x.model)])].sort();
    let requestNumber=0;
-      const sourceFields=["title","navTitle","short","detail","meta","image","checks","body","sections","faqs","bodyEs","sectionsEs","faqsEs","categoryJson","seoTitle","seoDescription"];
+      const sourceFields=["title","navTitle","short","detail","meta","image","checks","body","sections","faqs","bodyEs","sectionsEs","faqsEs","categoryJson","categoryEsJson","seoTitle","seoDescription"];
      const resetFields=()=>{for(const key of sourceFields){
       const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=((key.includes("sections")||key.includes("faqs"))?"[]":"");
    }container.querySelector('[data-cms-field="status"]').value="draft";};
@@ -358,7 +359,7 @@
       const el=container.querySelector('[data-cms-field="'+key+'"]');
       if(!el)continue;
         if(["sections","faqs","sectionsEs","faqsEs"].includes(key)&&Array.isArray(val))el.value=JSON.stringify(val,null,2);
-        else if(key==="categoryJson"&&val&&typeof val==="object")el.value=JSON.stringify(val,null,2);
+       else if((key==="categoryJson"||key==="categoryEsJson")&&val&&typeof val==="object")el.value=JSON.stringify(val,null,2);
        else if(key==="checks"&&Array.isArray(val))el.value=val.join("\\n");
       else if(typeof val==="string")el.value=val;
     }
@@ -557,11 +558,12 @@
        throw Error("请先从已配置的模具类别列表中选择类别");
      const checks=String(value("checks")||"").split(/\\n+/).map(item=>item.trim()).filter(Boolean);
       const sections=arrayEditors.get("sections")?.get()||[],faqs=arrayEditors.get("faqs")?.get()||[],sectionsEs=arrayEditors.get("sectionsEs")?.get()||[],faqsEs=arrayEditors.get("faqsEs")?.get()||[];
-       let category={};
-       try{category=JSON.parse(String(value("categoryJson")||"{}"))}catch(error){throw Error("分类页模块 JSON 格式错误")}
+       let category={},categoryEs={};
+       try{category=JSON.parse(String(value("categoryJson")||"{}"))}catch(error){throw Error("英文分类页模块 JSON 格式错误")}
+       try{categoryEs=JSON.parse(String(value("categoryEsJson")||"{}"))}catch(error){throw Error("西班牙语分类页模块 JSON 格式错误")}
        result=await api("product-content",{action:"save_product",model:value("model"),
        status:value("status"),content:{title:value("title"),navTitle:value("navTitle"),short:value("short"),detail:value("detail"),meta:value("meta"),
-          image:value("image"),checks,body:value("body"),sections,faqs,bodyEs:value("bodyEs"),sectionsEs,faqsEs,category,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
+          image:value("image"),checks,body:value("body"),sections,faqs,bodyEs:value("bodyEs"),sectionsEs,faqsEs,category,categoryEs,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});
     }else if(action==="structured-copy"){
      const content={eyebrow:value("structuredEyebrow"),title:value("structuredTitle"),subtitle:value("structuredSubtitle"),quickAnswers:arrayEditors.get("quickAnswers")?.get()||[],groups:arrayEditors.get("groups")?.get()||[],sections:arrayEditors.get("sections")?.get()||[],stats:arrayEditors.get("stats")?.get()||[]};
      const target=document.querySelector('[data-cms-field="structuredJson"]');if(target)target.value=JSON.stringify(content);
@@ -604,6 +606,7 @@
   if(!state.brand)load();
  });
 })();
+
 
 
 
