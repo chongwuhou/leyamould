@@ -3,7 +3,15 @@
  const token=()=>sessionStorage.getItem("xuyiAdminToken")||"";
  const $=id=>document.getElementById(id);
  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  let state={},tab="brand",dirty=false,bannerLocale="";
+  let state={},tab="brand",dirty=false,bannerLocale="",productDraftPack=null;
+  const PRODUCT_DRAFT_URL="https://raw.githubusercontent.com/chongwuhou/leyamould/main/data/mould-product-content-draft.json";
+  async function readProductDraftPack(){
+   const response=await fetch(PRODUCT_DRAFT_URL+"?t="+Date.now(),{cache:"no-store"});
+   if(!response.ok)throw Error("GitHub 稿包读取失败 HTTP "+response.status);
+   const pack=await response.json().catch(()=>null);
+   if(!pack||typeof pack!=="object"||Array.isArray(pack))throw Error("GitHub 稿包不是有效 JSON 对象");
+   return pack;
+  }
   const languageConfig=()=>state.settings?.languages||{};
   const sourceLocale=()=>languageConfig().sourceLocale||"en";
   const requiredData={brand:"brand",banners:"bannerDraft",navigation:"site",pages:"pages",
@@ -181,8 +189,9 @@
    field("seoDescription","","Meta Description",3)+
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
    button("保存产品到 D1","product")+
-   '<hr><h3>13 个产品族双语稿包</h3><p>选择仓库中的 <code>data/mould-product-content-draft.json</code>。系统会读取当前 D1 产品结构，只替换双语正文、FAQ 和项目简报，不改图片、模块顺序或其他人工字段。</p>'+ 
-   '<label class="block-label">双语稿包 JSON <input id="cms-product-draft-file" type="file" accept=".json,application/json"></label>'+button("导入并发布 13 个产品族","product-draft-import");
+   '<hr><h3>13 个产品族双语稿包</h3><p>稿包已经随线上版本保存在 GitHub。后台直接读取固定稿包，只替换双语正文、FAQ 和项目简报，不改图片、模块顺序或其他人工字段。</p>'+
+   '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+button("从 GitHub 读取稿包","product-draft-remote-load")+'<span id="cms-product-draft-status" class="muted">尚未读取</span></div>'+
+   '<details style="margin-top:10px"><summary>备用：选择本地 JSON</summary><label class="block-label">双语稿包 JSON <input id="cms-product-draft-file" type="file" accept=".json,application/json"></label></details>'+button("导入并发布 13 个产品族","product-draft-import");
   }
   if(tab==="structured-copy"){
    const routes=state.structuredCopy?.routes||["/","/contact/","/faq/"];
@@ -561,9 +570,21 @@
     const details=failed.slice(0,12).map(item=>item.model+": "+item.error).join("；");
     say("目录导入完成：新建 "+created.length+" 款；跳过 "+skipped.length+" 款；失败 "+failed.length+" 款。"+(details?"失败明细："+details:"")+" 已有商品未覆盖。");
     return;
+   }else if(action==="product-draft-remote-load"){
+    say("正在从 GitHub 读取 13 个产品族稿包 …");
+    const pack=await readProductDraftPack(),models=Object.keys(pack||{});
+    const knownModels=new Set(state.products.catalogModels||[]);
+    if(models.length!==13||models.some(model=>!knownModels.has(model)))throw Error("GitHub 稿包必须正好包含当前 13 个已配置产品族");
+    productDraftPack=pack;
+    const status=$("cms-product-draft-status");if(status)status.textContent="已读取 GitHub 线上稿包（13 个产品族）";
+    say("已从 GitHub 读取 13 个产品族；现在点击“导入并发布 13 个产品族”。");return;
    }else if(action==="product-draft-import"){
-    const file=$("cms-product-draft-file")?.files?.[0];if(!file)throw Error("请先选择双语稿包 JSON");
-    let pack;try{pack=JSON.parse(await file.text())}catch(error){throw Error("双语稿包 JSON 无法读取")}
+    let pack=productDraftPack;
+    if(!pack){
+     const file=$("cms-product-draft-file")?.files?.[0];
+     if(file){try{pack=JSON.parse(await file.text())}catch(error){throw Error("双语稿包 JSON 无法读取")}}
+     else{say("正在从 GitHub 读取 13 个产品族稿包 …");pack=await readProductDraftPack();productDraftPack=pack;}
+    }
     const models=Object.keys(pack||{}),knownModels=new Set(state.products.catalogModels||[]);
     if(models.length!==13||models.some(model=>!knownModels.has(model)))throw Error("稿包必须正好包含当前 13 个已配置产品族");
     if(!window.confirm("确认把 13 个产品族的英文和西班牙语正文、FAQ、项目简报写入正式 D1 并发布？"))return;
