@@ -124,21 +124,24 @@ def structured_page_copy(locale: str, route: str) -> dict:
     """Return the reviewed structured copy for one route and locale.
 
     D1 owns the editable words, while this renderer continues to own the DOM,
-    spacing and responsive layout.  A missing locale/field falls back to the
-    source-language row and finally to the existing renderer baseline.
+    spacing and responsive layout. Local development may use the checked-in
+    fixture; production never falls back to it.
     """
     # In a production snapshot the translated page override is the only
     # accepted locale source.  Checked-in Spanish copy remains available for a
     # local clean checkout, but it must never silently fill a production page.
-    source = {} if STRICT_D1 and locale != "en" else (_PAGE_SOURCE.get("en", {}) if isinstance(_PAGE_SOURCE.get("en", {}), dict) else {})
-    source_locale = {} if STRICT_D1 and locale != "en" else (_PAGE_SOURCE.get(locale, {}) if isinstance(_PAGE_SOURCE.get(locale, {}), dict) else {})
+    # A production snapshot is the only business-copy source.  The checked-in
+    # page JSON is intentionally available only to a local, non-production
+    # checkout; otherwise a missing D1 field would silently reappear online.
+    source = {} if STRICT_D1 else (_PAGE_SOURCE.get("en", {}) if isinstance(_PAGE_SOURCE.get("en", {}), dict) else {})
+    source_locale = {} if STRICT_D1 else (_PAGE_SOURCE.get(locale, {}) if isinstance(_PAGE_SOURCE.get(locale, {}), dict) else {})
     d1_source = PAGE_COPY.get("en", {}) if isinstance(PAGE_COPY.get("en", {}), dict) else {}
     d1_localized = PAGE_COPY.get(locale, {}) if isinstance(PAGE_COPY.get(locale, {}), dict) else {}
     row = source.get(route) if isinstance(source.get(route), dict) else {}
     row = _merge_copy(row, source_locale.get(route) if isinstance(source_locale.get(route), dict) else {})
     # A source-language D1 row must not overwrite the reviewed Spanish branch.
-    # Use D1's localized object when present; otherwise retain the checked-in
-    # locale baseline and let the shared renderer provide the safe fallback.
+    # In production both branches are D1-owned; a missing field is handled by
+    # the completeness gate instead of a checked-in locale baseline.
     if locale == "en":
         row = _merge_copy(row, d1_source.get(route) if isinstance(d1_source.get(route), dict) else {})
     row = _merge_copy(row, d1_localized.get(route) if isinstance(d1_localized.get(route), dict) else {})
@@ -146,7 +149,9 @@ def structured_page_copy(locale: str, route: str) -> dict:
 
 def structured_page_value(locale: str, route: str, key: str, fallback: str = "") -> str:
     value = structured_page_copy(locale, route).get(key)
-    return str(value).strip() if isinstance(value, str) and value.strip() else fallback
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return "" if STRICT_D1 else fallback
 
 def structured_section(locale: str, route: str, section_id: str, fallback_title: str = "", fallback_body: str = "", fallback_eyebrow: str = "") -> dict:
     """Read one small, text-only section override from D1.
@@ -167,9 +172,9 @@ def structured_section(locale: str, route: str, section_id: str, fallback_title:
                 row = candidate
                 break
     return {
-        "eyebrow": str(row.get("eyebrow") or fallback_eyebrow).strip(),
-        "title": str(row.get("title") or fallback_title).strip(),
-        "body": str(row.get("body") or fallback_body).strip(),
+        "eyebrow": str(row.get("eyebrow") or ("" if STRICT_D1 else fallback_eyebrow)).strip(),
+        "title": str(row.get("title") or ("" if STRICT_D1 else fallback_title)).strip(),
+        "body": str(row.get("body") or ("" if STRICT_D1 else fallback_body)).strip(),
         "bullets": [str(item).strip() for item in row.get("bullets", []) if str(item).strip()][:8] if isinstance(row.get("bullets"), list) else [],
         "items": [item for item in row.get("items", []) if isinstance(item, dict)][:48] if isinstance(row.get("items"), list) else [],
     }
@@ -180,7 +185,7 @@ def structured_section_items(locale: str, route: str, section_id: str, fallback:
     items = section.get("items") if isinstance(section, dict) else []
     if isinstance(items, list) and items:
         return [item for item in items if isinstance(item, dict)][:48]
-    return list(fallback or [])
+    return [] if STRICT_D1 else list(fallback or [])
 def _normalise_page_row(row: dict) -> dict:
     """Accept the D1 snapshot's snake_case fields and the admin API's camelCase.
 
@@ -300,7 +305,10 @@ def _catalog_from_state() -> list[dict]:
     family; it receives the same category template instead of disappearing
     from menus and generated routes.
     """
-    rows = json.loads(json.dumps(CATALOG.get("categories", [])))
+    # Static catalogue data is useful for a clean local checkout only.  A
+    # production build must not keep a deleted/unpublished family alive by
+    # starting from the repository catalogue and overlaying D1 rows.
+    rows = [] if STRICT_D1 else json.loads(json.dumps(CATALOG.get("categories", [])))
     by_slug = {str(item.get("slug")): item for item in rows}
     for row in STATE.get("products", []):
         if not isinstance(row, dict):
@@ -334,6 +342,9 @@ def _catalog_from_state() -> list[dict]:
         structured = content.get("structured") if isinstance(content.get("structured"), dict) else content.get("category")
         if isinstance(structured, dict):
             item["categoryCopy"] = structured
+        structured_es = content.get("structuredEs") if isinstance(content.get("structuredEs"), dict) else content.get("categoryEs")
+        if isinstance(structured_es, dict):
+            item["categoryCopyEs"] = structured_es
     return rows
 
 CATALOG["categories"] = _catalog_from_state()
@@ -466,18 +477,21 @@ def page_override_for(locale: str, route: str) -> dict:
                     product = {"seoTitle": title, "metaDescription": description}
                 break
         if not product:
-            fallback = PRODUCT_FALLBACK_SEO.get(slug) if locale == "es" else None
-            if fallback:
-                product = fallback
-            else:
-                for item in CATALOG.get("categories", []):
-                    if not isinstance(item, dict) or str(item.get("slug") or "").strip().lower() != slug:
-                        continue
-                    title = str(item.get("title") or "").strip()
-                    description = str(item.get("description") or "").strip()
-                    if title and description:
-                        product = {"seoTitle": title, "metaDescription": description}
-                    break
+            if not STRICT_D1:
+                fallback = PRODUCT_FALLBACK_SEO.get(slug) if locale == "es" else None
+                if fallback:
+                    product = fallback
+                else:
+                    for item in CATALOG.get("categories", []):
+                        if not isinstance(item, dict) or str(item.get("slug") or "").strip().lower() != slug:
+                            continue
+                        title = str(item.get("title") or "").strip()
+                        description = str(item.get("description") or "").strip()
+                        if title and description:
+                            product = {"seoTitle": title, "metaDescription": description}
+                        break
+            elif not product:
+                raise RuntimeError("Strict D1 product SEO missing for " + slug + ":" + locale)
         if product:
             value.update(product)
     return value
@@ -618,6 +632,8 @@ def text(locale: str, key: str) -> str:
     value = localized.get(key) if key in localized else source.get(key)
     if isinstance(value, str) and value.strip():
         return value
+    if STRICT_D1:
+        raise RuntimeError("Strict D1 common copy missing for " + locale + ":" + key)
     return str(TEXT.get(locale, TEXT["en"]).get(key, TEXT["en"].get(key, key)))
 
 def data(locale: str, key: str):
@@ -926,15 +942,18 @@ def head(locale: str, title: str, description: str, route: str) -> str:
 
 def rail(locale: str) -> str:
     phone_digits = re.sub(r"[^0-9+]", "", WHATSAPP)
-    phone = '<a href="tel:' + esc(phone_digits) + '" class="rail-float rail-float--phone" title="Call us" aria-label="Call us"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 4.5 9.7 4c.5-.1 1 .2 1.2.7l1.2 2.8c.2.4.1.9-.2 1.2l-1.4 1.4a13.4 13.4 0 0 0 3.4 3.4l1.4-1.4c.3-.3.8-.4 1.2-.2l2.8 1.2c.5.2.8.7.7 1.2l-.5 2.6c-.1.5-.5.8-1 .8C11.8 17.7 6.3 12.2 6.3 5.5c0-.5.3-.9.8-1Z"/></svg><span class="floating-tooltip">Call</span></a>'
-    whatsapp = '<a href="' + WA_URL + '" target="_blank" rel="noopener noreferrer" class="rail-float rail-float--whatsapp" title="Chat on WhatsApp" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.2a8.4 8.4 0 0 1-12.4 7.4L4 20l1.4-4A8.4 8.4 0 1 1 20.5 11.2Z"/><path d="M9.2 8.8c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.6 1.4c.1.2.1.4-.1.6l-.5.6c.6 1.1 1.5 2 2.6 2.6l.6-.5c.2-.2.4-.2.6-.1l1.4.6c.3.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.1.4-1.7.2-2.1-.6-4.7-3.2-5.3-5.3-.2-.6-.1-1.2.1-1.8Z"/></svg><span class="floating-tooltip">WhatsApp</span></a>'
-    wechat = '<a href="' + localized_href(locale, "/contact/") + '" class="rail-float rail-float--wechat" title="WeChat contact" aria-label="WeChat contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 6.3C6.9 6.3 4 8.5 4 11.2c0 1.6 1 3 2.5 3.9L6 17l2.2-1.1c.7.2 1.5.3 2.3.3 3.6 0 6.5-2.2 6.5-4.9S14.1 6.3 10.5 6.3Z"/><path d="M14.2 10.1c3.2 0 5.8 1.9 5.8 4.4 0 1.3-.7 2.5-1.9 3.3l.4 1.5-1.8-.9c-.6.2-1.3.3-2 .3-3.2 0-5.8-1.8-5.8-4.2"/></svg><span class="floating-tooltip">WeChat</span></a>'
+    # Match cap-molds' filled Font Awesome silhouettes and order: WhatsApp,
+    # WeChat, then the orange phone action. Inline SVG keeps this independent
+    # from a CDN while preserving the same icon geometry.
+    phone = '<a href="tel:' + esc(phone_digits) + '" class="rail-float rail-float--phone" title="Call us" aria-label="Call us"><svg viewBox="0 0 512 512" aria-hidden="true"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30 0 46 0 64 0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg><span class="floating-tooltip">Call</span></a>'
+    whatsapp = '<a href="' + WA_URL + '" target="_blank" rel="noopener noreferrer" class="rail-float rail-float--whatsapp" title="Chat on WhatsApp" aria-label="Chat on WhatsApp"><svg viewBox="0 0 448 512" aria-hidden="true"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg><span class="floating-tooltip">WhatsApp</span></a>'
+    wechat = '<a href="' + localized_href(locale, "/contact/") + '" class="rail-float rail-float--wechat" title="WeChat contact" aria-label="WeChat contact"><svg viewBox="0 0 576 512" aria-hidden="true"><path d="M385.2 167.6c6.4 0 12.6.3 18.8 1.1C387.4 90.3 303.3 32 207.7 32 100.5 32 13 104.8 13 197.4c0 53.4 29.3 97.5 77.9 131.6l-19.3 58.6 68-34.1c24.4 4.8 43.8 9.7 68.2 9.7 6.2 0 12.1-.3 18.3-.8-4-12.9-6.2-26.6-6.2-40.8-.1-84.9 72.9-154 165.3-154zm-104.5-52.9c14.5 0 24.2 9.7 24.2 24.4 0 14.5-9.7 24.2-24.2 24.2-14.8 0-29.3-9.7-29.3-24.2.1-14.7 14.6-24.4 29.3-24.4zm-136.4 48.6c-14.5 0-29.3-9.7-29.3-24.2 0-14.8 14.8-24.4 29.3-24.4 14.8 0 24.4 9.7 24.4 24.4 0 14.6-9.6 24.2-24.4 24.2zM563 319.4c0-77.9-77.9-141.3-165.4-141.3-92.7 0-165.4 63.4-165.4 141.3S305 460.7 397.6 460.7c19.3 0 38.9-5.1 58.6-9.9l53.4 29.3-14.8-48.6C534 402.1 563 363.2 563 319.4zm-219.1-24.5c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.8 0 24.4 9.7 24.4 19.3 0 10-9.7 19.6-24.4 19.6zm107.1 0c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.5 0 24.4 9.7 24.4 19.3.1 10-9.9 19.6-24.4 19.6z"/></svg><span class="floating-tooltip">WeChat</span></a>'
     if locale == "es":
         phone = phone.replace('title="Call us"', 'title="Llamar"').replace('aria-label="Call us"', 'aria-label="Llamar"').replace('>Call</span>', '>Llamar</span>')
         whatsapp = whatsapp.replace('title="Chat on WhatsApp"', 'title="Chat por WhatsApp"').replace('aria-label="Chat on WhatsApp"', 'aria-label="Chat por WhatsApp"')
         wechat = wechat.replace('title="WeChat contact"', 'title="Contacto por WeChat"').replace('aria-label="WeChat contact"', 'aria-label="Contacto por WeChat"')
     rail_label = "Contacto rápido" if locale == "es" else "Quick contact"
-    return '<aside class="rail" role="complementary" aria-label="' + esc(rail_label) + '">' + phone + whatsapp + wechat + '</aside>'
+    return '<aside class="rail" role="complementary" aria-label="' + esc(rail_label) + '">' + whatsapp + wechat + phone + '</aside>'
 
 def shell(locale: str, title: str, description: str, route: str, body: str) -> str:
     return render_template("shell", HEAD=head(locale, title, description, route), HEADER=header(locale, route), SIDEBAR=rail(locale), BODY=body, FOOTER=footer(locale))
@@ -1031,6 +1050,8 @@ def shared_cta(locale: str, variant: str = "catalog", element_id: str = "", titl
     d1_locale = COMMON_COPY.get(lang, {}) if isinstance(COMMON_COPY.get(lang, {}), dict) else {}
     d1_ctas = d1_locale.get("shared_cta", {}) if isinstance(d1_locale.get("shared_cta", {}), dict) else {}
     d1_copy = d1_ctas.get(variant) if isinstance(d1_ctas.get(variant), dict) else {}
+    if STRICT_D1 and any(not str(d1_copy.get(key) or "").strip() for key in ("title", "description", "note")):
+        raise RuntimeError("Strict D1 shared CTA missing for " + lang + ":" + variant)
     copy = (
         str(d1_copy.get("title") or fallback[0]),
         str(d1_copy.get("description") or fallback[1]),
@@ -1057,11 +1078,13 @@ def shared_cta(locale: str, variant: str = "catalog", element_id: str = "", titl
         '</div></div></section>'
     )
 
-def _review_rows(locale: str) -> list[dict]:
+def _review_rows(locale: str, model: str | None = None) -> list[dict]:
     """Return only explicitly published D1 reviews with real text."""
     rows = []
     for raw in STATE.get("productReviews", []):
         if not isinstance(raw, dict) or str(raw.get("status") or "").lower() != "published":
+            continue
+        if model and str(raw.get("model") or "").strip().lower() != str(model).strip().lower():
             continue
         content = raw.get("content") if isinstance(raw.get("content"), dict) else raw
         quote = str(content.get("quote") or content.get("content") or "").strip()
@@ -1246,7 +1269,9 @@ def products_page(locale: str) -> str:
     return hero + crumb + products + model_references + catalog_support_sections(locale)
 
 def cap_product_page(locale: str, item: dict) -> str:
-    helpers = {"esc": esc, "image": image, "localized_href": localized_href, "shared_cta": shared_cta, "hmould_models": HMOULD_MODELS}
+    helpers = {"esc": esc, "image": image, "localized_href": localized_href, "shared_cta": shared_cta,
+               "hmould_models": HMOULD_MODELS, "strict_d1": STRICT_D1,
+               "verified_reviews": _review_rows(locale, item.get("slug"))}
     return render_category_page(locale, item, helpers)
 
 def about_page(locale: str) -> str:
@@ -1638,7 +1663,10 @@ def effective_news_items(category: str = "news") -> list[dict]:
     replaces it when it carries the same reviewed rich article payload; an
     unrelated water-cup Blog snapshot must never erase mould news.
     """
-    reviewed = editorial_news_items(category)
+    # The checked-in editorial registry is a local fixture only.  In a strict
+    # production build the published D1 rows are the complete list; no deleted
+    # or unpublished article may be resurrected from the repository.
+    reviewed = [] if STRICT_D1 else editorial_news_items(category)
     rows = STATE.get("blogPosts") if isinstance(STATE.get("blogPosts"), list) else []
     mapped = []
     for row in rows:
@@ -1937,6 +1965,7 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
+
 
 
 

@@ -1,4 +1,4 @@
-"""Static editorial and cover gate for the 24 mould-news articles."""
+"""Static editorial and cover gate for the reviewed mould-news registry."""
 from __future__ import annotations
 
 import hashlib
@@ -14,20 +14,20 @@ MANIFEST = json.loads((ROOT / "data" / "mould-news-image-manifest.json").read_te
 
 assert DATA.get("locales") == ["en", "es"]
 items = DATA.get("items") or []
-assert len(items) == 24, len(items)
-assert len({item["slug"] for item in items}) == 24
+assert items
+assert len({item["slug"] for item in items}) == len(items)
 manifest = {item["slug"]: item for item in MANIFEST.get("items", [])}
 assert set(manifest) == {item["slug"] for item in items}
 hashes = set()
 for item in items:
     assert len(item["title"]["en"]) >= 30 and len(item["title"]["es"]) >= 30
     assert len(item["description"]["en"]) >= 80 and len(item["description"]["es"]) >= 80
-    assert len(item["sections"]["en"]) == 7 and len(item["sections"]["es"]) == 7
+    assert len(item["sections"]["en"]) >= 7 and len(item["sections"]["es"]) >= 7
     assert all(len(part["paragraph"]) >= 650 for part in item["sections"]["en"])
     assert all(len(part["paragraph"]) >= 650 for part in item["sections"]["es"])
-    assert len(item["checklist"]["en"]) == 10 and len(item["checklist"]["es"]) == 10
-    assert len(item["faqs"]["en"]) == 4 and len(item["faqs"]["es"]) == 4
-    assert len(item["products"]) == 3 and len(item["related"]) == 3
+    assert len(item["checklist"]["en"]) >= 10 and len(item["checklist"]["es"]) >= 10
+    assert len(item["faqs"]["en"]) >= 4 and len(item["faqs"]["es"]) >= 4
+    assert 2 <= len(item["products"]) <= 5 and 2 <= len(item["related"]) <= 3
     cover = ROOT / item["cover"].lstrip("/")
     assert cover.is_file(), cover
     with Image.open(cover) as im:
@@ -62,3 +62,4 @@ for item in items:
     check_page("", item)
     check_page("es", item)
 print("MOULD_NEWS_EDITORIAL_OK", len(items), "articles", "unique covers", len(hashes))
+

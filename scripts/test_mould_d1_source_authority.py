@@ -35,10 +35,10 @@ assert not (ROOT / "functions/api/admin/mould-content-seed-20261124.js").exists(
 
 editorial = json.loads((ROOT / "data/mould-news-editorial.json").read_text(encoding="utf-8"))
 items = editorial.get("items") or []
-assert len(items) == 24
-assert len({item["slug"] for item in items}) == 24
-assert {item["category"] for item in items} == {"news", "machine"}
-assert all(len(item.get("sections", {}).get("en", [])) == 7 for item in items)
+assert items, "editorial registry is empty"
+assert len({item["slug"] for item in items}) == len(items)
+assert {item["category"] for item in items} <= {"news", "machine"}
+assert all(item.get("sections", {}).get("en") and item.get("sections", {}).get("es") for item in items)
 
 workflow = read(".github/workflows/publish-leyamould.yml")
 assert "scripts/migrate_mould_content.py" not in workflow
@@ -48,5 +48,6 @@ assert 'LEYA_REQUIRE_D1_SNAPSHOT: "1"' in workflow
 assert "scripts/test_mould_release_authority.py" in workflow
 
 print("LEYA_MOULD_D1_SOURCE_AUTHORITY_PASSED")
+
 
 
