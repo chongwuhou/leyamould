@@ -1343,7 +1343,11 @@ def spanish_model_description(value: Any) -> str:
     text = str(value or "").strip()
     if not text:
         return "Referencia de catálogo HMould. La configuración final de cavidades, el acero, la interfaz de máquina y la evidencia de producción se confirman durante la revisión del proyecto de LEYA MOULD."
-    value = _replace(text, (("HMould catalogue model reference", "Referencia de catálogo de HMould"), ("Final cavity plan", "La configuración final de cavidades"), ("steel", "el acero"), ("machine interface", "la interfaz de máquina"), ("production evidence", "la evidencia de producción"), ("are confirmed during LEYA MOULD project review", "se confirman durante la revisión del proyecto de LEYA MOULD")) + _EDITORIAL_REPLACEMENTS + _GENERAL_REPLACEMENTS)
+    # Apply phrase-level repairs before short glossary tokens.  Otherwise a
+    # legacy D1 phrase such as ``Cap Auxiliary Machines`` is split by the
+    # generic ``cap`` replacement and can no longer be repaired as a whole.
+    value = _replace(text, _MIXED_CLEANUP_REPLACEMENTS)
+    value = _replace(value, (("HMould catalogue model reference", "Referencia de catálogo de HMould"), ("Final cavity plan", "La configuración final de cavidades"), ("steel", "el acero"), ("machine interface", "la interfaz de máquina"), ("production evidence", "la evidencia de producción"), ("are confirmed during LEYA MOULD project review", "se confirman durante la revisión del proyecto de LEYA MOULD")) + _EDITORIAL_REPLACEMENTS + _GENERAL_REPLACEMENTS)
     return _replace(value, _MIXED_CLEANUP_REPLACEMENTS)
 
 
@@ -1380,7 +1384,13 @@ def spanish_ui_text(value: Any) -> str:
     # name during the Spanish boundary pass.
     if re.fullmatch(r"(?:https?://|/|[A-Za-z]:[\\/])\S+\.(?:svg|png|jpe?g|webp|gif|pdf)(?:\?\S*)?", text.strip(), flags=re.I):
         return text
-    value = _replace(text, _UI_REPLACEMENTS + _EDITORIAL_REPLACEMENTS + _GENERAL_REPLACEMENTS)
+    # Phrase-level cleanup must run once before the short generic glossary and
+    # once after it.  D1 rows frequently contain mixed fragments such as
+    # ``Cap Auxiliary Machines`` or ``Your Trusted ...``; translating ``Cap``
+    # first would destroy the phrase boundary and leave an English fragment
+    # that a later pass can no longer recognise.
+    value = _replace(text, _MIXED_CLEANUP_REPLACEMENTS)
+    value = _replace(value, _UI_REPLACEMENTS + _EDITORIAL_REPLACEMENTS + _GENERAL_REPLACEMENTS)
     return _replace(value, _MIXED_CLEANUP_REPLACEMENTS)
 
 
