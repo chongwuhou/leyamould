@@ -44,7 +44,9 @@ workflow = read(".github/workflows/publish-leyamould.yml")
 assert "scripts/migrate_mould_content.py" not in workflow
 assert "Seed reviewed LEYA D1 content and translations" not in workflow
 assert "Build bootstrap source release before D1 seed" not in workflow
-assert 'LEYA_REQUIRE_D1_SNAPSHOT: "1"' in workflow
+assert "LEYA_REQUIRE_D1_SNAPSHOT:" in workflow
+assert "inputs.bootstrap_admin == '1'" in workflow
+assert "|| '1'" in workflow
 assert "scripts/test_mould_release_authority.py" in workflow
 
 print("LEYA_MOULD_D1_SOURCE_AUTHORITY_PASSED")
