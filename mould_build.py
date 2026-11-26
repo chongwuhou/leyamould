@@ -2158,7 +2158,13 @@ def generate() -> dict:
             # were assembled after the earlier override check, without
             # translating URLs, attributes or embedded script payloads.
             final_body = spanish_html_text(final_body)
-        write(file_path, shell(locale, final_title + " | " + BRAND_DISPLAY if route != "/" else final_title + " | " + BRAND_DISPLAY, final_description, route, final_body))
+        rendered = shell(locale, final_title + " | " + BRAND_DISPLAY if route != "/" else final_title + " | " + BRAND_DISPLAY, final_description, route, final_body)
+        if locale == "es":
+            # Final shell boundary: shared header/footer, title text and any
+            # owner-authored fragment must use the same Spanish visible-text
+            # rules. Attributes and embedded scripts remain untouched.
+            rendered = spanish_html_text(rendered)
+        write(file_path, rendered)
         routes[localized] = title
     for locale in LOCALES:
         code = locale["code"]
