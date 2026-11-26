@@ -16,7 +16,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from mould_build import ES_SEO  # noqa: E402
-BOOTSTRAP_ADMIN = os.environ.get("LEYA_BOOTSTRAP_ADMIN", "").strip().lower() in {"1", "true", "yes"}
 snapshot_path = ROOT / "_local_ops" / "build-snapshot.json"
 if not snapshot_path.is_file():
     if os.environ.get("LEYA_REQUIRE_D1_SNAPSHOT") in {"1", "true", "yes"}:
@@ -190,20 +189,7 @@ for product in products:
             localized = content.get("structuredEs") if isinstance(content.get("structuredEs"), dict) else content.get("categoryEs")
             product_fields_missing.extend(model + ":" + issue for issue in structured_modules(localized, locale))
 if product_fields_missing:
-    if BOOTSTRAP_ADMIN:
-        # One-time admin bootstrap: the existing production snapshot predates
-        # the new family brief/section fields.  Keep every other production
-        # gate strict, and allow only these two newly introduced fields to be
-        # filled through the formal admin importer before the next release.
-        legacy_missing = [
-            issue for issue in product_fields_missing
-            if not (issue.endswith(":sections") or ":projectBrief" in issue)
-        ]
-        if legacy_missing:
-            raise SystemExit("D1 product structured fields are incomplete: " + ", ".join(legacy_missing[:40]))
-        print("LEYA_D1_BOOTSTRAP_ADMIN_ALLOWED missing_new_family_fields=" + str(len(product_fields_missing)))
-    else:
-        raise SystemExit("D1 product structured fields are incomplete: " + ", ".join(product_fields_missing[:40]))
+    raise SystemExit("D1 product structured fields are incomplete: " + ", ".join(product_fields_missing[:40]))
 
 product_routes = set()
 for product in products:
