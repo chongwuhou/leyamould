@@ -106,6 +106,10 @@ jobs:
         run: python scripts/test_mould_d1_source_authority.py
       - name: Verify LEYA product catalog D1 authority
         run: python scripts/test_mould_product_d1_contract.py
+      - name: Verify bilingual product-family content draft
+        run: python scripts/test_mould_product_content_quality.py
+      - name: Verify product-family JSON-LD image, FAQ and breadcrumb contract
+        run: python scripts/test_mould_product_jsonld.py
       - name: Verify strict production source boundary and growth-safe gates
         run: python scripts/test_mould_production_source_boundary.py
       - name: Verify LEYA structured page copy and shared CTA D1 authority

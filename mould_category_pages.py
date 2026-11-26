@@ -121,6 +121,40 @@ def _category_text(value: dict, key: str, fallback: str = "") -> str:
     return str(candidate).strip() if isinstance(candidate, str) and candidate.strip() else fallback
 
 
+def _project_brief(value: dict) -> dict:
+    """Normalize the buyer-facing project brief stored with a product family."""
+    raw = value.get("projectBrief") if isinstance(value, dict) else None
+    if not isinstance(raw, dict):
+        return {"scenarios": [], "parameters": [], "quoteChecklist": [], "sources": [], "evidenceNote": ""}
+    def cards(key: str, limit: int) -> list[dict]:
+        rows = raw.get(key)
+        if not isinstance(rows, list):
+            return []
+        out = []
+        for row in rows[:limit]:
+            if not isinstance(row, dict):
+                continue
+            title = str(row.get("title") or "").strip()
+            body = str(row.get("body") or "").strip()
+            if title and body:
+                out.append({"title": title, "body": body})
+        return out
+    checklist = raw.get("quoteChecklist")
+    checklist = [str(row).strip() for row in checklist[:8] if str(row).strip()] if isinstance(checklist, list) else []
+    sources = []
+    for row in (raw.get("sources") if isinstance(raw.get("sources"), list) else [])[:6]:
+        if not isinstance(row, dict):
+            continue
+        label = str(row.get("label") or "").strip()
+        url = str(row.get("url") or "").strip()
+        note = str(row.get("note") or "").strip()
+        if label and url:
+            sources.append({"label": label, "url": url, "note": note})
+    return {"scenarios": cards("scenarios", 6), "parameters": cards("parameters", 8),
+            "quoteChecklist": checklist, "sources": sources,
+            "evidenceNote": str(raw.get("evidenceNote") or "").strip()}
+
+
 def _spec(hero_title, accent, subtitle, image, stats, products, advantages,
           technology, samples, quality, faqs, testimonials, videos=None):
     return {
@@ -333,8 +367,8 @@ DETAILS.update({
 
 def _lang(locale: str, key: str) -> str:
     values = {
-        "en": {"our_products": "Our Products", "advantages": "Why Our Moulds", "technology": "Technology", "samples": "Samples", "videos": "Mould Trials", "quality": "Quality", "faq": "Common Questions", "feedback": "Client Feedback", "contact": "Start Your Mould Project", "learn": "Learn More →", "quote": "Request a Quote", "home": "Home", "cap_mould": "Cap Mould"},
-        "es": {"our_products": "Nuestros productos", "advantages": "Por qué nuestros moldes", "technology": "Tecnología", "samples": "Muestras", "videos": "Pruebas del molde", "quality": "Calidad", "faq": "Preguntas frecuentes", "feedback": "Opiniones de clientes", "contact": "Inicie su proyecto", "learn": "Ver detalles →", "quote": "Solicitar cotización", "home": "Inicio", "cap_mould": "Moldes de tapas"},
+        "en": {"our_products": "Our Products", "advantages": "Why Our Moulds", "technology": "Technology", "samples": "Samples", "videos": "Mould Trials", "quality": "Quality", "faq": "Common Questions", "feedback": "Client Feedback", "contact": "Start Your Mould Project", "learn": "Learn More →", "quote": "Request a Quote", "home": "Home", "cap_mould": "Cap Mould", "brief": "Plan the mould correctly", "scenarios": "Where it is used", "parameters": "Buyer parameters", "quote_info": "Before requesting a quote", "sources": "Standards and references", "evidence_note": "Evidence note"},
+        "es": {"our_products": "Nuestros productos", "advantages": "Por qué nuestros moldes", "technology": "Tecnología", "samples": "Muestras", "videos": "Pruebas del molde", "quality": "Calidad", "faq": "Preguntas frecuentes", "feedback": "Opiniones de clientes", "contact": "Inicie su proyecto", "learn": "Ver detalles →", "quote": "Solicitar cotización", "home": "Inicio", "cap_mould": "Moldes de tapas", "brief": "Defina correctamente el molde", "scenarios": "Aplicaciones", "parameters": "Parámetros del comprador", "quote_info": "Antes de solicitar una cotización", "sources": "Normas y referencias", "evidence_note": "Nota de evidencia"},
     }
     return values.get(locale, values["en"]).get(key, values["en"].get(key, key))
 
@@ -487,6 +521,38 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
         helpers,
     )
 
+    # Buyer brief fields are authored per family and per locale in D1.  They
+    # deliberately stay separate from the visual advantages/technology cards:
+    # a buyer can scan the application, input requirements and quotation
+    # checklist without mistaking an industry reference for a LEYA guarantee.
+    brief_data = _project_brief(category)
+    brief_blocks = []
+    for heading_key, rows, icon in (("scenarios", brief_data["scenarios"], "01"), ("parameters", brief_data["parameters"], "02")):
+        if not rows:
+            continue
+        cards = ''.join('<article class="mould-advantage-card"><div class="mould-adv-icon">' + esc(icon) + '</div><h4>' + esc(str(row["title"])) + '</h4><p>' + esc(str(row["body"])) + '</p></article>' for row in rows)
+        brief_blocks.append('<div class="mould-brief-column"><h3>' + esc(_lang(locale, heading_key)) + '</h3><div class="mould-advantages-grid mould-brief-grid">' + cards + '</div></div>')
+    checklist = brief_data["quoteChecklist"]
+    if checklist:
+        list_html = ''.join('<li>✓ ' + esc(row) + '</li>' for row in checklist)
+        brief_blocks.append('<div class="mould-brief-column"><h3>' + esc(_lang(locale, "quote_info")) + '</h3><ul class="mould-brief-checklist">' + list_html + '</ul></div>')
+    source_html = ''
+    if brief_data["sources"]:
+        source_items = []
+        for source in brief_data["sources"]:
+            url = source["url"]
+            if not re.match(r"^https://", url):
+                continue
+            note = (' <span>' + esc(source["note"]) + '</span>') if source["note"] else ''
+            source_items.append('<li><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(source["label"]) + '</a>' + note + '</li>')
+        if source_items:
+            source_html = '<div class="mould-brief-sources"><h3>' + esc(_lang(locale, "sources")) + '</h3><ul>' + ''.join(source_items) + '</ul></div>'
+    evidence_note = brief_data["evidenceNote"]
+    brief = ''
+    if brief_blocks or source_html or evidence_note:
+        note_html = '<p class="mould-brief-note"><strong>' + esc(_lang(locale, "evidence_note")) + ':</strong> ' + esc(evidence_note) + '</p>' if evidence_note else ''
+        brief = '<section class="mould-project-brief" id="project-brief"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "brief")) + '</span><h2>' + esc(title) + '</h2><p>' + esc(detail) + '</p><i></i></div><div class="mould-brief-grid-wrap">' + ''.join(brief_blocks) + '</div>' + source_html + note_html + '</div></section>'
+
     advantage_rows = _category_rows(category.get("advantages"), [{"title": adv_title, "body": adv_text} for adv_title, adv_text in details["advantages"]], 12)
     advantages_title = _category_text(category, "advantagesTitle", "" if strict_d1 else "Key Advantages of Our " + title)
     advantages_body = _category_text(category, "advantagesBody", "" if strict_d1 else "Engineered for repeatable production, stable quality and a clear technical handover.")
@@ -579,5 +645,5 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     cta = shared_cta(locale, "category", element_id="contact") if shared_cta else '<section class="mould-cta" id="contact"><div class="mould-detail-container"><div class="mould-cta-box"><h2>' + esc(_lang(locale, "contact")) + '</h2><p>' + esc(fallback_cta_copy) + '</p><div class="mould-cta-row"><a href="mailto:amyhu@leyamould.com" class="mould-cta-item">✉ amyhu@leyamould.com</a><a href="https://wa.me/8613606727715" class="mould-cta-item" target="_blank" rel="noopener">WhatsApp +8613606727715</a><a href="' + href(locale, "/contact/#inquiry") + '" class="mould-cta-item mould-cta-item--accent">' + esc(_lang(locale, "quote")) + ' →</a></div></div></div></section>'
 
     lightbox = '<div class="mould-lightbox" id="mould-lightbox" aria-hidden="true"><button type="button" aria-label="Close" data-mould-close>×</button><img alt=""></div><div class="mould-video-lightbox" id="mould-video-lightbox" aria-hidden="true"><button type="button" aria-label="Close" data-mould-video-close>×</button><iframe title="Mould trial video" allow="autoplay; encrypted-media" allowfullscreen></iframe></div><script>(()=>{const l=document.getElementById("mould-lightbox"),li=l?.querySelector("img"),v=document.getElementById("mould-video-lightbox"),f=v?.querySelector("iframe");const close=()=>{l?.classList.remove("active");v?.classList.remove("active");if(f)f.src=""};document.addEventListener("click",e=>{const s=e.target.closest("[data-mould-lightbox]");if(s&&li){li.src=s.dataset.mouldLightbox;l.classList.add("active")};const b=e.target.closest("[data-mould-video]");if(b&&f){f.src="https://www.youtube.com/embed/"+b.dataset.mouldVideo+"?autoplay=1&rel=0";v.classList.add("active")};if(e.target.closest("[data-mould-close],[data-mould-video-close]")||e.target===l||e.target===v)close()});document.addEventListener("keydown",e=>{if(e.key==="Escape")close()})})();</script>'
-    return '<div class="mould-detail-page mould-detail-page--' + item["slug"] + '">' + hero + crumb + products + model_references + advantages + tech + samples + videos + quality + faq + cta + lightbox + '</div>'
+    return '<div class="mould-detail-page mould-detail-page--' + item["slug"] + '">' + hero + crumb + products + model_references + brief + advantages + tech + samples + videos + quality + faq + cta + lightbox + '</div>'
 

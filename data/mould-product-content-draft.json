@@ -1,0 +1,2278 @@
+{
+  "mineral-water-closure-cap-molds": {
+    "slug": "mineral-water-closure-cap-molds",
+    "title": "Mineral Water Closure Cap Moulds",
+    "description": "Closure tooling for still, sparkling and treated-water bottles where the neck finish, seal and tamper evidence must remain aligned.",
+    "body": "Closure tooling for still, sparkling and treated-water bottles where the neck finish, seal and tamper evidence must remain aligned.",
+    "sections": [
+      {
+        "title": "Finish and seal review",
+        "body": "LEYA checks the neck drawing, sealing lands, thread release and tamper-band geometry before steel is released.",
+        "bullets": [
+          "Drawing revision recorded",
+          "Material and weight assumptions listed",
+          "Critical dimensions marked"
+        ]
+      },
+      {
+        "title": "Trial and evidence plan",
+        "body": "The agreed mould trial links cap samples, dimensional checks and the buyer's acceptance limits.",
+        "bullets": [
+          "Machine information confirmed",
+          "Sample quantity agreed",
+          "Final result follows the approved drawing and trial record"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Which neck-finish information is needed?",
+        "answer": "Send the neck drawing or named finish, plus the bottle drawing if the closure and container are being developed together."
+      },
+      {
+        "question": "Can the cap be lightweighted?",
+        "answer": "Yes, lightweighting can be reviewed through the cap drawing, resin, target weight, seal load and trial criteria."
+      },
+      {
+        "question": "Do you quote a cavity number without a drawing?",
+        "answer": "We can give a preliminary range, but the formal quotation follows review of the part, machine and output brief."
+      },
+      {
+        "question": "What proves the final result?",
+        "answer": "Approved drawings, trial samples and the agreed inspection record are the basis for project confirmation."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Still and sparkling water",
+          "body": "Match a beverage neck finish, cap seal and tamper band to the approved bottle and filling line."
+        },
+        {
+          "title": "Lightweight closure development",
+          "body": "Review material distribution, opening torque and bridge behaviour before selecting a cavity plan."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Neck finish",
+          "body": "Provide the finish drawing or standard reference, such as PCO 1881, including thread, bead and sealing surfaces."
+        },
+        {
+          "title": "Resin and cap weight",
+          "body": "State the resin grade, target weight, colour and any recycled-content requirement."
+        },
+        {
+          "title": "Line interface",
+          "body": "Share the machine, hot-runner preference, target output and inspection points."
+        }
+      ],
+      "quoteChecklist": [
+        "Approved neck and cap drawings",
+        "Resin, colour and target weight",
+        "Machine and cavity/output target",
+        "Trial, inspection and packaging requirements"
+      ],
+      "sources": [
+        {
+          "label": "CETIE GME 32.04 · PCO 1881 finish",
+          "url": "https://cetie-standard.com/206-document-gme3204-pet-pco-finish-28-22-17-1-27",
+          "note": "Finish terminology and interface reference; confirm the buyer drawing."
+        },
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        }
+      ],
+      "evidenceNote": "Industry references guide the discussion; the final closure design is subject to drawings, mould trial and project confirmation."
+    },
+    "titleEs": "Moldes de tapas para agua mineral",
+    "descriptionEs": "Moldes para tapas de botellas de agua sin gas, con gas y tratada, manteniendo alineados el cuello, el sellado y la banda de inviolabilidad.",
+    "bodyEs": "Moldes para tapas de botellas de agua sin gas, con gas y tratada, manteniendo alineados el cuello, el sellado y la banda de inviolabilidad.",
+    "sectionsEs": [
+      {
+        "title": "Revisión de acabado y sellado",
+        "body": "LEYA revisa el plano del cuello, las superficies de sellado, la salida de rosca y la banda antes de liberar el acero.",
+        "bullets": [
+          "Revisión del plano registrada",
+          "Supuestos de material y peso listados",
+          "Cotas críticas marcadas"
+        ]
+      },
+      {
+        "title": "Plan de prueba y evidencias",
+        "body": "La prueba acordada relaciona muestras, controles dimensionales y límites de aceptación del comprador.",
+        "bullets": [
+          "Datos de la máquina confirmados",
+          "Cantidad de muestras acordada",
+          "El resultado final sigue el plano y el acta de prueba"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Qué datos del cuello son necesarios?",
+        "answer": "Envíe el plano o acabado nominal y, si se desarrollan juntos, también el plano de la botella."
+      },
+      {
+        "question": "¿Se puede aligerar la tapa?",
+        "answer": "Sí. Se revisan plano, resina, peso objetivo, carga de sellado y criterios de prueba."
+      },
+      {
+        "question": "¿Cotizan las cavidades sin plano?",
+        "answer": "Podemos dar una orientación inicial; la cotización formal requiere revisar pieza, máquina y producción."
+      },
+      {
+        "question": "¿Qué confirma el resultado final?",
+        "answer": "Los planos aprobados, las muestras de prueba y el registro de inspección acordado."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Agua sin gas y con gas",
+          "body": "Ajustar el acabado del cuello, el sellado y la banda de inviolabilidad al envase y a la línea aprobados."
+        },
+        {
+          "title": "Desarrollo de tapas ligeras",
+          "body": "Revisar la distribución del material, el par de apertura y los puentes antes de definir las cavidades."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Acabado del cuello",
+          "body": "Enviar el plano o la referencia del estándar, por ejemplo PCO 1881, con rosca, anillo y superficies de sellado."
+        },
+        {
+          "title": "Resina y peso",
+          "body": "Indicar resina, peso objetivo, color y cualquier requisito de material reciclado."
+        },
+        {
+          "title": "Interfaz de línea",
+          "body": "Compartir máquina, opción de canal caliente, producción objetivo y puntos de inspección."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos aprobados de cuello y tapa",
+        "Resina, color y peso objetivo",
+        "Máquina y objetivo de cavidades/producción",
+        "Requisitos de prueba, inspección y embalaje"
+      ],
+      "sources": [
+        {
+          "label": "CETIE GME 32.04 · PCO 1881 finish",
+          "url": "https://cetie-standard.com/206-document-gme3204-pet-pco-finish-28-22-17-1-27",
+          "note": "Finish terminology and interface reference; confirm the buyer drawing."
+        },
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        }
+      ],
+      "evidenceNote": "Las referencias orientan la conversación; el diseño final depende de planos, prueba del molde y confirmación del proyecto."
+    }
+  },
+  "oil-bottle-cap-mould": {
+    "slug": "oil-bottle-cap-mould",
+    "title": "Edible Oil Bottle Cap Moulds",
+    "description": "Closure tooling for edible-oil bottles, with the sealing path, pull ring or flip top and filling-line handling reviewed as one package.",
+    "body": "Closure tooling for edible-oil bottles, with the sealing path, pull ring or flip top and filling-line handling reviewed as one package.",
+    "sections": [
+      {
+        "title": "Seal-path DFM",
+        "body": "LEYA reviews the sealing land, plug, bridge and parting line against the bottle finish and opening requirement.",
+        "bullets": [
+          "Critical seal surfaces identified",
+          "Bridge and ring release checked",
+          "Draft and ejection risks recorded"
+        ]
+      },
+      {
+        "title": "Filling-line trial",
+        "body": "Samples are checked under the agreed oil, temperature and handling conditions before the buyer signs the project record.",
+        "bullets": [
+          "Actual cap and bottle used where available",
+          "Leak and fit checks recorded",
+          "Result tied to approved revision"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can an existing oil cap be copied?",
+        "answer": "A drawing or physical sample can be reviewed for a compatible replacement; the bottle finish remains essential."
+      },
+      {
+        "question": "How should leakage be evaluated?",
+        "answer": "Agree the oil, temperature, dwell time and pressure method before the trial so the evidence is comparable."
+      },
+      {
+        "question": "Which steel should be considered?",
+        "answer": "Steel is selected after reviewing wear, corrosion, polishing and maintenance needs rather than by a fixed promise."
+      },
+      {
+        "question": "What should accompany a quote request?",
+        "answer": "Send the cap/bottle geometry, resin, weight, line data, target output and acceptance method."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Cooking-oil bottles",
+          "body": "Develop pull-ring, tamper-evident or flip-top closures for edible-oil brands and contract packers."
+        },
+        {
+          "title": "Existing cap replacement",
+          "body": "Use an approved sample and bottle finish to review fit, opening behaviour and repeatability."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Seal and opening",
+          "body": "Share the sealing land, liner or plug details, opening torque and tamper-band requirement."
+        },
+        {
+          "title": "Food-contact brief",
+          "body": "Identify the resin, additives, colour and documentation the buyer expects from the part supplier."
+        },
+        {
+          "title": "Filling conditions",
+          "body": "Provide temperature, line speed, bottle finish, cap weight and leak-test method."
+        }
+      ],
+      "quoteChecklist": [
+        "Cap and bottle drawings or samples",
+        "Resin, colour and food-contact documentation",
+        "Opening/sealing targets and leak-test method",
+        "Machine, output and trial sample plan"
+      ],
+      "sources": [
+        {
+          "label": "CETIE GME 32.04 · PCO 1881 finish",
+          "url": "https://cetie-standard.com/206-document-gme3204-pet-pco-finish-28-22-17-1-27",
+          "note": "Finish terminology and interface reference; confirm the buyer drawing."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "Food-contact and leak performance must be confirmed with the buyer's materials, process and trial evidence."
+    },
+    "titleEs": "Moldes de tapas para botellas de aceite",
+    "descriptionEs": "Moldes para botellas de aceite comestible, revisando juntos el sellado, el anillo de seguridad o la tapa abatible y la manipulación en línea.",
+    "bodyEs": "Moldes para botellas de aceite comestible, revisando juntos el sellado, el anillo de seguridad o la tapa abatible y la manipulación en línea.",
+    "sectionsEs": [
+      {
+        "title": "DFM del sellado",
+        "body": "LEYA revisa superficies de sellado, tapón, puentes y línea de partición respecto al cuello y la apertura.",
+        "bullets": [
+          "Superficies críticas identificadas",
+          "Salida del anillo revisada",
+          "Riesgos de desmoldeo registrados"
+        ]
+      },
+      {
+        "title": "Prueba en línea",
+        "body": "Las muestras se comprueban con el aceite, temperatura y manipulación acordados antes de cerrar el acta.",
+        "bullets": [
+          "Tapa y botella reales cuando sea posible",
+          "Controles de fuga y ajuste registrados",
+          "Resultado ligado a la revisión aprobada"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Se puede copiar una tapa de aceite existente?",
+        "answer": "Sí, se puede revisar una muestra o plano para un reemplazo compatible; el cuello de la botella es imprescindible."
+      },
+      {
+        "question": "¿Cómo se evalúan las fugas?",
+        "answer": "Se acuerdan aceite, temperatura, tiempo y método de presión antes de la prueba."
+      },
+      {
+        "question": "¿Qué acero se debe elegir?",
+        "answer": "Se selecciona tras revisar desgaste, corrosión, pulido y mantenimiento, no mediante una promesa fija."
+      },
+      {
+        "question": "¿Qué debe incluir la solicitud?",
+        "answer": "Geometría, resina, peso, datos de línea, producción objetivo y método de aceptación."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Botellas de aceite",
+          "body": "Desarrollar tapas de anillo, inviolables o abatibles para marcas de aceite y envasadores."
+        },
+        {
+          "title": "Sustitución de una tapa existente",
+          "body": "Usar muestra y acabado del cuello aprobados para revisar ajuste, apertura y repetibilidad."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Sellado y apertura",
+          "body": "Compartir superficies de sellado, liner o tapón, par de apertura y requisito de inviolabilidad."
+        },
+        {
+          "title": "Ficha de contacto alimentario",
+          "body": "Indicar resina, aditivos, color y documentación esperada del proveedor de piezas."
+        },
+        {
+          "title": "Condiciones de llenado",
+          "body": "Facilitar temperatura, velocidad, acabado de botella, peso y método de prueba de fugas."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos o muestras de tapa y botella",
+        "Resina, color y documentación de contacto alimentario",
+        "Objetivos de apertura/sellado y prueba de fugas",
+        "Máquina, producción y plan de muestras"
+      ],
+      "sources": [
+        {
+          "label": "CETIE GME 32.04 · PCO 1881 finish",
+          "url": "https://cetie-standard.com/206-document-gme3204-pet-pco-finish-28-22-17-1-27",
+          "note": "Finish terminology and interface reference; confirm the buyer drawing."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "El contacto alimentario y la estanqueidad se confirman con materiales, proceso y evidencias de prueba del comprador."
+    }
+  },
+  "flip-top-caps-mould": {
+    "slug": "flip-top-caps-mould",
+    "title": "Flip-Top Cap Moulds",
+    "description": "Living-hinge and disc-top tooling for personal-care, household and travel packs where opening feel, hinge alignment and closure fit matter.",
+    "body": "Living-hinge and disc-top tooling for personal-care, household and travel packs where opening feel, hinge alignment and closure fit matter.",
+    "sections": [
+      {
+        "title": "Living-hinge DFM",
+        "body": "LEYA reviews hinge thickness, radii, gate position and ejection so the cap opens without damaging the hinge.",
+        "bullets": [
+          "Flexing zone marked",
+          "Parting and ejection reviewed",
+          "Resin shrinkage assumptions recorded"
+        ]
+      },
+      {
+        "title": "Functional sample review",
+        "body": "Trial caps are checked for open angle, snap fit, dispensing and visual limits against the approved sample.",
+        "bullets": [
+          "Open/close checks agreed",
+          "Bottle fit confirmed",
+          "Approved revision retained"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Which resin is suitable for a living hinge?",
+        "answer": "The resin must be confirmed with the buyer because flow, fatigue behaviour, colour and process conditions affect the hinge."
+      },
+      {
+        "question": "Can you match an existing flip-top?",
+        "answer": "Yes, send a sample, bottle finish and any force or angle requirement for a DFM review."
+      },
+      {
+        "question": "How is the hinge approved?",
+        "answer": "The buyer and LEYA agree open/close checks, bottle fit, appearance limits and the trial record."
+      },
+      {
+        "question": "Can the cap be made in two colours?",
+        "answer": "Two-colour feasibility depends on the parting, material pairing, machine and visual boundary defined in the brief."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Shampoo and lotion packs",
+          "body": "Balance hinge feel, dispensing opening and snap closure for repeated consumer use."
+        },
+        {
+          "title": "Two-colour or decorated caps",
+          "body": "Separate cosmetic surfaces and functional interfaces while keeping the assembly repeatable."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Hinge geometry",
+          "body": "Provide the open angle, hinge thickness, expected flexing and resin grade."
+        },
+        {
+          "title": "Dispensing path",
+          "body": "State opening size, plug fit, wall thickness and the bottle neck interface."
+        },
+        {
+          "title": "Appearance limits",
+          "body": "Mark gate, weld-line, texture, colour and parting-line expectations on the sample or drawing."
+        }
+      ],
+      "quoteChecklist": [
+        "Cap, bottle and hinge drawings",
+        "Resin, colour and decoration limits",
+        "Open/close force or user-feel target",
+        "Machine, cycle objective and sample plan"
+      ],
+      "sources": [
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "Hinge life and user feel are confirmed by the specified resin, mould trial and approved project record."
+    },
+    "titleEs": "Moldes para tapas abatibles",
+    "descriptionEs": "Moldes para bisagras vivas y tapas disc-top de envases de cuidado personal, hogar y viaje, priorizando apertura, alineación y ajuste.",
+    "bodyEs": "Moldes para bisagras vivas y tapas disc-top de envases de cuidado personal, hogar y viaje, priorizando apertura, alineación y ajuste.",
+    "sectionsEs": [
+      {
+        "title": "DFM de la bisagra",
+        "body": "LEYA revisa espesor, radios, entrada y expulsión para evitar daños durante la apertura.",
+        "bullets": [
+          "Zona flexible marcada",
+          "Partición y expulsión revisadas",
+          "Supuestos de contracción registrados"
+        ]
+      },
+      {
+        "title": "Revisión de muestra funcional",
+        "body": "Las tapas de prueba se comprueban por ángulo, ajuste, dispensación y límites visuales.",
+        "bullets": [
+          "Controles de apertura acordados",
+          "Ajuste en botella confirmado",
+          "Revisión aprobada conservada"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Qué resina sirve para una bisagra viva?",
+        "answer": "Debe confirmarse con el comprador porque flujo, fatiga, color y proceso afectan la bisagra."
+      },
+      {
+        "question": "¿Pueden igualar una tapa abatible existente?",
+        "answer": "Sí, envíe muestra, acabado del cuello y requisito de fuerza o ángulo."
+      },
+      {
+        "question": "¿Cómo se aprueba la bisagra?",
+        "answer": "Se acuerdan controles de apertura/cierre, ajuste, aspecto y registro de prueba."
+      },
+      {
+        "question": "¿Se puede fabricar en dos colores?",
+        "answer": "Depende de partición, combinación de materiales, máquina y límite visual del proyecto."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Envases de champú y loción",
+          "body": "Equilibrar sensación de bisagra, abertura de dispensación y cierre a presión."
+        },
+        {
+          "title": "Tapas bicolor o decoradas",
+          "body": "Separar superficies estéticas e interfaces funcionales manteniendo un montaje repetible."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Geometría de bisagra",
+          "body": "Indicar ángulo abierto, espesor, flexiones esperadas y resina."
+        },
+        {
+          "title": "Canal de dispensación",
+          "body": "Definir abertura, ajuste del tapón, pared y unión con el cuello."
+        },
+        {
+          "title": "Límites visuales",
+          "body": "Marcar entrada, líneas de soldadura, textura, color y línea de partición en plano o muestra."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos de tapa, botella y bisagra",
+        "Resina, color y límites decorativos",
+        "Objetivo de fuerza o sensación de apertura",
+        "Máquina, ciclo y plan de muestras"
+      ],
+      "sources": [
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "La vida de la bisagra y la sensación de uso se confirman con resina, prueba del molde y registro aprobado."
+    }
+  },
+  "engine-oil-cap-mould": {
+    "slug": "engine-oil-cap-mould",
+    "title": "Engine Oil Cap Moulds",
+    "description": "Industrial closure tooling for engine oil, lubricant and fluid containers where chemical exposure, torque and seal geometry must be reviewed together.",
+    "body": "Industrial closure tooling for engine oil, lubricant and fluid containers where chemical exposure, torque and seal geometry must be reviewed together.",
+    "sections": [
+      {
+        "title": "Chemical-service review",
+        "body": "LEYA reviews the closure geometry, material assumptions, draft and steel selection around the declared fluid exposure.",
+        "bullets": [
+          "Contact areas marked",
+          "Seal and thread risks listed",
+          "Maintenance assumptions recorded"
+        ]
+      },
+      {
+        "title": "Torque and fit trial",
+        "body": "Trial parts are checked on the intended bottle with the agreed torque, fit and visual limits.",
+        "bullets": [
+          "Bottle interface confirmed",
+          "Torque method agreed",
+          "Approval linked to the project record"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can one cap fit several lubricant bottles?",
+        "answer": "Only if the neck finish, seal and torque windows are compatible; provide each bottle reference for review."
+      },
+      {
+        "question": "Do you promise a fixed mould life?",
+        "answer": "No. Service life depends on steel, resin, maintenance, process and the approved usage profile."
+      },
+      {
+        "question": "How is chemical resistance assessed?",
+        "answer": "The buyer should provide the fluid and exposure conditions; part material and mould steel are then reviewed accordingly."
+      },
+      {
+        "question": "What does a useful first enquiry contain?",
+        "answer": "Send drawings or samples, fluid conditions, resin, torque, machine and output requirements."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Lubricant and ATF packs",
+          "body": "Develop threaded or tethered closures for bottles exposed to oils and workshop handling."
+        },
+        {
+          "title": "High-torque service caps",
+          "body": "Review grip, tamper evidence and seal compression for repeated opening in the field."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Fluid and exposure",
+          "body": "Name the fluid, temperature range, storage time and cleaning chemicals that contact the part."
+        },
+        {
+          "title": "Torque and seal",
+          "body": "Provide thread, plug, gasket and opening-torque targets, if already specified."
+        },
+        {
+          "title": "Handling and line",
+          "body": "Share cap weight, machine, output, automation and inspection method."
+        }
+      ],
+      "quoteChecklist": [
+        "Cap/bottle drawing or sample",
+        "Fluid, temperature and exposure brief",
+        "Torque, seal and tamper requirements",
+        "Machine, output and inspection plan"
+      ],
+      "sources": [
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        },
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        }
+      ],
+      "evidenceNote": "Chemical compatibility, torque and durability are confirmed only against the declared fluid, drawings and trial evidence."
+    },
+    "titleEs": "Moldes para tapas de aceite de motor",
+    "descriptionEs": "Moldes industriales para envases de aceite y fluidos, revisando exposición química, par y sellado en conjunto.",
+    "bodyEs": "Moldes industriales para envases de aceite y fluidos, revisando exposición química, par y sellado en conjunto.",
+    "sectionsEs": [
+      {
+        "title": "Revisión de servicio químico",
+        "body": "LEYA revisa geometría, material, desmoldeo y acero considerando el fluido declarado.",
+        "bullets": [
+          "Zonas de contacto marcadas",
+          "Riesgos de rosca y sellado listados",
+          "Mantenimiento registrado"
+        ]
+      },
+      {
+        "title": "Prueba de par y ajuste",
+        "body": "Las piezas se prueban en la botella prevista con los límites acordados de par, ajuste y aspecto.",
+        "bullets": [
+          "Interfaz confirmada",
+          "Método de par acordado",
+          "Aprobación ligada al registro"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Una tapa puede servir para varias botellas?",
+        "answer": "Solo si acabados, sellado y ventanas de par son compatibles; envíe cada referencia."
+      },
+      {
+        "question": "¿Prometen una vida fija del molde?",
+        "answer": "No. Depende de acero, resina, mantenimiento, proceso y uso aprobado."
+      },
+      {
+        "question": "¿Cómo se revisa la resistencia química?",
+        "answer": "El comprador aporta fluido y exposición; después se revisan material y acero."
+      },
+      {
+        "question": "¿Qué debe incluir la primera consulta?",
+        "answer": "Planos o muestras, condiciones del fluido, resina, par, máquina y producción."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Envases de lubricante y ATF",
+          "body": "Desarrollar cierres roscados o unidos para botellas expuestas a aceites y manipulación de taller."
+        },
+        {
+          "title": "Tapas de alto par",
+          "body": "Revisar agarre, inviolabilidad y compresión del sellado para aperturas repetidas."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Fluido y exposición",
+          "body": "Indicar fluido, temperatura, almacenamiento y químicos de limpieza en contacto con la pieza."
+        },
+        {
+          "title": "Par y sellado",
+          "body": "Facilitar rosca, tapón, junta y objetivo de par si ya existe."
+        },
+        {
+          "title": "Manipulación y línea",
+          "body": "Compartir peso, máquina, producción, automatización e inspección."
+        }
+      ],
+      "quoteChecklist": [
+        "Plano o muestra de tapa y botella",
+        "Ficha de fluido, temperatura y exposición",
+        "Requisitos de par, sellado e inviolabilidad",
+        "Máquina, producción y plan de inspección"
+      ],
+      "sources": [
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        },
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        }
+      ],
+      "evidenceNote": "La compatibilidad química, el par y la durabilidad se confirman con fluido, planos y evidencias de prueba."
+    }
+  },
+  "food-packaging-cap-mould": {
+    "slug": "food-packaging-cap-mould",
+    "title": "Food Packaging Cap Moulds",
+    "description": "Closure moulds for sauces, dairy, condiments and ready-meal packaging, with hygiene, sealing and consumer opening requirements defined up front.",
+    "body": "Closure moulds for sauces, dairy, condiments and ready-meal packaging, with hygiene, sealing and consumer opening requirements defined up front.",
+    "sections": [
+      {
+        "title": "Hygiene-oriented DFM",
+        "body": "LEYA reviews parting, polish, venting, ejection and material assumptions around the food-contact surfaces.",
+        "bullets": [
+          "Contact surfaces identified",
+          "Cleanability risks discussed",
+          "Critical appearance areas marked"
+        ]
+      },
+      {
+        "title": "Fit and sealing trial",
+        "body": "The agreed container and filling conditions are used to check fit, opening and leakage evidence.",
+        "bullets": [
+          "Actual container used where possible",
+          "Inspection method recorded",
+          "Final result follows approved evidence"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Do you certify the finished package?",
+        "answer": "No. LEYA can review mould and trial requirements; food-contact and package approval remain with the buyer and material suppliers."
+      },
+      {
+        "question": "Can you match a sauce-cap sample?",
+        "answer": "Yes, provide the sample, bottle drawing, resin and opening/seal target for review."
+      },
+      {
+        "question": "How should hygiene be specified?",
+        "answer": "Describe contact surfaces, cleaning practice, material documents and the visual/parting limits expected."
+      },
+      {
+        "question": "What is needed before pricing?",
+        "answer": "Send the container and cap geometry, resin, line data, target output and trial acceptance method."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Sauce and condiment bottles",
+          "body": "Coordinate tamper evidence, dispensing control and clean appearance for filled food packs."
+        },
+        {
+          "title": "Dairy and ready-meal containers",
+          "body": "Review snap fit, lid flatness and filling-line handling around the container rim."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Food-contact materials",
+          "body": "State resin, additives, colour and the documentation route used by the part supplier."
+        },
+        {
+          "title": "Seal and opening",
+          "body": "Provide the rim/neck drawing, liner or plug details and opening method."
+        },
+        {
+          "title": "Hygiene and line",
+          "body": "Share filling temperature, cleaning practice, output and visual inspection limits."
+        }
+      ],
+      "quoteChecklist": [
+        "Container and closure drawings",
+        "Resin, additives and food-contact documents",
+        "Seal/opening and tamper requirements",
+        "Filling, cleaning and inspection conditions"
+      ],
+      "sources": [
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "Food-contact suitability and package performance require the buyer's material documents, process conditions and acceptance record."
+    },
+    "titleEs": "Moldes de tapas para envases alimentarios",
+    "descriptionEs": "Moldes para salsas, lácteos, condimentos y platos preparados, definiendo higiene, sellado y apertura del consumidor desde el inicio.",
+    "bodyEs": "Moldes para salsas, lácteos, condimentos y platos preparados, definiendo higiene, sellado y apertura del consumidor desde el inicio.",
+    "sectionsEs": [
+      {
+        "title": "DFM orientado a higiene",
+        "body": "LEYA revisa partición, pulido, ventilación, expulsión y material en superficies de contacto.",
+        "bullets": [
+          "Superficies de contacto identificadas",
+          "Riesgos de limpieza comentados",
+          "Zonas visuales marcadas"
+        ]
+      },
+      {
+        "title": "Prueba de ajuste y sellado",
+        "body": "Se usan envase y condiciones acordadas para comprobar ajuste, apertura y evidencias de fuga.",
+        "bullets": [
+          "Envase real cuando sea posible",
+          "Método registrado",
+          "Resultado según evidencia aprobada"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Certifican el envase terminado?",
+        "answer": "No. LEYA revisa molde y pruebas; la aprobación de contacto alimentario corresponde al comprador y proveedores."
+      },
+      {
+        "question": "¿Pueden igualar una tapa de salsa?",
+        "answer": "Sí, envíe muestra, plano, resina y objetivo de apertura/sellado."
+      },
+      {
+        "question": "¿Cómo se define la higiene?",
+        "answer": "Describa superficies, limpieza, documentos de material y límites de partición/aspecto."
+      },
+      {
+        "question": "¿Qué hace falta antes del precio?",
+        "answer": "Geometría, resina, datos de línea, producción y método de aceptación de prueba."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Botellas de salsas y condimentos",
+          "body": "Coordinar inviolabilidad, dosificación y aspecto limpio en envases llenos."
+        },
+        {
+          "title": "Envases lácteos y preparados",
+          "body": "Revisar encaje, planitud de tapa y manipulación alrededor del borde."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Materiales de contacto",
+          "body": "Indicar resina, aditivos, color y documentación del proveedor de piezas."
+        },
+        {
+          "title": "Sellado y apertura",
+          "body": "Facilitar plano del cuello/borde, liner o tapón y método de apertura."
+        },
+        {
+          "title": "Higiene y línea",
+          "body": "Compartir temperatura de llenado, limpieza, producción y límites visuales."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos de envase y tapa",
+        "Resina, aditivos y documentos de contacto",
+        "Sellado, apertura e inviolabilidad",
+        "Condiciones de llenado, limpieza e inspección"
+      ],
+      "sources": [
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "La aptitud para contacto alimentario y el envase se confirman con documentos, proceso y registro de aceptación."
+    }
+  },
+  "medical-cap-mould": {
+    "slug": "medical-cap-mould",
+    "title": "Medical and Diagnostic Cap Moulds",
+    "description": "Precision tooling for diagnostic, pharmaceutical and medical packaging parts where traceability, cleanable surfaces and controlled approval records are essential.",
+    "body": "Precision tooling for diagnostic, pharmaceutical and medical packaging parts where traceability, cleanable surfaces and controlled approval records are essential.",
+    "sections": [
+      {
+        "title": "Risk-led part review",
+        "body": "LEYA maps critical sealing, burr, flash and ejection features to the drawing and inspection plan.",
+        "bullets": [
+          "Revision frozen for review",
+          "Critical-to-function features listed",
+          "Material assumptions separated from evidence"
+        ]
+      },
+      {
+        "title": "Documented trial handover",
+        "body": "Trial samples and dimensional records are packaged with the approved revision so the buyer can complete its own release.",
+        "bullets": [
+          "Sampling plan agreed",
+          "Inspection record attached",
+          "Buyer approval remains the release decision"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can LEYA claim a medical certification for the mould?",
+        "answer": "No. Any regulatory or cleanroom claim must be confirmed by the buyer's quality system and project documents."
+      },
+      {
+        "question": "What controls flash and burrs?",
+        "answer": "Parting, venting, steel condition, ejection and the agreed inspection limit are reviewed together."
+      },
+      {
+        "question": "Can you work from a diagnostic sample?",
+        "answer": "Yes, but a controlled drawing or scan and the intended material are needed before design release."
+      },
+      {
+        "question": "What records should be requested?",
+        "answer": "Agree revision, material traceability, dimensional report, samples and approval signatures before the trial."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Diagnostic containers",
+          "body": "Review small closures, plugs or caps around the container, filling and inspection process."
+        },
+        {
+          "title": "Pharmaceutical packaging",
+          "body": "Define surface, material and documentation expectations before committing to a mould design."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Part and material",
+          "body": "Provide the drawing, resin grade, additives, colour and any controlled-environment requirements."
+        },
+        {
+          "title": "Critical features",
+          "body": "Mark sealing, snap, thread, burr, flash and cosmetic limits on the drawing."
+        },
+        {
+          "title": "Traceability",
+          "body": "State revision control, inspection records, sampling and approval sign-off needed by the buyer."
+        }
+      ],
+      "quoteChecklist": [
+        "Controlled part drawing and revision",
+        "Material and environment requirements",
+        "Critical defect and inspection limits",
+        "Approval, sampling and traceability plan"
+      ],
+      "sources": [
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        },
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        }
+      ],
+      "evidenceNote": "Regulatory suitability is never inferred from a mould page; final release follows the buyer's controlled documents and trial record."
+    },
+    "titleEs": "Moldes para tapas médicas y de diagnóstico",
+    "descriptionEs": "Moldes de precisión para envases de diagnóstico, farmacéuticos y médicos, con trazabilidad, superficies limpiables y registros controlados.",
+    "bodyEs": "Moldes de precisión para envases de diagnóstico, farmacéuticos y médicos, con trazabilidad, superficies limpiables y registros controlados.",
+    "sectionsEs": [
+      {
+        "title": "Revisión de riesgos",
+        "body": "LEYA relaciona sellado, rebabas, flash y expulsión con el plano y el plan de inspección.",
+        "bullets": [
+          "Revisión congelada",
+          "Funciones críticas listadas",
+          "Supuestos separados de evidencias"
+        ]
+      },
+      {
+        "title": "Entrega documentada de prueba",
+        "body": "Las muestras y registros dimensionales acompañan la revisión aprobada para que el comprador complete su liberación.",
+        "bullets": [
+          "Plan de muestreo acordado",
+          "Informe adjunto",
+          "La liberación corresponde al comprador"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿LEYA puede afirmar una certificación médica?",
+        "answer": "No. Las afirmaciones regulatorias o de sala limpia dependen del sistema de calidad y documentos del comprador."
+      },
+      {
+        "question": "¿Cómo se controlan rebabas y flash?",
+        "answer": "Se revisan partición, ventilación, acero, expulsión y límite de inspección."
+      },
+      {
+        "question": "¿Pueden trabajar desde una muestra?",
+        "answer": "Sí, pero se necesita plano o escaneo controlado y material previsto."
+      },
+      {
+        "question": "¿Qué registros solicitar?",
+        "answer": "Revisiones, trazabilidad, informe dimensional, muestras y firmas antes de la prueba."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Envases de diagnóstico",
+          "body": "Revisar tapas, tapones o cierres pequeños junto con llenado e inspección."
+        },
+        {
+          "title": "Envases farmacéuticos",
+          "body": "Definir superficie, material y documentación antes de aprobar el diseño."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Pieza y material",
+          "body": "Enviar plano, resina, aditivos, color y requisitos de entorno controlado."
+        },
+        {
+          "title": "Características críticas",
+          "body": "Marcar sellado, encaje, rosca, rebaba, flash y límites cosméticos."
+        },
+        {
+          "title": "Trazabilidad",
+          "body": "Indicar revisiones, informes, muestreo y firmas de aprobación."
+        }
+      ],
+      "quoteChecklist": [
+        "Plano controlado y revisión",
+        "Requisitos de material y entorno",
+        "Límites de defectos e inspección",
+        "Plan de aprobación, muestras y trazabilidad"
+      ],
+      "sources": [
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        },
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        }
+      ],
+      "evidenceNote": "La aptitud regulatoria no se deduce de una página; la liberación depende de documentos controlados y pruebas."
+    }
+  },
+  "personal-care-cap-mould": {
+    "slug": "personal-care-cap-mould",
+    "title": "Personal Care Cap Moulds",
+    "description": "Cap tooling for shampoo, body wash, lotion and cosmetic bottles, balancing dispensing, appearance, grip and line handling.",
+    "body": "Cap tooling for shampoo, body wash, lotion and cosmetic bottles, balancing dispensing, appearance, grip and line handling.",
+    "sections": [
+      {
+        "title": "Appearance and function DFM",
+        "body": "LEYA separates cosmetic surfaces from sealing and ejection features so the sample can be judged fairly.",
+        "bullets": [
+          "Appearance zones marked",
+          "Dispensing path reviewed",
+          "Gate and parting risks recorded"
+        ]
+      },
+      {
+        "title": "Brand sample comparison",
+        "body": "The trial review checks colour, texture, fit, opening feel and approved visual limits.",
+        "bullets": [
+          "Reference sample retained",
+          "Bottle fit checked",
+          "Changes logged by revision"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can you make a cap for an existing bottle?",
+        "answer": "Yes, send the bottle finish, cap sample and dispensing requirements so fit and function can be reviewed."
+      },
+      {
+        "question": "How are cosmetic surfaces protected?",
+        "answer": "Gate, parting, venting, polish, texture and ejection are planned around the marked appearance zones."
+      },
+      {
+        "question": "Can a pump interface be integrated?",
+        "answer": "Feasibility depends on the pump drawing, neck finish, sealing and assembly method."
+      },
+      {
+        "question": "What helps an accurate quotation?",
+        "answer": "A drawing, sample, resin, colour/texture reference, machine data and target output."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Shampoo and body wash",
+          "body": "Develop flip-top, disc-top or pump interfaces for filled personal-care bottles."
+        },
+        {
+          "title": "Premium cosmetic packs",
+          "body": "Coordinate texture, colour split, decoration area and clean parting lines with the brand sample."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Dispensing function",
+          "body": "Provide the opening, plug, pump interface, closure force and bottle finish."
+        },
+        {
+          "title": "Appearance and decoration",
+          "body": "Mark texture, gloss, colour, logo area, gate witness and acceptable weld lines."
+        },
+        {
+          "title": "Resin and process",
+          "body": "State resin, colour masterbatch, machine, output and automation details."
+        }
+      ],
+      "quoteChecklist": [
+        "Cap, bottle and dispenser drawings",
+        "Resin, colour and appearance sample",
+        "Opening/closing and dispensing target",
+        "Machine, output and decoration limits"
+      ],
+      "sources": [
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "Appearance and dispensing are approved against the buyer's sample, drawings and trial record, not a generic catalogue promise."
+    },
+    "titleEs": "Moldes para tapas de cuidado personal",
+    "descriptionEs": "Moldes para champú, gel, loción y cosmética, equilibrando dispensación, aspecto, agarre y manipulación en línea.",
+    "bodyEs": "Moldes para champú, gel, loción y cosmética, equilibrando dispensación, aspecto, agarre y manipulación en línea.",
+    "sectionsEs": [
+      {
+        "title": "DFM de aspecto y función",
+        "body": "LEYA separa superficies cosméticas de sellado y expulsión para valorar la muestra correctamente.",
+        "bullets": [
+          "Zonas visuales marcadas",
+          "Ruta de dispensación revisada",
+          "Riesgos de entrada y partición registrados"
+        ]
+      },
+      {
+        "title": "Comparación con muestra",
+        "body": "La prueba comprueba color, textura, ajuste, sensación de apertura y límites visuales.",
+        "bullets": [
+          "Muestra conservada",
+          "Ajuste en botella comprobado",
+          "Cambios registrados por revisión"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Pueden hacer una tapa para una botella existente?",
+        "answer": "Sí, envíe acabado del cuello, muestra y requisitos de dispensación."
+      },
+      {
+        "question": "¿Cómo se protegen las superficies cosméticas?",
+        "answer": "Entrada, partición, ventilación, pulido, textura y expulsión se planifican con las zonas marcadas."
+      },
+      {
+        "question": "¿Se puede integrar una bomba?",
+        "answer": "Depende de plano de bomba, cuello, sellado y método de montaje."
+      },
+      {
+        "question": "¿Qué permite cotizar mejor?",
+        "answer": "Plano, muestra, resina, referencia de color/textura, máquina y producción."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Champú y gel corporal",
+          "body": "Desarrollar interfaces abatibles, disc-top o de bomba para botellas de cuidado personal."
+        },
+        {
+          "title": "Cosmética premium",
+          "body": "Coordinar textura, color, decoración y líneas limpias con la muestra de marca."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Función de dispensación",
+          "body": "Facilitar abertura, tapón, interfaz de bomba, fuerza y acabado del cuello."
+        },
+        {
+          "title": "Aspecto y decoración",
+          "body": "Marcar textura, brillo, color, logo, marca de entrada y soldaduras aceptables."
+        },
+        {
+          "title": "Resina y proceso",
+          "body": "Indicar resina, masterbatch, máquina, producción y automatización."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos de tapa, botella y dispensador",
+        "Resina, color y muestra visual",
+        "Objetivo de apertura/cierre y dispensación",
+        "Máquina, producción y límites decorativos"
+      ],
+      "sources": [
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "El aspecto y la dispensación se aprueban con muestra, planos y prueba del comprador, no con una promesa genérica."
+    }
+  },
+  "functional-cap-mould": {
+    "slug": "functional-cap-mould",
+    "title": "Functional and Combination Cap Moulds",
+    "description": "Tooling for sport, push-pull, tethered and multi-feature closures where several functions must work in one compact part.",
+    "body": "Tooling for sport, push-pull, tethered and multi-feature closures where several functions must work in one compact part.",
+    "sections": [
+      {
+        "title": "Mechanism mapping",
+        "body": "LEYA maps each moving, sealing and ejection feature to a mould action before layout is fixed.",
+        "bullets": [
+          "User sequence documented",
+          "Interference risks listed",
+          "Assembly interfaces marked"
+        ]
+      },
+      {
+        "title": "Function-first trial",
+        "body": "Trial parts are checked in the actual opening/closing sequence with the agreed fit and leak criteria.",
+        "bullets": [
+          "Sequence demonstrated",
+          "Critical forces recorded",
+          "Changes linked to revision"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can one mould combine several functions?",
+        "answer": "Often, but feasibility depends on the parting, sliders/inserts, machine and assembly sequence."
+      },
+      {
+        "question": "How do you review a sport-cap leak path?",
+        "answer": "Provide the neck, seal, drinking opening and use conditions; the trial criteria are agreed before testing."
+      },
+      {
+        "question": "Can a tether be added later?",
+        "answer": "Only if the drawing, material and mould architecture leave a controlled route; review it before steel release."
+      },
+      {
+        "question": "What should be sent first?",
+        "answer": "A sample or 3D/drawing plus the user sequence, resin, machine and output target."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Sports and on-the-go closures",
+          "body": "Coordinate drinking aperture, tether, grip and leak-control features for active-use packs."
+        },
+        {
+          "title": "Combination mechanisms",
+          "body": "Review several moving or sealing features together before choosing the mould split and ejection sequence."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Functional sequence",
+          "body": "Describe how the user opens, drinks, closes, pulls or locks the part."
+        },
+        {
+          "title": "Interface geometry",
+          "body": "Provide neck finish, seal, hinge/tether, insert and assembly drawings."
+        },
+        {
+          "title": "Use conditions",
+          "body": "State resin, temperature, force, drop/handling expectations and output target."
+        }
+      ],
+      "quoteChecklist": [
+        "Functional sequence and approved sample",
+        "Neck, seal, tether and assembly drawings",
+        "Resin, forces and use conditions",
+        "Machine, automation and trial acceptance"
+      ],
+      "sources": [
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        },
+        {
+          "label": "HMould product catalogue",
+          "url": "https://www.hmould.com/products/",
+          "note": "Model-family reference for enquiry scoping; not a LEYA specification."
+        }
+      ],
+      "evidenceNote": "Combination functions are confirmed by geometry, assembly sequence and trial evidence for the specified use."
+    },
+    "titleEs": "Moldes para tapas funcionales y combinadas",
+    "descriptionEs": "Moldes para tapas deportivas, push-pull, unidas y multifunción, donde varias funciones deben convivir en una pieza compacta.",
+    "bodyEs": "Moldes para tapas deportivas, push-pull, unidas y multifunción, donde varias funciones deben convivir en una pieza compacta.",
+    "sectionsEs": [
+      {
+        "title": "Mapa del mecanismo",
+        "body": "LEYA relaciona funciones móviles, sellado y expulsión con acciones del molde antes de fijar el diseño.",
+        "bullets": [
+          "Secuencia documentada",
+          "Interferencias listadas",
+          "Interfaces de montaje marcadas"
+        ]
+      },
+      {
+        "title": "Prueba orientada a función",
+        "body": "Las piezas se prueban en la secuencia real de apertura y cierre con criterios de ajuste y fuga acordados.",
+        "bullets": [
+          "Secuencia demostrada",
+          "Fuerzas críticas registradas",
+          "Cambios ligados a revisión"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Un molde puede combinar varias funciones?",
+        "answer": "A menudo sí; depende de partición, correderas/insertos, máquina y montaje."
+      },
+      {
+        "question": "¿Cómo se revisa una tapa deportiva?",
+        "answer": "Facilite cuello, sellado, abertura y condiciones de uso para acordar la prueba."
+      },
+      {
+        "question": "¿Se puede añadir una unión después?",
+        "answer": "Solo si geometría, material y arquitectura dejan una ruta controlada; se revisa antes del acero."
+      },
+      {
+        "question": "¿Qué enviar primero?",
+        "answer": "Muestra o plano 3D con secuencia de uso, resina, máquina y producción."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Tapas deportivas y de uso móvil",
+          "body": "Coordinar abertura, unión, agarre y control de fugas para envases activos."
+        },
+        {
+          "title": "Mecanismos combinados",
+          "body": "Revisar funciones móviles y de sellado antes de fijar partición y expulsión."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Secuencia funcional",
+          "body": "Describir cómo el usuario abre, bebe, cierra, tira o bloquea la pieza."
+        },
+        {
+          "title": "Geometría de interfaz",
+          "body": "Facilitar cuello, sellado, bisagra/unión, insertos y montaje."
+        },
+        {
+          "title": "Condiciones de uso",
+          "body": "Indicar resina, temperatura, fuerzas, manipulación y producción."
+        }
+      ],
+      "quoteChecklist": [
+        "Secuencia y muestra aprobada",
+        "Planos de cuello, sellado, unión y montaje",
+        "Resina, fuerzas y uso",
+        "Máquina, automatización y aceptación"
+      ],
+      "sources": [
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        },
+        {
+          "label": "HMould product catalogue",
+          "url": "https://www.hmould.com/products/",
+          "note": "Model-family reference for enquiry scoping; not a LEYA specification."
+        }
+      ],
+      "evidenceNote": "Las funciones combinadas se confirman mediante geometría, montaje y evidencias de prueba del uso definido."
+    }
+  },
+  "plastic-handle-cap-mould": {
+    "slug": "plastic-handle-cap-mould",
+    "title": "Plastic Handle Moulds",
+    "description": "Handle and grip tooling for bottles, jerry cans and containers where ergonomics, attachment strength and mould release must stay aligned.",
+    "body": "Handle and grip tooling for bottles, jerry cans and containers where ergonomics, attachment strength and mould release must stay aligned.",
+    "sections": [
+      {
+        "title": "Load-path DFM",
+        "body": "LEYA reviews the load path, ribs, attachment and ejection direction against the drawing and intended use.",
+        "bullets": [
+          "Load points marked",
+          "Shrinkage and warpage risks listed",
+          "Assembly interface checked"
+        ]
+      },
+      {
+        "title": "Fit and handling trial",
+        "body": "Samples are assembled with the container and checked for fit, grip and agreed visual limits.",
+        "bullets": [
+          "Container used where possible",
+          "Handling checks recorded",
+          "Approved revision retained"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can the handle be moulded with the container?",
+        "answer": "Feasibility depends on the container process, parting, machine and assembly requirement; send the full interface."
+      },
+      {
+        "question": "How is handle strength checked?",
+        "answer": "Agree load direction, fixture, duration and acceptance before the trial."
+      },
+      {
+        "question": "Can a textured grip be added?",
+        "answer": "Yes, if texture, draft, ejection and appearance zones are defined on the drawing or sample."
+      },
+      {
+        "question": "What information is needed for a quote?",
+        "answer": "Send handle/container geometry, resin, load, machine, output and assembly method."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Jerry-can and container handles",
+          "body": "Develop an integrated or separate handle for carrying, stacking and filling operations."
+        },
+        {
+          "title": "Bottle carrying grips",
+          "body": "Review finger clearance, attachment points and cosmetic surfaces for repeated handling."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Load and ergonomics",
+          "body": "Provide user load, grip dimensions, finger clearance and any drop or handling requirement."
+        },
+        {
+          "title": "Attachment design",
+          "body": "Share the container interface, weld/snap details and assembly method."
+        },
+        {
+          "title": "Part and machine",
+          "body": "State resin, wall thickness, texture, machine and output target."
+        }
+      ],
+      "quoteChecklist": [
+        "Handle and container drawings or sample",
+        "Load, grip and attachment requirements",
+        "Resin, texture and wall targets",
+        "Machine, assembly and trial plan"
+      ],
+      "sources": [
+        {
+          "label": "HMould product catalogue",
+          "url": "https://www.hmould.com/products/",
+          "note": "Model-family reference for enquiry scoping; not a LEYA specification."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "Strength and ergonomics are confirmed by the buyer's load case, assembly method and trial record."
+    },
+    "titleEs": "Moldes para asas de plástico",
+    "descriptionEs": "Moldes de asas y agarres para botellas, garrafas y envases, alineando ergonomía, resistencia de unión y desmoldeo.",
+    "bodyEs": "Moldes de asas y agarres para botellas, garrafas y envases, alineando ergonomía, resistencia de unión y desmoldeo.",
+    "sectionsEs": [
+      {
+        "title": "DFM del camino de carga",
+        "body": "LEYA revisa carga, nervios, unión y dirección de expulsión respecto al uso previsto.",
+        "bullets": [
+          "Puntos de carga marcados",
+          "Riesgos de contracción listados",
+          "Interfaz comprobada"
+        ]
+      },
+      {
+        "title": "Prueba de ajuste y manipulación",
+        "body": "Las muestras se montan en el envase y se comprueban ajuste, agarre y límites visuales.",
+        "bullets": [
+          "Envase real cuando sea posible",
+          "Controles registrados",
+          "Revisión aprobada conservada"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿El asa puede moldearse con el envase?",
+        "answer": "Depende de proceso, partición, máquina y montaje; envíe la interfaz completa."
+      },
+      {
+        "question": "¿Cómo se comprueba la resistencia?",
+        "answer": "Se acuerdan dirección, útil, duración y aceptación antes de probar."
+      },
+      {
+        "question": "¿Se puede añadir textura?",
+        "answer": "Sí, si textura, desmoldeo y zonas visuales aparecen en plano o muestra."
+      },
+      {
+        "question": "¿Qué hace falta para cotizar?",
+        "answer": "Geometría, resina, carga, máquina, producción y montaje."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Asas para garrafas y envases",
+          "body": "Desarrollar un asa integrada o separada para transporte, apilado y llenado."
+        },
+        {
+          "title": "Agarres de botellas",
+          "body": "Revisar espacio para dedos, uniones y superficies cosméticas para uso repetido."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Carga y ergonomía",
+          "body": "Facilitar carga, dimensiones de agarre, espacio para dedos y golpes o manipulación."
+        },
+        {
+          "title": "Unión",
+          "body": "Compartir interfaz con el envase, soldadura/encaje y montaje."
+        },
+        {
+          "title": "Pieza y máquina",
+          "body": "Indicar resina, pared, textura, máquina y producción."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos o muestras de asa y envase",
+        "Carga, agarre y unión",
+        "Resina, textura y pared",
+        "Máquina, montaje y prueba"
+      ],
+      "sources": [
+        {
+          "label": "HMould product catalogue",
+          "url": "https://www.hmould.com/products/",
+          "note": "Model-family reference for enquiry scoping; not a LEYA specification."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "La resistencia y la ergonomía se confirman con la carga, el montaje y el registro de prueba del comprador."
+    }
+  },
+  "five-gallon-water-cap-mould": {
+    "slug": "five-gallon-water-cap-mould",
+    "title": "5 Gallon Water Cap Moulds",
+    "description": "Closure tooling for reusable large-format water bottles and dispenser packs, with seal, handling and sanitation requirements reviewed together.",
+    "body": "Closure tooling for reusable large-format water bottles and dispenser packs, with seal, handling and sanitation requirements reviewed together.",
+    "sections": [
+      {
+        "title": "Reuse-service review",
+        "body": "LEYA maps neck, seal, grip and cleaning exposure to the mould and material assumptions.",
+        "bullets": [
+          "Seal surfaces marked",
+          "Cleaning exposure listed",
+          "Handling risks recorded"
+        ]
+      },
+      {
+        "title": "Fit and leak trial",
+        "body": "The cap is checked on the intended bottle with the agreed filling, cleaning and leak criteria.",
+        "bullets": [
+          "Bottle interface confirmed",
+          "Test method recorded",
+          "Acceptance tied to revision"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "What makes a 5-gallon cap different?",
+        "answer": "The larger neck, handling load, reuse and cleaning conditions must be reviewed with the cap and bottle drawings."
+      },
+      {
+        "question": "Can you use an existing dispenser finish?",
+        "answer": "Yes, send the finish drawing or cap/bottle sample so fit and seal can be checked."
+      },
+      {
+        "question": "How should reuse be described?",
+        "answer": "State wash temperature, chemical, return cycle and handling conditions; these affect material and trial planning."
+      },
+      {
+        "question": "What should be included before pricing?",
+        "answer": "Provide drawings, resin, seal/opening target, machine or filling data and leak-test method."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Returnable 18.9 L bottles",
+          "body": "Match the cap and neck to repeated filling, washing, transport and dispenser use."
+        },
+        {
+          "title": "Cooler and dispenser closures",
+          "body": "Review pull tabs, plugs, seals and operator handling around a large closure."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Bottle neck and seal",
+          "body": "Provide the large-format neck drawing, sealing surfaces, plug or gasket details."
+        },
+        {
+          "title": "Reuse and cleaning",
+          "body": "State washing temperature, chemical exposure, return cycles and handling conditions."
+        },
+        {
+          "title": "Line and closure",
+          "body": "Share cap weight, resin, filling equipment, output and leak-test method."
+        }
+      ],
+      "quoteChecklist": [
+        "Large-bottle neck and cap drawings",
+        "Reuse, washing and chemical conditions",
+        "Resin, seal and opening requirements",
+        "Filling, leak test and sample plan"
+      ],
+      "sources": [
+        {
+          "label": "HMould product catalogue",
+          "url": "https://www.hmould.com/products/",
+          "note": "Model-family reference for enquiry scoping; not a LEYA specification."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "Reusable-bottle performance is confirmed against the buyer's cleaning, handling and leak-test conditions."
+    },
+    "titleEs": "Moldes para tapas de garrafón de 5 galones",
+    "descriptionEs": "Moldes para botellas grandes reutilizables y dispensadores, revisando sellado, manipulación y sanitización en conjunto.",
+    "bodyEs": "Moldes para botellas grandes reutilizables y dispensadores, revisando sellado, manipulación y sanitización en conjunto.",
+    "sectionsEs": [
+      {
+        "title": "Revisión de servicio reutilizable",
+        "body": "LEYA relaciona cuello, sellado, agarre y limpieza con material y diseño del molde.",
+        "bullets": [
+          "Superficies de sellado marcadas",
+          "Limpieza listada",
+          "Riesgos de manipulación registrados"
+        ]
+      },
+      {
+        "title": "Prueba de ajuste y fuga",
+        "body": "La tapa se comprueba en la botella prevista con criterios de llenado, limpieza y fugas acordados.",
+        "bullets": [
+          "Interfaz confirmada",
+          "Método registrado",
+          "Aceptación ligada a revisión"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Qué diferencia una tapa de 5 galones?",
+        "answer": "El cuello grande, carga de manipulación, reutilización y limpieza deben revisarse con planos."
+      },
+      {
+        "question": "¿Pueden usar un acabado de dispensador existente?",
+        "answer": "Sí, envíe plano o muestra de tapa y botella para revisar ajuste y sellado."
+      },
+      {
+        "question": "¿Cómo describir la reutilización?",
+        "answer": "Indique temperatura, químicos, retornos y manipulación; afectan material y prueba."
+      },
+      {
+        "question": "¿Qué incluir antes del precio?",
+        "answer": "Planos, resina, objetivo de sellado/apertura, datos de llenado y prueba de fugas."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Botellas retornables de 18,9 L",
+          "body": "Ajustar tapa y cuello a llenado, lavado, transporte y uso en dispensador."
+        },
+        {
+          "title": "Cierres de enfriadores",
+          "body": "Revisar pestañas, tapones, juntas y manipulación alrededor de una tapa grande."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Cuello y sellado",
+          "body": "Facilitar plano del cuello grande, superficies, tapón o junta."
+        },
+        {
+          "title": "Reutilización y limpieza",
+          "body": "Indicar temperatura de lavado, químicos, retornos y manipulación."
+        },
+        {
+          "title": "Línea y cierre",
+          "body": "Compartir peso, resina, equipo de llenado, producción y prueba de fugas."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos de cuello y tapa grande",
+        "Condiciones de lavado y químicos",
+        "Resina, sellado y apertura",
+        "Llenado, fugas y plan de muestras"
+      ],
+      "sources": [
+        {
+          "label": "HMould product catalogue",
+          "url": "https://www.hmould.com/products/",
+          "note": "Model-family reference for enquiry scoping; not a LEYA specification."
+        },
+        {
+          "label": "Uddeholm · Steel for moulds",
+          "url": "https://www.uddeholm.com/app/uploads/sites/242/2024/05/Tech-Uddeholm-Steel-for-moulds-EN.pdf",
+          "note": "Steel-selection factors such as wear, corrosion and hardness."
+        }
+      ],
+      "evidenceNote": "El uso de botella reutilizable se confirma con limpieza, manipulación y condiciones de fuga del comprador."
+    }
+  },
+  "wine-cap-mould": {
+    "slug": "wine-cap-mould",
+    "title": "Wine and Specialty Beverage Cap Moulds",
+    "description": "Closure tooling for wine, spirits and specialty beverages where pour control, tamper evidence and decorative surfaces must fit the bottle finish.",
+    "body": "Closure tooling for wine, spirits and specialty beverages where pour control, tamper evidence and decorative surfaces must fit the bottle finish.",
+    "sections": [
+      {
+        "title": "Finish and pour review",
+        "body": "LEYA checks neck fit, pour path, seal surfaces, parting and ejection before tool layout.",
+        "bullets": [
+          "Bottle interface frozen",
+          "Pour features marked",
+          "Visual surfaces separated"
+        ]
+      },
+      {
+        "title": "Bottle-and-cap trial",
+        "body": "Samples are fitted to the intended bottle and checked for pour, opening and appearance evidence.",
+        "bullets": [
+          "Actual bottle used where possible",
+          "Opening method agreed",
+          "Final result follows the approved record"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can the mould follow a glass-bottle finish?",
+        "answer": "Yes, provide the controlled neck drawing and cap sample; the bottle tolerance is part of the review."
+      },
+      {
+        "question": "How are decorative surfaces protected?",
+        "answer": "Texture, parting, gate, venting and ejection are arranged around the visible zones."
+      },
+      {
+        "question": "Can a pourer be built into the cap?",
+        "answer": "Feasibility depends on the pourer drawing, seal, assembly and bottle neck."
+      },
+      {
+        "question": "What is needed for a quotation?",
+        "answer": "Send bottle/cap drawings, pour and opening targets, resin, appearance sample and line data."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Wine and spirits closures",
+          "body": "Coordinate pourer, plug or threaded closure with a glass or PET bottle neck."
+        },
+        {
+          "title": "Decorative beverage caps",
+          "body": "Protect visible surfaces while preserving fit, opening and tamper features."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Bottle finish",
+          "body": "Provide the neck drawing, material and tolerance information for the bottle."
+        },
+        {
+          "title": "Pour and seal",
+          "body": "Describe pour rate, plug/gasket, opening torque and tamper requirement."
+        },
+        {
+          "title": "Decoration",
+          "body": "Mark colour, texture, gloss, logo area and acceptable marks on the sample."
+        }
+      ],
+      "quoteChecklist": [
+        "Bottle finish and cap drawings",
+        "Pour, seal and tamper targets",
+        "Resin, colour and decoration sample",
+        "Machine, output and trial acceptance"
+      ],
+      "sources": [
+        {
+          "label": "CETIE GME 32.04 · PCO 1881 finish",
+          "url": "https://cetie-standard.com/206-document-gme3204-pet-pco-finish-28-22-17-1-27",
+          "note": "Finish terminology and interface reference; confirm the buyer drawing."
+        },
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        }
+      ],
+      "evidenceNote": "Pour, seal and decoration are confirmed with the intended bottle, approved sample and mould trial."
+    },
+    "titleEs": "Moldes para tapas de vino y bebidas especiales",
+    "descriptionEs": "Moldes para vino, licores y bebidas especiales, ajustando vertido, inviolabilidad y superficies decorativas al cuello de la botella.",
+    "bodyEs": "Moldes para vino, licores y bebidas especiales, ajustando vertido, inviolabilidad y superficies decorativas al cuello de la botella.",
+    "sectionsEs": [
+      {
+        "title": "Revisión de cuello y vertido",
+        "body": "LEYA revisa ajuste, ruta de vertido, sellado, partición y expulsión antes del diseño.",
+        "bullets": [
+          "Interfaz congelada",
+          "Funciones de vertido marcadas",
+          "Superficies visibles separadas"
+        ]
+      },
+      {
+        "title": "Prueba botella-tapa",
+        "body": "Las muestras se montan en la botella prevista y se comprueban vertido, apertura y aspecto.",
+        "bullets": [
+          "Botella real cuando sea posible",
+          "Método de apertura acordado",
+          "Resultado según registro aprobado"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿El molde puede seguir un cuello de vidrio?",
+        "answer": "Sí, envíe plano controlado y muestra; la tolerancia de la botella forma parte de la revisión."
+      },
+      {
+        "question": "¿Cómo se protegen superficies decorativas?",
+        "answer": "Textura, partición, entrada, ventilación y expulsión se organizan alrededor de zonas visibles."
+      },
+      {
+        "question": "¿Se puede integrar un vertedor?",
+        "answer": "Depende del plano del vertedor, sellado, montaje y cuello."
+      },
+      {
+        "question": "¿Qué hace falta para cotizar?",
+        "answer": "Planos, objetivos de vertido/apertura, resina, muestra visual y datos de línea."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Cierres de vino y licores",
+          "body": "Coordinar vertedor, tapón o rosca con un cuello de vidrio o PET."
+        },
+        {
+          "title": "Tapas decorativas",
+          "body": "Proteger superficies visibles manteniendo ajuste, apertura e inviolabilidad."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Acabado de botella",
+          "body": "Facilitar plano de cuello, material y tolerancias de la botella."
+        },
+        {
+          "title": "Vertido y sellado",
+          "body": "Describir caudal, tapón/junta, par de apertura e inviolabilidad."
+        },
+        {
+          "title": "Decoración",
+          "body": "Marcar color, textura, brillo, logo y marcas aceptables."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos de cuello y tapa",
+        "Objetivos de vertido, sellado e inviolabilidad",
+        "Resina, color y muestra decorativa",
+        "Máquina, producción y aceptación"
+      ],
+      "sources": [
+        {
+          "label": "CETIE GME 32.04 · PCO 1881 finish",
+          "url": "https://cetie-standard.com/206-document-gme3204-pet-pco-finish-28-22-17-1-27",
+          "note": "Finish terminology and interface reference; confirm the buyer drawing."
+        },
+        {
+          "label": "CAP Moulds category reference",
+          "url": "https://www.cap-molds.com/Plastic-cap-mold.html",
+          "note": "Product-family vocabulary only; project requirements still govern."
+        }
+      ],
+      "evidenceNote": "Vertido, sellado y decoración se confirman con botella, muestra aprobada y prueba del molde."
+    }
+  },
+  "pet-preform-mould": {
+    "slug": "pet-preform-mould",
+    "title": "PET Preform Moulds",
+    "description": "Preform tooling for beverage, edible-oil and specialty PET packaging, linking neck finish, gram weight, stretch ratio and blow process.",
+    "body": "Preform tooling for beverage, edible-oil and specialty PET packaging, linking neck finish, gram weight, stretch ratio and blow process.",
+    "sections": [
+      {
+        "title": "Preform-to-bottle review",
+        "body": "LEYA maps neck, gram weight, stretch ratio and bottle wall targets before defining the cavity layout.",
+        "bullets": [
+          "Finish drawing controlled",
+          "Weight and wall targets listed",
+          "Blow process assumptions separated"
+        ]
+      },
+      {
+        "title": "Preform and bottle trial",
+        "body": "The trial connects preform dimensions to blown-bottle fit, wall distribution and agreed inspection points.",
+        "bullets": [
+          "Machine data confirmed",
+          "Bottle checks agreed",
+          "Result follows approved drawings"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "What makes a preform quote accurate?",
+        "answer": "The finish drawing, weight, length, PET grade, bottle drawing and blow-machine data are the starting set."
+      },
+      {
+        "question": "Can you design for a new bottle shape?",
+        "answer": "Yes, provide the bottle, preform and stretch-blow targets for a feasibility review."
+      },
+      {
+        "question": "How is cavity balance checked?",
+        "answer": "Cavity dimensions, weight and trial samples are compared against the agreed inspection plan."
+      },
+      {
+        "question": "Can a bottle wall map be confirmed before trial?",
+        "answer": "The target can be reviewed, but wall distribution depends on resin, preform, machine and process and is confirmed with trial evidence."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Beverage preforms",
+          "body": "Develop a preform that matches the neck finish, bottle volume and stretch-blow process."
+        },
+        {
+          "title": "Oil and specialty packs",
+          "body": "Review resin, colour, weight distribution and barrier or shape requirements before tool layout."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Neck and gram weight",
+          "body": "Provide finish drawing, preform weight, length, wall map and target bottle."
+        },
+        {
+          "title": "Resin and process",
+          "body": "State PET grade, IV, colour, drying and intended blow-machine information."
+        },
+        {
+          "title": "Cavity and output",
+          "body": "Share output target, machine interface, hot-runner preference and sampling plan."
+        }
+      ],
+      "quoteChecklist": [
+        "Preform and bottle drawings",
+        "PET grade, IV, colour and weight",
+        "Blow machine and output target",
+        "Trial bottle, dimensions and acceptance plan"
+      ],
+      "sources": [
+        {
+          "label": "Husky PET tooling reference",
+          "url": "https://www.husky.co/en/solutions/pet-tooling/",
+          "note": "Industry context for PET preform tooling; not a LEYA performance claim."
+        },
+        {
+          "label": "CETIE GME 32.04 · PCO 1881 finish",
+          "url": "https://cetie-standard.com/206-document-gme3204-pet-pco-finish-28-22-17-1-27",
+          "note": "Finish terminology and interface reference; confirm the buyer drawing."
+        }
+      ],
+      "evidenceNote": "Preform and bottle performance are confirmed by the buyer's resin, machine, drawings and trial data."
+    },
+    "titleEs": "Moldes para preformas PET",
+    "descriptionEs": "Moldes de preformas para envases PET de bebidas, aceites y formatos especiales, conectando cuello, peso, estirado y soplado.",
+    "bodyEs": "Moldes de preformas para envases PET de bebidas, aceites y formatos especiales, conectando cuello, peso, estirado y soplado.",
+    "sectionsEs": [
+      {
+        "title": "Revisión preforma-botella",
+        "body": "LEYA relaciona cuello, peso, estirado y pared antes de definir las cavidades.",
+        "bullets": [
+          "Acabado controlado",
+          "Peso y pared listados",
+          "Supuestos de soplado separados"
+        ]
+      },
+      {
+        "title": "Prueba de preforma y botella",
+        "body": "La prueba relaciona cotas de preforma con ajuste, pared y controles de botella.",
+        "bullets": [
+          "Datos de máquina confirmados",
+          "Controles acordados",
+          "Resultado según planos aprobados"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Qué hace precisa una cotización de preforma?",
+        "answer": "Acabado, peso, longitud, PET, botella y máquina de soplado son la base."
+      },
+      {
+        "question": "¿Pueden diseñar una botella nueva?",
+        "answer": "Sí, envíe botella, preforma y objetivos de estirado-soplado."
+      },
+      {
+        "question": "¿Cómo se revisa el equilibrio de cavidades?",
+        "answer": "Se comparan cotas, pesos y muestras con el plan de inspección."
+      },
+      {
+        "question": "¿Garantizan el mapa de pared?",
+        "answer": "No. Depende de resina, preforma, máquina y proceso; se confirma con prueba."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Preformas para bebidas",
+          "body": "Desarrollar una preforma compatible con acabado, volumen y proceso de estirado-soplado."
+        },
+        {
+          "title": "Envases de aceite y especiales",
+          "body": "Revisar resina, color, distribución de peso y forma antes del diseño."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Cuello y peso",
+          "body": "Facilitar acabado, peso, longitud, mapa de pared y botella objetivo."
+        },
+        {
+          "title": "Resina y proceso",
+          "body": "Indicar PET, IV, color, secado y máquina de soplado."
+        },
+        {
+          "title": "Cavidades y producción",
+          "body": "Compartir producción, interfaz, canal caliente y plan de muestras."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos de preforma y botella",
+        "PET, IV, color y peso",
+        "Máquina de soplado y producción",
+        "Botella de prueba, cotas y aceptación"
+      ],
+      "sources": [
+        {
+          "label": "Husky PET tooling reference",
+          "url": "https://www.husky.co/en/solutions/pet-tooling/",
+          "note": "Industry context for PET preform tooling; not a LEYA performance claim."
+        },
+        {
+          "label": "CETIE GME 32.04 · PCO 1881 finish",
+          "url": "https://cetie-standard.com/206-document-gme3204-pet-pco-finish-28-22-17-1-27",
+          "note": "Finish terminology and interface reference; confirm the buyer drawing."
+        }
+      ],
+      "evidenceNote": "La preforma y la botella se confirman con resina, máquina, planos y datos de prueba del comprador."
+    }
+  },
+  "blow-bottle-mould": {
+    "slug": "blow-bottle-mould",
+    "title": "Blow Bottle Moulds",
+    "description": "Bottle blow moulds for PET and specialty containers, linking bottle geometry, wall distribution, cooling and machine envelope before manufacture.",
+    "body": "Bottle blow moulds for PET and specialty containers, linking bottle geometry, wall distribution, cooling and machine envelope before manufacture.",
+    "sections": [
+      {
+        "title": "Geometry and stretch review",
+        "body": "LEYA maps preform stretch, panels, ribs, neck and parting to the bottle drawing.",
+        "bullets": [
+          "Critical surfaces marked",
+          "Stretch assumptions listed",
+          "Machine envelope checked"
+        ]
+      },
+      {
+        "title": "Blow trial and inspection",
+        "body": "Trial bottles are checked for dimensions, fit, appearance, leakage and agreed wall evidence.",
+        "bullets": [
+          "Cooling and machine data recorded",
+          "Bottle checks agreed",
+          "Final result follows approved revision"
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can you develop a custom bottle shape?",
+        "answer": "Yes, provide bottle/preform drawings and machine data for a feasibility and DFM review."
+      },
+      {
+        "question": "How is wall distribution discussed?",
+        "answer": "The buyer's preform, stretch ratio, process and acceptance method must be defined before trial."
+      },
+      {
+        "question": "Can an existing bottle be matched?",
+        "answer": "A sample, scan or controlled drawing can be reviewed for neck, parting and critical panels."
+      },
+      {
+        "question": "What is needed before a quote?",
+        "answer": "Send bottle/preform geometry, machine envelope, resin/weight target and inspection criteria."
+      }
+    ],
+    "projectBrief": {
+      "scenarios": [
+        {
+          "title": "Standard PET bottles",
+          "body": "Develop a bottle around the approved preform, neck and filling/label requirements."
+        },
+        {
+          "title": "Wide-mouth and custom shapes",
+          "body": "Review handles, panels, grip, cooling and demoulding for a non-standard container."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Bottle and preform",
+          "body": "Provide 3D/2D bottle, preform, neck finish, volume, weight and stretch targets."
+        },
+        {
+          "title": "Machine envelope",
+          "body": "Share blow-machine make, mould height, opening, tie-bar and cooling interface."
+        },
+        {
+          "title": "Quality limits",
+          "body": "State wall map, appearance, leak, panel and dimensional acceptance criteria."
+        }
+      ],
+      "quoteChecklist": [
+        "Bottle and preform drawings",
+        "Machine and cooling interface",
+        "Weight/wall/appearance targets",
+        "Trial bottle and inspection method"
+      ],
+      "sources": [
+        {
+          "label": "Husky PET tooling reference",
+          "url": "https://www.husky.co/en/solutions/pet-tooling/",
+          "note": "Industry context for PET preform tooling; not a LEYA performance claim."
+        },
+        {
+          "label": "HMould product catalogue",
+          "url": "https://www.hmould.com/products/",
+          "note": "Model-family reference for enquiry scoping; not a LEYA specification."
+        }
+      ],
+      "evidenceNote": "Bottle geometry, wall distribution and cooling are confirmed by the buyer's preform, machine and trial evidence."
+    },
+    "titleEs": "Moldes de soplado para botellas",
+    "descriptionEs": "Moldes de soplado para envases PET y especiales, conectando geometría, pared, refrigeración y envolvente de máquina.",
+    "bodyEs": "Moldes de soplado para envases PET y especiales, conectando geometría, pared, refrigeración y envolvente de máquina.",
+    "sectionsEs": [
+      {
+        "title": "Revisión de geometría y estirado",
+        "body": "LEYA relaciona estirado, paneles, nervios, cuello y partición con el plano.",
+        "bullets": [
+          "Superficies críticas marcadas",
+          "Supuestos de estirado listados",
+          "Envolvente comprobada"
+        ]
+      },
+      {
+        "title": "Prueba de soplado e inspección",
+        "body": "Las botellas de prueba se comprueban en cotas, ajuste, aspecto, fugas y pared acordada.",
+        "bullets": [
+          "Datos de máquina y refrigeración registrados",
+          "Controles acordados",
+          "Resultado según revisión aprobada"
+        ]
+      }
+    ],
+    "faqsEs": [
+      {
+        "question": "¿Pueden desarrollar una forma personalizada?",
+        "answer": "Sí, envíe planos de botella/preforma y datos de máquina para revisar viabilidad y DFM."
+      },
+      {
+        "question": "¿Cómo se trata la distribución de pared?",
+        "answer": "Se definen preforma, estirado, proceso y aceptación antes de probar."
+      },
+      {
+        "question": "¿Pueden igualar una botella existente?",
+        "answer": "Se puede revisar muestra, escaneo o plano para cuello, partición y paneles."
+      },
+      {
+        "question": "¿Qué hace falta antes del precio?",
+        "answer": "Geometría, máquina, resina/peso y criterios de inspección."
+      }
+    ],
+    "projectBriefEs": {
+      "scenarios": [
+        {
+          "title": "Botellas PET estándar",
+          "body": "Desarrollar una botella con preforma, cuello, llenado y etiquetado aprobados."
+        },
+        {
+          "title": "Formatos de boca ancha o especiales",
+          "body": "Revisar asas, paneles, agarre, refrigeración y desmoldeo del envase."
+        }
+      ],
+      "parameters": [
+        {
+          "title": "Botella y preforma",
+          "body": "Facilitar planos 2D/3D, preforma, cuello, volumen, peso y estirado."
+        },
+        {
+          "title": "Envolvente de máquina",
+          "body": "Compartir fabricante, altura, apertura, columnas e interfaz de refrigeración."
+        },
+        {
+          "title": "Límites de calidad",
+          "body": "Indicar pared, aspecto, fugas, paneles y cotas de aceptación."
+        }
+      ],
+      "quoteChecklist": [
+        "Planos de botella y preforma",
+        "Máquina e interfaz de refrigeración",
+        "Peso/pared/aspecto objetivo",
+        "Botella de prueba y método"
+      ],
+      "sources": [
+        {
+          "label": "Husky PET tooling reference",
+          "url": "https://www.husky.co/en/solutions/pet-tooling/",
+          "note": "Industry context for PET preform tooling; not a LEYA performance claim."
+        },
+        {
+          "label": "HMould product catalogue",
+          "url": "https://www.hmould.com/products/",
+          "note": "Model-family reference for enquiry scoping; not a LEYA specification."
+        }
+      ],
+      "evidenceNote": "La geometría, pared y refrigeración se confirman con preforma, máquina y evidencias de prueba del comprador."
+    }
+  }
+}
+
