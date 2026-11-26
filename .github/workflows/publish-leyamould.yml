@@ -60,6 +60,12 @@ on:
       - "PROJECT_CHANGE_POLICY.md"
       - "项目圣经/**"
   workflow_dispatch:
+    inputs:
+      bootstrap_admin:
+        description: "One-time admin deployment before the new family fields are imported"
+        required: false
+        default: "0"
+        type: string
 
 concurrency:
   group: leyamould-source-build
@@ -77,6 +83,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
       LEYA_RELEASE_SHA: ${{ github.sha }}
       LEYA_REQUIRE_D1_SNAPSHOT: "1"
+      LEYA_BOOTSTRAP_ADMIN: ${{ inputs.bootstrap_admin || '0' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
