@@ -107,7 +107,15 @@ def _structured_sections(item: dict, locale: str, fallback: list[tuple[str, str,
 def _category_payload(item: dict, locale: str = "en") -> dict:
     """Return the published D1 category payload, with source fallback only on a clean checkout."""
     value = item.get("categoryCopyEs") if locale == "es" else item.get("categoryCopy")
-    return value if isinstance(value, dict) else {}
+    if not isinstance(value, dict):
+        return {}
+    # D1 remains the sole production source. A reviewed Spanish row can still
+    # contain a legacy UI label copied from the English baseline; clean that
+    # label at the locale boundary instead of falling back to checked-in
+    # category content or weakening the Spanish completeness gate. The glossary
+    # only translates reviewed UI/category phrases and leaves model numbers,
+    # standards and media paths intact.
+    return spanish_ui_copy(value) if locale == "es" else value
 
 
 def _category_rows(value: object, fallback: list[dict] | None = None, limit: int = 24) -> list[dict]:
