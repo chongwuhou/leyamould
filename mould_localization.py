@@ -1394,6 +1394,33 @@ def spanish_ui_text(value: Any) -> str:
     return _replace(value, _MIXED_CLEANUP_REPLACEMENTS)
 
 
+def spanish_html_text(value: Any) -> str:
+    """Clean visible text in an owner-authored Spanish HTML fragment.
+
+    D1 page overrides are allowed to contain small HTML fragments.  Applying
+    the glossary to the complete fragment would corrupt URLs and attributes,
+    so split tags from text and leave script/style/template payloads opaque.
+    """
+    raw = str(value or "")
+    parts = re.split(r"(<[^>]*>)", raw)
+    hidden = 0
+    output: list[str] = []
+    for part in parts:
+        if not part:
+            continue
+        if part.startswith("<"):
+            opening = re.match(r"<\s*(script|style|noscript|template)\b", part, flags=re.I)
+            closing = re.match(r"<\s*/\s*(script|style|noscript|template)\b", part, flags=re.I)
+            if opening:
+                hidden += 1
+            elif closing and hidden:
+                hidden -= 1
+            output.append(part)
+        else:
+            output.append(part if hidden else spanish_ui_text(part))
+    return "".join(output)
+
+
 def spanish_ui_copy(value: Any) -> Any:
     """Copy a page-specific English fallback into its Spanish UI form."""
     if isinstance(value, str):
