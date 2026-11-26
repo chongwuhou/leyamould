@@ -2105,6 +2105,15 @@ def generate() -> dict:
                 raise RuntimeError("Strict D1 translation missing for " + route + ":" + locale + ":" + ",".join(missing))
         final_title = str(translated.get("title") or page_override.get("seoTitle") or title)
         final_description = str(translated.get("description") or page_override.get("metaDescription") or description)
+        # D1 translation rows are authoritative, but older rows may have been
+        # seeded from the English SEO baseline.  Keep the D1 value while
+        # applying the same reviewed Spanish boundary glossary used by the
+        # visible renderer; otherwise an English title/description can leak
+        # into <title>, Open Graph and JSON-LD even when the page body is
+        # localized.
+        if locale == "es":
+            final_title = spanish_ui_text(final_title)
+            final_description = spanish_ui_text(final_description)
         # xuyi_page_content stores the reviewed source-language body. A
         # localized D1 override wins for that locale; otherwise Spanish keeps
         # the renderer's translated baseline instead of silently showing an
