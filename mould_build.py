@@ -2152,6 +2152,12 @@ def generate() -> dict:
             if any(marker.lower() in plain.lower() for marker in english_markers):
                 localized_body = ""
         final_body = str(localized_body or source_body or body)
+        if locale == "es":
+            # Apply one last visible-text pass to the selected body as well.
+            # This covers legacy D1 fragments and source-rendered sections that
+            # were assembled after the earlier override check, without
+            # translating URLs, attributes or embedded script payloads.
+            final_body = spanish_html_text(final_body)
         write(file_path, shell(locale, final_title + " | " + BRAND_DISPLAY if route != "/" else final_title + " | " + BRAND_DISPLAY, final_description, route, final_body))
         routes[localized] = title
     for locale in LOCALES:
