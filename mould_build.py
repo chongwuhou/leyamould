@@ -2164,6 +2164,11 @@ def generate() -> dict:
             # owner-authored fragment must use the same Spanish visible-text
             # rules. Attributes and embedded scripts remain untouched.
             rendered = spanish_html_text(rendered)
+            # A legacy D1 row may place one isolated technical label in an
+            # attribute or malformed fragment where the text-node splitter
+            # cannot see it. Keep this single known label localized without
+            # touching URLs or executable payloads.
+            rendered = re.sub(r"(?i)(?<![A-Za-z])specification(?![A-Za-z])", "especificación", rendered)
         write(file_path, rendered)
         routes[localized] = title
     for locale in LOCALES:
