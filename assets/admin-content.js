@@ -175,10 +175,14 @@
      arrayEditor("faqsEs","answers","西班牙语产品 FAQ")+
      field("categoryJson","","英文分类页完整模块 JSON（产品卡、优势、技术、样例、质量、评价、视频；高级编辑）",18)+
      field("categoryEsJson","","西班牙语分类页完整模块 JSON（产品卡、优势、技术、样例、质量、评价、视频；高级编辑）",18)+
+     field("projectBriefJson","","英文项目简报 JSON（应用场景、买家参数、报价清单、来源、证据说明）",12)+
+     field("projectBriefEsJson","","西班牙语项目简报 JSON（应用场景、买家参数、报价清单、来源、证据说明）",12)+
    field("seoTitle","","SEO Title")+
    field("seoDescription","","Meta Description",3)+
    '<label class="block-label">状态 <select data-cms-field="status"><option value="draft">草稿（不影响官网）</option><option value="published">审核完成并发布</option></select></label>'+
-   button("保存产品到 D1","product");
+   button("保存产品到 D1","product")+
+   '<hr><h3>13 个产品族双语稿包</h3><p>选择仓库中的 <code>data/mould-product-content-draft.json</code>。系统会读取当前 D1 产品结构，只替换双语正文、FAQ 和项目简报，不改图片、模块顺序或其他人工字段。</p>'+ 
+   '<label class="block-label">双语稿包 JSON <input id="cms-product-draft-file" type="file" accept=".json,application/json"></label>'+button("导入并发布 13 个产品族","product-draft-import");
   }
   if(tab==="structured-copy"){
    const routes=state.structuredCopy?.routes||["/","/contact/","/faq/"];
@@ -323,7 +327,7 @@
    const known=[...new Set([...(state.products.catalogModels||[]),
      ...(state.products.items||[]).filter(x=>!x.content?.newProduct).map(x=>x.model)])].sort();
    let requestNumber=0;
-      const sourceFields=["title","navTitle","short","detail","meta","image","checks","body","sections","faqs","bodyEs","sectionsEs","faqsEs","categoryJson","categoryEsJson","seoTitle","seoDescription"];
+      const sourceFields=["title","navTitle","short","detail","meta","image","checks","body","sections","faqs","bodyEs","sectionsEs","faqsEs","categoryJson","categoryEsJson","projectBriefJson","projectBriefEsJson","seoTitle","seoDescription"];
      const resetFields=()=>{for(const key of sourceFields){
       const el=container.querySelector('[data-cms-field="'+key+'"]');if(el)el.value=((key.includes("sections")||key.includes("faqs"))?"[]":"");
    }container.querySelector('[data-cms-field="status"]').value="draft";};
@@ -365,6 +369,10 @@
     }
     hydrateArrayEditor("sections",entry?.content?.sections||[]);hydrateArrayEditor("faqs",entry?.content?.faqs||[]);
     hydrateArrayEditor("sectionsEs",entry?.content?.sectionsEs||[]);hydrateArrayEditor("faqsEs",entry?.content?.faqsEs||[]);
+    const brief=(entry?.content?.structured||entry?.content?.category||{}).projectBrief||{};
+    const briefEs=(entry?.content?.structuredEs||entry?.content?.categoryEs||{}).projectBrief||{};
+    const briefField=container.querySelector('[data-cms-field="projectBriefJson"]'),briefEsField=container.querySelector('[data-cms-field="projectBriefEsJson"]');
+    if(briefField)briefField.value=JSON.stringify(brief,null,2);if(briefEsField)briefEsField.value=JSON.stringify(briefEs,null,2);
     container.querySelector('[data-cms-field="status"]').value=entry?.status||"draft";
     const label=entry?"已有 D1 "+(entry.status==="published"?"正式发布":"草稿")+"记录":"当前为官网原始商品，尚无单独 D1 修改记录";
      notice.innerHTML=esc(id)+" · "+esc(label)+"。 <a href=\""+esc(route)+"\" target=\"_blank\" rel=\"noopener\">查看当前类别页 ↗</a>"+
@@ -553,7 +561,24 @@
     const details=failed.slice(0,12).map(item=>item.model+": "+item.error).join("；");
     say("目录导入完成：新建 "+created.length+" 款；跳过 "+skipped.length+" 款；失败 "+failed.length+" 款。"+(details?"失败明细："+details:"")+" 已有商品未覆盖。");
     return;
-    }else if(action==="product"){
+   }else if(action==="product-draft-import"){
+    const file=$("cms-product-draft-file")?.files?.[0];if(!file)throw Error("请先选择双语稿包 JSON");
+    let pack;try{pack=JSON.parse(await file.text())}catch(error){throw Error("双语稿包 JSON 无法读取")}
+    const models=Object.keys(pack||{}),knownModels=new Set(state.products.catalogModels||[]);
+    if(models.length!==13||models.some(model=>!knownModels.has(model)))throw Error("稿包必须正好包含当前 13 个已配置产品族");
+    if(!window.confirm("确认把 13 个产品族的英文和西班牙语正文、FAQ、项目简报写入正式 D1 并发布？"))return;
+    const failed=[];
+    for(const model of models){
+     try{
+      const entry=(state.products.items||[]).find(x=>x.model===model&&!x.content?.newProduct);if(!entry?.content)throw Error("缺少当前 D1 结构");
+      const draft=pack[model],content=structuredClone(entry.content),base=structuredClone(content.structured||content.category||{}),baseEs=structuredClone(content.structuredEs||content.categoryEs||{});
+      Object.assign(content,{title:draft.title,description:draft.description,body:draft.body,sections:draft.sections,faqs:draft.faqs,titleEs:draft.titleEs,descriptionEs:draft.descriptionEs,bodyEs:draft.bodyEs,sectionsEs:draft.sectionsEs,faqsEs:draft.faqsEs});
+      base.projectBrief=draft.projectBrief;baseEs.projectBrief=draft.projectBriefEs;content.category=base;content.structured=base;content.categoryEs=baseEs;content.structuredEs=baseEs;
+      await api("product-content",{action:"save_product",model,status:"published",content});
+     }catch(error){failed.push(model+": "+String(error?.message||error))}
+    }
+    await load();if(failed.length)throw Error("已提交但有失败项："+failed.join("；"));say("13 个产品族的双语正文、FAQ、项目简报已提交正式 D1，并排队发布。");return;
+   }else if(action==="product"){
      if(!value("model")||(state.products.catalogModels||[]).length&&!state.products.catalogModels.includes(value("model")))
        throw Error("请先从已配置的模具类别列表中选择类别");
      const checks=String(value("checks")||"").split(/\\n+/).map(item=>item.trim()).filter(Boolean);
@@ -561,6 +586,8 @@
        let category={},categoryEs={};
        try{category=JSON.parse(String(value("categoryJson")||"{}"))}catch(error){throw Error("英文分类页模块 JSON 格式错误")}
        try{categoryEs=JSON.parse(String(value("categoryEsJson")||"{}"))}catch(error){throw Error("西班牙语分类页模块 JSON 格式错误")}
+       try{const brief=JSON.parse(String(value("projectBriefJson")||"{}"));if(brief&&typeof brief==="object"&&!Array.isArray(brief))category.projectBrief=brief;}catch(error){throw Error("英文项目简报 JSON 格式错误")}
+       try{const briefEs=JSON.parse(String(value("projectBriefEsJson")||"{}"));if(briefEs&&typeof briefEs==="object"&&!Array.isArray(briefEs))categoryEs.projectBrief=briefEs;}catch(error){throw Error("西班牙语项目简报 JSON 格式错误")}
        result=await api("product-content",{action:"save_product",model:value("model"),
        status:value("status"),content:{title:value("title"),navTitle:value("navTitle"),short:value("short"),detail:value("detail"),meta:value("meta"),
           image:value("image"),checks,body:value("body"),sections,faqs,bodyEs:value("bodyEs"),sectionsEs,faqsEs,category,categoryEs,seoTitle:value("seoTitle"),seoDescription:value("seoDescription")}});

@@ -833,7 +833,49 @@ def footer(locale: str) -> str:
     vals.update({"FOOTER_LOGO": footer_logo, "FOOTER_EMAIL": esc(footer_email), "FOOTER_WA_URL": esc(footer_wa_url), "FOOTER_CONTACT_HREF": esc(localized_href(locale, "/contact/#inquiry")), "FOOTER_HOME_HREF": esc(localized_href(locale, "/")), "FOOTER_PRIVACY_HREF": esc(localized_href(locale, "/privacy-policy/")), "FOOTER_SITE_URL": esc(ORIGIN + localized_href(locale, "/")), "FOOTER_COPYRIGHT": esc(footer_copy), "FOOTER_QUICK_LINKS": esc(text(locale, "footer_quick_links")), "FOOTER_SITEMAP": esc(text(locale, "footer_sitemap"))})
     return render_template("footer", **vals)
 
+def _product_item_for_route(route: str) -> dict | None:
+    """Return the D1-backed product-family row for a canonical route.
+
+    Product-family pages are not SKU detail pages.  The row is still the
+    authoritative source for the family slug and approved hero image, so the
+    structured data must not fall back to the generic About image.
+    """
+    slug = product_slug_for_route(str(route or ""))
+    if not slug:
+        return None
+    return next((item for item in CATALOG.get("categories", [])
+                 if isinstance(item, dict) and str(item.get("slug") or "").strip().lower() == slug), None)
+
+
+def _product_image_url(item: dict | None) -> str:
+    """Resolve a product-family image without inventing or borrowing a SKU."""
+    if not isinstance(item, dict):
+        return ""
+    path = str(item.get("image") or "").strip()
+    if not path:
+        structured = item.get("categoryCopy") if isinstance(item.get("categoryCopy"), dict) else {}
+        hero = structured.get("hero") if isinstance(structured.get("hero"), dict) else {}
+        path = str(hero.get("image") or "").strip()
+    if not path:
+        return ""
+    if path.startswith(("https://", "http://")):
+        return path if path.startswith(ORIGIN + "/") else ""
+    if path.startswith(("/media/", "/assets/")):
+        return ORIGIN + path
+    # Legacy reference paths are resolved only through the reviewed media map;
+    # an unmapped path is deliberately rejected so Product schema never labels
+    # a source-site image as a LEYA-owned upload.
+    mapped = LEGACY_MEDIA_MAP.get(path) or LEGACY_MEDIA_MAP.get(ORIGIN + path)
+    if mapped and str(mapped).startswith(("/media/", "/assets/")):
+        return ORIGIN + str(mapped)
+    return ""
+
+
 def _absolute_social_image(route: str) -> str:
+    product_item = _product_item_for_route(route)
+    product_image = _product_image_url(product_item)
+    if product_image:
+        return product_image
     detail = re.fullmatch(r"/(?:news|Bottle-Cap-Machine)/([a-z0-9-]+)\.html", str(route or ""))
     if detail and detail.group(1) in EDITORIAL_BY_SLUG:
         cover = str(EDITORIAL_BY_SLUG[detail.group(1)].get("cover") or "")
@@ -848,6 +890,24 @@ def _absolute_social_image(route: str) -> str:
     # A stable, compressed LEYA-specific image is preferable to a remote
     # reference-site asset and is available on every generated locale route.
     return ORIGIN + "/assets/about/about-hero-generated.webp"
+
+
+def _product_faq_pairs(item: dict | None, locale: str) -> list[tuple[str, str]]:
+    if not isinstance(item, dict):
+        return []
+    field = "faqsEs" if locale == "es" else "faqs"
+    rows = item.get(field)
+    if not isinstance(rows, list):
+        return []
+    result = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        question = str(row.get("question") or "").strip()
+        answer = str(row.get("answer") or "").strip()
+        if len(question) >= 8 and len(answer) >= 15:
+            result.append((question, answer))
+    return result[:8]
 
 
 def _json_ld(locale: str, title: str, description: str, route: str, canonical: str, image_url: str) -> str:
@@ -893,14 +953,41 @@ def _json_ld(locale: str, title: str, description: str, route: str, canonical: s
         "primaryImageOfPage": {"@type": "ImageObject", "url": image_url},
     }
     if route.startswith("/product/"):
-        page["mainEntity"] = {
+        item = _product_item_for_route(route)
+        product_id = canonical + "#product"
+        product_image = _product_image_url(item) or image_url
+        product = {
             "@type": "Product",
+            "@id": product_id,
             "name": title,
             "description": description,
-            "image": [image_url],
+            "url": canonical,
+            "image": [product_image],
+            "inLanguage": locale,
             "brand": {"@type": "Brand", "name": BRAND_DISPLAY},
-            "category": "Plastic mould tooling",
+            "category": str((item or {}).get("titleEs" if locale == "es" else "title") or (item or {}).get("title") or "Plastic mould tooling"),
         }
+        if not product_image:
+            product.pop("image", None)
+        page["mainEntity"] = {"@id": product_id}
+        if product_image:
+            page["primaryImageOfPage"] = {"@type": "ImageObject", "url": product_image}
+        faq_pairs = _product_faq_pairs(item, locale)
+        if faq_pairs:
+            graph.append(product)
+            graph.append({
+                "@type": "FAQPage",
+                "@id": canonical + "#faq",
+                "url": canonical,
+                "inLanguage": locale,
+                "mainEntity": [
+                    {"@type": "Question", "name": question,
+                     "acceptedAnswer": {"@type": "Answer", "text": answer}}
+                    for question, answer in faq_pairs
+                ],
+            })
+        else:
+            graph.append(product)
     elif detail and detail.group(1) in EDITORIAL_BY_SLUG:
         editorial = EDITORIAL_BY_SLUG[detail.group(1)]
         page["author"] = {"@type": "Organization", "name": BRAND_DISPLAY}
@@ -911,7 +998,11 @@ def _json_ld(locale: str, title: str, description: str, route: str, canonical: s
     graph.append(page)
     crumbs = [{"@type": "ListItem", "position": 1, "name": text(locale, "home"), "item": ORIGIN + route_for(locale, "/")}]
     if route != "/":
-        crumbs.append({"@type": "ListItem", "position": 2, "name": title, "item": canonical})
+        if route.startswith("/product/"):
+            crumbs.append({"@type": "ListItem", "position": 2, "name": text(locale, "products"), "item": ORIGIN + route_for(locale, "/products/")})
+            crumbs.append({"@type": "ListItem", "position": 3, "name": title, "item": canonical})
+        else:
+            crumbs.append({"@type": "ListItem", "position": 2, "name": title, "item": canonical})
         graph.append({"@type": "BreadcrumbList", "@id": canonical + "#breadcrumb", "itemListElement": crumbs})
     payload = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, separators=(",", ":"))
     return payload.replace("</", "<\\/")

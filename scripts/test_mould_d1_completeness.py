@@ -147,6 +147,20 @@ def structured_modules(value, label):
                 issues.append(label + ":technology.items")
         elif not isinstance(row, list) or not row:
             issues.append(label + ":" + key)
+    brief = value.get("projectBrief")
+    if not isinstance(brief, dict):
+        issues.append(label + ":projectBrief")
+    else:
+        if not isinstance(brief.get("scenarios"), list) or len(brief["scenarios"]) < 2:
+            issues.append(label + ":projectBrief.scenarios")
+        if not isinstance(brief.get("parameters"), list) or len(brief["parameters"]) < 3:
+            issues.append(label + ":projectBrief.parameters")
+        if not isinstance(brief.get("quoteChecklist"), list) or len(brief["quoteChecklist"]) < 4:
+            issues.append(label + ":projectBrief.quoteChecklist")
+        if not isinstance(brief.get("sources"), list) or not brief["sources"]:
+            issues.append(label + ":projectBrief.sources")
+        if not clean_text(brief.get("evidenceNote")):
+            issues.append(label + ":projectBrief.evidenceNote")
     return issues
 
 product_fields_missing = []
@@ -163,10 +177,11 @@ for product in products:
             product_fields_missing.append(model + ":" + locale + ":title")
         if not str(description or "").strip():
             product_fields_missing.append(model + ":" + locale + ":description")
-        if locale != source_locale:
-            for base in ("body", "sections", "faqs"):
-                if content.get(base) and not content.get(base + suffix):
-                    product_fields_missing.append(model + ":" + locale + ":" + base)
+        for base in ("body", "sections", "faqs"):
+            value = content.get(base + suffix)
+            minimum = 4 if base == "faqs" else (2 if base == "sections" else 1)
+            if (not isinstance(value, list) and base != "body") or (isinstance(value, list) and len(value) < minimum) or (base == "body" and not clean_text(value)):
+                product_fields_missing.append(model + ":" + locale + ":" + base)
         structured = content.get("structured") if isinstance(content.get("structured"), dict) else content.get("category")
         if locale == source_locale:
             product_fields_missing.extend(model + ":" + issue for issue in structured_modules(structured, locale))

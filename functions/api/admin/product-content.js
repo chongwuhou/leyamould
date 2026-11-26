@@ -49,6 +49,16 @@ function categoryCopy(value){
   out.quality=rows(value.quality||[],12,row=>({label:text(row?.label,40),title:text(row?.title,240),body:text(row?.body,1800)}));
   out.testimonials=rows(value.testimonials||[],12,row=>({quote:text(row?.quote,1800),author:text(row?.author,160),country:text(row?.country,100)}));
   out.videos=rows(value.videos||[],24,row=>({videoId:/^[A-Za-z0-9_-]{11}$/.test(String(row?.videoId||""))?String(row.videoId):"",title:text(row?.title,240)}));
+  const brief=value.projectBrief;
+  if(brief&&typeof brief==="object"&&!Array.isArray(brief)){
+    out.projectBrief={
+      scenarios:rows(brief.scenarios||[],6,row=>({title:text(row?.title,180),body:text(row?.body,1200)})),
+      parameters:rows(brief.parameters||[],8,row=>({title:text(row?.title,180),body:text(row?.body,1200)})),
+      quoteChecklist:Array.isArray(brief.quoteChecklist)?brief.quoteChecklist.map(x=>text(x,240)).filter(Boolean).slice(0,8):[],
+      sources:rows(brief.sources||[],6,row=>({label:text(row?.label,180),url:media(row?.url),note:text(row?.note,600)})),
+      evidenceNote:text(brief.evidenceNote,1200),
+    };
+  }
   return out;
 }
 function validatePublishedProductContent(content){
@@ -60,14 +70,17 @@ function validatePublishedProductContent(content){
       if(!Array.isArray(value[key])||!value[key].length)throw Error("Published product requires "+label+" "+key);
     if(!value.technology||typeof value.technology!=="object"||!Array.isArray(value.technology.items)||!value.technology.items.length)
       throw Error("Published product requires "+label+" technology items");
+    const brief=value.projectBrief;
+    if(!brief||typeof brief!=="object"||!Array.isArray(brief.scenarios)||brief.scenarios.length<2||!Array.isArray(brief.parameters)||brief.parameters.length<2||!Array.isArray(brief.quoteChecklist)||brief.quoteChecklist.length<3||!Array.isArray(brief.sources)||!brief.sources.length||!title(brief.evidenceNote))
+      throw Error("Published product requires "+label+" project brief fields");
   };
   if(!title(content.route))throw Error("Published product requires a canonical route");
   if(!title(content.title||content.name)||!title(content.description||content.short))throw Error("Published product requires source title and description");
   if(!title(content.titleEs||content.nameEs)||!title(content.descriptionEs||content.shortEs))throw Error("Published product requires Spanish title and description");
   modules(content.structured||content.category,"source");
   modules(content.structuredEs||content.categoryEs,"es");
-  if(content.sections&&!content.sectionsEs)throw Error("Published product requires Spanish sections");
-  if(content.faqs&&!content.faqsEs)throw Error("Published product requires Spanish FAQs");
+  if(!Array.isArray(content.sections)||content.sections.length<2||!Array.isArray(content.sectionsEs)||content.sectionsEs.length<2)throw Error("Published product requires English and Spanish sections");
+  if(!Array.isArray(content.faqs)||content.faqs.length<4||!Array.isArray(content.faqsEs)||content.faqsEs.length<4)throw Error("Published product requires four English and four Spanish FAQs");
 }
 async function ensure(db){await db.prepare(`CREATE TABLE IF NOT EXISTS xuyi_product_content(
   model TEXT PRIMARY KEY,
