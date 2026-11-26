@@ -1208,6 +1208,23 @@ _MIXED_CLEANUP_REPLACEMENTS = (
     ("uso las opciones", "Use las opciones"),
     ("match", "coincidir"), ("existing", "existente"), ("supply", "proporcionar"),
     ("Every", "Cada"), ("every", "cada"), ("used", "utilizado"), ("provide", "proporcionar"),
+    # Standalone fragments still present in older D1 Spanish rows.  These are
+    # intentionally kept at the final locale boundary because the same words
+    # can appear in category cards, page-copy fields and technical FAQs.
+    ("Cap Auxiliary Machines", "Máquinas auxiliares para tapas"),
+    ("Why Cap Auxiliary Machines Are Essential", "Por qué son esenciales las máquinas auxiliares para tapas"),
+    ("Your Trusted Plastic Cap Mould Manufacturer", "Su fabricante de confianza de moldes de tapas de plástico"),
+    ("Your Trusted", "Su fabricante de confianza"),
+    ("Mineral Water Cap Mould", "Molde de tapas de agua mineral"),
+    ("Beverage Bottle Cap Mould", "Molde de tapas para botellas de bebidas"),
+    ("specification", "especificación"), ("Specification", "Especificación"),
+    ("processing", "procesamiento"), ("Processing", "Procesamiento"),
+    ("variability", "variabilidad"), ("Variability", "Variabilidad"),
+    ("Unscrewing", "desenroscado"), ("Replaceable", "reemplazable"),
+    ("Serviceable", "de servicio"), ("Band bridges", "puentes de la banda"),
+    ("Trial video", "Vídeo de prueba"), ("Living-Hinge", "Bisagra integrada"),
+    ("Fatigue Test", "Prueba de fatiga"), ("gating", "compuertas"),
+    ("Compliance", "conformidad"),
     ("include", "incluye"), ("includes", "incluye"), ("make", "hacer"),
     ("run", "funcionar"), ("held", "mantuvo"), ("was", "fue"), ("were", "fueron"),
     ("has", "ha"), ("be", "ser"), ("use", "uso"), ("can", "puede"),
