@@ -630,8 +630,7 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
         quality_title, quality_body = spanish_ui_text(quality_title), spanish_ui_text(quality_body)
     quality = '<section class="mould-quality" id="quality"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "quality")) + '</span><h2>' + esc(quality_title) + '</h2><p>' + esc(quality_body) + '</p><i></i></div><div class="mould-quality-list">' + ''.join('<article><b>✓</b><h4>' + esc(str(row.get("title") or "")) + '</h4><p>' + esc(str(row.get("body") or "")) + '</p></article>' for row in quality_rows) + '</div></div></section>'
 
-    faq_pairs = _structured_faqs(item, locale, details["faqs"], strict_d1)
-    if locale == "es" and not strict_d1:
+    # Use the same D1-backed rows that feed Product/FAQPage JSON-LD so the\r\n    # visible questions can never drift from the structured data.\r\n    faq_pairs = helpers.get("d1_faqs")\r\n    if not isinstance(faq_pairs, list):\r\n        faq_pairs = _structured_faqs(item, locale, details["faqs"], strict_d1)\r\n    if locale == "es" and not strict_d1:
         faq_pairs = spanish_ui_copy(faq_pairs)
     faq_rows = ''.join('<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>' for q, a in faq_pairs)
     # Category structured copy is not a customer-review ledger. Only the

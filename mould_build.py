@@ -870,7 +870,7 @@ def _product_image_url(item: dict | None) -> str:
     # Legacy reference paths are resolved only through the reviewed media map;
     # an unmapped path is deliberately rejected so Product schema never labels
     # a source-site image as a LEYA-owned upload.
-    mapped = LEGACY_MEDIA_MAP.get(path) or LEGACY_MEDIA_MAP.get(ORIGIN + path)
+    # The checked-in media manifest is keyed by the reference origin, not the\r\n    # LEYA public origin. Resolve that reviewed source path before allowing\r\n    # it into Product/OG schema; never fall back to the generic About image.\r\n    mapped = LEGACY_MEDIA_MAP.get(path) or LEGACY_MEDIA_MAP.get("https://www.cap-molds.com" + (path if path.startswith("/") else "/" + path))
     if mapped and str(mapped).startswith(("/media/", "/assets/")):
         return ORIGIN + str(mapped)
     return ""
@@ -1364,11 +1364,7 @@ def products_page(locale: str) -> str:
     model_references = render_model_reference_section(locale, general_models, model_helpers, "Referencias adicionales de modelos de tapas" if locale == "es" else "Additional Cap Model References")
     return hero + crumb + products + model_references + catalog_support_sections(locale)
 
-def cap_product_page(locale: str, item: dict) -> str:
-    helpers = {"esc": esc, "image": image, "localized_href": localized_href, "shared_cta": shared_cta,
-               "hmould_models": HMOULD_MODELS, "strict_d1": STRICT_D1,
-               "verified_reviews": _review_rows(locale, item.get("slug"))}
-    return render_category_page(locale, item, helpers)
+def cap_product_page(locale: str, item: dict) -> str:\r\n    helpers = {"esc": esc, "image": image, "localized_href": localized_href, "shared_cta": shared_cta,\r\n               "hmould_models": HMOULD_MODELS, "strict_d1": STRICT_D1,\r\n               "verified_reviews": _review_rows(locale, item.get("slug")),\r\n               # Keep the visible FAQ list on the exact same D1-backed rows\r\n               # used by Product/FAQPage JSON-LD.\r\n               "d1_faqs": _product_faq_pairs(item, locale)}\r\n    return render_category_page(locale, item, helpers)
 
 def about_page(locale: str) -> str:
     # The reference About page is a long, editorial company page rather than a
