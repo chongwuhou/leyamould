@@ -39,4 +39,3 @@ for path in pages:
 
 assert checked, "No mould pages found in dist"
 print("MOULD_RAIL_PASSED", checked, "pages")
-

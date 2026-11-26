@@ -150,7 +150,8 @@ def structured_page_copy(locale: str, route: str) -> dict:
 def structured_page_value(locale: str, route: str, key: str, fallback: str = "") -> str:
     value = structured_page_copy(locale, route).get(key)
     if isinstance(value, str) and value.strip():
-        return value.strip()
+        value = value.strip()
+        return spanish_ui_text(value) if locale == "es" else value
     return "" if STRICT_D1 else fallback
 
 def structured_section(locale: str, route: str, section_id: str, fallback_title: str = "", fallback_body: str = "", fallback_eyebrow: str = "") -> dict:
@@ -171,21 +172,24 @@ def structured_section(locale: str, route: str, section_id: str, fallback_title:
             if isinstance(candidate, dict) and str(candidate.get("id") or "").strip() == section_id:
                 row = candidate
                 break
-    return {
+    result = {
         "eyebrow": str(row.get("eyebrow") or ("" if STRICT_D1 else fallback_eyebrow)).strip(),
         "title": str(row.get("title") or ("" if STRICT_D1 else fallback_title)).strip(),
         "body": str(row.get("body") or ("" if STRICT_D1 else fallback_body)).strip(),
         "bullets": [str(item).strip() for item in row.get("bullets", []) if str(item).strip()][:8] if isinstance(row.get("bullets"), list) else [],
         "items": [item for item in row.get("items", []) if isinstance(item, dict)][:48] if isinstance(row.get("items"), list) else [],
     }
+    return spanish_ui_copy(result) if locale == "es" else result
 
 def structured_section_items(locale: str, route: str, section_id: str, fallback: list[dict] | None = None) -> list[dict]:
     """Return editable text-only cards/steps for a D1 structured section."""
     section = structured_section(locale, route, section_id)
     items = section.get("items") if isinstance(section, dict) else []
     if isinstance(items, list) and items:
-        return [item for item in items if isinstance(item, dict)][:48]
-    return [] if STRICT_D1 else list(fallback or [])
+        rows = [item for item in items if isinstance(item, dict)][:48]
+        return spanish_ui_copy(rows) if locale == "es" else rows
+    rows = [] if STRICT_D1 else list(fallback or [])
+    return spanish_ui_copy(rows) if locale == "es" else rows
 def _normalise_page_row(row: dict) -> dict:
     """Accept the D1 snapshot's snake_case fields and the admin API's camelCase.
 
@@ -379,7 +383,7 @@ def navigation_label(url: str, fallback: str, locale: str = "en") -> str:
             return route_labels[url]
         for item in CATALOG.get("categories", []):
             if isinstance(item, dict) and str(item.get("route") or "") == url:
-                return str(item.get("navTitleEs") or item.get("titleEs") or fallback)
+                return spanish_ui_text(str(item.get("navTitleEs") or item.get("titleEs") or fallback))
     rows = [row for row in NAVIGATION if str(row.get("url") or "") == url]
     rows.sort(key=lambda row: (int(row.get("sort_order", row.get("sortOrder", 999)) or 999), str(row.get("id", ""))))
     if not rows:
@@ -545,6 +549,12 @@ def effective_banners(locale: str) -> list[dict]:
         translated = slide.get("translations", {}).get(locale, {}) if isinstance(slide.get("translations"), dict) else {}
         if isinstance(translated, dict):
             value.update({key: translated[key] for key in ("title", "highlight", "description", "alt", "cta") if isinstance(translated.get(key), str) and translated[key].strip()})
+        if locale == "es":
+            # Keep the D1 banner row authoritative while cleaning legacy
+            # English shells when an older row has no reviewed Spanish branch.
+            for key in ("title", "highlight", "description", "alt", "cta"):
+                if isinstance(value.get(key), str):
+                    value[key] = spanish_ui_text(value[key])
         if not all(isinstance(value.get(key), str) and value[key].strip() for key in ("img", "link", "title", "highlight", "description", "alt", "cta")):
             return []
         result.append({key: value[key] for key in ("img", "link", "title", "highlight", "description", "alt", "cta")})
@@ -634,7 +644,16 @@ def esc(value: object) -> str:
 def text(locale: str, key: str) -> str:
     localized = COMMON_COPY.get(locale) if isinstance(COMMON_COPY.get(locale), dict) else {}
     source = COMMON_COPY.get("en") if isinstance(COMMON_COPY.get("en"), dict) else {}
-    value = localized.get(key) if key in localized else source.get(key)
+    value = localized.get(key) if key in localized else None
+    if isinstance(value, str) and value.strip():
+        return value
+    if locale != "en" and STRICT_D1:
+        raise RuntimeError("Strict D1 common copy missing for " + locale + ":" + key)
+    if locale != "en":
+        fallback_value = TEXT.get(locale, {}).get(key)
+        if isinstance(fallback_value, str) and fallback_value.strip():
+            return fallback_value
+    value = source.get(key)
     if isinstance(value, str) and value.strip():
         return value
     if STRICT_D1:
@@ -659,8 +678,9 @@ def catalog_text(locale: str, item: dict, key: str) -> str:
     if locale == "es":
         translated = item.get(key + "Es")
         if isinstance(translated, str) and translated.strip():
-            return translated.strip()
-    return str(item.get(key) or "")
+            return spanish_ui_text(translated.strip())
+    value = str(item.get(key) or "")
+    return spanish_ui_text(value) if locale == "es" else value
 
 def image(path: str, alt: str, loading: str = "lazy") -> str:
     return '<img src="' + esc(path) + '" alt="' + esc(alt) + '" loading="' + loading + '" decoding="async">'
@@ -697,6 +717,41 @@ SAMPLE_ITEMS = [
     {"image": "bottle-handle.jpg", "alt": "Oil bottle handle sample", "name": "Integrated Oil Bottle Handle (Carry Handle)", "description": "This ergonomic handle is molded as a separate part that snaps onto the neck of edible oil or chemical bottles. It provides a comfortable carrying grip, reducing the risk of slipping. The handle is injection molded from high-strength PP, with a textured finish for a secure hold. The design includes a tamper-evident break-tab that locks the handle onto the bottle during filling, preventing removal without evidence.", "mold": "Manufactured with: 32-Cavity Bottle Handle Mold (Model SH-BH32)", "applications": ["5L edible oil bottles", "Chemical jugs", "Large vinegar containers", "Laundry detergent bottles"]},
     {"image": "custom-cap.jpg", "alt": "Custom cap sample", "name": "Custom Closure — Your Design, Our Mold", "description": "This sample represents our ability to produce entirely custom caps based on unique client specifications. Whether you need a proprietary thread profile, a child-proof mechanism, a dispensing valve, or a multi-material assembly, our engineering team will design and manufacture the precise mold to bring your concept to life.", "mold": "Manufactured with: Fully Custom Mold (cavitation & features according to your design)", "applications": ["Proprietary closures", "Multi-functional caps", "Any shape or function", "Small & large volumes"]},
 ]
+
+# The reference catalogue contains long English sample descriptions.  Keep an
+# explicit Spanish branch for these public cards instead of applying a word
+# substitution to technical prose; this prevents mixed-language sentences and
+# keeps the claims bounded to the reviewed sample data.
+SAMPLE_ITEMS_ES = {
+    "water-cap.jpg": {"alt": "Muestra de tapa de botella de agua de 29/25 mm", "name": "Tapa de botella de agua de 29/25 mm", "description": "Tapa ligera con precinto para botellas de agua mineral y otros envases PET. El anillo de rotura, el sellado interior y la rosca se revisan para el acabado de cuello aprobado.", "mold": "Fabricada con: molde de tapas de agua de alta velocidad de 96 cavidades (modelo SH-W96)", "applications": ["Agua mineral", "Agua saborizada", "Agua con gas", "Botellas PET pequeñas"]},
+    "csd-cap.jpg": {"alt": "Muestra de tapa PCO 1881 para bebidas carbonatadas", "name": "Tapa PCO 1881 para bebidas carbonatadas", "description": "Cierre para bebidas presurizadas con banda de precinto profunda y sellado múltiple. El moleteado lateral facilita el agarre y las ranuras de ventilación ayudan a evitar el desprendimiento durante el taponado.", "mold": "Fabricada con: molde de tapas PCO 1881 de alta presión de 72 cavidades (modelo SH-CSD72)", "applications": ["Refrescos", "Zumos con gas", "Agua con gas", "Bebidas energéticas"]},
+    "hotfill-cap.jpg": {"alt": "Muestra de tapa hot-fill de 38 mm", "name": "Tapa hot-fill de 38 mm con sellado cónico", "description": "Diseñada para zumos y tés llenados hasta 90 °C. El tapón de sellado, los puntos de rotura y el alojamiento para sello de inducción se ajustan al proceso de llenado en caliente.", "mold": "Fabricada con: molde de tapas hot-fill de 48 cavidades (modelo SH-HF48)", "applications": ["Zumos", "Té frío", "Bebidas deportivas", "Leche saborizada"]},
+    "oil-cap.jpg": {"alt": "Muestra de tapa de aceite comestible con anilla", "name": "Tapa de aceite comestible con anilla y vertedor", "description": "Cierre de dos piezas con anilla de precinto y vertedor abatible integrado. La geometría de la bisagra, el sellado y el vertido sin goteo se revisan con el material y el envase del comprador.", "mold": "Fabricada con: molde de tapas de aceite de 32 cavidades con vertedor integrado (modelo SH-OC32)", "applications": ["Aceite de oliva", "Aceite de girasol", "Aceite de soja", "Aceite de colza"]},
+    "soysauce-cap.jpg": {"alt": "Muestra de tapa dosificadora para salsa de soja", "name": "Tapa dosificadora para salsa de soja y condimentos", "description": "Tapa abatible compacta con válvula de silicona para abrir con una ligera presión y cerrar sin goteo. El cuerpo transparente, la abertura y la bisagra a presión se ajustan al producto.", "mold": "Fabricada con: molde de tapas dosificadoras para condimentos de 24 cavidades (modelo SH-CD24)", "applications": ["Salsa de soja", "Vinagre", "Kétchup", "Salsa picante"]},
+    "pharma-cap.jpg": {"alt": "Muestra de tapa médica resistente a niños", "name": "Tapa farmacéutica resistente a niños con cámara desecante", "description": "Cierre de seguridad que requiere presionar y girar simultáneamente. La cámara desecante, el material médico y los requisitos USP e ISO se confirman con el comprador.", "mold": "Fabricada con: molde de tapas médicas resistentes a niños de 16 cavidades (modelo SH-CR16)", "applications": ["Comprimidos farmacéuticos", "Vitaminas y suplementos", "Tubos efervescentes", "Kits de diagnóstico"]},
+    "disc-top-cap.jpg": {"alt": "Muestra de tapa disc-top de alto brillo", "name": "Tapa disc-top de alto brillo para champú", "description": "Cierre de superficie pulida con actuador de presión y retorno silencioso. El acabado de la cavidad y la resistencia al rayado se revisan para el envase de cuidado personal.", "mold": "Fabricada con: molde de tapas disc-top cosméticas de 8 cavidades (modelo SH-CT8)", "applications": ["Champú y acondicionador", "Gel de baño", "Jabón de manos", "Lociones y cremas"]},
+    "flip-top-cap.jpg": {"alt": "Muestra de tapa abatible con bisagra integrada", "name": "Tapa abatible con bisagra integrada para productos domésticos", "description": "Tapa abatible con bisagra de larga duración, cierre audible y abertura amplia para líquidos espesos. La superficie superior admite etiquetado o estampado en caliente.", "mold": "Fabricada con: molde de tapas abatibles de 32 cavidades (modelo SH-FT32)", "applications": ["Gel hidroalcohólico", "Lavavajillas", "Champú", "Detergente líquido"]},
+    "tamper-evident-cap.jpg": {"alt": "Muestra de tapa con anillo de precinto", "name": "Tapa con anillo de precinto para bebidas", "description": "El anillo visible se separa al abrir el envase y proporciona evidencia inmediata de manipulación. Los puentes y el moleteado se diseñan para líneas de taponado de alta velocidad.", "mold": "Fabricada con: molde de tapas con precinto de 72 cavidades (modelo SH-TE72)", "applications": ["Botellas de zumo", "Botellas de agua", "Botellas de leche", "Tarros de salsa"]},
+    "push-pull-cap.jpg": {"alt": "Muestra de tapa deportiva push-pull", "name": "Tapa deportiva push-pull con protección contra polvo", "description": "Cierre para beber con una sola mano sin retirar la tapa. La base rígida, el obturador flexible y la cubierta antipolvo se revisan para un sellado seguro en actividades al aire libre.", "mold": "Fabricada con: molde deportivo bicomponente de 24 cavidades (modelo SH-SC24)", "applications": ["Botellas deportivas", "Botellas de bicicleta", "Botellas de zumo", "Botellas infantiles"]},
+    "pull-ring-cap.jpg": {"alt": "Muestra de tapa con anilla de apertura", "name": "Tapa con anilla de apertura para productos lácteos", "description": "Tapa de apertura fácil que rompe la banda al tirar de la anilla. El recorrido de rotura deja un borde seguro y el material HDPE mantiene la resistencia y el sellado.", "mold": "Fabricada con: molde de tapas con anilla de 16 cavidades (modelo SH-PR16)", "applications": ["Botellas de leche", "Bebidas de yogur", "Aceite de oliva", "Tarros de mermelada y salsa"]},
+    "two-shot-cap.jpg": {"alt": "Muestra de tapa sobremoldeada de tacto suave", "name": "Tapa sobremoldeada bicomponente de tacto suave", "description": "Cuerpo transparente de PP con sobremoldeado de TPE en la zona de agarre. La unión de materiales y el acabado exterior se ajustan a envases premium y productos de cuidado del automóvil.", "mold": "Fabricada con: molde de sobremoldeo por biinyección de 8 cavidades (modelo SH-BI8)", "applications": ["Cosmética premium", "Botellas de agua de lujo", "Frascos de perfume", "Productos de cuidado del automóvil"]},
+    "wide-mouth-cap.jpg": {"alt": "Muestra de tapa para tarro de boca ancha de 110 mm", "name": "Tapa para tarro de boca ancha (110 mm)", "description": "Cierre de gran diámetro para tarros PET de aperitivos, encurtidos y alimentos instantáneos. La rosca profunda, el agarre lateral y el sellado se revisan para aperturas repetidas.", "mold": "Fabricada con: molde de tapas de boca ancha de 12 cavidades (modelo SH-WM12)", "applications": ["Tarros de encurtidos", "Envases de aperitivos", "Tarros de alimentos instantáneos", "Tarros de caramelos y frutos secos"]},
+    "squeeze-sports-cap.jpg": {"alt": "Muestra de tapa deportiva de compresión con válvula", "name": "Tapa deportiva de compresión con válvula", "description": "La válvula de silicona dosifica el líquido al comprimir la botella y se cierra al liberar la presión. La base de PP y la válvula se revisan como un conjunto para evitar fugas.", "mold": "Fabricada con: molde de tapas deportivas de compresión de 16 cavidades (modelo SH-SQ16)", "applications": ["Botellas de ciclismo", "Frascos para correr", "Botellas de gimnasio", "Mochilas de hidratación"]},
+    "motor-oil-cap.jpg": {"alt": "Muestra de tapa para aceite de motor con vertedor", "name": "Tapa de aceite de motor con vertedor", "description": "Tapa para lubricantes de automoción con vertedor extensible para llenar sin derrames. El HDPE, la banda de precinto y la protección contra polvo se seleccionan para el envase de aceite.", "mold": "Fabricada con: molde de tapas de aceite de motor con vertedor de 24 cavidades (modelo SH-MO24)", "applications": ["Botellas de aceite de motor", "Envases de fluido de transmisión", "Envases de refrigerante", "Garrafas de DEF"]},
+    "5-gallon-cap.jpg": {"alt": "Muestra de tapa de garrafón de agua de cinco galones", "name": "Tapa con precinto para garrafón de cinco galones", "description": "Tapa robusta para botellas reutilizables de policarbonato de 18,9 litros. La banda exterior, el sellado interior y la resistencia a los ciclos de sanitización se revisan antes de la entrega.", "mold": "Fabricada con: molde de tapas de agua de cinco galones de 8 cavidades (modelo SH-5G8)", "applications": ["Botellas de dispensador", "Garrafones de agua", "Envases de jarabe", "Almacenamiento de agua a granel"]},
+    "bottle-handle.jpg": {"alt": "Muestra de asa para botella de aceite", "name": "Asa integrada para botella de aceite", "description": "Asa ergonómica que encaja en el cuello de botellas de aceite comestible o productos químicos. La geometría, la resistencia y la pestaña de precinto se comprueban con la botella real.", "mold": "Fabricada con: molde de asas para botellas de 32 cavidades (modelo SH-BH32)", "applications": ["Botellas de aceite de 5 L", "Garrafas químicas", "Envases grandes de vinagre", "Botellas de detergente"]},
+    "custom-cap.jpg": {"alt": "Muestra de tapa personalizada", "name": "Cierre personalizado: su diseño, nuestro molde", "description": "Referencia de nuestra capacidad para desarrollar cierres a partir de especificaciones del cliente. La rosca, el mecanismo de seguridad, la válvula y la combinación de materiales se definen mediante revisión de ingeniería.", "mold": "Fabricada con: molde totalmente personalizado (cavidades y funciones según su diseño)", "applications": ["Cierres propios", "Tapas multifunción", "Cualquier forma o función", "Volúmenes pequeños y grandes"]},
+}
+
+def spanish_sample_items() -> list[dict]:
+    rows = []
+    for item in SAMPLE_ITEMS:
+        row = dict(item)
+        translated = SAMPLE_ITEMS_ES.get(str(item.get("image") or ""))
+        if translated:
+            row.update(translated)
+        rows.append(row)
+    return rows
 
 AUXILIARY_MACHINES = [
     {"image": "202105282235237950.jpg", "alt": "Automated Assembly Machine for Wine Bottle Cap", "name": "Automated Assembly Machine for Wine Bottle Cap", "description": "LEYA MOULD supplies automated cap cutting and assembly equipment for stable, repeatable post-moulding production.", "model": "machine802"},
@@ -834,7 +889,12 @@ def footer(locale: str) -> str:
     footer_email = str(_brand_contact.get("email") or EMAIL)
     footer_wa_url = WA_URL
     footer_copy = str(footer_config.get("copyright") or ("© 2026 " + BRAND_DISPLAY))
-    vals = {"PRODUCT_LINKS": links, "QUICK_LINKS": quick, "WHATSAPP_NUMBER": esc(WHATSAPP), "FOOTER_EYEBROW": esc(text(locale, "footer_eyebrow")), "FOOTER_CTA_TITLE": esc(text(locale, "footer_cta_title")), "FOOTER_CTA_TEXT": esc(text(locale, "footer_cta_text")), "FOOTER_CTA_BUTTON": esc(text(locale, "quote")), "FOOTER_TAGLINE": esc(footer_config.get("about") or text(locale, "footer_tagline")), "FOOTER_ADDRESS": esc(ADDRESS), "FOOTER_PRODUCTS_TITLE": esc(text(locale, "footer_products")), "FOOTER_CONTACT_TITLE": esc(footer_config.get("contactHeading") or text(locale, "footer_contact")), "FOOTER_QUOTE": esc(text(locale, "footer_quote")), "FOOTER_PRIVACY": esc(text(locale, "footer_privacy")), "FOOTER_STICKY": esc(text(locale, "footer_sticky"))}
+    footer_about = str(footer_config.get("about") or text(locale, "footer_tagline"))
+    footer_contact_heading = str(footer_config.get("contactHeading") or text(locale, "footer_contact"))
+    if locale == "es":
+        footer_about = spanish_ui_text(footer_about)
+        footer_contact_heading = spanish_ui_text(footer_contact_heading)
+    vals = {"PRODUCT_LINKS": links, "QUICK_LINKS": quick, "WHATSAPP_NUMBER": esc(WHATSAPP), "FOOTER_EYEBROW": esc(text(locale, "footer_eyebrow")), "FOOTER_CTA_TITLE": esc(text(locale, "footer_cta_title")), "FOOTER_CTA_TEXT": esc(text(locale, "footer_cta_text")), "FOOTER_CTA_BUTTON": esc(text(locale, "quote")), "FOOTER_TAGLINE": esc(footer_about), "FOOTER_ADDRESS": esc(ADDRESS), "FOOTER_PRODUCTS_TITLE": esc(text(locale, "footer_products")), "FOOTER_CONTACT_TITLE": esc(footer_contact_heading), "FOOTER_QUOTE": esc(text(locale, "footer_quote")), "FOOTER_PRIVACY": esc(text(locale, "footer_privacy")), "FOOTER_STICKY": esc(text(locale, "footer_sticky")), "FOOTER_EMAIL_LABEL": esc("CORREO" if locale == "es" else "EMAIL"), "FOOTER_WHATSAPP_LABEL": esc("WHATSAPP"), "FOOTER_INQUIRY_LABEL": esc("CONSULTA" if locale == "es" else "INQUIRY")}
     vals.update({"FOOTER_LOGO": footer_logo, "FOOTER_EMAIL": esc(footer_email), "FOOTER_WA_URL": esc(footer_wa_url), "FOOTER_CONTACT_HREF": esc(localized_href(locale, "/contact/#inquiry")), "FOOTER_HOME_HREF": esc(localized_href(locale, "/")), "FOOTER_PRIVACY_HREF": esc(localized_href(locale, "/privacy-policy/")), "FOOTER_SITE_URL": esc(ORIGIN + localized_href(locale, "/")), "FOOTER_COPYRIGHT": esc(footer_copy), "FOOTER_QUICK_LINKS": esc(text(locale, "footer_quick_links")), "FOOTER_SITEMAP": esc(text(locale, "footer_sitemap"))})
     return render_template("footer", **vals)
 
@@ -871,7 +931,7 @@ def _product_image_url(item: dict | None) -> str:
     # an unmapped path is deliberately rejected so Product schema never labels
     # a source-site image as a LEYA-owned upload.
     # The checked-in media manifest is keyed by the reference origin, not the
-    # LEYA public origin. Resolve that reviewed source path before allowing
+    # LEYA public origin.  Resolve that reviewed source path before allowing
     # it into Product/OG schema; never fall back to the generic About image.
     mapped = LEGACY_MEDIA_MAP.get(path) or LEGACY_MEDIA_MAP.get("https://www.cap-molds.com" + (path if path.startswith("/") else "/" + path))
     if mapped and str(mapped).startswith(("/media/", "/assets/")):
@@ -913,6 +973,8 @@ def _product_faq_pairs(item: dict | None, locale: str) -> list[tuple[str, str]]:
             continue
         question = str(row.get("question") or "").strip()
         answer = str(row.get("answer") or "").strip()
+        if locale == "es":
+            question, answer = spanish_ui_text(question), spanish_ui_text(answer)
         if len(question) >= 8 and len(answer) >= 15:
             result.append((question, answer))
     return result[:8]
@@ -1079,7 +1141,7 @@ def intro(locale: str, title: str, subtitle: str, route: str) -> str:
     structured_subtitle = structured_page_value(locale, route, "subtitle", "")
     if route == "/capabilities/":
         page_eyebrow = "EQUIPOS AUXILIARES" if locale == "es" else "AUXILIARY EQUIPMENT"
-        page_title = "Cap <span class=\"reference-title-accent\">Auxiliary Machines</span>"
+        page_title = ("Máquinas auxiliares para <span class=\"reference-title-accent\">tapas</span>" if locale == "es" else "Cap <span class=\"reference-title-accent\">Auxiliary Machines</span>")
     elif route == "/video/":
         page_eyebrow = "EXPLORE NUESTRO TRABAJO" if locale == "es" else "EXPLORE OUR WORK"
         page_title = "Video <span class=\"reference-title-accent\">Gallery</span>" if locale == "en" else "Galería de <span class=\"reference-title-accent\">vídeos</span>"
@@ -1156,6 +1218,8 @@ def shared_cta(locale: str, variant: str = "catalog", element_id: str = "", titl
         str(d1_copy.get("description") or fallback[1]),
         str(d1_copy.get("note") or fallback[2]),
     )
+    if lang == "es":
+        copy = tuple(spanish_ui_text(value) for value in copy)
     title = title_override or copy[0]
     description = text_override or copy[1]
     id_attr = ' id="' + esc(element_id) + '"' if element_id else ""
@@ -1164,6 +1228,8 @@ def shared_cta(locale: str, variant: str = "catalog", element_id: str = "", titl
     email_label = str(d1_copy.get("emailLabel") or ("Correo electrónico" if lang == "es" else "Email"))
     whatsapp_label = str(d1_copy.get("whatsappLabel") or "WhatsApp")
     eyebrow = str(d1_copy.get("eyebrow") or ("LEYA MOULD · INGENIERÍA · SOPORTE" if lang == "es" else "LEYA MOULD · ENGINEERING · SUPPORT"))
+    if lang == "es":
+        quote_label, phone_label, email_label, whatsapp_label, eyebrow = tuple(spanish_ui_text(value) for value in (quote_label, phone_label, email_label, whatsapp_label, eyebrow))
     return (
         '<section' + id_attr + ' class="mould-shared-cta mould-shared-cta--' + esc(variant) + '">'
         '<div class="mould-shared-cta__inner">'
@@ -1191,8 +1257,15 @@ def _review_rows(locale: str, model: str | None = None) -> list[dict]:
         if not quote or not author:
             continue
         if locale == "es":
-            quote = str(content.get("quoteEs") or content.get("contentEs") or quote).strip()
-            author = str(content.get("authorEs") or author).strip()
+            # Never present an English review as a completed Spanish
+            # translation.  Only the explicitly reviewed Spanish fields are
+            # eligible for the Spanish page; otherwise the review stays out of
+            # the public locale until its translation is approved.
+            quote = str(content.get("quoteEs") or content.get("contentEs") or "").strip()
+            author = str(content.get("authorEs") or "").strip()
+            if not quote or not author:
+                continue
+            quote, author = spanish_ui_text(quote), spanish_ui_text(author)
         rows.append({"quote": quote, "author": author, "company": str(content.get("company") or "").strip()})
     return rows[:12]
 
@@ -1202,14 +1275,14 @@ def home(locale: str) -> str:
     first_banner = managed_banners[0] if managed_banners else {
         "img": legacy_media_url("/upload/Banner/Plastic-flip-top-mold.jpg"),
         "link": localized_href(locale, "/products/"),
-        "title": "Your Trusted", "highlight": "Plastic Cap Mould",
+        "title": "Su fabricante de" if locale == "es" else "Your Trusted", "highlight": "moldes de tapas" if locale == "es" else "Plastic Cap Mould",
         "description": text(locale, "hero_text"), "alt": "LEYA MOULD precision machining reference",
         "cta": text(locale, "hero_primary")
     }
     hero_img = first_banner["img"]
     steel_img = legacy_media_url("/upload/Home/steel-quality.jpg")
     samples = ["water-cap", "csd-cap", "hotfill-cap", "oil-cap", "soysauce-cap", "pharma-cap", "disc-top-cap", "flip-top-cap", "tamper-evident-cap", "push-pull-cap", "pull-ring-cap", "two-shot-cap", "custom-cap", "wide-mouth-cap", "squeeze-sports-cap", "motor-oil-cap", "5-gallon-cap", "bottle-handle"]
-    hero_tail = "" if managed_banners else " Manufacturer"
+    hero_tail = "" if managed_banners or locale == "es" else " Manufacturer"
     previous_slide = "Diapositiva anterior" if locale == "es" else "Previous slide"
     next_slide = "Diapositiva siguiente" if locale == "es" else "Next slide"
     slide_status = "Diapositiva 1 de 3" if locale == "es" else "Slide 1 of 3"
@@ -1385,7 +1458,7 @@ def about_page(locale: str) -> str:
         story, title, subtitle = "Nuestra historia", "Sobre LEYA MOULD", "LEYA MOULD es una marca de proyectos de moldes con sede en Huangyan, Taizhou, Zhejiang, China. Acompañamos a compradores internacionales con precisión, claridad técnica y soporte durante todo el proyecto."
         who = "Quiénes somos"
         who_paras = [
-            "LEYA MOULD desarrolla proyectos de moldes para tapones, preformas, botellas y componentes de packaging. Nuestro trabajo conecta el diseño de la pieza, el acero, la refrigeración, la expulsión y las pruebas de producción.",
+            "LEYA MOULD desarrolla proyectos de moldes para tapones, preformas, botellas y componentes de envases. Nuestro trabajo conecta el diseño de la pieza, el acero, la refrigeración, la expulsión y las pruebas de producción.",
             "Revisamos moldes de agua, bebidas, aceite, alimentación, medicina, cuidado personal y cierres funcionales. El alcance se adapta al material, el cuello, las cavidades, la máquina y el objetivo de ciclo del comprador.",
             "El equipo mantiene una comunicación de proyecto clara: dibujo, muestra, revisión DFM, informe de prueba y cambios aprobados permanecen conectados hasta la entrega."
         ]
@@ -1406,7 +1479,8 @@ def about_page(locale: str) -> str:
     structured_sections = structured.get("sections", {}) if isinstance(structured.get("sections", {}), dict) else {}
     def section_title(key: str, fallback: str) -> str:
         row = structured_sections.get(key, {})
-        return str(row.get("title") or fallback) if isinstance(row, dict) else fallback
+        value = str(row.get("title") or fallback) if isinstance(row, dict) else fallback
+        return spanish_ui_text(value) if es else value
     story = structured_page_value(locale, "/about/", "story", story)
     title = structured_page_value(locale, "/about/", "title", title)
     subtitle = structured_page_value(locale, "/about/", "subtitle", subtitle)
@@ -1439,10 +1513,24 @@ def about_page(locale: str) -> str:
     # evidence workflow without claiming an unverified certificate.
     certifications = ["Project quality records", "Material traceability", "Trial and inspection evidence", "Buyer-specific documentation"]
     if es:
-        timeline = spanish_ui_copy(timeline)
-        advantages = spanish_ui_copy(advantages)
-        equipment = [spanish_ui_text(value) for value in equipment]
-        certifications = [spanish_ui_text(value) for value in certifications]
+        timeline = [
+            ("01", "Base de diseño", "Un documento técnico claro conecta el plano, el material, el acabado del cuello y el proceso de producción previsto."),
+            ("02", "Asignación del proyecto", "La familia del molde, el plan de cavidades, la interfaz de máquina y la producción objetivo se confirman antes de cortar el acero."),
+            ("03", "Revisión tecnológica", "La refrigeración, los canales calientes, la línea de partición y la expulsión se revisan frente a la geometría de la pieza."),
+            ("04", "Fabricación de precisión", "El mecanizado, EDM, pulido, ajuste e inspección siguen el documento técnico de utillaje aprobado."),
+            ("05", "Prueba y validación", "Las muestras de prueba, las comprobaciones dimensionales y los cambios acordados guían la entrega final."),
+            ("06", "Soporte de proyectos internacionales", "Los archivos aprobados, las notas de entrega y el soporte técnico permanecen disponibles después del envío."),
+        ]
+        advantages = [
+            ("Ingeniería de precisión", "La revisión CAD/CAM, el mecanizado CNC y la inspección mantienen bajo control las dimensiones críticas del cierre.", advantages[0][2]),
+            ("Soluciones personalizadas", "Adaptamos la estructura del molde al diseño del cierre, la resina, la máquina y los requisitos de producción.", advantages[1][2]),
+            ("Garantía de calidad", "Las pruebas, las comprobaciones dimensionales y la aprobación de muestras crean una entrega documentada.", advantages[2][2]),
+            ("Entrega rápida", "Un plan de utillaje escalonado mantiene visibles los hitos de mecanizado, ajuste, prueba y entrega.", advantages[3][2]),
+            ("Soluciones integradas", "El diseño del molde, la evidencia de producción y los requisitos de procesos auxiliares permanecen en una sola conversación del proyecto.", advantages[4][2]),
+            ("Soporte durante toda la vida útil", "Los planos aprobados, los registros de inspección y las notas técnicas facilitan el soporte futuro.", advantages[5][2]),
+        ]
+        equipment = ["Centros de mecanizado CNC de 5 ejes", "Máquinas EDM de alta velocidad", "Máquinas EDM de corte por hilo", "Máquinas rectificadoras de precisión", "Tornos y fresadoras CNC", "Máquinas de prueba de moldeo por inyección", "Máquinas de medición por coordenadas 3D (CMM)", "Durómetros y espectrómetros"]
+        certifications = ["Registros de calidad del proyecto", "Trazabilidad del material", "Evidencia de pruebas e inspección", "Documentación específica del comprador"]
     reference_images = "https://www.cap-molds.com/images/"
     facility_images = [
         (legacy_media_url("/images/CNC-machining-workshop.jpg"), "CNC machining workshop"),
@@ -1471,7 +1559,8 @@ def about_page(locale: str) -> str:
         # number but always pass the visible label through the reviewed UI
         # glossary before rendering the Spanish page.
         about_stats = spanish_ui_copy(about_stats)
-    overview = '<section class="mould-about-block"><div class="mould-about-overview"><div class="mould-about-overview-image"><img src="' + ABOUT_MEDIA["team"] + '" alt="LEYA MOULD engineering team reviewing a mould project" loading="eager" decoding="async"></div><div><h2>' + esc(who) + '</h2>' + ''.join('<p>' + esc(p) + '</p>' for p in who_paras) + '</div></div><div class="mould-about-stats">' + ''.join('<div class="mould-about-stat"><span class="number">' + esc(str(item.get("label") or "")) + '</span><span class="label">' + esc(str(item.get("title") or "")) + '</span></div>' for item in about_stats[:4] if isinstance(item, dict)) + '</div></section>'
+    team_alt = "Equipo de ingeniería de LEYA MOULD revisando un proyecto de moldes" if es else "LEYA MOULD engineering team reviewing a mould project"
+    overview = '<section class="mould-about-block"><div class="mould-about-overview"><div class="mould-about-overview-image"><img src="' + ABOUT_MEDIA["team"] + '" alt="' + esc(team_alt) + '" loading="eager" decoding="async"></div><div><h2>' + esc(who) + '</h2>' + ''.join('<p>' + esc(p) + '</p>' for p in who_paras) + '</div></div><div class="mould-about-stats">' + ''.join('<div class="mould-about-stat"><span class="number">' + esc(str(item.get("label") or "")) + '</span><span class="label">' + esc(str(item.get("title") or "")) + '</span></div>' for item in about_stats[:4] if isinstance(item, dict)) + '</div></section>'
     journey_html = '<section class="mould-about-block"><h2>' + esc(journey) + '</h2><div class="mould-about-timeline">' + ''.join('<div class="mould-about-timeline-item"><span class="year">' + esc(year) + '</span><div><h3>' + esc(head) + '</h3><p>' + esc(desc) + '</p></div></div>' for year, head, desc in timeline) + '</div></section>'
     advantages_html = '<section class="mould-about-block"><h2>' + esc(why) + '</h2><div class="mould-about-advantages">' + ''.join('<article><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true">' + icon + '</svg></div><h3>' + esc(head) + '</h3><p>' + esc(desc) + '</p></article>' for head, desc, icon in advantages) + '</div></section>'
     equipment_intro = "Nuestros recursos de fabricación utilizan mecanizado, inspección y equipos de prueba modernos para que cada decisión de utillaje pueda comprobarse frente al documento técnico de producción." if es else "Our manufacturing references use modern machining, inspection and trial equipment so every tooling decision can be checked against the production brief."
@@ -1503,7 +1592,7 @@ def capabilities_page(locale: str) -> str:
     )
     machine_rows = spanish_ui_copy(AUXILIARY_MACHINES) if locale == "es" else AUXILIARY_MACHINES
     machine_cards = ''.join(
-        '<article class="machine-card"><img class="machine-card-image" src="' + legacy_media_url('/upload/product/month_2105/' + str(item["image"])) + '" alt="' + esc(item["alt"]) + '" loading="lazy" decoding="async">'
+        '<article class="machine-card"><img class="machine-card-image" src="' + legacy_media_url('/upload/product/month_2105/' + str(item["image"])) + '" alt="' + esc(spanish_ui_text(item["alt"]) if locale == "es" else item["alt"]) + '" loading="lazy" decoding="async">'
         '<div class="machine-card-body"><h2 class="machine-card-name">' + esc(item["name"]) + '</h2><p class="machine-card-desc">' + esc(item["description"]) + '</p>'
         '<a href="' + localized_href(locale, "/contact/?model=" + item["model"] + "#inquiry") + '" class="machine-link">Learn More <span aria-hidden="true">→</span></a></div></article>'
         for item in machine_rows
@@ -1515,12 +1604,36 @@ def capabilities_page(locale: str) -> str:
     return body
 
 def service_page(locale: str, service: dict) -> str:
-    body = intro(locale, service["title"], service["text"], "/capabilities/" + service["slug"] + "/")
-    body += '<section class="section"><div class="shell"><div class="split"><div><h2 class="section__title">' + esc(service["title"]) + '</h2><p class="copy-muted">' + esc(service["text"]) + '</p><p class="copy-muted">' + esc(text(locale, "technical_text")) + '</p></div><div class="split__placeholder"><strong>PROJECT FILES TO BE REVIEWED</strong><p>Drawing · sample · PDF · revision notes</p></div></div><p style="margin-top:28px"><a class="button" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a></p></div></section>'
+    # Keep the three capability pages fully authored in Spanish.  These are
+    # high-intent landing pages, so a word glossary alone is not sufficient:
+    # it can leave English sentence order in the public copy.  The English
+    # source remains the canonical reference; this map is the reviewed locale
+    # owner copy used by the static build and the D1 snapshot gate.
+    service_es = {
+        "mould-design": (
+            "Diseño e ingeniería de moldes",
+            "Revisamos planos, líneas de partición, refrigeración, expulsión e interfaz de la máquina de producción antes de aprobar el utillaje."
+        ),
+        "precision-manufacturing": (
+            "Fabricación de precisión",
+            "El mecanizado, EDM, ajuste e inspección siguen el documento técnico de utillaje aprobado y los puntos de control acordados."
+        ),
+        "trial-sampling": (
+            "Pruebas, muestras y optimización",
+            "Las pruebas de molde, las muestras, las comprobaciones dimensionales y las revisiones acordadas guían la entrega final."
+        ),
+    }
+    if locale == "es" and service.get("slug") in service_es:
+        service_title, service_text = service_es[service["slug"]]
+    else:
+        service_title = service["title"]
+        service_text = service["text"]
+    body = intro(locale, service_title, service_text, "/capabilities/" + service["slug"] + "/")
+    body += '<section class="section"><div class="shell"><div class="split"><div><h2 class="section__title">' + esc(service_title) + '</h2><p class="copy-muted">' + esc(service_text) + '</p><p class="copy-muted">' + esc(text(locale, "technical_text")) + '</p></div><div class="split__placeholder"><strong>' + esc("ARCHIVOS DEL PROYECTO POR REVISAR" if locale == "es" else "PROJECT FILES TO BE REVIEWED") + '</strong><p>' + esc("Plano · muestra · PDF · notas de revisión" if locale == "es" else "Drawing · sample · PDF · revision notes") + '</p></div></div><p style="margin-top:28px"><a class="button" href="' + localized_href(locale, "/contact/#inquiry") + '">' + esc(text(locale, "quote")) + ' →</a></p></div></section>'
     return body
 
 def contact_page(locale: str) -> str:
-    labels = {"FORM_ARIA": text(locale, "form_aria"), "FORM_NAME": "Full Name" if locale == "en" else "Nombre completo", "FORM_PHONE": "Phone / WhatsApp" if locale == "en" else "Teléfono / WhatsApp", "FORM_COMPANY": text(locale, "form_company"), "FORM_EMAIL": text(locale, "form_email"), "FORM_CATEGORY": "Cap Mould Type" if locale == "en" else "Tipo de molde de tapa", "FORM_CATEGORY_PLACEHOLDER": "— Select cap mould type —" if locale == "en" else "— Seleccione el tipo de molde —", "FORM_REQUIREMENTS": "Your Message" if locale == "en" else "Su mensaje", "FORM_PRIVACY_NOTE": "Your information is secure." if locale == "en" else "Su información está protegida.", "FORM_PRIVACY": text(locale, "form_privacy"), "FORM_SUBMIT": "Send Inquiry Now" if locale == "en" else "Enviar consulta"}
+    labels = {"FORM_ARIA": text(locale, "form_aria"), "FORM_NAME": "Full Name" if locale == "en" else "Nombre completo", "FORM_PHONE": "Phone / WhatsApp" if locale == "en" else "Teléfono / WhatsApp", "FORM_COMPANY": text(locale, "form_company"), "FORM_EMAIL": text(locale, "form_email"), "FORM_CATEGORY": "Cap Mould Type" if locale == "en" else "Tipo de molde de tapa", "FORM_CATEGORY_PLACEHOLDER": "— Select cap mould type —" if locale == "en" else "— Seleccione el tipo de molde —", "FORM_REQUIREMENTS": "Your Message" if locale == "en" else "Su mensaje", "FORM_PRIVACY_NOTE": "Your information is secure." if locale == "en" else "Su información está protegida.", "FORM_PRIVACY": text(locale, "form_privacy"), "FORM_SUBMIT": "Send Inquiry Now" if locale == "en" else "Enviar consulta", "FORM_COMPANY_PLACEHOLDER": "Your company" if locale == "en" else "Su empresa", "FORM_REQUIREMENTS_PLACEHOLDER": "Share cap design, material, cavity count and production volume." if locale == "en" else "Comparta el diseño de la tapa, el material, el número de cavidades y el volumen de producción.", "FORM_MINERAL_WATER": "Mineral Water Cap Mould" if locale == "en" else "Molde de tapas de agua mineral", "FORM_BEVERAGE": "Beverage Bottle Cap Mould" if locale == "en" else "Molde de tapas para botellas de bebidas", "FORM_EDIBLE_OIL": "Edible Oil Bottle Cap Mould" if locale == "en" else "Molde de tapas para aceite comestible", "FORM_MEDICAL": "Medical Bottle Cap Mould" if locale == "en" else "Molde de tapas médicas", "FORM_COSMETIC": "Cosmetic Cap Mould" if locale == "en" else "Molde de tapas cosméticas", "FORM_FLIP_TOP": "Flip Top Cap Mould" if locale == "en" else "Molde de tapas abatibles", "FORM_TAMPER": "Tamper-Evident Cap Mould" if locale == "en" else "Molde de tapas con precinto", "FORM_CUSTOM": "Custom Closure Mould" if locale == "en" else "Molde de cierres personalizados", "FORM_OTHER": "Other / Not Sure" if locale == "en" else "Otro / No estoy seguro"}
     form = render_template("contact-form", **{key: esc(value) for key, value in labels.items()})
     body = intro(locale, text(locale, "contact_title"), text(locale, "contact_intro"), "/contact/")
     stats_rows = structured_page_copy(locale, "/contact/").get("stats")
@@ -1544,7 +1657,7 @@ def contact_page(locale: str) -> str:
             if question and answer:
                 reviewed.append((question, answer))
         if reviewed:
-            quick_answers = reviewed
+            quick_answers = [(spanish_ui_text(q), spanish_ui_text(a)) for q, a in reviewed] if locale == "es" else reviewed
     quick_title = "Quick Answers" if locale == "en" else "Respuestas rápidas"
     quick = '<section class="faq-teaser" aria-labelledby="quick-answers-title"><h2 id="quick-answers-title">' + quick_title + '</h2><div class="faq-list">' + ''.join('<div class="faq-item"><p class="faq-q">' + esc(question) + '</p><p class="faq-a">' + esc(answer) + '</p></div>' for question, answer in quick_answers) + '</div></section>'
     form_title = "Envíenos su consulta" if locale == "es" else "Send Us Your Inquiry"
@@ -1615,12 +1728,16 @@ def faq_page(locale: str) -> str:
             if not isinstance(group, dict):
                 continue
             group_title = str(group.get("title") or "").strip()
+            if locale == "es":
+                group_title = spanish_ui_text(group_title)
             pairs = []
             for entry in (group.get("items") if isinstance(group.get("items"), list) else [])[:12]:
                 if not isinstance(entry, dict):
                     continue
                 question = str(entry.get("question") or "").strip()
                 answer = str(entry.get("answer") or "").strip()
+                if locale == "es":
+                    question, answer = spanish_ui_text(question), spanish_ui_text(answer)
                 if question and answer:
                     pairs.append((question, answer))
             if group_title and pairs:
@@ -1628,11 +1745,11 @@ def faq_page(locale: str) -> str:
         if reviewed_groups:
             groups = reviewed_groups
     if structured.get("eyebrow"):
-        page_eyebrow = str(structured["eyebrow"])
+        page_eyebrow = spanish_ui_text(str(structured["eyebrow"])) if locale == "es" else str(structured["eyebrow"])
     if structured.get("title"):
         page_title = esc(str(structured["title"]))
     if structured.get("subtitle"):
-        page_subtitle = str(structured["subtitle"])
+        page_subtitle = spanish_ui_text(str(structured["subtitle"])) if locale == "es" else str(structured["subtitle"])
 
     prefix = '<section class="reference-banner reference-banner--compact"><img src="' + legacy_media_url('/upload/Banner/pheader-faq.jpg') + '" alt="LEYA MOULD FAQ" loading="eager" decoding="async"></section>'
     prefix += '<nav class="reference-breadcrumb faq-breadcrumb" aria-label="Breadcrumb"><div class="shell"><a href="' + local_link(locale, "/") + '">' + esc(text(locale, "home")) + '</a><span>›</span><span>' + esc("FAQs" if locale == "en" else "Preguntas frecuentes") + '</span></div></nav>'
@@ -1659,7 +1776,7 @@ def samples_page(locale: str) -> str:
     title = "Plastic Cap Samples" if locale == "en" else ("Muestras de tapas de plástico" if locale == "es" else text(locale, "samples"))
     subtitle = ("Explore una amplia variedad de tapas de plástico fabricadas con nuestros moldes de inyección de alta precisión. Cada tapa muestra lo que pueden producir nuestros moldes, desde cierres estándar de agua hasta diseños complejos con precinto." if locale == "es" else "Explore a wide variety of plastic bottle caps that we manufacture using our high-precision injection molds. Each cap is a sample of what our molds can produce — from standard water closures to complex tamper-evident designs.")
     cards = []
-    sample_rows = spanish_ui_copy(SAMPLE_ITEMS) if locale == "es" else SAMPLE_ITEMS
+    sample_rows = spanish_sample_items() if locale == "es" else SAMPLE_ITEMS
     for item in sample_rows:
         applications = ''.join('<li>' + esc(app) + '</li>' for app in item["applications"])
         cards.append(
@@ -1691,8 +1808,9 @@ def video_card(item: dict, locale: str) -> str:
             date_text = f"{day}/{month}/{year}"
         except ValueError:
             pass
+    play_label = "Reproducir vídeo" if locale == "es" else "Play video"
     return ('<article class="video-card" data-video-id="' + video_id + '">'
-        '<div class="video-thumb" data-video-id="' + video_id + '" role="button" tabindex="0" aria-label="Play ' + title + '">'
+        '<div class="video-thumb" data-video-id="' + video_id + '" role="button" tabindex="0" aria-label="' + esc(play_label + ': ' + raw_title) + '">'
         '<img src="https://i.ytimg.com/vi/' + video_id + '/mqdefault.jpg" alt="' + title + '" loading="lazy" decoding="async">'
         '<span class="play-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></span></div>'
         '<div class="video-body"><time class="video-date" datetime="' + published + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-.75-1.23-4.5-2.67V7z"></path></svg>' + esc(date_text) + '</time>'
@@ -1755,7 +1873,12 @@ def catalog_video_section(locale: str) -> str:
 def localized_item_text(item: dict, locale: str, field: str) -> str:
     """Read an article's translated field without replacing CMS-owned values."""
     if locale == "es":
-        return item.get(field + "Es") or item.get(field, "")
+        value = item.get(field + "Es") or ("" if STRICT_D1 else item.get(field, ""))
+        # D1 summaries/titles can contain the same legacy mixed-language
+        # fragments as the rich editorial branch.  Apply the reviewed Spanish
+        # glossary at the final render boundary so listing cards and the
+        # Article schema cannot expose an English fallback.
+        return spanish_ui_text(value)
     return item.get(field, "")
 
 def effective_news_items(category: str = "news") -> list[dict]:
@@ -1882,7 +2005,13 @@ def rich_news_body(locale: str, item: dict, category_label: str) -> str:
     faq_title = "Frequently asked questions" if lang == "en" else "Preguntas frecuentes"
     faq_html = '<section class="blog-faq"><h2>' + faq_title + '</h2>' + ''.join('<details><summary>' + esc(faq.get("question") or "") + '</summary><p>' + esc(faq.get("answer") or "") + '</p></details>' for faq in faqs) + '</section>'
     product_title = "Relevant mould categories" if lang == "en" else "Categorías de moldes relacionadas"
-    product_html = '<section class="blog-products"><h2>' + product_title + '</h2><div class="blog-product-links">' + ''.join('<a class="blog-editorial__product-link" href="' + localized_href(locale, product.get("route") or "/products/") + '"><strong>' + esc((product.get("label") or {}).get(lang) or "") + '</strong><span>' + esc((product.get("reason") or {}).get(lang) or "") + '</span></a>' for product in products[:3]) + '</div></section>'
+    product_links = []
+    for product in products[:3]:
+        label = (product.get("label") or {}).get(lang) or ("" if lang == "es" else (product.get("label") or {}).get("en") or "")
+        reason = (product.get("reason") or {}).get(lang) or ("" if lang == "es" else (product.get("reason") or {}).get("en") or "")
+        if label and reason:
+            product_links.append('<a class="blog-editorial__product-link" href="' + localized_href(locale, product.get("route") or "/products/") + '"><strong>' + esc(label) + '</strong><span>' + esc(reason) + '</span></a>')
+    product_html = '<section class="blog-products"><h2>' + product_title + '</h2><div class="blog-product-links">' + ''.join(product_links) + '</div></section>'
     related_title = "Related reading" if lang == "en" else "Lecturas relacionadas"
     related_cards = []
     for slug in related_slugs[:3]:
@@ -1891,8 +2020,10 @@ def rich_news_body(locale: str, item: dict, category_label: str) -> str:
             continue
         if lang == "es":
             related = spanish_editorial_copy(related)
-        rtitle = (related.get("title") or {}).get(lang) or (related.get("title") or {}).get("en")
-        rsummary = (related.get("description") or {}).get(lang) or (related.get("description") or {}).get("en")
+        rtitle = (related.get("title") or {}).get(lang) or ("" if lang == "es" else (related.get("title") or {}).get("en"))
+        rsummary = (related.get("description") or {}).get(lang) or ("" if lang == "es" else (related.get("description") or {}).get("en"))
+        if not rtitle or not rsummary:
+            continue
         related_cards.append('<a class="blog-related__item" href="' + localized_href(locale, _editorial_route(str(slug)) + str(slug) + ".html") + '"><img src="' + esc(str(related.get("cover") or "/assets/mould-news-placeholder.svg")) + '" alt="' + esc(rtitle) + '" loading="lazy" decoding="async"><span><strong>' + esc(rtitle) + '</strong><small>' + esc(rsummary) + '</small></span></a>')
     related_html = '<section class="blog-related"><h2>' + related_title + '</h2><div class="blog-related__grid">' + ''.join(related_cards) + '</div></section>'
     sources_title = "Sources and disclosure" if lang == "en" else "Fuentes y transparencia"
@@ -1997,6 +2128,8 @@ def generate() -> dict:
                 "Our Production Facilities", "Let's Work Together", "Plastic Cap Samples",
                 "Engineering Excellence Behind Every Mould", "Start Your Cap Mould Project",
                 "Want to See More Samples or Request a Quote", "Need Auxiliary Equipment for Your Cap Line?",
+                "Mould Design & Engineering", "Mould Design and Engineering", "PROJECT FILES TO BE REVIEWED",
+                "Drawing · sample · PDF · revision notes", "review drawings, parting lines, cooling",
             )
             if any(marker.lower() in plain.lower() for marker in english_markers):
                 localized_body = ""
@@ -2067,7 +2200,6 @@ def generate() -> dict:
 if __name__ == "__main__":
     result = generate()
     print("LEYA_MOULD_SOURCE_BUILD_OK", "HTML_FILES", len(result["routes"]), "LOCALES", ",".join(x["code"] for x in result["locales"]))
-
 
 
 

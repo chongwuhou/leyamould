@@ -62,6 +62,23 @@ ENGLISH_LEAKS = (
     "Our Production Facilities", "Trial runs, dimensional checks", "Quality evidence is kept",
     "LEYA MOULD production references show", "What is the typical cycle time?",
     "Can one mould run", "Do you provide installation support?",
+    # Static-route, form and video strings that previously bypassed the D1
+    # copy layer.  Keep these as phrases rather than generic technical words
+    # such as PET, machine or mould, which are valid in Spanish trade copy.
+    "Your Trusted Plastic Cap Mould Manufacturer", "Your Trusted",
+    "Cap Auxiliary Machines", "Why Cap Auxiliary Machines Are Essential",
+    "Contact LEYA MOULD", "Contact us", "Factory Address", "Contact Methods",
+    "Mineral Water Cap Mould", "Beverage Bottle Cap Mould", "Your company",
+    "Share cap design", "Living-Hinge", "Video Gallery", "Play video",
+    "Trial video", "Bottle Cap Machine", "Mould Product Families",
+    "Learn More", "Frequently Asked Questions", "Quick Answers",
+    # Mixed-language fragments that can reappear when an older D1 row was
+    # copied from the English category record.  Technical standards and
+    # country/brand names remain intentionally outside this list.
+    "Unscrewing", "Band bridges", "Replaceable", "Serviceable", "Fatigue Test",
+    "gating", "Compliance", "Stretch-Ratio", "overmould", "tool rooms",
+    "pull-top", "stays aligned", "specification", "processing", "variability",
+    "Yes.", "Send ", " existing ", " match ", " supply ", "Every ",
 )
 
 

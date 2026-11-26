@@ -41,4 +41,3 @@ for locale, expected_faq in (("en", "Which drawing is needed?"), ("es", "¿Qué 
 
 print("PASS: product image, localized FAQPage and three-level BreadcrumbList are aligned")
 mould_build.STRICT_D1 = original_strict_d1
-
