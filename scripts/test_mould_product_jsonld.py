@@ -16,6 +16,11 @@ def nodes(payload: str):
 
 
 original = mould_build.CATALOG.get("categories")
+original_strict_d1 = mould_build.STRICT_D1
+# This is a pure renderer-contract test.  It supplies its own demo product
+# row and must not require a production D1 snapshot just to resolve the
+# shared breadcrumb label.
+mould_build.STRICT_D1 = False
 mould_build.CATALOG["categories"] = [{
     "slug": "demo-family", "route": "/product/demo-family.html", "title": "Demo Family",
     "image": "/media/product/demo-family.webp",
@@ -35,4 +40,5 @@ for locale, expected_faq in (("en", "Which drawing is needed?"), ("es", "¿Qué 
     assert breadcrumb[0]["itemListElement"][1]["item"].endswith("/products/")
 
 print("PASS: product image, localized FAQPage and three-level BreadcrumbList are aligned")
+mould_build.STRICT_D1 = original_strict_d1
 
