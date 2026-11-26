@@ -14,7 +14,7 @@ from pathlib import Path
 
 from locale_registry import approved_locales
 from mould_category_pages import render_category_page, render_model_reference_section
-from mould_localization import ES_COMMON_COPY, ES_SEO, ES_SHARED_CTA, spanish_editorial_copy, spanish_model_description, spanish_model_text, spanish_ui_copy, spanish_ui_text
+from mould_localization import ES_COMMON_COPY, ES_SEO, ES_SHARED_CTA, spanish_editorial_copy, spanish_html_text, spanish_model_description, spanish_model_text, spanish_ui_copy, spanish_ui_text
 
 ROOT = Path(__file__).resolve().parent
 # The supplied logo is kept as a source asset so the published header can scale it without stretching.
@@ -2120,6 +2120,12 @@ def generate() -> dict:
         # English body from the source-language CMS row.
         source_body = BODY_OVERRIDES.get(route) if locale == "en" else ""
         localized_body = str(translated.get("mainHtml") or "")
+        if locale == "es" and localized_body:
+            # D1 page overrides are owner-authored HTML fragments.  Normalize
+            # only their visible text nodes so stale English fragments cannot
+            # bypass the structured renderer, while URLs, media attributes and
+            # embedded scripts remain byte-for-byte intact.
+            localized_body = spanish_html_text(localized_body)
         if locale == "es" and localized_body:
             # The first D1 translation seed stored the English reference HTML
             # in several Spanish overrides. Keep a genuinely Spanish owner
