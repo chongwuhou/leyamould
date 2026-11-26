@@ -409,7 +409,8 @@ def navigation_label(url: str, fallback: str, locale: str = "en") -> str:
                 if isinstance(item, dict) and str(item.get("route") or "") == url:
                     localized = item.get("navTitleEs") or item.get("titleEs")
                     break
-    return str(localized or row.get("label") or fallback)
+    value = str(localized or row.get("label") or fallback)
+    return spanish_ui_text(value) if locale == "es" else value
 
 def product_navigation_items() -> list[dict]:
     """Merge D1 product children with the checked-in visual catalogue.
@@ -646,7 +647,7 @@ def text(locale: str, key: str) -> str:
     source = COMMON_COPY.get("en") if isinstance(COMMON_COPY.get("en"), dict) else {}
     value = localized.get(key) if key in localized else None
     if isinstance(value, str) and value.strip():
-        return value
+        return spanish_ui_text(value) if locale == "es" else value
     if locale != "en" and STRICT_D1:
         raise RuntimeError("Strict D1 common copy missing for " + locale + ":" + key)
     if locale != "en":
@@ -1640,6 +1641,8 @@ def contact_page(locale: str) -> str:
     if not isinstance(stats_rows, list) or not stats_rows:
         labels_fallback = ["Years Experience", "Countries Served", "Moulds Delivered", "Quote Response"] if locale == "en" else ["Años de experiencia", "Países atendidos", "Moldes entregados", "Respuesta de cotización"]
         stats_rows = [{"label": value, "title": label} for value, label in zip(["15+", "60+", "500+", "24h"], labels_fallback)]
+    if locale == "es":
+        stats_rows = spanish_ui_copy(stats_rows)
     stats = '<div class="trust-row" aria-label="LEYA MOULD at a glance">' + ''.join('<div class="trust-badge"><span class="badge-number">' + esc(str(item.get("label") or "")) + '</span><span class="badge-label">' + esc(str(item.get("title") or "")) + '</span></div>' for item in stats_rows[:4] if isinstance(item, dict)) + '</div>'
     info_labels = ("Dirección de fábrica", "Métodos de contacto", "TELÉFONO / WHATSAPP", "CORREO", "SITIO WEB") if locale == "es" else ("Factory Address", "Contact Methods", "PHONE / WHATSAPP", "EMAIL", "WEBSITE")
     info = '<div class="contact-info-card"><div class="contact-info-block"><span class="contact-info-icon">⌖</span><h3>' + info_labels[0] + '</h3><strong>LEYA MOULD Co.,Ltd</strong><p>' + esc(ADDRESS) + '</p></div><div class="contact-info-block"><h3>' + info_labels[1] + '</h3><dl class="contact-methods"><div><dt>' + info_labels[2] + '</dt><dd><a href="tel:+8613606727715">+86 136 0672 7715</a></dd></div><div><dt>' + info_labels[3] + '</dt><dd><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></dd></div><div><dt>' + info_labels[4] + '</dt><dd><a href="https://leyamould.com/">leyamould.com</a></dd></div></dl></div>' + stats + '</div>'
