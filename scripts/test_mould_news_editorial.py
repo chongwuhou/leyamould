@@ -62,4 +62,3 @@ for item in items:
     check_page("", item)
     check_page("es", item)
 print("MOULD_NEWS_EDITORIAL_OK", len(items), "articles", "unique covers", len(hashes))
-

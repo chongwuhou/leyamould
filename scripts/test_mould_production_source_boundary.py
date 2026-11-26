@@ -43,4 +43,3 @@ for path in (
     assert "== 24" not in source and "== 13" not in source and "== 21" not in source, path
 
 print("LEYA_MOULD_PRODUCTION_SOURCE_BOUNDARY_PASSED")
-

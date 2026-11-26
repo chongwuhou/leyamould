@@ -58,11 +58,12 @@ def _structured_text(item: dict, locale: str, key: str, fallback: str, strict: b
     """Read an owner-edited structured product field with a safe locale fallback."""
     localized = item.get(key + "Es") if locale == "es" else item.get(key)
     if isinstance(localized, str) and localized.strip():
-        return localized.strip()
+        return spanish_ui_text(localized.strip()) if locale == "es" else localized.strip()
     if strict:
         return ""
     value = item.get(key)
-    return value.strip() if isinstance(value, str) and value.strip() else fallback
+    value = value.strip() if isinstance(value, str) and value.strip() else fallback
+    return spanish_ui_text(value) if locale == "es" else value
 
 
 def _structured_faqs(item: dict, locale: str, fallback: list[tuple[str, str]], strict: bool = False) -> list[tuple[str, str]]:
@@ -77,6 +78,8 @@ def _structured_faqs(item: dict, locale: str, fallback: list[tuple[str, str]], s
             continue
         question = str(entry.get("question") or "").strip()
         answer = str(entry.get("answer") or "").strip()
+        if locale == "es":
+            question, answer = spanish_ui_text(question), spanish_ui_text(answer)
         if question and answer:
             rows.append((question, answer))
     return [] if strict else (rows or fallback)
@@ -93,6 +96,8 @@ def _structured_sections(item: dict, locale: str, fallback: list[tuple[str, str,
             continue
         title = str(entry.get("title") or "").strip()
         body = str(entry.get("body") or "").strip()
+        if locale == "es":
+            title, body = spanish_ui_text(title), spanish_ui_text(body)
         if not title or not body:
             continue
         previous = fallback[min(index, len(fallback) - 1)] if fallback else (title, body, "", [])
@@ -109,12 +114,12 @@ def _category_payload(item: dict, locale: str = "en") -> dict:
     value = item.get("categoryCopyEs") if locale == "es" else item.get("categoryCopy")
     if not isinstance(value, dict):
         return {}
-    # D1 remains the sole production source. A reviewed Spanish row can still
-    # contain a legacy UI label copied from the English baseline; clean that
-    # label at the locale boundary instead of falling back to checked-in
-    # category content or weakening the Spanish completeness gate. The glossary
-    # only translates reviewed UI/category phrases and leaves model numbers,
-    # standards and media paths intact.
+    # D1 remains the sole production source.  A reviewed Spanish row can
+    # still contain a legacy UI label copied from the English baseline; clean
+    # that label at the locale boundary instead of falling back to checked-in
+    # category content or weakening the Spanish completeness gate.  The
+    # glossary only translates reviewed UI/category phrases and leaves model
+    # numbers, standards and media paths intact.
     return spanish_ui_copy(value) if locale == "es" else value
 
 
@@ -126,7 +131,15 @@ def _category_rows(value: object, fallback: list[dict] | None = None, limit: int
 
 def _category_text(value: dict, key: str, fallback: str = "") -> str:
     candidate = value.get(key)
-    return str(candidate).strip() if isinstance(candidate, str) and candidate.strip() else fallback
+    if not isinstance(candidate, str) or not candidate.strip():
+        return fallback
+    # Media paths and identifiers are data, not user-facing copy.  They may
+    # contain words such as ``gallon`` or ``water`` and must never pass
+    # through the Spanish glossary, otherwise a reviewed asset URL becomes a
+    # different (and usually broken) filename.
+    if key.lower() in {"image", "hero_image", "src", "href", "route", "slug", "url", "cover", "imagepath"}:
+        return candidate.strip()
+    return candidate.strip()
 
 
 def _project_brief(value: dict) -> dict:
@@ -384,10 +397,11 @@ def _catalog_text(item: dict, locale: str, key: str, strict: bool = False) -> st
     if locale == "es":
         translated = item.get(key + "Es")
         if isinstance(translated, str) and translated.strip():
-            return translated.strip()
+            return spanish_ui_text(translated.strip())
         if strict:
             return ""
-    return str(item.get(key) or "")
+    value = str(item.get(key) or "")
+    return spanish_ui_text(value) if locale == "es" else value
 
 def _model_text(item: dict, locale: str, key: str) -> str:
     """Read reviewed per-locale model copy, falling back to source English."""
@@ -395,6 +409,8 @@ def _model_text(item: dict, locale: str, key: str) -> str:
     localized = translations.get(locale) if isinstance(translations.get(locale), dict) else {}
     value = localized.get(key)
     if isinstance(value, str) and value.strip():
+        if locale == "es":
+            return spanish_model_text(value) if key in {"title", "alt"} else spanish_model_description(value)
         return value.strip()
     source = str(item.get(key) or "").strip()
     if locale == "es":
@@ -485,12 +501,18 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
             [image], [("Dimensional Inspection", "Critical dimensions are checked against the approved drawing."), ("Trial Samples", "Agreed samples guide the final approval.")],
             [("Can you review a custom mould?", "Yes. Send the drawing, sample, material and production target for a technical review."), ("Do you provide trial samples?", "Agreed trial samples and inspection evidence are included before handover.")],
             [], [])
-    if locale == "es" and not strict_d1:
-        # D1 localized fields still win when present; this only localizes the
-        # checked-in/reference fallback strings that predate the Spanish row.
+    if locale == "es":
+        # D1 is still the production source, but older Spanish rows can carry
+        # English baseline fragments inside structured cards (for example
+        # ``reported for each cavity``).  Clean the visible Spanish branch at
+        # the shared renderer boundary so production never publishes mixed
+        # language copy, while preserving media paths and identifiers.
         details = spanish_ui_copy(details)
     category = _category_payload(item, locale)
-    if locale == "es" and not strict_d1:
+    if locale == "es":
+        # Apply the same boundary normalization to D1 category fields.  This
+        # does not replace D1 values or fall back to English; it only translates
+        # legacy English fragments in the selected Spanish record.
         category = spanish_ui_copy(category)
     hero_data = category.get("hero") if isinstance(category.get("hero"), dict) else {}
     title = _catalog_text(item, locale, "title", strict_d1)
@@ -500,6 +522,28 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     hero_accent = _category_text(hero_data, "accent", "" if strict_d1 else details["hero_accent"])
     hero_subtitle = _category_text(hero_data, "subtitle", "" if strict_d1 else details["hero_subtitle"])
     hero_image = _category_text(hero_data, "image", "" if strict_d1 else details["hero_image"])
+    if locale == "es":
+        # The reference template splits the hero into three visual spans. A
+        # literal word-by-word conversion of the English spans can produce
+        # awkward fragments (for example “sanitaria sanitaria envases”). Keep
+        # the Spanish headline as reviewed family copy instead.
+        spanish_hero = {
+            "mineral-water-closure-cap-molds": ("Moldes de tapas de agua y bebidas", "Soluciones", "para líneas de alta producción"),
+            "five-gallon-water-cap-mould": ("Molde de tapas de 5 galones", "Soluciones", "para botellas reutilizables de 18,9 litros"),
+            "oil-bottle-cap-mould": ("Molde de tapas para aceite comestible", "Soluciones", "para envases de aceite"),
+            "flip-top-caps-mould": ("Molde de tapas abatibles", "para", "envases cosméticos"),
+            "engine-oil-cap-mould": ("Molde de tapas para aceite de motor", "para", "fluidos de automoción"),
+            "food-packaging-cap-mould": ("Molde de tapas para envases alimentarios", "para", "productos seguros y frescos"),
+            "medical-cap-mould": ("Molde de tapas médicas", "para", "envases sanitarios estériles"),
+            "personal-care-cap-mould": ("Molde de tapas para cuidado personal", "para", "marcas de belleza e higiene"),
+            "functional-cap-mould": ("Molde de tapas funcionales", "para", "cierres multicomponente"),
+            "plastic-handle-cap-mould": ("Molde de asas de plástico", "para", "transporte duradero de botellas"),
+            "wine-cap-mould": ("Molde de tapas para vino", "para", "bebidas espirituosas y especiales"),
+            "pet-preform-mould": ("Moldes de preformas PET", "para", "envases de bebidas y aceites"),
+            "blow-bottle-mould": ("Moldes de soplado de botellas", "para", "envases PET y formas especiales"),
+        }
+        if item["slug"] in spanish_hero:
+            hero_title_text, hero_accent, hero_subtitle = spanish_hero[item["slug"]]
     image = hero_image
     stats = _category_rows(hero_data.get("stats"), [{"number": number, "label": label} for number, label in details["stats"]], 8)
     reference_description = _category_text(category, "heroDescriptionEs" if locale == "es" else "heroDescription", "" if strict_d1 else (detail or description))
@@ -511,10 +555,10 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     crumb = '<nav class="mould-breadcrumb" aria-label="Breadcrumb"><div class="mould-detail-container"><a href="' + href(locale, "/") + '">' + esc(_lang(locale, "home")) + '</a><span>/</span><a href="' + href(locale, "/Plastic-cap-mold.html") + '">' + esc(_lang(locale, "cap_mould")) + '</a><span>/</span><span>' + esc(title) + '</span></div></nav>'
 
     product_rows = _category_rows(category.get("products"), [{"title": title, "image": image, "body": body} for title, image, body in details["products"]], 12)
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         product_rows = spanish_ui_copy(product_rows)
     products_heading = _category_text(category, "productsTitle", "" if strict_d1 else hero_title_text + " " + hero_accent + " Types")
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         products_heading = spanish_ui_text(products_heading)
     products = '<section class="mould-products" id="products"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "our_products")) + '</span><h2>' + esc(products_heading) + '</h2><p>' + esc(detail) + '</p><i></i></div><div class="mould-products-grid">'
     for row in product_rows:
@@ -564,7 +608,7 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     advantage_rows = _category_rows(category.get("advantages"), [{"title": adv_title, "body": adv_text} for adv_title, adv_text in details["advantages"]], 12)
     advantages_title = _category_text(category, "advantagesTitle", "" if strict_d1 else "Key Advantages of Our " + title)
     advantages_body = _category_text(category, "advantagesBody", "" if strict_d1 else "Engineered for repeatable production, stable quality and a clear technical handover.")
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         advantages_title, advantages_body = spanish_ui_text(advantages_title), spanish_ui_text(advantages_body)
     advantages = '<section class="mould-advantages" id="advantages"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "advantages")) + '</span><h2>' + esc(advantages_title) + '</h2><p>' + esc(advantages_body) + '</p><i></i></div><div class="mould-advantages-grid">'
     for row in advantage_rows:
@@ -575,7 +619,7 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     technology_fallback = [{"title": row[0], "body": row[1], "image": row[2], "bullets": row[3]} for row in details["technology"][1]]
     structured_technology = _category_rows(category_technology.get("items"), technology_fallback, 8)
     tech_heading = _category_text(category_technology, "title", "" if strict_d1 else details["technology"][0])
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         structured_technology = spanish_ui_copy(structured_technology)
         tech_heading = spanish_ui_text(tech_heading)
     tech = '<section class="mould-technology" id="technical"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "technology")) + '</span><h2>' + esc(tech_heading) + '</h2><i></i></div>'
@@ -590,11 +634,11 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     tech += '</div></section>'
 
     sample_rows = _category_rows(category.get("samples"), [{"image": sample} for sample in details["samples"]], 24)
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         sample_rows = spanish_ui_copy(sample_rows)
     samples_title = _category_text(category, "samplesTitle", "" if strict_d1 else title + " Gallery")
     samples_body = _category_text(category, "samplesBody", "" if strict_d1 else "Click any image to enlarge. Samples and reference parts are shown for technical discussion.")
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         samples_title, samples_body = spanish_ui_text(samples_title), spanish_ui_text(samples_body)
     samples = '<section class="mould-samples" id="samples"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "samples")) + '</span><h2>' + esc(samples_title) + '</h2><p>' + esc(samples_body) + '</p><i></i></div><div class="mould-samples-grid">'
     for row in sample_rows:
@@ -604,13 +648,13 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
     samples += '</div></div></section>'
 
     video_rows = _category_rows(category.get("videos"), [{"videoId": video_id, "title": video_title} for video_id, video_title in details["videos"]], 24)
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         video_rows = spanish_ui_copy(video_rows)
     videos = ''
     if video_rows:
         videos_title = _category_text(category, "videosTitle", "" if strict_d1 else title + ' Trial Videos')
         videos_body = _category_text(category, "videosBody", "" if strict_d1 else "Watch the mould trial and production references in full screen.")
-        if locale == "es" and not strict_d1:
+        if locale == "es":
             videos_title, videos_body = spanish_ui_text(videos_title), spanish_ui_text(videos_body)
         videos = '<section class="mould-videos" id="videos"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "videos")) + '</span><h2>' + esc(videos_title) + '</h2><p>' + esc(videos_body) + '</p><i></i></div><div class="mould-videos-grid">'
         for row in video_rows:
@@ -622,31 +666,29 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
         videos += '</div></div></section>'
 
     quality_rows = _category_rows(category.get("quality"), [{"title": q, "body": a} for q, a in details["quality"]], 12)
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         quality_rows = spanish_ui_copy(quality_rows)
     quality_title = _category_text(category, "qualityTitle", "" if strict_d1 else "Quality Control & Inspection")
     quality_body = _category_text(category, "qualityBody", "" if strict_d1 else "Every mould passes a documented inspection path before shipment.")
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         quality_title, quality_body = spanish_ui_text(quality_title), spanish_ui_text(quality_body)
     quality = '<section class="mould-quality" id="quality"><div class="mould-detail-container"><div class="mould-section-heading"><span>' + esc(_lang(locale, "quality")) + '</span><h2>' + esc(quality_title) + '</h2><p>' + esc(quality_body) + '</p><i></i></div><div class="mould-quality-list">' + ''.join('<article><b>✓</b><h4>' + esc(str(row.get("title") or "")) + '</h4><p>' + esc(str(row.get("body") or "")) + '</p></article>' for row in quality_rows) + '</div></div></section>'
 
-    # Use the same D1-backed rows that feed Product/FAQPage JSON-LD so the
-    # visible questions can never drift from the structured data.
     faq_pairs = helpers.get("d1_faqs")
     if not isinstance(faq_pairs, list):
         faq_pairs = _structured_faqs(item, locale, details["faqs"], strict_d1)
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         faq_pairs = spanish_ui_copy(faq_pairs)
     faq_rows = ''.join('<details><summary>' + esc(q) + '</summary><p>' + esc(a) + '</p></details>' for q, a in faq_pairs)
     # Category structured copy is not a customer-review ledger. Only the
     # publication-filtered D1 review rows passed by the shared builder may be
     # rendered here; otherwise the section stays transparently empty.
     testimonial_rows = list(helpers.get("verified_reviews") or [])[:12]
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         testimonial_rows = spanish_ui_copy(testimonial_rows)
     feedback = ''.join('<article class="mould-testimonial"><p>“' + esc(str(row.get("quote") or "")) + '”</p><b>' + esc(str(row.get("author") or "")) + '</b><span>' + esc(str(row.get("country") or "")) + '</span></article>' for row in testimonial_rows)
     feedback_title = _category_text(category, "feedbackTitle", "" if strict_d1 else "What Buyers Say")
-    if locale == "es" and not strict_d1:
+    if locale == "es":
         feedback_title = spanish_ui_text(feedback_title)
     faq = '<section class="mould-faq" id="faq"><div class="mould-detail-container"><div class="mould-faq-grid"><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "faq")) + '</span><h2>' + esc(title) + ' FAQ</h2><i></i></div><div class="mould-faq-list">' + faq_rows + '</div></div><div><div class="mould-section-heading mould-section-heading--left"><span>' + esc(_lang(locale, "feedback")) + '</span><h2>' + esc(feedback_title) + '</h2><i></i></div><div class="mould-testimonials">' + feedback + '</div></div></div></div></section>'
 
@@ -658,4 +700,3 @@ def render_category_page(locale: str, item: dict, helpers: dict) -> str:
 
     lightbox = '<div class="mould-lightbox" id="mould-lightbox" aria-hidden="true"><button type="button" aria-label="Close" data-mould-close>×</button><img alt=""></div><div class="mould-video-lightbox" id="mould-video-lightbox" aria-hidden="true"><button type="button" aria-label="Close" data-mould-video-close>×</button><iframe title="Mould trial video" allow="autoplay; encrypted-media" allowfullscreen></iframe></div><script>(()=>{const l=document.getElementById("mould-lightbox"),li=l?.querySelector("img"),v=document.getElementById("mould-video-lightbox"),f=v?.querySelector("iframe");const close=()=>{l?.classList.remove("active");v?.classList.remove("active");if(f)f.src=""};document.addEventListener("click",e=>{const s=e.target.closest("[data-mould-lightbox]");if(s&&li){li.src=s.dataset.mouldLightbox;l.classList.add("active")};const b=e.target.closest("[data-mould-video]");if(b&&f){f.src="https://www.youtube.com/embed/"+b.dataset.mouldVideo+"?autoplay=1&rel=0";v.classList.add("active")};if(e.target.closest("[data-mould-close],[data-mould-video-close]")||e.target===l||e.target===v)close()});document.addEventListener("keydown",e=>{if(e.key==="Escape")close()})})();</script>'
     return '<div class="mould-detail-page mould-detail-page--' + item["slug"] + '">' + hero + crumb + products + model_references + brief + advantages + tech + samples + videos + quality + faq + cta + lightbox + '</div>'
-

@@ -28,6 +28,10 @@ const ES_VIDEO_TERMS = [
   ["high speed", "alta velocidad"], ["wide mouth", "boca ancha"], ["virus tube", "tubo de virus"],
   ["sampling tube", "tubo de muestreo"], ["edible oil", "aceite comestible"], ["engine oil", "aceite de motor"],
   ["automatic combination", "combinación automática"]
+  ,["clamshell", "tapa tipo clamshell"], ["cold runner", "colada fría"], ["out of", "de"],
+  ["ring", "anilla"], ["tube", "tubo"], ["flip", "abatible"], ["butterfly", "mariposa"],
+  ["flat", "plana"], ["manufacturing", "fabricación"], ["cosmetic", "cosmética"],
+  ["tear", "rotura"], ["inner", "interior"], ["cover", "tapa"], ["port", "boca"]
 ];
 const spanishVideoText = (value) => {
   let text = String(value || "").trim();
