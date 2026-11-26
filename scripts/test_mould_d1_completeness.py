@@ -66,11 +66,31 @@ if registry_routes != page_routes:
 page_translation = translation_map(state.get("translations", []))
 page_missing = []
 
+# LEYA news detail pages are owned by the published D1 Blog rows themselves.
+# They are rendered from each row's localized editorial payload, not from the
+# legacy shared water-cup `xuyi_translation_overrides` `/blog/.../` records.
+# Keep the generic page gate strict for managed shell/pages, while validating
+# every news article's Spanish fields in the dedicated Blog gate below.
+blog_detail_routes = set()
+for post in state.get("blogPosts", []):
+    if not isinstance(post, dict):
+        continue
+    slug = clean_text(post.get("slug"))
+    if not slug:
+        continue
+    editorial = post.get("editorial") if isinstance(post.get("editorial"), dict) else post
+    category = clean_text(editorial.get("category") or post.get("category") or "news").lower()
+    prefix = "/Bottle-Cap-Machine/" if category in {"machine", "machines", "cap-machine"} else "/news/"
+    blog_detail_routes.add(prefix + slug + ".html")
+    # Ignore legacy shared-template aliases if they still exist in an older
+    # D1 registry; they are not emitted by the LEYA renderer.
+    blog_detail_routes.add("/blog/" + slug + "/")
+
 for row in page_rows:
     route = clean_text(row.get("route"))
     if not clean_text(row.get("seo_title")) or not clean_text(row.get("meta_description")):
         page_missing.append(route + ":source-seo")
-for route in sorted(page_routes):
+for route in sorted(page_routes - blog_detail_routes):
     has_body = any(isinstance(item, dict) and clean_text(item.get("route")) == route and len(clean_text(item.get("mainHtml"))) >= 100 for item in state.get("pageBodies", []))
     for locale in published:
         if locale == source_locale:

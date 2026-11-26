@@ -7,16 +7,24 @@ import { MOULD_MODELS, MOULD_ROUTES, isMouldModel, isMouldProductRoute, isMouldR
 
 const BLOG_DETAIL_ROUTE_RE=/^\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/;
 const NEWS_DETAIL_ROUTE_RE=/^\/news\/[A-Za-z0-9][A-Za-z0-9_-]*\.html$/;
+const MACHINE_DETAIL_ROUTE_RE=/^\/Bottle-Cap-Machine\/[A-Za-z0-9][A-Za-z0-9_-]*\.html$/;
+function blogDetailRoute(post){
+  const slug=String(post?.slug||"");
+  const category=String(post?.category||post?.editorial?.category||"news").toLowerCase();
+  return (category==="machine"||category==="machines"||category==="cap-machine")
+    ? "/Bottle-Cap-Machine/"+slug+".html"
+    : "/news/"+slug+".html";
+}
 function managedPageRoute(route){
   const value=String(route||"");
   const registered=MOULD_ROUTES.has(value);
-  return registered||isMouldRoute(value)||BLOG_DETAIL_ROUTE_RE.test(value)||NEWS_DETAIL_ROUTE_RE.test(value);
+  return registered||isMouldRoute(value)||BLOG_DETAIL_ROUTE_RE.test(value)||NEWS_DETAIL_ROUTE_RE.test(value)||MACHINE_DETAIL_ROUTE_RE.test(value);
 }
 function pageContentType(route){
   const value=String(route||"");
   if(/^\/product\//.test(value))return "product";
-  if(BLOG_DETAIL_ROUTE_RE.test(value))return "blog";
-  if(NEWS_DETAIL_ROUTE_RE.test(value)||value==="/news/")return "news";
+  if(BLOG_DETAIL_ROUTE_RE.test(value)||NEWS_DETAIL_ROUTE_RE.test(value)||MACHINE_DETAIL_ROUTE_RE.test(value))return "blog";
+  if(value==="/news/")return "news";
   if(value==="/video/")return "video";
   if(value==="/Bottle-Cap-Machine/Bottle-Cap-Machine.html"||value.startsWith("/capabilities/"))return "capability";
   return "page";
@@ -171,8 +179,8 @@ export async function onRequestGet(context){
       if(!pageRegistry.has(route))pageRegistry.set(route,{route,label:title,seo_title:title,meta_description:description,robots:"noindex,nofollow",sitemap_enabled:0,contentType:"product",contentKey:row.model,source:"product_content"});
     }
     for(const post of onlyBlogPosts){
-      const route="/blog/"+String(post.slug||"")+"/";
-      if(!BLOG_DETAIL_ROUTE_RE.test(route))continue;
+      const route=blogDetailRoute(post);
+      if(!NEWS_DETAIL_ROUTE_RE.test(route)&&!MACHINE_DETAIL_ROUTE_RE.test(route))continue;
       if(!pageRegistry.has(route))pageRegistry.set(route,{route,label:String(post.title||post.slug||"").trim(),seo_title:String(post.title||"").trim(),meta_description:String(post.description||"").trim(),robots:"noindex,nofollow",sitemap_enabled:0,contentType:"blog",contentKey:String(post.slug||""),source:"blog_posts"});
     }
     const onlyRoutes=[...pageRegistry.values()].sort((a,b)=>String(a.route).localeCompare(String(b.route)));
@@ -180,7 +188,7 @@ export async function onRequestGet(context){
       const content=parseJson(row.content_json,{});
       return [String(content.route||"/product/"+row.model+".html"),{model:row.model,content}];
     }));
-    const blogByRoute=new Map(onlyBlogPosts.map(post=>["/blog/"+String(post.slug||"")+"/",post]));
+    const blogByRoute=new Map(onlyBlogPosts.map(post=>[blogDetailRoute(post),post]));
     const pageCopy= parseJson(config.page_copy,{});
     const pageFields=onlyRoutes.map(row=>{
       const route=String(row.route||"");
