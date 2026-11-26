@@ -82,8 +82,11 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: a4032d0251103d6ef680b2aaddce1afc
       LEYA_RELEASE_SHA: ${{ github.sha }}
-      LEYA_REQUIRE_D1_SNAPSHOT: ${{ inputs.bootstrap_admin == '1' && '0' || '1' }}
-      LEYA_BOOTSTRAP_ADMIN: ${{ inputs.bootstrap_admin || '0' }}
+      # Temporary first deployment for the formal admin importer.  This is
+      # removed immediately after the 13-family D1 import; normal pushes are
+      # always strict again.
+      LEYA_REQUIRE_D1_SNAPSHOT: "0"
+      LEYA_BOOTSTRAP_ADMIN: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
