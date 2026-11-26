@@ -9,6 +9,7 @@ localized.
 from __future__ import annotations
 
 import copy
+import html
 import re
 from functools import lru_cache
 from typing import Any
@@ -1417,7 +1418,13 @@ def spanish_html_text(value: Any) -> str:
                 hidden -= 1
             output.append(part)
         else:
-            output.append(part if hidden else spanish_ui_text(part))
+            if hidden:
+                output.append(part)
+            else:
+                # D1 HTML fragments can contain character references. Decode
+                # only text nodes for matching, then escape the translated
+                # result again so visible text cannot create markup.
+                output.append(html.escape(spanish_ui_text(html.unescape(part)), quote=False))
     return "".join(output)
 
 
